@@ -1,0 +1,55 @@
+Third-Party Software
+
+lwpa incorporates components of the following third-party software, under the
+respective terms of the license of each third-party software component.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RSA Data Security, Inc. MD5 Message-Digest Algorithm
+Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All rights reserved.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following sources in this repository are derived from the RSA Data
+Security, Inc. MD5 Message-Digest algorithm:
+
+src/md5.h
+src/md5c.c
+
+See the license information at the top of those source files for more details.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+mirek/rb_tree (https://github.com/mirek/rb_tree)
+Public domain, under the Unlicense (http://unlicense.org)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following sources in this repository are based on sources obtained from
+mirek/rb_tree:
+
+include/lwpa_rbtree.h
+src/lwpa_rbtree.c
+
+See the license information at the top of those source files for more details.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Appendix A Defines for the RDM Protocol, Compiled by Scott M. Blair
+http://www.rdmprotocol.org
+Copyright 2006, 2011, 2014 Litespeed Design
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following sources in this repository are derived from Appendix A Defines
+for the RDM Protocol:
+
+include/estardm.h
+
+See the license information at the top of that source file for more details.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Google Test framework (https://github.com/google/googletest)
+Copyright 2008, Google Inc., under the 3-Clause BSD License
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following directories in this repository contain sources that are part of
+the Google Test framework:
+
+test/unit/gtest/
+
+See test/unit/gtest/README.txt for more details.
