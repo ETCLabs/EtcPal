@@ -20,4 +20,4 @@ lwpa is currently ported for the following platforms and toolchains:
 
 lwpa is typically included as a dependency by other software libraries.
 However, if you would like to build lwpa on its own as a static lib, there are
-instructions in the documentation **TODO link**.
+instructions in the [documentation](https://etclabs.github.io/lwpa)
