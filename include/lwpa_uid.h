@@ -67,7 +67,7 @@ typedef struct LwpaUid
  *            0 (uidptr1 is equal to uidptr2)\n
  *          > 0 (uidptr1 is greater than uidptr2)
  */
-#define uidcmp(uidptr1, uidptr2)                                                    \
+#define uid_cmp(uidptr1, uidptr2)                                                   \
   (((uidptr1)->manu == (uidptr2)->manu) ? ((int)(uidptr1)->id - (int)(uidptr2)->id) \
                                         : ((int)(uidptr1)->manu - (int)(uidptr2)->manu))
 
