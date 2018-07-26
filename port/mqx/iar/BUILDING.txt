@@ -1,0 +1,22 @@
+Notes on building the Lightweight Platform Abstraction (lwpa) library for
+MQX 4.2/IAR Embedded Workbench
+
+== Workspace Variables ==
+
+A workspace-level variable is needed to point the lwpa project at the MQX
+headers that it needs to build:
+    MQX_BOARD_DIR: The location of your project's MQX build directory
+                   (of the form .../MQX/v4.2.0/lib/[your board].iar)
+Set this variable in Tools -> Configure Custom Argument Variables -> Workspace.
+
+== Project Configurations ==
+
+"Debug" includes debugging information and has no optimizations. "Release"
+includes no debugging information and is optimized for size.
+
+== Output ==
+
+The static lib will be copied to lib/mqx/iar/liblwpa[d].a. From there it
+can be linked into your project. Your project's include paths should include:
+    lwpa/include
+    lwpa/include/mqx

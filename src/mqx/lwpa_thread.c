@@ -49,7 +49,7 @@ bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void 
   template.TASK_STACKSIZE = params->stack_size;
   if (params->platform_data)
   {
-    struct lwpa_thread_params_mqx *platform_params = (struct lwpa_thread_params_mqx *)params->platform_data;
+    LwpaThreadParamsMqx *platform_params = (LwpaThreadParamsMqx *)params->platform_data;
     template.TASK_ATTRIBUTES = platform_params->task_attributes;
     template.DEFAULT_TIME_SLICE = platform_params->time_slice;
   }

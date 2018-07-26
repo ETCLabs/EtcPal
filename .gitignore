@@ -8,10 +8,22 @@
 *.so
 bin/
 
+# Toolchain Artifacts #
+#######################
+
 # MSVC2015 and Qt
 Debug/
 Release/
 GeneratedFiles/
+
+# IAR Embedded Workbench
+*.dep
+*.ewd
+*.ewt
+settings/
+
+# Eclipse-based IDEs
+.settings/
 
 # Packages #
 ############

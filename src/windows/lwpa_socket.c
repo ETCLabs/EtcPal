@@ -301,7 +301,7 @@ lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr *address)
 
 lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address)
 {
-  int res = -1;
+  int res;
   struct sockaddr_storage ss;
   socklen_t size = sizeof ss;
 
@@ -335,9 +335,9 @@ lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog)
   return (res == 0 ? LWPA_OK : err_plat_to_lwpa(WSAGetLastError()));
 }
 
-lwpa_error_t lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags)
+int lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags)
 {
-  int res = -1;
+  int res;
   int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
 
   if (!buffer)
@@ -349,7 +349,7 @@ lwpa_error_t lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags)
 
 int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, LwpaSockaddr *address)
 {
-  int res = -1;
+  int res;
   int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
   struct sockaddr_storage fromaddr;
   socklen_t fromlen = sizeof fromaddr;
@@ -373,11 +373,11 @@ int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, Lwpa
 
 int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags)
 {
-  int res = -1;
+  int res;
   (void)flags;
 
   if (!message)
-    return (int)LWPA_INVALID;
+    return LWPA_INVALID;
 
   res = send(id, message, (int)length, 0);
   return (res >= 0 ? res : (int)err_plat_to_lwpa(WSAGetLastError()));
@@ -394,9 +394,8 @@ int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags,
     return (int)LWPA_INVALID;
 
   if ((ss_size = sockaddr_lwpa_to_plat((struct sockaddr *)&ss, dest_addr)) > 0)
-  {
     res = sendto(id, message, (int)length, 0, (struct sockaddr *)&ss, (int)ss_size);
-  }
+
   return (res >= 0 ? res : (int)err_plat_to_lwpa(WSAGetLastError()));
 }
 
@@ -407,8 +406,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   if (!option_value)
     return LWPA_INVALID;
 
-  /* TODO this platform implementation could be simplified by use of socket
-   * option lookup arrays. */
+  /* TODO this platform implementation could be simplified by use of socket option lookup arrays. */
   switch (level)
   {
     case LWPA_SOL_SOCKET:
@@ -612,8 +610,7 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
   return (res == 0 ? LWPA_OK : err_plat_to_lwpa(WSAGetLastError()));
 }
 
-/* TODO move to an overlapped IO implementation on Windows for better
- * performance. */
+/* TODO move to an overlapped IO implementation on Windows for better performance. */
 int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
 {
   fd_set readfds, writefds, exceptfds;
@@ -665,9 +662,13 @@ int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
                    timeout_ms == LWPA_WAIT_FOREVER ? NULL : &plat_timeout);
 
   if (sel_res < 0)
-    return (int)err_plat_to_lwpa(WSAGetLastError());
+  {
+    return err_plat_to_lwpa(WSAGetLastError());
+  }
   else if (sel_res == 0)
+  {
     return LWPA_TIMEDOUT;
+  }
   else if (fds && nfds > 0)
   {
     for (fd = fds; fd < fds + nfds; ++fd)
@@ -745,8 +746,8 @@ bool lwpa_nextaddr(LwpaAddrinfo *ai)
     ai->ai_flags = 0;
     if (!sockaddr_plat_to_lwpa(&ai->ai_addr, pf_ai->ai_addr))
       return false;
-    /* Can't use reverse maps, because we have no guarantee of the numeric
-     * values of the platform constants. Ugh. */
+    /* Can't use reverse maps, because we have no guarantee of the numeric values of the platform
+     * constants. Ugh. */
     if (pf_ai->ai_family == AF_INET)
       ai->ai_family = LWPA_AF_INET;
     else if (pf_ai->ai_family == AF_INET6)

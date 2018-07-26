@@ -1,21 +1,21 @@
 /******************************************************************************
-* Copyright 2018 ETC Inc.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*******************************************************************************
-* This file is a part of lwpa. For more information, go to:
-* https://github.com/ETCLabs/lwpa
-******************************************************************************/
+ * Copyright 2018 ETC Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************
+ * This file is a part of lwpa. For more information, go to:
+ * https://github.com/ETCLabs/lwpa
+ ******************************************************************************/
 #include "lwpa_log.h"
 #include "gtest/gtest.h"
 #include <cstddef>
@@ -28,10 +28,7 @@ class LogTest : public ::testing::Test
 {
 protected:
   LogTest()
-      : expect_syslog_str_present(false)
-      , expect_human_str_present(false)
-      , log_passed(false)
-      , time_fn_called(false)
+      : expect_syslog_str_present(false), expect_human_str_present(false), log_passed(false), time_fn_called(false)
   {
     FillDefaultTime(cur_time);
   }
@@ -160,7 +157,7 @@ TEST_F(LogTest, validate)
 }
 
 // Test logging of:
-//    - string values
+//    - int values
 //    - time from callback
 //    - weird and missing value in syslog header
 TEST_F(LogTest, log_intval)
@@ -168,8 +165,7 @@ TEST_F(LogTest, log_intval)
   LwpaLogParams lparams;
   // A string with a non-ASCII character: "host\xC8name"
   // Should be sanitized to "host?name"
-  const unsigned char weird_hostname[] = {0x68, 0x6f, 0x73, 0x74, 0xc8,
-                                          0x6e, 0x61, 0x6d, 0x65, 0x00};
+  const unsigned char weird_hostname[] = {0x68, 0x6f, 0x73, 0x74, 0xc8, 0x6e, 0x61, 0x6d, 0x65, 0x00};
   char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
   char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
 
@@ -184,9 +180,7 @@ TEST_F(LogTest, log_intval)
   lparams.time_fn = time_cb;
   lparams.context = this;
 
-  expect_syslog_str =
-      "<0>1 1970-01-01T00:00:00.000Z host?name My_App - - - Here are some int values: 1 42 "
-      "4294967295";
+  expect_syslog_str = "<0>1 1970-01-01T00:00:00.000Z host?name My_App - - - Here are some int values: 1 42 4294967295";
   expect_human_str = "1970-01-01 00:00:00.000Z Here are some int values: 1 42 4294967295";
 
   ASSERT_TRUE(lwpa_validate_log_params(&lparams));
@@ -194,13 +188,11 @@ TEST_F(LogTest, log_intval)
 #define INTVAL_FORMAT_STR_AND_ARGS "Here are some int values: %d %d %u", 1, 42, 0xffffffffu
 
   // Try the functions that simply build the log strings
-  ASSERT_TRUE(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time,
-                                     &lparams.syslog_params, LWPA_LOG_EMERG,
-                                     INTVAL_FORMAT_STR_AND_ARGS));
+  ASSERT_TRUE(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
+                                     LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS));
   ASSERT_STREQ(syslog_buf, expect_syslog_str.c_str());
 
-  ASSERT_TRUE(lwpa_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time,
-                                        INTVAL_FORMAT_STR_AND_ARGS));
+  ASSERT_TRUE(lwpa_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, INTVAL_FORMAT_STR_AND_ARGS));
   ASSERT_STREQ(human_buf, expect_human_str.c_str());
 
   // Try logging with the log mask set to 0, should not work.
@@ -285,8 +277,7 @@ TEST_F(LogTest, log_strval)
   lparams.time_fn = nullptr;
   lparams.context = this;
 
-  expect_syslog_str =
-      "<149>1 - 10.101.17.38 - _2_4? - - Here are some string values: hey wassup hello";
+  expect_syslog_str = "<149>1 - 10.101.17.38 - _2_4? - - Here are some string values: hey wassup hello";
   expect_human_str = "Here are some string values: hey wassup hello";
 
   ASSERT_TRUE(lwpa_validate_log_params(&lparams));
@@ -294,13 +285,11 @@ TEST_F(LogTest, log_strval)
 #define STRVAL_FORMAT_STR_AND_ARGS "Here are some string values: %s %s %s", "hey", "wassup", "hello"
 
   // Try the functions that simply build the log strings
-  ASSERT_TRUE(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, nullptr,
-                                     &lparams.syslog_params, LWPA_LOG_NOTICE,
-                                     STRVAL_FORMAT_STR_AND_ARGS));
+  ASSERT_TRUE(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, nullptr, &lparams.syslog_params,
+                                     LWPA_LOG_NOTICE, STRVAL_FORMAT_STR_AND_ARGS));
   ASSERT_STREQ(syslog_buf, expect_syslog_str.c_str());
 
-  ASSERT_TRUE(lwpa_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, nullptr,
-                                        STRVAL_FORMAT_STR_AND_ARGS));
+  ASSERT_TRUE(lwpa_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, nullptr, STRVAL_FORMAT_STR_AND_ARGS));
   ASSERT_STREQ(human_buf, expect_human_str.c_str());
 
   // Try logging with the log mask set to 0, should not work.
@@ -313,7 +302,7 @@ TEST_F(LogTest, log_strval)
   TestLwpaVlogHelper(&lparams, LWPA_LOG_NOTICE, STRVAL_FORMAT_STR_AND_ARGS);
 }
 
-// Helper to get the proper sanitized character from a loop counter for the 
+// Helper to get the proper sanitized character from a loop counter for the
 // max length string test
 static unsigned char get_sanitized_char(size_t i)
 {
@@ -389,12 +378,11 @@ TEST_F(LogTest, log_maxlength)
   cur_time.utc_offset = -720;
 
   // Try the functions that simply build the log strings
-  ASSERT_TRUE(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time,
-                                     &lparams.syslog_params, LWPA_LOG_DEBUG, to_log_str));
+  ASSERT_TRUE(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
+                                     LWPA_LOG_DEBUG, to_log_str));
   ASSERT_STREQ(syslog_buf, expect_syslog_str.c_str());
 
-  ASSERT_TRUE(
-      lwpa_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, to_log_str));
+  ASSERT_TRUE(lwpa_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, to_log_str));
   ASSERT_STREQ(human_buf, expect_human_str.c_str());
 
   // Try logging with the log mask set to 0, should not work.
