@@ -24,7 +24,6 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
-#include <time.h>
 #include "lwpa_bool.h"
 
 /* Suppress strncpy() and gmtime() warnings on Windows/MSVC. */
@@ -41,8 +40,7 @@
 
 static void sanitize_str(char *str)
 {
-  /* Replace non-printing characters and spaces with '_'. Replace characters
-   * above 127 with '?'. */
+  /* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
   unsigned char *cp;
   for (cp = (unsigned char *)str; *cp != '\0'; ++cp)
   {
@@ -53,13 +51,12 @@ static void sanitize_str(char *str)
   }
 }
 
-/*! \brief Ensure that the given syslog parameters are compliant with the
- *         syslog RFC (modifying them if necessary).
+/*! \brief Ensure that the given syslog parameters are compliant with the syslog RFC (modifying
+ *         them if necessary).
  *
- *  Sanitizes the three string fields (hostname, app_name and procid) by
- *  replacing characters that are not allowed by RFC 5424 with filler
- *  characters. Also ensures that the facility value is within the correct
- *  range (#LWPA_LOG_NFACILITIES).
+ *  Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
+ *  are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
+ *  within the correct range (#LWPA_LOG_NFACILITIES).
  *
  *  \param[in,out] params Syslog params to sanitize.
  */
@@ -75,19 +72,15 @@ void lwpa_sanitize_syslog_params(LwpaSyslogParams *params)
 
 /*! \brief Ensure that the given lwpa_log_params are valid.
  *
- *  This also sanitizes the syslog params using lwpa_sanitize_syslog_params()
- *  if action is set to kLwpaLogCreateSyslog or kLwpaLogCreateBoth.
- *
- *  Some examples of invalid log parameters are:
- *    * Log callback function is NULL
- *    * time_method is set to kLwpaLogUseTimeFn but time_fn is NULL
+ *  This also sanitizes the syslog params using lwpa_sanitize_syslog_params() if action is set to
+ *  kLwpaLogCreateSyslog or kLwpaLogCreateBoth.
  *
  *  \param[in,out] params lwpa_log_params to validate.
  *  \return true (params are valid) or false (params are invalid).
  */
 bool lwpa_validate_log_params(LwpaLogParams *params)
 {
-  if (!params || !params->log_fn || (params->time_method == kLwpaLogUseTimeFn && !params->time_fn))
+  if (!params || !params->log_fn)
   {
     return false;
   }
@@ -99,98 +92,95 @@ bool lwpa_validate_log_params(LwpaLogParams *params)
   return true;
 }
 
-/* Build the current timestamp. Buffer must be of length
- * LWPA_LOG_TIMESTAMP_LEN. */
-static void make_timestamp(const LwpaLogTimeParams *time, char *buf, bool human_readable)
+/* Enforce the range rules defined in the LwpaLogTimeParams struct definition. */
+static bool validate_time(const LwpaLogTimeParams *tparams)
 {
-  if (time)
+  return (tparams->year >= 0 && tparams->year <= 9999 && tparams->month >= 1 && tparams->month <= 12 &&
+          tparams->day >= 1 && tparams->day <= 31 && tparams->hour >= 0 && tparams->hour <= 23 &&
+          tparams->minute >= 0 && tparams->minute <= 59 && tparams->second >= 0 && tparams->second <= 60 &&
+          tparams->msec >= 0 && tparams->msec <= 999);
+}
+
+/* Build the current timestamp. Buffer must be of length LWPA_LOG_TIMESTAMP_LEN. */
+static void make_timestamp(const LwpaLogTimeParams *tparams, char *buf, bool human_readable)
+{
+  bool timestamp_created = false;
+
+  if (tparams && validate_time(tparams))
   {
     /* Print the basic timestamp */
-    size_t pos = strftime(buf, LWPA_LOG_TIMESTAMP_LEN, human_readable ? "%Y-%m-%d %H:%M:%S" : "%Y-%m-%dT%H:%M:%S",
-                          &time->cur_time);
-    /* Add the millisecond value */
-    snprintf(&buf[pos], LWPA_LOG_TIMESTAMP_LEN - pos, ".%03d", time->msec);
-    pos += 4;
-    /* Add the UTC offset */
-    if (time->utc_offset == 0)
+    int print_res = snprintf(
+        buf, LWPA_LOG_TIMESTAMP_LEN,
+        human_readable ? "%04d-%02d-%02d %02d:%02d:%02d.%03d" : "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tparams->year,
+        tparams->month, tparams->day, tparams->hour, tparams->minute, tparams->second, tparams->msec);
+
+    if (print_res > 0 && print_res < LWPA_LOG_TIMESTAMP_LEN - 1)
     {
-      buf[pos] = 'Z';
-      buf[pos + 1] = '\0';
-    }
-    else
-    {
-      snprintf(&buf[pos], LWPA_LOG_TIMESTAMP_LEN - pos, "%s%02d:%02d", time->utc_offset > 0 ? "+" : "-",
-               abs(time->utc_offset) / 60, abs(time->utc_offset) % 60);
+      size_t pos = print_res;
+      /* Add the UTC offset */
+      if (tparams->utc_offset == 0)
+      {
+        buf[pos] = 'Z';
+        buf[pos + 1] = '\0';
+      }
+      else
+      {
+        snprintf(&buf[pos], LWPA_LOG_TIMESTAMP_LEN - pos, "%s%02d:%02d", tparams->utc_offset > 0 ? "+" : "-",
+                 abs(tparams->utc_offset) / 60, abs(tparams->utc_offset) % 60);
+      }
+
+      timestamp_created = true;
     }
   }
-  else if (!human_readable)
-    strcpy(buf, NILVALUE_STR);
-  else
-    buf[0] = '\0';
+
+  if (!timestamp_created)
+  {
+    if (!human_readable)
+      strcpy(buf, NILVALUE_STR);
+    else
+      buf[0] = '\0';
+  }
 }
 
-/* Get the current time via either the standard C library or a time callback.
- */
+/* Get the current time via either the standard C library or a time callback. */
 static bool get_time(const LwpaLogParams *params, LwpaLogTimeParams *time_params)
 {
-  bool got_time = false;
-  switch (params->time_method)
+  if (params->time_fn)
   {
-    case kLwpaLogUseGmtime:
-    {
-      time_t ct = time(NULL);
-      struct tm *ptm = gmtime(&ct);
-      if (ptm)
-      {
-        time_params->cur_time = *ptm;
-        time_params->msec = 0;
-        time_params->utc_offset = 0;
-        got_time = true;
-      }
-    }
-    break;
-    case kLwpaLogUseTimeFn:
-      if (params->time_fn)
-      {
-        time_params->msec = 0;
-        time_params->utc_offset = 0;
-
-        /* Get the time from the application */
-        params->time_fn(params->context, time_params);
-        got_time = true;
-      }
-      break;
-    case kLwpaLogNoTime:
-    default:
-      break;
+    memset(time_params, 0, sizeof(LwpaLogTimeParams));
+    params->time_fn(params->context, time_params);
+    return true;
   }
-  return got_time;
+  else
+    return false;
 }
 
-static bool lwpa_vcreate_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *time,
-                                    const LwpaSyslogParams *syslog_params, int pri, const char *format, va_list args)
+/* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
+ * original message within the syslog message, or NULL on failure. */
+static char *lwpa_vcreate_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *tparams,
+                                     const LwpaSyslogParams *syslog_params, int pri, const char *format, va_list args)
 {
   char timestamp[LWPA_LOG_TIMESTAMP_LEN];
   int prival = LWPA_LOG_PRI(pri) | syslog_params->facility;
   size_t syslog_header_size;
 
-  if (buflen < LWPA_SYSLOG_HEADER_MAX_LEN)
-    return false;
+  if (!buf || buflen < LWPA_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+    return NULL;
 
-  make_timestamp(time, timestamp, false);
+  make_timestamp(tparams, timestamp, false);
 
   syslog_header_size =
       snprintf(buf, LWPA_SYSLOG_HEADER_MAX_LEN, "<%d>%d %s %s %s %s %s %s ", prival, SYSLOG_PROT_VERSION, timestamp,
                syslog_params->hostname[0] ? syslog_params->hostname : NILVALUE_STR,
                syslog_params->app_name[0] ? syslog_params->app_name : NILVALUE_STR,
                syslog_params->procid[0] ? syslog_params->procid : NILVALUE_STR, MSGID_STR, STRUCTURED_DATA_STR);
+
   /* Copy in the message */
-  /* Making an exception to the strict C89 rule here for safety. We have not
-   * found a toolchain that doesn't support vsnprintf. vsnprintf will write
-   * up to count - 1 bytes and always null-terminates. This allows
-   * LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
+  /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
+   * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
+   * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
   vsnprintf(&buf[syslog_header_size], buflen - syslog_header_size, format, args);
-  return true;
+  return &buf[syslog_header_size];
 }
 
 /*! \brief Create a log message with syslog header in the given buffer.
@@ -199,12 +189,12 @@ static bool lwpa_vcreate_syslog_str(char *buf, size_t buflen, const LwpaLogTimeP
  *
  *  \param[out] buf Buffer in which to build the syslog message.
  *  \param[in] buflen Length in bytes of buf.
- *  \param[in] time A set of time parameters representing the current time.
+ *  \param[in] time A set of time parameters representing the current time. If NULL, no timestamp
+ *                  will be added to the log message.
  *  \param[in] syslog_params A set of parameters for the syslog header.
  *  \param[in] pri Priority of this log message.
- *  \param[in] format Log message with printf-style format specifiers. Provide
- *                    additional arguments as appropriate for format
- *                    specifiers.
+ *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                    as appropriate for format specifiers.
  */
 bool lwpa_create_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *time,
                             const LwpaSyslogParams *syslog_params, int pri, const char *format, ...)
@@ -212,33 +202,35 @@ bool lwpa_create_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *t
   va_list args;
   bool res;
   va_start(args, format);
-  res = lwpa_vcreate_syslog_str(buf, buflen, time, syslog_params, pri, format, args);
+  res = (NULL != lwpa_vcreate_syslog_str(buf, buflen, time, syslog_params, pri, format, args));
   va_end(args);
   return res;
 }
 
-static bool lwpa_vcreate_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format,
-                                       va_list args)
+/* Create a log message with a human-readable header given the appropriate va_list. Returns a
+ * pointer to the original message within the log message, or NULL on failure. */
+static char *lwpa_vcreate_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format,
+                                        va_list args)
 {
   char timestamp[LWPA_LOG_TIMESTAMP_LEN];
   size_t human_header_size;
 
-  if (buflen < LWPA_LOG_TIMESTAMP_LEN + 1)
-    return false;
+  if (!buf || buflen < LWPA_LOG_TIMESTAMP_LEN + 1 || !format)
+    return NULL;
 
   make_timestamp(time, timestamp, true);
 
   if (timestamp[0] == '\0')
-  {
     human_header_size = 0;
-  }
   else
-  {
     human_header_size = snprintf(buf, LWPA_LOG_TIMESTAMP_LEN + 1, "%s ", timestamp);
-  }
 
+  /* Copy in the message */
+  /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
+   * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
+   * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
   vsnprintf(&buf[human_header_size], buflen - human_header_size, format, args);
-  return true;
+  return &buf[human_header_size];
 }
 
 /*! \brief Create a log message with a human-readable header in the given
@@ -248,31 +240,29 @@ static bool lwpa_vcreate_human_log_str(char *buf, size_t buflen, const LwpaLogTi
  *
  *  \param[out] buf Buffer in which to build the log message.
  *  \param[in] buflen Length in bytes of buf.
- *  \param[in] time A set of time parameters representing the current time.
- *  \param[in] format Log message with printf-style format specifiers. Provide
- *                    additional arguments as appropriate for format
- *                    specifiers.
+ *  \param[in] time A set of time parameters representing the current time. If NULL, no timestamp
+ *                  will be added to the log message.
+ *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                    as appropriate for format specifiers.
  */
 bool lwpa_create_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format, ...)
 {
   va_list args;
   bool res;
   va_start(args, format);
-  res = lwpa_vcreate_human_log_str(buf, buflen, time, format, args);
+  res = (NULL != lwpa_vcreate_human_log_str(buf, buflen, time, format, args));
   va_end(args);
   return res;
 }
 
 /*! \brief Log a message from a library module.
  *
- *  Takes a printf-style format string which is formatted and passed to the
- *  application callback.
+ *  Takes a printf-style format string which is formatted and passed to the application callback.
  *
  *  \param[in] params The log parameters to be used for this message.
  *  \param[in] pri Priority of this log message.
- *  \param[in] format Log message with printf-style format specifiers. Provide
- *                    additional arguments as appropriate for format
- *                    specifiers.
+ *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                    as appropriate for format specifiers.
  */
 void lwpa_log(const LwpaLogParams *params, int pri, const char *format, ...)
 {
@@ -282,12 +272,10 @@ void lwpa_log(const LwpaLogParams *params, int pri, const char *format, ...)
   va_end(args);
 }
 
-/*! \brief Log a message from a library module with the list of format
- *         arguments already generated.
+/*! \brief Log a message from a library module with the list of format arguments already generated.
  *
- *  For normal usage, just use lwpa_log(). However, this function is useful if
- *  you want to create a wrapper function around lwpa_log() which also takes
- *  variable format arguments.
+ *  For normal usage, just use lwpa_log(). However, this function is useful if you want to create a
+ *  wrapper function around lwpa_log() which also takes variable format arguments.
  *
  *  \param[in] params The log parameters to be used for this message.
  *  \param[in] pri Priority of this log message.
@@ -300,32 +288,33 @@ void lwpa_vlog(const LwpaLogParams *params, int pri, const char *format, va_list
   char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];
   char *syslog_msg_ptr = NULL;
   char *humanlog_msg_ptr = NULL;
+  char *raw_msg_ptr = NULL;
   LwpaLogTimeParams time_params;
   bool have_time;
 
   if (!params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
-  {
     return;
-  }
 
   have_time = get_time(params, &time_params);
 
   if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateSyslog)
   {
-    if (lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
-                                &params->syslog_params, pri, format, args))
+    raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+                                          &params->syslog_params, pri, format, args);
+    if (raw_msg_ptr)
     {
       syslog_msg_ptr = syslogmsg;
     }
   }
   if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateHumanReadableLog)
   {
-    if (lwpa_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL, format,
-                                   args))
+    raw_msg_ptr = lwpa_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
+                                             have_time ? &time_params : NULL, format, args);
+    if (raw_msg_ptr)
     {
       humanlog_msg_ptr = humanlogmsg;
     }
   }
 
-  params->log_fn(params->context, syslog_msg_ptr, humanlog_msg_ptr);
+  params->log_fn(params->context, syslog_msg_ptr, humanlog_msg_ptr, raw_msg_ptr);
 }

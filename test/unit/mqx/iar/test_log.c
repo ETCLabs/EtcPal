@@ -25,11 +25,12 @@ static void *expect_context;
 static bool expect_syslog_str_present, expect_human_str_present;
 static char expect_syslog_str[LWPA_SYSLOG_STR_MAX_LEN];
 static char expect_human_str[LWPA_HUMAN_LOG_STR_MAX_LEN];
+static char expect_raw_str[LWPA_LOG_MSG_MAX_LEN];
 static bool log_passed_flag;
 
-static void log_cb(void *context, const char *syslog_str, const char *human_str)
+static void log_cb(void *context, const char *syslog_str, const char *human_str, const char *raw_str)
 {
-  if (context != expect_context ||
+  if (context != expect_context || !raw_str || 0 != strcmp(raw_str, expect_raw_str) ||
       (expect_syslog_str_present && (!syslog_str || 0 != strcmp(syslog_str, expect_syslog_str))) ||
       (!expect_syslog_str_present && syslog_str) ||
       (expect_human_str_present && (!human_str || 0 != strcmp(human_str, expect_human_str))) ||
@@ -54,17 +55,14 @@ static void time_cb(void *context, LwpaLogTimeParams *time_params)
 
 static void fill_default_time()
 {
-  tparams.cur_time.tm_sec = 0;    // seconds after the minute - [0, 60] including leap second
-  tparams.cur_time.tm_min = 0;    // minutes after the hour - [0, 59]
-  tparams.cur_time.tm_hour = 0;   // hours since midnight - [0, 23]
-  tparams.cur_time.tm_mday = 1;   // day of the month - [1, 31]
-  tparams.cur_time.tm_mon = 0;    // months since January - [0, 11]
-  tparams.cur_time.tm_year = 70;  // years since 1900
-  tparams.cur_time.tm_wday = 4;   // days since Sunday - [0, 6]
-  tparams.cur_time.tm_yday = 0;   // days since January 1 - [0, 365]
-  tparams.cur_time.tm_isdst = 0;  // daylight savings time flag
-  tparams.msec = 0;
-  tparams.utc_offset = 0;
+  tparams.year = 1970;     // absolute year
+  tparams.month = 1;       // month of the year - [1, 12]
+  tparams.day = 1;         // day of the month - [1, 31]
+  tparams.hour = 0;        // hours since midnight - [0, 23]
+  tparams.minute = 0;      // minutes after the hour - [0, 59]
+  tparams.second = 0;      // seconds after the minute - [0, 60] including leap second
+  tparams.msec = 0;        // milliseconds after the second - [0, 999]
+  tparams.utc_offset = 0;  // Local offset from UTC in minutes
 }
 
 static void init_flags()
@@ -117,7 +115,6 @@ bool test_log_validate()
   lparams.syslog_params.facility = LWPA_LOG_KERN;
   memcpy(lparams.syslog_params.app_name, special_char_array, sizeof special_char_array);
   lparams.log_mask = 0;
-  lparams.time_method = kLwpaLogUseTimeFn;
   lparams.time_fn = time_cb;
   lparams.context = NULL;
 
@@ -133,18 +130,9 @@ bool test_log_validate()
   if (lwpa_validate_log_params(&lparams))
     return false;
 
-  // Invalid combination of time parameters
+  // It's valid for time_fn to be NULL
   lparams.log_fn = log_cb;
   lparams.time_fn = NULL;
-  if (lwpa_validate_log_params(&lparams))
-    return false;
-
-  // Time methods where it's valid for time function to be null
-  lparams.time_method = kLwpaLogNoTime;
-  if (!lwpa_validate_log_params(&lparams))
-    return false;
-
-  lparams.time_method = kLwpaLogUseGmtime;
   if (!lwpa_validate_log_params(&lparams))
     return false;
 
@@ -173,13 +161,13 @@ bool test_log_intval()
   lparams.syslog_params.procid[0] = '\0';
   lparams.syslog_params.facility = LWPA_LOG_KERN;
   lparams.log_mask = 0;
-  lparams.time_method = kLwpaLogUseTimeFn;
   lparams.time_fn = time_cb;
   lparams.context = NULL;
 
   strcpy(expect_syslog_str,
          "<0>1 1970-01-01T00:00:00.000Z host?name My_App - - - Here are some int values: 1 42 4294967295");
   strcpy(expect_human_str, "1970-01-01 00:00:00.000Z Here are some int values: 1 42 4294967295");
+  strcpy(expect_raw_str, "Here are some int values: 1 42 4294967295");
 
   if (!lwpa_validate_log_params(&lparams))
     return false;
@@ -295,12 +283,12 @@ bool test_log_strval()
   lparams.syslog_params.app_name[0] = '\0';
   lparams.syslog_params.facility = LWPA_LOG_LOCAL2;
   lparams.log_mask = 0;
-  lparams.time_method = kLwpaLogNoTime;
   lparams.time_fn = NULL;
   lparams.context = NULL;
 
   strcpy(expect_syslog_str, "<149>1 - 10.101.17.38 - _2_4? - - Here are some string values: hey wassup hello");
   strcpy(expect_human_str, "Here are some string values: hey wassup hello");
+  strcpy(expect_raw_str, "Here are some string values: hey wassup hello");
 
   if (!lwpa_validate_log_params(&lparams))
     return false;
@@ -360,6 +348,7 @@ bool test_log_maxlength()
   char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
   char *expect_syslog_str_ptr;
   char *expect_human_str_ptr;
+  char *expect_raw_str_ptr;
 
   init_flags();
 
@@ -367,7 +356,6 @@ bool test_log_maxlength()
   lparams.log_fn = log_cb;
   lparams.syslog_params.facility = LWPA_LOG_LOCAL7;
   lparams.log_mask = 0;
-  lparams.time_method = kLwpaLogUseTimeFn;
   lparams.time_fn = time_cb;
   lparams.context = NULL;
 
@@ -378,6 +366,7 @@ bool test_log_maxlength()
   expect_syslog_str_ptr = expect_syslog_str + sizeof(SYSLOG_TIME_HEADER) - 1;
   strcpy(expect_human_str, HUMAN_TIME_HEADER);
   expect_human_str_ptr = expect_human_str + sizeof(HUMAN_TIME_HEADER) - 1;
+  expect_raw_str_ptr = expect_raw_str;
 
   // Create our very long syslog header components
   size_t i;
@@ -416,6 +405,7 @@ bool test_log_maxlength()
     char to_add = get_sanitized_char(i);
     *expect_syslog_str_ptr++ = to_add;
     *expect_human_str_ptr++ = to_add;
+    *expect_raw_str_ptr++ = to_add;
     to_log_str[i] = to_add;
   }
   to_log_str[i] = '\0';

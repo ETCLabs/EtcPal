@@ -21,8 +21,8 @@
 #ifndef _LWPA_LOG_H_
 #define _LWPA_LOG_H_
 
-#include <time.h>
 #include <stdarg.h>
+#include <stddef.h>
 #include "lwpa_bool.h"
 
 /*! \defgroup lwpa_log lwpa_log
@@ -135,77 +135,63 @@
  *  lwpa_log_callback function.  */
 #define LWPA_HUMAN_LOG_STR_MAX_LEN ((LWPA_LOG_TIMESTAMP_LEN - 1) + 1 /*SP*/ + LWPA_LOG_MSG_MAX_LEN)
 
-/*! A set of parameters which represent the current local time with millisecond
- *  resolution. */
+/*! A set of parameters which represent the current local time with millisecond resolution. */
 typedef struct LwpaLogTimeParams
 {
-  /*! The current time as specified in the C standard. Note that only the
-   *  tm_sec, tm_min, tm_hour, tm_mday, tm_mon, and tm_year members are used by
-   *  this module. */
-  struct tm cur_time;
-  /*! The number of milliseconds past the current second. */
-  unsigned int msec;
-  /*! The UTC offset in minutes. */
-  long utc_offset;
+  /*! Absolute year. Valid range 0-9999. */
+  int year;
+  /*! Month of the year. Valid range 1-12 (starting with 1 for January). */
+  int month;
+  /*! Day of the month. Valid range 1-31.  */
+  int day;
+  /*! Hours since midnight. Valid range 0-23. */
+  int hour;
+  /*! Minutes past the current hour. Valid range 0-59. */
+  int minute;
+  /*! Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
+  int second;
+  /*! Milliseconds past the current second. Valid range 0-999. */
+  int msec;
+  /*! The local offset from UTC in minutes. */
+  int utc_offset;
 } LwpaLogTimeParams;
 
 /*! \brief Log callback function.
  *
- *  The function that library modules use to log messages. The application
- *  developer defines the function and determines where the messages go.
+ *  The function that library modules use to log messages. The application developer defines the
+ *  function and determines where the messages go.
  *
  *  \param[in] context Optional application-provided value that was previously
  *                     passed to the library module.
  *  \param[in] syslog_str Log string, formatted compliant to RFC 5424.
  *  \param[in] human_str Log string, formatted for readability per ETC
  *                       convention.
+ *  \param[in] raw_str The original log string that was passed to lwpa_log() or lwpa_vlog(). Will
+ *                     overlap with one of syslog_str or human_str.
  */
-typedef void (*lwpa_log_callback)(void *context, const char *syslog_str, const char *human_str);
+typedef void (*lwpa_log_callback)(void *context, const char *syslog_str, const char *human_str, const char *raw_str);
 
 /*! \brief Time callback function.
  *
  *  A function by which the logging module can get the current local time.
  *
- *  \param[in] context Optional application-provided value that was previously
- *                     passed to the library module.
- *  \param[out] time Fill this in with the current time.
- *  \param[out] msec Fill this in with the current time past the second in
- *                   milliseconds, if it is available. Otherwise 0 ms will be
- *                   assumed.
- *  \param[out] utc_offset Fill this in with the UTC offset in minutes, if it
- *                         is available. Otherwise UTC will be assumed.
+ *  \param[in] context Optional application-provided value that was previously passed to the library
+ *                     module.
+ *  \param[out] time_params Fill this in with the current local time.
  */
 typedef void (*lwpa_log_time_fn)(void *context, LwpaLogTimeParams *time_params);
 
-/*! The method the lwpa_log() and lwpa_vlog() functions use to create a
- *  timestamp. */
+/*! Which types of log message(s) the lwpa_log() and lwpa_vlog() functions create. */
 typedef enum
 {
-  /*! lwpa_log() and lwpa_vlog() use the C library gmtime() internally. Note:
-   *  only UTC and whole-second precision is possible with gmtime(), although
-   *  milliseconds will still be present in the timestamp as '.000'. */
-  kLwpaLogUseGmtime,
-  /*! lwpa_log() and lwpa_vlog() use a time callback function to get the
-   *  current time from the application when creating a timestamp. */
-  kLwpaLogUseTimeFn,
-  /*! lwpa_log() and lwpa_vlog() omit the timestamp when building log
-   *  messages. */
-  kLwpaLogNoTime
-} lwpa_log_time_method_t;
-
-/*! Which types of log message(s) the lwpa_log() and lwpa_vlog() functions
- *  create. */
-typedef enum
-{
-  /*! lwpa_log() and lwpa_vlog() create a syslog message and pass it back in
-   *  the syslog_str parameter of the log callback. */
+  /*! lwpa_log() and lwpa_vlog() create a syslog message and pass it back in the syslog_str
+   *  parameter of the log callback. */
   kLwpaLogCreateSyslog,
-  /*! lwpa_log() and lwpa_vlog() create a human-readable log message and pass
-   *  it back in the human_str parameter of the log callback. */
+  /*! lwpa_log() and lwpa_vlog() create a human-readable log message and pass it back in the
+   *  human_str parameter of the log callback. */
   kLwpaLogCreateHumanReadableLog,
-  /*! lwpa_log() and lwpa_vlog() create both a syslog message and a
-   *  human-readable log message and pass them back in the syslog_str and
-   *  human_str parameters of the log callback. */
+  /*! lwpa_log() and lwpa_vlog() create both a syslog message and a human-readable log message and
+   *  pass them back in the syslog_str and human_str parameters of the log callback. */
   kLwpaLogCreateBoth
 } lwpa_log_action_t;
 
@@ -233,13 +219,10 @@ typedef struct LwpaLogParams
   LwpaSyslogParams syslog_params;
   /*! A mask value that determines which priority messages can be logged. */
   int log_mask;
-  /*! How the lwpa_*log() functions should obtain the current time. */
-  lwpa_log_time_method_t time_method;
-  /*! A callback function for lwpa_*log() functions to obtain the time from the
-   *  application. */
+  /*! A callback function for lwpa_*log() functions to obtain the time from the application. If
+   *  NULL, no timestamp will be added to log messages. */
   lwpa_log_time_fn time_fn;
-  /*! Application context that will be passed back with the log callback
-   *  function. */
+  /*! Application context that will be passed back with the log callback function. */
   void *context;
 } LwpaLogParams;
 
@@ -251,13 +234,22 @@ typedef struct LwpaLogParams
 extern "C" {
 #endif
 
+/* The various compiler ifdefs are to use each compiler's method of checking printf-style
+ * arguments. */
+
+#ifdef __ICCARM__
+#pragma __printf_args
+#endif
 bool lwpa_create_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *time,
                             const LwpaSyslogParams *syslog_params, int pri, const char *format, ...)
 #ifdef __GNUC__
-    /* GCC sorcery to check the format string just like a 'printf' call */
     __attribute__((__format__(__printf__, 6, 7)))
 #endif
     ;
+
+#ifdef __ICCARM__
+#pragma __printf_args
+#endif
 bool lwpa_create_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 4, 5)))
@@ -266,11 +258,16 @@ bool lwpa_create_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams
 
 void lwpa_sanitize_syslog_params(LwpaSyslogParams *params);
 bool lwpa_validate_log_params(LwpaLogParams *params);
+
+#ifdef __ICCARM__
+#pragma __printf_args
+#endif
 void lwpa_log(const LwpaLogParams *params, int pri, const char *format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 3, 4)))
 #endif
     ;
+
 void lwpa_vlog(const LwpaLogParams *params, int pri, const char *format, va_list args);
 
 #ifdef __cplusplus
