@@ -411,12 +411,32 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
       /* Option not supported, but seems to be allowed by default */
       res = RTCS_OK;
       break;
+    case LWPA_IP_MULTICAST_IF:
+      /* This one is a bit tricky. The stack doesn't actually support this functionality, but for
+       * systems with only one network interface we want to pretend that it does if called
+       * correctly. This makes the behavior for platform-neutral calling code more consistent. */
+#if BSP_ENET_DEVICE_COUNT == 1
+      if (option_len == sizeof(LwpaIpAddr))
+      {
+        LwpaIpAddr *netint_requested = (LwpaIpAddr *)option_value;
+        IPCFG_IP_ADDRESS_DATA ip_data;
+
+        if (ipcfg_get_ip(BSP_DEFAULT_ENET_DEVICE, &ip_data))
+        {
+          LwpaIpAddr default_netint_ip;
+
+          lwpaip_set_v4_address(&default_netint_ip, ip_data.ip);
+          if (lwpaip_equal(netint_requested, &default_netint_ip))
+            res = LWPA_OK;
+        }
+      }
+#endif
+      break;
     case LWPA_SO_BROADCAST:      /* Not supported */
     case LWPA_SO_ERROR:          /* Set not supported */
     case LWPA_SO_KEEPALIVE:      /* TODO */
     case LWPA_SO_LINGER:         /* TODO */
     case LWPA_SO_TYPE:           /* Not supported */
-    case LWPA_IP_MULTICAST_IF:   /* Not supported */
     case LWPA_IP_MULTICAST_TTL:  /* Not supported */
     case LWPA_IP_MULTICAST_LOOP: /* TODO */
     default:
