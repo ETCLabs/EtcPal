@@ -29,12 +29,15 @@ int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  if (argc < 2 || 0 >= inet_pton(AF_INET, argv[1], &g_netint))
+  // Only check our custom argument if we haven't been given the "list_tests" flag
+  if (!testing::GTEST_FLAG(list_tests))
   {
-    printf("Usage: %s <interface_addr>\n"
-           "  interface_addr: IP address of network interface to use for "
-             "test.\n", argv[0]);
-    return 1;
+    if (argc < 2 || 0 >= inet_pton(AF_INET, argv[1], &g_netint))
+    {
+      printf("Usage: %s <interface_addr>\n"
+             "  interface_addr: IP address of network interface to use for test.\n", argv[0]);
+      return 1;
+    }
   }
 
   printf("Starting googletest...\n");
