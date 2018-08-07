@@ -21,75 +21,70 @@ if (NOT ${LWPA_PLATFORM} IN_LIST VALID_LWPA_PLATFORMS)
 endif()
 
 ###############################################################################
-# Main lwpa interface library
+# Core lwpa library
 ###############################################################################
-
-add_library(lwpa_with_deps INTERFACE)
-target_link_libraries(lwpa_with_deps INTERFACE lwpa)
-if (WIN32)
-  target_link_libraries(lwpa_with_deps INTERFACE winmm ws2_32 Iphlpapi)
-endif()
-
-###############################################################################
-# Core lwpa library, should not be used directly from a CMake environment
-###############################################################################
-
-set(LWPA_INCLUDE_DIR include)
-set(LWPA_SRC_DIR src)
 
 add_library(lwpa
 # lwpa headers
-  ${LWPA_INCLUDE_DIR}/acn_prot.h
-  ${LWPA_INCLUDE_DIR}/estardm.h
-  ${LWPA_INCLUDE_DIR}/estardmnet.h
-  ${LWPA_INCLUDE_DIR}/lwpa_bool.h
-  ${LWPA_INCLUDE_DIR}/lwpa_cid.h
-  ${LWPA_INCLUDE_DIR}/lwpa_common.h
-  ${LWPA_INCLUDE_DIR}/lwpa_error.h
-  ${LWPA_INCLUDE_DIR}/lwpa_inet.h
-  ${LWPA_INCLUDE_DIR}/lwpa_int.h
-  ${LWPA_INCLUDE_DIR}/lwpa_log.h
-  ${LWPA_INCLUDE_DIR}/lwpa_mempool.h
-  ${LWPA_INCLUDE_DIR}/lwpa_netint.h
-  ${LWPA_INCLUDE_DIR}/lwpa_pack.h
-  ${LWPA_INCLUDE_DIR}/lwpa_pdu.h
-  ${LWPA_INCLUDE_DIR}/lwpa_rbtree.h
-  ${LWPA_INCLUDE_DIR}/lwpa_rootlayerpdu.h
-  ${LWPA_INCLUDE_DIR}/lwpa_socket.h
-  ${LWPA_INCLUDE_DIR}/lwpa_timer.h
-  ${LWPA_INCLUDE_DIR}/lwpa_uid.h
-  ${LWPA_INCLUDE_DIR}/${LWPA_PLATFORM}/lwpa_lock.h
-  ${LWPA_INCLUDE_DIR}/${LWPA_PLATFORM}/lwpa_thread.h
-  ${LWPA_INCLUDE_DIR}/${LWPA_PLATFORM}/lwpa_socket_plat.h
+  include/acn_prot.h
+  include/estardm.h
+  include/estardmnet.h
+  include/lwpa_bool.h
+  include/lwpa_cid.h
+  include/lwpa_common.h
+  include/lwpa_error.h
+  include/lwpa_inet.h
+  include/lwpa_int.h
+  include/lwpa_log.h
+  include/lwpa_mempool.h
+  include/lwpa_netint.h
+  include/lwpa_pack.h
+  include/lwpa_pdu.h
+  include/lwpa_rbtree.h
+  include/lwpa_rootlayerpdu.h
+  include/lwpa_socket.h
+  include/lwpa_timer.h
+  include/lwpa_uid.h
+  include/${LWPA_PLATFORM}/lwpa_lock.h
+  include/${LWPA_PLATFORM}/lwpa_thread.h
+  include/${LWPA_PLATFORM}/lwpa_socket_plat.h
 # lwpa sources
-  ${LWPA_SRC_DIR}/lwpa_cid.c
-  ${LWPA_SRC_DIR}/lwpa_error.c
-  ${LWPA_SRC_DIR}/lwpa_log.c
-  ${LWPA_SRC_DIR}/lwpa_mempool.c
-  ${LWPA_SRC_DIR}/lwpa_pdu.c
-  ${LWPA_SRC_DIR}/lwpa_rbtree.c
-  ${LWPA_SRC_DIR}/lwpa_rootlayerpdu.c
-  ${LWPA_SRC_DIR}/lwpa_uid.c
-  ${LWPA_SRC_DIR}/md5.h
-  ${LWPA_SRC_DIR}/md5c.c
-  ${LWPA_SRC_DIR}/${LWPA_PLATFORM}/lwpa_lock.c
-  ${LWPA_SRC_DIR}/${LWPA_PLATFORM}/lwpa_netint.c
-  ${LWPA_SRC_DIR}/${LWPA_PLATFORM}/lwpa_socket.c
-  ${LWPA_SRC_DIR}/${LWPA_PLATFORM}/lwpa_thread.c
-  ${LWPA_SRC_DIR}/${LWPA_PLATFORM}/lwpa_timer.c
+  src/lwpa_cid.c
+  src/lwpa_error.c
+  src/lwpa_log.c
+  src/lwpa_mempool.c
+  src/lwpa_pdu.c
+  src/lwpa_rbtree.c
+  src/lwpa_rootlayerpdu.c
+  src/lwpa_uid.c
+  src/md5.h
+  src/md5c.c
+  src/${LWPA_PLATFORM}/lwpa_lock.c
+  src/${LWPA_PLATFORM}/lwpa_netint.c
+  src/${LWPA_PLATFORM}/lwpa_socket.c
+  src/${LWPA_PLATFORM}/lwpa_thread.c
+  src/${LWPA_PLATFORM}/lwpa_timer.c
 )
 
 if (MINGW)
-  add_definitions(-D_WIN32_WINNT=0x0501)
+  target_compile_definitions(lwpa PUBLIC -D_WIN32_WINNT=0x0501)
 endif()
 
-include_directories(${LWPA_INCLUDE_DIR} ${LWPA_INCLUDE_DIR}/${LWPA_PLATFORM})
+# lwpa public include directories and library dependencies
+
+target_include_directories(lwpa PUBLIC ${LWPA_INCLUDE_DIR} ${LWPA_INCLUDE_DIR}/${LWPA_PLATFORM})
+if (WIN32)
+  target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi)
+endif()
+
+set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 
 ################################### testing ###################################
 
 enable_testing()
 include(GoogleTest)
 
+# Get and build the Googletest library at configure time: https://crascit.com/2015/07/25/cmake-gtest/
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/get_googletest.cmake)
 get_googletest()
 
@@ -112,6 +107,6 @@ add_executable(test_lwpa
   ${TEST_SRC_DIR}/test_timer.cpp
 )
 
-target_link_libraries(test_lwpa lwpa_with_deps gtest)
+target_link_libraries(test_lwpa lwpa gtest)
 
 gtest_discover_tests(test_lwpa)
