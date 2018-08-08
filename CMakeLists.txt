@@ -95,7 +95,8 @@ elseif(LWPA_PLATFORM STREQUAL mqx)
     set(MQX_BOARD_INT_DIR release)
   endif()
 
-  target_include_directories(lwpa PUBLIC ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp
+  target_include_directories(lwpa PUBLIC ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}
+                                         ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp
                                          ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Generated_Code
                                          ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Sources
                                          ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/psp
