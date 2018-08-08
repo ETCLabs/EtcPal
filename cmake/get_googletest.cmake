@@ -1,3 +1,7 @@
+# Somewhat messy way to download and build the Google Test library at configure time.
+# Taken directly from the Google Test README,
+# and generalized here: https://crascit.com/2015/07/25/cmake-gtest/
+
 function(get_googletest)
   # Download and unpack googletest at configure time
   configure_file(${CMAKE_SOURCE_DIR}/cmake/CMakeLists.txt.gtest googletest-download/CMakeLists.txt)

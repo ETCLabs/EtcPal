@@ -89,12 +89,15 @@ target_include_directories(lwpa PUBLIC include include/${LWPA_PLATFORM})
 if(LWPA_PLATFORM STREQUAL windows)
   target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi)
 elseif(LWPA_PLATFORM STREQUAL mqx)
+  # Include the debug versions of the MQX libs if a Debug configuration is specified.
+  # I think there's probably a better way of doing this and I'm missing something here.
   if(CMAKE_BUILD_TYPE STREQUAL Debug)
     set(MQX_BOARD_INT_DIR debug)
   else()
     set(MQX_BOARD_INT_DIR release)
   endif()
 
+  # Depend on the MQX libs.
   target_include_directories(lwpa PUBLIC ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}
                                          ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp
                                          ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Generated_Code
@@ -110,11 +113,11 @@ set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 
 ################################### testing ###################################
 
-if (LWPA_PLATFORM STREQUAL windows)
+if(LWPA_PLATFORM STREQUAL windows)
   enable_testing()
   include(GoogleTest)
 
-  # Get and build the Googletest library at configure time: https://crascit.com/2015/07/25/cmake-gtest/
+  # Get and build the Googletest library at configure time: 
   include(${CMAKE_CURRENT_LIST_DIR}/cmake/get_googletest.cmake)
   get_googletest()
 
