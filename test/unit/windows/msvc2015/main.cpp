@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     {
       LwpaNetintInfo default_netint;
       netint_get_default_interface(&default_netint);
-      g_netint.s_addr = lwpaip_v4_address(&default_netint.addr);
+      g_netint.s_addr = htonl(lwpaip_v4_address(&default_netint.addr));
     }
   }
 
