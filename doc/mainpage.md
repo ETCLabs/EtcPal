@@ -37,49 +37,63 @@ identical interface, as documented in that module's documentation.
 
 ## Platforms
 
-lwpa is currently ported for the following platforms and toolchains:
+lwpa is currently ported for the following platforms:
 
-+ Windows
-  - Visual Studio 2015 (x86 and x86_64)
++ Microsoft Windows
++ MQX RTOS
 
 ### Building lwpa for Your Platform
 
-There are project files for each platform and toolchain which compile the lwpa
-sources into a static library. Alternatively, your project can simply build in
-the lwpa sources directly. There are pros and cons to each approach:
-- The project files have predefined compilation options which may not match
-  with those of your project.
-- However, if building in the sources directly, your project will have to be
-  updated if lwpa sources are added or removed in the future.
+lwpa is built with [CMake](https://cmake.org), a popular cross-platform build
+system generator. CMake can also be used to include lwpa as a dependency to
+other projects, i.e. using the `add_subdirectory()` command.
 
-Especially on embedded platforms, lwpa is often dependent on project-specific
-headers (i.e. FreeRTOSConfig.h, mqx.h, etc). The BUILDING.txt file in each
-build directory indicates how to point the lwpa project at the relevant paths
-for your project, usually via IDE workspace-level variable defines.
+To configure and build lwpa on its own using CMake, follow these steps:
 
-The projects are located in the heirarchy:
+1. [Download and install](https://cmake.org/download/) CMake version 3.3 or higher.
+2. Create a directory in your location of choice to hold your build projects or
+   Makefiles:
+   ```
+   $ mkdir build
+   $ cd build
+   ```
+   This directory can be inside or outside the lwpa repository.
+3. Run CMake to configure the lwpa project:
+   ```
+   $ cmake path/to/lwpa/root
+   ```
+   You can optionally specify your build system with the `-G` option;
+   otherwise, CMake will choose a system-appropriate default. Use `cmake --help`
+   to see all available options.
+4. Use CMake to invoke the generated build system to build the lwpa library and
+   unit tests:
+   ```
+   $ cmake --build .
+   ```
+   If you are generating IDE project files, you can use CMake to open the
+   projects in the IDE:
+   ```
+   $ cmake --open .
+   ```
+5. To run the unit tests after building:
+   ```
+   # On Windows
+   > .\test\[Build_Configuration]\test_lwpa.exe
 
-```
-port/
-  [platform_name]/
-    [toolchain_name]/
-      [project files]
-      BUILDING.txt
-```
+   # Elsewhere
+   $ ./test/test_lwpa
+   ```
+   Or, if you are generating IDE project files, simply run the test_lwpa
+   project from your IDE.
 
-Static libraries are built to:
-```
-lib/
-  [platform_name]/
-    [toolchain_name]/
-      liblwpa.a
-      liblwpad.a (debug lib)
-      lwpa.lib (Windows)
-      lwpad.lib (Windows debug lib)
-```
+Alternatively, if you don't want to use CMake, your project can simply build in
+the lwpa sources directly using the appropriate directories for your target
+platform. This is currently the only option for MQX RTOS.
 
 ### Platform Dependencies
 
 The platform ports of lwpa have the following dependencies:
-+ Windows
++ Microsoft Windows
   - Windows XP or higher
++ MQX RTOS
+  - MQX 4.2.0
