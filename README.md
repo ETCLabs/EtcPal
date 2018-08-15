@@ -12,12 +12,9 @@ The lwpa library serves two main purposes:
 
 ## Platform Ports
 
-lwpa is currently ported for the following platforms and toolchains:
-+ Windows
-  - Visual Studio 2015 (x86 and x86_64)
+lwpa is currently ported for the following platforms:
++ Microsoft Windows
 + MQX RTOS
-  - CodeWarrior/ARM-GCC
-  - IAR Embedded Workbench
 
 ## Building
 
