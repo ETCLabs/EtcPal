@@ -8,6 +8,10 @@ branches:
   except:
     - gh-pages
 
+skip_commits:
+  files:
+    - '**/*.md'
+
 #---------------------------------#
 #    environment configuration    #
 #---------------------------------#
