@@ -26,8 +26,8 @@ function(get_googletest LWPA_REPO_ROOT)
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
   # Add googletest directly to our build. This adds the following targets:
-  # gtest, gtest_main, gmock and gmock_main
-  add_subdirectory("${CMAKE_CURRENT_BINARY_DIR}/googletest-src"
+  # gtest and gtest_main
+  add_subdirectory("${CMAKE_CURRENT_BINARY_DIR}/googletest-src/googletest"
                    "${CMAKE_CURRENT_BINARY_DIR}/googletest-build")
 
 endfunction(get_googletest)
