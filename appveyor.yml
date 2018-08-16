@@ -31,7 +31,7 @@ before_build:
   - cmd: |-
       mkdir build
       cd build
-      cmake --verison
+      cmake --version
       cmake -G "Visual Studio 15 2017 Win64"
 
 build:
