@@ -37,7 +37,6 @@ set(LWPA_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
 add_library(lwpa
 # lwpa headers
   ${LWPA_ROOT}/include/acn_prot.h
-  ${LWPA_ROOT}/include/estardm.h
   ${LWPA_ROOT}/include/estardmnet.h
   ${LWPA_ROOT}/include/lwpa_bool.h
   ${LWPA_ROOT}/include/lwpa_cid.h
@@ -54,7 +53,6 @@ add_library(lwpa
   ${LWPA_ROOT}/include/lwpa_rootlayerpdu.h
   ${LWPA_ROOT}/include/lwpa_socket.h
   ${LWPA_ROOT}/include/lwpa_timer.h
-  ${LWPA_ROOT}/include/lwpa_uid.h
   ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa_lock.h
   ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa_thread.h
   ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa_socket_plat.h
@@ -66,7 +64,6 @@ add_library(lwpa
   ${LWPA_ROOT}/src/lwpa_pdu.c
   ${LWPA_ROOT}/src/lwpa_rbtree.c
   ${LWPA_ROOT}/src/lwpa_rootlayerpdu.c
-  ${LWPA_ROOT}/src/lwpa_uid.c
   ${LWPA_ROOT}/src/md5.h
   ${LWPA_ROOT}/src/md5c.c
   ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_lock.c
