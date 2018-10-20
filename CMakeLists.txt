@@ -21,9 +21,15 @@ endif()
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(OPTION_DEFAULTS ON)
+else()
+  set(OPTION_DEFAULTS OFF)
+endif()
+
 # Tests
 
-option(LWPA_BUILD_TESTS "Build the lwpa unit tests" OFF)
-if(LWPA_BUILD_TESTS OR PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/test)
+option(LWPA_BUILD_TESTS "Build the lwpa unit tests" ${OPTION_DEFAULTS})
+if(LWPA_BUILD_TESTS)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()
