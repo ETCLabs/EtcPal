@@ -5,8 +5,8 @@
 version: '{build}'
 
 branches:
-  except:
-    - gh-pages
+  only:
+    - master
 
 skip_commits:
   files:
