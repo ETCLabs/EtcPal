@@ -16,13 +16,12 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa_log.h"
+#include "lwpa/log.h"
 #include "gtest/gtest.h"
 #include <cstddef>
 #include <cstring>
 #include <cstdarg>
 #include <string>
-#include <Windows.h>
 
 class LogTest : public ::testing::Test
 {

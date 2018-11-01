@@ -17,30 +17,20 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_WINDOWS_THREAD_H_
-#define _LWPA_WINDOWS_THREAD_H_
+#ifndef _LWPA_PLAT_THREAD_H_
+#define _LWPA_PLAT_THREAD_H_
 
 #include <winsock2.h>
 #include <windows.h>
 #include <process.h>
-
-#include "lwpa_common.h"
-#include "lwpa_bool.h"
+#include "lwpa/common.h"
+#include "lwpa/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct LwpaThreadParams
-{
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char *thread_name;
-  void *platform_data;
-} LwpaThreadParams;
-
-/* Windows has no additional platform data and thus platform_data in the struct
- * above is ignored. */
+/* Windows has no additional platform data and thus platform_data in the struct above is ignored. */
 
 #define LWPA_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL
 #define LWPA_THREAD_DEFAULT_STACK 0
@@ -64,4 +54,4 @@ bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms);
 }
 #endif
 
-#endif /* LWPA_WINDOWS_THREAD_H_ */
+#endif /* LWPA_PLAT_THREAD_H_ */

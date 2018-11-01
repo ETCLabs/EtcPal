@@ -20,6 +20,14 @@
 #ifndef _LWPA_THREAD_H_
 #define _LWPA_THREAD_H_
 
+typedef struct LwpaThreadParams
+{
+  unsigned int thread_priority;
+  unsigned int stack_size;
+  char *thread_name;
+  void *platform_data;
+} LwpaThreadParams;
+
 #include "lwpa/plat_thread.h"
 
 #endif /* _LWPA_THREAD_H_ */

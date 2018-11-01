@@ -61,8 +61,8 @@ add_library(lwpa
   ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
   ${LWPA_ROOT}/include/lwpa/socket.h
   ${LWPA_ROOT}/include/lwpa/timer.h
-  ${LWPA_ROOT}/include/lwpa/${LWPA_PLATFORM}/lock.h
-  ${LWPA_ROOT}/include/lwpa/${LWPA_PLATFORM}/thread.h
+  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_lock.h
+  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_thread.h
   ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_socket.h
 # lwpa sources
   ${LWPA_ROOT}/src/lwpa_uuid.c

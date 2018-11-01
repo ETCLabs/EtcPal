@@ -400,7 +400,7 @@ size_t pack_root_layer_block(uint8_t *buf, size_t buflen, const RootLayerPdu *pd
         inheritvec = false;
         last_pdu.vector = pdu->vector;
       }
-      if (0 != cidcmp(&pdu->sender_cid, &last_pdu.sender_cid))
+      if (0 != uuidcmp(&pdu->sender_cid, &last_pdu.sender_cid))
       {
         set_h_flag(*cur_ptr);
         inherithead = false;

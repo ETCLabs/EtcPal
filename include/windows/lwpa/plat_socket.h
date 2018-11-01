@@ -22,11 +22,12 @@
 
 #include <WinSock2.h>
 #include <Windows.h>
+#include "lwpa/inet.h"
 
 typedef SOCKET lwpa_socket_t;
 
-/*! An identifier for an invalid socket handle. The ONLY invalid socket
- *  descriptor is LWPA_SOCKET_INVALID. */
+/*! An identifier for an invalid socket handle. The ONLY invalid socket descriptor is
+ *  LWPA_SOCKET_INVALID. */
 #define LWPA_SOCKET_INVALID INVALID_SOCKET
 
 #define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE

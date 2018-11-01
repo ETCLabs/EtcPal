@@ -17,7 +17,8 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_thread.h"
+#include "lwpa/thread.h"
+
 #include <process.h>
 #include <string.h>
 

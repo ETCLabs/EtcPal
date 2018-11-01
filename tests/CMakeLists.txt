@@ -7,12 +7,11 @@ if(LWPA_PLATFORM STREQUAL windows)
   include(../cmake/get_googletest.cmake)
   get_googletest(${CMAKE_CURRENT_LIST_DIR}/..)
 
-  set(TEST_SRC_DIR ../test/unit/windows/msvc2015)
+  set(TEST_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/unit)
 
   add_executable(test_lwpa
-  # lwpa unit test sources
+    # lwpa unit test sources
     ${TEST_SRC_DIR}/main.cpp
-    ${TEST_SRC_DIR}/test_cid.cpp
     ${TEST_SRC_DIR}/test_log.cpp
     ${TEST_SRC_DIR}/test_mempool.cpp
     ${TEST_SRC_DIR}/test_mutex.cpp
@@ -24,6 +23,7 @@ if(LWPA_PLATFORM STREQUAL windows)
     ${TEST_SRC_DIR}/test_socket.cpp
     ${TEST_SRC_DIR}/test_thread.cpp
     ${TEST_SRC_DIR}/test_timer.cpp
+    ${TEST_SRC_DIR}/test_uuid.cpp
   )
 
   target_link_libraries(test_lwpa lwpa gtest)

@@ -20,12 +20,12 @@
 #include <cstdint>
 #include "gtest/gtest.h"
 #include <Ws2tcpip.h>
-#include "lwpa_netint.h"
+#include "lwpa/netint.h"
+#include "lwpa/socket.h"
 
-// Need to pass this from the command line to a test case; there doesn't seem
-// to be a better way to do this than using a global variable.
-// TODO make this platform-neutral
-in_addr g_netint;
+// Need to pass this from the command line to a test case; there doesn't seem to be a better way to
+// do this than using a global variable.
+LwpaIpAddr g_netint;
 
 int main(int argc, char **argv)
 {
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
   {
     if (argc == 2)
     {
-      if (0 >= inet_pton(AF_INET, argv[1], &g_netint))
+      if (0 >= lwpa_inet_pton(LWPA_IPV4, argv[1], &g_netint))
       {
         printf(
             "Usage: %s <interface_addr>\n"
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     {
       LwpaNetintInfo default_netint;
       netint_get_default_interface(&default_netint);
-      g_netint.s_addr = htonl(lwpaip_v4_address(&default_netint.addr));
+      g_netint = default_netint.addr;
     }
   }
 

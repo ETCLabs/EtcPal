@@ -17,20 +17,20 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_LOCK_H_
-#define _LWPA_LOCK_H_
+#ifndef _LWPA_PLAT_LOCK_H_
+#define _LWPA_PLAT_LOCK_H_
 
 #include <winsock2.h> /* To fix winsock include order issues */
 #include <windows.h>
-#include "lwpa_common.h"
-#include "lwpa_bool.h"
+#include "lwpa/common.h"
+#include "lwpa/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Critical sections have been shown by empirical testing to provide a large
- * efficiency boost over Windows mutexes. */
+/* Critical sections have been shown by empirical testing to provide a large efficiency boost over
+ * Windows mutexes. */
 typedef struct
 {
   bool valid;
@@ -112,4 +112,4 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms);
 }
 #endif
 
-#endif /* _LWPA_LOCK_H_ */
+#endif /* _LWPA_PLAT_LOCK_H_ */

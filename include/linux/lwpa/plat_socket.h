@@ -17,11 +17,12 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_LINUX_SOCKET_H_
-#define _LWPA_LINUX_SOCKET_H_
+#ifndef _LWPA_PLAT_SOCKET_H_
+#define _LWPA_PLAT_SOCKET_H_
 
 #include <netinet/in.h>
 #include <sys/select.h>
+#include "lwpa/inet.h"
 
 typedef int lwpa_socket_t;
 
@@ -45,5 +46,5 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa);
 }
 #endif
 
-#endif /* _LWPA_LINUX_SOCKET_H_ */
+#endif /* _LWPA_PLAT_SOCKET_H_ */
 

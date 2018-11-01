@@ -1,38 +1,37 @@
 /******************************************************************************
-* Copyright 2018 ETC Inc.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*******************************************************************************
-* This file is a part of lwpa. For more information, go to:
-* https://github.com/ETCLabs/lwpa
-******************************************************************************/
-#include "lwpa_rbtree.h"
+ * Copyright 2018 ETC Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************
+ * This file is a part of lwpa. For more information, go to:
+ * https://github.com/ETCLabs/lwpa
+ ******************************************************************************/
+#include "lwpa/rbtree.h"
 #include "gtest/gtest.h"
 #include <cstddef>
-#include <cstdlib>
 #include <cmath>
-#include <Windows.h>
+#include <random>
+#include <algorithm>
+#include <array>
 
 class RbTreeTest : public ::testing::Test
 {
 protected:
-  RbTreeTest()
-    : clearfunc_call_count(0)
-    , remove_one_flag(false)
+  RbTreeTest() : clearfunc_call_count(0), remove_one_flag(false)
   {
-    // Initialize the static variables. They need to be static because they are
-    // accessed from the non-member functions (which need to be non-member
-    // functions because they are passed as function pointers to the C library)
+    // Initialize the static variables. They need to be static because they are accessed from the
+    // non-member functions (which need to be non-member functions because they are passed as
+    // function pointers to the C library)
     alloc_call_count = 0;
     dealloc_call_count = 0;
 
@@ -41,30 +40,16 @@ protected:
       incrementing_int_array[i] = i;
 
     // Copy and shuffle the integer array
-    memcpy(random_int_array, incrementing_int_array, sizeof random_int_array);
-    for (int i = 0; i < INT_ARRAY_SIZE; ++i)
-    {
-      // Swap the number at this index with the number at a random index later
-      // in the array
-      int index = i + rand() / (RAND_MAX / (INT_ARRAY_SIZE - i) + 1);
-      int t = random_int_array[index];
-      random_int_array[index] = random_int_array[i];
-      random_int_array[i] = t;
-    }
-
-    timeBeginPeriod(1);
-    srand(timeGetTime());
+    random_int_array = incrementing_int_array;
+    std::random_device seed;
+    std::default_random_engine rand(seed());
+    std::shuffle(random_int_array.begin(), random_int_array.end(), rand);
   }
 
-  virtual ~RbTreeTest()
-  {
-    timeEndPeriod(1);
-  }
-
-  static const size_t INT_ARRAY_SIZE = 100;
-  int incrementing_int_array[INT_ARRAY_SIZE];
-  int random_int_array[INT_ARRAY_SIZE];
-  LwpaRbNode node_pool[INT_ARRAY_SIZE];
+  static constexpr size_t INT_ARRAY_SIZE = 100;
+  std::array<int, INT_ARRAY_SIZE> incrementing_int_array;
+  std::array<int, INT_ARRAY_SIZE> random_int_array;
+  std::array<LwpaRbNode, INT_ARRAY_SIZE> node_pool;
 
 public:
   static unsigned int alloc_call_count;
@@ -90,8 +75,7 @@ void node_dealloc(LwpaRbNode *node)
   delete node;
 }
 
-static int
-int_cmp(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node_b)
+static int int_cmp(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node_b)
 {
   (void)self;
   int a = *(int *)node_a->value;
@@ -99,14 +83,12 @@ int_cmp(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node
   return a - b;
 }
 
-static void
-clear_func(const LwpaRbTree *self, LwpaRbNode *node)
+static void clear_func(const LwpaRbTree *self, LwpaRbNode *node)
 {
   RbTreeTest *rbtt = static_cast<RbTreeTest *>(self->info);
   if (rbtt)
   {
-    if (rbtt->remove_one_flag &&
-      *(int *)node->value == RbTreeTest::MAGIC_REMOVE_VALUE)
+    if (rbtt->remove_one_flag && *(int *)node->value == RbTreeTest::MAGIC_REMOVE_VALUE)
     {
       rbtt->remove_one_flag = false;
     }
@@ -192,8 +174,8 @@ TEST_F(RbTreeTest, iter)
 
   // Get the first value.
   int *val = (int *)rb_iter_first(&iter, &tree);
-  // Although the elements were inserted in random order, the tree should be
-  // sorted so 0 should be the first value.
+  // Although the elements were inserted in random order, the tree should be sorted so 0 should be
+  // the first value.
   ASSERT_EQ(*val, 0);
 
   // Test iterating through the tree in forward order.
@@ -202,8 +184,8 @@ TEST_F(RbTreeTest, iter)
   while ((val = (int *)rb_iter_next(&iter)) != NULL)
   {
     ++num_iterations;
-    // Each value given by the iterator should be numerically higher than the
-    // one that came before it.
+    // Each value given by the iterator should be numerically higher than the one that came before
+    // it.
     ASSERT_GT(*val, last_val);
     last_val = *val;
   }
@@ -219,8 +201,8 @@ TEST_F(RbTreeTest, iter)
   while ((val = (int *)rb_iter_prev(&iter)) != NULL)
   {
     ++num_iterations;
-    // Each value given by the iterator should be numerically lower than the
-    // one that came before it.
+    // Each value given by the iterator should be numerically lower than the one that came before
+    // it.
     ASSERT_LT(*val, last_val);
     last_val = *val;
   }
@@ -236,10 +218,9 @@ TEST_F(RbTreeTest, max_height)
 {
   LwpaRbTree tree;
   ASSERT_TRUE(NULL != rb_tree_init(&tree, int_cmp, node_alloc, node_dealloc));
-  // Insert monotonically incrementing values into the tree. In a traditional
-  // binary tree, this would result in a worst-case unbalanced tree of height
-  // INT_ARRAY_SIZE. In the red-black tree, the maximum height should be
-  // determined by the formula 2 * log2(INT_ARRAY_SIZE + 1). */
+  // Insert monotonically incrementing values into the tree. In a traditional binary tree, this
+  // would result in a worst-case unbalanced tree of height INT_ARRAY_SIZE. In the red-black tree,
+  // the maximum height should be determined by the formula 2 * log2(INT_ARRAY_SIZE + 1).
   for (size_t i = 0; i < INT_ARRAY_SIZE; ++i)
     ASSERT_NE(0, rb_tree_insert(&tree, &incrementing_int_array[i]));
   ASSERT_EQ(INT_ARRAY_SIZE, rb_tree_size(&tree));

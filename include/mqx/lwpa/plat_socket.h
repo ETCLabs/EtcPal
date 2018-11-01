@@ -17,45 +17,33 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_THREAD_H_
-#define _LWPA_THREAD_H_
+#ifndef _LWPA_PLAT_SOCKET_H_
+#define _LWPA_PLAT_SOCKET_H_
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "semphr.h"
-#include "lwpa_common.h"
-#include "lwpa_bool.h"
+#include <rtcs.h>
+#include "lwpa/inet.h"
+
+typedef uint32_t lwpa_socket_t;
+
+/*! An identifier for an invalid socket handle. The ONLY invalid socket descriptor is LWPA_SOCKET_INVALID. */
+#define LWPA_SOCKET_INVALID RTCS_SOCKET_ERROR
+
+#define LWPA_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct LwpaThreadParams
-{
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char *thread_name;
-  void *platform_data;
-} LwpaThreadParams;
+#define ip_plat_to_lwpa_v4(lwpaipptr, pfipptr) lwpaip_set_v4_address((lwpaipptr), (pfipptr)->s_addr)
+#define ip_lwpa_to_plat_v4(pfipptr, lwpaipptr) ((pfipptr)->s_addr = lwpaip_v4_address(lwpaipptr))
+#define ip_plat_to_lwpa_v6(lwpaipptr, pfipptr) lwpaip_set_v6_address((lwpaipptr), (pfipptr)->s6_addr)
+#define ip_lwpa_to_plat_v6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, lwpaip_v6_address(lwpaipptr), IPV6_BYTES)
 
-#define LWPA_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
-#define LWPA_THREAD_DEFAULT_STACK 2000
-#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
-
-typedef struct
-{
-  void (*fn)(void *);
-  void *arg;
-  SemaphoreHandle_t sig;
-  TaskHandle_t tid;
-} lwpa_thread_t;
-
-bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
-bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms);
-#define lwpa_thread_sleep(sleep_ms) vTaskDelay(pdMS_TO_TICKS(sleep_ms))
+bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa);
+size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* LWPA_THREAD_H_ */
+#endif /* _LWPA_PLAT_SOCKET_H_ */

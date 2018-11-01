@@ -17,33 +17,51 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_SOCKET_PLAT_H_
-#define _LWPA_SOCKET_PLAT_H_
+#ifndef _LWPA_PLAT_THREAD_H_
+#define _LWPA_PLAT_THREAD_H_
 
-#include <rtcs.h>
-#include "lwpa_inet.h"
-
-typedef uint32_t lwpa_socket_t;
-
-/*! An identifier for an invalid socket handle. The ONLY invalid socket descriptor is LWPA_SOCKET_INVALID. */
-#define LWPA_SOCKET_INVALID RTCS_SOCKET_ERROR
-
-#define LWPA_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE
+#include <mqx.h>
+#include "lwpa/common.h"
+#include "lwpa/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define ip_plat_to_lwpa_v4(lwpaipptr, pfipptr) lwpaip_set_v4_address((lwpaipptr), (pfipptr)->s_addr)
-#define ip_lwpa_to_plat_v4(pfipptr, lwpaipptr) ((pfipptr)->s_addr = lwpaip_v4_address(lwpaipptr))
-#define ip_plat_to_lwpa_v6(lwpaipptr, pfipptr) lwpaip_set_v6_address((lwpaipptr), (pfipptr)->s6_addr)
-#define ip_lwpa_to_plat_v6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, lwpaip_v6_address(lwpaipptr), IPV6_BYTES)
+typedef struct LwpaThreadParams
+{
+  unsigned int thread_priority;
+  unsigned int stack_size;
+  char *thread_name;
+  void *platform_data;
+} LwpaThreadParams;
 
-bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa);
-size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa);
+typedef struct LwpaThreadParamsMqx
+{
+  _mqx_uint task_attributes;
+  _mqx_uint time_slice;
+} LwpaThreadParamsMqx;
+
+#define LWPA_THREAD_DEFAULT_PRIORITY 11
+#define LWPA_THREAD_DEFAULT_STACK 8000
+#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
+#define LWPA_THREAD_MQX_DEFAULT_ATTRIBUTES NULL
+#define LWPA_THREAD_MQX_DEFAULT_TIME_SLICE 0
+
+typedef struct
+{
+  void (*fn)(void *);
+  void *arg;
+  LWSEM_STRUCT sig;
+  _task_id tid;
+} lwpa_thread_t;
+
+bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
+bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms);
+#define lwpa_thread_sleep(sleep_ms) _time_delay(sleep_ms)
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _LWPA_SOCKET_PLAT_H_ */
+#endif /* LWPA_PLAT_THREAD_H_ */

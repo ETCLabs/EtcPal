@@ -17,7 +17,8 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_socket.h"
+#include "lwpa/socket.h"
+
 #include <string.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>

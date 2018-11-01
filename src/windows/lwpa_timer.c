@@ -17,7 +17,8 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_timer.h"
+#include "lwpa/timer.h"
+
 #include <windows.h>
 #include "mmsystem.h"
 

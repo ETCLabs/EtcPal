@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_lock.h"
-#include "lwpa_int.h"
+#include "lwpa/lock.h"
+#include "lwpa/int.h"
 #include "mmsystem.h"
 
 bool lwpa_mutex_create(lwpa_mutex_t *id)

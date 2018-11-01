@@ -17,14 +17,14 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_netint.h"
+#include "lwpa/netint.h"
 
 #include <stdlib.h>
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
-#include "lwpa_int.h"
+#include "lwpa/int.h"
 
 static bool mask_is_empty(const LwpaIpAddr *mask);
 static bool mask_compare(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr *mask);
