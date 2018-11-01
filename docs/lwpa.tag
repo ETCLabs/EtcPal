@@ -70,10 +70,6 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaCid</name>
-    <filename>struct_lwpa_cid.html</filename>
-  </compound>
-  <compound kind="struct">
     <name>LwpaIpAddr</name>
     <filename>struct_lwpa_ip_addr.html</filename>
     <class kind="union">LwpaIpAddr::AddrUnion</class>
@@ -135,13 +131,6 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_log_time_method_t</type>
-      <name>time_method</name>
-      <anchorfile>struct_lwpa_log_params.html</anchorfile>
-      <anchor>a7cc72e95223de2129405522e65deeb73</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
       <type>lwpa_log_time_fn</type>
       <name>time_fn</name>
       <anchorfile>struct_lwpa_log_params.html</anchorfile>
@@ -160,24 +149,59 @@
     <name>LwpaLogTimeParams</name>
     <filename>struct_lwpa_log_time_params.html</filename>
     <member kind="variable">
-      <type>struct tm</type>
-      <name>cur_time</name>
+      <type>int</type>
+      <name>year</name>
       <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
-      <anchor>a1b387f98601112cad811726169680a6e</anchor>
+      <anchor>abeac221e38b7b9ce7df8722c842bf671</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>unsigned int</type>
+      <type>int</type>
+      <name>month</name>
+      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchor>aedb06abe5aff12fa3e7e0e71a374edfb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>day</name>
+      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchor>a4c11afc03fc3ee49bab660def6558f2a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>hour</name>
+      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchor>a15df9ba285cfd842f284025f904edc9c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>minute</name>
+      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchor>a5edffad982a0566ad01d95005474eae3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>second</name>
+      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchor>a6cf35be1947a62f134392fcb1b3c54d2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
       <name>msec</name>
       <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
-      <anchor>ab7174bcdc6006eb03894beaa8664521c</anchor>
+      <anchor>ad957f34cd6e8272740bc231865080b22</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>long</type>
+      <type>int</type>
       <name>utc_offset</name>
       <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
-      <anchor>ab5f0905f15fed8a7778ab6691b7b0318</anchor>
+      <anchor>a0d5ceb6295477b5931bf54c002e36fe9</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -582,8 +606,8 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaUid</name>
-    <filename>struct_lwpa_uid.html</filename>
+    <name>LwpaUuid</name>
+    <filename>struct_lwpa_uuid.html</filename>
   </compound>
   <compound kind="struct">
     <name>MD5_CTX</name>
@@ -593,10 +617,10 @@
     <name>RootLayerPdu</name>
     <filename>struct_root_layer_pdu.html</filename>
     <member kind="variable">
-      <type>LwpaCid</type>
+      <type>LwpaUuid</type>
       <name>sender_cid</name>
       <anchorfile>struct_root_layer_pdu.html</anchorfile>
-      <anchor>aa637edf35bbbdf0fceb946c870aca115</anchor>
+      <anchor>addaf02226137035b7f46186c67b87fe5</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -899,89 +923,12 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_cid</name>
-    <title>lwpa_cid</title>
-    <filename>group__lwpa__cid.html</filename>
-    <class kind="struct">LwpaCid</class>
-    <member kind="define">
-      <type>#define</type>
-      <name>CID_BYTES</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>gaee95c27b36279244f3037cee3de2f16f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>cidcmp</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga9a3d36611766c680c40e0742551af114</anchor>
-      <arglist>(cid1ptr, cid2ptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>cid_isnull</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga282b353a04c10c13968db9b32e1a71fc</anchor>
-      <arglist>(cidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>CID_STRING_BYTES</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga1f424d01d1f4390897bf75c224c87979</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>struct LwpaCid</type>
-      <name>LwpaCid</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga9237ca1644d15cfef0502328e0e0724e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>cid_to_string</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga922ba9e1a9da548623280193706e8800</anchor>
-      <arglist>(char *buf, const LwpaCid *cid)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>string_to_cid</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga18bf762e02022b61d1b63de8e66728bc</anchor>
-      <arglist>(LwpaCid *cid, const char *buf, size_t buflen)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>generate_cid</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga2b90d5c4c01894a8f0892e715f880974</anchor>
-      <arglist>(LwpaCid *cid, const char *devstr, const uint8_t *macaddr, uint32_t cidnum)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>generate_rdm_cid</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga44ac6bfbb401e50d62a33a6b5d83737f</anchor>
-      <arglist>(LwpaCid *cid, const uint8_t *rdmuid)</arglist>
-    </member>
-    <member kind="variable">
-      <type>const LwpaCid</type>
-      <name>NULL_CID</name>
-      <anchorfile>group__lwpa__cid.html</anchorfile>
-      <anchor>ga1fab4750423a1e3e6efa2c58ef19c5eb</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="group">
     <name>lwpa</name>
     <title>lwpa</title>
     <filename>group__lwpa.html</filename>
     <subgroup>lwpa_lock</subgroup>
     <subgroup>lwpa_thread</subgroup>
     <subgroup>lwpa_bool</subgroup>
-    <subgroup>lwpa_cid</subgroup>
     <subgroup>lwpa_error</subgroup>
     <subgroup>lwpa_inet</subgroup>
     <subgroup>lwpa_int</subgroup>
@@ -993,7 +940,7 @@
     <subgroup>lwpa_rbtree</subgroup>
     <subgroup>lwpa_socket</subgroup>
     <subgroup>lwpa_timer</subgroup>
-    <subgroup>lwpa_uid</subgroup>
+    <subgroup>lwpa_uuid</subgroup>
     <member kind="define">
       <type>#define</type>
       <name>LWPA_WAIT_FOREVER</name>
@@ -1449,8 +1396,8 @@
       <type>void(*</type>
       <name>lwpa_log_callback</name>
       <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga617453aecd6dfd019061891bcd8da62a</anchor>
-      <arglist>)(void *context, const char *sylog_str, const char *human_str)</arglist>
+      <anchor>gacd26df727c6a5f6d0d6fcfa4c2ac3755</anchor>
+      <arglist>)(void *context, const char *syslog_str, const char *human_str, const char *raw_str)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
@@ -1471,31 +1418,6 @@
       <name>LwpaLogParams</name>
       <anchorfile>group__lwpa__log.html</anchorfile>
       <anchor>ga4e65f5bb723d9280bfece5770a224f2c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>lwpa_log_time_method_t</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga8de04e453d8f99260abdf9b4c0a5cbec</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>kLwpaLogUseGmtime</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gga8de04e453d8f99260abdf9b4c0a5cbecadf004781838ba73f79718ef848e21635</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>kLwpaLogUseTimeFn</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gga8de04e453d8f99260abdf9b4c0a5cbeca168d569615db9448070a960a59998d30</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>kLwpaLogNoTime</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gga8de04e453d8f99260abdf9b4c0a5cbeca33838033977d007e97020db0d42d229f</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -1923,34 +1845,6 @@
       <name>pack_32l</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
       <anchor>ga093d966b9ca2bd2669c04087e27ca1ee</anchor>
-      <arglist>(ptr, val)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>upack_64b</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gaeff4455ed41104dd89cf0330bf05f487</anchor>
-      <arglist>(ptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>pack_64b</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gaafd5b33653239f0f842b05b3d1f51ff4</anchor>
-      <arglist>(ptr, val)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>upack_64l</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gaa321477a84b0d802fae691ab8a0bba5a</anchor>
-      <arglist>(ptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>pack_64l</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gab0c737df215c1bafd0012f5f2b6e75fe</anchor>
       <arglist>(ptr, val)</arglist>
     </member>
   </compound>
@@ -2820,127 +2714,78 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_uid</name>
-    <title>lwpa_uid</title>
-    <filename>group__lwpa__uid.html</filename>
-    <class kind="struct">LwpaUid</class>
+    <name>lwpa_uuid</name>
+    <title>lwpa_uuid</title>
+    <filename>group__lwpa__uuid.html</filename>
+    <class kind="struct">LwpaUuid</class>
     <member kind="define">
       <type>#define</type>
-      <name>uidcmp</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga51501d4d0bca912b319b00e6dfd19ae4</anchor>
-      <arglist>(uidptr1, uidptr2)</arglist>
+      <name>UUID_BYTES</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>gaeb75693c1a74a44252144cf35c0198e3</anchor>
+      <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>uid_equal</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>gab57e197a69d465b71089c5f36e5a510f</anchor>
-      <arglist>(uidptr1, uidptr2)</arglist>
+      <name>uuidcmp</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga5e04b9328bf19a7bce284977e7b03152</anchor>
+      <arglist>(uuid1ptr, uuid2ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>init_static_uid</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga51b8dcb487d19cc07d3cd926a017b698</anchor>
-      <arglist>(uidptr, manu_val, id_val)</arglist>
+      <name>uuid_isnull</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga405752e29769f95ff7ad72e525676b08</anchor>
+      <arglist>(uuidptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>init_dynamic_uid</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga7f7bee2337e45eb27c8180e8b1178046</anchor>
-      <arglist>(uidptr, manu_val, id_val)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>uid_is_broadcast</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga2fc7f8e2cea15e4fd1a2e903d0ad23ea</anchor>
-      <arglist>(uidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>uid_is_rdmnet_controller_broadcast</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>gaabd65340080b6d7d083b9719b2d9723e</anchor>
-      <arglist>(uidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>uid_is_rdmnet_device_broadcast</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga51f99ed4b8f1edddf2068ee8c68e8e11</anchor>
-      <arglist>(uidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>uid_is_rdmnet_device_manu_broadcast</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga8ef4f2936b3b944c3cceca1d7ebf1801</anchor>
-      <arglist>(uidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>rdmnet_device_broadcast_manu_matches</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>gaa173f304e2e1c469670cef664260f543</anchor>
-      <arglist>(uidptr, manu_val)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>rdmnet_device_broadcast_manu_id</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga98d12a84da72b76c2173a46fdc25027b</anchor>
-      <arglist>(uidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>uid_is_dynamic</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga00667ebd9ba8321637134546cfb3b69f</anchor>
-      <arglist>(uidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>get_manufacturer_id</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga8b42d44d069f01298595e0bd2b52096f</anchor>
-      <arglist>(uidptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>get_device_id</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga5826ef4fbeab6938db9c83e396a616aa</anchor>
-      <arglist>(uidptr)</arglist>
+      <name>UUID_STRING_BYTES</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga092ea21481ec5bda4cb7c340caaefa02</anchor>
+      <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaUid</type>
-      <name>LwpaUid</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga113088417c5b751afd85c63b62bbb998</anchor>
+      <type>struct LwpaUuid</type>
+      <name>LwpaUuid</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga176bfe391ccacc68bd4c7c4e01b93384</anchor>
       <arglist></arglist>
     </member>
-    <member kind="variable">
-      <type>const LwpaUid</type>
-      <name>kBroadcastUid</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga82301f49d95c1b5ab9764f96c4565b86</anchor>
-      <arglist></arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>uuid_to_string</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>gad8ba8f7422f70ecf12ffe410bdbaa177</anchor>
+      <arglist>(char *buf, const LwpaUuid *uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>string_to_uuid</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>gab86a23155ecf5a4c809cc7cc13420bf8</anchor>
+      <arglist>(LwpaUuid *uuid, const char *buf, size_t buflen)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>generate_uuid</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga2f06c90c01bf82ca206663ebcd7cecc9</anchor>
+      <arglist>(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>generate_rdm_uuid</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga49298072c583b6358c664672e5161668</anchor>
+      <arglist>(LwpaUuid *uuid, const uint8_t *rdmuid)</arglist>
     </member>
     <member kind="variable">
-      <type>const LwpaUid</type>
-      <name>kRdmnetControllerBroadcastUid</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga743ec44d275cd95349b12a9e4a593693</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>const LwpaUid</type>
-      <name>kRdmnetDeviceBroadcastUid</name>
-      <anchorfile>group__lwpa__uid.html</anchorfile>
-      <anchor>ga9fc69dcd792111501cc919b0a88f71d2</anchor>
+      <type>const LwpaUuid</type>
+      <name>NULL_UUID</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga9d9f29e6869412c4b473a13daabf4780</anchor>
       <arglist></arglist>
     </member>
   </compound>
