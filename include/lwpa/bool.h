@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* lwpa_bool.h: Provide a C boolean type for non-C99 environments. */
+/* lwpa/bool.h: Provide a C boolean type for non-C99 environments. */
 #ifndef _LWPA_BOOL_H_
 #define _LWPA_BOOL_H_
 
@@ -25,34 +25,33 @@
  *  \ingroup lwpa
  *  \brief A C boolean type.
  *
- *  \#include "lwpa_bool.h"
+ *  \#include "lwpa/bool.h"
  *
- *  In the before-times, C had no boolean type. Then, C99 gave us stdbool.h.
- *  But there still exist environments where a C99 compiler is not available or
- *  practical, and one allegedly modern toolchain (it rhymes with "Nicrosoft
- *  Fishual D++") picks and chooses the modern C features it supports seemingly
- *  at random.
+ *  In the before-times, C had no boolean type. Then, C99 gave us stdbool.h. But there still exist
+ *  environments where a C99 compiler is not available or practical, and one allegedly modern
+ *  toolchain (it rhymes with "Nicrosoft Fishual D++") picks and chooses the modern C features it
+ *  supports seemingly at random.
  *
- *  This header attempts to detect if it is being compiled with C99 or later
- *  (or C++). If it is being compiled with C99 or later it simply includes
- *  stdbool.h. If it is being compiled with C++ it does nothing (bool is a
- *  native type in C++). If none of the above are true, it creates a boolean
- *  type the old-fashioned way: \#defines.
+ *  This header attempts to detect if it is being compiled with C99 or later (or C++). If it is
+ *  being compiled with C99 or later it simply includes stdbool.h. If it is being compiled with C++
+ *  it does nothing (bool is a native type in C++). If none of the above are true, it creates a
+ *  boolean type the old-fashioned way: \#defines.
  *
  *  @{
  */
+
+#include "lwpa/opts.h"
 
 #ifndef __cplusplus
 
 #if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || (defined(_MSC_VER) && _MSC_VER >= 1800) || \
      HAVE_STDBOOL_H)
-/* We are being compiled with C99 or later, Visual Studio 2013 or later, or the
- * user has defined HAVE_STDBOOL_H to 1 to force inclusion of stdbool.h */
+/* We are being compiled with C99 or later, Visual Studio 2013 or later, or the user has defined
+ * HAVE_STDBOOL_H to 1 to force inclusion of stdbool.h */
 #include <stdbool.h>
 #else /* __STDC_VERSION__ */
 
-/*! Char is used for the fake boolean type as it is guaranteed to be the
- *  smallest available type. */
+/*! Char is used for the fake boolean type as it is guaranteed to be the smallest available type. */
 #ifndef bool
 #define bool char
 #endif

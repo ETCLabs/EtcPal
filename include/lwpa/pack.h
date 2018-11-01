@@ -17,23 +17,22 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* lwpa_pack.h: Platform- and endianness-independent buffer packing and
- * unpacking. */
+/* lwpa/pack.h: Platform- and endianness-independent buffer packing and unpacking. */
 #ifndef _LWPA_PACK_H_
 #define _LWPA_PACK_H_
 
-#include "lwpa_int.h"
+#include "lwpa/int.h"
+#include "lwpa/opts.h"
 
 /*! \defgroup lwpa_pack lwpa_pack
  *  \ingroup lwpa
  *  \brief Platform- and endianness-independent buffer packing and unpacking.
  *
- *  \#include "lwpa_pack.h"
+ *  \#include "lwpa/pack.h"
  *
- *  This module defines macros for packing and unpacking integer types to/from
- *  a byte buffer. They are architected in such a way that the endianness of
- *  the integer in the buffer is always known, regardless of the endianness of
- *  your platform.
+ *  This module defines macros for packing and unpacking integer types to/from a byte buffer. They
+ *  are architected in such a way that the endianness of the integer in the buffer is always known,
+ *  regardless of the endianness of your platform.
  *
  *  @{
  */
@@ -128,7 +127,7 @@
     ((uint8_t *)(ptr))[3] = (uint8_t)(((val) & 0xff000000) >> 24); \
   } while (0)
 
-#if !LWPA_NO_64BIT_SUPPORT
+#if LWPA_64BIT_SUPPORT
 
 /*! \brief Unpack a uint64_t from a known big-endian buffer.
  *  \param ptr Pointer to the buffer from which to unpack a uint64_t.
@@ -194,7 +193,7 @@
     ((uint8_t *)(ptr))[7] = (uint8_t)(((val) & 0xff00000000000000) >> 56); \
   } while (0)
 
-#endif /* !LWPA_NO_64BIT_SUPPORT */
+#endif /* LWPA_64BIT_SUPPORT */
 
 /*!@}*/
 

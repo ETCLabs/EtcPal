@@ -17,28 +17,26 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* pdu.h: Functions to parse and pack a generic PDU as defined in ANSI
- * E1.17. */
+/* lwpa/pdu.h: Functions to parse and pack a generic PDU as defined in ANSI E1.17. */
 #ifndef _LWPA_PDU_H_
 #define _LWPA_PDU_H_
 
 #include <stddef.h>
-#include "lwpa_int.h"
-#include "lwpa_bool.h"
+#include "lwpa/int.h"
+#include "lwpa/bool.h"
 
 /*! \defgroup lwpa_pdu lwpa_pdu
  *  \ingroup lwpa
  *  \brief Parse or pack a generic PDU or PDU block.
  *
- *  \#include "lwpa_pdu.h"
+ *  \#include "lwpa/pdu.h"
  *
  *  @{
  */
 
 /*! \name Get the inheritance and length bits in a PDU Flags & Length segment.
- *  The first byte of each PDU contains a flags field which indicates the
- *  inheritance properties of that PDU. For more information, see ANSI E1.17,
- *  ACN Architecture, s. 2.4.
+ *  The first byte of each PDU contains a flags field which indicates the inheritance properties of
+ *  that PDU. For more information, see ANSI E1.17, ACN Architecture, &sect; 2.4.
  *  @{
  */
 /*! Determine whether the L flag is set in a PDU flags field.
@@ -67,9 +65,8 @@
                                      : (((pdu_buf[0] & 0x0f) << 8) | pdu_buf[1])))
 
 /*! \name Set the inheritance and length bits in a PDU Flags & Length segment.
- *  The first byte of each PDU contains a flags field which indicates the
- *  inheritance properties of that PDU. For more information, see ANSI E1.17,
- *  ACN Architecture, s. 2.4.
+ *  The first byte of each PDU contains a flags field which indicates the inheritance properties of
+ *  that PDU. For more information, see ANSI E1.17, ACN Architecture, &sect; 2.4.
  *  @{
  */
 /*! Set the L flag in a PDU flags field.
@@ -86,8 +83,8 @@
 #define set_d_flag(flags_byte) (flags_byte |= 0x10)
 /*!@}*/
 
-/*! Fill in the Length field of a PDU which has a length less than 4096. The L
- *  flag of this PDU must be set to 0.
+/*! Fill in the Length field of a PDU which has a length less than 4096. The L flag of this PDU must
+ *  be set to 0.
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \param length Length of this PDU.
  */
@@ -98,8 +95,8 @@
     (pdu_buf)[1] = (length)&0xff;                                      \
   } while (0)
 
-/*! Fill in the Length field of a PDU which has a length 4096 or greater. The
- *  L flag of this PDU must be set to 1.
+/*! Fill in the Length field of a PDU which has a length 4096 or greater. The L flag of this PDU
+ *  must be set to 1.
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \param length Length of this PDU.
  */
@@ -121,15 +118,14 @@ typedef struct LwpaPdu
   const uint8_t *pnextpdu;
 } LwpaPdu;
 
-/*! Default LwpaPdu initializer values; must be used to intialize a struct
- *  pdu when parsing the first PDU in a block. */
+/*! Default LwpaPdu initializer values; must be used to intialize an LwpaPdu when parsing the first
+ *  PDU in a block. */
 #define PDU_INIT              \
   {                           \
     NULL, NULL, NULL, 0, NULL \
   }
 
-/*! An alternative to #PDU_INIT which can be used on an existing LwpaPdu to
- *  re-initialize its values.
+/*! An alternative to #PDU_INIT which can be used on an existing LwpaPdu to re-initialize its values.
  *  \param pduptr Pointer to LwpaPdu to initialize. */
 #define init_pdu(pduptr)       \
   do                           \

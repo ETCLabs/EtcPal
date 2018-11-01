@@ -21,24 +21,23 @@
 #ifndef _LWPA_TIMER_H_
 #define _LWPA_TIMER_H_
 
-#include "lwpa_int.h"
-#include "lwpa_bool.h"
+#include "lwpa/int.h"
+#include "lwpa/bool.h"
 
 /*! \defgroup lwpa_timer lwpa_timer
  *  \ingroup lwpa
  *  \brief Platform-neutral system timers.
  *
- *  \#include "lwpa_timer.h"
+ *  \#include "lwpa/timer.h"
  *
  *  @{
  */
 
 /*! \brief A millisecond-resolution timer.
  *
- *  The times are represented in milliseconds by a 32-bit unsigned integer.
- *  Since the timer is monotonically-increasing, wraparound is handled by doing
- *  comparisons of the form \code timeA - timeB > 0 \endcode rather than \code
- *  timeA > timeB \endcode.
+ *  The times are represented in milliseconds by a 32-bit unsigned integer. Since the timer is
+ *  monotonically-increasing, wraparound is handled by doing comparisons of the form
+ *  \code timeA - timeB > 0 \endcode rather than \code timeA > timeB \endcode.
  */
 typedef struct LwpaTimer
 {
@@ -57,8 +56,8 @@ uint32_t lwpa_getms();
 
 /*! \brief Start a timer.
  *  \param lwpatimerptr Pointer to the LwpaTimer to start.
- *  \param intval Timer interval in milliseconds. An interval of 0 will result
- *                in a timer that is always expired.
+ *  \param intval Timer interval in milliseconds. An interval of 0 will result in a timer that is
+ *                always expired.
  */
 #define lwpa_timer_start(lwpatimerptr, intval) \
   do                                           \
@@ -73,27 +72,23 @@ uint32_t lwpa_getms();
 #define lwpa_timer_reset(lwpatimerptr) (((lwpatimerptr)->reset_time) = lwpa_getms())
 
 /*! \brief Get the time since a timer was reset.
- *  \param lwpatimerptr Pointer to the LwpaTimer of which to get the
- *                      elapsed time.
+ *  \param lwpatimerptr Pointer to the LwpaTimer of which to get the elapsed time.
  *  \return Number of milliseconds since the timer was reset.
  */
 #define lwpa_timer_elapsed(lwpatimerptr) (lwpa_getms() - (lwpatimerptr)->reset_time)
 
 /*! \brief Check to see if a timer is expired.
- *  \param lwpatimerptr Pointer to the LwpaTimer of which to check the
- *                      expiration.
- *  \return true (more than \link LwpaTimer::interval interval \endlink
- *          milliseconds have passed since the timer was started/reset) or
- *          false (less than or equal to \link LwpaTimer::interval interval
- *          \endlink milliseconds have passed since the timer was
+ *  \param lwpatimerptr Pointer to the LwpaTimer of which to check the expiration.
+ *  \return true (more than \link LwpaTimer::interval interval \endlink milliseconds have passed
+ *          since the timer was started/reset) or false (less than or equal to
+ *          \link LwpaTimer::interval interval \endlink milliseconds have passed since the timer was
  *          started/reset)
  */
 #define lwpa_timer_isexpired(lwpatimerptr) \
   (((lwpatimerptr)->interval == 0) || (lwpa_timer_elapsed(lwpatimerptr) > (lwpatimerptr)->interval))
 
 /*! \brief Get the amount of time remaining in a timer.
- *  \param timer Pointer to the LwpaTimer of which to get the remaining
- *               time.
+ *  \param timer Pointer to the LwpaTimer of which to get the remaining time.
  *  \return Remaining time in milliseconds or 0 (timer is expired).
  */
 uint32_t lwpa_timer_remaining(const LwpaTimer *timer);

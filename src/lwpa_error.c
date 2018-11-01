@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_error.h"
+#include "lwpa/error.h"
 
 /* clang-format off */
 

@@ -34,7 +34,7 @@
  *
  * For more information, please refer to <http://unlicense.org/>
  */
-#include "lwpa_rbtree.h"
+#include "lwpa/rbtree.h"
 
 /* rb_node */
 

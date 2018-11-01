@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* lwpa_error.h: Platform-neutral error codes. */
+/* lwpa/error.h: Platform-neutral error codes. */
 #ifndef _LWPA_ERROR_H_
 #define _LWPA_ERROR_H_
 
@@ -27,7 +27,7 @@
  *  \ingroup lwpa
  *  \brief Platform-neutral error codes.
  *
- *  \#include "lwpa_error.h"
+ *  \#include "lwpa/error.h"
  *
  *  @{
  */
@@ -37,11 +37,10 @@ typedef enum
 {
   /*! The call was successful, no error occurred. */
   LWPA_OK = 0,
-  /*! An identifier or handle passed to a function was not valid or not
-   *  previously initialized. */
+  /*! An identifier or handle passed to a function was not valid or not previously initialized. */
   LWPA_NOTFOUND = -1,
-  /*! A dynamic memory allocation failed, or there is no space left in a
-   *  statically allocated array. */
+  /*! A dynamic memory allocation failed, or there is no space left in a statically allocated
+   *  array. */
   LWPA_NOMEM = -2,
   /*! The resource being requested is temporarily unavailable. */
   LWPA_BUSY = -3,
@@ -51,8 +50,8 @@ typedef enum
   LWPA_INVALID = -5,
   /*! The requested operation would block. */
   LWPA_WOULDBLOCK = -6,
-  /*! Returned from a function that is meant to be called repeatedly to
-   *  indicate that there is no more data available. */
+  /*! Returned from a function that is meant to be called repeatedly to indicate that there is no
+   *  more data available. */
   LWPA_NODATA = -7,
   /*! A protocol parsing function encountered a malformed packet. */
   LWPA_PROTERR = -8,
@@ -66,8 +65,8 @@ typedef enum
   LWPA_NETERR = -12,
   /*! A connection was reset (hard/abortive close) by the remote peer. */
   LWPA_CONNRESET = -13,
-  /*! A connection was gracefully closed by the remote peer. This code is only
-   *  used for protocols above the transport layer. */
+  /*! A connection was gracefully closed by the remote peer. This code is only used for protocols
+   *  above the transport layer. */
   LWPA_CONNCLOSED = -14,
   /*! Transport endpoint is already connected. */
   LWPA_ISCONN = -15,
@@ -83,19 +82,17 @@ typedef enum
   LWPA_ALREADY = -20,
   /*! The operation requested is now in progress and will complete later. */
   LWPA_INPROGRESS = -21,
-  /*! A buffer provided to a function was not big enough to hold the data that
-   *  needed to be packed into it. */
+  /*! A buffer provided to a function was not big enough to hold the data that needed to be packed
+   *  into it. */
   LWPA_BUFSIZE = -22,
-  /*! An API function was called from a module that was not previously
-   *  initialized. */
+  /*! An API function was called from a module that was not previously initialized. */
   LWPA_NOTINIT = -23,
-  /*! No network interfaces were found on the system, or there are no network
-   *  interfaces of a type that can satisfy the call being made. */
+  /*! No network interfaces were found on the system, or there are no network interfaces of a type
+   *  that can satisfy the call being made. */
   LWPA_NOIFACES = -24,
   /*! A function or specific use of a function is not implemented yet. */
   LWPA_NOTIMPL = -25,
-  /*! A system call or C library call failed in a way not covered by other
-   *  errors. */
+  /*! A system call or C library call failed in a way not covered by other errors. */
   LWPA_SYSERR = -26,
 } lwpa_error_t;
 
@@ -109,8 +106,7 @@ extern const char *lwpa_error_strings[LWPA_NUM_ERROR_CODES];
 
 /*! \brief Get a string representation of an error code.
  *  \param errcode lwpa error code.
- *  \return Error string (char *) (valid error code) or NULL (invalid error
- *          code).
+ *  \return Error string (char *) (valid error code) or NULL (invalid error code).
  */
 #define lwpa_strerror(errcode) \
   (((int)errcode <= 0 && (int)errcode > -LWPA_NUM_ERROR_CODES) ? lwpa_error_strings[-((int)errcode)] : NULL)

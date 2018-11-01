@@ -17,9 +17,11 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_mempool.h"
+#include "lwpa/mempool.h"
 
-#include "lwpa_lock.h"
+#include "lwpa/common.h"
+#include "lwpa/bool.h"
+#include "lwpa/lock.h"
 
 static bool mempool_lock_initted = false;
 static lwpa_mutex_t mempool_lock;

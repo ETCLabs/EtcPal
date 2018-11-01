@@ -16,21 +16,16 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#ifndef _ACN_PROT_H_
-#define _ACN_PROT_H_
 
-#include "lwpa_int.h"
+#ifndef _LWPA_OPTS_H_
+#define _LWPA_OPTS_H_
 
-typedef uint32_t acn_protocol_t;
+#if HAVE_LWPA_CONFIG_H
+#include "lwpa_config.h"
+#endif /* HAVE_LWPA_CONFIG_H */
 
-#define ACN_PROTOCOL_SDT 0x00000001u
-#define ACN_PROTOCOL_DMP 0x00000002u
-#define ACN_PROTOCOL_DRAFT_E131_DATA 0x00000003u
-#define ACN_PROTOCOL_E131_DATA 0x00000004u
-#define ACN_PROTOCOL_E131_EXTENDED 0x00000008u
-#define ACN_PROTOCOL_LLRP 0x0000000Au
-#define ACN_PROTOCOL_BROKER 0x00000009u
-#define ACN_PROTOCOL_RPT 0x00000005u
-#define ACN_PROTOCOL_EPT 0x0000000Bu
+#ifndef LWPA_64BIT_SUPPORT
+#define LWPA_64BIT_SUPPORT 1
+#endif
 
-#endif /* _ACN_PROT_H_ */
+#endif /* _LWPA_OPTS_H_ */

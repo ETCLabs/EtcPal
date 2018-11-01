@@ -28,7 +28,7 @@ documentation and/or software.
 #ifndef _MD5_H_
 #define _MD5_H_
 
-#include "lwpa_int.h"
+#include "lwpa/int.h"
 
 typedef struct {
     uint32_t state[4];  // state (ABCD)

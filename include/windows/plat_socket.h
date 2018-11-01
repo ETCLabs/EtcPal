@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_SOCKET_PLAT_H_
-#define _LWPA_SOCKET_PLAT_H_
+#ifndef _LWPA_WINDOWS_SOCKET_H_
+#define _LWPA_WINDOWS_SOCKET_H_
 
 #include <WinSock2.h>
 #include <Windows.h>
@@ -53,4 +53,4 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa);
 }
 #endif
 
-#endif /* _LWPA_SOCKET_PLAT_H_ */
+#endif /* _LWPA_WINDOWS_SOCKET_H_ */

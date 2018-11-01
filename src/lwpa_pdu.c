@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_pdu.h"
+#include "lwpa/pdu.h"
 
 /*! \brief Parse a generic PDU
  *

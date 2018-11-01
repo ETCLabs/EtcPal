@@ -17,43 +17,51 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* lwpa_netint.h: Platform-neutral method for enumerating network interfaces.
- */
-#ifndef _LWPA_NETINT_H_
-#define _LWPA_NETINT_H_
+#ifndef _LWPA_WINDOWS_THREAD_H_
+#define _LWPA_WINDOWS_THREAD_H_
 
-#include <stddef.h>
+#include <winsock2.h>
+#include <windows.h>
+#include <process.h>
+
+#include "lwpa_common.h"
 #include "lwpa_bool.h"
-#include "lwpa_inet.h"
-
-/*! \defgroup lwpa_netint lwpa_netint
- *  \ingroup lwpa
- *  \brief A platform-neutral method for enumerating network interfaces.
- *
- *  \#include "lwpa_netint.h"
- *
- *  @{
- */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-size_t netint_get_num_interfaces();
-size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size);
-bool netint_get_default_interface(LwpaNetintInfo *netint);
-const LwpaNetintInfo *netint_get_iface_for_dest(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr,
-                                                size_t netint_arr_size);
+typedef struct LwpaThreadParams
+{
+  unsigned int thread_priority;
+  unsigned int stack_size;
+  char *thread_name;
+  void *platform_data;
+} LwpaThreadParams;
 
-// typedef void (*netint_change_notification)(void *context);
+/* Windows has no additional platform data and thus platform_data in the struct
+ * above is ignored. */
 
-// int    netint_register_change_cb(netint_change_notification fn, void
-// *context); void   netint_unregister_change_cb(int handle);
+#define LWPA_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL
+#define LWPA_THREAD_DEFAULT_STACK 0
+#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
+
+#define LWPA_THREAD_NAME_MAX_LENGTH 32
+
+typedef struct
+{
+  void (*fn)(void *);
+  void *arg;
+  HANDLE tid;
+  char name[LWPA_THREAD_NAME_MAX_LENGTH];
+} lwpa_thread_t;
+
+bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
+bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms);
+#define lwpa_thread_sleep(sleep_ms) Sleep(sleep_ms)
 
 #ifdef __cplusplus
 }
 #endif
 
-/*!@}*/
-
-#endif /* _LWPA_NETINT_H_ */
+#endif /* LWPA_WINDOWS_THREAD_H_ */

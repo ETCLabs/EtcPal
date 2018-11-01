@@ -17,33 +17,30 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* lwpa_log.h: Common logging functions. */
+/* lwpa/log.h: Common logging functions. */
 #ifndef _LWPA_LOG_H_
 #define _LWPA_LOG_H_
 
 #include <stdarg.h>
 #include <stddef.h>
-#include "lwpa_bool.h"
+#include "lwpa/bool.h"
 
 /*! \defgroup lwpa_log lwpa_log
  *  \ingroup lwpa
- *  \brief A platform-neutral module enabling applications and libraries to log
- *         messages in either or both of syslog-compliant and human-readable
- *         format.
+ *  \brief A platform-neutral module enabling applications and libraries to log messages in either
+ *         or both of syslog-compliant and human-readable format.
  *
- *  \#include "lwpa_log.h"
+ *  \#include "lwpa/log.h"
  *
  *  This module can be used in two ways. Applications can use the lightweight
- *  lwpa_create_syslog_str() and lwpa_create_human_log_str() to create log
- *  messages with a header defined by the Syslog protocol or with a
- *  human-readable header defined by ETC.
+ *  lwpa_create_syslog_str() and lwpa_create_human_log_str() to create log messages with a header
+ *  defined by the Syslog protocol or with a human-readable header defined by ETC.
  *
- *  This module can also be used to enable other libraries to log messages via
- *  a callback function. Library functions can take a set of parameters
- *  (lwpa_log_params) on initialization. They use these parameters and the
- *  lwpa_log() or lwpa_vlog() functions to call back to the application to log
- *  messages. The application can then decide what to do with these log
- *  messages (print to console, syslog, etc.)
+ *  This module can also be used to enable other libraries to log messages via a callback function.
+ *  Library functions can take a set of parameters (lwpa_log_params) on initialization. They use
+ *  these parameters and the lwpa_log() or lwpa_vlog() functions to call back to the application to
+ *  log messages. The application can then decide what to do with these log messages (print to
+ *  console, syslog, etc.)
  *
  *  @{
  */
@@ -58,8 +55,7 @@
 #define LWPA_LOG_MAIL (2 << 3)      /*!< Mail system. */
 #define LWPA_LOG_DAEMON (3 << 3)    /*!< System daemons. */
 #define LWPA_LOG_AUTH (4 << 3)      /*!< Security/authorization messages. */
-#define LWPA_LOG_SYSLOG (5 << 3)    /*!< Messages generated internally by
-                                         syslogd. */
+#define LWPA_LOG_SYSLOG (5 << 3)    /*!< Messages generated internally by syslogd. */
 #define LWPA_LOG_LPR (6 << 3)       /*!< Line printer subsystem. */
 #define LWPA_LOG_NEWS (7 << 3)      /*!< Network news subsystem. */
 #define LWPA_LOG_UUCP (8 << 3)      /*!< UUCP subsystem. */
@@ -78,8 +74,7 @@
 /*!@}*/
 
 #define LWPA_LOG_NFACILITIES 24 /*!< Current number of facilities. */
-#define LWPA_LOG_FACMASK 0x03f8 /* Mask to extract facility part of a
-                                   prival. */
+#define LWPA_LOG_FACMASK 0x03f8 /* Mask to extract facility part of a prival. */
 #define LWPA_LOG_FAC(p) (((p)&LWPA_LOG_FACMASK) >> 3)
 
 /*! \name Log Priority
@@ -100,8 +95,7 @@
 #define LWPA_LOG_MAKEPRI(fac, pri) (((fac) << 3) | (pri))
 
 #define LWPA_LOG_MASK(pri) (1 << (pri)) /* mask for one priority */
-#define LWPA_LOG_UPTO(pri) \
-  ((1 << ((pri) + 1)) - 1) /* all priorities through pri */
+#define LWPA_LOG_UPTO(pri) ((1 << ((pri) + 1)) - 1) /* all priorities through pri */
 
 #define LWPA_LOG_HOSTNAME_MAX_LEN 256 /*!< Max length of the hostname param. */
 #define LWPA_LOG_APP_NAME_MAX_LEN 49  /*!< Max length of the app_name param. */
@@ -112,8 +106,7 @@
 
 /* clang-format on */
 
-/*! The maximum length of the timestamp used in syslog and human-readable
- *  logging. */
+/*! The maximum length of the timestamp used in syslog and human-readable logging. */
 #define LWPA_LOG_TIMESTAMP_LEN (10 /*Date*/ + 1 /*T*/ + 12 /*Time*/ + 6 /*Offset*/ + 1 /*Nullterm*/)
 
 /*! The maximum length of the syslog header. */
@@ -127,12 +120,11 @@
 /*! The minimum length of a buffer passed to lwpa_create_human_log_str(). */
 #define LWPA_HUMAN_LOG_STR_MIN_LEN LWPA_LOG_TIMESTAMP_LEN
 
-/*! The maximum length of a syslog string that will be passed to an
- *  lwpa_log_callback function.  */
+/*! The maximum length of a syslog string that will be passed to an lwpa_log_callback function. */
 #define LWPA_SYSLOG_STR_MAX_LEN (LWPA_SYSLOG_HEADER_MAX_LEN + LWPA_LOG_MSG_MAX_LEN)
 
-/*! The maximum length of a human-readable string that will be passed to an
- *  lwpa_log_callback function.  */
+/*! The maximum length of a human-readable string that will be passed to an lwpa_log_callback
+ *  function.  */
 #define LWPA_HUMAN_LOG_STR_MAX_LEN ((LWPA_LOG_TIMESTAMP_LEN - 1) + 1 /*SP*/ + LWPA_LOG_MSG_MAX_LEN)
 
 /*! A set of parameters which represent the current local time with millisecond resolution. */
@@ -161,11 +153,10 @@ typedef struct LwpaLogTimeParams
  *  The function that library modules use to log messages. The application developer defines the
  *  function and determines where the messages go.
  *
- *  \param[in] context Optional application-provided value that was previously
- *                     passed to the library module.
+ *  \param[in] context Optional application-provided value that was previously passed to the library
+ *                     module.
  *  \param[in] syslog_str Log string, formatted compliant to RFC 5424.
- *  \param[in] human_str Log string, formatted for readability per ETC
- *                       convention.
+ *  \param[in] human_str Log string, formatted for readability per ETC convention.
  *  \param[in] raw_str The original log string that was passed to lwpa_log() or lwpa_vlog(). Will
  *                     overlap with one of syslog_str or human_str.
  */

@@ -17,14 +17,14 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_log.h"
+#include "lwpa/log.h"
 
 #include <stdio.h>
 #include <stddef.h>
 #include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
-#include "lwpa_bool.h"
+#include "lwpa/bool.h"
 
 /* Suppress strncpy() and gmtime() warnings on Windows/MSVC. */
 #ifdef _MSC_VER

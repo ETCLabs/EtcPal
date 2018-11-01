@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_rootlayerpdu.h"
-#include "lwpa_pack.h"
+#include "lwpa/root_layer_pdu.h"
+#include "lwpa/pack.h"
 
 #include <string.h>
 
@@ -153,8 +153,8 @@ bool parse_root_layer_header(const uint8_t *buf, size_t buflen, RootLayerPdu *pd
     pdu->sender_cid = last_pdu->sender_cid;
   else
   {
-    memcpy(pdu->sender_cid.data, cur_ptr, CID_BYTES);
-    cur_ptr += CID_BYTES;
+    memcpy(pdu->sender_cid.data, cur_ptr, UUID_BYTES);
+    cur_ptr += UUID_BYTES;
   }
   if (inheritdata)
   {
@@ -217,7 +217,7 @@ bool parse_root_layer_pdu(const uint8_t *buf, size_t buflen, RootLayerPdu *pdu, 
   if (parse_pdu(buf, buflen, &rlp_constraints, last_pdu))
   {
     pdu->vector = upack_32b(last_pdu->pvector);
-    memcpy(pdu->sender_cid.data, last_pdu->pheader, CID_BYTES);
+    memcpy(pdu->sender_cid.data, last_pdu->pheader, UUID_BYTES);
     pdu->pdata = last_pdu->pdata;
     pdu->datalen = last_pdu->datalen;
     return true;
@@ -336,8 +336,8 @@ size_t pack_root_layer_header(uint8_t *buf, size_t buflen, const RootLayerPdu *p
   }
   pack_32b(cur_ptr, pdu->vector);
   cur_ptr += 4;
-  memcpy(cur_ptr, pdu->sender_cid.data, CID_BYTES);
-  cur_ptr += CID_BYTES;
+  memcpy(cur_ptr, pdu->sender_cid.data, UUID_BYTES);
+  cur_ptr += UUID_BYTES;
   return cur_ptr - buf;
 }
 
@@ -441,8 +441,8 @@ size_t pack_root_layer_block(uint8_t *buf, size_t buflen, const RootLayerPdu *pd
     }
     if (!inherithead)
     {
-      memcpy(cur_ptr, pdu->sender_cid.data, CID_BYTES);
-      cur_ptr += CID_BYTES;
+      memcpy(cur_ptr, pdu->sender_cid.data, UUID_BYTES);
+      cur_ptr += UUID_BYTES;
     }
     if (!inheritdata)
     {

@@ -17,29 +17,27 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* lwpa_socket.h: Platform-neutral BSD-modeled network socket
- * implementation. */
+/* lwpa/socket.h: Platform-neutral BSD-modeled network socket implementation. */
 #ifndef _LWPA_SOCKET_H_
 #define _LWPA_SOCKET_H_
 
 #include <stddef.h>
-#include "lwpa_common.h"
-#include "lwpa_bool.h"
-#include "lwpa_error.h"
-#include "lwpa_inet.h"
-#include "lwpa_socket_plat.h"
+#include "lwpa/common.h"
+#include "lwpa/bool.h"
+#include "lwpa/error.h"
+#include "lwpa/inet.h"
+#include "lwpa/plat_socket.h"
 
 /*! \defgroup lwpa_socket lwpa_socket
  *  \ingroup lwpa
  *  \brief Platform-neutral BSD-modeled network socket implementation.
  *
- *  \#include "lwpa_socket.h"
+ *  \#include "lwpa/socket.h"
  *
- *  This module attempts to abstract the network socket interface from various
- *  platforms into one platform-neutral interface. The functions and flags are
- *  modeled after the BSD sockets interface. <em>UNIX Network Programming: The
- *  Sockets Networking API</em> by Stevens, Fenner, and Rudoff is highly
- *  recommended reading for those unfamiliar with this interface.
+ *  This module attempts to abstract the network socket interface from various platforms into one
+ *  platform-neutral interface. The functions and flags are modeled after the BSD sockets
+ *  interface. <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner,
+ *  and Rudoff is highly recommended reading for those unfamiliar with this interface.
  *
  *  @{
  */
@@ -66,18 +64,14 @@
 
 /*! \name Options for level LWPA_SOL_SOCKET
  *  Used in the option parameter to lwpa_setsockopt() and lwpa_getsockopt().
- *  Refer to the similarly-named option on your favorite man page for more
- *  details.
+ *  Refer to the similarly-named option on your favorite man page for more details.
  *  @{ */
 #define LWPA_SO_BROADCAST 0  /*!< Get/Set, value is boolean int */
-#define LWPA_SO_ERROR     1  /*!< Get only, value is int representing platform
-                              *   error value */
+#define LWPA_SO_ERROR     1  /*!< Get only, value is int representing platform error value */
 #define LWPA_SO_KEEPALIVE 2  /*!< Get/Set, value is boolean int */
 #define LWPA_SO_LINGER    3  /*!< Get/Set, value is LwpaLinger */
-#define LWPA_SO_RCVBUF    4  /*!< Get/Set, value is int representing byte
-                              *   size */
-#define LWPA_SO_SNDBUF    5  /*!< Get/Set, value is int representing byte
-                              *   size */
+#define LWPA_SO_RCVBUF    4  /*!< Get/Set, value is int representing byte size */
+#define LWPA_SO_SNDBUF    5  /*!< Get/Set, value is int representing byte size */
 #define LWPA_SO_RCVTIMEO  6  /*!< Get/Set, value is int representing ms */
 #define LWPA_SO_SNDTIMEO  7  /*!< Get/Set, value is int representing ms */
 #define LWPA_SO_REUSEADDR 8  /*!< Get/Set, value is boolean int */
@@ -87,8 +81,7 @@
 
 /*! \name Options for level LWPA_IPPROTO_IP or LWPA_IPPROTO_IPV6
  *  Used in the option parameter to lwpa_setsockopt() and lwpa_getsockopt().
- *  Refer to the similarly-named option on your favorite man page for more
- *  details.
+ *  Refer to the similarly-named option on your favorite man page for more details.
  *  @{ */
 #define LWPA_IP_TTL            11 /*!< Get/Set, value is int */
 #define LWPA_IP_MULTICAST_IF   12 /*!< Get/Set, value is LwpaIpAddr */
@@ -175,8 +168,7 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
 
 /*! \name 'events' and 'revents' values for LwpaPollfd
  *
- *  Refer to the similarly-named flags in your favorite poll() man page for
- *  more details.
+ *  Refer to the similarly-named flags in your favorite poll() man page for more details.
  *  @{ */
 #define LWPA_POLLIN 0x1
 #define LWPA_POLLOUT 0x2
@@ -199,16 +191,15 @@ int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms);
 
 /*! \name 'flags' values for LwpaAddrinfo
  *
- *  Refer to the similarly-named flags in your favorite getaddrinfo() man page
- *  for more details.
+ *  Refer to the similarly-named flags in your favorite getaddrinfo() man page for more details.
  *  @{ */
 #define LWPA_AI_PASSIVE 0x01
 #define LWPA_AI_CANONNAME 0x02
 #define LWPA_AI_NUMERICHOST 0x04
 /*!@}*/
 
-/*! A structure containing name and address information about an internet host.
- *  Returned by lwpa_getaddrinfo(). */
+/*! A structure containing name and address information about an internet host. Returned by
+ *  lwpa_getaddrinfo(). */
 typedef struct LwpaAddrinfo
 {
   int ai_flags;         /*!< i.e. LWPA_AI_xxx */
@@ -226,8 +217,7 @@ lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const L
 
 bool lwpa_nextaddr(LwpaAddrinfo *ai);
 
-/* Call with any of the LwpaAddrinfos in the list to free the whole
- * list */
+/* Call with any of the LwpaAddrinfos in the list to free the whole list */
 void lwpa_freeaddrinfo(LwpaAddrinfo *ai);
 
 /************************* Mimic inet_xtox() API *****************************/

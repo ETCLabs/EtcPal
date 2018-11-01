@@ -12,6 +12,9 @@ lib/
 # Toolchain Artifacts #
 #######################
 
+# CMake
+build/
+
 # MSVC2015 and Qt
 *.VC.db
 *.vcxproj.user

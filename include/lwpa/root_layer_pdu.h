@@ -17,23 +17,23 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* rootlayerpdu.h: Functions to parse or pack a Root Layer PDU block (as
- * defined in ANSI E1.17) and its associated preambles. */
-#ifndef _LWPA_ROOTLAYERPDU_H_
-#define _LWPA_ROOTLAYERPDU_H_
+/* lwpa/root_layer_pdu.h: Functions to parse or pack a Root Layer PDU block (as defined in ANSI
+ * E1.17) and its associated preambles. */
+#ifndef _LWPA_ROOT_LAYER_PDU_H_
+#define _LWPA_ROOT_LAYER_PDU_H_
 
 #include <stddef.h>
-#include "lwpa_int.h"
-#include "lwpa_bool.h"
-#include "lwpa_cid.h"
-#include "acn_prot.h"
-#include "lwpa_pdu.h"
+#include "lwpa/int.h"
+#include "lwpa/bool.h"
+#include "lwpa/uuid.h"
+#include "lwpa/acn_prot.h"
+#include "lwpa/pdu.h"
 
 /*! \defgroup lwpa_rootlayerpdu lwpa_rootlayerpdu
  *  \ingroup lwpa_pdu
  *  \brief Parse or pack a Root Layer PDU block.
  *
- *  \#include "lwpa_rootlayerpdu.h"
+ *  \#include "lwpa/root_layer_pdu.h"
  *
  *  @{
  */
@@ -48,9 +48,8 @@
 #define RLP_HEADER_SIZE_EXT_LEN 23
 
 /*! \name Protocol Vectors
- *  Each ACN family protocol is defined by a protocol vector in a Root Layer
- *  PDU. These values occupy the vector field of a RootLayerPdu to
- *  identify the contents of its data segment.
+ *  Each ACN family protocol is defined by a protocol vector in a Root Layer PDU. These values
+ *  occupy the vector field of a RootLayerPdu to identify the contents of its data segment.
  *  @{
  */
 #define VECTOR_ROOT_SDT ACN_PROTOCOL_SDT
@@ -85,7 +84,7 @@ typedef struct UdpPreamble
 typedef struct RootLayerPdu
 {
   /*! The CID of the component that sent this Root Layer PDU. */
-  LwpaCid sender_cid;
+  LwpaUuid sender_cid;
   /*! The Vector indicates the type of data contained in the Data segment. */
   uint32_t vector;
   /*! A pointer to the Data segment of this PDU. */
@@ -115,4 +114,4 @@ size_t pack_root_layer_block(uint8_t *buf, size_t buflen, const RootLayerPdu *pd
 
 /*!@}*/
 
-#endif /* _LWPA_ROOTLAYERPDU_H_ */
+#endif /* _LWPA_ROOT_LAYER_PDU_H_ */
