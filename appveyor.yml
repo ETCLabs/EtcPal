@@ -6,6 +6,7 @@ version: '{build}'
 
 branches:
   only:
+    - develop
     - master
 
 skip_commits:
@@ -50,4 +51,4 @@ build:
 #---------------------------------#
 
 test_script:
-  - cmd: test\%configuration%\test_lwpa.exe
+  - cmd: tests\%configuration%\test_lwpa.exe
