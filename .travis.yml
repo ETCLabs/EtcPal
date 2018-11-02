@@ -1,0 +1,31 @@
+language: cpp
+
+sudo: false
+
+# Blacklist
+branches:
+  only:
+    - develop
+
+# Environment variables
+env:
+  global:
+    - GH_REPO_NAME: lwpa
+    - GH_REPO_REF: github.com/ETCLabs/lwpa.git
+    - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
+
+# Install dependencies
+addons:
+  apt:
+    packages:
+      - doxygen
+
+# Build your code e.g. by calling make
+script:
+  - /bin/true
+
+# Generate and deploy documentation
+# after_success:
+#   - cd $TRAVIS_BUILD_DIR
+#   - chmod +x generateDocumentationAndDeploy.sh
+#   - ./generateDocumentationAndDeploy.sh
