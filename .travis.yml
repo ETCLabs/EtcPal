@@ -1,3 +1,6 @@
+# Since our non-Windows ports are not finished, Travis is currently only used
+# to deploy the documentation.
+
 language: cpp
 
 sudo: false
@@ -14,6 +17,12 @@ env:
     - GH_REPO_REF: github.com/ETCLabs/lwpa.git
     - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
 
+if: branch = develop
+  env:
+    global:
+      - DOCS_PUBLISH_DIR: head
+      - DOCS_VERSION_NUMBER: "HEAD (unstable)"
+
 # Install dependencies
 addons:
   apt:
@@ -25,7 +34,7 @@ script:
   - /bin/true
 
 # Generate and deploy documentation
-# after_success:
-#   - cd $TRAVIS_BUILD_DIR
-#   - chmod +x generateDocumentationAndDeploy.sh
-#   - ./generateDocumentationAndDeploy.sh
+after_success:
+  - cd $TRAVIS_BUILD_DIR/tools/ci
+  - chmod +x publish_docs.sh
+  - ./publish_docs.sh
