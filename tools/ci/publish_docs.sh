@@ -21,8 +21,9 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" || "$TRAVIS_BRANCH" != "develop" ]; then
 fi
 
 # Create a clean working directory for this script.
-mkdir code_docs
-cd code_docs
+cd $TRAVIS_BUILD_DIR/docs
+mkdir output
+cd output
 
 # Get the current gh-pages branch
 git clone -b gh-pages https://git@$GH_REPO_REF
@@ -46,10 +47,11 @@ rm -rf docs/head/*
 ##### Generate the Doxygen code documentation and log the output.          #####
 echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
-( cat $DOXYFILE ; echo "PROJECT_NUMBER=\"HEAD (unstable)\"" ; \
-                  echo "OUTPUT_DIRECTORY=$(pwd)/docs/head" ; \
-                  echo "HTML_OUTPUT=." ) \
-                  | doxygen - 2>&1 | tee doxygen.log
+cd ../..
+( cat Doxyfile ; echo "PROJECT_NUMBER=\"HEAD (unstable)\"" ; \
+                 echo "OUTPUT_DIRECTORY=${TRAVIS_BUILD_DIR}/docs/output/${GH_REPO_NAME}/docs/head" ; \
+                 echo "HTML_OUTPUT=." ) \
+                 | doxygen - 2>&1 | tee doxygen.log
 
 # Debug
 echo 'pwd'
