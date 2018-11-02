@@ -24,32 +24,7 @@ Public domain, under the Unlicense (http://unlicense.org)
 The following sources in this repository are based on sources obtained from
 mirek/rb_tree:
 
-include/lwpa_rbtree.h
+include/lwpa/rbtree.h
 src/lwpa_rbtree.c
 
 See the license information at the top of those source files for more details.
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Appendix A Defines for the RDM Protocol, Compiled by Scott M. Blair
-http://www.rdmprotocol.org
-Copyright 2006, 2011, 2014 Litespeed Design
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The following sources in this repository are derived from Appendix A Defines
-for the RDM Protocol:
-
-include/estardm.h
-
-See the license information at the top of that source file for more details.
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Google Test framework (https://github.com/google/googletest)
-Copyright 2008, Google Inc., under the 3-Clause BSD License
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The following directories in this repository contain sources that are part of
-the Google Test framework:
-
-test/unit/gtest/
-
-See test/unit/gtest/README.txt for more details.
