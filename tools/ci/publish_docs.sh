@@ -53,6 +53,8 @@ cd ../..
                  echo "HTML_OUTPUT=." ) \
                  | doxygen - 2>&1 | tee doxygen.log
 
+cd output/$GH_REPO_NAME
+
 # Debug
 echo 'pwd'
 pwd
