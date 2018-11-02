@@ -19,7 +19,6 @@
 #include <cstdio>
 #include <cstdint>
 #include "gtest/gtest.h"
-#include <Ws2tcpip.h>
 #include "lwpa/netint.h"
 #include "lwpa/socket.h"
 

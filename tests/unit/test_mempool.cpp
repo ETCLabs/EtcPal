@@ -19,38 +19,24 @@
 #include "lwpa/mempool.h"
 #include "gtest/gtest.h"
 #include <cstddef>
-#include <cstdlib>
 #include <vector>
-#include <Windows.h>
+#include <array>
+#include <random>
+#include <algorithm>
 
 class MempoolTest : public ::testing::Test
 {
 protected:
-  MempoolTest()
-  {
-    timeBeginPeriod(1);
-    srand(timeGetTime());
-  }
-
-  virtual ~MempoolTest() { timeEndPeriod(1); }
-
   static const size_t TEST_ALLOC_MEMP_SIZE = 500;
 
-  struct test_elem
+  struct TestElem
   {
     int val1;
     char val2;
   };
-  LWPA_MEMPOOL_DEFINE(alloc_test, test_elem, TEST_ALLOC_MEMP_SIZE);
+  LWPA_MEMPOOL_DEFINE(alloc_test, TestElem, TEST_ALLOC_MEMP_SIZE);
 
-  struct alloctest
-  {
-    alloctest() : elem(NULL), freed(false) {}
-
-    struct test_elem *elem;
-    bool freed;
-  };
-  std::vector<alloctest> test_vec;
+  std::vector<TestElem *> test_vec;
 };
 
 TEST_F(MempoolTest, alloc_free)
@@ -63,31 +49,31 @@ TEST_F(MempoolTest, alloc_free)
   test_vec.reserve(TEST_ALLOC_MEMP_SIZE);
   for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
   {
-    alloctest test_val;
-    test_val.elem = static_cast<struct test_elem *>(lwpa_mempool_alloc(alloc_test));
-    ASSERT_TRUE(test_val.elem != NULL);
-    test_vec.push_back(test_val);
+    auto elem = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_test));
+    ASSERT_TRUE(elem != NULL);
+    test_vec.push_back(elem);
   }
   ASSERT_EQ(TEST_ALLOC_MEMP_SIZE, lwpa_mempool_used(alloc_test));
 
   // Free the elements back in random order.
-  size_t num_freed = 0;
-  while (num_freed < TEST_ALLOC_MEMP_SIZE)
+  // Generate and shuffle the index array.
+  std::array<size_t, TEST_ALLOC_MEMP_SIZE> free_indices;
+  for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
+    free_indices[i] = i;
+  std::random_device seed;
+  std::default_random_engine rand(seed());
+  std::shuffle(free_indices.begin(), free_indices.end(), rand);
+
+  for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
   {
-    size_t i = (rand() % TEST_ALLOC_MEMP_SIZE);
-    if (!test_vec[i].freed)
-    {
-      lwpa_mempool_free(alloc_test, test_vec[i].elem);
-      test_vec[i].freed = true;
-      ++num_freed;
-    }
+    lwpa_mempool_free(alloc_test, test_vec[free_indices[i]]);
   }
   ASSERT_EQ(0u, lwpa_mempool_used(alloc_test));
 
   // Make sure we can allocate the entire pool again.
   for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
   {
-    test_vec[i].elem = static_cast<struct test_elem *>(lwpa_mempool_alloc(alloc_test));
-    ASSERT_TRUE(test_vec[i].elem != NULL);
+    test_vec[i] = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_test));
+    ASSERT_TRUE(test_vec[i] != NULL);
   }
 }
