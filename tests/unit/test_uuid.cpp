@@ -71,14 +71,14 @@ TEST_F(UuidTest, generate)
 {
   uint8_t mac1[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x12};
   uint8_t mac2[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x13};
-  LwpaUuid uuid1, uuid2, uuid3, uuid4, uuid1_dup, rdm1, rdm2, rdm1_dup;
+  LwpaUuid uuid1, uuid2, uuid3, uuid4, uuid1_dup;
 
-  // Test the generate_uuid() function
-  generate_uuid(&uuid1, "Test Device", mac1, 0);
-  generate_uuid(&uuid2, "Test Device", mac1, 1);
-  generate_uuid(&uuid3, "Tst Device", mac1, 0);
-  generate_uuid(&uuid4, "Test Device", mac2, 0);
-  generate_uuid(&uuid1_dup, "Test Device", mac1, 0);
+  // Test the generate_v3_uuid() function
+  generate_v3_uuid(&uuid1, "Test Device", mac1, 0);
+  generate_v3_uuid(&uuid2, "Test Device", mac1, 1);
+  generate_v3_uuid(&uuid3, "Tst Device", mac1, 0);
+  generate_v3_uuid(&uuid4, "Test Device", mac2, 0);
+  generate_v3_uuid(&uuid1_dup, "Test Device", mac1, 0);
 
   ASSERT_NE(0, uuidcmp(&uuid1, &uuid2));
   ASSERT_NE(0, uuidcmp(&uuid1, &uuid3));
@@ -87,12 +87,4 @@ TEST_F(UuidTest, generate)
   ASSERT_NE(0, uuidcmp(&uuid2, &uuid4));
   ASSERT_NE(0, uuidcmp(&uuid3, &uuid4));
   ASSERT_EQ(0, uuidcmp(&uuid1, &uuid1_dup));
-
-  // Test the generate_rdm_uuid() function.
-  // We'll reuse the MAC addresses as UIDs.
-  generate_rdm_uuid(&rdm1, mac1);
-  generate_rdm_uuid(&rdm2, mac2);
-  generate_rdm_uuid(&rdm1_dup, mac1);
-  ASSERT_NE(0, uuidcmp(&rdm1, &rdm2));
-  ASSERT_EQ(0, uuidcmp(&rdm1, &rdm1_dup));
 }
