@@ -16,7 +16,7 @@ echo 'Publishing documentation...'
 # Exit with nonzero exit code if anything fails
 set -e
 
-if [ $TRAVIS_PULL_REQUEST != "false" || $TRAVIS_BRANCH != "develop" ]; then
+if [ "$TRAVIS_PULL_REQUEST" != "false" || "$TRAVIS_BRANCH" != "develop" ]; then
   exit 0
 fi
 
@@ -48,8 +48,16 @@ echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
 ( cat $DOXYFILE ; echo "PROJECT_NUMBER=\"HEAD (unstable)\"" ; \
                   echo "OUTPUT_DIRECTORY=$(pwd)/docs/head" ; \
-                  echo "HTML_OUTPUT=." \
-                  | doxygen - ) 2>&1 | tee doxygen.log
+                  echo "HTML_OUTPUT=." ) \
+                  | doxygen - 2>&1 | tee doxygen.log
+
+# Debug
+echo 'pwd'
+pwd
+echo 'ls docs'
+ls docs
+echo 'ls docs/head'
+ls docs/head
 
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
