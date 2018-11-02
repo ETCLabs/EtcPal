@@ -3,7 +3,7 @@
 
 language: cpp
 
-sudo: false
+sudo: required
 
 # Blacklist
 branches:
@@ -28,10 +28,15 @@ jobs:
     - script: skip
     # Generate and deploy documentation
     - stage: docs
-      addons:
-        apt:
-          packages:
-            - doxygen
+      # TODO - we need to install doxygen like this for now because of older
+      # distros on Travis. Once Doxygen support gets up to 1.8 or so we can use
+      # apt-get.
+      before_script:
+        - wget http://ftp.stack.nl/pub/users/dmitri/doxygen-1.8.14.linux.bin.tar.gz
+        - tar -xzf doxygen-1.8.14.linux.bin.tar.gz
+        - cd doxygen-1.8.14
+        - ./configure
+        - sudo make install || true
       script:
         - cd $TRAVIS_BUILD_DIR/tools/ci
         - chmod +x publish_docs.sh
