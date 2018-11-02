@@ -118,11 +118,14 @@ static void generate_from_hash(LwpaUuid *uuid_out, MD5_CTX *pmd5)
   memcpy(uuid_out->data, buffer, UUID_BYTES);
 }
 
-/*! \brief Generate a UUID from a combination of a custom string and MAC address.
+/*! \brief Generate a Version 3 UUID from a combination of a custom string and MAC address.
  *
  *  This function is for use by devices that want to create their own UUIDs, and create the same
- *  UUIDs each time. The UUID output is deterministic for each combination of devstr, macaddr and
+ *  UUIDs each time. It creates a Version 3 UUID (defined in RFC 4122) within a constant, hardcoded
+ *  namespace. The UUID output is deterministic for each combination of devstr, macaddr and
  *  uuidnum inputs.
+ * 
+ *  The namespace UUID used is: 57323103-db01-44b3-bafa-abdee3f37c1a
  *
  *  \param[out] uuid UUID to fill in with the generation result.
  *  \param[in] devstr The device-specific string, such as the model name. This should never change
@@ -132,12 +135,12 @@ static void generate_from_hash(LwpaUuid *uuid_out, MD5_CTX *pmd5)
  *  \param[in] uuidnum Component number. By changing this number, multiple unique UUIDs can be
  *                     generated for the same device string-MAC address combination.
  */
-void generate_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)
+void generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)
 {
   MD5_CTX md5;
   uint8_t num[4];
   /* RFC4122 requires that we use a name space UUID before the string */
-  uint8_t ns[16] = {0x57, 0x32, 0x31, 0x03, 0xDB, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a};
+  uint8_t ns[16] = {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a};
 
   if (!uuid || !devstr || !macaddr)
     return;
@@ -157,32 +160,6 @@ void generate_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, u
   num[2] = (uint8_t)((uuidnum >> 16) & 0xFF);
   num[3] = (uint8_t)((uuidnum >> 24) & 0xFF);
   MD5Update(&md5, num, 4);
-
-  generate_from_hash(uuid, &md5);
-}
-
-/*! \brief Generate a UUID from an RDM UID.
- *
- *  This function is used to consistently create the same UUID for an RDM device, regardless of the
- *  ACN component/location in which the device is being instanced.
- *
- *  \param[out] uuid UUID to fill in with the generation result.
- *  \param[in] rdmuid The 6-byte RDM unique identifier. The first 2 bytes are the manufacturer ID,
- *                    and the last 4 bytes are the device ID.
- */
-void generate_rdm_uuid(LwpaUuid *uuid, const uint8_t *rdmuid)
-{
-  MD5_CTX md5;
-  uint8_t ns[16] = {0xba, 0x8a, 0xfd, 0x46, 0x35, 0x78, 0x46, 0x3c, 0xa5, 0xa7, 0xa2, 0x8c, 0xe3, 0xd3, 0x2f, 0xe4};
-
-  MD5Init(&md5);
-
-  /* RFC4122 requires that we use a name space UUID before the string. */
-  MD5Update(&md5, ns, 16);
-
-  /* The string we'll be encoding is "RDM Device, [rdmuid]" */
-  MD5Update(&md5, (uint8_t *)"RDM Device, ", 12);
-  MD5Update(&md5, rdmuid, 6);
 
   generate_from_hash(uuid, &md5);
 }
