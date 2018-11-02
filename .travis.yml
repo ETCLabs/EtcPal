@@ -32,11 +32,14 @@ jobs:
       # distros on Travis. Once Doxygen support gets up to 1.8 or so we can use
       # apt-get.
       before_script:
-        - wget http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.14.linux.bin.tar.gz
-        - tar -xzf doxygen-1.8.14.linux.bin.tar.gz
-        - cd doxygen-1.8.14
-        - ./configure
-        - sudo make install || true
+        - sudo apt-get update
+        - sudo apt-get install flex bison
+        - git clone https://github.com/doxygen/doxygen.git
+        - cd doxygen
+        - mkdir build && cd build
+        - cmake -G "Unix Makefiles" ..
+        - make
+        - sudo make install
       script:
         - cd $TRAVIS_BUILD_DIR/tools/ci
         - chmod +x publish_docs.sh
