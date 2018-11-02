@@ -17,24 +17,23 @@ env:
     - GH_REPO_REF: github.com/ETCLabs/lwpa.git
     - DOXYFILE: $TRAVIS_BUILD_DIR/docs/Doxyfile
 
-if: branch = develop
-  env:
-    global:
-      - DOCS_PUBLISH_DIR: head
-      - DOCS_VERSION_NUMBER: "HEAD (unstable)"
-
 # Install dependencies
 addons:
   apt:
     packages:
       - doxygen
 
-# Build your code e.g. by calling make
-script:
-  - /bin/true
+stages:
+  - test
+  - name: docs
+    if: branch = develop
 
-# Generate and deploy documentation
-after_success:
-  - cd $TRAVIS_BUILD_DIR/tools/ci
-  - chmod +x publish_docs.sh
-  - ./publish_docs.sh
+jobs:
+  include:
+    - script: skip
+    # Generate and deploy documentation
+    - stage: docs
+      script:
+        - cd $TRAVIS_BUILD_DIR/tools/ci
+        - chmod +x publish_docs.sh
+        - ./publish_docs.sh

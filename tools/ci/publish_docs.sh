@@ -16,6 +16,10 @@ echo 'Publishing documentation...'
 # Exit with nonzero exit code if anything fails
 set -e
 
+if [ $TRAVIS_PULL_REQUEST != "false" || $TRAVIS_BRANCH != "develop" ]; then
+  exit 0
+fi
+
 # Create a clean working directory for this script.
 mkdir code_docs
 cd code_docs
@@ -36,14 +40,14 @@ git config user.email "travis@travis-ci.org"
 # which files have stayed the same and will only update the changed files. So
 # the directory can be safely cleaned, and it is sure that everything pushed
 # later is the new documentation.
-rm -rf docs/$DOCS_PUBLISH_DIR/*
+rm -rf docs/head/*
 
 ################################################################################
 ##### Generate the Doxygen code documentation and log the output.          #####
 echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
-( cat $DOXYFILE ; echo "PROJECT_NUMBER=\"${DOCS_VERSION_NUMBER}\"" ; \
-                  echo "OUTPUT_DIRECTORY=$(pwd)/docs/$DOCS_PUBLISH_DIR" ; \
+( cat $DOXYFILE ; echo "PROJECT_NUMBER=\"HEAD (unstable)\"" ; \
+                  echo "OUTPUT_DIRECTORY=$(pwd)/docs/head" ; \
                   echo "HTML_OUTPUT=." \
                   | doxygen - ) 2>&1 | tee doxygen.log
 
@@ -52,7 +56,7 @@ echo 'Generating Doxygen code documentation...'
 # Only upload if Doxygen successfully created the documentation.
 # Check this by verifying that the html directory and the file html/index.html
 # both exist. This is a good indication that Doxygen did it's work.
-if [ -d "docs/$DOCS_PUBLISH_DIR" ] && [ -f "docs/$DOCS_PUBLISH_DIR/index.html" ]; then
+if [ -d "docs/head" ] && [ -f "docs/head/index.html" ]; then
 
     echo 'Uploading documentation to the gh-pages branch...'
     # Add everything in this directory (the Doxygen code documentation) to the
