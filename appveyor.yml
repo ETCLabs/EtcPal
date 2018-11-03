@@ -5,8 +5,9 @@
 version: '{build}'
 
 branches:
-  except:
-    - gh-pages
+  only:
+    - develop
+    - master
 
 skip_commits:
   files:
@@ -50,4 +51,4 @@ build:
 #---------------------------------#
 
 test_script:
-  - cmd: test\%configuration%\test_lwpa.exe
+  - cmd: tests\%configuration%\test_lwpa.exe

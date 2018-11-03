@@ -4,7 +4,7 @@
 
 function(get_googletest LWPA_REPO_ROOT)
   # Download and unpack googletest at configure time
-  configure_file(${LWPA_REPO_ROOT}/cmake/CMakeLists_gtest.txt.in googletest-download/CMakeLists.txt)
+  configure_file(${LWPA_REPO_ROOT}/tools/cmake/CMakeLists_gtest.txt.in googletest-download/CMakeLists.txt)
 
   execute_process(COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" .
                   RESULT_VARIABLE result

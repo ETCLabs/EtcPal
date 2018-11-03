@@ -27,14 +27,10 @@
 
 /*! \defgroup lwpa_uuid lwpa_uuid
  *  \ingroup lwpa
- *  \brief Type and helper functions for the Component IDentifier (UUID) used in
- *         the ACN family of protocols.
+ *  \brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
- *  ACN-based protocols use an identifier called a UUID to identify a Component,
- *  which E1.17 defines as "a distinct endpoint transmitting and receiving ACN
- *  data". A UUID is simply a UUID which should not change over the lifetime of
- *  a device. To this end, functions are provided which help with UUID
- *  generation.
+ *  UUIDs (per RFC 4122) are used in several protocols supported by lwpa. This module contains a
+ *  type for a UUID and functions to generate, inspect and manipulate them.
  *
  *  \#include "lwpa/uuid.h"
  *
@@ -83,8 +79,7 @@ bool string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen);
 
 /************************ UUID Generation Functions **************************/
 
-void generate_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum);
-void generate_rdm_uuid(LwpaUuid *uuid, const uint8_t *rdmuid);
+void generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum);
 
 #ifdef __cplusplus
 }
