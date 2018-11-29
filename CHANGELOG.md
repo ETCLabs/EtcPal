@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   [RDMnet](https://github.com/ETCLabs/RDMnet) repository as rdmnet/defs.h.
 - Visual Studio project files, as we now build with CMake.
 
-## [0.1.0] - 2018-10-18
+## 0.1.0 - 2018-10-18
 ### Added
 - Initial library modules, tests and documentation.
+
+[Unreleased]: https://github.com/ETCLabs/lwpa/compare/master...develop
