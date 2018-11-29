@@ -30,9 +30,11 @@
  *
  *  \#include "lwpa_mempool.h"
  *
- *  This module can be used to declare memory pools containing some number of objects of an
- *  arbitrary type. Only objects of that type can be allocated from the pool or freed back into it.
- *  Allocations and deallocations are ensured to be thread_safe by an \ref lwpa_mutex internally.
+ *  This module can be used to declare memory pools containing some number of elements of an
+ *  arbitrary type. Only elements of that type can be allocated from the pool or freed back into it.
+ *  A pool element can be a single object (e.g. int) or a fixed-size array of objects
+ *  (e.g. int[60]). Allocations and deallocations are ensured to be thread_safe by an
+ *  \ref lwpa_mutex internally.
  *
  *  @{
  */
@@ -45,8 +47,8 @@ struct LwpaMempool
 };
 
 /*! (Not for direct usage) A memory pool description structure. Do not declare or use this structure
- *  directly; instead, use LWPA_MEMPOOL_DECLARE(), LWPA_MEMPOOL_DEFINE() and the lwpa_mempool_*
- *  macros to interact with it. */
+ *  directly; instead, use LWPA_MEMPOOL_DECLARE(), LWPA_MEMPOOL_DEFINE(),
+ *  LWPA_MEMPOOL_DEFINE_ARRAY(), and the lwpa_mempool_* macros to interact with it. */
 typedef struct LwpaMempoolDesc
 {
   const size_t elem_size;  /*!< The size of each element. */
@@ -60,7 +62,7 @@ typedef struct LwpaMempoolDesc
 /*! \brief Declare a pool as an external variable.
  *
  *  This optional macro is useful for header files; when used, it must be paired with a call of
- *  LWPA_MEMPOOL_DEFINE() using the same name.
+ *  LWPA_MEMPOOL_DEFINE() or LWPA_MEMPOOL_DEFINE_ARRAY() using the same name.
  *
  *  \param name The name of the memory pool.
  */
