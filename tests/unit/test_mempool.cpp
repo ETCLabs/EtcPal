@@ -28,6 +28,7 @@ class MempoolTest : public ::testing::Test
 {
 protected:
   static const size_t TEST_ALLOC_MEMP_SIZE = 500;
+  static const size_t TEST_ALLOC_MEMP_ARRAY_SIZE = 30;
 
   struct TestElem
   {
@@ -35,6 +36,7 @@ protected:
     char val2;
   };
   LWPA_MEMPOOL_DEFINE(alloc_test, TestElem, TEST_ALLOC_MEMP_SIZE);
+  LWPA_MEMPOOL_DEFINE_ARRAY(alloc_array_test, TestElem, TEST_ALLOC_MEMP_ARRAY_SIZE, TEST_ALLOC_MEMP_SIZE);
 
   std::vector<TestElem *> test_vec;
 };
@@ -74,6 +76,61 @@ TEST_F(MempoolTest, alloc_free)
   for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
   {
     test_vec[i] = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_test));
+    ASSERT_TRUE(test_vec[i] != NULL);
+  }
+}
+
+TEST_F(MempoolTest, alloc_free_array)
+{
+  // Initialize the pool.
+  ASSERT_EQ(LWPA_OK, lwpa_mempool_init(alloc_array_test));
+  ASSERT_EQ(TEST_ALLOC_MEMP_SIZE, lwpa_mempool_size(alloc_array_test));
+
+  // Allocate the entire pool.
+  test_vec.reserve(TEST_ALLOC_MEMP_SIZE);
+  for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
+  {
+    auto elem_arr = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_array_test));
+    ASSERT_TRUE(elem_arr != NULL);
+
+    // Write to each spot in the array - failure could be caught by a segfault or similar
+    for (size_t j = 0; j < TEST_ALLOC_MEMP_ARRAY_SIZE; ++j)
+    {
+      elem_arr[j].val1 = 1;
+      elem_arr[j].val2 = 2;
+    }
+
+    test_vec.push_back(elem_arr);
+  }
+  ASSERT_EQ(TEST_ALLOC_MEMP_SIZE, lwpa_mempool_used(alloc_array_test));
+
+  // Free the elements back in random order.
+  // Generate and shuffle the index array.
+  std::array<size_t, TEST_ALLOC_MEMP_SIZE> free_indices;
+  for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
+    free_indices[i] = i;
+  std::random_device seed;
+  std::default_random_engine rand(seed());
+  std::shuffle(free_indices.begin(), free_indices.end(), rand);
+
+  for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
+  {
+    lwpa_mempool_free(alloc_array_test, test_vec[free_indices[i]]);
+  }
+  ASSERT_EQ(0u, lwpa_mempool_used(alloc_array_test));
+
+  // Make sure we can allocate the entire pool again.
+  for (size_t i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
+  {
+    test_vec[i] = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_array_test));
+
+    // Make sure the sentinel values we set before are still there.
+    for (size_t j = 0; j < TEST_ALLOC_MEMP_ARRAY_SIZE; ++j)
+    {
+      ASSERT_EQ(test_vec[i][j].val1, 1);
+      ASSERT_EQ(test_vec[i][j].val2, 2);
+    }
+
     ASSERT_TRUE(test_vec[i] != NULL);
   }
 }

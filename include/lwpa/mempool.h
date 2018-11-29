@@ -86,6 +86,26 @@ typedef struct LwpaMempoolDesc
                                              0,                /* current_used */ \
                                              name##_pool /* pool */}
 
+/*! \brief Define a new memory pool composed of arrays of elements.
+ *
+ *  This is an alternative to #LWPA_MEMPOOL_DEFINE for creating memory pools containing fixed-size
+ *  arrays of elements.
+ *
+ *  \param name The name of the memory pool.
+ *  \param type The type of a single array element in the memory pool.
+ *  \param array_size The number of elements in each array.
+ *  \param pool_size The number of arrays in the memory pool.
+ */
+#define LWPA_MEMPOOL_DEFINE_ARRAY(name, type, array_size, pool_size)                      \
+  type name##_pool[array_size][pool_size];                                                \
+  struct LwpaMempool name##_pool_list[pool_size];                                         \
+  struct LwpaMempoolDesc name##_pool_desc = {sizeof(type[array_size]), /* elem_size */    \
+                                             pool_size,                /* pool_size */    \
+                                             NULL,                     /* freelist */     \
+                                             name##_pool_list,         /* list */         \
+                                             0,                        /* current_used */ \
+                                             name##_pool /* pool */}
+
 /*! \brief Initialize a memory pool.
  *
  *  This macro must be called on a pool before using lwpa_mempool_alloc() or lwpa_mempool_free() on
