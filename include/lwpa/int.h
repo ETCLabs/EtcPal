@@ -26,7 +26,7 @@
  *  \ingroup lwpa
  *  \brief Fixed-width integer types.
  *
- *  \#include "lwpa_int.h"
+ *  \#include "lwpa/int.h"
  *
  *  In the before-times, C had no fixed-width integer types. Then, C99 gave us stdint.h. But there
  *  still exist environments where a C99 compiler is not available or practical, and one allegedly

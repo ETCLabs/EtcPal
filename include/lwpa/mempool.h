@@ -28,7 +28,7 @@
  *  \ingroup lwpa
  *  \brief Memory pools with fixed-size elements.
  *
- *  \#include "lwpa_mempool.h"
+ *  \#include "lwpa/mempool.h"
  *
  *  This module can be used to declare memory pools containing some number of elements of an
  *  arbitrary type. Only elements of that type can be allocated from the pool or freed back into it.
@@ -90,7 +90,7 @@ typedef struct LwpaMempoolDesc
 
 /*! \brief Define a new memory pool composed of arrays of elements.
  *
- *  This is an alternative to #LWPA_MEMPOOL_DEFINE for creating memory pools containing fixed-size
+ *  This is an alternative to LWPA_MEMPOOL_DEFINE() for creating memory pools containing fixed-size
  *  arrays of elements.
  *
  *  \param name The name of the memory pool.
