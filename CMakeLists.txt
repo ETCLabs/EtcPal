@@ -15,7 +15,10 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
       add_compile_options(-Wno-sign-compare)
     endif()
   endif()
+
+  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tools/cmake)
 endif()
+
 
 # Main library
 
