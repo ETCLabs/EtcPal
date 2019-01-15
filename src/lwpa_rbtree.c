@@ -304,9 +304,9 @@ int lwpa_rbtree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
 
 /*! \brief Remove a value from a red-black tree.
  *
- *  The node memory is deallocated using the #rb_node_dealloc_f provided in lwpa_rbtree_init(); the
- *  user is responsible for deallocating the value memory. Uses the #lwpa_rbtree_node_cmp_f provided
- *  in lwpa_rbtree_init() to compare values. Removal guaranteed in log(n) time.
+ *  The node memory is deallocated using the #lwpa_rbnode_dealloc_f provided in lwpa_rbtree_init();
+ *  the user is responsible for deallocating the value memory. Uses the #lwpa_rbtree_node_cmp_f
+ *  provided in lwpa_rbtree_init() to compare values. Removal guaranteed in log(n) time.
  *
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
@@ -434,8 +434,8 @@ int lwpa_rbtree_remove_with_cb(LwpaRbTree *self, void *value, lwpa_rbtree_node_f
 
 /*! \brief Clear all values from a red-black tree.
  *
- *  The node memory is deallocated using the #rb_node_dealloc_f provided in lwpa_rbtree_init(); the
- *  user is responsible for deallocating the value memory.
+ *  The node memory is deallocated using the #lwpa_rbnode_dealloc_f provided in lwpa_rbtree_init();
+ *  the user is responsible for deallocating the value memory.
  *
  *  \param[in] self Tree to clear.
  *  \return 1 (the tree was cleared) or 0 (an error occurred).

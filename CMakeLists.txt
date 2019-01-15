@@ -19,7 +19,6 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tools/cmake)
 endif()
 
-
 # Main library
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)

@@ -37,7 +37,7 @@ const LwpaUuid LWPA_NULL_UUID = {{0}};
  *  used for hexadecimal letters per RFC 4122 and common convention).
  *
  *  \param[out] buf Character buffer to which to write the resulting string. To avoid undefined
- *                  behavior, this buffer should be at least of size #UUID_STRING_BYTES.
+ *                  behavior, this buffer should be at least of size #LWPA_UUID_STRING_BYTES.
  *  \param[in] uuid UUID to convert to a string.
  */
 void lwpa_uuid_to_string(char *buf, const LwpaUuid *uuid)
