@@ -85,6 +85,23 @@ void lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *ma
 }
 #endif
 
+#ifdef __cplusplus
+/* C++ utilities */
+
+/* Comparison operators for UUIDs */
+
+inline bool operator<(const LwpaUuid &a, const LwpaUuid &b)
+{
+  return (lwpa_uuid_cmp(&a, &b) < 0);
+}
+
+inline bool operator==(const LwpaUuid &a, const LwpaUuid &b)
+{
+  return (lwpa_uuid_cmp(&a, &b) == 0);
+}
+
+#endif
+
 /*!@}*/
 
 #endif /* _LWPA_UUID_H_ */
