@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lwpa is now built with CMake. Documentation updated accordingly.
 - Windows dependencies removed from unit tests - unit tests are now
   platform-neutral.
+- Added lwpa_ prefix to existing values and functions where necessary for better
+  namespacing.
 
 ### Removed
 - lwpa_uid (lwpa_uid.h and lwpa_uid.c) and estardm (estardm.h). These are now in

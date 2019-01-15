@@ -4,10 +4,10 @@
  * 2018-02-28.
  *
  ******************************************************************************
- * Based on Julienne Walker's <http://eternallyconfuzzled.com/> rb_tree
+ * Based on Julienne Walker's <http://eternallyconfuzzled.com/> lwpa_rbtree
  * implementation.
  *
- * Modified by Mirek Rusin <http://github.com/mirek/rb_tree>.
+ * Modified by Mirek Rusin <http://github.com/mirek/lwpa_rbtree>.
  *
  * This is free and unencumbered software released into the public domain.
  *
@@ -36,9 +36,9 @@
  */
 #include "lwpa/rbtree.h"
 
-/* rb_node */
+/* lwpa_rbnode */
 
-static LwpaRbNode *rb_node_alloc(LwpaRbTree *tree)
+static LwpaRbNode *lwpa_rbnode_alloc(LwpaRbTree *tree)
 {
   if (tree && tree->alloc_f)
     return tree->alloc_f();
@@ -48,14 +48,14 @@ static LwpaRbNode *rb_node_alloc(LwpaRbTree *tree)
 /*! \brief Initialize a red-black tree node.
  *
  *  This function must be called on a new node before inserting it manually
- *  using rb_tree_insert_node(). When using rb_tree_insert(), this function is
+ *  using lwpa_rbtree_insert_node(). When using lwpa_rbtree_insert(), this function is
  *  called on the new node automatically.
  *
  *  \param[in] self The node to be initialized.
  *  \param[in] value Pointer to the value to assign to the node.
  *  \return Pointer to the node that was initialized.
  */
-LwpaRbNode *rb_node_init(LwpaRbNode *self, void *value)
+LwpaRbNode *lwpa_rbnode_init(LwpaRbNode *self, void *value)
 {
   if (self)
   {
@@ -68,7 +68,7 @@ LwpaRbNode *rb_node_init(LwpaRbNode *self, void *value)
 
 static LwpaRbNode *rb_node_create(LwpaRbTree *tree, void *value)
 {
-  return rb_node_init(rb_node_alloc(tree), value);
+  return lwpa_rbnode_init(lwpa_rbnode_alloc(tree), value);
 }
 
 static void rb_node_dealloc(LwpaRbNode *self, const LwpaRbTree *tree)
@@ -109,15 +109,14 @@ static LwpaRbNode *rb_node_rotate2(LwpaRbNode *self, int dir)
   return result;
 }
 
-/* rb_tree - default callbacks */
+/* lwpa_rbtree - default callbacks */
 
 /*! \brief The default node comparison callback.
  *
  *  This function can be supplied as an argument to any function that takes a
- *  #rb_tree_node_cmp_f. Simply compares the pointer addresses of the two node
- *  values.
+ *  #lwpa_rbtree_node_cmp_f. Simply compares the pointer addresses of the two node values.
  */
-int rb_tree_node_cmp_ptr_cb(const LwpaRbTree *self, const LwpaRbNode *a, const LwpaRbNode *b)
+int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree *self, const LwpaRbNode *a, const LwpaRbNode *b)
 {
   (void)self;
   return (a->value > b->value) - (a->value < b->value);
@@ -125,20 +124,20 @@ int rb_tree_node_cmp_ptr_cb(const LwpaRbTree *self, const LwpaRbNode *a, const L
 
 /*! \brief The default node deallocation callback.
  *
- *  This function can be supplied as an argument to any function that takes a
- *  #rb_tree_node_f. Simply deallocates the node using the tree's dealloc_f.
+ *  This function can be supplied as an argument to any function that takes a #lwpa_rbtree_node_f.
+ *  Simply deallocates the node using the tree's dealloc_f.
  */
-void rb_tree_node_dealloc_cb(const LwpaRbTree *self, LwpaRbNode *node)
+void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree *self, LwpaRbNode *node)
 {
   rb_node_dealloc(node, self);
 }
 
-/* rb_tree */
+/* lwpa_rbtree */
 
 /*! \brief Initialize a red-black tree node.
  *
- *  This function must be called on a new red-black tree before performing any
- *  other operations on it.
+ *  This function must be called on a new red-black tree before performing any other operations on
+ *  it.
  *
  *  \param[in] self The tree to be initialized.
  *  \param[in] node_cmp_cb A function to use for comparing values in the tree.
@@ -146,14 +145,14 @@ void rb_tree_node_dealloc_cb(const LwpaRbTree *self, LwpaRbNode *node)
  *  \param[in] dealloc_f A function to use for deallocating node structures.
  *  \return Pointer to the tree that was initialized.
  */
-LwpaRbTree *rb_tree_init(LwpaRbTree *self, rb_tree_node_cmp_f node_cmp_cb, rb_node_alloc_f alloc_f,
-                         rb_node_dealloc_f dealloc_f)
+LwpaRbTree *lwpa_rbtree_init(LwpaRbTree *self, lwpa_rbtree_node_cmp_f node_cmp_cb, lwpa_rbnode_alloc_f alloc_f,
+                             lwpa_rbnode_dealloc_f dealloc_f)
 {
   if (self)
   {
     self->root = NULL;
     self->size = 0;
-    self->cmp = node_cmp_cb ? node_cmp_cb : rb_tree_node_cmp_ptr_cb;
+    self->cmp = node_cmp_cb ? node_cmp_cb : lwpa_rbtree_node_cmp_ptr_cb;
     self->alloc_f = alloc_f;
     self->dealloc_f = dealloc_f;
   }
@@ -162,14 +161,14 @@ LwpaRbTree *rb_tree_init(LwpaRbTree *self, rb_tree_node_cmp_f node_cmp_cb, rb_no
 
 /*! \brief Find a value in a red-black tree.
  *
- *  Uses the #rb_tree_node_cmp_f provided in rb_tree_init() to compare values.
- *  Lookup guaranteed in log(n) time.
+ *  Uses the #lwpa_rbtree_node_cmp_f provided in lwpa_rbtree_init() to compare values. Lookup
+ *  guaranteed in log(n) time.
  *
  *  \param[in] self Tree in which to find the value.
  *  \param[in] value Value to find.
  *  \return Pointer to the value (value found) or NULL (value not found).
  */
-void *rb_tree_find(LwpaRbTree *self, void *value)
+void *lwpa_rbtree_find(LwpaRbTree *self, void *value)
 {
   void *result = NULL;
   if (self)
@@ -183,12 +182,14 @@ void *rb_tree_find(LwpaRbTree *self, void *value)
     {
       if ((cmp = self->cmp(self, it, &node)) != 0)
       {
-        /* If the tree supports duplicates, they should be chained to the right
-         * subtree for this to work */
+        /* If the tree supports duplicates, they should be chained to the right subtree for this to
+         * work */
         it = it->link[cmp < 0];
       }
       else
+      {
         break;
+      }
     }
     result = it ? it->value : NULL;
   }
@@ -197,34 +198,33 @@ void *rb_tree_find(LwpaRbTree *self, void *value)
 
 /*! \brief Insert a new value into a red-black tree.
  *
- *  If the value did not already exist in the tree, a new node is allocated
- *  using the #rb_node_alloc_f provided in rb_tree_init(). Uses the
- *  #rb_tree_node_cmp_f provided in rb_tree_init() to compare values. Insertion
- *  guaranteed in log(n) time.
+ *  If the value did not already exist in the tree, a new node is allocated using the
+ *  #lwpa_rbnode_alloc_f provided in lwpa_rbtree_init(). Uses the #lwpa_rbtree_node_cmp_f provided
+ *  in lwpa_rbtree_init() to compare values. Insertion guaranteed in log(n) time.
  *
  *  \param[in] self Tree in which to insert the value.
  *  \param[in] value Value to insert.
- *  \return 1 (the value was inserted or the value already existed in the tree)
- *          or 0 (an error occurred).
+ *  \return 1 (the value was inserted or the value already existed in the tree) or 0 (an error
+ *          occurred).
  */
-int rb_tree_insert(LwpaRbTree *self, void *value)
+int lwpa_rbtree_insert(LwpaRbTree *self, void *value)
 {
-  return rb_tree_insert_node(self, rb_node_create(self, value));
+  return lwpa_rbtree_insert_node(self, rb_node_create(self, value));
 }
 
 /*! \brief Insert a node containing a new value into a red-black tree.
  *
- *  The node is supplied by the caller and its memory must remain valid as long
- *  as it remains in the tree. Uses the #rb_tree_node_cmp_f provided in
- *  rb_tree_init() to compare values. Insertion guaranteed in log(n) time.
+ *  The node is supplied by the caller and its memory must remain valid as long as it remains in the
+ *  tree. Uses the #lwpa_rbtree_node_cmp_f provided in lwpa_rbtree_init() to compare values.
+ *  Insertion guaranteed in log(n) time.
  *
  *  \param[in] self Tree in which to insert the value.
- *  \param[in] node Node containing value to insert. Must have been previously
- *                  initialized using rb_node_init().
- *  \return 1 (the value was inserted or the value already existed in the tree)
- *          or 0 (an error occurred).
+ *  \param[in] node Node containing value to insert. Must have been previously initialized using
+ *                  lwpa_rbnode_init().
+ *  \return 1 (the value was inserted or the value already existed in the tree) or 0 (an error
+ *          occurred).
  */
-int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
+int lwpa_rbtree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
 {
   int result = 0;
   if (self && node)
@@ -272,8 +272,7 @@ int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
             t->link[dir2] = rb_node_rotate2(g, !last);
         }
 
-        /* Stop working if we inserted a node. This check also disallows
-         * duplicates in the tree */
+        /* Stop working if we inserted a node. This check also disallows duplicates in the tree */
         if (self->cmp(self, q, node) == 0)
         {
           result = 1;
@@ -305,40 +304,37 @@ int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
 
 /*! \brief Remove a value from a red-black tree.
  *
- *  The node memory is deallocated using the #rb_node_dealloc_f provided in
- *  rb_tree_init(); the user is responsible for deallocating the value memory.
- *  Uses the #rb_tree_node_cmp_f provided in rb_tree_init() to compare values.
- *  Removal guaranteed in log(n) time.
+ *  The node memory is deallocated using the #rb_node_dealloc_f provided in lwpa_rbtree_init(); the
+ *  user is responsible for deallocating the value memory. Uses the #lwpa_rbtree_node_cmp_f provided
+ *  in lwpa_rbtree_init() to compare values. Removal guaranteed in log(n) time.
  *
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
- *  \return 1 (the value was removed) or 0 (the value did not exist in the tree
- *          or an error occurred).
+ *  \return 1 (the value was removed) or 0 (the value did not exist in the tree or an error
+ *          occurred).
  */
-int rb_tree_remove(LwpaRbTree *self, void *value)
+int lwpa_rbtree_remove(LwpaRbTree *self, void *value)
 {
   int result = 0;
   if (self)
-    result = rb_tree_remove_with_cb(self, value, rb_tree_node_dealloc_cb);
+    result = lwpa_rbtree_remove_with_cb(self, value, lwpa_rbtree_node_dealloc_cb);
   return result;
 }
 
-/*! \brief Remove a value from a red-black tree, calling back into the
- *         application with the node and value being removed.
+/*! \brief Remove a value from a red-black tree, calling back into the application with the node and
+ *         value being removed.
  *
- *  The user provides a #rb_tree_node_f callback function and is responsible for
- *  deallocating both the node and value memory. Uses the #rb_tree_node_cmp_f
- *  provided in rb_tree_init() to compare values. Removal guaranteed in log(n)
- *  time.
+ *  The user provides a #lwpa_rbtree_node_f callback function and is responsible for deallocating
+ *  both the node and value memory. Uses the #lwpa_rbtree_node_cmp_f provided in lwpa_rbtree_init()
+ *  to compare values. Removal guaranteed in log(n) time.
  *
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
- *  \param[in] node_cb Callback function to call with the node and value being
- *                     removed.
- *  \return 1 (the value was removed) or 0 (the value did not exist in the tree
- *          or an error occurred).
+ *  \param[in] node_cb Callback function to call with the node and value being removed.
+ *  \return 1 (the value was removed) or 0 (the value did not exist in the tree or an error
+ *          occurred).
  */
-int rb_tree_remove_with_cb(LwpaRbTree *self, void *value, rb_tree_node_f node_cb)
+int lwpa_rbtree_remove_with_cb(LwpaRbTree *self, void *value, lwpa_rbtree_node_f node_cb)
 {
   LwpaRbNode head = {0}; /* False tree root */
   LwpaRbNode node;       /* Value wrapper node */
@@ -349,9 +345,9 @@ int rb_tree_remove_with_cb(LwpaRbTree *self, void *value, rb_tree_node_f node_cb
   if (!self || self->root == NULL)
     return 0;
 
-  /* SMK added this check, because the removal code seems to fail badly in the
-   * case where the node being removed didn't previously exist in the tree. */
-  if (NULL == rb_tree_find(self, value))
+  /* SMK added this check, because the removal code seems to fail badly in the case where the node
+   * being removed didn't previously exist in the tree. */
+  if (NULL == lwpa_rbtree_find(self, value))
     return 0;
 
   /* Set up our helpers */
@@ -370,8 +366,7 @@ int rb_tree_remove_with_cb(LwpaRbTree *self, void *value, rb_tree_node_f node_cb
     q = q->link[dir];
     dir = self->cmp(self, q, &node) < 0;
 
-    /* Save the node with matching value and keep going; we'll do removal
-     * tasks at the end */
+    /* Save the node with matching value and keep going; we'll do removal tasks at the end */
     if (self->cmp(self, q, &node) == 0)
       f = q;
 
@@ -379,7 +374,9 @@ int rb_tree_remove_with_cb(LwpaRbTree *self, void *value, rb_tree_node_f node_cb
     if (!rb_node_is_red(q) && !rb_node_is_red(q->link[dir]))
     {
       if (rb_node_is_red(q->link[!dir]))
+      {
         p = p->link[last] = rb_node_rotate(q, dir);
+      }
       else if (!rb_node_is_red(q->link[!dir]))
       {
         LwpaRbNode *s = p->link[!last];
@@ -437,33 +434,31 @@ int rb_tree_remove_with_cb(LwpaRbTree *self, void *value, rb_tree_node_f node_cb
 
 /*! \brief Clear all values from a red-black tree.
  *
- *  The node memory is deallocated using the #rb_node_dealloc_f provided in
- *  rb_tree_init(); the user is responsible for deallocating the value memory.
+ *  The node memory is deallocated using the #rb_node_dealloc_f provided in lwpa_rbtree_init(); the
+ *  user is responsible for deallocating the value memory.
  *
  *  \param[in] self Tree to clear.
  *  \return 1 (the tree was cleared) or 0 (an error occurred).
  */
-int rb_tree_clear(LwpaRbTree *self)
+int lwpa_rbtree_clear(LwpaRbTree *self)
 {
   int result = 0;
   if (self)
-    result = rb_tree_clear_with_cb(self, rb_tree_node_dealloc_cb);
+    result = lwpa_rbtree_clear_with_cb(self, lwpa_rbtree_node_dealloc_cb);
   return result;
 }
 
-/*! \brief Clear all values from a red-black tree, calling back into the
- *         application for each node and value being removed.
+/*! \brief Clear all values from a red-black tree, calling back into the application for each node
+ *         and value being removed.
  *
- *  The user provides a #rb_tree_node_f callback function which is called for
- *  each node in the tree. The user is responsible for deallocating both the
- *  node and value memory.
+ *  The user provides a #lwpa_rbtree_node_f callback function which is called for each node in the
+ *  tree. The user is responsible for deallocating both the node and value memory.
  *
  *  \param[in] self Tree to clear.
- *  \param[in] node_cb Callback function to call with each node and value being
- *                     removed.
+ *  \param[in] node_cb Callback function to call with each node and value being removed.
  *  \return 1 (the tree was cleared) or 0 (an error occurred).
  */
-int rb_tree_clear_with_cb(LwpaRbTree *self, rb_tree_node_f node_cb)
+int lwpa_rbtree_clear_with_cb(LwpaRbTree *self, lwpa_rbtree_node_f node_cb)
 {
   int result = 0;
   if (self && node_cb)
@@ -471,8 +466,7 @@ int rb_tree_clear_with_cb(LwpaRbTree *self, rb_tree_node_f node_cb)
     LwpaRbNode *node = self->root;
     LwpaRbNode *save = NULL;
 
-    /* Rotate away the left links so that we can treat this like the
-     * destruction of a linked list */
+    /* Rotate away the left links so that we can treat this like the destruction of a linked list */
     while (node)
     {
       if (node->link[0] == NULL)
@@ -502,7 +496,7 @@ int rb_tree_clear_with_cb(LwpaRbTree *self, rb_tree_node_f node_cb)
  *  \param[in] self The tree of which to get the size.
  *  \return The number of values currently in the tree.
  */
-size_t rb_tree_size(LwpaRbTree *self)
+size_t lwpa_rbtree_size(LwpaRbTree *self)
 {
   size_t result = 0;
   if (self)
@@ -512,20 +506,21 @@ size_t rb_tree_size(LwpaRbTree *self)
 
 /*! \brief Test the validity of a red-black tree.
  *
- *  A debugging function; tests that both basic binary tree rules and specific
- *  red-black rules are not violated.
+ *  A debugging function; tests that both basic binary tree rules and specific red-black rules are
+ *  not violated.
  *
  *  \param[in] self Tree to test.
- *  \param[in] root Node at which to start the test. All nodes beneath this
- *                  node will be tested.
+ *  \param[in] root Node at which to start the test. All nodes beneath this node will be tested.
  *  \return 1 (no violations were found) or 0 (a violation was found).
  */
-int rb_tree_test(LwpaRbTree *self, LwpaRbNode *root)
+int lwpa_rbtree_test(LwpaRbTree *self, LwpaRbNode *root)
 {
   int lh, rh;
 
   if (root == NULL)
+  {
     return 1;
+  }
   else
   {
     LwpaRbNode *ln = root->link[0];
@@ -540,8 +535,8 @@ int rb_tree_test(LwpaRbTree *self, LwpaRbNode *root)
       }
     }
 
-    lh = rb_tree_test(self, ln);
-    rh = rb_tree_test(self, rn);
+    lh = lwpa_rbtree_test(self, ln);
+    rh = lwpa_rbtree_test(self, rn);
 
     /* Invalid binary search tree */
     if ((ln != NULL && self->cmp(self, ln, root) >= 0) || (rn != NULL && self->cmp(self, rn, root) <= 0))
@@ -563,17 +558,17 @@ int rb_tree_test(LwpaRbTree *self, LwpaRbNode *root)
   }
 }
 
-/* rb_iter */
+/* lwpa_rbiter */
 
 /*! \brief Initialize a red-black tree iterator.
  *
- *  This function must be called on a new iterator before using any of the other
- *  rb_iter_* functions on it.
+ *  This function must be called on a new iterator before using any of the other lwpa_rbiter_*
+ *  functions on it.
  *
  *  \param[in] self The iterator to be initialized.
  *  \return Pointer to the iterator that was initialized.
  */
-LwpaRbIter *rb_iter_init(LwpaRbIter *self)
+LwpaRbIter *lwpa_rbiter_init(LwpaRbIter *self)
 {
   if (self)
   {
@@ -584,8 +579,8 @@ LwpaRbIter *rb_iter_init(LwpaRbIter *self)
   return self;
 }
 
-/* Internal function, init traversal object, dir determines whether to begin
- * traversal at the smallest or largest valued node. */
+/* Internal function, init traversal object, dir determines whether to begin traversal at the
+ * smallest or largest valued node. */
 static void *rb_iter_start(LwpaRbIter *self, LwpaRbTree *tree, int dir)
 {
   void *result = NULL;
@@ -644,56 +639,54 @@ static void *rb_iter_move(LwpaRbIter *self, int dir)
 
 /*! \brief Point a red-black tree iterator at the first value in the tree.
  *
- *  The first value is the lowest, as determined by the #rb_tree_node_cmp_f
- *  provided in rb_tree_init(). Use rb_iter_next() to get the next higher value.
+ *  The first value is the lowest, as determined by the #lwpa_rbtree_node_cmp_f provided in
+ *  lwpa_rbtree_init(). Use lwpa_rbiter_next() to get the next higher value.
  *
  *  \param[in] self Iterator to point at the first value.
  *  \param[in] tree Tree of which to get the first value.
  *  \return Pointer to the first value or NULL (the tree was empty or invalid).
  */
-void *rb_iter_first(LwpaRbIter *self, LwpaRbTree *tree)
+void *lwpa_rbiter_first(LwpaRbIter *self, LwpaRbTree *tree)
 {
   return rb_iter_start(self, tree, 0);
 }
 
 /*! \brief Point a red-black tree iterator at the last value in the tree.
  *
- *  The last value is the highest, as determined by the #rb_tree_node_cmp_f
- *  provided in rb_tree_init(). Use rb_iter_prev() to get the next lower value.
+ *  The last value is the highest, as determined by the #lwpa_rbtree_node_cmp_f provided in
+ *  lwpa_rbtree_init(). Use lwpa_rbiter_prev() to get the next lower value.
  *
  *  \param[in] self Iterator to point at the last value.
  *  \param[in] tree Tree of which to get the last value.
  *  \return Pointer to the last value or NULL (the tree was empty or invalid).
  */
-void *rb_iter_last(LwpaRbIter *self, LwpaRbTree *tree)
+void *lwpa_rbiter_last(LwpaRbIter *self, LwpaRbTree *tree)
 {
   return rb_iter_start(self, tree, 1);
 }
 
 /*! \brief Advance a red-black tree iterator.
  *
- *  Gets the next higher value in the tree as determined by the
- *  #rb_tree_node_cmp_f provided in rb_tree_init().
+ *  Gets the next higher value in the tree as determined by the #lwpa_rbtree_node_cmp_f provided in
+ *  lwpa_rbtree_init().
  *
  *  \param[in] self Iterator to advance.
- *  \return Pointer to next higher value, or NULL (the end of the tree has been
- *          reached).
+ *  \return Pointer to next higher value, or NULL (the end of the tree has been reached).
  */
-void *rb_iter_next(LwpaRbIter *self)
+void *lwpa_rbiter_next(LwpaRbIter *self)
 {
   return rb_iter_move(self, 1);
 }
 
 /*! \brief Reverse-advance a red-black tree iterator.
  *
- *  Gets the next lower value in the tree as determined by the
- *  #rb_tree_node_cmp_f provided in rb_tree_init().
+ *  Gets the next lower value in the tree as determined by the #lwpa_rbtree_node_cmp_f provided in
+ *  lwpa_rbtree_init().
  *
  *  \param[in] self Iterator to reverse-advance.
- *  \return Pointer to next lower value, or NULL (the beginning of the tree has
- *          been reached).
+ *  \return Pointer to next lower value, or NULL (the beginning of the tree has been reached).
  */
-void *rb_iter_prev(LwpaRbIter *self)
+void *lwpa_rbiter_prev(LwpaRbIter *self)
 {
   return rb_iter_move(self, 0);
 }

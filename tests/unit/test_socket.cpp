@@ -53,12 +53,12 @@ protected:
   const char *test_ip4_2 = "255.255.255.255";
   const char *test_ip4_fail = "256.256.256.256";
   const char *test_ip6_1 = "::";
-  const uint8_t test_ip6_1_bin[IPV6_BYTES] = {0};
+  const uint8_t test_ip6_1_bin[LWPA_IPV6_BYTES] = {0};
   const char *test_ip6_2 = "::1";
-  const uint8_t test_ip6_2_bin[IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+  const uint8_t test_ip6_2_bin[LWPA_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
   const char *test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
-  const uint8_t test_ip6_3_bin[IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-                                              0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+  const uint8_t test_ip6_3_bin[LWPA_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                                   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
   const char *test_ip6_fail = "abcd::ef01::2345";
 
   // For getaddrinfo
@@ -78,18 +78,18 @@ TEST_F(SocketTest, inet_xtox)
   LwpaIpAddr addr;
 
   // Test lwpa_inet_pton()
-  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(LWPA_IPV4, test_ip4_1, &addr));
+  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(kLwpaIpTypeV4, test_ip4_1, &addr));
   ASSERT_EQ(lwpaip_v4_address(&addr), 0u);
-  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(LWPA_IPV4, test_ip4_2, &addr));
+  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(kLwpaIpTypeV4, test_ip4_2, &addr));
   ASSERT_EQ(lwpaip_v4_address(&addr), 0xffffffffu);
-  ASSERT_NE(LWPA_OK, lwpa_inet_pton(LWPA_IPV4, test_ip4_fail, &addr));
-  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(LWPA_IPV6, test_ip6_1, &addr));
-  ASSERT_EQ(0, memcmp(lwpaip_v6_address(&addr), test_ip6_1_bin, IPV6_BYTES));
-  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(LWPA_IPV6, test_ip6_2, &addr));
-  ASSERT_EQ(0, memcmp(lwpaip_v6_address(&addr), test_ip6_2_bin, IPV6_BYTES));
-  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(LWPA_IPV6, test_ip6_3, &addr));
-  ASSERT_EQ(0, memcmp(lwpaip_v6_address(&addr), test_ip6_3_bin, IPV6_BYTES));
-  ASSERT_NE(LWPA_OK, lwpa_inet_pton(LWPA_IPV6, test_ip6_fail, &addr));
+  ASSERT_NE(LWPA_OK, lwpa_inet_pton(kLwpaIpTypeV4, test_ip4_fail, &addr));
+  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_1, &addr));
+  ASSERT_EQ(0, memcmp(lwpaip_v6_address(&addr), test_ip6_1_bin, LWPA_IPV6_BYTES));
+  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_2, &addr));
+  ASSERT_EQ(0, memcmp(lwpaip_v6_address(&addr), test_ip6_2_bin, LWPA_IPV6_BYTES));
+  ASSERT_EQ(LWPA_OK, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_3, &addr));
+  ASSERT_EQ(0, memcmp(lwpaip_v6_address(&addr), test_ip6_3_bin, LWPA_IPV6_BYTES));
+  ASSERT_NE(LWPA_OK, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_fail, &addr));
 
   // Test lwpa_inet_ntop()
   lwpaip_set_v4_address(&addr, 0);

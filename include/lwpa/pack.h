@@ -43,7 +43,7 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint16_t.
  *  \return Unpacked uint16_t.
  */
-#define upack_16b(ptr)                        \
+#define lwpa_upack_16b(ptr)                   \
   (((uint16_t)0u) |                           \
    (((uint16_t)((uint8_t *)(ptr))[0]) << 8) | \
     ((uint16_t)((uint8_t *)(ptr))[1]))
@@ -52,7 +52,7 @@
  *  \param ptr Pointer to the buffer into which to pack a uint16_t.
  *  \param val uint16_t value to pack into the buffer.
  */
-#define pack_16b(ptr, val)                                    \
+#define lwpa_pack_16b(ptr, val)                               \
   do                                                          \
   {                                                           \
     ((uint8_t *)(ptr))[1] = (uint8_t) ((val) & 0xff);         \
@@ -63,7 +63,7 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint16_t.
  *  \return Unpacked uint16_t.
  */
-#define upack_16l(ptr)                        \
+#define lwpa_upack_16l(ptr)                   \
   (((uint16_t)0u) |                           \
    (((uint16_t)((uint8_t *)(ptr))[1]) << 8) | \
     ((uint16_t)((uint8_t *)(ptr))[0]))
@@ -72,7 +72,7 @@
  *  \param ptr Pointer to the buffer into which to pack a uint16_t.
  *  \param val uint16_t value to pack into the buffer.
  */
-#define pack_16l(ptr, val)                                    \
+#define lwpa_pack_16l(ptr, val)                               \
   do                                                          \
   {                                                           \
     ((uint8_t *)(ptr))[0] = (uint8_t) ((val) & 0xff);         \
@@ -83,7 +83,7 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint32_t.
  *  \return Unpacked uint32_t.
  */
-#define upack_32b(ptr)                         \
+#define lwpa_upack_32b(ptr)                    \
   (((uint32_t)0u) |                            \
    (((uint32_t)((uint8_t *)(ptr))[0]) << 24) | \
    (((uint32_t)((uint8_t *)(ptr))[1]) << 16) | \
@@ -94,7 +94,7 @@
  *  \param ptr Pointer to the buffer into which to pack a uint32_t.
  *  \param val uint32_t value to pack into the buffer.
  */
-#define pack_32b(ptr, val)                                         \
+#define lwpa_pack_32b(ptr, val)                                    \
   do                                                               \
   {                                                                \
     ((uint8_t *)(ptr))[3] = (uint8_t) ((val) & 0xff);              \
@@ -107,7 +107,7 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint32_t.
  *  \return Unpacked uint32_t.
  */
-#define upack_32l(ptr)                         \
+#define lwpa_upack_32l(ptr)                    \
   (((uint32_t)0u) |                            \
    (((uint32_t)((uint8_t *)(ptr))[3]) << 24) | \
    (((uint32_t)((uint8_t *)(ptr))[2]) << 16) | \
@@ -118,7 +118,7 @@
  *  \param ptr Pointer to the buffer into which to pack a uint32_t.
  *  \param val uint32_t value to pack into the buffer.
  */
-#define pack_32l(ptr, val)                                         \
+#define lwpa_pack_32l(ptr, val)                                    \
   do                                                               \
   {                                                                \
     ((uint8_t *)(ptr))[0] = (uint8_t) ((val) & 0xff);              \
@@ -133,7 +133,7 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint64_t.
  *  \return Unpacked uint64_t.
  */
-#define upack_64b(ptr)                         \
+#define lwpa_upack_64b(ptr)                    \
   (((uint64_t)0u) |                            \
    (((uint64_t)((uint8_t *)(ptr))[0]) << 56) | \
    (((uint64_t)((uint8_t *)(ptr))[1]) << 48) | \
@@ -148,7 +148,7 @@
  *  \param ptr Pointer to the buffer into which to pack a uint64_t.
  *  \param val uint64_t value to pack into the buffer.
  */
-#define pack_64b(ptr, val)                                                 \
+#define lwpa_pack_64b(ptr, val)                                            \
   do                                                                       \
   {                                                                        \
     ((uint8_t *)(ptr))[7] = (uint8_t) ((val) & 0xff);                      \
@@ -165,7 +165,7 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint64_t.
  *  \return Unpacked uint64_t.
  */
-#define upack_64l(ptr)                         \
+#define lwpa_upack_64l(ptr)                    \
   (((uint64_t)0u) |                            \
    (((uint64_t)((uint8_t *)(ptr))[7]) << 56) | \
    (((uint64_t)((uint8_t *)(ptr))[6]) << 48) | \
@@ -180,7 +180,7 @@
  *  \param ptr Pointer to the buffer into which to pack a uint64_t.
  *  \param val uint64_t value to pack into the buffer.
  */
-#define pack_64l(ptr, val)                                                 \
+#define lwpa_pack_64l(ptr, val)                                            \
   do                                                                       \
   {                                                                        \
     ((uint8_t *)(ptr))[0] = (uint8_t) ((val) & 0xff);                      \

@@ -117,7 +117,7 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
     struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)pfsa;
     sin6->sin6_family = AF_INET6;
     sin6->sin6_port = htons(sa->port);
-    memcpy(sin6->sin6_addr.s6_addr, lwpaip_v6_address(&sa->ip), IPV6_BYTES);
+    memcpy(sin6->sin6_addr.s6_addr, lwpaip_v6_address(&sa->ip), LWPA_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
   }
   return ret;
@@ -548,7 +548,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
               struct ipv6_mreq val;
               val.ipv6imr_interface = 0;
               memcpy(&val.ipv6imr_multiaddr.s6_addr,
-                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
+                     lwpaip_v6_address(&amreq->group), LWPA_IPV6_BYTES);
               res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
                                sizeof val);
             }
@@ -565,7 +565,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
               struct ipv6_mreq val;
               val.ipv6imr_interface = 0;
               memcpy(&val.ipv6imr_multiaddr.s6_addr,
-                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
+                     lwpaip_v6_address(&amreq->group), LWPA_IPV6_BYTES);
               res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
                                sizeof val);
             }
@@ -690,7 +690,9 @@ int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
           }
         }
         else
+        {
           return (int)err_plat_to_lwpa(WSAGetLastError());
+        }
       }
       if (nreadfds && (fd->events & LWPA_POLLIN) && FD_ISSET(fd->fd, &readfds))
       {
@@ -747,6 +749,7 @@ bool lwpa_nextaddr(LwpaAddrinfo *ai)
     ai->ai_flags = 0;
     if (!sockaddr_plat_to_lwpa(&ai->ai_addr, pf_ai->ai_addr))
       return false;
+
     /* Can't use reverse maps, because we have no guarantee of the numeric values of the platform
      * constants. Ugh. */
     if (pf_ai->ai_family == AF_INET)
@@ -755,18 +758,21 @@ bool lwpa_nextaddr(LwpaAddrinfo *ai)
       ai->ai_family = LWPA_AF_INET6;
     else
       ai->ai_family = LWPA_AF_UNSPEC;
+
     if (pf_ai->ai_socktype == SOCK_DGRAM)
       ai->ai_socktype = LWPA_DGRAM;
     else if (pf_ai->ai_socktype == SOCK_STREAM)
       ai->ai_socktype = LWPA_STREAM;
     else
       ai->ai_socktype = 0;
+
     if (pf_ai->ai_protocol == IPPROTO_UDP)
       ai->ai_protocol = LWPA_IPPROTO_UDP;
     else if (pf_ai->ai_protocol == IPPROTO_TCP)
       ai->ai_protocol = LWPA_IPPROTO_TCP;
     else
       ai->ai_protocol = 0;
+
     ai->ai_canonname = pf_ai->ai_canonname;
     ai->pd[1] = pf_ai->ai_next;
 
@@ -788,7 +794,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
 
   switch (src->type)
   {
-    case LWPA_IPV4:
+    case kLwpaIpTypeV4:
     {
       struct in_addr addr;
       addr.s_addr = htonl(lwpaip_v4_address(src));
@@ -796,10 +802,10 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
         return LWPA_OK;
       return LWPA_SYSERR;
     }
-    case LWPA_IPV6:
+    case kLwpaIpTypeV6:
     {
       struct in6_addr addr;
-      memcpy(addr.s6_addr, lwpaip_v6_address(src), IPV6_BYTES);
+      memcpy(addr.s6_addr, lwpaip_v6_address(src), LWPA_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
         return LWPA_OK;
       return LWPA_SYSERR;
@@ -816,7 +822,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *des
 
   switch (type)
   {
-    case LWPA_IPV4:
+    case kLwpaIpTypeV4:
     {
       struct in_addr addr;
       if (1 != inet_pton(AF_INET, src, &addr))
@@ -824,7 +830,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *des
       lwpaip_set_v4_address(dest, ntohl(addr.s_addr));
       return LWPA_OK;
     }
-    case LWPA_IPV6:
+    case kLwpaIpTypeV6:
     {
       struct in6_addr addr;
       if (1 != inet_pton(AF_INET6, src, &addr))

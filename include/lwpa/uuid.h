@@ -42,12 +42,12 @@ extern "C" {
 #endif
 
 /*! The number of bytes that make up a UUID. */
-#define UUID_BYTES 16u
+#define LWPA_UUID_BYTES 16u
 
 /*! The UUID type. */
 typedef struct LwpaUuid
 {
-  uint8_t data[UUID_BYTES];
+  uint8_t data[LWPA_UUID_BYTES];
 } LwpaUuid;
 
 /*! \brief Compare two UUIDs.
@@ -57,10 +57,10 @@ typedef struct LwpaUuid
  *            0 (uuid1ptr is equal to uuid2ptr)\n
  *          > 0 (uuid1ptr is greater than uuid2ptr)
  */
-#define uuidcmp(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, UUID_BYTES)
+#define lwpa_uuid_cmp(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, LWPA_UUID_BYTES)
 
 /*! A null (all 0's) UUID, used by uuid_isnull() for comparison. */
-extern const LwpaUuid NULL_UUID;
+extern const LwpaUuid LWPA_NULL_UUID;
 
 /*! \brief Determine if a UUID is null.
  *
@@ -69,17 +69,17 @@ extern const LwpaUuid NULL_UUID;
  *  \param uuidptr Pointer to UUID to null-check.
  *  \return true (UUID is null) or false (UUID is not null).
  */
-#define uuid_isnull(uuidptr) (memcmp((uuidptr)->data, NULL_UUID.data, UUID_BYTES) == 0)
+#define lwpa_uuid_is_null(uuidptr) (memcmp((uuidptr)->data, LWPA_NULL_UUID.data, LWPA_UUID_BYTES) == 0)
 
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
-#define UUID_STRING_BYTES 37
+#define LWPA_UUID_STRING_BYTES 37
 
-void uuid_to_string(char *buf, const LwpaUuid *uuid);
-bool string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen);
+void lwpa_uuid_to_string(char *buf, const LwpaUuid *uuid);
+bool lwpa_string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen);
 
 /************************ UUID Generation Functions **************************/
 
-void generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum);
+void lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum);
 
 #ifdef __cplusplus
 }

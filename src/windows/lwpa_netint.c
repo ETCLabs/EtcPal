@@ -34,8 +34,8 @@ static IP_ADAPTER_ADDRESSES *get_windows_adapters()
   ULONG buflen = 0;
   ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER | GAA_FLAG_INCLUDE_GATEWAYS;
 
-  /* Preallocating a buffer specifically this size is expressly recommended by
-   * the Microsoft usage page. */
+  /* Preallocating a buffer specifically this size is expressly recommended by the Microsoft usage
+   * page. */
   uint8_t *buffer = malloc(15000);
   if (!buffer)
     return NULL;
@@ -68,7 +68,7 @@ static void copy_ipv4_info(IP_ADAPTER_UNICAST_ADDRESS *pip, IP_ADAPTER_GATEWAY_A
     lwpaip_set_v4_address(&info->gate, 0u);
 }
 
-size_t netint_get_num_interfaces()
+size_t lwpa_netint_get_num_interfaces()
 {
   IP_ADAPTER_ADDRESSES *padapters, *pcur;
   size_t n_ifaces = 0;
@@ -80,8 +80,7 @@ size_t netint_get_num_interfaces()
 
   while (pcur)
   {
-    /* If this is multihomed, there may be multiple addresses under the
-     * same adapter */
+    /* If this is multihomed, there may be multiple addresses under the same adapter */
     IP_ADAPTER_UNICAST_ADDRESS *pip = pcur->FirstUnicastAddress;
     while (pip)
     {
@@ -103,7 +102,7 @@ size_t netint_get_num_interfaces()
   return n_ifaces;
 }
 
-size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size)
+size_t lwpa_netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size)
 {
   size_t n_ifaces = 0;
   IP_ADAPTER_ADDRESSES *padapters, *pcur;
@@ -123,8 +122,7 @@ size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size)
 
   while (pcur)
   {
-    /* If this is multihomed, there may be multiple addresses under the
-     * same adapter */
+    /* If this is multihomed, there may be multiple addresses under the same adapter */
     IP_ADAPTER_UNICAST_ADDRESS *pip = pcur->FirstUnicastAddress;
     IP_ADAPTER_GATEWAY_ADDRESS *pgate = pcur->FirstGatewayAddress;
     while (pip)
@@ -151,19 +149,20 @@ size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size)
         have_def_index = false;
       }
       else
+      {
         info->is_default = false;
-      strncpy_s(info->name, NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
-      if (pcur->PhysicalAddressLength == NETINTINFO_MAC_LEN)
-        memcpy(info->mac, pcur->PhysicalAddress, NETINTINFO_MAC_LEN);
+      }
+      strncpy_s(info->name, LWPA_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
+      if (pcur->PhysicalAddressLength == LWPA_NETINTINFO_MAC_LEN)
+        memcpy(info->mac, pcur->PhysicalAddress, LWPA_NETINTINFO_MAC_LEN);
       else
-        memset(info->mac, 0, NETINTINFO_MAC_LEN);
+        memset(info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
 
       if (++n_ifaces >= netint_arr_size)
         break;
 
       pip = pip->Next;
-      /* Just in case there's only ever one gateway but more
-       * addrs (probably not possible) */
+      /* Just in case there's only ever one gateway but more addrs (probably not possible) */
       if (pgate && pgate->Next)
         pgate = pgate->Next;
     }
@@ -175,7 +174,7 @@ size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size)
   return n_ifaces;
 }
 
-bool netint_get_default_interface(LwpaNetintInfo *netint)
+bool lwpa_netint_get_default_interface(LwpaNetintInfo *netint)
 {
   DWORD def_ifindex;
   bool res = false;
@@ -190,8 +189,7 @@ bool netint_get_default_interface(LwpaNetintInfo *netint)
 
     while (pcur)
     {
-      /* If this is multihomed, there may be multiple addresses under the
-       * same adapter */
+      /* If this is multihomed, there may be multiple addresses under the same adapter */
       IP_ADAPTER_UNICAST_ADDRESS *pip = pcur->FirstUnicastAddress;
       IP_ADAPTER_GATEWAY_ADDRESS *pgate = pcur->FirstGatewayAddress;
       while (pip)
@@ -201,17 +199,16 @@ bool netint_get_default_interface(LwpaNetintInfo *netint)
           copy_ipv4_info(pip, pgate, netint);
           netint->ifindex = def_ifindex;
           netint->is_default = true;
-          strncpy_s(netint->name, NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
-          if (pcur->PhysicalAddressLength == NETINTINFO_MAC_LEN)
-            memcpy(netint->mac, pcur->PhysicalAddress, NETINTINFO_MAC_LEN);
+          strncpy_s(netint->name, LWPA_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
+          if (pcur->PhysicalAddressLength == LWPA_NETINTINFO_MAC_LEN)
+            memcpy(netint->mac, pcur->PhysicalAddress, LWPA_NETINTINFO_MAC_LEN);
           else
-            memset(netint->mac, 0, NETINTINFO_MAC_LEN);
+            memset(netint->mac, 0, LWPA_NETINTINFO_MAC_LEN);
           res = true;
           break;
         }
         pip = pip->Next;
-        /* Just in case there's only ever one gateway but more
-         * addrs (probably not possible) */
+        /* Just in case there's only ever one gateway but more addrs (probably not possible) */
         if (pgate && pgate->Next)
           pgate = pgate->Next;
       }
@@ -237,7 +234,7 @@ bool mask_compare(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr
     const uint32_t *p2 = (const uint32_t *)lwpaip_v6_address(ip2);
     const uint32_t *pm = (const uint32_t *)lwpaip_v6_address(mask);
 
-    for (i = 0; i < IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
+    for (i = 0; i < LWPA_IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
     {
       if ((*p1 & *pm) != (*p2 & *pm))
         return false;
@@ -252,19 +249,21 @@ bool mask_is_empty(const LwpaIpAddr *mask)
   uint32_t mask_part = 0;
 
   if (lwpaip_is_v4(mask))
+  {
     mask_part = lwpaip_v4_address(mask);
+  }
   else if (lwpaip_is_v6(mask))
   {
     size_t i;
     const uint32_t *p = (const uint32_t *)lwpaip_v6_address(mask);
-    for (i = 0; i < IPV6_BYTES / 4; ++i, ++p)
+    for (i = 0; i < LWPA_IPV6_BYTES / 4; ++i, ++p)
       mask_part |= *p;
   }
   return (mask_part == 0);
 }
 
-const LwpaNetintInfo *netint_get_iface_for_dest(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr,
-                                                size_t netint_arr_size)
+const LwpaNetintInfo *lwpa_netint_get_iface_for_dest(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr,
+                                                     size_t netint_arr_size)
 {
   const LwpaNetintInfo *res = NULL;
   const LwpaNetintInfo *def = NULL;

@@ -35,7 +35,7 @@ int main(int argc, char **argv)
   {
     if (argc == 2)
     {
-      if (0 >= lwpa_inet_pton(LWPA_IPV4, argv[1], &g_netint))
+      if (0 >= lwpa_inet_pton(kLwpaIpTypeV4, argv[1], &g_netint))
       {
         printf(
             "Usage: %s <interface_addr>\n"
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     else
     {
       LwpaNetintInfo default_netint;
-      netint_get_default_interface(&default_netint);
+      lwpa_netint_get_default_interface(&default_netint);
       g_netint = default_netint.addr;
     }
   }
