@@ -28,9 +28,9 @@
 #define rlp_extended_length(inheritvec, inherithead, datalen) \
   ((datalen + (inheritvec ? 0 : RLP_VECTOR_SIZE) + (inherithead ? 0 : ACN_RLP_HEADER_SIZE)) > 4095)
 
-#define prot_mandates_l_flag(vector)                                                                               \
-  ((vector == LWPA_VECTOR_ROOT_LLRP) || (vector == LWPA_VECTOR_ROOT_BROKER) || (vector == LWPA_VECTOR_ROOT_RPT) || \
-   (vector == LWPA_VECTOR_ROOT_EPT))
+#define prot_mandates_l_flag(vector)                                                                            \
+  ((vector == ACN_VECTOR_ROOT_LLRP) || (vector == ACN_VECTOR_ROOT_BROKER) || (vector == ACN_VECTOR_ROOT_RPT) || \
+   (vector == ACN_VECTOR_ROOT_EPT))
 
 /* Make sure to use memcmp, not strcmp, because of the extra nulls */
 #define ACN_PACKET_IDENT "ASC-E1.17\0\0\0"
