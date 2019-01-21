@@ -108,7 +108,7 @@ bool lwpa_string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen)
 }
 
 /* This documentation appears here; the actual functions are in [platform]/lwpa_uuid_plat.c */
-/*! \fn lwpa_generate_v1_uuid()
+/*! \fn lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
  *  \brief Generate a Version 1 UUID.
  *
  *  This function uses the underlying OS API to create a UUID that is based on a combination of a
@@ -193,7 +193,7 @@ lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uin
 }
 
 /* This documentation appears here; the actual functions are in [platform]/lwpa_uuid_plat.c */
-/*! \fn lwpa_generate_v4_uuid()
+/*! \fn lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
  *  \brief Generate a Version 4 UUID.
  *
  *  This function uses the underlying OS API to create a UUID that is based on random data. The

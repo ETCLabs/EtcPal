@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - This CHANGELOG file.
 - lwpa_mempool: LWPA_MEMPOOL_DEFINE_ARRAY(), which allows a memory pool of
   fixed-size arrays of elements.
+- lwpa_uuid: Functions to generate V1 and V4 UUIDs using OS APIs where
+  available.
 
 ### Changed
 - lwpa is now built with CMake. Documentation updated accordingly.

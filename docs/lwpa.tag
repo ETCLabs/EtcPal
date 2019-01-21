@@ -308,15 +308,15 @@
       <type>uint8_t</type>
       <name>mac</name>
       <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>acfb2730f6bc990ea60b006dd2bf6e2b2</anchor>
-      <arglist>[NETINTINFO_MAC_LEN]</arglist>
+      <anchor>af218cb57bca9340eb78204cb81754bc9</anchor>
+      <arglist>[LWPA_NETINTINFO_MAC_LEN]</arglist>
     </member>
     <member kind="variable">
       <type>char</type>
       <name>name</name>
       <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>aa1880b44aa15396b0f044c0a84d2b0f3</anchor>
-      <arglist>[NETINTINFO_NAME_LEN]</arglist>
+      <anchor>abbe9b559861b88e242f78e5eb27b0fd5</anchor>
+      <arglist>[LWPA_NETINTINFO_NAME_LEN]</arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
@@ -401,8 +401,8 @@
       <type>LwpaRbNode *</type>
       <name>path</name>
       <anchorfile>struct_lwpa_rb_iter.html</anchorfile>
-      <anchor>a431a8b3f6f36f5c3e9f381a42bfabc5a</anchor>
-      <arglist>[RB_ITER_MAX_HEIGHT]</arglist>
+      <anchor>aca890e30bedb607e7d2164b568197d55</anchor>
+      <arglist>[LWPA_RB_ITER_MAX_HEIGHT]</arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
@@ -455,10 +455,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>rb_tree_node_cmp_f</type>
+      <type>lwpa_rbtree_node_cmp_f</type>
       <name>cmp</name>
       <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
-      <anchor>a3b4d0c1a0e7f6eac13267a7ae55d4179</anchor>
+      <anchor>a73b341fcbb4f0cb5c35ad5437de9da0b</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -469,17 +469,17 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>rb_node_alloc_f</type>
+      <type>lwpa_rbnode_alloc_f</type>
       <name>alloc_f</name>
       <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
-      <anchor>a93e173200002f4685f94f14d4eb674e7</anchor>
+      <anchor>a7a4e85551fa2e1fb00d70745c1fd5a65</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>rb_node_dealloc_f</type>
+      <type>lwpa_rbnode_dealloc_f</type>
       <name>dealloc_f</name>
       <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
-      <anchor>ab3e9daf21d6483195063b31b3507f82e</anchor>
+      <anchor>a37ee31aceb2b6af53d21336e97ce6330</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -487,6 +487,38 @@
       <name>info</name>
       <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
       <anchor>acb1df3a0f703b05bc4971f79cabe2597</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>LwpaRootLayerPdu</name>
+    <filename>struct_lwpa_root_layer_pdu.html</filename>
+    <member kind="variable">
+      <type>LwpaUuid</type>
+      <name>sender_cid</name>
+      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
+      <anchor>addaf02226137035b7f46186c67b87fe5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>vector</name>
+      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
+      <anchor>a513d751c7097b43b3968ac81f3a5715b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>pdata</name>
+      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
+      <anchor>a2f9eb29aa10e0d64f27f69db1e90bd07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>datalen</name>
+      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
+      <anchor>a3d12e161726566d24a1d0cf6c6b416bb</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -552,6 +584,24 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>LwpaTcpPreamble</name>
+    <filename>struct_lwpa_tcp_preamble.html</filename>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>rlp_block</name>
+      <anchorfile>struct_lwpa_tcp_preamble.html</anchorfile>
+      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>rlp_block_len</name>
+      <anchorfile>struct_lwpa_tcp_preamble.html</anchorfile>
+      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>LwpaThreadParams</name>
     <filename>struct_lwpa_thread_params.html</filename>
     <member kind="variable">
@@ -606,6 +656,24 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>LwpaUdpPreamble</name>
+    <filename>struct_lwpa_udp_preamble.html</filename>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>rlp_block</name>
+      <anchorfile>struct_lwpa_udp_preamble.html</anchorfile>
+      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>rlp_block_len</name>
+      <anchorfile>struct_lwpa_udp_preamble.html</anchorfile>
+      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>LwpaUuid</name>
     <filename>struct_lwpa_uuid.html</filename>
   </compound>
@@ -614,76 +682,8 @@
     <filename>struct_m_d5___c_t_x.html</filename>
   </compound>
   <compound kind="struct">
-    <name>RootLayerPdu</name>
-    <filename>struct_root_layer_pdu.html</filename>
-    <member kind="variable">
-      <type>LwpaUuid</type>
-      <name>sender_cid</name>
-      <anchorfile>struct_root_layer_pdu.html</anchorfile>
-      <anchor>addaf02226137035b7f46186c67b87fe5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint32_t</type>
-      <name>vector</name>
-      <anchorfile>struct_root_layer_pdu.html</anchorfile>
-      <anchor>a513d751c7097b43b3968ac81f3a5715b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>pdata</name>
-      <anchorfile>struct_root_layer_pdu.html</anchorfile>
-      <anchor>a2f9eb29aa10e0d64f27f69db1e90bd07</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>datalen</name>
-      <anchorfile>struct_root_layer_pdu.html</anchorfile>
-      <anchor>a3d12e161726566d24a1d0cf6c6b416bb</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
     <name>tagTHREADNAME_INFO</name>
     <filename>structtag_t_h_r_e_a_d_n_a_m_e___i_n_f_o.html</filename>
-  </compound>
-  <compound kind="struct">
-    <name>TcpPreamble</name>
-    <filename>struct_tcp_preamble.html</filename>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>rlp_block</name>
-      <anchorfile>struct_tcp_preamble.html</anchorfile>
-      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>rlp_block_len</name>
-      <anchorfile>struct_tcp_preamble.html</anchorfile>
-      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>UdpPreamble</name>
-    <filename>struct_udp_preamble.html</filename>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>rlp_block</name>
-      <anchorfile>struct_udp_preamble.html</anchorfile>
-      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>rlp_block_len</name>
-      <anchorfile>struct_udp_preamble.html</anchorfile>
-      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="group">
     <name>lwpa_lock</name>
@@ -1139,9 +1139,9 @@
     <class kind="struct">LwpaNetintInfo</class>
     <member kind="define">
       <type>#define</type>
-      <name>IPV6_BYTES</name>
+      <name>LWPA_IPV6_BYTES</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gad13014eeb2e4a08990536a16089be0f4</anchor>
+      <anchor>gadf510df24e827cbeeeca96a00d6cdd75</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -1180,21 +1180,21 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_IP_INVALID</name>
+      <name>kLwpaIpTypeInvalid</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gga75918e41a21a5b4511b2b3c797e6f048a827878502eeeef634e5d0d4dd3c77e88</anchor>
+      <anchor>gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_IPV4</name>
+      <name>kLwpaIpTypeV4</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gga75918e41a21a5b4511b2b3c797e6f048af03dcc1f24060aa236145f272fbf88cf</anchor>
+      <anchor>gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_IPV6</name>
+      <name>kLwpaIpTypeV6</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gga75918e41a21a5b4511b2b3c797e6f048a474b73f5d6671c188f851d9c1d3c6a0d</anchor>
+      <anchor>gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -1706,6 +1706,13 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>LWPA_MEMPOOL_DEFINE_ARRAY</name>
+      <anchorfile>group__lwpa__mempool.html</anchorfile>
+      <anchor>ga40f10bc28b7493a35a86c1cb4c1fd766</anchor>
+      <arglist>(name, type, array_size, pool_size)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>lwpa_mempool_init</name>
       <anchorfile>group__lwpa__mempool.html</anchorfile>
       <anchor>gaef04cee1ba289720a3a5701248ac6141</anchor>
@@ -1760,30 +1767,30 @@
     <filename>group__lwpa__netint.html</filename>
     <member kind="function">
       <type>size_t</type>
-      <name>netint_get_num_interfaces</name>
+      <name>lwpa_netint_get_num_interfaces</name>
       <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga6b5fd1732b51d2090225617c87a902b8</anchor>
+      <anchor>gaf5826dbe7cab3ace937a77ca32ecb362</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>netint_get_interfaces</name>
+      <name>lwpa_netint_get_interfaces</name>
       <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga5a175a38550ad3b30bb0930a279311ee</anchor>
+      <anchor>ga3e8baf49586da56197583bce01aaaf95</anchor>
       <arglist>(LwpaNetintInfo *netint_arr, size_t netint_arr_size)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>netint_get_default_interface</name>
+      <name>lwpa_netint_get_default_interface</name>
       <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>gaae95e6b2b89d004506ac868d094d0ac0</anchor>
+      <anchor>gaa829c4964206f21bf51f0171a9c81ff8</anchor>
       <arglist>(LwpaNetintInfo *netint)</arglist>
     </member>
     <member kind="function">
       <type>const LwpaNetintInfo *</type>
-      <name>netint_get_iface_for_dest</name>
+      <name>lwpa_netint_get_iface_for_dest</name>
       <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga21a8bd8c4fd3fd9be340a6f9051eacc7</anchor>
+      <anchor>gad0631d5b71730d81b06b3d15fcbf7884</anchor>
       <arglist>(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr, size_t netint_arr_size)</arglist>
     </member>
   </compound>
@@ -1793,58 +1800,58 @@
     <filename>group__lwpa__pack.html</filename>
     <member kind="define">
       <type>#define</type>
-      <name>upack_16b</name>
+      <name>lwpa_upack_16b</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga68d1fab4542e3bfde42b2e071078024d</anchor>
+      <anchor>gaaaf27b0d45b7d9fdae52a4218774ec35</anchor>
       <arglist>(ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>pack_16b</name>
+      <name>lwpa_pack_16b</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga32f0584d0100019465abdae96fced391</anchor>
+      <anchor>ga0ff3f85ee64ed231d89baaa57bd13dad</anchor>
       <arglist>(ptr, val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>upack_16l</name>
+      <name>lwpa_upack_16l</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga38fbf13e5a30a30bfc16f8849b9c0e13</anchor>
+      <anchor>gae7c40446cec9afd5a353956fb19eb2fe</anchor>
       <arglist>(ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>pack_16l</name>
+      <name>lwpa_pack_16l</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gaeff170e309ac2e9eed5bee5b97258728</anchor>
+      <anchor>gac839a3e63e3a5d22fbb31c1328927d21</anchor>
       <arglist>(ptr, val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>upack_32b</name>
+      <name>lwpa_upack_32b</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga442155eb9bd7cb4312b004b50aa39608</anchor>
+      <anchor>gaf1954a62e2548d796642ed114db84d5c</anchor>
       <arglist>(ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>pack_32b</name>
+      <name>lwpa_pack_32b</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gabc8cfafb05fb11c81e8f5dbc89472de7</anchor>
+      <anchor>ga178005bbc344ef67ee778b6617752a85</anchor>
       <arglist>(ptr, val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>upack_32l</name>
+      <name>lwpa_upack_32l</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga3b8f297f4976651c00e2dd15fae2c2b4</anchor>
+      <anchor>ga752fcacb7a3d901a169174414408b618</anchor>
       <arglist>(ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>pack_32l</name>
+      <name>lwpa_pack_32l</name>
       <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga093d966b9ca2bd2669c04087e27ca1ee</anchor>
+      <anchor>ga4293fdfec8c32a7296fca6f3ac28dc91</anchor>
       <arglist>(ptr, val)</arglist>
     </member>
   </compound>
@@ -1857,37 +1864,37 @@
     <class kind="struct">LwpaPduConstraints</class>
     <member kind="define">
       <type>#define</type>
-      <name>pdu_length</name>
+      <name>lwpa_pdu_length</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga26b92b4dfc472ca15e229260aae48592</anchor>
+      <anchor>gadaf3eef17f0630b17283c1e7d5dd6104</anchor>
       <arglist>(pdu_buf)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>pdu_pack_normal_len</name>
+      <name>lwpa_pdu_pack_normal_len</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gabef4551d2056e46f2e9288480cdf20c4</anchor>
+      <anchor>ga93536e776d086b3382f063c6ecd2c39c</anchor>
       <arglist>(pdu_buf, length)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>pdu_pack_ext_len</name>
+      <name>lwpa_pdu_pack_ext_len</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gad9b9ee28c2c3923ca1ece7239eff6b7d</anchor>
+      <anchor>ga38732658618dbe739d909c9cdc71d010</anchor>
       <arglist>(pdu_buf, length)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>PDU_INIT</name>
+      <name>LWPA_PDU_INIT</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga5263d5874200e90de739e1cf453078ef</anchor>
+      <anchor>ga1b9332f5d2c84f7679f6d37d7abc9abc</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>init_pdu</name>
+      <name>lwpa_init_pdu</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gaa750a6d6dbdffd9d35f20c608aa71529</anchor>
+      <anchor>gabb885bd8514cdb920910fdc815514e2a</anchor>
       <arglist>(pduptr)</arglist>
     </member>
     <member kind="typedef">
@@ -1906,65 +1913,65 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>parse_pdu</name>
+      <name>lwpa_parse_pdu</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga099a70bb62e8eeb7bcd338c6c2565b9f</anchor>
+      <anchor>gacc313a157e7e2b45c67858452512f6c0</anchor>
       <arglist>(const uint8_t *buf, size_t buflen, const LwpaPduConstraints *constraints, LwpaPdu *pdu)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>l_flag_set</name>
+      <name>lwpa_pdu_l_flag_set</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga7b46c39b50be48a8253dd21ab6a58b91</anchor>
+      <anchor>gae5b364603403da45cb766ce7b6511deb</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>v_flag_set</name>
+      <name>lwpa_pdu_v_flag_set</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga4173e8e7c7e466c0838d444ef380fb88</anchor>
+      <anchor>ga9b9015abbec81a0ce77a9458f81a36ad</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>h_flag_set</name>
+      <name>lwpa_pdu_h_flag_set</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gaded5a889b6168f4dba687b319bb3ce3a</anchor>
+      <anchor>ga33fb4996b8195d16ef3d067a0325728d</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>d_flag_set</name>
+      <name>lwpa_pdu_d_flag_set</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga21c0bdfc1d6580d6a7f4067c5f0e2a22</anchor>
+      <anchor>ga27a123d2b8de5379a9fb58bfa530cfd6</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>set_l_flag</name>
+      <name>lwpa_pdu_set_l_flag</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gaa4c290b814c7db454dd912abc2712612</anchor>
+      <anchor>gadb9eaf73cb157935232cf5b918bc7de9</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>set_v_flag</name>
+      <name>lwpa_pdu_set_v_flag</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga06ef097d7a1f8efa9033660edb3b2038</anchor>
+      <anchor>gaf5c1d329d7d9784de1ac81950d1aece5</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>set_h_flag</name>
+      <name>lwpa_pdu_set_h_flag</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gaa51d5354237eac56446b124e7c77b605</anchor>
+      <anchor>gab1ac6bc0f38adfb6bd122df4ad896de5</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>set_d_flag</name>
+      <name>lwpa_pdu_set_d_flag</name>
       <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gaea2405bfe6dd376950dbb72fe36bb56e</anchor>
+      <anchor>ga996c5a9416c5c3a17ded724e9e69ad18</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
   </compound>
@@ -1977,9 +1984,9 @@
     <class kind="struct">LwpaRbIter</class>
     <member kind="define">
       <type>#define</type>
-      <name>RB_ITER_MAX_HEIGHT</name>
+      <name>LWPA_RB_ITER_MAX_HEIGHT</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga0d5d812c77767d9b18de1620e34167ac</anchor>
+      <anchor>gaa24d5568b0d6e32ebf26911d1d0ab31a</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -1991,156 +1998,156 @@
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_node_cmp_ptr_cb</name>
+      <name>lwpa_rbtree_node_cmp_ptr_cb</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga81b54f02c74208cebaf5415a834ae570</anchor>
+      <anchor>ga73fa4fa4c22fb8c6fb9a07235035bfcb</anchor>
       <arglist>(const LwpaRbTree *self, const LwpaRbNode *a, const LwpaRbNode *b)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>rb_tree_node_dealloc_cb</name>
+      <name>lwpa_rbtree_node_dealloc_cb</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga3d53f0f67ab15bd6786a403ee15c71a5</anchor>
+      <anchor>ga7ce658fe81d10f1d6fb5e2b2eb431885</anchor>
       <arglist>(const LwpaRbTree *self, LwpaRbNode *node)</arglist>
     </member>
     <member kind="function">
       <type>LwpaRbNode *</type>
-      <name>rb_node_init</name>
+      <name>lwpa_rbnode_init</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gada83215755aa518f6bf3d166a5ff7779</anchor>
+      <anchor>ga1ab2558f54d713524267465e09c68759</anchor>
       <arglist>(LwpaRbNode *self, void *value)</arglist>
     </member>
     <member kind="function">
       <type>LwpaRbTree *</type>
-      <name>rb_tree_init</name>
+      <name>lwpa_rbtree_init</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gab5a8c9076e06fd05f042b25a6d385f02</anchor>
-      <arglist>(LwpaRbTree *self, rb_tree_node_cmp_f cmp, rb_node_alloc_f alloc_f, rb_node_dealloc_f dealloc_f)</arglist>
+      <anchor>ga0672dba7fbba4e6d1f6d7132bff40478</anchor>
+      <arglist>(LwpaRbTree *self, lwpa_rbtree_node_cmp_f cmp, lwpa_rbnode_alloc_f alloc_f, lwpa_rbnode_dealloc_f dealloc_f)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>rb_tree_find</name>
+      <name>lwpa_rbtree_find</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gae7649c69dac063892143049d14b78021</anchor>
+      <anchor>ga900128f36dacd99eb073a0b5839c6dd8</anchor>
       <arglist>(LwpaRbTree *self, void *value)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_insert</name>
+      <name>lwpa_rbtree_insert</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga1d0ad25bb2702bd4d5bd568775474fea</anchor>
+      <anchor>gace26e2ddd0124db8ed9d8fa6addc9099</anchor>
       <arglist>(LwpaRbTree *self, void *value)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_remove</name>
+      <name>lwpa_rbtree_remove</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gad6533c429550b824318c8a654e8e992f</anchor>
+      <anchor>gadd7548756edcae39dec8c9ca9a24f32e</anchor>
       <arglist>(LwpaRbTree *self, void *value)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_clear</name>
+      <name>lwpa_rbtree_clear</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga3c386b632e95e457a4536385c93e72a0</anchor>
+      <anchor>gaa26f51f6939eff6a7c5bf5aebc064006</anchor>
       <arglist>(LwpaRbTree *self)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>rb_tree_size</name>
+      <name>lwpa_rbtree_size</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga7329ab2313e8d6ac2cffdef6506192c4</anchor>
+      <anchor>ga4134368aed440effbdc9c00db986bda6</anchor>
       <arglist>(LwpaRbTree *self)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_insert_node</name>
+      <name>lwpa_rbtree_insert_node</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga448db091fd66028c31f2507f1dfee961</anchor>
+      <anchor>gab0ae8911b04de195b3e1dfc45b96f4c4</anchor>
       <arglist>(LwpaRbTree *self, LwpaRbNode *node)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_remove_with_cb</name>
+      <name>lwpa_rbtree_remove_with_cb</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga332ebc443ba728868c326dd4616ad7e9</anchor>
-      <arglist>(LwpaRbTree *self, void *value, rb_tree_node_f node_cb)</arglist>
+      <anchor>ga996e8bddf815b66a84fd8cf157520ed1</anchor>
+      <arglist>(LwpaRbTree *self, void *value, lwpa_rbtree_node_f node_cb)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_clear_with_cb</name>
+      <name>lwpa_rbtree_clear_with_cb</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gae72ff458135e96562d19f412552b0023</anchor>
-      <arglist>(LwpaRbTree *self, rb_tree_node_f node_cb)</arglist>
+      <anchor>ga51c0b8012054964179660d156c1f7ccc</anchor>
+      <arglist>(LwpaRbTree *self, lwpa_rbtree_node_f node_cb)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>rb_tree_test</name>
+      <name>lwpa_rbtree_test</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga2648ae99f6997c45d42a1d4896c8f0cf</anchor>
+      <anchor>ga58bc2511d88a45dc21f686a6ecb12326</anchor>
       <arglist>(LwpaRbTree *self, LwpaRbNode *root)</arglist>
     </member>
     <member kind="function">
       <type>LwpaRbIter *</type>
-      <name>rb_iter_init</name>
+      <name>lwpa_rbiter_init</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga26612f21d99cfdbc6719a96e82f369b8</anchor>
+      <anchor>gad9bc2263f7d1d6d8123b2bd5f4819f37</anchor>
       <arglist>(LwpaRbIter *self)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>rb_iter_first</name>
+      <name>lwpa_rbiter_first</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga938ea056d3e6fb8b89515f78cf5afbce</anchor>
+      <anchor>ga2b42b70a765f47531dd9fa29ecba0fc8</anchor>
       <arglist>(LwpaRbIter *self, LwpaRbTree *tree)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>rb_iter_last</name>
+      <name>lwpa_rbiter_last</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gad75cc5bf03d1455046c47b17acf27dbb</anchor>
+      <anchor>ga9ecf1b3abcc0fe0a093d849fa98d3c1a</anchor>
       <arglist>(LwpaRbIter *self, LwpaRbTree *tree)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>rb_iter_next</name>
+      <name>lwpa_rbiter_next</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga627846455078b0b6cdd99fdfe9b6c24d</anchor>
+      <anchor>ga36bdc60c9ae6b2ac95afa10c9f21d766</anchor>
       <arglist>(LwpaRbIter *self)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>rb_iter_prev</name>
+      <name>lwpa_rbiter_prev</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga7cb1cd4f04ffc6d9d14b74bc81c476f0</anchor>
+      <anchor>gae6350ed5b8ba7a39476bf7e3d582d5c1</anchor>
       <arglist>(LwpaRbIter *self)</arglist>
     </member>
     <member kind="typedef">
       <type>int(*</type>
-      <name>rb_tree_node_cmp_f</name>
+      <name>lwpa_rbtree_node_cmp_f</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gab784fd5c55bf752e7b940d155d434367</anchor>
+      <anchor>ga5bf67caf3af12bd3dfd679a9886190cd</anchor>
       <arglist>)(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node_b)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>rb_tree_node_f</name>
+      <name>lwpa_rbtree_node_f</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gacc50d641f7962fb9f40dc56ae5254e9a</anchor>
+      <anchor>ga0e25492a71fdf4f04c1970df5224aaa9</anchor>
       <arglist>)(const LwpaRbTree *self, LwpaRbNode *node)</arglist>
     </member>
     <member kind="typedef">
       <type>LwpaRbNode *(*</type>
-      <name>rb_node_alloc_f</name>
+      <name>lwpa_rbnode_alloc_f</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga78d8bafef37c68be88c8a382b5fb024d</anchor>
+      <anchor>gac9b02f8c0316ca42a5da18ff908319d6</anchor>
       <arglist>)()</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>rb_node_dealloc_f</name>
+      <name>lwpa_rbnode_dealloc_f</name>
       <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gaf6fa55ab036a41506969c3b87f18e02e</anchor>
+      <anchor>ga8bd35866203b0c357afa7969474bbdcd</anchor>
       <arglist>)(LwpaRbNode *node)</arglist>
     </member>
   </compound>
@@ -2148,9 +2155,9 @@
     <name>lwpa_rootlayerpdu</name>
     <title>lwpa_rootlayerpdu</title>
     <filename>group__lwpa__rootlayerpdu.html</filename>
-    <class kind="struct">TcpPreamble</class>
-    <class kind="struct">UdpPreamble</class>
-    <class kind="struct">RootLayerPdu</class>
+    <class kind="struct">LwpaTcpPreamble</class>
+    <class kind="struct">LwpaUdpPreamble</class>
+    <class kind="struct">LwpaRootLayerPdu</class>
     <member kind="define">
       <type>#define</type>
       <name>ACN_TCP_PREAMBLE_SIZE</name>
@@ -2167,101 +2174,101 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>RLP_HEADER_SIZE_NORMAL_LEN</name>
+      <name>ACN_RLP_HEADER_SIZE_NORMAL_LEN</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga592d004ced57212084bb1760304ea7cc</anchor>
+      <anchor>ga29ae7e116cd77cc00366461415bf54a7</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>RLP_HEADER_SIZE_EXT_LEN</name>
+      <name>ACN_RLP_HEADER_SIZE_EXT_LEN</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga3b0720c08ac5b029b98f25a74906787a</anchor>
+      <anchor>ga9d9a7bd4498a28d5b0de8ed598141c66</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct TcpPreamble</type>
-      <name>TcpPreamble</name>
+      <type>struct LwpaTcpPreamble</type>
+      <name>LwpaTcpPreamble</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga8771de56a78804528141712daf34696f</anchor>
+      <anchor>ga07007c5d21574fd00d811c65f3503acb</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct UdpPreamble</type>
-      <name>UdpPreamble</name>
+      <type>struct LwpaUdpPreamble</type>
+      <name>LwpaUdpPreamble</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga2213bd0ed0099e61af5b558a4f185d63</anchor>
+      <anchor>ga5721d124b0a48d536543434c40e6fe60</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct RootLayerPdu</type>
-      <name>RootLayerPdu</name>
+      <type>struct LwpaRootLayerPdu</type>
+      <name>LwpaRootLayerPdu</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gab8a3b3bd971ccd9498b62a1997c917aa</anchor>
+      <anchor>ga1f9d4d412ce818c9a96790ed912c5cc9</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>parse_tcp_preamble</name>
+      <name>lwpa_parse_tcp_preamble</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga5504243cf58e317bc0f61ccb3191d80d</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, TcpPreamble *preamble)</arglist>
+      <anchor>ga349964e773a8e7ecc255cf9a6386f9e8</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, LwpaTcpPreamble *preamble)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>parse_udp_preamble</name>
+      <name>lwpa_parse_udp_preamble</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gae0be0e22c075acfbbea4330cf1bec23c</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, UdpPreamble *preamble)</arglist>
+      <anchor>ga7cdabf9c84ccb70db5be32237b5387b7</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, LwpaUdpPreamble *preamble)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>parse_root_layer_header</name>
+      <name>lwpa_parse_root_layer_header</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gac6f5d91d9ae4549dc6af9ab2aa59b7e8</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, RootLayerPdu *pdu, RootLayerPdu *last_pdu)</arglist>
+      <anchor>ga43752f0807b577d98c74f1217ec6508f</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, LwpaRootLayerPdu *pdu, LwpaRootLayerPdu *last_pdu)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>parse_root_layer_pdu</name>
+      <name>lwpa_parse_root_layer_pdu</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga16a05260696331878fe93a454dee8e79</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, RootLayerPdu *pdu, LwpaPdu *last_pdu)</arglist>
+      <anchor>ga803a00da49042e85f9b6948ce2cee909</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, LwpaRootLayerPdu *pdu, LwpaPdu *last_pdu)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>pack_tcp_preamble</name>
+      <name>lwpa_pack_tcp_preamble</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga470dcd083be11e88e26381ce4f1a7b17</anchor>
+      <anchor>ga2ead8338b16270f2c835db088786c227</anchor>
       <arglist>(uint8_t *buf, size_t buflen, size_t rlp_block_len)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>pack_udp_preamble</name>
+      <name>lwpa_pack_udp_preamble</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gaa95aeb9aa4ca18f8ed26a6523ea9a2c5</anchor>
+      <anchor>gacaae6efceceeb2a2d5850b60b1dd06f8</anchor>
       <arglist>(uint8_t *buf, size_t buflen)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>root_layer_buf_size</name>
+      <name>lwpa_root_layer_buf_size</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gaf778285bf86d4d5e8eaf673492fd06a6</anchor>
-      <arglist>(const RootLayerPdu *pdu_block, size_t num_pdus)</arglist>
+      <anchor>gae1223dfe5d9ebbe99f457a46582e7178</anchor>
+      <arglist>(const LwpaRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>pack_root_layer_header</name>
+      <name>lwpa_pack_root_layer_header</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga508b6176f6fa96d9a22fad3e87d0379b</anchor>
-      <arglist>(uint8_t *buf, size_t buflen, const RootLayerPdu *pdu)</arglist>
+      <anchor>gaffc1246bd07dc0e4a884e94f558eae34</anchor>
+      <arglist>(uint8_t *buf, size_t buflen, const LwpaRootLayerPdu *pdu)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>pack_root_layer_block</name>
+      <name>lwpa_pack_root_layer_block</name>
       <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga577897f50c0a7a5a78abe74b07520184</anchor>
-      <arglist>(uint8_t *buf, size_t buflen, const RootLayerPdu *pdu_block, size_t num_pdus)</arglist>
+      <anchor>ga75b8ed10289f7085dddb00c44f0bd132</anchor>
+      <arglist>(uint8_t *buf, size_t buflen, const LwpaRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -2720,30 +2727,30 @@
     <class kind="struct">LwpaUuid</class>
     <member kind="define">
       <type>#define</type>
-      <name>UUID_BYTES</name>
+      <name>LWPA_UUID_BYTES</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>gaeb75693c1a74a44252144cf35c0198e3</anchor>
+      <anchor>ga8c2c0266da7a921d450de0c97ba380ae</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>uuidcmp</name>
+      <name>lwpa_uuid_cmp</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga5e04b9328bf19a7bce284977e7b03152</anchor>
+      <anchor>ga0a76d940787138f930fc119abbee791d</anchor>
       <arglist>(uuid1ptr, uuid2ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>uuid_isnull</name>
+      <name>lwpa_uuid_is_null</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga405752e29769f95ff7ad72e525676b08</anchor>
+      <anchor>ga11fe0eb25265c769b4a0abb729b41523</anchor>
       <arglist>(uuidptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>UUID_STRING_BYTES</name>
+      <name>LWPA_UUID_STRING_BYTES</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga092ea21481ec5bda4cb7c340caaefa02</anchor>
+      <anchor>ga1eaab61ad5262363f3ff5739c27f8be5</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -2755,37 +2762,44 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>uuid_to_string</name>
+      <name>lwpa_uuid_to_string</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>gad8ba8f7422f70ecf12ffe410bdbaa177</anchor>
+      <anchor>ga913c775ec9337470909a993287f9a7e0</anchor>
       <arglist>(char *buf, const LwpaUuid *uuid)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>string_to_uuid</name>
+      <name>lwpa_string_to_uuid</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>gab86a23155ecf5a4c809cc7cc13420bf8</anchor>
+      <anchor>gac0dfc2593ae51c5fc3dbc28d73ce1bd1</anchor>
       <arglist>(LwpaUuid *uuid, const char *buf, size_t buflen)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>generate_uuid</name>
+      <type>lwpa_error_t</type>
+      <name>lwpa_generate_v1_uuid</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga2f06c90c01bf82ca206663ebcd7cecc9</anchor>
+      <anchor>ga98aaae9b8d23b7a57fac6f1974ed8bd0</anchor>
+      <arglist>(LwpaUuid *uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>lwpa_error_t</type>
+      <name>lwpa_generate_v3_uuid</name>
+      <anchorfile>group__lwpa__uuid.html</anchorfile>
+      <anchor>ga19d9fbaf6f594ac9ba7e576eaea91201</anchor>
       <arglist>(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>generate_rdm_uuid</name>
+      <type>lwpa_error_t</type>
+      <name>lwpa_generate_v4_uuid</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga49298072c583b6358c664672e5161668</anchor>
-      <arglist>(LwpaUuid *uuid, const uint8_t *rdmuid)</arglist>
+      <anchor>gad5a92c6e824c30a75fb7f5abda8dec7f</anchor>
+      <arglist>(LwpaUuid *uuid)</arglist>
     </member>
     <member kind="variable">
       <type>const LwpaUuid</type>
-      <name>NULL_UUID</name>
+      <name>LWPA_NULL_UUID</name>
       <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga9d9f29e6869412c4b473a13daabf4780</anchor>
+      <anchor>ga530cc15affa0ab8d775bc38c4fc69806</anchor>
       <arglist></arglist>
     </member>
   </compound>
