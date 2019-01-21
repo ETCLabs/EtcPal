@@ -48,6 +48,10 @@ TEST_F(UuidTest, compare)
   ASSERT_EQ(0, lwpa_uuid_cmp(&uuid1, &uuid1_dup));
   ASSERT_LT(0, lwpa_uuid_cmp(&uuid2, &uuid1));
   ASSERT_GT(0, lwpa_uuid_cmp(&uuid1, &uuid2));
+
+  // Test the C++ operators
+  ASSERT_LT(uuid1, uuid2);
+  ASSERT_EQ(uuid1, uuid1_dup);
 }
 
 TEST_F(UuidTest, string)
@@ -139,7 +143,7 @@ TEST_F(UuidTest, generate_v4)
   {
     LwpaUuid uuid;
     std::string failure_msg = "This failure occurred on UUID attempt " + std::to_string(i + 1) + " of " +
-                              std::to_string(kNumV1UuidGenerations);
+                              std::to_string(kNumV4UuidGenerations);
 
     ASSERT_EQ(LWPA_OK, lwpa_generate_v4_uuid(&uuid)) << failure_msg;
 
