@@ -76,6 +76,7 @@ add_library(lwpa
   ${LWPA_ROOT}/src/md5c.c
   ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_lock.c
   ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_netint.c
+  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_plat_uuid.c
   ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_socket.c
   ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_thread.c
   ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_timer.c
@@ -90,7 +91,7 @@ target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
 
 # Add include paths and library dependencies based on platform for which we are being compiled
 if(LWPA_PLATFORM STREQUAL windows)
-  target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi)
+  target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
 elseif(LWPA_PLATFORM STREQUAL mqx)
   # Include the debug versions of the MQX libs if a Debug configuration is specified.
   # I think there's probably a better way of doing this and I'm missing something here.

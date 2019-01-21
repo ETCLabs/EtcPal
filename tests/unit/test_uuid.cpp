@@ -19,9 +19,13 @@
 #include "lwpa/uuid.h"
 #include "gtest/gtest.h"
 #include <cstddef>
+#include <algorithm>
 
 class UuidTest : public ::testing::Test
 {
+public:
+  static constexpr int kNumV1UuidGenerations = 10000;
+  static constexpr int kNumV4UuidGenerations = 10000;
 };
 
 TEST_F(UuidTest, null)
@@ -67,13 +71,40 @@ TEST_F(UuidTest, string)
   ASSERT_FALSE(lwpa_string_to_uuid(&uuid, bad_str, strlen(bad_str)));
 }
 
-TEST_F(UuidTest, generate)
+TEST_F(UuidTest, generate_v1)
+{
+  // Generate a bunch of V1 UUIDs. They should all be unique from each other and have the proper
+  // version and variant information. We will cheat a little and just make sure that each one is
+  // unique from the last one generated.
+  LwpaUuid last_uuid = LWPA_NULL_UUID;
+
+  for (int i = 0; i < kNumV1UuidGenerations; ++i)
+  {
+    LwpaUuid uuid;
+    std::string failure_msg = "This failure occurred on UUID attempt " + std::to_string(i + 1) + " of " +
+                              std::to_string(kNumV1UuidGenerations);
+
+    ASSERT_EQ(LWPA_OK, lwpa_generate_v1_uuid(&uuid)) << failure_msg;
+
+    // We should always have Variant 1, Version 1.
+    ASSERT_EQ((uuid.data[6] & 0xf0u), 0x10u) << failure_msg;
+    ASSERT_EQ((uuid.data[8] & 0xc0u), 0x80u) << failure_msg;
+
+    // Should be unique from the last one generated.
+    ASSERT_NE(0, lwpa_uuid_cmp(&uuid, &last_uuid)) << failure_msg;
+
+    last_uuid = uuid;
+  }
+}
+
+TEST_F(UuidTest, generate_v3)
 {
   uint8_t mac1[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x12};
   uint8_t mac2[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x13};
   LwpaUuid uuid1, uuid2, uuid3, uuid4, uuid1_dup;
 
-  // Test the generate_v3_uuid() function
+  // Version 3 UUIDs should be deterministic for the same combination of the three possible input
+  // arguments. If any of the arguments is different, a different UUID should result.
   lwpa_generate_v3_uuid(&uuid1, "Test Device", mac1, 0);
   lwpa_generate_v3_uuid(&uuid2, "Test Device", mac1, 1);
   lwpa_generate_v3_uuid(&uuid3, "Tst Device", mac1, 0);
@@ -87,4 +118,38 @@ TEST_F(UuidTest, generate)
   ASSERT_NE(0, lwpa_uuid_cmp(&uuid2, &uuid4));
   ASSERT_NE(0, lwpa_uuid_cmp(&uuid3, &uuid4));
   ASSERT_EQ(0, lwpa_uuid_cmp(&uuid1, &uuid1_dup));
+
+  // Make sure the Variant Version bits are correct.
+  // We should always have Variant 1, Version 3.
+  std::vector<LwpaUuid> uuid_vect{uuid1, uuid2, uuid3, uuid4, uuid1_dup};
+  std::for_each(uuid_vect.begin(), uuid_vect.end(), [](const LwpaUuid &uuid) {
+    ASSERT_EQ((uuid.data[6] & 0xf0u), 0x30u);
+    ASSERT_EQ((uuid.data[8] & 0xc0u), 0x80u);
+  });
+}
+
+TEST_F(UuidTest, generate_v4)
+{
+  // Generate a bunch of V4 UUIDs. They should all be unique from each other and have the proper
+  // version and variant information. We will cheat a little and just make sure that each one is
+  // unique from the last one generated.
+  LwpaUuid last_uuid = LWPA_NULL_UUID;
+
+  for (int i = 0; i < kNumV4UuidGenerations; ++i)
+  {
+    LwpaUuid uuid;
+    std::string failure_msg = "This failure occurred on UUID attempt " + std::to_string(i + 1) + " of " +
+                              std::to_string(kNumV1UuidGenerations);
+
+    ASSERT_EQ(LWPA_OK, lwpa_generate_v4_uuid(&uuid)) << failure_msg;
+
+    // We should always have Variant 1, Version 4.
+    ASSERT_EQ((uuid.data[6] & 0xf0u), 0x40u) << failure_msg;
+    ASSERT_EQ((uuid.data[8] & 0xc0u), 0x80u) << failure_msg;
+
+    // Should be unique from the last one generated.
+    ASSERT_NE(0, lwpa_uuid_cmp(&uuid, &last_uuid)) << failure_msg;
+
+    last_uuid = uuid;
+  }
 }

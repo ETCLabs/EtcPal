@@ -24,6 +24,7 @@
 #include <string.h>
 #include "lwpa/int.h"
 #include "lwpa/bool.h"
+#include "lwpa/error.h"
 
 /*! \defgroup lwpa_uuid lwpa_uuid
  *  \ingroup lwpa
@@ -79,7 +80,9 @@ bool lwpa_string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen);
 
 /************************ UUID Generation Functions **************************/
 
-void lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum);
+lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid);
+lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum);
+lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid);
 
 #ifdef __cplusplus
 }

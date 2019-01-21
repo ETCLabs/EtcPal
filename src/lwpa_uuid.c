@@ -107,6 +107,27 @@ bool lwpa_string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen)
   return false;
 }
 
+/* This documentation appears here; the actual functions are in [platform]/lwpa_uuid_plat.c */
+/*! \fn lwpa_generate_v1_uuid()
+ *  \brief Generate a Version 1 UUID.
+ *
+ *  This function uses the underlying OS API to create a UUID that is based on a combination of a
+ *  local MAC address and the current system time. This method guarantees UUID uniqueness across
+ *  space and time. Some OSes have deprecated this method because it creates a UUID that is
+ *  traceable to the MAC address of the machine on which it was generated. If this type of security
+ *  is a concern, lwpa_generate_v4_uuid() should be preferred. If you want to generate UUIDs that
+ *  are deterministic for a combination of inputs you provide, see lwpa_generate_v3_uuid().
+ *
+ *  This function may return #LWPA_NOTIMPL on platforms that do not have this functionality
+ *  available (this is mostly a concern for RTOS-level embedded platforms).
+ *
+ *  \param[out] uuid UUID to fill in with the generation result.
+ *  \return #LWPA_OK: UUID generated successfully.\n
+ *          #LWPA_INVALID: Invalid argument provided.\n
+ *          #LWPA_NOTIMPL: This UUID generation method is not available on this platform.\n
+ *          #LWPA_SYSERR: An internal library of system call error occurred.
+ */
+
 /* Quick utility for generating a uuid out of a md5 hash buffer */
 static void generate_from_hash(LwpaUuid *uuid_out, MD5_CTX *pmd5)
 {
@@ -138,8 +159,10 @@ static void generate_from_hash(LwpaUuid *uuid_out, MD5_CTX *pmd5)
  *  \param[in] macaddr The device's MAC address as an array of 6 bytes.
  *  \param[in] uuidnum Component number. By changing this number, multiple unique UUIDs can be
  *                     generated for the same device string-MAC address combination.
+ *  \return #LWPA_OK: UUID generated successfully.\n
+ *          #LWPA_INVALID: Invalid argument provided.
  */
-void lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)
+lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)
 {
   MD5_CTX md5;
   uint8_t num[4];
@@ -147,7 +170,7 @@ void lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *ma
   uint8_t ns[16] = {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a};
 
   if (!uuid || !devstr || !macaddr)
-    return;
+    return LWPA_INVALID;
 
   MD5Init(&md5);
   MD5Update(&md5, ns, 16);
@@ -166,4 +189,23 @@ void lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *ma
   MD5Update(&md5, num, 4);
 
   generate_from_hash(uuid, &md5);
+  return LWPA_OK;
 }
+
+/* This documentation appears here; the actual functions are in [platform]/lwpa_uuid_plat.c */
+/*! \fn lwpa_generate_v4_uuid()
+ *  \brief Generate a Version 4 UUID.
+ *
+ *  This function uses the underlying OS API to create a UUID that is based on random data. The
+ *  quality of the random data used may differ across platforms. If you want to generate UUIDs that
+ *  are deterministic for a combination of inputs you provide, see lwpa_generate_v3_uuid().
+ *
+ *  This function may return #LWPA_NOTIMPL on platforms that do not have this functionality
+ *  available (this is mostly a concern for RTOS-level embedded platforms).
+ *
+ *  \param[out] uuid UUID to fill in with the generation result.
+ *  \return #LWPA_OK: UUID generated successfully.\n
+ *          #LWPA_INVALID: Invalid argument provided.\n
+ *          #LWPA_NOTIMPL: This UUID generation method is not available on this platform.\n
+ *          #LWPA_SYSERR: An internal library of system call error occurred.
+ */
