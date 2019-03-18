@@ -123,6 +123,8 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
   return ret;
 }
 
+#if !defined(LWPA_BUILDING_MOCK_LIB)
+
 static lwpa_error_t err_plat_to_lwpa(int wsaerror)
 {
   /* The Winsock error codes are not even close to contiguous in defined value,
@@ -786,6 +788,8 @@ void lwpa_freeaddrinfo(LwpaAddrinfo *ai)
   if (ai)
     freeaddrinfo((struct addrinfo *)ai->pd[0]);
 }
+
+#endif /* !defined(LWPA_BUILDING_MOCK_LIB) */
 
 lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
 {
