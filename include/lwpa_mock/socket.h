@@ -62,6 +62,30 @@ DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getaddrinfo, const char *, const char
 DECLARE_FAKE_VALUE_FUNC(bool, lwpa_nextaddr, LwpaAddrinfo *);
 DECLARE_FAKE_VOID_FUNC(lwpa_freeaddrinfo, LwpaAddrinfo *);
 
+#define LWPA_SOCKET_DO_FOR_ALL_FAKES(operation) \
+  operation(lwpa_socket_init);                  \
+  operation(lwpa_socket_deinit);                \
+  operation(lwpa_accept);                       \
+  operation(lwpa_bind);                         \
+  operation(lwpa_close);                        \
+  operation(lwpa_connect);                      \
+  operation(lwpa_getpeername);                  \
+  operation(lwpa_getsockname);                  \
+  operation(lwpa_getsockopt);                   \
+  operation(lwpa_listen);                       \
+  operation(lwpa_recv);                         \
+  operation(lwpa_recvfrom);                     \
+  operation(lwpa_send);                         \
+  operation(lwpa_sendto);                       \
+  operation(lwpa_setsockopt);                   \
+  operation(lwpa_shutdown);                     \
+  operation(lwpa_socket);                       \
+  operation(lwpa_setblocking);                  \
+  operation(lwpa_poll);                         \
+  operation(lwpa_getaddrinfo);                  \
+  operation(lwpa_nextaddr);                     \
+  operation(lwpa_freeaddrinfo);
+
 #ifdef __cplusplus
 }
 #endif
