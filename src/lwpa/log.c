@@ -38,9 +38,12 @@
 /* LOG_LOCAL1 seems to be one that's lightly used */
 #define DEFAULT_FACILITY LWPA_LOG_LOCAL1
 
+/* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
 static void sanitize_str(char *str)
 {
-  /* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
+  /* C library functions like isprint()/isgraph() are not used here because their behavior is not
+   * well-defined in the presence of non-ASCII characters.
+   */
   unsigned char *cp;
   for (cp = (unsigned char *)str; *cp != '\0'; ++cp)
   {
