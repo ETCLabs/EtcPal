@@ -22,7 +22,7 @@
 #define _LWPA_MOCK_SOCKET_H_
 
 #include "lwpa/socket.h"
-#include "lwpa_mock/fff.h"
+#include "fff.h"
 
 // We don't mock:
 // lwpa_inet_pton()

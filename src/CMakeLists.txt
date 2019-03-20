@@ -119,7 +119,6 @@ set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 # Mock lwpa library
 ###############################################################################
 
-option(LWPA_BUILD_MOCK_LIB "Build the lwpa_mock library" OFF)
 if(LWPA_BUILD_MOCK_LIB)
   add_library(lwpa_mock
     # lwpa headers
@@ -171,6 +170,7 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/include/${LWPA_PLATFORM}
   )
   target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
+  target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)
   if(LWPA_PLATFORM STREQUAL windows)
     target_link_libraries(lwpa_mock PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
   endif()
