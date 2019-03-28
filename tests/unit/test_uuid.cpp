@@ -88,7 +88,7 @@ TEST_F(UuidTest, generate_v1)
     std::string failure_msg = "This failure occurred on UUID attempt " + std::to_string(i + 1) + " of " +
                               std::to_string(kNumV1UuidGenerations);
 
-    ASSERT_EQ(LWPA_OK, lwpa_generate_v1_uuid(&uuid)) << failure_msg;
+    ASSERT_EQ(kLwpaErrOk, lwpa_generate_v1_uuid(&uuid)) << failure_msg;
 
     // We should always have Variant 1, Version 1.
     ASSERT_EQ((uuid.data[6] & 0xf0u), 0x10u) << failure_msg;
@@ -145,7 +145,7 @@ TEST_F(UuidTest, generate_v4)
     std::string failure_msg = "This failure occurred on UUID attempt " + std::to_string(i + 1) + " of " +
                               std::to_string(kNumV4UuidGenerations);
 
-    ASSERT_EQ(LWPA_OK, lwpa_generate_v4_uuid(&uuid)) << failure_msg;
+    ASSERT_EQ(kLwpaErrOk, lwpa_generate_v4_uuid(&uuid)) << failure_msg;
 
     // We should always have Variant 1, Version 4.
     ASSERT_EQ((uuid.data[6] & 0xf0u), 0x40u) << failure_msg;

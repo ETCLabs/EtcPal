@@ -968,163 +968,163 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_OK</name>
+      <name>kLwpaErrOk</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NOTFOUND</name>
+      <name>kLwpaErrNotFound</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa2acbe19477fb07c07db1f9b3d9bb0637</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NOMEM</name>
+      <name>kLwpaErrNoMem</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa1c83c6b26dacaebf3ff5ee52fb85e4c4</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_BUSY</name>
+      <name>kLwpaErrBusy</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfab105c4c9af4d26afbd6dcb664279770a</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_EXIST</name>
+      <name>kLwpaErrExists</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa219cade9f19d3b17ff65b56d98f41eee</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_INVALID</name>
+      <name>kLwpaErrInvalid</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa9cf2f92a879c1eacc80a024bae41cd96</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_WOULDBLOCK</name>
+      <name>kLwpaErrWouldBlock</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa75f1c87405d6317c354d5e8e87bba817</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NODATA</name>
+      <name>kLwpaErrNoData</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa06ed657852ed6acda52f334c2bc87ad0</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_PROTERR</name>
+      <name>kLwpaErrProtocol</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa60397db549f16a805fb4553d0cc2d5d9</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_MSGSIZE</name>
+      <name>kLwpaErrMsgSize</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa854b24c13e687336e7cb4ae0110866f3</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_ADDRINUSE</name>
+      <name>kLwpaErrAddrInUse</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa254f03432a42298cb3caded4644763d1</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_ADDRNOTAVAIL</name>
+      <name>kLwpaErrAddrNotAvail</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfacca2125a6d3fe7e2defd93e0364326a2</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NETERR</name>
+      <name>kLwpaErrNetwork</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfaf65425d05b3d91f90adf5f0ee7dc8092</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_CONNRESET</name>
+      <name>kLwpaErrConnReset</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfaad3a7c2661b83f69312d25767d7455d6</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_CONNCLOSED</name>
+      <name>kLwpaErrConnClosed</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfaaa097ac19c3cf75639f475aca2c59971</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_ISCONN</name>
+      <name>kLwpaErrIsConn</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfad4194b82d4385ca8b95136fcf542e76c</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NOTCONN</name>
+      <name>kLwpaErrNotConn</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa92048423fc209e99bf80a9685e0824a4</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_SHUTDOWN</name>
+      <name>kLwpaErrShutdown</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa7ccf319f032b55fd13ddfb4c319d5028</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_TIMEDOUT</name>
+      <name>kLwpaErrTimedOut</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa227b5a6ccb818da7bcc74cecbf193f7f</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_CONNREFUSED</name>
+      <name>kLwpaErrConnRefused</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa5d5cc5181b64b6aed02cd510cf084d5a</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_ALREADY</name>
+      <name>kLwpaErrAlready</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa543a4059f06676e225762b0f21f945e8</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_INPROGRESS</name>
+      <name>kLwpaErrInProgress</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa11a9a2879288ced39e9091d61c5eb723</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_BUFSIZE</name>
+      <name>kLwpaErrBufSize</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa1600093d7a7190c396cae1b19a34ed74</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NOTINIT</name>
+      <name>kLwpaErrNotInit</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa093ea9e89008867f7049d4203ffd31cc</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NOIFACES</name>
+      <name>kLwpaErrNoNetints</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa5183c038cc84e7cbaab3399f7f76a1bf</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_NOTIMPL</name>
+      <name>kLwpaErrNotImpl</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa051f09b950e5709f3f2a1cc4e32a08a5</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LWPA_SYSERR</name>
+      <name>kLwpaErrSys</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4</anchor>
       <arglist></arglist>

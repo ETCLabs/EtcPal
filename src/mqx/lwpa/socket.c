@@ -128,13 +128,13 @@ static lwpa_error_t err_plat_to_lwpa(uint32_t rtcserr)
   switch (rtcserr)
   {
     case RTCS_OK:
-      return LWPA_OK;
+      return kLwpaErrOk;
     case RTCSERR_OUT_OF_MEMORY:
     case RTCSERR_OUT_OF_BUFFERS:
     case RTCSERR_OUT_OF_SOCKETS:
-      return LWPA_NOMEM;
+      return kLwpaErrNoMem;
     case RTCSERR_TIMEOUT:
-      return LWPA_TIMEDOUT;
+      return kLwpaErrTimedOut;
     case RTCSERR_INVALID_ADDRESS:
     case RTCSERR_INVALID_PARAMETER:
     case RTCSERR_SOCK_INVALID:
@@ -152,21 +152,21 @@ static lwpa_error_t err_plat_to_lwpa(uint32_t rtcserr)
     case RTCSERR_SOCK_EBADF:
     case RTCSERR_SOCK_EINVAL:
     case RTCSERR_SOCK_OPTION_IS_READ_ONLY:
-      return LWPA_INVALID;
+      return kLwpaErrInvalid;
     case RTCSERR_FEATURE_NOT_ENABLED:
     case RTCSERR_SOCK_NOT_SUPPORTED:
-      return LWPA_NOTIMPL;
+      return kLwpaErrNotImpl;
     case RTCSERR_SOCK_NOT_CONNECTED:
-      return LWPA_NOTCONN;
+      return kLwpaErrNotConn;
     case RTCSERR_SOCK_IS_BOUND:
     case RTCSERR_SOCK_IS_LISTENING:
-      return LWPA_ALREADY;
+      return kLwpaErrAlready;
     case RTCSERR_SOCK_IS_CONNECTED:
-      return LWPA_ISCONN;
+      return kLwpaErrIsConn;
     case RTCSERR_SOCK_ESHUTDOWN:
-      return LWPA_SHUTDOWN;
+      return kLwpaErrShutdown;
     default:
-      return LWPA_SYSERR;
+      return kLwpaErrSys;
   }
 }
 
@@ -174,7 +174,7 @@ lwpa_error_t lwpa_socket_init(void *platform_data)
 {
   /* No initialization is necessary on this platform. */
   (void)platform_data;
-  return LWPA_OK;
+  return kLwpaErrOk;
 }
 
 void lwpa_socket_deinit()
@@ -185,7 +185,7 @@ void lwpa_socket_deinit()
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t *conn_sock)
 {
   /* TODO */
-  return LWPA_NOTIMPL;
+  return kLwpaErrNotImpl;
 }
 
 lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr *address)
@@ -194,11 +194,11 @@ lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr *address)
   size_t sa_size;
 
   if (!address)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   sa_size = sockaddr_lwpa_to_plat(&ss, address);
   if (sa_size == 0)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   return err_plat_to_lwpa(bind(id, &ss, sa_size));
 }
@@ -211,13 +211,13 @@ lwpa_error_t lwpa_close(lwpa_socket_t id)
 lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr *address)
 {
   /* TODO */
-  return LWPA_NOTIMPL;
+  return kLwpaErrNotImpl;
 }
 
 lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr *address)
 {
   /* TODO */
-  return LWPA_NOTIMPL;
+  return kLwpaErrNotImpl;
 }
 
 lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address)
@@ -227,13 +227,13 @@ lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address)
   uint32_t res;
 
   if (!address)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   res = getsockname(id, &ss, &size);
   if (res == RTCS_OK)
   {
     if (!sockaddr_plat_to_lwpa(address, &ss))
-      return LWPA_SYSERR;
+      return kLwpaErrSys;
   }
   return err_plat_to_lwpa(res);
 }
@@ -241,19 +241,19 @@ lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address)
 lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void *option_value, size_t *option_len)
 {
   /* TODO */
-  return LWPA_NOTIMPL;
+  return kLwpaErrNotImpl;
 }
 
 lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog)
 {
   /* TODO */
-  return LWPA_NOTIMPL;
+  return kLwpaErrNotImpl;
 }
 
 int lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags)
 {
   /* TODO */
-  return LWPA_NOTIMPL;
+  return kLwpaErrNotImpl;
 }
 
 int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, LwpaSockaddr *address)
@@ -264,7 +264,7 @@ int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, Lwpa
   uint16_t fromlen = sizeof fromaddr;
 
   if (!buffer)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   res = recvfrom(id, buffer, length, impl_flags, &fromaddr, &fromlen);
 
@@ -273,7 +273,7 @@ int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, Lwpa
     if (address && fromlen > 0)
     {
       if (!sockaddr_plat_to_lwpa(address, &fromaddr))
-        return LWPA_INVALID;
+        return kLwpaErrInvalid;
     }
   }
   return (res == RTCS_ERROR ? err_plat_to_lwpa(RTCS_geterror(id)) : res);
@@ -282,7 +282,7 @@ int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, Lwpa
 int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags)
 {
   /* TODO */
-  return LWPA_NOTIMPL;
+  return kLwpaErrNotImpl;
 }
 
 int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags, const LwpaSockaddr *dest_addr)
@@ -292,10 +292,10 @@ int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags,
   struct sockaddr ss;
 
   if (!dest_addr || !message)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   if ((ss_size = sockaddr_lwpa_to_plat(&ss, dest_addr)) == 0)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   res = sendto(id, (char *)message, (uint32_t)length, 0, &ss, ss_size);
   return (res == RTCS_ERROR ? err_plat_to_lwpa(RTCS_geterror(id)) : res);
@@ -306,7 +306,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   uint32_t res = RTCSERR_SOCK_INVALID_OPTION;
 
   if (!option_value)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   switch (option_name)
   {
@@ -427,7 +427,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
 
           lwpaip_set_v4_address(&default_netint_ip, ip_data.ip);
           if (lwpaip_equal(netint_requested, &default_netint_ip))
-            res = LWPA_OK;
+            res = kLwpaErrOk;
         }
       }
 #endif
@@ -452,7 +452,7 @@ lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how)
   {
     return err_plat_to_lwpa(shutdownsocket(id, (int32_t)shutmap[how]));
   }
-  return LWPA_INVALID;
+  return kLwpaErrInvalid;
 }
 
 lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id)
@@ -465,13 +465,13 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
       if (sock != RTCS_SOCKET_ERROR)
       {
         *id = sock;
-        return LWPA_OK;
+        return kLwpaErrOk;
       }
       else
       {
         *id = LWPA_SOCKET_INVALID;
         /* RTCS does not provide error codes on socket failure */
-        return LWPA_SYSERR;
+        return kLwpaErrSys;
       }
     }
     else
@@ -479,7 +479,7 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
       *id = LWPA_SOCKET_INVALID;
     }
   }
-  return LWPA_INVALID;
+  return kLwpaErrInvalid;
 }
 
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
@@ -506,10 +506,10 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
     }
     else
     {
-      return LWPA_INVALID;
+      return kLwpaErrInvalid;
     }
   }
-  return LWPA_SYSERR;
+  return kLwpaErrSys;
 }
 
 int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
@@ -558,7 +558,7 @@ int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
   }
   else if (sel_res == 0)
   {
-    return LWPA_TIMEDOUT;
+    return kLwpaErrTimedOut;
   }
   else if (fds && nfds > 0)
   {
@@ -587,7 +587,7 @@ lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const L
   struct addrinfo pf_hints;
 
   if ((!hostname && !service) || !result)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
@@ -604,7 +604,7 @@ lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const L
     result->pd[0] = pf_res;
     result->pd[1] = pf_res;
     if (!lwpa_nextaddr(result))
-      return LWPA_SYSERR;
+      return kLwpaErrSys;
   }
   return err_plat_to_lwpa(res);
 }
@@ -654,7 +654,7 @@ void lwpa_freeaddrinfo(LwpaAddrinfo *ai)
 lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
 {
   if (!src || !dest)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   switch (src->type)
   {
@@ -664,26 +664,26 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
       /* RTCS expects host byte order in their in_addrs. Thus no htonl is needed. */
       addr.s_addr = lwpaip_v4_address(src);
       if (NULL != inet_ntop(AF_INET, &addr, dest, size))
-        return LWPA_OK;
-      return LWPA_SYSERR;
+        return kLwpaErrOk;
+      return kLwpaErrSys;
     }
     case LWPA_IPV6:
     {
       struct in6_addr addr;
       memcpy(addr.s6_addr, lwpaip_v6_address(src), IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
-        return LWPA_OK;
-      return LWPA_SYSERR;
+        return kLwpaErrOk;
+      return kLwpaErrSys;
     }
     default:
-      return LWPA_INVALID;
+      return kLwpaErrInvalid;
   }
 }
 
 lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest)
 {
   if (!src || !dest)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   switch (type)
   {
@@ -691,20 +691,20 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *des
     {
       struct in_addr addr;
       if (RTCS_OK != inet_pton(AF_INET, src, &addr, sizeof addr))
-        return LWPA_SYSERR;
+        return kLwpaErrSys;
       /* RTCS gives us host byte order in their in_addrs. Thus no htonl is needed. */
       lwpaip_set_v4_address(dest, addr.s_addr);
-      return LWPA_OK;
+      return kLwpaErrOk;
     }
     case LWPA_IPV6:
     {
       struct in6_addr addr;
       if (RTCS_OK != inet_pton(AF_INET6, src, &addr, sizeof addr))
-        return LWPA_SYSERR;
+        return kLwpaErrSys;
       lwpaip_set_v6_address(dest, addr.s6_addr);
-      return LWPA_OK;
+      return kLwpaErrOk;
     }
     default:
-      return LWPA_INVALID;
+      return kLwpaErrInvalid;
   }
 }

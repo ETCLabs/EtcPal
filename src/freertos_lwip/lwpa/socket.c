@@ -142,7 +142,7 @@ lwpa_error_t lwpa_socket_init(void *platform_data)
 {
   /* No initialization is necessary on this platform. */
   (void)platform_data;
-  return LWPA_OK;
+  return kLwpaErrOk;
 }
 
 void lwpa_socket_deinit()
@@ -444,7 +444,7 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
       if (sock >= 0)
       {
         *id = sock;
-        return LWPA_OK;
+        return kLwpaErrOk;
       }
       else
       {
@@ -457,7 +457,7 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
       *id = LWPA_SOCKET_INVALID;
     }
   }
-  return LWPA_INVALID;
+  return kLwpaErrInvalid;
 }
 
 int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
@@ -601,7 +601,7 @@ void lwpa_freeaddrinfo(LwpaAddrinfo *ai)
 lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
 {
   if (!src || !dest)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   switch (src->type)
   {
@@ -610,26 +610,26 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
       struct in_addr addr;
       addr.s_addr = htonl(lwpaip_v4_address(src));
       if (NULL != inet_ntop(AF_INET, &addr, dest, size))
-        return LWPA_OK;
-      return LWPA_SYSERR;
+        return kLwpaErrOk;
+      return kLwpaErrSys;
     }
     case LWPA_IPV6:
     {
       struct in6_addr addr;
       memcpy(addr.s6_addr, lwpaip_v6_address(src), IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
-        return LWPA_OK;
-      return LWPA_SYSERR;
+        return kLwpaErrOk;
+      return kLwpaErrSys;
     }
     default:
-      return LWPA_INVALID;
+      return kLwpaErrInvalid;
   }
 }
 
 lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest)
 {
   if (!src || !dest)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   switch (type)
   {
@@ -637,19 +637,19 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *des
     {
       struct in_addr addr;
       if (1 != inet_pton(AF_INET, src, &addr))
-        return LWPA_SYSERR;
+        return kLwpaErrSys;
       lwpaip_set_v4_address(dest, ntohl(addr.s_addr));
-      return LWPA_OK;
+      return kLwpaErrOk;
     }
     case LWPA_IPV6:
     {
       struct in6_addr addr;
       if (1 != inet_pton(AF_INET6, src, &addr))
-        return LWPA_SYSERR;
+        return kLwpaErrSys;
       lwpaip_set_v6_address(dest, addr.s6_addr);
-      return LWPA_OK;
+      return kLwpaErrOk;
     }
     default:
-      return LWPA_INVALID;
+      return kLwpaErrInvalid;
   }
 }

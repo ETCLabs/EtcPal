@@ -1,8 +1,8 @@
 ################################### testing ###################################
 
-if(LWPA_PLATFORM STREQUAL windows)
-  enable_testing()
+include(GoogleTest)
 
+if(LWPA_PLATFORM STREQUAL windows)
   message(STATUS "Adding GoogleTest dependency...")
   include(AddGoogleTest)
 
@@ -26,4 +26,5 @@ if(LWPA_PLATFORM STREQUAL windows)
   )
 
   target_link_libraries(test_lwpa lwpa gtest)
+  gtest_add_tests(TARGET test_lwpa)
 endif()

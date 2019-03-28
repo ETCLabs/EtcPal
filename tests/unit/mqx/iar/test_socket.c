@@ -41,63 +41,63 @@ bool test_inet_xtox()
   const char *test_ip6_fail = "abcd::ef01::2345";
 
   /* Test lwpa_inet_pton() */
-  ok = (LWPA_OK == lwpa_inet_pton(LWPA_IPV4, test_ip4_1, &addr));
+  ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV4, test_ip4_1, &addr));
   if (ok)
     ok = (lwpaip_v4_address(&addr) == 0);
   if (ok)
-    ok = (LWPA_OK == lwpa_inet_pton(LWPA_IPV4, test_ip4_2, &addr));
+    ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV4, test_ip4_2, &addr));
   if (ok)
     ok = (lwpaip_v4_address(&addr) == 0xffffffff);
   if (ok)
-    ok = (LWPA_OK != lwpa_inet_pton(LWPA_IPV4, test_ip4_fail, &addr));
+    ok = (kLwpaErrOk != lwpa_inet_pton(LWPA_IPV4, test_ip4_fail, &addr));
   if (ok)
-    ok = (LWPA_OK == lwpa_inet_pton(LWPA_IPV6, test_ip6_1, &addr));
+    ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV6, test_ip6_1, &addr));
   if (ok)
     ok = (0 == memcmp(lwpaip_v6_address(&addr), test_ip6_1_bin, IPV6_BYTES));
   if (ok)
-    ok = (LWPA_OK == lwpa_inet_pton(LWPA_IPV6, test_ip6_2, &addr));
+    ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV6, test_ip6_2, &addr));
   if (ok)
     ok = (0 == memcmp(lwpaip_v6_address(&addr), test_ip6_2_bin, IPV6_BYTES));
   if (ok)
-    ok = (LWPA_OK == lwpa_inet_pton(LWPA_IPV6, test_ip6_3, &addr));
+    ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV6, test_ip6_3, &addr));
   if (ok)
     ok = (0 == memcmp(lwpaip_v6_address(&addr), test_ip6_3_bin, IPV6_BYTES));
   if (ok)
-    ok = (LWPA_OK != lwpa_inet_pton(LWPA_IPV6, test_ip6_fail, &addr));
+    ok = (kLwpaErrOk != lwpa_inet_pton(LWPA_IPV6, test_ip6_fail, &addr));
 
   /* Test lwpa_inet_ntop() */
   if (ok)
   {
     lwpaip_set_v4_address(&addr, 0);
-    ok = (LWPA_OK == lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
+    ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip4_1));
   if (ok)
   {
     lwpaip_set_v4_address(&addr, 0xffffffff);
-    ok = (LWPA_OK == lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
+    ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip4_2));
   if (ok)
   {
     lwpaip_set_v6_address(&addr, test_ip6_1_bin);
-    ok = (LWPA_OK == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+    ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip6_1));
   if (ok)
   {
     lwpaip_set_v6_address(&addr, test_ip6_2_bin);
-    ok = (LWPA_OK == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+    ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip6_2));
   if (ok)
   {
     lwpaip_set_v6_address(&addr, test_ip6_3_bin);
-    ok = (LWPA_OK == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+    ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   }
   if (ok)
   {
@@ -432,7 +432,7 @@ bool test_poll()
     pfds[0].events = LWPA_POLLIN;
     pfds[1].fd = rcvsock2;
     pfds[1].events = LWPA_POLLIN;
-    ok = (LWPA_TIMEDOUT == lwpa_poll(pfds, 2, 100));
+    ok = (kLwpaErrTimedOut == lwpa_poll(pfds, 2, 100));
   }
   if (ok)
   {

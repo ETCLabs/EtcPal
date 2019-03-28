@@ -28,7 +28,7 @@ static lwpa_mutex_t mempool_lock;
 
 lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc *desc)
 {
-  lwpa_error_t res = LWPA_SYSERR;
+  lwpa_error_t res = kLwpaErrSys;
 
   if (!mempool_lock_initted)
   {
@@ -46,7 +46,7 @@ lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc *desc)
     desc->list[i].next = NULL;
     desc->freelist = desc->list;
     desc->current_used = 0;
-    res = LWPA_OK;
+    res = kLwpaErrOk;
     lwpa_mutex_give(&mempool_lock);
   }
   return res;

@@ -38,5 +38,6 @@ endif()
 
 option(LWPA_BUILD_TESTS "Build the lwpa unit tests" ${OPTION_DEFAULTS})
 if(LWPA_BUILD_TESTS)
+  enable_testing()
   add_subdirectory(tests)
 endif()

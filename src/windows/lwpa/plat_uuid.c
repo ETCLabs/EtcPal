@@ -29,7 +29,7 @@ lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
   UUID plat_uuid;
 
   if (!uuid)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   if (RPC_S_OK == UuidCreateSequential(&plat_uuid))
   {
@@ -37,11 +37,11 @@ lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
     lwpa_pack_16b(&uuid->data[4], plat_uuid.Data2);
     lwpa_pack_16b(&uuid->data[6], plat_uuid.Data3);
     memcpy(&uuid->data[8], plat_uuid.Data4, 8);
-    return LWPA_OK;
+    return kLwpaErrOk;
   }
   else
   {
-    return LWPA_SYSERR;
+    return kLwpaErrSys;
   }
 }
 
@@ -50,7 +50,7 @@ lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
   UUID plat_uuid;
 
   if (!uuid)
-    return LWPA_INVALID;
+    return kLwpaErrInvalid;
 
   if (RPC_S_OK == UuidCreate(&plat_uuid))
   {
@@ -58,10 +58,10 @@ lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
     lwpa_pack_16b(&uuid->data[4], plat_uuid.Data2);
     lwpa_pack_16b(&uuid->data[6], plat_uuid.Data3);
     memcpy(&uuid->data[8], plat_uuid.Data4, 8);
-    return LWPA_OK;
+    return kLwpaErrOk;
   }
   else
   {
-    return LWPA_SYSERR;
+    return kLwpaErrSys;
   }
 }

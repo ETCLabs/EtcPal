@@ -44,7 +44,7 @@ protected:
 TEST_F(MempoolTest, alloc_free)
 {
   // Initialize the pool.
-  ASSERT_EQ(LWPA_OK, lwpa_mempool_init(alloc_test));
+  ASSERT_EQ(kLwpaErrOk, lwpa_mempool_init(alloc_test));
   ASSERT_EQ(TEST_ALLOC_MEMP_SIZE, lwpa_mempool_size(alloc_test));
 
   // Allocate the entire pool.
@@ -83,7 +83,7 @@ TEST_F(MempoolTest, alloc_free)
 TEST_F(MempoolTest, alloc_free_array)
 {
   // Initialize the pool.
-  ASSERT_EQ(LWPA_OK, lwpa_mempool_init(alloc_array_test));
+  ASSERT_EQ(kLwpaErrOk, lwpa_mempool_init(alloc_array_test));
   ASSERT_EQ(TEST_ALLOC_MEMP_SIZE, lwpa_mempool_size(alloc_array_test));
 
   // Allocate the entire pool.
