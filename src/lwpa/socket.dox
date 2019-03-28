@@ -257,15 +257,16 @@ lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how);
  *
  *  Refer to your favorite socket() man page for more information.
  *
- *  Differences from POSIX: Rarely-used 'protocol' parameter is omitted.
- *  #LWPA_SOCKET_INVALID is the only invalid return value.
+ *  Differences from POSIX: Returns an error code and fills in an output parameter for the socket
+ *  handle instead of returning the socket handle. Rarely-used 'protocol' parameter is omitted.
  *
  *  \param[in] family Protocol family that the socket should use.
  *  \param[in] type Socket communication type.
- *  \return #LWPA_SOCKET_INVALID (error occurred) or a value other than
- *          #LWPA_SOCKET_INVALID (success).
+ *  \param[out] id Filled in with socket handle on success. Filled in with #LWPA_SOCKET_INVALID on
+ *                 failure.
+ *  \return #LWPA_OK (success) or lwpa_error_t code from system (error occurred).
  */
-lwpa_socket_t lwpa_socket(unsigned int family, unsigned int type);
+lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id);
 
 /*! \brief Change the blocking behavior of a socket.
  *

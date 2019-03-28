@@ -42,7 +42,7 @@ public:
   static const char *SEND_MSG;
   static const size_t SEND_MSG_LEN = 12;
   static const uint32_t TEST_MCAST_ADDR = 0xec02054d;  // 236.2.5.77
-  lwpa_socket_t send_sock;
+  lwpa_socket_t send_sock = LWPA_SOCKET_INVALID;
   LwpaSockaddr send_addr_1;
   LwpaSockaddr send_addr_2;
 
@@ -127,31 +127,39 @@ static void send_thread(SocketTest *fixture)
 
 TEST_F(SocketTest, unicast_udp)
 {
-  lwpa_socket_t rcvsock1, rcvsock2, rcvsock3;
+  lwpa_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
+  lwpa_socket_t rcvsock2 = LWPA_SOCKET_INVALID;
+  lwpa_socket_t rcvsock3 = LWPA_SOCKET_INVALID;
   LwpaSockaddr bind_addr;
 
   // We'll just use the default interface for this test.
 
-  rcvsock1 = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
   ASSERT_NE(rcvsock1, LWPA_SOCKET_INVALID);
-  rcvsock2 = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
   ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
+
   int intval = 1;
-  ASSERT_EQ(0, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
-  rcvsock3 = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+  ASSERT_EQ(LWPA_OK, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
+
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock3));
   ASSERT_NE(rcvsock3, LWPA_SOCKET_INVALID);
-  send_sock = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
   ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
-  ASSERT_EQ(0, lwpa_close(rcvsock3));
+
+  ASSERT_EQ(LWPA_OK, lwpa_close(rcvsock3));
+
   lwpaip_make_any_v4(&bind_addr.ip);
   bind_addr.port = 8888;
   // Shouldn't be able to bind to a closed socket.
-  ASSERT_NE(0, lwpa_bind(rcvsock3, &bind_addr));
+  ASSERT_NE(LWPA_OK, lwpa_bind(rcvsock3, &bind_addr));
   // Bind socket 1 to the wildcard address and port 8888.
-  ASSERT_EQ(0, lwpa_bind(rcvsock1, &bind_addr));
+  ASSERT_EQ(LWPA_OK, lwpa_bind(rcvsock1, &bind_addr));
   // Bind socket 2 to the wildcard address and port 9999.
   bind_addr.port = 9999;
-  ASSERT_EQ(0, lwpa_bind(rcvsock2, &bind_addr));
+  ASSERT_EQ(LWPA_OK, lwpa_bind(rcvsock2, &bind_addr));
 
   lwpaip_set_v4_address(&send_addr_1.ip, 0x7f000001u);
   send_addr_1.port = 8888;
@@ -163,9 +171,11 @@ TEST_F(SocketTest, unicast_udp)
   {
     LwpaSockaddr from_addr;
     uint8_t buf[SEND_MSG_LEN + 1];
+
     ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(rcvsock1, buf, SEND_MSG_LEN, 0, &from_addr));
     ASSERT_TRUE(lwpaip_equal(&send_addr_1.ip, &from_addr.ip));
     ASSERT_NE(from_addr.port, 8888);
+
     buf[SEND_MSG_LEN] = '\0';
     ASSERT_EQ(0, strcmp((char *)buf, SEND_MSG));
   }
@@ -179,41 +189,52 @@ TEST_F(SocketTest, unicast_udp)
   // Let the send thread end
   send_thr.join();
 
-  ASSERT_EQ(0, lwpa_close(rcvsock1));
-  ASSERT_EQ(0, lwpa_close(rcvsock2));
-  ASSERT_EQ(0, lwpa_close(send_sock));
+  ASSERT_EQ(LWPA_OK, lwpa_close(rcvsock1));
+  ASSERT_EQ(LWPA_OK, lwpa_close(rcvsock2));
+  ASSERT_EQ(LWPA_OK, lwpa_close(send_sock));
 }
 
 TEST_F(SocketTest, multicast_udp)
 {
-  lwpa_socket_t rcvsock1, rcvsock2;
+  lwpa_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
+  lwpa_socket_t rcvsock2 = LWPA_SOCKET_INVALID;
   LwpaSockaddr bind_addr;
 
-  rcvsock1 = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
   ASSERT_NE(rcvsock1, LWPA_SOCKET_INVALID);
+
   int intval = 1;
   ASSERT_EQ(0, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
-  rcvsock2 = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
   ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
-  ASSERT_EQ(0, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
-  ASSERT_EQ(0, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
-  send_sock = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+
+  ASSERT_EQ(LWPA_OK, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
+  ASSERT_EQ(LWPA_OK, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
+
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
   ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
-  ASSERT_EQ(0, lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+
+  ASSERT_EQ(LWPA_OK, lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+
   // Bind socket 1 to the wildcard address and port 8888.
   lwpaip_make_any_v4(&bind_addr.ip);
   bind_addr.port = 8888;
-  ASSERT_EQ(0, lwpa_bind(rcvsock1, &bind_addr));
+  ASSERT_EQ(LWPA_OK, lwpa_bind(rcvsock1, &bind_addr));
+
   // Bind socket 2 to the wildcard address and port 9999.
   bind_addr.port = 9999;
-  ASSERT_EQ(0, lwpa_bind(rcvsock2, &bind_addr));
+  ASSERT_EQ(LWPA_OK, lwpa_bind(rcvsock2, &bind_addr));
+
   // Subscribe socket 1 to the multicast address.
   LwpaMreq mreq;
   mreq.netint = g_netint;
   lwpaip_set_v4_address(&mreq.group, TEST_MCAST_ADDR);
-  ASSERT_EQ(0, lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &mreq, sizeof mreq));
+  ASSERT_EQ(LWPA_OK, lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &mreq, sizeof mreq));
+
   // Subscribe socket 2 to the multicast address
-  ASSERT_EQ(0, lwpa_setsockopt(rcvsock2, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &mreq, sizeof mreq));
+  ASSERT_EQ(LWPA_OK, lwpa_setsockopt(rcvsock2, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &mreq, sizeof mreq));
+
   lwpaip_set_v4_address(&send_addr_1.ip, TEST_MCAST_ADDR);
   send_addr_1.port = 8888;
 
@@ -225,8 +246,10 @@ TEST_F(SocketTest, multicast_udp)
   {
     LwpaSockaddr from_addr;
     uint8_t buf[SEND_MSG_LEN + 1];
+
     ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(rcvsock1, buf, SEND_MSG_LEN, 0, &from_addr));
     ASSERT_NE(from_addr.port, 8888);
+
     buf[SEND_MSG_LEN] = '\0';
     ASSERT_EQ(0, strcmp((char *)buf, SEND_MSG));
   }
@@ -239,9 +262,9 @@ TEST_F(SocketTest, multicast_udp)
   // Let the send thread end
   send_thr.join();
 
-  ASSERT_EQ(0, lwpa_close(rcvsock1));
-  ASSERT_EQ(0, lwpa_close(rcvsock2));
-  ASSERT_EQ(0, lwpa_close(send_sock));
+  ASSERT_EQ(LWPA_OK, lwpa_close(rcvsock1));
+  ASSERT_EQ(LWPA_OK, lwpa_close(rcvsock2));
+  ASSERT_EQ(LWPA_OK, lwpa_close(send_sock));
 }
 
 static void polltest_sendthread(SocketTest *fixture)
@@ -256,23 +279,27 @@ static void polltest_sendthread(SocketTest *fixture)
 
 TEST_F(SocketTest, poll)
 {
-  lwpa_socket_t rcvsock1, rcvsock2;
+  lwpa_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
+  lwpa_socket_t rcvsock2 = LWPA_SOCKET_INVALID;
   LwpaSockaddr bind_addr;
 
-  rcvsock1 = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
   ASSERT_NE(rcvsock1, LWPA_SOCKET_INVALID);
-  rcvsock2 = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
   ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
-  send_sock = lwpa_socket(LWPA_AF_INET, LWPA_DGRAM);
+
+  ASSERT_EQ(LWPA_OK, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
   ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
 
   // Bind socket 1 to the wildcard address and port 8888.
   lwpaip_make_any_v4(&bind_addr.ip);
   bind_addr.port = 8888;
-  ASSERT_EQ(0, lwpa_bind(rcvsock1, &bind_addr));
+  ASSERT_EQ(LWPA_OK, lwpa_bind(rcvsock1, &bind_addr));
+
   // Bind socket 2 to the wildcard address and port 9999.
   bind_addr.port = 9999;
-  ASSERT_EQ(0, lwpa_bind(rcvsock2, &bind_addr));
+  ASSERT_EQ(LWPA_OK, lwpa_bind(rcvsock2, &bind_addr));
 
   // Test poll with nothing sending - should time out.
   LwpaPollfd pfds[2];
@@ -281,6 +308,7 @@ TEST_F(SocketTest, poll)
   pfds[1].fd = rcvsock2;
   pfds[1].events = LWPA_POLLIN;
   ASSERT_EQ(LWPA_TIMEDOUT, lwpa_poll(pfds, 2, 100));
+
   send_addr_1.ip = g_netint;
   send_addr_1.port = 8888;
   send_addr_2.ip = g_netint;
@@ -301,9 +329,11 @@ poll_again:
     {
       LwpaSockaddr from_addr;
       uint8_t buf[SEND_MSG_LEN + 1];
+
       ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(pfds[i].fd, buf, SEND_MSG_LEN, 0, &from_addr));
       ASSERT_TRUE(lwpaip_equal(&send_addr_1.ip, &from_addr.ip));
       ASSERT_NE(from_addr.port, 8888);
+
       buf[SEND_MSG_LEN] = '\0';
       ASSERT_EQ(0, strcmp((char *)buf, SEND_MSG));
     }
@@ -317,9 +347,9 @@ poll_again:
   // Let the send thread end
   send_thr.join();
 
-  ASSERT_EQ(0, lwpa_close(rcvsock1));
-  ASSERT_EQ(0, lwpa_close(rcvsock2));
-  ASSERT_EQ(0, lwpa_close(send_sock));
+  ASSERT_EQ(LWPA_OK, lwpa_close(rcvsock1));
+  ASSERT_EQ(LWPA_OK, lwpa_close(rcvsock2));
+  ASSERT_EQ(LWPA_OK, lwpa_close(send_sock));
 }
 
 TEST_F(SocketTest, getaddrinfo)
@@ -329,12 +359,12 @@ TEST_F(SocketTest, getaddrinfo)
 
   memset(&ai_hints, 0, sizeof ai_hints);
   ai_hints.ai_family = LWPA_AF_INET;
-  ASSERT_EQ(0, lwpa_getaddrinfo(test_hostname, test_service, &ai_hints, &ai));
+  ASSERT_EQ(LWPA_OK, lwpa_getaddrinfo(test_hostname, test_service, &ai_hints, &ai));
   ASSERT_TRUE(lwpaip_is_v4(&ai.ai_addr.ip));
   lwpa_freeaddrinfo(&ai);
 
   ai_hints.ai_flags = LWPA_AI_NUMERICHOST;
-  ASSERT_EQ(0, lwpa_getaddrinfo(test_gai_ip_str, test_gai_port_str, &ai_hints, &ai));
+  ASSERT_EQ(LWPA_OK, lwpa_getaddrinfo(test_gai_ip_str, test_gai_port_str, &ai_hints, &ai));
   ASSERT_TRUE(lwpaip_is_v4(&ai.ai_addr.ip));
   ASSERT_EQ(lwpaip_v4_address(&ai.ai_addr.ip), test_gai_ip);
   ASSERT_EQ(ai.ai_addr.port, test_gai_port);

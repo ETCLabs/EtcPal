@@ -36,7 +36,7 @@ DEFINE_FAKE_VALUE_FUNC(int, lwpa_send, lwpa_socket_t, const void *, size_t, int)
 DEFINE_FAKE_VALUE_FUNC(int, lwpa_sendto, lwpa_socket_t, const void *, size_t, int, const LwpaSockaddr *);
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setsockopt, lwpa_socket_t, int, int, const void *, size_t);
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_shutdown, lwpa_socket_t, int);
-DEFINE_FAKE_VALUE_FUNC(lwpa_socket_t, lwpa_socket, unsigned int, unsigned int);
+DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket, unsigned int, unsigned int, lwpa_socket_t *);
 
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setblocking, lwpa_socket_t, bool);
 

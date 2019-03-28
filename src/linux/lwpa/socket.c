@@ -354,185 +354,185 @@ int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags,
 
 lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void *option_value, size_t option_len)
 {
-//  int res = -1;
-//
-//  if (!option_value)
-//    return LWPA_INVALID;
-//
-//  /* TODO this platform implementation could be simplified by use of socket option lookup arrays. */
-//  switch (level)
-//  {
-//    case LWPA_SOL_SOCKET:
-//      switch (option_name)
-//      {
-//        case LWPA_SO_RCVBUF:
-//          res = setsockopt(id, SOL_SOCKET, SO_RCVBUF, option_value, (int)option_len);
-//          break;
-//        case LWPA_SO_SNDBUF:
-//          res = setsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, (int)option_len);
-//          break;
-//        case LWPA_SO_RCVTIMEO:
-//          if (option_len == sizeof(int))
-//          {
-//            DWORD val = (DWORD) * (int *)option_value;
-//            res = setsockopt(id, SOL_SOCKET, SO_RCVTIMEO, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_SO_SNDTIMEO:
-//          if (option_len == sizeof(int))
-//          {
-//            DWORD val = (DWORD) * (int *)option_value;
-//            res = setsockopt(id, SOL_SOCKET, SO_SNDTIMEO, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_SO_REUSEADDR:
-//          if (option_len == sizeof(int))
-//          {
-//            BOOL val = (BOOL) * (int *)option_value;
-//            res = setsockopt(id, SOL_SOCKET, SO_REUSEADDR, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_SO_BROADCAST:
-//          if (option_len == sizeof(int))
-//          {
-//            BOOL val = (BOOL) * (int *)option_value;
-//            res = setsockopt(id, SOL_SOCKET, SO_BROADCAST, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_SO_KEEPALIVE:
-//          if (option_len == sizeof(int))
-//          {
-//            BOOL val = (BOOL) * (int *)option_value;
-//            res = setsockopt(id, SOL_SOCKET, SO_KEEPALIVE, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_SO_LINGER:
-//          if (option_len == sizeof(LwpaLinger))
-//          {
-//            LwpaLinger *ll = (LwpaLinger *)option_value;
-//            struct linger val;
-//            val.l_onoff = (u_short)ll->onoff;
-//            val.l_linger = (u_short)ll->linger;
-//            res = setsockopt(id, SOL_SOCKET, SO_LINGER, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_SO_ERROR: /* Set not supported */
-//        case LWPA_SO_TYPE:  /* Not supported */
-//        default:
-//          return LWPA_INVALID;
-//      }
-//      break;
-//    case LWPA_IPPROTO_IP:
-//      switch (option_name)
-//      {
-//        case LWPA_IP_TTL:
-//          if (option_len == sizeof(int))
-//          {
-//            DWORD val = (DWORD) * (int *)option_value;
-//            res = setsockopt(id, IPPROTO_IP, IP_TTL, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_MCAST_JOIN_GROUP:
-//          if (option_len == sizeof(LwpaMreq))
-//          {
-//            LwpaMreq *amreq = (LwpaMreq *)option_value;
-//            if (lwpaip_is_v4(&amreq->group))
-//            {
-//              struct ip_mreq val;
-//              val.imr_multiaddr.s_addr = htonl(lwpaip_v4_address(&amreq->group));
-//              val.imr_interface.s_addr = htonl(lwpaip_v4_address(&amreq->netint));
-//              res = setsockopt(id, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&val, sizeof val);
-//            }
-//          }
-//          break;
-//        case LWPA_MCAST_LEAVE_GROUP:
-//          if (option_len == sizeof(LwpaMreq))
-//          {
-//            LwpaMreq *amreq = (LwpaMreq *)option_value;
-//            if (lwpaip_is_v4(&amreq->group))
-//            {
-//              struct ip_mreq val;
-//              val.imr_multiaddr.s_addr = htonl(lwpaip_v4_address(&amreq->group));
-//              val.imr_interface.s_addr = htonl(lwpaip_v4_address(&amreq->netint));
-//              res = setsockopt(id, IPPROTO_IP, IP_DROP_MEMBERSHIP, (char *)&val, sizeof val);
-//            }
-//          }
-//          break;
-//        case LWPA_IP_MULTICAST_IF:
-//          if (option_len == sizeof(LwpaIpAddr))
-//          {
-//            LwpaIpAddr *netint = (LwpaIpAddr *)option_value;
-//            if (lwpaip_is_v4(netint))
-//            {
-//              DWORD val = htonl(lwpaip_v4_address(netint));
-//              res = setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, (char *)&val, sizeof val);
-//            }
-//          }
-//          break;
-//        case LWPA_IP_MULTICAST_TTL:
-//          if (option_len == sizeof(int))
-//          {
-//            DWORD val = (DWORD) * (int *)option_value;
-//            res = setsockopt(id, IPPROTO_IP, IP_MULTICAST_TTL, (char *)&val, sizeof val);
-//          }
-//          break;
-//        case LWPA_IP_MULTICAST_LOOP:
-//          if (option_len == sizeof(int))
-//          {
-//            DWORD val = (DWORD) * (int *)option_value;
-//            res = setsockopt(id, IPPROTO_IP, IP_MULTICAST_LOOP, (char *)&val, sizeof val);
-//          }
-//          break;
-//        default:
-//          return LWPA_INVALID;
-//      }
-//      break;
-//    case LWPA_IPPROTO_IPV6:
-//      switch (option_name)
-//      {
-//        case LWPA_MCAST_JOIN_GROUP:
-//          /* TODO on windows.
-//          if (option_len == sizeof(struct lwpa_mreq))
-//          {
-//            LwpaMreq *amreq = (LwpaMreq *)option_value;
-//            if (lwpaip_is_v6(&amreq->group))
-//            {
-//              struct ipv6_mreq val;
-//              val.ipv6imr_interface = 0;
-//              memcpy(&val.ipv6imr_multiaddr.s6_addr,
-//                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
-//              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
-//                               sizeof val);
-//            }
-//          }
-//          */
-//          break;
-//        case LWPA_MCAST_LEAVE_GROUP:
-//          /* TODO on windows.
-//          if (option_len == sizeof(struct lwpa_mreq))
-//          {
-//            LwpaMreq *amreq = (LwpaMreq *)option_value;
-//            if (lwpaip_is_v6(&amreq->group))
-//            {
-//              struct ipv6_mreq val;
-//              val.ipv6imr_interface = 0;
-//              memcpy(&val.ipv6imr_multiaddr.s6_addr,
-//                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
-//              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
-//                               sizeof val);
-//            }
-//          }
-//          */
-//          break;
-//        default: /* Other IPv6 options TODO on windows. */
-//          return LWPA_INVALID;
-//      }
-//      break;
-//    case LWPA_SO_REUSEPORT: /* Not supported on this platform. */
-//    default:
-//      return LWPA_INVALID;
-//  }
-//  return (res == 0 ? LWPA_OK : err_plat_to_lwpa(WSAGetLastError()));
+  //  int res = -1;
+  //
+  //  if (!option_value)
+  //    return LWPA_INVALID;
+  //
+  //  /* TODO this platform implementation could be simplified by use of socket option lookup arrays. */
+  //  switch (level)
+  //  {
+  //    case LWPA_SOL_SOCKET:
+  //      switch (option_name)
+  //      {
+  //        case LWPA_SO_RCVBUF:
+  //          res = setsockopt(id, SOL_SOCKET, SO_RCVBUF, option_value, (int)option_len);
+  //          break;
+  //        case LWPA_SO_SNDBUF:
+  //          res = setsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, (int)option_len);
+  //          break;
+  //        case LWPA_SO_RCVTIMEO:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            DWORD val = (DWORD) * (int *)option_value;
+  //            res = setsockopt(id, SOL_SOCKET, SO_RCVTIMEO, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_SO_SNDTIMEO:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            DWORD val = (DWORD) * (int *)option_value;
+  //            res = setsockopt(id, SOL_SOCKET, SO_SNDTIMEO, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_SO_REUSEADDR:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            BOOL val = (BOOL) * (int *)option_value;
+  //            res = setsockopt(id, SOL_SOCKET, SO_REUSEADDR, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_SO_BROADCAST:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            BOOL val = (BOOL) * (int *)option_value;
+  //            res = setsockopt(id, SOL_SOCKET, SO_BROADCAST, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_SO_KEEPALIVE:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            BOOL val = (BOOL) * (int *)option_value;
+  //            res = setsockopt(id, SOL_SOCKET, SO_KEEPALIVE, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_SO_LINGER:
+  //          if (option_len == sizeof(LwpaLinger))
+  //          {
+  //            LwpaLinger *ll = (LwpaLinger *)option_value;
+  //            struct linger val;
+  //            val.l_onoff = (u_short)ll->onoff;
+  //            val.l_linger = (u_short)ll->linger;
+  //            res = setsockopt(id, SOL_SOCKET, SO_LINGER, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_SO_ERROR: /* Set not supported */
+  //        case LWPA_SO_TYPE:  /* Not supported */
+  //        default:
+  //          return LWPA_INVALID;
+  //      }
+  //      break;
+  //    case LWPA_IPPROTO_IP:
+  //      switch (option_name)
+  //      {
+  //        case LWPA_IP_TTL:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            DWORD val = (DWORD) * (int *)option_value;
+  //            res = setsockopt(id, IPPROTO_IP, IP_TTL, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_MCAST_JOIN_GROUP:
+  //          if (option_len == sizeof(LwpaMreq))
+  //          {
+  //            LwpaMreq *amreq = (LwpaMreq *)option_value;
+  //            if (lwpaip_is_v4(&amreq->group))
+  //            {
+  //              struct ip_mreq val;
+  //              val.imr_multiaddr.s_addr = htonl(lwpaip_v4_address(&amreq->group));
+  //              val.imr_interface.s_addr = htonl(lwpaip_v4_address(&amreq->netint));
+  //              res = setsockopt(id, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&val, sizeof val);
+  //            }
+  //          }
+  //          break;
+  //        case LWPA_MCAST_LEAVE_GROUP:
+  //          if (option_len == sizeof(LwpaMreq))
+  //          {
+  //            LwpaMreq *amreq = (LwpaMreq *)option_value;
+  //            if (lwpaip_is_v4(&amreq->group))
+  //            {
+  //              struct ip_mreq val;
+  //              val.imr_multiaddr.s_addr = htonl(lwpaip_v4_address(&amreq->group));
+  //              val.imr_interface.s_addr = htonl(lwpaip_v4_address(&amreq->netint));
+  //              res = setsockopt(id, IPPROTO_IP, IP_DROP_MEMBERSHIP, (char *)&val, sizeof val);
+  //            }
+  //          }
+  //          break;
+  //        case LWPA_IP_MULTICAST_IF:
+  //          if (option_len == sizeof(LwpaIpAddr))
+  //          {
+  //            LwpaIpAddr *netint = (LwpaIpAddr *)option_value;
+  //            if (lwpaip_is_v4(netint))
+  //            {
+  //              DWORD val = htonl(lwpaip_v4_address(netint));
+  //              res = setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, (char *)&val, sizeof val);
+  //            }
+  //          }
+  //          break;
+  //        case LWPA_IP_MULTICAST_TTL:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            DWORD val = (DWORD) * (int *)option_value;
+  //            res = setsockopt(id, IPPROTO_IP, IP_MULTICAST_TTL, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        case LWPA_IP_MULTICAST_LOOP:
+  //          if (option_len == sizeof(int))
+  //          {
+  //            DWORD val = (DWORD) * (int *)option_value;
+  //            res = setsockopt(id, IPPROTO_IP, IP_MULTICAST_LOOP, (char *)&val, sizeof val);
+  //          }
+  //          break;
+  //        default:
+  //          return LWPA_INVALID;
+  //      }
+  //      break;
+  //    case LWPA_IPPROTO_IPV6:
+  //      switch (option_name)
+  //      {
+  //        case LWPA_MCAST_JOIN_GROUP:
+  //          /* TODO on windows.
+  //          if (option_len == sizeof(struct lwpa_mreq))
+  //          {
+  //            LwpaMreq *amreq = (LwpaMreq *)option_value;
+  //            if (lwpaip_is_v6(&amreq->group))
+  //            {
+  //              struct ipv6_mreq val;
+  //              val.ipv6imr_interface = 0;
+  //              memcpy(&val.ipv6imr_multiaddr.s6_addr,
+  //                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
+  //              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
+  //                               sizeof val);
+  //            }
+  //          }
+  //          */
+  //          break;
+  //        case LWPA_MCAST_LEAVE_GROUP:
+  //          /* TODO on windows.
+  //          if (option_len == sizeof(struct lwpa_mreq))
+  //          {
+  //            LwpaMreq *amreq = (LwpaMreq *)option_value;
+  //            if (lwpaip_is_v6(&amreq->group))
+  //            {
+  //              struct ipv6_mreq val;
+  //              val.ipv6imr_interface = 0;
+  //              memcpy(&val.ipv6imr_multiaddr.s6_addr,
+  //                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
+  //              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
+  //                               sizeof val);
+  //            }
+  //          }
+  //          */
+  //          break;
+  //        default: /* Other IPv6 options TODO on windows. */
+  //          return LWPA_INVALID;
+  //      }
+  //      break;
+  //    case LWPA_SO_REUSEPORT: /* Not supported on this platform. */
+  //    default:
+  //      return LWPA_INVALID;
+  //  }
+  //  return (res == 0 ? LWPA_OK : err_plat_to_lwpa(WSAGetLastError()));
   return LWPA_NOTIMPL;
 }
 
@@ -549,17 +549,13 @@ lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how)
   return LWPA_NOTIMPL;
 }
 
-lwpa_socket_t lwpa_socket(unsigned int family, unsigned int type)
+lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id)
 {
-  /*
-  if (family < LWPA_NUM_AF && type < LWPA_NUM_TYPE)
+  if (id)
   {
-    SOCKET sock = socket(sfmap[family], stmap[type], 0);
-    if (sock != INVALID_SOCKET)
-      return sock;
+    *id = LWPA_SOCKET_INVALID;
   }
-  */
-  return LWPA_SOCKET_INVALID;
+  return LWPA_NOTIMPL;
 }
 
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
@@ -575,99 +571,100 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
 /* TODO move to an overlapped IO implementation on Windows for better performance. */
 int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
 {
-//  fd_set readfds, writefds, exceptfds;
-//  LwpaPollfd *fd;
-//  int nplatfds;
-//  int sel_res;
-//  int nreadfds = 0, nwritefds = 0, nexceptfds = 0;
-//  struct timeval plat_timeout;
-//
-//  if (fds && nfds > 0)
-//  {
-//    FD_ZERO(&readfds);
-//    FD_ZERO(&writefds);
-//    FD_ZERO(&exceptfds);
-//
-//    for (fd = fds; fd < fds + nfds; ++fd)
-//    {
-//      if (fd->events & LWPA_POLLIN)
-//      {
-//        FD_SET(fd->fd, &readfds);
-//        nreadfds++;
-//      }
-//      if (fd->events & LWPA_POLLOUT)
-//      {
-//        FD_SET(fd->fd, &writefds);
-//        nwritefds++;
-//      }
-//      if (fd->events & LWPA_POLLPRI)
-//      {
-//        FD_SET(fd->fd, &exceptfds);
-//        nexceptfds++;
-//      }
-//    }
-//  }
-//
-//  if (timeout_ms == 0)
-//  {
-//    plat_timeout.tv_sec = 0;
-//    plat_timeout.tv_usec = 0;
-//  }
-//  else if (timeout_ms != LWPA_WAIT_FOREVER)
-//  {
-//    plat_timeout.tv_sec = timeout_ms / 1000;
-//    plat_timeout.tv_usec = (timeout_ms % 1000) * 1000;
-//  }
-//  nplatfds = (nreadfds > nwritefds) ? nreadfds : nwritefds;
-//  nplatfds = (nexceptfds > nplatfds) ? nexceptfds : nplatfds;
-//  sel_res = select(nplatfds, nreadfds ? &readfds : NULL, nwritefds ? &writefds : NULL, nexceptfds ? &exceptfds : NULL,
-//                   timeout_ms == LWPA_WAIT_FOREVER ? NULL : &plat_timeout);
-//
-//  if (sel_res < 0)
-//  {
-//    return err_plat_to_lwpa(WSAGetLastError());
-//  }
-//  else if (sel_res == 0)
-//  {
-//    return LWPA_TIMEDOUT;
-//  }
-//  else if (fds && nfds > 0)
-//  {
-//    for (fd = fds; fd < fds + nfds; ++fd)
-//    {
-//      fd->revents = 0;
-//
-//      if (FD_ISSET(fd->fd, &readfds) || FD_ISSET(fd->fd, &writefds) || FD_ISSET(fd->fd, &exceptfds))
-//      {
-//        /* Check for errors */
-//        int error;
-//        int error_size = sizeof(error);
-//        if (getsockopt(fd->fd, SOL_SOCKET, SO_ERROR, (char *)&error, &error_size) == 0)
-//        {
-//          if (error != 0)
-//          {
-//            fd->revents |= LWPA_POLLERR;
-//            fd->err = err_plat_to_lwpa(error);
-//          }
-//        }
-//        else
-//          return (int)err_plat_to_lwpa(WSAGetLastError());
-//      }
-//      if (nreadfds && (fd->events & LWPA_POLLIN) && FD_ISSET(fd->fd, &readfds))
-//      {
-//        fd->revents |= LWPA_POLLIN;
-//      }
-//      if (nwritefds && (fd->events & LWPA_POLLOUT) && FD_ISSET(fd->fd, &writefds))
-//      {
-//        fd->revents |= LWPA_POLLOUT;
-//      }
-//      if (nexceptfds && (fd->events & LWPA_POLLPRI) && FD_ISSET(fd->fd, &exceptfds))
-//      {
-//        fd->revents |= LWPA_POLLPRI;
-//      }
-//    }
-//  }
-//  return sel_res;
+  //  fd_set readfds, writefds, exceptfds;
+  //  LwpaPollfd *fd;
+  //  int nplatfds;
+  //  int sel_res;
+  //  int nreadfds = 0, nwritefds = 0, nexceptfds = 0;
+  //  struct timeval plat_timeout;
+  //
+  //  if (fds && nfds > 0)
+  //  {
+  //    FD_ZERO(&readfds);
+  //    FD_ZERO(&writefds);
+  //    FD_ZERO(&exceptfds);
+  //
+  //    for (fd = fds; fd < fds + nfds; ++fd)
+  //    {
+  //      if (fd->events & LWPA_POLLIN)
+  //      {
+  //        FD_SET(fd->fd, &readfds);
+  //        nreadfds++;
+  //      }
+  //      if (fd->events & LWPA_POLLOUT)
+  //      {
+  //        FD_SET(fd->fd, &writefds);
+  //        nwritefds++;
+  //      }
+  //      if (fd->events & LWPA_POLLPRI)
+  //      {
+  //        FD_SET(fd->fd, &exceptfds);
+  //        nexceptfds++;
+  //      }
+  //    }
+  //  }
+  //
+  //  if (timeout_ms == 0)
+  //  {
+  //    plat_timeout.tv_sec = 0;
+  //    plat_timeout.tv_usec = 0;
+  //  }
+  //  else if (timeout_ms != LWPA_WAIT_FOREVER)
+  //  {
+  //    plat_timeout.tv_sec = timeout_ms / 1000;
+  //    plat_timeout.tv_usec = (timeout_ms % 1000) * 1000;
+  //  }
+  //  nplatfds = (nreadfds > nwritefds) ? nreadfds : nwritefds;
+  //  nplatfds = (nexceptfds > nplatfds) ? nexceptfds : nplatfds;
+  //  sel_res = select(nplatfds, nreadfds ? &readfds : NULL, nwritefds ? &writefds : NULL, nexceptfds ? &exceptfds :
+  //  NULL,
+  //                   timeout_ms == LWPA_WAIT_FOREVER ? NULL : &plat_timeout);
+  //
+  //  if (sel_res < 0)
+  //  {
+  //    return err_plat_to_lwpa(WSAGetLastError());
+  //  }
+  //  else if (sel_res == 0)
+  //  {
+  //    return LWPA_TIMEDOUT;
+  //  }
+  //  else if (fds && nfds > 0)
+  //  {
+  //    for (fd = fds; fd < fds + nfds; ++fd)
+  //    {
+  //      fd->revents = 0;
+  //
+  //      if (FD_ISSET(fd->fd, &readfds) || FD_ISSET(fd->fd, &writefds) || FD_ISSET(fd->fd, &exceptfds))
+  //      {
+  //        /* Check for errors */
+  //        int error;
+  //        int error_size = sizeof(error);
+  //        if (getsockopt(fd->fd, SOL_SOCKET, SO_ERROR, (char *)&error, &error_size) == 0)
+  //        {
+  //          if (error != 0)
+  //          {
+  //            fd->revents |= LWPA_POLLERR;
+  //            fd->err = err_plat_to_lwpa(error);
+  //          }
+  //        }
+  //        else
+  //          return (int)err_plat_to_lwpa(WSAGetLastError());
+  //      }
+  //      if (nreadfds && (fd->events & LWPA_POLLIN) && FD_ISSET(fd->fd, &readfds))
+  //      {
+  //        fd->revents |= LWPA_POLLIN;
+  //      }
+  //      if (nwritefds && (fd->events & LWPA_POLLOUT) && FD_ISSET(fd->fd, &writefds))
+  //      {
+  //        fd->revents |= LWPA_POLLOUT;
+  //      }
+  //      if (nexceptfds && (fd->events & LWPA_POLLPRI) && FD_ISSET(fd->fd, &exceptfds))
+  //      {
+  //        fd->revents |= LWPA_POLLPRI;
+  //      }
+  //    }
+  //  }
+  //  return sel_res;
   return (int)LWPA_NOTIMPL;
 }
 
@@ -706,37 +703,37 @@ lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const L
 
 bool lwpa_nextaddr(LwpaAddrinfo *ai)
 {
-//  if (ai && ai->pd[1])
-//  {
-//    struct addrinfo *pf_ai = (struct addrinfo *)ai->pd[1];
-//    ai->ai_flags = 0;
-//    if (!sockaddr_plat_to_lwpa(&ai->ai_addr, pf_ai->ai_addr))
-//      return false;
-//    /* Can't use reverse maps, because we have no guarantee of the numeric values of the platform
-//     * constants. Ugh. */
-//    if (pf_ai->ai_family == AF_INET)
-//      ai->ai_family = LWPA_AF_INET;
-//    else if (pf_ai->ai_family == AF_INET6)
-//      ai->ai_family = LWPA_AF_INET6;
-//    else
-//      ai->ai_family = LWPA_AF_UNSPEC;
-//    if (pf_ai->ai_socktype == SOCK_DGRAM)
-//      ai->ai_socktype = LWPA_DGRAM;
-//    else if (pf_ai->ai_socktype == SOCK_STREAM)
-//      ai->ai_socktype = LWPA_STREAM;
-//    else
-//      ai->ai_socktype = 0;
-//    if (pf_ai->ai_protocol == IPPROTO_UDP)
-//      ai->ai_protocol = LWPA_IPPROTO_UDP;
-//    else if (pf_ai->ai_protocol == IPPROTO_TCP)
-//      ai->ai_protocol = LWPA_IPPROTO_TCP;
-//    else
-//      ai->ai_protocol = 0;
-//    ai->ai_canonname = pf_ai->ai_canonname;
-//    ai->pd[1] = pf_ai->ai_next;
-//
-//    return true;
-//  }
+  //  if (ai && ai->pd[1])
+  //  {
+  //    struct addrinfo *pf_ai = (struct addrinfo *)ai->pd[1];
+  //    ai->ai_flags = 0;
+  //    if (!sockaddr_plat_to_lwpa(&ai->ai_addr, pf_ai->ai_addr))
+  //      return false;
+  //    /* Can't use reverse maps, because we have no guarantee of the numeric values of the platform
+  //     * constants. Ugh. */
+  //    if (pf_ai->ai_family == AF_INET)
+  //      ai->ai_family = LWPA_AF_INET;
+  //    else if (pf_ai->ai_family == AF_INET6)
+  //      ai->ai_family = LWPA_AF_INET6;
+  //    else
+  //      ai->ai_family = LWPA_AF_UNSPEC;
+  //    if (pf_ai->ai_socktype == SOCK_DGRAM)
+  //      ai->ai_socktype = LWPA_DGRAM;
+  //    else if (pf_ai->ai_socktype == SOCK_STREAM)
+  //      ai->ai_socktype = LWPA_STREAM;
+  //    else
+  //      ai->ai_socktype = 0;
+  //    if (pf_ai->ai_protocol == IPPROTO_UDP)
+  //      ai->ai_protocol = LWPA_IPPROTO_UDP;
+  //    else if (pf_ai->ai_protocol == IPPROTO_TCP)
+  //      ai->ai_protocol = LWPA_IPPROTO_TCP;
+  //    else
+  //      ai->ai_protocol = 0;
+  //    ai->ai_canonname = pf_ai->ai_canonname;
+  //    ai->pd[1] = pf_ai->ai_next;
+  //
+  //    return true;
+  //  }
   return false;
 }
 

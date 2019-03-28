@@ -455,15 +455,31 @@ lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how)
   return LWPA_INVALID;
 }
 
-lwpa_socket_t lwpa_socket(unsigned int family, unsigned int type)
+lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id)
 {
-  if (family < LWPA_NUM_AF && type < LWPA_NUM_TYPE)
+  if (id)
   {
-    uint32_t sock = socket(sfmap[family], stmap[type], 0);
-    if (sock != RTCS_SOCKET_ERROR)
-      return sock;
+    if (family < LWPA_NUM_AF && type < LWPA_NUM_TYPE)
+    {
+      uint32_t sock = socket(sfmap[family], stmap[type], 0);
+      if (sock != RTCS_SOCKET_ERROR)
+      {
+        *id = sock;
+        return LWPA_OK;
+      }
+      else
+      {
+        *id = LWPA_SOCKET_INVALID;
+        /* RTCS does not provide error codes on socket failure */
+        return LWPA_SYSERR;
+      }
+    }
+    else
+    {
+      *id = LWPA_SOCKET_INVALID;
+    }
   }
-  return LWPA_SOCKET_INVALID;
+  return LWPA_INVALID;
 }
 
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)

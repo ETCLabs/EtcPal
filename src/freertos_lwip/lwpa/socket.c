@@ -434,15 +434,30 @@ int lwpa_shutdown(void *id, int how)
   return -1;
 }
 
-void *lwpa_socket(unsigned int family, unsigned int type)
+lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id)
 {
-  if (family < LWPA_NUM_AF && type < LWPA_NUM_TYPE)
+  if (id)
   {
-    int sock = socket(sfmap[family], stmap[type], 0);
-    if (sock >= 0)
-      return (void *)sock;
+    if (family < LWPA_NUM_AF && type < LWPA_NUM_TYPE)
+    {
+      int sock = socket(sfmap[family], stmap[type], 0);
+      if (sock >= 0)
+      {
+        *id = sock;
+        return LWPA_OK;
+      }
+      else
+      {
+        *id = LWPA_SOCKET_INVALID;
+        return err_plat_to_lwpa(errno);
+      }
+    }
+    else
+    {
+      *id = LWPA_SOCKET_INVALID;
+    }
   }
-  return LWPA_SOCKET_INVALID;
+  return LWPA_INVALID;
 }
 
 int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
