@@ -5,6 +5,8 @@ language: cpp
 
 sudo: required
 
+dist: xenial
+
 # Blacklist
 branches:
   only:
@@ -15,6 +17,11 @@ env:
   global:
     - GH_REPO_NAME: lwpa
     - GH_REPO_REF: github.com/ETCLabs/lwpa.git
+
+addons:
+  apt:
+    packages:
+      - doxygen
 
 # Install dependencies
 
@@ -28,18 +35,6 @@ jobs:
     - script: skip
     # Generate and deploy documentation
     - stage: docs
-      # TODO - we need to install doxygen like this for now because of older
-      # distros on Travis. Once Doxygen support gets up to 1.8 or so we can use
-      # apt-get.
-      before_script:
-        - sudo apt-get update
-        - sudo apt-get install flex bison
-        - git clone https://github.com/doxygen/doxygen.git
-        - cd doxygen
-        - mkdir build && cd build
-        - cmake -G "Unix Makefiles" ..
-        - make
-        - sudo make install
       script:
         - cd $TRAVIS_BUILD_DIR/tools/ci
         - chmod +x publish_docs.sh

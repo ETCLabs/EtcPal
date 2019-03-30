@@ -15,11 +15,18 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
       add_compile_options(-Wno-sign-compare)
     endif()
   endif()
+
+  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tools/cmake)
+endif()
+
+option(LWPA_BUILD_MOCK_LIB "Build the lwpa_mock library" OFF)
+if(LWPA_BUILD_MOCK_LIB)
+  add_subdirectory(external/fff)
 endif()
 
 # Main library
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_subdirectory(src)
 
 if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(OPTION_DEFAULTS ON)
@@ -31,5 +38,6 @@ endif()
 
 option(LWPA_BUILD_TESTS "Build the lwpa unit tests" ${OPTION_DEFAULTS})
 if(LWPA_BUILD_TESTS)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+  enable_testing()
+  add_subdirectory(tests)
 endif()

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2018 ETC Inc.
+ * Copyright 2019 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,64 +36,64 @@
 typedef enum
 {
   /*! The call was successful, no error occurred. */
-  LWPA_OK = 0,
+  kLwpaErrOk = 0,
   /*! An identifier or handle passed to a function was not valid or not previously initialized. */
-  LWPA_NOTFOUND = -1,
+  kLwpaErrNotFound = -1,
   /*! A dynamic memory allocation failed, or there is no space left in a statically allocated
    *  array. */
-  LWPA_NOMEM = -2,
+  kLwpaErrNoMem = -2,
   /*! The resource being requested is temporarily unavailable. */
-  LWPA_BUSY = -3,
+  kLwpaErrBusy = -3,
   /*! The item being created already exists. */
-  LWPA_EXIST = -4,
+  kLwpaErrExists = -4,
   /*! An invalid argument was provided to an API function. */
-  LWPA_INVALID = -5,
+  kLwpaErrInvalid = -5,
   /*! The requested operation would block. */
-  LWPA_WOULDBLOCK = -6,
+  kLwpaErrWouldBlock = -6,
   /*! Returned from a function that is meant to be called repeatedly to indicate that there is no
    *  more data available. */
-  LWPA_NODATA = -7,
+  kLwpaErrNoData = -7,
   /*! A protocol parsing function encountered a malformed packet. */
-  LWPA_PROTERR = -8,
+  kLwpaErrProtocol = -8,
   /*! Message too long. */
-  LWPA_MSGSIZE = -9,
+  kLwpaErrMsgSize = -9,
   /*! The requested address is already in use. */
-  LWPA_ADDRINUSE = -10,
+  kLwpaErrAddrInUse = -10,
   /*! Cannot assign the requested address. */
-  LWPA_ADDRNOTAVAIL = -11,
+  kLwpaErrAddrNotAvail = -11,
   /*! The operation failed because a network was down or unreachable. */
-  LWPA_NETERR = -12,
+  kLwpaErrNetwork = -12,
   /*! A connection was reset (hard/abortive close) by the remote peer. */
-  LWPA_CONNRESET = -13,
+  kLwpaErrConnReset = -13,
   /*! A connection was gracefully closed by the remote peer. This code is only used for protocols
    *  above the transport layer. */
-  LWPA_CONNCLOSED = -14,
+  kLwpaErrConnClosed = -14,
   /*! Transport endpoint is already connected. */
-  LWPA_ISCONN = -15,
+  kLwpaErrIsConn = -15,
   /*! Transport endpoint is not connected. */
-  LWPA_NOTCONN = -16,
+  kLwpaErrNotConn = -16,
   /*! Transport endpoint is shut down. */
-  LWPA_SHUTDOWN = -17,
+  kLwpaErrShutdown = -17,
   /*! A connection timed out. */
-  LWPA_TIMEDOUT = -18,
+  kLwpaErrTimedOut = -18,
   /*! A connection was refused. */
-  LWPA_CONNREFUSED = -19,
+  kLwpaErrConnRefused = -19,
   /*! The operation requested is already in progress. */
-  LWPA_ALREADY = -20,
+  kLwpaErrAlready = -20,
   /*! The operation requested is now in progress and will complete later. */
-  LWPA_INPROGRESS = -21,
+  kLwpaErrInProgress = -21,
   /*! A buffer provided to a function was not big enough to hold the data that needed to be packed
    *  into it. */
-  LWPA_BUFSIZE = -22,
+  kLwpaErrBufSize = -22,
   /*! An API function was called from a module that was not previously initialized. */
-  LWPA_NOTINIT = -23,
+  kLwpaErrNotInit = -23,
   /*! No network interfaces were found on the system, or there are no network interfaces of a type
    *  that can satisfy the call being made. */
-  LWPA_NOIFACES = -24,
+  kLwpaErrNoNetints = -24,
   /*! A function or specific use of a function is not implemented yet. */
-  LWPA_NOTIMPL = -25,
+  kLwpaErrNotImpl = -25,
   /*! A system call or C library call failed in a way not covered by other errors. */
-  LWPA_SYSERR = -26,
+  kLwpaErrSys = -26,
 } lwpa_error_t;
 
 #define LWPA_NUM_ERROR_CODES 27

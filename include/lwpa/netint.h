@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2018 ETC Inc.
+ * Copyright 2019 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@
 extern "C" {
 #endif
 
-size_t netint_get_num_interfaces();
-size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size);
-bool netint_get_default_interface(LwpaNetintInfo *netint);
-const LwpaNetintInfo *netint_get_iface_for_dest(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr,
-                                                size_t netint_arr_size);
+size_t lwpa_netint_get_num_interfaces();
+size_t lwpa_netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size);
+bool lwpa_netint_get_default_interface(LwpaNetintInfo *netint);
+const LwpaNetintInfo *lwpa_netint_get_iface_for_dest(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr,
+                                                     size_t netint_arr_size);
 
 // typedef void (*netint_change_notification)(void *context);
 

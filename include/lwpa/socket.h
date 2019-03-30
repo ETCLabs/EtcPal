@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2018 ETC Inc.
+ * Copyright 2019 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,7 +156,7 @@ int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags);
 int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags, const LwpaSockaddr *dest_addr);
 lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void *option_value, size_t option_len);
 lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how);
-lwpa_socket_t lwpa_socket(unsigned int family, unsigned int type);
+lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id);
 /* int protocol - not necessary */
 /* socketpair - not implemented */
 

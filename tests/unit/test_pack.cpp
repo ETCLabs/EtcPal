@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2018 ETC Inc.
+ * Copyright 2019 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ protected:
     const uint8_t *ptst = (const uint8_t *)(&tst);
     memset(buffer, 0, sizeof(uint16_t));
 
-    pack_16b(buffer, tst);
+    lwpa_pack_16b(buffer, tst);
     if ((ptst[0] == buffer[1]) && (ptst[1] == buffer[0]))
       return true;
     return false;
@@ -42,7 +42,7 @@ protected:
     const uint8_t *ptst = (const uint8_t *)(&tst);
     memset(buffer, 0, sizeof(uint16_t));
 
-    pack_16l(buffer, tst);
+    lwpa_pack_16l(buffer, tst);
     if ((ptst[0] == buffer[0]) && (ptst[1] == buffer[1]))
       return true;
     return false;
@@ -54,8 +54,8 @@ protected:
     uint16_t var;
     memset(buffer, 0, sizeof(uint16_t));
 
-    pack_16b(buffer, tst);
-    var = upack_16b(buffer);
+    lwpa_pack_16b(buffer, tst);
+    var = lwpa_upack_16b(buffer);
     if (tst == var)
       return true;
     return false;
@@ -67,8 +67,8 @@ protected:
     uint16_t var;
     memset(buffer, 0, sizeof(uint16_t));
 
-    pack_16l(buffer, tst);
-    var = upack_16l(buffer);
+    lwpa_pack_16l(buffer, tst);
+    var = lwpa_upack_16l(buffer);
     if (tst == var)
       return true;
     return false;
@@ -80,7 +80,7 @@ protected:
     const uint8_t *ptst = (const uint8_t *)(&tst);
     memset(buffer, 0, sizeof(uint32_t));
 
-    pack_32b(buffer, tst);
+    lwpa_pack_32b(buffer, tst);
     if ((ptst[0] == buffer[3]) && (ptst[1] == buffer[2]) && (ptst[2] == buffer[1]) && (ptst[3] == buffer[0]))
     {
       return true;
@@ -94,7 +94,7 @@ protected:
     const uint8_t *ptst = (const uint8_t *)(&tst);
     memset(buffer, 0, sizeof(uint32_t));
 
-    pack_32l(buffer, tst);
+    lwpa_pack_32l(buffer, tst);
     if ((ptst[0] == buffer[0]) && (ptst[1] == buffer[1]) && (ptst[2] == buffer[2]) && (ptst[3] == buffer[3]))
     {
       return true;
@@ -108,8 +108,8 @@ protected:
     uint32_t var;
     memset(buffer, 0, sizeof(uint32_t));
 
-    pack_32b(buffer, tst);
-    var = upack_32b(buffer);
+    lwpa_pack_32b(buffer, tst);
+    var = lwpa_upack_32b(buffer);
     if (tst == var)
       return true;
     return false;
@@ -121,8 +121,8 @@ protected:
     uint32_t var;
     memset(buffer, 0, sizeof(uint32_t));
 
-    pack_32l(buffer, tst);
-    var = upack_32l(buffer);
+    lwpa_pack_32l(buffer, tst);
+    var = lwpa_upack_32l(buffer);
     if (tst == var)
       return true;
     return false;
@@ -134,7 +134,7 @@ protected:
     const uint8_t *ptst = (const uint8_t *)(&tst);
     memset(buffer, 0, sizeof(uint64_t));
 
-    pack_64b(buffer, tst);
+    lwpa_pack_64b(buffer, tst);
     if ((ptst[0] == buffer[7]) && (ptst[1] == buffer[6]) && (ptst[2] == buffer[5]) && (ptst[3] == buffer[4]) &&
         (ptst[4] == buffer[3]) && (ptst[5] == buffer[2]) && (ptst[6] == buffer[1]) && (ptst[7] == buffer[0]))
     {
@@ -149,7 +149,7 @@ protected:
     const uint8_t *ptst = (const uint8_t *)(&tst);
     memset(buffer, 0, sizeof(uint64_t));
 
-    pack_64l(buffer, tst);
+    lwpa_pack_64l(buffer, tst);
     if ((ptst[0] == buffer[0]) && (ptst[1] == buffer[1]) && (ptst[2] == buffer[2]) && (ptst[3] == buffer[3]) &&
         (ptst[4] == buffer[4]) && (ptst[5] == buffer[5]) && (ptst[6] == buffer[6]) && (ptst[7] == buffer[7]))
     {
@@ -164,8 +164,8 @@ protected:
     uint64_t var;
     memset(buffer, 0, sizeof(uint64_t));
 
-    pack_64b(buffer, tst);
-    var = upack_64b(buffer);
+    lwpa_pack_64b(buffer, tst);
+    var = lwpa_upack_64b(buffer);
     if (tst == var)
       return true;
     return false;
@@ -177,8 +177,8 @@ protected:
     uint64_t var;
     memset(buffer, 0, sizeof(uint64_t));
 
-    pack_64l(buffer, tst);
-    var = upack_64l(buffer);
+    lwpa_pack_64l(buffer, tst);
+    var = lwpa_upack_64l(buffer);
     if (tst == var)
       return true;
     return false;

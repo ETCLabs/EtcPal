@@ -1,11 +1,10 @@
 ################################### testing ###################################
 
-if(LWPA_PLATFORM STREQUAL windows)
-  enable_testing()
+include(GoogleTest)
 
-  # Get and build the Googletest library at configure time: 
-  include(../tools/cmake/get_googletest.cmake)
-  get_googletest(${CMAKE_CURRENT_LIST_DIR}/..)
+if(LWPA_PLATFORM STREQUAL windows)
+  message(STATUS "Adding GoogleTest dependency...")
+  include(AddGoogleTest)
 
   set(TEST_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/unit)
 
@@ -27,4 +26,5 @@ if(LWPA_PLATFORM STREQUAL windows)
   )
 
   target_link_libraries(test_lwpa lwpa gtest)
+  gtest_add_tests(TARGET test_lwpa)
 endif()

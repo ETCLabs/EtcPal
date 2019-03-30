@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2018 ETC Inc.
+ * Copyright 2019 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,13 @@
  *  \ingroup lwpa
  *  \brief Memory pools with fixed-size elements.
  *
- *  \#include "lwpa_mempool.h"
+ *  \#include "lwpa/mempool.h"
  *
- *  This module can be used to declare memory pools containing some number of objects of an
- *  arbitrary type. Only objects of that type can be allocated from the pool or freed back into it.
- *  Allocations and deallocations are ensured to be thread_safe by an \ref lwpa_mutex internally.
+ *  This module can be used to declare memory pools containing some number of elements of an
+ *  arbitrary type. Only elements of that type can be allocated from the pool or freed back into it.
+ *  A pool element can be a single object (e.g. int) or a fixed-size array of objects
+ *  (e.g. int[60]). Allocations and deallocations are ensured to be thread_safe by an
+ *  \ref lwpa_mutex internally.
  *
  *  @{
  */
@@ -45,8 +47,8 @@ struct LwpaMempool
 };
 
 /*! (Not for direct usage) A memory pool description structure. Do not declare or use this structure
- *  directly; instead, use LWPA_MEMPOOL_DECLARE(), LWPA_MEMPOOL_DEFINE() and the lwpa_mempool_*
- *  macros to interact with it. */
+ *  directly; instead, use LWPA_MEMPOOL_DECLARE(), LWPA_MEMPOOL_DEFINE(),
+ *  LWPA_MEMPOOL_DEFINE_ARRAY(), and the lwpa_mempool_* macros to interact with it. */
 typedef struct LwpaMempoolDesc
 {
   const size_t elem_size;  /*!< The size of each element. */
@@ -60,7 +62,7 @@ typedef struct LwpaMempoolDesc
 /*! \brief Declare a pool as an external variable.
  *
  *  This optional macro is useful for header files; when used, it must be paired with a call of
- *  LWPA_MEMPOOL_DEFINE() using the same name.
+ *  LWPA_MEMPOOL_DEFINE() or LWPA_MEMPOOL_DEFINE_ARRAY() using the same name.
  *
  *  \param name The name of the memory pool.
  */
@@ -86,6 +88,26 @@ typedef struct LwpaMempoolDesc
                                              0,                /* current_used */ \
                                              name##_pool /* pool */}
 
+/*! \brief Define a new memory pool composed of arrays of elements.
+ *
+ *  This is an alternative to LWPA_MEMPOOL_DEFINE() for creating memory pools containing fixed-size
+ *  arrays of elements.
+ *
+ *  \param name The name of the memory pool.
+ *  \param type The type of a single array element in the memory pool.
+ *  \param array_size The number of elements in each array.
+ *  \param pool_size The number of arrays in the memory pool.
+ */
+#define LWPA_MEMPOOL_DEFINE_ARRAY(name, type, array_size, pool_size)                      \
+  type name##_pool[array_size][pool_size];                                                \
+  struct LwpaMempool name##_pool_list[pool_size];                                         \
+  struct LwpaMempoolDesc name##_pool_desc = {sizeof(type[array_size]), /* elem_size */    \
+                                             pool_size,                /* pool_size */    \
+                                             NULL,                     /* freelist */     \
+                                             name##_pool_list,         /* list */         \
+                                             0,                        /* current_used */ \
+                                             name##_pool /* pool */}
+
 /*! \brief Initialize a memory pool.
  *
  *  This macro must be called on a pool before using lwpa_mempool_alloc() or lwpa_mempool_free() on
@@ -93,8 +115,8 @@ typedef struct LwpaMempoolDesc
  *  pool, simply call this function again.
  *
  *  \param name The name of the memory pool to initialize.
- *  \return #LWPA_OK: The memory pool was initialized successfully.\n
- *          #LWPA_SYSERR: An internal system call error occurred.
+ *  \return #kLwpaErrOk: The memory pool was initialized successfully.\n
+ *          #kLwpaErrSys: An internal system call error occurred.
  */
 #define lwpa_mempool_init(name) lwpa_mempool_init_priv(&name##_pool_desc)
 

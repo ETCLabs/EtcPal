@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2018 ETC Inc.
+ * Copyright 2019 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ bool test_alloc()
 {
   bool ok;
 
-  ok = (LWPA_OK == lwpa_mempool_init(alloc_test));
+  ok = (kLwpaErrOk == lwpa_mempool_init(alloc_test));
   if (ok)
     ok = (TEST_ALLOC_MEMP_SIZE == lwpa_mempool_size(alloc_test));
   if (ok)
