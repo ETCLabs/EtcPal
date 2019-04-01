@@ -21,6 +21,9 @@
 #ifndef _LWPA_COMMON_H_
 #define _LWPA_COMMON_H_
 
+#include "lwpa/int.h"
+#include "lwpa/error.h"
+
 /*! \defgroup lwpa lwpa
  *  \brief Lightweight Platform Abstraction (lwpa): A set of platform abstraction and utility
  *         modules.
@@ -35,8 +38,26 @@
  * @{
  */
 
+
 /*! For lwpa_ functions that take a millisecond timeout, this means to wait indefinitely. */
 #define LWPA_WAIT_FOREVER -1
+
+#define LWPA_FEATURE_SOCKETS 0x00000001u
+#define LWPA_FEATURE_TIMERS  0x00000002u
+#define LWPA_FEATURES_ALL    0xffffffffu
+
+typedef uint32_t lwpa_features_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+lwpa_error_t lwpa_init(lwpa_features_t features);
+void lwpa_deinit(lwpa_features_t features);
+
+#ifdef __cplusplus
+}
+#endif
 
 /*!@}*/
 

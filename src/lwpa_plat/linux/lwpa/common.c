@@ -17,31 +17,21 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/timer.h"
+#include "lwpa/common.h"
 
-#include <windows.h>
-#include "mmsystem.h"
+#include <unistd.h>
 
-static bool time_initted = false;
-
-uint32_t lwpa_getms()
+lwpa_error_t lwpa_init(lwpa_features_t features)
 {
-  if (!time_initted)
+  if (features & LWPA_FEATURE_TIMERS)
   {
-    timeBeginPeriod(1);
-    time_initted = true;
+    if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
+      return kLwpaErrSys;
   }
-  return timeGetTime();
+  return kLwpaErrOk;
 }
 
-uint32_t lwpa_timer_remaining(const LwpaTimer *timer)
+void lwpa_deinit(lwpa_features_t features)
 {
-  uint32_t res = 0;
-  if (timer->interval != 0)
-  {
-    uint32_t cur_ms = lwpa_getms();
-    if (cur_ms - timer->reset_time < timer->interval)
-      res = timer->reset_time + timer->interval - cur_ms;
-  }
-  return res;
+  (void) features;
 }

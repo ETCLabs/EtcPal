@@ -14,29 +14,6 @@ typedef UNDEFINED lwpa_socket_t;
 
 /*! @} */
 
-/*! \brief Initialize the lwpa_socket module.
- *
- *  Some platforms require initialization before socket/networking functionality can be used. Others
- *  do not, and on those platforms this will simply be an empty function. This function can be
- *  called multiple times in a given application, but it must be paired with an equal number of
- *  calls to lwpa_socket_deinit().
- *
- *  \param[in] platform_data A pointer to platform-specific data to use on initialization. The
- *                           specific type is defined in lwpa_socket_[platform].h if it exists for a
- *                           platform. NULL indicates use defaults.
- *  \return #kLwpaErrOk: Initialization successful.\n
- *          #kLwpaErrSys: An internal library or system call error occurred.\n
- */
-lwpa_error_t lwpa_socket_init(void *platform_data);
-
-/*! \brief Deinitialize the lwpa_socket module.
- *
- *  Some platforms require deinitialization when an application is finished using socket/networking
- *  functionality. Others do not, and on those platforms this will simply be an empty function. This
- *  function must be called for every time that lwpa_socket_init() is called in an application.
- */
-void lwpa_socket_deinit();
-
 /*! \brief Accept a connection on a socket.
  *
  *  Refer to your favorite accept() man page for more information.

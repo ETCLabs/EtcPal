@@ -32,12 +32,6 @@ typedef SOCKET lwpa_socket_t;
 
 #define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
 
-typedef struct LwpaSocketPlatformData
-{
-  WORD wsver;
-  WSADATA wsdata;
-} LwpaSocketPlatformData;
-
 #ifdef __cplusplus
 extern "C" {
 #endif

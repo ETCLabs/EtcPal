@@ -83,6 +83,7 @@ bool lwpa_string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen);
 lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid);
 lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum);
 lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid);
+lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid *uuid);
 
 #ifdef __cplusplus
 }

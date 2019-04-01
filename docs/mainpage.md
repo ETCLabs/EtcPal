@@ -97,3 +97,5 @@ The platform ports of lwpa have the following dependencies:
   - Windows XP or higher
 + MQX RTOS
   - MQX 4.2.0
++ Linux
+  - libuuid (`sudo apt-get install uuid-dev`)

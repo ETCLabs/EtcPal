@@ -44,9 +44,10 @@
  *  \return Unpacked uint16_t.
  */
 #define lwpa_upack_16b(ptr)                   \
-  (((uint16_t)0u) |                           \
-   (((uint16_t)((uint8_t *)(ptr))[0]) << 8) | \
-    ((uint16_t)((uint8_t *)(ptr))[1]))
+  ((uint16_t)(0u |                            \
+   (uint16_t)((((uint8_t *)(ptr))[0]) << 8) | \
+   (uint16_t) (((uint8_t *)(ptr))[1]))        \
+  )
 
 /*! \brief Pack a uint16_t to a known big-endian buffer.
  *  \param ptr Pointer to the buffer into which to pack a uint16_t.

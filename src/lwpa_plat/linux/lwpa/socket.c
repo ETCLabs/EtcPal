@@ -16,7 +16,6 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-
 #include "lwpa/socket.h"
 
 #include <sys/socket.h>
@@ -58,7 +57,7 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
     struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)pfsa;
     sin6->sin6_family = AF_INET6;
     sin6->sin6_port = htons(sa->port);
-    memcpy(sin6->sin6_addr.s6_addr, lwpaip_v6_address(&sa->ip), IPV6_BYTES);
+    memcpy(sin6->sin6_addr.s6_addr, lwpaip_v6_address(&sa->ip), LWPA_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
   }
   return ret;
@@ -500,7 +499,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   //              struct ipv6_mreq val;
   //              val.ipv6imr_interface = 0;
   //              memcpy(&val.ipv6imr_multiaddr.s6_addr,
-  //                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
+  //                     lwpaip_v6_address(&amreq->group), LWPA_IPV6_BYTES);
   //              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
   //                               sizeof val);
   //            }
@@ -517,7 +516,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   //              struct ipv6_mreq val;
   //              val.ipv6imr_interface = 0;
   //              memcpy(&val.ipv6imr_multiaddr.s6_addr,
-  //                     lwpaip_v6_address(&amreq->group), IPV6_BYTES);
+  //                     lwpaip_v6_address(&amreq->group), LWPA_IPV6_BYTES);
   //              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
   //                               sizeof val);
   //            }
@@ -752,7 +751,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
 
   switch (src->type)
   {
-    case LWPA_IPV4:
+    case kLwpaIpTypeV4:
     {
       struct in_addr addr;
       addr.s_addr = htonl(lwpaip_v4_address(src));
@@ -760,10 +759,10 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
         return kLwpaErrOk;
       return kLwpaErrSys;
     }
-    case LWPA_IPV6:
+    case kLwpaIpTypeV6:
     {
       struct in6_addr addr;
-      memcpy(addr.s6_addr, lwpaip_v6_address(src), IPV6_BYTES);
+      memcpy(addr.s6_addr, lwpaip_v6_address(src), LWPA_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, (socklen_t)size))
         return kLwpaErrOk;
       return kLwpaErrSys;
@@ -780,7 +779,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *des
 
   switch (type)
   {
-    case LWPA_IPV4:
+    case kLwpaIpTypeV4:
     {
       struct in_addr addr;
       if (1 != inet_pton(AF_INET, src, &addr))
@@ -788,7 +787,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *des
       lwpaip_set_v4_address(dest, ntohl(addr.s_addr));
       return kLwpaErrOk;
     }
-    case LWPA_IPV6:
+    case kLwpaIpTypeV6:
     {
       struct in6_addr addr;
       if (1 != inet_pton(AF_INET6, src, &addr))

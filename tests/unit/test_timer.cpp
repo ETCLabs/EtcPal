@@ -17,6 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
+#include "lwpa/common.h"
 // Do some C-style mocking
 #include "lwpa/int.h"
 extern "C" uint32_t lwpa_getms();
@@ -28,6 +29,14 @@ extern "C" uint32_t lwpa_getms();
 
 class TimerTest : public ::testing::Test
 {
+  void SetUp() override
+  {
+    ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURE_TIMERS));
+  }
+  void TearDown() override
+  {
+    lwpa_deinit(LWPA_FEATURE_TIMERS);
+  }
 };
 
 static bool mocking_getms;

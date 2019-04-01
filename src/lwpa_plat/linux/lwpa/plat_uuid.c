@@ -19,49 +19,40 @@
 
 #include "lwpa/uuid.h"
 
-#include <string.h>
-#include <rpc.h>
-#include "lwpa/pack.h"
+#include <uuid/uuid.h>
 
-/* The Windows implementation of generating a V1 UUID. */
+// Use Linux APIs to generate UUIDs.
+// https://linux.die.net/man/3/uuid_generate
+
 lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
 {
-  UUID plat_uuid;
-
   if (!uuid)
     return kLwpaErrInvalid;
 
-  if (RPC_S_OK == UuidCreateSequential(&plat_uuid))
-  {
-    lwpa_pack_32b(&uuid->data[0], plat_uuid.Data1);
-    lwpa_pack_16b(&uuid->data[4], plat_uuid.Data2);
-    lwpa_pack_16b(&uuid->data[6], plat_uuid.Data3);
-    memcpy(&uuid->data[8], plat_uuid.Data4, 8);
-    return kLwpaErrOk;
-  }
-  else
-  {
-    return kLwpaErrSys;
-  }
+  uuid_t plat_uuid;
+  uuid_generate_time(plat_uuid);
+  memcpy(uuid->data, plat_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
 }
 
 lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
 {
-  UUID plat_uuid;
-
   if (!uuid)
     return kLwpaErrInvalid;
 
-  if (RPC_S_OK == UuidCreate(&plat_uuid))
-  {
-    lwpa_pack_32b(&uuid->data[0], plat_uuid.Data1);
-    lwpa_pack_16b(&uuid->data[4], plat_uuid.Data2);
-    lwpa_pack_16b(&uuid->data[6], plat_uuid.Data3);
-    memcpy(&uuid->data[8], plat_uuid.Data4, 8);
-    return kLwpaErrOk;
-  }
-  else
-  {
-    return kLwpaErrSys;
-  }
+  uuid_t plat_uuid;
+  uuid_generate_random(plat_uuid);
+  memcpy(uuid->data, plat_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
+}
+
+lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid *uuid)
+{
+  if (!uuid)
+    return kLwpaErrInvalid;
+
+  uuid_t plat_uuid;
+  uuid_generate(plat_uuid);
+  memcpy(uuid->data, plat_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
 }
