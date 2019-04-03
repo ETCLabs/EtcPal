@@ -20,8 +20,16 @@
 #ifndef _LWPA_WINDOWS_SOCKET_H_
 #define _LWPA_WINDOWS_SOCKET_H_
 
-#include <WinSock2.h>
-#include <Windows.h>
+#ifndef NOMINMAX
+#define NOMINMAX 1 /* Suppress some conflicting definitions in the Windows headers */
+#include <winsock2.h>
+#include <windows.h>
+#undef NOMINMAX
+#else
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
 #include "lwpa/inet.h"
 
 typedef SOCKET lwpa_socket_t;
