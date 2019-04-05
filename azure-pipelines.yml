@@ -17,12 +17,12 @@ jobs:
       Release:
         BUILD_CONFIG: 'Release'
   steps:
-  - displayName: 'lwpa Windows build'
-    script: |
+  - script: |
       mkdir build
       cd build
       cmake --version
       cmake -G "Visual Studio 15 2017 Win64" ..
       cmake --build . --config %BUILD_CONFIG%
-  - displayName: 'lwpa Windows test'
-    script: tests\%BUILD_CONFIG%\test_lwpa.exe
+    displayName: 'lwpa Windows build'
+  - script: tests\%BUILD_CONFIG%\test_lwpa.exe
+    displayName: 'lwpa Windows test'
