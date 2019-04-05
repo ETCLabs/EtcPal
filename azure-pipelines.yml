@@ -14,20 +14,16 @@ jobs:
   strategy:
     matrix:
       Debug:
-        BUILD_CONFIG: 'Debug'
+        LWPA_BUILD_CONFIG: 'Debug'
       Release:
-        BUILD_CONFIG: 'Release'
+        LWPA_BUILD_CONFIG: 'Release'
   steps:
   - script: |
       mkdir build
       cd build
       cmake --version
       cmake -G "Visual Studio 15 2017 Win64" ..
-      cmake --build . --config %BUILD_CONFIG%
+      cmake --build . --config %LWPA_BUILD_CONFIG%
     displayName: 'lwpa Windows build'
-  - script: |
-      pwd
-      dir
-      echo "%BUILD_CONFIG%"
-      set
+  - script: build\tests\%LWPA_BUILD_CONFIG%\test_lwpa.exe
     displayName: 'lwpa Windows test'
