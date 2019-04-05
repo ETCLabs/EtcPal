@@ -3,16 +3,25 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger: none
+trigger: develop
+pr: develop
 
-pool:
-  vmImage: 'vs2017-win2016'
-
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- job: Windows Build and Test
+  pool:
+    vmImage: 'vs2017-win2016'
+  strategy:
+    matrix:
+      Debug:
+        BUILD_CONFIG: 'Debug'
+      Release:
+        BUILD_CONFIG: 'Release'
+  steps:
+  - displayName: 'lwpa Windows build'
+    script: |
+      mkdir build
+      cd build
+      cmake --version
+      cmake -G "Visual Studio 15 2017 Win64" ..
+      cmake --build . --config %BUILD_CONFIG%
+  - displayName: 'lwpa Windows test'
+    script: tests\%BUILD_CONFIG%\test_lwpa.exe
