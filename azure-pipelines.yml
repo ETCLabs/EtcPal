@@ -27,3 +27,22 @@ jobs:
     displayName: 'lwpa Windows build'
   - script: build\tests\%LWPA_BUILD_CONFIG%\test_lwpa.exe
     displayName: 'lwpa Windows test'
+- job: docs
+  displayName: 'Deploy documentation'
+  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+  pool:
+    vmImage: 'ubuntu-16.04'
+  variables: 
+  - group: github-push-access
+  steps:
+  - script: sudo apt-get install doxygen
+    displayName: 'Install dependencies'
+  - script: |
+      cd tools/ci
+      chmod +x publish_docs.sh
+      ./publish_docs.sh
+    env:
+      GH_REPO_NAME: lwpa
+      GH_REPO_REF: github.com/ETCLabs/lwpa.git
+      GH_REPO_TOKEN: $(GH_ACCESS_TOKEN)
+  
