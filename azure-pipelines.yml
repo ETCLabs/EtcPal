@@ -7,7 +7,8 @@ pr:
 - develop
 
 jobs:
-- job: Windows Build and Test
+- job: windows_build
+  displayName: 'Windows Build and Test'
   pool:
     vmImage: 'vs2017-win2016'
   strategy:
