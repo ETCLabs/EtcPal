@@ -25,5 +25,9 @@ jobs:
       cmake -G "Visual Studio 15 2017 Win64" ..
       cmake --build . --config %BUILD_CONFIG%
     displayName: 'lwpa Windows build'
-  - script: tests\%BUILD_CONFIG%\test_lwpa.exe
+  - script: |
+      pwd
+      dir
+      echo "%BUILD_CONFIG%"
+      set
     displayName: 'lwpa Windows test'
