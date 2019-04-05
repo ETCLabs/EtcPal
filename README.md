@@ -22,7 +22,7 @@ lwpa is currently ported for the following platforms:
 
 lwpa is typically included as a dependency by other software libraries.
 However, if you would like to build lwpa on its own as a static lib, there are
-instructions in the [documentation](https://etclabs.github.io/lwpa)
+instructions in the [documentation](https://etclabs.github.io/lwpa).
 
 ## About this ETCLabs Project
 
