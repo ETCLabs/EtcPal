@@ -1,11 +1,12 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# The lwpa build and test pipeline.
 
-trigger: develop
-pr: develop
+trigger:
+- develop
 
+pr:
+- develop
+
+jobs:
 - job: Windows Build and Test
   pool:
     vmImage: 'vs2017-win2016'
