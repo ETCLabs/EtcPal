@@ -32,7 +32,7 @@ TEST_F(UuidTest, null)
 {
   LwpaUuid uuid = {{0}};
   ASSERT_TRUE(lwpa_uuid_is_null(&uuid));
-  uuid = LWPA_NULL_UUID;
+  uuid = kLwpaNullUuid;
   ASSERT_TRUE(lwpa_uuid_is_null(&uuid));
   for (size_t i = 0; i < LWPA_UUID_BYTES; ++i)
     uuid.data[i] = static_cast<uint8_t>(i);
@@ -64,13 +64,13 @@ TEST_F(UuidTest, string)
 
   lwpa_uuid_to_string(str_buf, &uuid);
   ASSERT_EQ(0, strcmp(str_buf, "01020304-0506-0708-090a-0b0c0d0e0f10"));
-  uuid = LWPA_NULL_UUID;
+  uuid = kLwpaNullUuid;
   lwpa_uuid_to_string(str_buf, &uuid);
   ASSERT_EQ(0, strcmp(str_buf, "00000000-0000-0000-0000-000000000000"));
   ASSERT_TRUE(lwpa_string_to_uuid(&uuid, good_str, strlen(good_str)));
   LwpaUuid uuid_cmp = {{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}};
   ASSERT_EQ(0, lwpa_uuid_cmp(&uuid, &uuid_cmp));
-  uuid = LWPA_NULL_UUID;
+  uuid = kLwpaNullUuid;
   ASSERT_FALSE(lwpa_string_to_uuid(&uuid, short_str, strlen(short_str)));
   ASSERT_FALSE(lwpa_string_to_uuid(&uuid, bad_str, strlen(bad_str)));
 }
@@ -80,7 +80,7 @@ TEST_F(UuidTest, generate_v1)
   // Generate a bunch of V1 UUIDs. They should all be unique from each other and have the proper
   // version and variant information. We will cheat a little and just make sure that each one is
   // unique from the last one generated.
-  LwpaUuid last_uuid = LWPA_NULL_UUID;
+  LwpaUuid last_uuid = kLwpaNullUuid;
 
   for (int i = 0; i < kNumV1UuidGenerations; ++i)
   {
@@ -137,7 +137,7 @@ TEST_F(UuidTest, generate_v4)
   // Generate a bunch of V4 UUIDs. They should all be unique from each other and have the proper
   // version and variant information. We will cheat a little and just make sure that each one is
   // unique from the last one generated.
-  LwpaUuid last_uuid = LWPA_NULL_UUID;
+  LwpaUuid last_uuid = kLwpaNullUuid;
 
   for (int i = 0; i < kNumV4UuidGenerations; ++i)
   {
