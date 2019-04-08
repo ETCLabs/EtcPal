@@ -17,7 +17,6 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/// \file lwpa/lock.h
 #ifndef _LWPA_LOCK_H_
 #define _LWPA_LOCK_H_
 
