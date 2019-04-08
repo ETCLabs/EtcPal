@@ -11,6 +11,7 @@ if(LWPA_PLATFORM STREQUAL windows)
   add_executable(test_lwpa
     # lwpa unit test sources
     ${TEST_SRC_DIR}/main.cpp
+    ${TEST_SRC_DIR}/test_inet.cpp
     ${TEST_SRC_DIR}/test_log.cpp
     ${TEST_SRC_DIR}/test_mempool.cpp
     ${TEST_SRC_DIR}/test_mutex.cpp

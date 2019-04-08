@@ -89,6 +89,7 @@
 #define LWPA_IP_MULTICAST_LOOP 14 /*!< Get/Set, value is boolean int */
 #define LWPA_MCAST_JOIN_GROUP  15 /*!< Set only, value is LwpaMreq */
 #define LWPA_MCAST_LEAVE_GROUP 16 /*!< Set only, value is LwpaMreq */
+#define LWPA_IPV6_V6ONLY       17 /*!< Get/Set, value is boolean int */
 /*!@}*/
 
 /* clang-format on */

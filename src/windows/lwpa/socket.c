@@ -574,6 +574,13 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
           }
           */
           break;
+        case LWPA_IPV6_V6ONLY:
+          if (option_len == sizeof(int))
+          {
+            DWORD val = (DWORD) * (int *)option_value;
+            res = setsockopt(id, IPPROTO_IPV6, IPV6_V6ONLY, (char *)&val, sizeof val);
+          }
+          break;
         default: /* Other IPv6 options TODO on windows. */
           return kLwpaErrInvalid;
       }
