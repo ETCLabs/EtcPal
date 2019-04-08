@@ -12,8 +12,6 @@ typedef UNDEFINED lwpa_socket_t;
 /*! An identifier for an invalid socket handle. */
 #define LWPA_SOCKET_INVALID
 
-/*! @} */
-
 /*! \brief Initialize the lwpa_socket module.
  *
  *  Some platforms require initialization before socket/networking functionality can be used. Others
@@ -377,3 +375,5 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
  *          #kLwpaErrSys: System call failed.
  */
 lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest);
+
+/*! @} */

@@ -70,8 +70,19 @@ TEST_F(RwlockTest, create_destroy)
   // On Windows, take succeeds when taking a mutex again from the same thread.
   ASSERT_TRUE(lwpa_rwlock_writelock(&rwlock, LWPA_WAIT_FOREVER));
 
-  // Take should fail on a destroyed rwlock.
   lwpa_rwlock_writeunlock(&rwlock);
+
+  // Test the guard classes
+  {  // Read lock scope
+    lwpa::ReadGuard read(rwlock);
+    // Just make sure it doesn't throw
+  }
+  {  // Write lock scope
+    lwpa::WriteGuard write(rwlock);
+    // Just make sure it doesn't throw
+  }
+
+  // Take should fail on a destroyed rwlock.
   lwpa_rwlock_destroy(&rwlock);
   ASSERT_FALSE(lwpa_rwlock_writelock(&rwlock, LWPA_WAIT_FOREVER));
 }
