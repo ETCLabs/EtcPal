@@ -107,6 +107,7 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
   if (lwpaip_is_v4(&sa->ip))
   {
     struct sockaddr_in *sin = (struct sockaddr_in *)pfsa;
+    memset(sin, 0, sizeof(struct sockaddr_in));
     sin->sin_family = AF_INET;
     sin->sin_port = htons(sa->port);
     sin->sin_addr.s_addr = htonl(lwpaip_v4_address(&sa->ip));
@@ -115,10 +116,12 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
   else if (lwpaip_is_v6(&sa->ip))
   {
     struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)pfsa;
+    memset(sin6, 0, sizeof(struct sockaddr_in6));
     sin6->sin6_family = AF_INET6;
     sin6->sin6_port = htons(sa->port);
     memcpy(sin6->sin6_addr.s6_addr, lwpaip_v6_address(&sa->ip), LWPA_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
+    in6addr_any;
   }
   return ret;
 }
