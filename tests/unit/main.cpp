@@ -21,6 +21,7 @@
 #include "gtest/gtest.h"
 #include "lwpa/netint.h"
 #include "lwpa/socket.h"
+#include "lwpa/common.h"
 
 // Need to pass this from the command line to a test case; there doesn't seem to be a better way to
 // do this than using a global variable.
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
 
   // Only check our custom argument if we haven't been given the "list_tests" flag
+ /*
   if (!testing::GTEST_FLAG(list_tests))
   {
     if (argc == 2)
@@ -52,6 +54,7 @@ int main(int argc, char **argv)
       g_netint = default_netint.addr;
     }
   }
+  */
 
   return RUN_ALL_TESTS();
 }

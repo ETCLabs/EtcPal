@@ -99,7 +99,7 @@ bool lwpa_parse_pdu(const uint8_t *buf, size_t buflen, const LwpaPduConstraints 
   if (!inheritdata)
   {
     pdu->pdata = cur_ptr;
-    pdu->datalen = pdu_len - (cur_ptr - this_pdu);
+    pdu->datalen = pdu_len - (uint32_t)(cur_ptr - this_pdu);
     cur_ptr += pdu->datalen;
   }
   pdu->pnextpdu = cur_ptr;

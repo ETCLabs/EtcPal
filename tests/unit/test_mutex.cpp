@@ -25,21 +25,16 @@
 
 class MutexTest : public ::testing::Test
 {
-protected:
-  MutexTest() : shared_var(0) { timeBeginPeriod(1); }
-
-  virtual ~MutexTest() { timeEndPeriod(1); }
-
 public:
   // Constants
-  static const int MUTEX_TEST_NUM_THREADS = 10;
-  static const int MUTEX_TEST_NUM_ITERATIONS = 10000;
+  static constexpr int kNumThreads = 10;
+  static constexpr int kNumIterations = 10000;
+
+  // For thread test
+  int shared_var{0};
 
   // For general usage
   lwpa_mutex_t mutex;
-
-  // For thread test
-  int shared_var;
 };
 
 TEST_F(MutexTest, create_destroy)
@@ -68,7 +63,7 @@ static void mutex_test_thread(MutexTest *fixture)
 {
   if (fixture)
   {
-    for (int i = 0; i < MutexTest::MUTEX_TEST_NUM_ITERATIONS; ++i)
+    for (int i = 0; i < MutexTest::kNumIterations; ++i)
     {
       lwpa_mutex_take(&fixture->mutex, LWPA_WAIT_FOREVER);
       ++fixture->shared_var;
@@ -92,9 +87,9 @@ TEST_F(MutexTest, threads)
   ASSERT_TRUE(lwpa_mutex_create(&mutex));
 
   std::vector<std::thread> threads;
-  threads.reserve(MUTEX_TEST_NUM_THREADS);
+  threads.reserve(kNumThreads);
 
-  for (size_t i = 0; i < MUTEX_TEST_NUM_THREADS; ++i)
+  for (size_t i = 0; i < kNumThreads; ++i)
   {
     std::thread thread(mutex_test_thread, this);
     ASSERT_TRUE(thread.joinable());
@@ -104,7 +99,7 @@ TEST_F(MutexTest, threads)
   for (auto &thread : threads)
     thread.join();
 
-  ASSERT_EQ(shared_var, (MUTEX_TEST_NUM_THREADS * MUTEX_TEST_NUM_ITERATIONS));
+  ASSERT_EQ(shared_var, (kNumThreads * kNumIterations));
 
   lwpa_mutex_destroy(&mutex);
 }

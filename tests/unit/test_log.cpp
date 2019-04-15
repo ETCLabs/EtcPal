@@ -18,36 +18,40 @@
  ******************************************************************************/
 #include "lwpa/log.h"
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include <cstddef>
 #include <cstring>
 #include <cstdarg>
 #include <string>
 
+// Disable strcpy() warning on Windows/MSVC
+#ifdef _MSC_VER
+#pragma warning(disable: 4996)
+#endif
+
+using testing::Mock;
+
 class LogTest : public ::testing::Test
 {
 protected:
   LogTest()
-      : expect_syslog_str_present(false), expect_human_str_present(false), log_passed(false), time_fn_called(false)
   {
     FillDefaultTime(cur_time);
   }
 
   virtual ~LogTest() {}
 
-  void TestLwpaVlogHelper(LwpaLogParams *lparams, int pri, const char *format, ...);
+  void TestLwpaVlogHelper(std::string expect_syslog_str, std::string expect_human_str,
+                          std::string expect_raw_str, LwpaLogParams *lparams, int pri,
+                          const char *format, ...);
 
 public:
   static void FillDefaultTime(LwpaLogTimeParams &tparams);
 
+  MOCK_METHOD3(VerifyLogCallback, void(std::string syslog_str, std::string human_str,
+                                       std::string raw_str));
+
   LwpaLogTimeParams cur_time;
-
-  bool expect_syslog_str_present;
-  std::string expect_syslog_str;
-  bool expect_human_str_present;
-  std::string expect_human_str;
-  std::string expect_raw_str;
-  bool log_passed;
-
   bool time_fn_called;
 };
 
@@ -56,18 +60,7 @@ static void log_cb(void *context, const char *syslog_str, const char *human_str,
   LogTest *lt = static_cast<LogTest *>(context);
   if (lt)
   {
-    if (!raw_str || lt->expect_raw_str != raw_str ||
-        (lt->expect_syslog_str_present && (!syslog_str || lt->expect_syslog_str != syslog_str)) ||
-        (!lt->expect_syslog_str_present && syslog_str) ||
-        (lt->expect_human_str_present && (!human_str || lt->expect_human_str != human_str)) ||
-        (!lt->expect_human_str_present && human_str))
-    {
-      lt->log_passed = false;
-    }
-    else
-    {
-      lt->log_passed = true;
-    }
+    lt->VerifyLogCallback(syslog_str ? syslog_str : "", human_str ? human_str : "", raw_str ? raw_str : "");
   }
 }
 
@@ -165,16 +158,16 @@ TEST_F(LogTest, log_intval)
   lparams.action = kLwpaLogCreateSyslog;
   lparams.log_fn = log_cb;
   memcpy(lparams.syslog_params.hostname, weird_hostname, sizeof weird_hostname);
-  strcpy_s(lparams.syslog_params.app_name, LWPA_LOG_APP_NAME_MAX_LEN, "My_App");
+  strcpy(lparams.syslog_params.app_name, "My_App");
   lparams.syslog_params.procid[0] = '\0';
   lparams.syslog_params.facility = LWPA_LOG_KERN;
   lparams.log_mask = 0;
   lparams.time_fn = time_cb;
   lparams.context = this;
 
-  expect_syslog_str = "<0>1 1970-01-01T00:00:00.000Z host?name My_App - - - Here are some int values: 1 42 4294967295";
-  expect_human_str = "1970-01-01 00:00:00.000Z Here are some int values: 1 42 4294967295";
-  expect_raw_str = "Here are some int values: 1 42 4294967295";
+  std::string expect_syslog_str = "<0>1 1970-01-01T00:00:00.000Z host?name My_App - - - Here are some int values: 1 42 4294967295";
+  std::string expect_human_str = "1970-01-01 00:00:00.000Z Here are some int values: 1 42 4294967295";
+  std::string expect_raw_str = "Here are some int values: 1 42 4294967295";
 
   ASSERT_TRUE(lwpa_validate_log_params(&lparams));
 
@@ -191,58 +184,52 @@ TEST_F(LogTest, log_intval)
   // Try logging with the log mask set to 0, should not work.
   ASSERT_FALSE(lwpa_canlog(&lparams, LWPA_LOG_EMERG));
   lwpa_log(&lparams, LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS);
-  ASSERT_FALSE(log_passed);
 
   // Try logging only syslog
-  expect_syslog_str_present = true;
-  expect_human_str_present = false;
+  EXPECT_CALL(*this, VerifyLogCallback(expect_syslog_str, std::string(), expect_raw_str));
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_EMERG);
   lwpa_log(&lparams, LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS);
-  ASSERT_TRUE(log_passed);
+  Mock::VerifyAndClearExpectations(this);
 
   // Try logging both
-  log_passed = false;
   lparams.action = kLwpaLogCreateBoth;
-  expect_human_str_present = true;
+  EXPECT_CALL(*this, VerifyLogCallback(expect_syslog_str, expect_human_str, expect_raw_str));
   lwpa_log(&lparams, LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS);
-  ASSERT_TRUE(log_passed);
+  Mock::VerifyAndClearExpectations(this);
 
   // Try logging only human-readable
-  log_passed = false;
   lparams.action = kLwpaLogCreateHumanReadableLog;
-  expect_syslog_str_present = false;
+  EXPECT_CALL(*this, VerifyLogCallback(std::string(), expect_human_str, expect_raw_str));
   lwpa_log(&lparams, LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS);
-  ASSERT_TRUE(log_passed);
+  Mock::VerifyAndClearExpectations(this);
 }
 
 // Used by the following tests. Try using lwpa_vlog() to log various combinations of syslog and
 // human-readable logging.
-void LogTest::TestLwpaVlogHelper(LwpaLogParams *lparams, int pri, const char *format, ...)
+void LogTest::TestLwpaVlogHelper(std::string expect_syslog_str, std::string expect_human_str,
+                                 std::string expect_raw_str, LwpaLogParams *lparams, int pri,
+                                 const char *format, ...)
 {
   va_list args;
   va_start(args, format);
 
   // Try logging only syslog
-  log_passed = false;
   lparams->action = kLwpaLogCreateSyslog;
-  expect_syslog_str_present = true;
-  expect_human_str_present = false;
+  EXPECT_CALL(*this, VerifyLogCallback(expect_syslog_str, std::string(), expect_raw_str));
   lwpa_vlog(lparams, pri, format, args);
-  ASSERT_TRUE(log_passed);
+  Mock::VerifyAndClearExpectations(this);
 
   // Try logging both
-  log_passed = false;
   lparams->action = kLwpaLogCreateBoth;
-  expect_human_str_present = true;
+  EXPECT_CALL(*this, VerifyLogCallback(expect_syslog_str, expect_human_str, expect_raw_str));
   lwpa_vlog(lparams, pri, format, args);
-  ASSERT_TRUE(log_passed);
+  Mock::VerifyAndClearExpectations(this);
 
   // Try logging only human-readable
-  log_passed = false;
   lparams->action = kLwpaLogCreateHumanReadableLog;
-  expect_syslog_str_present = false;
+  EXPECT_CALL(*this, VerifyLogCallback(std::string(), expect_human_str, expect_raw_str));
   lwpa_vlog(lparams, pri, format, args);
-  ASSERT_TRUE(log_passed);
+  Mock::VerifyAndClearExpectations(this);
 
   va_end(args);
 }
@@ -261,7 +248,7 @@ TEST_F(LogTest, log_strval)
 
   lparams.action = kLwpaLogCreateSyslog;
   lparams.log_fn = log_cb;
-  strcpy_s(lparams.syslog_params.hostname, LWPA_LOG_HOSTNAME_MAX_LEN, "10.101.17.38");
+  strcpy(lparams.syslog_params.hostname, "10.101.17.38");
   memcpy(lparams.syslog_params.procid, weird_procid, sizeof weird_procid);
   lparams.syslog_params.app_name[0] = '\0';
   lparams.syslog_params.facility = LWPA_LOG_LOCAL2;
@@ -269,8 +256,9 @@ TEST_F(LogTest, log_strval)
   lparams.time_fn = nullptr;
   lparams.context = this;
 
-  expect_syslog_str = "<149>1 - 10.101.17.38 - _2_4? - - Here are some string values: hey wassup hello";
-  expect_human_str = expect_raw_str = "Here are some string values: hey wassup hello";
+  std::string expect_syslog_str = "<149>1 - 10.101.17.38 - _2_4? - - Here are some string values: hey wassup hello";
+  std::string expect_human_str = "Here are some string values: hey wassup hello";
+  std::string expect_raw_str = expect_human_str;
 
   ASSERT_TRUE(lwpa_validate_log_params(&lparams));
 
@@ -287,11 +275,11 @@ TEST_F(LogTest, log_strval)
   // Try logging with the log mask set to 0, should not work.
   ASSERT_FALSE(lwpa_canlog(&lparams, LWPA_LOG_NOTICE));
   lwpa_log(&lparams, LWPA_LOG_NOTICE, STRVAL_FORMAT_STR_AND_ARGS);
-  ASSERT_FALSE(log_passed);
 
   // Now try the actual logging using lwpa_vlog().
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_NOTICE);
-  TestLwpaVlogHelper(&lparams, LWPA_LOG_NOTICE, STRVAL_FORMAT_STR_AND_ARGS);
+  TestLwpaVlogHelper(expect_syslog_str, expect_human_str, expect_raw_str, &lparams, LWPA_LOG_NOTICE,
+                     STRVAL_FORMAT_STR_AND_ARGS);
 }
 
 // Helper to get the proper sanitized character from a loop counter for the
@@ -322,8 +310,9 @@ TEST_F(LogTest, log_maxlength)
   lparams.time_fn = time_cb;
   lparams.context = this;
 
-  expect_syslog_str = "<191>1 1970-01-01T00:00:00.000-12:00 ";
-  expect_human_str = "1970-01-01 00:00:00.000-12:00 ";
+  std::string expect_syslog_str = "<191>1 1970-01-01T00:00:00.000-12:00 ";
+  std::string expect_human_str = "1970-01-01 00:00:00.000-12:00 ";
+  std::string expect_raw_str;
 
   // Create our very long syslog header components
   size_t i;
@@ -381,9 +370,9 @@ TEST_F(LogTest, log_maxlength)
   // Try logging with the log mask set to 0, should not work.
   ASSERT_FALSE(lwpa_canlog(&lparams, LWPA_LOG_DEBUG));
   lwpa_log(&lparams, LWPA_LOG_DEBUG, STRVAL_FORMAT_STR_AND_ARGS);
-  ASSERT_FALSE(log_passed);
 
   // Now try the actual logging using lwpa_vlog().
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
-  TestLwpaVlogHelper(&lparams, LWPA_LOG_DEBUG, to_log_str);
+  TestLwpaVlogHelper(expect_syslog_str, expect_human_str, expect_raw_str, &lparams, LWPA_LOG_DEBUG,
+                     to_log_str);
 }

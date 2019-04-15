@@ -119,17 +119,17 @@ static void make_timestamp(const LwpaLogTimeParams *tparams, char *buf, bool hum
 
     if (print_res > 0 && print_res < LWPA_LOG_TIMESTAMP_LEN - 1)
     {
-      size_t pos = print_res;
       /* Add the UTC offset */
       if (tparams->utc_offset == 0)
       {
-        buf[pos] = 'Z';
-        buf[pos + 1] = '\0';
+        buf[print_res] = 'Z';
+        buf[print_res + 1] = '\0';
       }
       else
       {
-        snprintf(&buf[pos], LWPA_LOG_TIMESTAMP_LEN - pos, "%s%02d:%02d", tparams->utc_offset > 0 ? "+" : "-",
-                 abs(tparams->utc_offset) / 60, abs(tparams->utc_offset) % 60);
+        snprintf(&buf[print_res], LWPA_LOG_TIMESTAMP_LEN - (size_t)print_res, "%s%02d:%02d",
+                 tparams->utc_offset > 0 ? "+" : "-", abs(tparams->utc_offset) / 60,
+                 abs(tparams->utc_offset) % 60);
       }
 
       timestamp_created = true;
@@ -163,27 +163,32 @@ static bool get_time(const LwpaLogParams *params, LwpaLogTimeParams *time_params
 static char *lwpa_vcreate_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *tparams,
                                      const LwpaSyslogParams *syslog_params, int pri, const char *format, va_list args)
 {
-  char timestamp[LWPA_LOG_TIMESTAMP_LEN];
-  int prival = LWPA_LOG_PRI(pri) | syslog_params->facility;
-  size_t syslog_header_size;
-
   if (!buf || buflen < LWPA_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
     return NULL;
 
+  char timestamp[LWPA_LOG_TIMESTAMP_LEN];
   make_timestamp(tparams, timestamp, false);
 
-  syslog_header_size =
+  int prival = LWPA_LOG_PRI(pri) | syslog_params->facility;
+  int syslog_header_size =
       snprintf(buf, LWPA_SYSLOG_HEADER_MAX_LEN, "<%d>%d %s %s %s %s %s %s ", prival, SYSLOG_PROT_VERSION, timestamp,
                syslog_params->hostname[0] ? syslog_params->hostname : NILVALUE_STR,
                syslog_params->app_name[0] ? syslog_params->app_name : NILVALUE_STR,
                syslog_params->procid[0] ? syslog_params->procid : NILVALUE_STR, MSGID_STR, STRUCTURED_DATA_STR);
 
-  /* Copy in the message */
-  /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
-   * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
-   * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
-  vsnprintf(&buf[syslog_header_size], buflen - syslog_header_size, format, args);
-  return &buf[syslog_header_size];
+  if (syslog_header_size >= 0)
+  {
+    /* Copy in the message */
+    /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
+     * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
+     * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
+    vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
+    return &buf[syslog_header_size];
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 /*! \brief Create a log message with syslog header in the given buffer.
@@ -215,25 +220,31 @@ bool lwpa_create_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *t
 static char *lwpa_vcreate_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format,
                                         va_list args)
 {
-  char timestamp[LWPA_LOG_TIMESTAMP_LEN];
-  size_t human_header_size;
-
   if (!buf || buflen < LWPA_LOG_TIMESTAMP_LEN + 1 || !format)
     return NULL;
 
+  char timestamp[LWPA_LOG_TIMESTAMP_LEN];
   make_timestamp(time, timestamp, true);
 
+  int human_header_size;
   if (timestamp[0] == '\0')
     human_header_size = 0;
   else
     human_header_size = snprintf(buf, LWPA_LOG_TIMESTAMP_LEN + 1, "%s ", timestamp);
 
-  /* Copy in the message */
-  /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
-   * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
-   * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
-  vsnprintf(&buf[human_header_size], buflen - human_header_size, format, args);
-  return &buf[human_header_size];
+  if (human_header_size >= 0)
+  {
+    /* Copy in the message */
+    /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
+     * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
+     * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
+    vsnprintf(&buf[human_header_size], buflen - (size_t)human_header_size, format, args);
+    return &buf[human_header_size];
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 /*! \brief Create a log message with a human-readable header in the given

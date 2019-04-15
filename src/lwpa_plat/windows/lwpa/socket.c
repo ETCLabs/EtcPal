@@ -205,34 +205,6 @@ static lwpa_error_t err_plat_to_lwpa(int wsaerror)
   }
 }
 
-lwpa_error_t lwpa_socket_init(void *platform_data)
-{
-  WSADATA wsdata;
-  WORD wsver;
-  WSADATA *wsdataptr;
-  int startup_res;
-
-  if (platform_data)
-  {
-    LwpaSocketPlatformData *win_data = (LwpaSocketPlatformData *)platform_data;
-    wsver = win_data->wsver;
-    wsdataptr = &win_data->wsdata;
-  }
-  else
-  {
-    wsver = MAKEWORD(2, 2);
-    wsdataptr = &wsdata;
-  }
-
-  startup_res = WSAStartup(wsver, wsdataptr);
-  return (startup_res == 0 ? kLwpaErrOk : err_plat_to_lwpa(startup_res));
-}
-
-void lwpa_socket_deinit()
-{
-  WSACleanup();
-}
-
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t *conn_sock)
 {
   struct sockaddr_storage ss;

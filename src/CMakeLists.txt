@@ -61,9 +61,9 @@ add_library(lwpa
   ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
   ${LWPA_ROOT}/include/lwpa/socket.h
   ${LWPA_ROOT}/include/lwpa/timer.h
-  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_lock.h
-  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_thread.h
-  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_socket.h
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
   # lwpa sources
   ${LWPA_ROOT}/src/lwpa/uuid.c
   ${LWPA_ROOT}/src/lwpa/error.c
@@ -74,24 +74,28 @@ add_library(lwpa
   ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
   ${LWPA_ROOT}/src/lwpa/md5.h
   ${LWPA_ROOT}/src/lwpa/md5c.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/lock.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/netint.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/plat_uuid.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/socket.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/thread.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/timer.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/common.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
 )
 
 # lwpa public include directories and library dependencies
 target_include_directories(lwpa PUBLIC
   ${LWPA_ROOT}/include
-  ${LWPA_ROOT}/include/${LWPA_PLATFORM}
-  ${LWPA_CONFIG_LOC})
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
+  ${LWPA_CONFIG_LOC}
+)
 target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
 
 # Add include paths and library dependencies based on platform for which we are being compiled
 if(LWPA_PLATFORM STREQUAL windows)
   target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
+elseif(LWPA_PLATFORM STREQUAL linux)
+  target_link_libraries(lwpa PUBLIC uuid)
 elseif(LWPA_PLATFORM STREQUAL mqx)
   # Include the debug versions of the MQX libs if a Debug configuration is specified.
   # I think there's probably a better way of doing this and I'm missing something here.

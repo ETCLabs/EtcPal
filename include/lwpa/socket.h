@@ -138,9 +138,6 @@ typedef struct LwpaMreq
 extern "C" {
 #endif
 
-lwpa_error_t lwpa_socket_init(void *platform_data);
-void lwpa_socket_deinit();
-
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t *conn_sock);
 lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr *address);
 lwpa_error_t lwpa_close(lwpa_socket_t id);

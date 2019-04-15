@@ -97,23 +97,23 @@
 #define LWPA_LOG_MASK(pri) (1 << (pri)) /* mask for one priority */
 #define LWPA_LOG_UPTO(pri) ((1 << ((pri) + 1)) - 1) /* all priorities through pri */
 
-#define LWPA_LOG_HOSTNAME_MAX_LEN 256 /*!< Max length of the hostname param. */
-#define LWPA_LOG_APP_NAME_MAX_LEN 49  /*!< Max length of the app_name param. */
-#define LWPA_LOG_PROCID_MAX_LEN 129   /*!< Max length of the procid param. */
+#define LWPA_LOG_HOSTNAME_MAX_LEN 256u /*!< Max length of the hostname param. */
+#define LWPA_LOG_APP_NAME_MAX_LEN 49u  /*!< Max length of the app_name param. */
+#define LWPA_LOG_PROCID_MAX_LEN 129u   /*!< Max length of the procid param. */
 
 /*! Max length of a log message string passed to lwpa_log() or lwpa_vlog(). */
-#define LWPA_LOG_MSG_MAX_LEN 480
+#define LWPA_LOG_MSG_MAX_LEN 480u
 
 /* clang-format on */
 
 /*! The maximum length of the timestamp used in syslog and human-readable logging. */
-#define LWPA_LOG_TIMESTAMP_LEN (10 /*Date*/ + 1 /*T*/ + 12 /*Time*/ + 6 /*Offset*/ + 1 /*Nullterm*/)
+#define LWPA_LOG_TIMESTAMP_LEN (10u /*Date*/ + 1u /*T*/ + 12u /*Time*/ + 6u /*Offset*/ + 1u /*Nullterm*/)
 
 /*! The maximum length of the syslog header. */
 #define LWPA_SYSLOG_HEADER_MAX_LEN                                                                   \
-  (5 /*PRIVAL*/ + 3 /*Version*/ + 1 /*SP*/ + (LWPA_LOG_TIMESTAMP_LEN - 1) /*Timestamp*/ + 1 /*SP*/ + \
-   (LWPA_LOG_HOSTNAME_MAX_LEN - 1) + 1 /*SP*/ + (LWPA_LOG_APP_NAME_MAX_LEN - 1) + 1 /*SP*/ +         \
-   (LWPA_LOG_PROCID_MAX_LEN - 1) + 1 /*SP*/ + 1 /*MSGID*/ + 1 /*SP*/ + 1 /*STRUCTURED-DATA*/ + 1 /*SP*/)
+  (5u /*PRIVAL*/ + 3u /*Version*/ + 1u /*SP*/ + (LWPA_LOG_TIMESTAMP_LEN - 1u) /*Timestamp*/ + 1u /*SP*/ + \
+   (LWPA_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (LWPA_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +         \
+   (LWPA_LOG_PROCID_MAX_LEN - 1u) + 1u /*SP*/ + 1u /*MSGID*/ + 1u /*SP*/ + 1u /*STRUCTURED-DATA*/ + 1u /*SP*/)
 
 /*! The minimum length of a buffer passed to lwpa_create_syslog_str(). */
 #define LWPA_SYSLOG_STR_MIN_LEN LWPA_SYSLOG_HEADER_MAX_LEN
@@ -125,7 +125,7 @@
 
 /*! The maximum length of a human-readable string that will be passed to an lwpa_log_callback
  *  function.  */
-#define LWPA_HUMAN_LOG_STR_MAX_LEN ((LWPA_LOG_TIMESTAMP_LEN - 1) + 1 /*SP*/ + LWPA_LOG_MSG_MAX_LEN)
+#define LWPA_HUMAN_LOG_STR_MAX_LEN ((LWPA_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + LWPA_LOG_MSG_MAX_LEN)
 
 /*! A set of parameters which represent the current local time with millisecond resolution. */
 typedef struct LwpaLogTimeParams
