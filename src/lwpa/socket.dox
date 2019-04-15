@@ -7,10 +7,10 @@ source file.
  */
 
 /*! A socket handle. Typedefed to the system's socket identifier. */
-typedef /* platform-defined */ lwpa_socket_t;
+typedef PLATFORM_DEFINED lwpa_socket_t;
 
 /*! An identifier for an invalid socket handle. */
-#define LWPA_SOCKET_INVALID /* platform-defined */
+#define LWPA_SOCKET_INVALID [PLATFORM_DEFINED]
 
 /*! \brief The maximum number of sockets that can be simultaneously monitored by lwpa_poll_wait().
  *
@@ -18,7 +18,7 @@ typedef /* platform-defined */ lwpa_socket_t;
  *  limit (e.g. ulimit) or even limited only by the amount of available memory. In that case this
  *  constant will have the value -1.
  */
-#define LWPA_SOCKET_MAX_POLL_SIZE /* platform-defined */
+#define LWPA_SOCKET_MAX_POLL_SIZE [PLATFORM_DEFINED]
 
 /*! \brief Accept a connection on a socket.
  *
@@ -243,7 +243,7 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
  *  
  *  See the documentation for lwpa_poll_context_init() and lwpa_poll_wait() for more information.
  */
-typedef /* platform-defined */ LwpaPollContext;
+typedef PLATFORM_DEFINED LwpaPollContext;
 
 /*! \brief Create a new context for waiting on events on multiple sockets.
  *

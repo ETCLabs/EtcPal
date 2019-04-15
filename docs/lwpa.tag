@@ -2313,6 +2313,20 @@
       <arglist></arglist>
     </member>
     <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>lwpa_socket_t</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga0fea2946114e0a2617a086c2139fb9f6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>LwpaPollContext</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga78118eb52c46ee1c731ac66c443a4690</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
       <type>uint32_t</type>
       <name>lwpa_poll_events_t</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
@@ -2528,20 +2542,6 @@
       <anchorfile>group__lwpa__socket.html</anchorfile>
       <anchor>ga4110e753475f9505e87b88e0097befb4</anchor>
       <arglist>(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest)</arglist>
-    </member>
-    <member kind="variable">
-      <type>typedef</type>
-      <name>lwpa_socket_t</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gada0a06416a5b7079b174a7f12a434e37</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>typedef</type>
-      <name>LwpaPollContext</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaca8075e324a8d54b1e591080673fd6b7</anchor>
-      <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
