@@ -773,7 +773,8 @@ void clear_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *sock)
   }
 }
 
-lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events)
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events,
+                                  void *user_data)
 {
   if (!context || !context->valid || socket == LWPA_SOCKET_INVALID || !(events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
     return kLwpaErrInvalid;
@@ -792,6 +793,7 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket
       {
         new_sock->socket = socket;
         new_sock->events = events;
+        new_sock->user_data = user_data;
         set_in_fd_sets(context, new_sock);
         context->num_valid_sockets++;
         res = kLwpaErrOk;
@@ -914,6 +916,7 @@ lwpa_error_t handle_select_result(LwpaPollContext *context, LwpaPollEvent *event
     {
       res = kLwpaErrOk;
       event->socket = sock_desc->socket;
+      event->user_data = sock_desc->user_data;
 
       /* Check for errors */
       int error;

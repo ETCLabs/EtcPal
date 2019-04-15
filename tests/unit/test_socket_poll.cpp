@@ -62,21 +62,52 @@ TEST_F(SocketPollTest, invalid_calls)
 
   // Deinit and make sure add of a valid socket fails
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_context_deinit(&context_));
-  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_IN));
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_IN, nullptr));
 
   // Initialize the context and add invalid sockets or invalid events
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_context_init(&context_));
 
   // Add invalid socket
-  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, LWPA_SOCKET_INVALID, LWPA_POLL_IN));
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, LWPA_SOCKET_INVALID, LWPA_POLL_IN, nullptr));
 
   // Add socket with invalid events
-  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, 0));
-  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_ERR));
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, 0, nullptr));
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_ERR, nullptr));
 
   // Remove invalid or non-existing socket
   EXPECT_NE(kLwpaErrOk, lwpa_poll_remove_socket(&context_, LWPA_SOCKET_INVALID));
   EXPECT_NE(kLwpaErrOk, lwpa_poll_remove_socket(&context_, sock));
+}
+
+// Test the user_data passing functionality.
+TEST_F(SocketPollTest, user_data)
+{
+  lwpa_socket_t sock_1, sock_2;
+  void *user_data_1 = reinterpret_cast<void *>(1);
+  void *user_data_2 = reinterpret_cast<void *>(2);
+
+  // Create two UDP sockets and poll for writability, make sure our user data gets passed back to us
+  // intact.
+
+  ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &sock_1));
+  ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &sock_2));
+
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_1, LWPA_POLL_OUT, user_data_1));
+
+  LwpaPollEvent event;
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
+  ASSERT_EQ(event.socket, sock_1);
+  ASSERT_EQ(event.user_data, user_data_1);
+
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_remove_socket(&context_, sock_1));
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_2, LWPA_POLL_OUT, user_data_2));
+
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
+  ASSERT_EQ(event.socket, sock_2);
+  ASSERT_EQ(event.user_data, user_data_2);
+
+  ASSERT_EQ(kLwpaErrOk, lwpa_close(sock_1));
+  ASSERT_EQ(kLwpaErrOk, lwpa_close(sock_2));
 }
 
 // Test to make sure lwpa_poll_* functions work properly with a large number of sockets.
@@ -102,13 +133,13 @@ TEST_F(SocketPollTest, bulk_poll)
       ASSERT_EQ(kLwpaErrOk, lwpa_getsockname(socket_arr[i], &bind_addr)) << "Failed on iteration " << i;
       bind_ports[i] = bind_addr.port;
 
-      ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, socket_arr[i], LWPA_POLL_IN))
+      ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, socket_arr[i], LWPA_POLL_IN, nullptr))
           << "Failed on iteration " << i;
     }
   }
 
   // The first socket over BULK_POLL_TEST_NUM_SOCKETS should fail
-  ASSERT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, socket_arr[BULK_POLL_TEST_NUM_SOCKETS], LWPA_POLL_IN));
+  ASSERT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, socket_arr[BULK_POLL_TEST_NUM_SOCKETS], LWPA_POLL_IN, nullptr));
 
   lwpa_socket_t send_sock;
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
@@ -137,6 +168,7 @@ TEST_F(SocketPollTest, bulk_poll)
   }
 }
 
+// Test the lwpa_poll_* API, polling for readability on UDP sockets.
 TEST_F(SocketPollTest, udp_in)
 {
   lwpa_socket_t send_sock = LWPA_SOCKET_INVALID;
@@ -163,8 +195,8 @@ TEST_F(SocketPollTest, udp_in)
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock2, &bind_addr));
 
   // Get the poll context set up
-  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, rcvsock1, LWPA_POLL_IN));
-  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, rcvsock2, LWPA_POLL_IN));
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, rcvsock1, LWPA_POLL_IN, nullptr));
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, rcvsock2, LWPA_POLL_IN, nullptr));
 
   // Test poll with nothing sending - should time out.
   LwpaPollEvent event;
@@ -210,6 +242,7 @@ TEST_F(SocketPollTest, udp_in)
   ASSERT_EQ(kLwpaErrOk, lwpa_close(send_sock));
 }
 
+// Test the lwpa_poll_* API, polling for writeablility on UDP sockets.
 TEST_F(SocketPollTest, udp_out)
 {
   lwpa_socket_t sock_1, sock_2;
@@ -219,7 +252,7 @@ TEST_F(SocketPollTest, udp_out)
 
   // The sockets should poll as ready for output right away. Not sure what else there is to test
   // here.
-  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_1, LWPA_POLL_OUT));
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_1, LWPA_POLL_OUT, nullptr));
 
   LwpaPollEvent event;
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
@@ -228,7 +261,7 @@ TEST_F(SocketPollTest, udp_out)
   ASSERT_EQ(event.err, kLwpaErrOk);
 
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_remove_socket(&context_, sock_1));
-  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_2, LWPA_POLL_OUT));
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_2, LWPA_POLL_OUT, nullptr));
 
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
   ASSERT_EQ(event.socket, sock_2);

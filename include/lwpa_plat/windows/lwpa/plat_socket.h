@@ -45,6 +45,7 @@ typedef struct LwpaPollCtxSocket
 {
   lwpa_socket_t socket;
   lwpa_poll_events_t events;
+  void *user_data;
 } LwpaPollCtxSocket;
 
 typedef struct LwpaPollFdSet

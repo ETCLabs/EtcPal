@@ -187,11 +187,13 @@ typedef struct LwpaPollEvent
   lwpa_socket_t socket;      /*!< Socket which had activity. */
   lwpa_poll_events_t events; /*!< Event(s) that occurred on the socket. */
   lwpa_error_t err;          /*!< More information about an error that occurred on the socket. */
+  void *user_data;           /*!< The user data that was given when this socket was added. */
 } LwpaPollEvent;
 
 lwpa_error_t lwpa_poll_context_init(LwpaPollContext *context);
 lwpa_error_t lwpa_poll_context_deinit(LwpaPollContext *context);
-lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events);
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events,
+                                  void *user_data);
 lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
 lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
 
