@@ -105,6 +105,18 @@ static const int aiprotmap[LWPA_NUM_IPPROTO] =
 
 /*********************** Private function prototypes *************************/
 
+// Convert Windows sockets errors to lwpa_error_t values.
+static lwpa_error_t err_plat_to_lwpa(int wsaerror);
+
+// Helper functions for the lwpa_poll API
+static void init_socket_chunk(LwpaPollCtxSocket *chunk);
+static LwpaPollCtxSocket *find_socket(LwpaPollContext *context, lwpa_socket_t socket);
+static LwpaPollCtxSocket *find_hole(LwpaPollContext *context);
+static void set_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *sock);
+static void clear_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *sock);
+static lwpa_error_t handle_select_result(LwpaPollContext *context, LwpaPollEvent *event, const LwpaPollFdSet *readfds,
+                                         const LwpaPollFdSet *writefds, const LwpaPollFdSet *exceptfds);
+
 /*************************** Function definitions ****************************/
 
 bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa)
@@ -153,7 +165,7 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
 
 #if !defined(LWPA_BUILDING_MOCK_LIB)
 
-static lwpa_error_t err_plat_to_lwpa(int wsaerror)
+lwpa_error_t err_plat_to_lwpa(int wsaerror)
 {
   /* The Winsock error codes are not even close to contiguous in defined value,
    * so a giant switch statement is the only solution here... */
@@ -667,7 +679,7 @@ lwpa_error_t lwpa_poll_context_deinit(LwpaPollContext *context)
   return kLwpaErrOk;
 }
 
-static LwpaPollCtxSocket *find_socket(LwpaPollContext *context, lwpa_socket_t socket)
+LwpaPollCtxSocket *find_socket(LwpaPollContext *context, lwpa_socket_t socket)
 {
   for (LwpaPollCtxSocket *cur = context->sockets; cur < context->sockets + context->socket_arr_size; ++cur)
   {
@@ -677,7 +689,7 @@ static LwpaPollCtxSocket *find_socket(LwpaPollContext *context, lwpa_socket_t so
   return NULL;
 }
 
-static void init_socket_chunk(LwpaPollCtxSocket *chunk)
+void init_socket_chunk(LwpaPollCtxSocket *chunk)
 {
   for (LwpaPollCtxSocket *cur = chunk; cur < chunk + POLL_CONTEXT_ARR_CHUNK_SIZE; ++cur)
   {
@@ -685,7 +697,7 @@ static void init_socket_chunk(LwpaPollCtxSocket *chunk)
   }
 }
 
-static LwpaPollCtxSocket *find_hole(LwpaPollContext *context)
+LwpaPollCtxSocket *find_hole(LwpaPollContext *context)
 {
   LwpaPollCtxSocket *hole = NULL;
 
@@ -729,7 +741,7 @@ static LwpaPollCtxSocket *find_hole(LwpaPollContext *context)
   return hole;
 }
 
-static void set_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *sock)
+void set_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *sock)
 {
   if (sock->events & LWPA_POLL_IN)
   {
@@ -745,7 +757,7 @@ static void set_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *so
   }
 }
 
-static void clear_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *sock)
+void clear_in_fd_sets(LwpaPollContext *context, const LwpaPollCtxSocket *sock)
 {
   if (sock->events & LWPA_POLL_IN)
   {
@@ -819,8 +831,68 @@ lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t soc
   return res;
 }
 
-static lwpa_error_t handle_select_result(LwpaPollContext *context, LwpaPollEvent *event, const LwpaPollFdSet *readfds,
-                                         const LwpaPollFdSet *writefds, const LwpaPollFdSet *exceptfds)
+lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms)
+{
+  if (!context || !context->valid || !event)
+    return kLwpaErrInvalid;
+
+  // Get the sets of sockets that we will select on.
+  LwpaPollFdSet readfds, writefds, exceptfds;
+  LWPA_FD_ZERO(&readfds);
+  LWPA_FD_ZERO(&writefds);
+  LWPA_FD_ZERO(&exceptfds);
+  if (lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
+  {
+    if (context->num_valid_sockets != 0)
+    {
+      readfds = context->readfds;
+      writefds = context->writefds;
+      exceptfds = context->exceptfds;
+    }
+    lwpa_mutex_give(&context->lock);
+  }
+
+  // No valid sockets are currently added to the context.
+  if (!readfds.count && !writefds.count && !exceptfds.count)
+    return kLwpaErrInvalid;
+
+  struct timeval plat_timeout;
+  if (timeout_ms == 0)
+  {
+    plat_timeout.tv_sec = 0;
+    plat_timeout.tv_usec = 0;
+  }
+  else if (timeout_ms != LWPA_WAIT_FOREVER)
+  {
+    plat_timeout.tv_sec = timeout_ms / 1000;
+    plat_timeout.tv_usec = (timeout_ms % 1000) * 1000;
+  }
+
+  int sel_res = select(0, readfds.count ? &readfds.set : NULL, writefds.count ? &writefds.set : NULL,
+                       exceptfds.count ? &exceptfds.set : NULL, timeout_ms == LWPA_WAIT_FOREVER ? NULL : &plat_timeout);
+
+  if (sel_res < 0)
+  {
+    return err_plat_to_lwpa(WSAGetLastError());
+  }
+  else if (sel_res == 0)
+  {
+    return kLwpaErrTimedOut;
+  }
+  else
+  {
+    lwpa_error_t res = kLwpaErrSys;
+    if (context->valid && lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
+    {
+      res = handle_select_result(context, event, &readfds, &writefds, &exceptfds);
+      lwpa_mutex_give(&context->lock);
+    }
+    return res;
+  }
+}
+
+lwpa_error_t handle_select_result(LwpaPollContext *context, LwpaPollEvent *event, const LwpaPollFdSet *readfds,
+                                  const LwpaPollFdSet *writefds, const LwpaPollFdSet *exceptfds)
 {
   // Init the event data.
   event->socket = LWPA_SOCKET_INVALID;
@@ -882,66 +954,6 @@ static lwpa_error_t handle_select_result(LwpaPollContext *context, LwpaPollEvent
     }
   }
   return res;
-}
-
-lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms)
-{
-  if (!context || !context->valid || !event)
-    return kLwpaErrInvalid;
-
-  // Get the sets of sockets that we will select on.
-  LwpaPollFdSet readfds, writefds, exceptfds;
-  LWPA_FD_ZERO(&readfds);
-  LWPA_FD_ZERO(&writefds);
-  LWPA_FD_ZERO(&exceptfds);
-  if (lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
-  {
-    if (context->num_valid_sockets != 0)
-    {
-      readfds = context->readfds;
-      writefds = context->writefds;
-      exceptfds = context->exceptfds;
-    }
-    lwpa_mutex_give(&context->lock);
-  }
-
-  // No valid sockets are currently added to the context.
-  if (!readfds.count && !writefds.count && !exceptfds.count)
-    return kLwpaErrInvalid;
-
-  struct timeval plat_timeout;
-  if (timeout_ms == 0)
-  {
-    plat_timeout.tv_sec = 0;
-    plat_timeout.tv_usec = 0;
-  }
-  else if (timeout_ms != LWPA_WAIT_FOREVER)
-  {
-    plat_timeout.tv_sec = timeout_ms / 1000;
-    plat_timeout.tv_usec = (timeout_ms % 1000) * 1000;
-  }
-
-  int sel_res = select(0, readfds.count ? &readfds.set : NULL, writefds.count ? &writefds.set : NULL,
-                       exceptfds.count ? &exceptfds.set : NULL, timeout_ms == LWPA_WAIT_FOREVER ? NULL : &plat_timeout);
-
-  if (sel_res < 0)
-  {
-    return err_plat_to_lwpa(WSAGetLastError());
-  }
-  else if (sel_res == 0)
-  {
-    return kLwpaErrTimedOut;
-  }
-  else
-  {
-    lwpa_error_t res = kLwpaErrSys;
-    if (context->valid && lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
-    {
-      res = handle_select_result(context, event, &readfds, &writefds, &exceptfds);
-      lwpa_mutex_give(&context->lock);
-    }
-    return res;
-  }
 }
 
 lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints,
