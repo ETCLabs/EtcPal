@@ -31,6 +31,7 @@
 #endif
 
 #include "lwpa/inet.h"
+#include "lwpa/lock.h"
 
 typedef SOCKET lwpa_socket_t;
 
@@ -39,6 +40,33 @@ typedef SOCKET lwpa_socket_t;
 #define LWPA_SOCKET_INVALID INVALID_SOCKET
 
 #define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
+
+typedef struct LwpaPollCtxSocket
+{
+  lwpa_socket_t socket;
+  lwpa_poll_events_t events;
+} LwpaPollCtxSocket;
+
+typedef struct LwpaPollFdSet
+{
+  fd_set set;
+  size_t count;
+} LwpaPollFdSet;
+
+typedef struct LwpaPollContext
+{
+  bool valid;
+  lwpa_mutex_t lock;
+
+  LwpaPollCtxSocket *sockets;
+  size_t socket_arr_size;
+  size_t num_valid_sockets;
+
+  LwpaPollFdSet readfds;
+  LwpaPollFdSet writefds;
+  LwpaPollFdSet exceptfds;
+
+} LwpaPollContext;
 
 #ifdef __cplusplus
 extern "C" {
