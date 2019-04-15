@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstdint>
 #include "gtest/gtest.h"
+#include "lwpa/common.h"
 #include "lwpa/netint.h"
 #include "lwpa/socket.h"
 #include "lwpa/common.h"
@@ -31,8 +32,9 @@ int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
+  ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURES_ALL));
+
   // Only check our custom argument if we haven't been given the "list_tests" flag
- /*
   if (!testing::GTEST_FLAG(list_tests))
   {
     if (argc == 2)
@@ -54,7 +56,6 @@ int main(int argc, char **argv)
       g_netint = default_netint.addr;
     }
   }
-  */
 
   return RUN_ALL_TESTS();
 }

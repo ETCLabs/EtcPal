@@ -28,15 +28,6 @@ extern LwpaIpAddr g_netint;
 
 class SocketTest : public ::testing::Test
 {
-protected:
-  SocketTest() : send_sock(LWPA_SOCKET_INVALID)
-  {
-    if (kLwpaErrOk != lwpa_socket_init(NULL))
-      printf("Error starting lwpa_socket library!\n");
-  }
-
-  virtual ~SocketTest() { lwpa_socket_deinit(); }
-
 public:
   static const size_t NUM_TEST_PACKETS = 1000;
   static const char *SEND_MSG;
@@ -321,7 +312,7 @@ TEST_F(SocketTest, poll)
   bool already_polled = false;
 
 poll_again:
-  int poll_res = lwpa_poll(pfds, 2, LWPA_WAIT_FOREVER);
+  int poll_res = lwpa_poll(pfds, 2, 1000);
   ASSERT_GT(poll_res, 0);
   for (int i = 0; i < 2; ++i)
   {

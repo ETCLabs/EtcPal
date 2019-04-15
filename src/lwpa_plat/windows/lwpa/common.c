@@ -20,13 +20,14 @@
 #include "lwpa/common.h"
 
 #include <windows.h>
+#include "lwpa/bool.h"
 
-#define LWPA_WINDOWS_TIMER_RESOLUTION 1 // ms
+#define LWPA_WINDOWS_TIMER_RESOLUTION 1  // ms
 
 static lwpa_error_t err_plat_to_lwpa(int wsaerror)
 {
   // Only dealing with the possible errors from WSAStartup() below.
-  switch(wsaerror)
+  switch (wsaerror)
   {
     case WSAEPROCLIM:
       return kLwpaErrNoMem;
@@ -67,7 +68,7 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
   return kLwpaErrOk;
 }
 
-lwpa_error_t lwpa_deinit(lwpa_features_t features)
+void lwpa_deinit(lwpa_features_t features)
 {
   if (features & LWPA_FEATURE_TIMERS)
   {

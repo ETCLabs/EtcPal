@@ -12,14 +12,14 @@ if(LWPA_PLATFORM STREQUAL windows OR LWPA_PLATFORM STREQUAL linux)
     ${TEST_SRC_DIR}/test_inet.cpp
     ${TEST_SRC_DIR}/test_log.cpp
     ${TEST_SRC_DIR}/test_mempool.cpp
-#    ${TEST_SRC_DIR}/test_mutex.cpp
-#    ${TEST_SRC_DIR}/test_netint.cpp
+    ${TEST_SRC_DIR}/test_mutex.cpp
+    ${TEST_SRC_DIR}/test_netint.cpp
     ${TEST_SRC_DIR}/test_pack.cpp
-#    ${TEST_SRC_DIR}/test_rbtree.cpp
-#    ${TEST_SRC_DIR}/test_rwlock.cpp
-#    ${TEST_SRC_DIR}/test_signal.cpp
-#    ${TEST_SRC_DIR}/test_socket.cpp
-#    ${TEST_SRC_DIR}/test_thread.cpp
+    ${TEST_SRC_DIR}/test_rbtree.cpp
+    ${TEST_SRC_DIR}/test_rwlock.cpp
+    ${TEST_SRC_DIR}/test_signal.cpp
+    ${TEST_SRC_DIR}/test_socket.cpp
+    ${TEST_SRC_DIR}/test_thread.cpp
     ${TEST_SRC_DIR}/test_timer.cpp
     ${TEST_SRC_DIR}/test_uuid.cpp
   )
