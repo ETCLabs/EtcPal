@@ -51,11 +51,10 @@ const char *SocketPollTest::SEND_MSG = "testtesttest";
 // Test to make sure various invalid calls to lwpa_poll_* functions fail properly.
 TEST_F(SocketPollTest, invalid_calls)
 {
-  // Wait should fail when no sockets have been added
+  // Wait should fail with a meaningful error code when no sockets have been added
   LwpaPollEvent event;
-  ASSERT_NE(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
+  ASSERT_EQ(kLwpaErrNoSockets, lwpa_poll_wait(&context_, &event, 100));
 
-  // Try adding a valid socket to an invalid/non-initialized context
   lwpa_socket_t sock;
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &sock));
   ASSERT_NE(sock, LWPA_SOCKET_INVALID);

@@ -49,6 +49,7 @@ const char *lwpa_error_strings[LWPA_NUM_ERROR_CODES] =
   "Buffer not big enough",           /* kLwpaErrBufSize */
   "Module not initialized",          /* kLwpaErrNotInit */
   "No network interfaces",           /* kLwpaErrNoNetints */
+  "No sockets",                      /* kLwpaErrNoSockets */
   "Not implemented",                 /* kLwpaErrNotImpl */
   "System or library call failed",   /* kLwpaErrSys */
 };

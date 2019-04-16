@@ -882,7 +882,7 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int 
 
   // No valid sockets are currently added to the context.
   if (!readfds.count && !writefds.count && !exceptfds.count)
-    return kLwpaErrInvalid;
+    return kLwpaErrNoSockets;
 
   struct timeval plat_timeout;
   if (timeout_ms == 0)

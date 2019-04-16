@@ -90,13 +90,15 @@ typedef enum
   /*! No network interfaces were found on the system, or there are no network interfaces of a type
    *  that can satisfy the call being made. */
   kLwpaErrNoNetints = -24,
+  /*! No sockets have been added to the context. */
+  kLwpaErrNoSockets = -25,
   /*! A function or specific use of a function is not implemented yet. */
-  kLwpaErrNotImpl = -25,
+  kLwpaErrNotImpl = -26,
   /*! A system call or C library call failed in a way not covered by other errors. */
-  kLwpaErrSys = -26,
+  kLwpaErrSys = -27,
 } lwpa_error_t;
 
-#define LWPA_NUM_ERROR_CODES 27
+#define LWPA_NUM_ERROR_CODES 28
 
 #ifdef __cplusplus
 extern "C" {
