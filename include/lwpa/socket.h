@@ -191,10 +191,12 @@ typedef struct LwpaPollEvent
 } LwpaPollEvent;
 
 lwpa_error_t lwpa_poll_context_init(LwpaPollContext *context);
-lwpa_error_t lwpa_poll_context_deinit(LwpaPollContext *context);
+void lwpa_poll_context_deinit(LwpaPollContext *context);
 lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events,
                                   void *user_data);
-lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
+lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
+                                     void *new_user_data);
+void lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
 lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
 
 /************************ Mimic getaddrinfo() API ****************************/

@@ -41,7 +41,7 @@ protected:
   static const size_t SEND_MSG_LEN{12};
 
   void SetUp() override { ASSERT_EQ(kLwpaErrOk, lwpa_poll_context_init(&context_)); }
-  void TearDown() override { ASSERT_EQ(kLwpaErrOk, lwpa_poll_context_deinit(&context_)); }
+  void TearDown() override { lwpa_poll_context_deinit(&context_); }
 
   LwpaPollContext context_{};
 };
@@ -61,7 +61,7 @@ TEST_F(SocketPollTest, invalid_calls)
   ASSERT_NE(sock, LWPA_SOCKET_INVALID);
 
   // Deinit and make sure add of a valid socket fails
-  ASSERT_EQ(kLwpaErrOk, lwpa_poll_context_deinit(&context_));
+  lwpa_poll_context_deinit(&context_);
   EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_IN, nullptr));
 
   // Initialize the context and add invalid sockets or invalid events
@@ -74,9 +74,17 @@ TEST_F(SocketPollTest, invalid_calls)
   EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, 0, nullptr));
   EXPECT_NE(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_ERR, nullptr));
 
-  // Remove invalid or non-existing socket
-  EXPECT_NE(kLwpaErrOk, lwpa_poll_remove_socket(&context_, LWPA_SOCKET_INVALID));
-  EXPECT_NE(kLwpaErrOk, lwpa_poll_remove_socket(&context_, sock));
+  // Try to modify a socket that has not been added
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_modify_socket(&context_, sock, LWPA_POLL_IN, nullptr));
+
+  // Add the socket and try to modify it with invalid calls
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_IN, nullptr));
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_modify_socket(&context_, sock, 0, nullptr));              // Invalid events
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_modify_socket(&context_, sock, LWPA_POLL_ERR, nullptr));  // Invalid events
+
+  // Deinit and make sure we cannot modify
+  lwpa_poll_context_deinit(&context_);
+  EXPECT_NE(kLwpaErrOk, lwpa_poll_modify_socket(&context_, sock, LWPA_POLL_OUT, nullptr));
 }
 
 // Test the user_data passing functionality.
@@ -99,15 +107,66 @@ TEST_F(SocketPollTest, user_data)
   ASSERT_EQ(event.socket, sock_1);
   ASSERT_EQ(event.user_data, user_data_1);
 
-  ASSERT_EQ(kLwpaErrOk, lwpa_poll_remove_socket(&context_, sock_1));
+  lwpa_poll_remove_socket(&context_, sock_1);
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_2, LWPA_POLL_OUT, user_data_2));
 
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
   ASSERT_EQ(event.socket, sock_2);
   ASSERT_EQ(event.user_data, user_data_2);
 
+  // Modify and make sure we get the updated user data
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_modify_socket(&context_, sock_2, LWPA_POLL_OUT, user_data_1));
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
+  ASSERT_EQ(event.socket, sock_2);
+  ASSERT_EQ(event.user_data, user_data_1);
+
   ASSERT_EQ(kLwpaErrOk, lwpa_close(sock_1));
   ASSERT_EQ(kLwpaErrOk, lwpa_close(sock_2));
+}
+
+// Test the lwpa_poll_modify_socket() functionality, using UDP sockets for simplicity
+TEST_F(SocketPollTest, modify)
+{
+  lwpa_socket_t sock = LWPA_SOCKET_INVALID;
+
+  ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &sock));
+  ASSERT_NE(sock, LWPA_SOCKET_INVALID);
+
+  // Bind the socket to the wildcard address and port 8888.
+  LwpaSockaddr bind_addr;
+  lwpaip_make_any_v4(&bind_addr.ip);
+  bind_addr.port = 8888;
+  ASSERT_EQ(kLwpaErrOk, lwpa_bind(sock, &bind_addr));
+
+  // Add it for output polling first
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock, LWPA_POLL_OUT, nullptr));
+
+  // Socket should be ready right away
+  LwpaPollEvent event;
+  EXPECT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
+  EXPECT_EQ(event.socket, sock);
+  EXPECT_EQ(event.events, LWPA_POLL_OUT);
+  EXPECT_EQ(event.err, kLwpaErrOk);
+
+  // Modify it to do input polling
+  ASSERT_EQ(kLwpaErrOk, lwpa_poll_modify_socket(&context_, sock, LWPA_POLL_IN, nullptr));
+
+  // Should time out now
+  EXPECT_EQ(kLwpaErrTimedOut, lwpa_poll_wait(&context_, &event, 100));
+
+  // Send data to socket
+  LwpaSockaddr send_addr;
+  send_addr.ip = g_netint;
+  send_addr.port = 8888;
+  lwpa_sendto(sock, SEND_MSG, SEND_MSG_LEN, 0, &send_addr);
+
+  // Should get the poll in event
+  EXPECT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
+  EXPECT_EQ(event.socket, sock);
+  EXPECT_EQ(event.events, LWPA_POLL_IN);
+  EXPECT_EQ(event.err, kLwpaErrOk);
+
+  ASSERT_EQ(kLwpaErrOk, lwpa_close(sock));
 }
 
 // Test to make sure lwpa_poll_* functions work properly with a large number of sockets.
@@ -174,7 +233,6 @@ TEST_F(SocketPollTest, udp_in)
   lwpa_socket_t send_sock = LWPA_SOCKET_INVALID;
   lwpa_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
   lwpa_socket_t rcvsock2 = LWPA_SOCKET_INVALID;
-  LwpaSockaddr bind_addr;
 
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
   ASSERT_NE(rcvsock1, LWPA_SOCKET_INVALID);
@@ -186,6 +244,7 @@ TEST_F(SocketPollTest, udp_in)
   ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
 
   // Bind socket 1 to the wildcard address and port 8888.
+  LwpaSockaddr bind_addr;
   lwpaip_make_any_v4(&bind_addr.ip);
   bind_addr.port = 8888;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock1, &bind_addr));
@@ -260,7 +319,7 @@ TEST_F(SocketPollTest, udp_out)
   ASSERT_EQ(event.events, LWPA_POLL_OUT);
   ASSERT_EQ(event.err, kLwpaErrOk);
 
-  ASSERT_EQ(kLwpaErrOk, lwpa_poll_remove_socket(&context_, sock_1));
+  lwpa_poll_remove_socket(&context_, sock_1);
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_add_socket(&context_, sock_2, LWPA_POLL_OUT, nullptr));
 
   ASSERT_EQ(kLwpaErrOk, lwpa_poll_wait(&context_, &event, 100));
