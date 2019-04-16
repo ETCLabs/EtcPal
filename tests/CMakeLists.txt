@@ -19,6 +19,7 @@ if(LWPA_PLATFORM STREQUAL windows OR LWPA_PLATFORM STREQUAL linux)
     ${TEST_SRC_DIR}/test_rwlock.cpp
     ${TEST_SRC_DIR}/test_signal.cpp
     ${TEST_SRC_DIR}/test_socket.cpp
+    ${TEST_SRC_DIR}/test_socket_poll.cpp
     ${TEST_SRC_DIR}/test_thread.cpp
     ${TEST_SRC_DIR}/test_timer.cpp
     ${TEST_SRC_DIR}/test_uuid.cpp

@@ -7,10 +7,18 @@ source file.
  */
 
 /*! A socket handle. Typedefed to the system's socket identifier. */
-typedef UNDEFINED lwpa_socket_t;
+typedef PLATFORM_DEFINED lwpa_socket_t;
 
 /*! An identifier for an invalid socket handle. */
-#define LWPA_SOCKET_INVALID
+#define LWPA_SOCKET_INVALID [PLATFORM_DEFINED]
+
+/*! \brief The maximum number of sockets that can be simultaneously monitored by lwpa_poll_wait().
+ *
+ *  Some systems have no compile-time limit on this value - it could be a runtime system-defined
+ *  limit (e.g. ulimit) or even limited only by the amount of available memory. In that case this
+ *  constant will have the value -1.
+ */
+#define LWPA_SOCKET_MAX_POLL_SIZE [PLATFORM_DEFINED]
 
 /*! \brief Accept a connection on a socket.
  *
@@ -231,23 +239,99 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
  */
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
 
-/*! \brief Wait for some event on a set of sockets.
+/*! \brief A structure that holds context information for poll operations on multiple sockets.
+ *  
+ *  See the documentation for lwpa_poll_context_init() and lwpa_poll_wait() for more information.
+ */
+typedef PLATFORM_DEFINED LwpaPollContext;
+
+/*! \brief Create a new context for waiting on events on multiple sockets.
  *
- *  Refer to your favorite poll() man page for more information.
+ *  LwpaPollContext structures contain information about an application's interest in events on a
+ *  set of sockets. The lwpa_poll_wait() function can then be used to block the calling thread until 
+ *  one such event takes place.
  *
- *  On UNIX-like systems, note that this may also work for descriptors that don't refer to sockets;
- *  however, for portability it should only be used on identifiers that were returned from an lwpa_*
- *  function.
+ *  This function must be called on an LwpaPollContext structure before using it with any other
+ *  lwpa_poll_* function.
+ * 
+ *  \param[in,out] context Pointer to LwpaPollContext to initialize.
+ *  \return #kLwpaErrOk: Init successful.\n
+ *          #kLwpaErrInvalid: Invalid argument.\n
+ *          #kLwpaErrSys: System call failed.
+ */
+lwpa_error_t lwpa_poll_context_init(LwpaPollContext *context);
+
+/*! \brief Invalidate a previously-initialized LwpaPollContext structure.
+ * 
+ *  This must be called at shutdown or when the LwpaPollContext is no longer needed to free any
+ *  resources being used to track polling context.
  *
- *  \param[in,out] fds Set of socket descriptors to be monitored.
- *  \param[in] nfds Number of LwpaPollfd structs in the fds array.
+ *  \param[in] context Pointer to LwpaPollContext to deinitialize.
+ *  \return #kLwpaErrOk: Deinit successful.\n
+ *          #kLwpaErrInvalid: Invalid argument.
+ */
+lwpa_error_t lwpa_poll_context_deinit(LwpaPollContext *context);
+
+/*! \brief Add a new socket to an LwpaPollContext.
+ *
+ *  This socket will be monitored on future calls to lwpa_poll_wait() for the events specified in
+ *  the 'events' parameter. See the definitions of the LWPA_POLL_* flag values for more information.
+ *  The flag values can be 'or'ed together to monitor for multiple events. Only flag values that are
+ *  not marked 'output only' are valid for use with this function. Errors on sockets will always be
+ *  reported with the #LWPA_POLL_ERR flag.
+ *
+ *  On some systems, the underlying polling method has a limit to how many sockets can be monitored
+ *  in a single call. If there is a limit, it is defined as the positive value
+ *  #LWPA_SOCKET_MAX_POLL_SIZE. Otherwise, that constant is set to -1.
+ *
+ *  \param[in,out] context Pointer to LwpaPollContext to which to add new socket.
+ *  \param[in] socket Socket to start monitoring.
+ *  \param[in] events Events to monitor for on this socket.
+ *  \return #kLwpaErrOk: Socket added successfully.\n
+ *          #kLwpaErrInvalid: Invalid argument.\n
+ *          #kLwpaErrNoMem: #LWPA_SOCKET_MAX_POLL_SIZE is exceeded in this context.\n
+ *          #kLwpaErrSys: System call failed.
+ */
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events);
+
+/*! \brief Remove a monitored socket from an LwpaPollContext.
+ *
+ *  This socket will no longer be monitored on future calls to lwpa_poll_wait().
+ *
+ *  \param[in,out] context Pointer to LwpaPollContext from which to remove socket.
+ *  \param[in] socket Socket to remove.
+ *  \return #kLwpaErrOk: Socket removed successfully.\n
+ *          #kLwpaErrInvalid: Invalid argument.\n
+ *          #kLwpaErrNotFound: Socket was not previously added to the context.\n
+ *          #kLwpaErrSys: System call failed.
+ */
+lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
+
+/*! \brief Wait for an event on a set of sockets defined by an LwpaPollContext.
+ *
+ *  Waits for events defined by previous calls to lwpa_poll_add_socket() on this context structure.
+ *  Reports one event at a time in the output 'event' parameter. Waits up to timeout_ms
+ *  milliseconds; use #LWPA_WAIT_FOREVER to wait indefinitely. If there are no sockets currently
+ *  added to the context structure, returns the special error code #kLwpaErrNoSockets immediately.
+ *
+ *  Uses OS-specific APIs for monitoring multiple sockets under the hood. Details:
+ *
+ * | Platform:  | API used: | Notes:   |
+ * |------------|-----------|----------|
+ * | Windows    | select()  | #LWPA_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
+ *
+ *  \param[in] context Pointer to LwpaPollContext for which to wait for events.
+ *  \param[out] event On success, contains information about the event that occurred.
  *  \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #LWPA_WAIT_FOREVER to
  *                        wait indefinitely.
- *  \return Number of LwpaPollfd structs which have nonzero revents fields (success),
- *          #kLwpaErrTimedOut (timed out), or other lwpa_error_t value from the underlying system
- *          call (error occurred).
+ *  \return #kLwpaErrOk: An event occurred, and information is available in the event argument.\n
+ *          #kLwpaErrInvalid: Invalid argument.\n
+ *          #kLwpaErrNoSockets: The context has no sockets added to it.\n
+ *          #kLwpaErrTimedOut: Timed out waiting for an event to occur.\n
+ *          #kLwpaErrSys: System or socket call failed.\n
+ *          Other lwpa_error_t values are possible from underlying socket calls.
  */
-int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms);
+lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
 
 /*! \brief Get address information for a named internet host and/or service.
  *

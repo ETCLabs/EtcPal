@@ -26,7 +26,6 @@
 #include "lwpa/bool.h"
 #include "lwpa/error.h"
 #include "lwpa/inet.h"
-#include "lwpa/plat_socket.h"
 
 /*! \defgroup lwpa_socket lwpa_socket
  *  \ingroup lwpa
@@ -42,12 +41,17 @@
  *  @{
  */
 
+/*! Event flags for the lwpa_poll_*() API functions. */
+typedef uint32_t lwpa_poll_events_t;
+
+#include "lwpa/plat_socket.h" /* The platform-specific socket definitions */
+
 /* clang-format off */
 
 /*! \name Flags for lwpa_recvfrom()
  *  @{ */
 #define LWPA_MSG_PEEK 0x1
-/*!@}*/
+/*! @} */
 
 /* Note: no flags are currently implemented for lwpa_sendto() */
 
@@ -60,7 +64,7 @@
 #define LWPA_IPPROTO_IPV6   3 /*!< IPv6 protocol level. */
 #define LWPA_IPPROTO_TCP    4 /*!< TCP protocol level. */
 #define LWPA_IPPROTO_UDP    5 /*!< UDP protocol level. */
-/*!@}*/
+/*! @} */
 
 /*! \name Options for level LWPA_SOL_SOCKET
  *  Used in the option parameter to lwpa_setsockopt() and lwpa_getsockopt().
@@ -77,7 +81,7 @@
 #define LWPA_SO_REUSEADDR 8  /*!< Get/Set, value is boolean int */
 #define LWPA_SO_REUSEPORT 9  /*!< Get/Set, value is boolean int */
 #define LWPA_SO_TYPE      10 /*!< Get only, value is int */
-/*!@}*/
+/*! @} */
 
 /*! \name Options for level LWPA_IPPROTO_IP or LWPA_IPPROTO_IPV6
  *  Used in the option parameter to lwpa_setsockopt() and lwpa_getsockopt().
@@ -90,7 +94,7 @@
 #define LWPA_MCAST_JOIN_GROUP  15 /*!< Set only, value is LwpaMreq */
 #define LWPA_MCAST_LEAVE_GROUP 16 /*!< Set only, value is LwpaMreq */
 #define LWPA_IPV6_V6ONLY       17 /*!< Get/Set, value is boolean int */
-/*!@}*/
+/*! @} */
 
 /* clang-format on */
 
@@ -117,20 +121,20 @@ typedef struct LwpaMreq
 #define LWPA_SHUT_RD 0
 #define LWPA_SHUT_WR 1
 #define LWPA_SHUT_RDWR 2
-/*!@}*/
+/*! @} */
 
 /*! \name 'family' values for lwpa_socket() and LwpaAddrinfo
  *  @{ */
 #define LWPA_AF_UNSPEC 0
 #define LWPA_AF_INET 1
 #define LWPA_AF_INET6 2
-/*!@}*/
+/*! @} */
 
 /*! \name 'type' values for lwpa_socket() and lwpa_getsockopt()
  *  @{ */
 #define LWPA_STREAM 0
 #define LWPA_DGRAM 1
-/*!@}*/
+/*! @} */
 
 /********************** Mimic sys/socket.h functions *************************/
 
@@ -164,26 +168,36 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
 
 /**************************** Mimic poll() API *******************************/
 
-/*! \name 'events' and 'revents' values for LwpaPollfd
+/*! \name Flag values to use with lwpa_poll_events_t.
  *
- *  Refer to the similarly-named flags in your favorite poll() man page for more details.
  *  @{ */
-#define LWPA_POLLIN 0x1
-#define LWPA_POLLOUT 0x2
-#define LWPA_POLLPRI 0x4
-#define LWPA_POLLERR 0x8
-/*!@}*/
+#define LWPA_POLL_IN 0x1u      /*!< Notify when data is available for reading on the socket. */
+#define LWPA_POLL_OUT 0x2u     /*!< Notify when the socket has space available to write data. */
+#define LWPA_POLL_CONNECT 0x4u /*!< Notify when a non-blocking connect operation has completed. */
+#define LWPA_POLL_OOB 0x8u     /*!< Notify when there is out-of-band data on a TCP socket. */
+#define LWPA_POLL_ERR 0x10u    /*!< An error has occurred on the socket (output only). */
+/*! @} */
 
-/*! A description for a socket to poll with lwpa_poll(). */
-typedef struct LwpaPollfd
+/* Mask of valid events for use with lwpa_poll_add_socket(). */
+#define LWPA_POLL_VALID_INPUT_EVENT_MASK 0x0fu
+
+/*! A description of an event that occurred on a socket, for usage with lwpa_poll_wait(). */
+typedef struct LwpaPollEvent
 {
-  lwpa_socket_t fd; /*!< Socket to poll. */
-  short events;     /*!< Events to poll for. */
-  short revents;    /*!< Events that occurred on the socket. */
-  lwpa_error_t err; /*!< Any error that occurred on the socket. */
-} LwpaPollfd;
+  lwpa_socket_t socket;      /*!< Socket which had activity. */
+  lwpa_poll_events_t events; /*!< Event(s) that occurred on the socket. */
+  lwpa_error_t err;          /*!< More information about an error that occurred on the socket. */
+  void *user_data;           /*!< The user data that was given when this socket was added. */
+} LwpaPollEvent;
 
-int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms);
+lwpa_error_t lwpa_poll_context_init(LwpaPollContext *context);
+void lwpa_poll_context_deinit(LwpaPollContext *context);
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events,
+                                  void *user_data);
+lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
+                                     void *new_user_data);
+void lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
+lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
 
 /************************ Mimic getaddrinfo() API ****************************/
 
@@ -194,7 +208,7 @@ int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms);
 #define LWPA_AI_PASSIVE 0x01
 #define LWPA_AI_CANONNAME 0x02
 #define LWPA_AI_NUMERICHOST 0x04
-/*!@}*/
+/*! @} */
 
 /*! A structure containing name and address information about an internet host. Returned by
  *  lwpa_getaddrinfo(). */
@@ -206,8 +220,7 @@ typedef struct LwpaAddrinfo
   int ai_protocol;      /*!< i.e. LWPA_IPPROTO_xxx */
   char *ai_canonname;   /*!< Canonical name for host */
   LwpaSockaddr ai_addr; /*!< Address of host */
-  void *pd[2];          /*!< Used by internal platform logic;
-                             don't touch */
+  void *pd[2];          /*!< Used by internal platform logic; don't touch */
 } LwpaAddrinfo;
 
 lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints,
@@ -232,6 +245,6 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *des
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_SOCKET_H_ */

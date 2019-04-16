@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added lwpa_ prefix to existing values and functions where necessary for better
   namespacing.
 - lwpa_socket() signature changed to return a meaningful error code.
+- lwpa_poll() removed and replaced with a new API based on context structures.
 - lwpa_error: Harmonize naming style with other enums
 
 ### Removed
