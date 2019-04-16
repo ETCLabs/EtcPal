@@ -311,7 +311,8 @@ lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t soc
  *
  *  Waits for events defined by previous calls to lwpa_poll_add_socket() on this context structure.
  *  Reports one event at a time in the output 'event' parameter. Waits up to timeout_ms
- *  milliseconds; use #LWPA_WAIT_FOREVER to wait indefinitely.
+ *  milliseconds; use #LWPA_WAIT_FOREVER to wait indefinitely. If there are no sockets currently
+ *  added to the context structure, returns the special error code #kLwpaErrNoSockets immediately.
  *
  *  Uses OS-specific APIs for monitoring multiple sockets under the hood. Details:
  *
@@ -324,7 +325,8 @@ lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t soc
  *  \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #LWPA_WAIT_FOREVER to
  *                        wait indefinitely.
  *  \return #kLwpaErrOk: An event occurred, and information is available in the event argument.\n
- *          #kLwpaErrInvalid: Invalid argument, or the context has no sockets added to it.\n
+ *          #kLwpaErrInvalid: Invalid argument.\n
+ *          #kLwpaErrNoSockets: The context has no sockets added to it.\n
  *          #kLwpaErrTimedOut: Timed out waiting for an event to occur.\n
  *          #kLwpaErrSys: System or socket call failed.\n
  *          Other lwpa_error_t values are possible from underlying socket calls.
