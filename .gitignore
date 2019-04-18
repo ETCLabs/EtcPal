@@ -15,6 +15,9 @@ lib/
 # CMake
 build/
 
+# Version script
+tmp_commit_msg.txt
+
 # MSVC2015 and Qt
 *.VC.db
 *.vcxproj.user
