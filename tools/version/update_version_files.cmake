@@ -30,7 +30,6 @@ execute_process(COMMAND
   WORKING_DIRECTORY ${VERSION_DIR}/../..
 )
 configure_file(${VERSION_DIR}/templates/commit_msg.txt.in ${VERSION_DIR}/tmp_commit_msg.txt)
+configure_file(${VERSION_DIR}/templates/tag_msg.txt.in ${VERSION_DIR}/tmp_tag_msg.txt)
 
-message(STATUS "Versioned files updated. Now commit and push your changes to do the build, e.g.:")
-message(STATUS "    git commit -F tmp_commit_msg.txt")
-message(STATUS "    git push origin")
+message(STATUS "Versioned files updated.")
