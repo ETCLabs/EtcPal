@@ -816,25 +816,18 @@ lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext *context, lwpa_socket_t soc
   lwpa_error_t res = kLwpaErrSys;
   if (lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
   {
-    if (context->num_valid_sockets >= LWPA_SOCKET_MAX_POLL_SIZE)
+    LwpaPollCtxSocket *sock_desc = find_socket(context, socket);
+    if (sock_desc)
     {
-      res = kLwpaErrNoMem;
+      clear_in_fd_sets(context, sock_desc);
+      sock_desc->events = new_events;
+      sock_desc->user_data = new_user_data;
+      set_in_fd_sets(context, sock_desc);
+      res = kLwpaErrOk;
     }
     else
     {
-      LwpaPollCtxSocket *sock_desc = find_socket(context, socket);
-      if (sock_desc)
-      {
-        clear_in_fd_sets(context, sock_desc);
-        sock_desc->events = new_events;
-        sock_desc->user_data = new_user_data;
-        set_in_fd_sets(context, sock_desc);
-        res = kLwpaErrOk;
-      }
-      else
-      {
-        res = kLwpaErrNotFound;
-      }
+      res = kLwpaErrNotFound;
     }
     lwpa_mutex_give(&context->lock);
   }

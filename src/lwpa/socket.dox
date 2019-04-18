@@ -30,7 +30,7 @@ typedef PLATFORM_DEFINED lwpa_socket_t;
  *  \param[in] id Listening socket on which to accept a new connection.
  *  \param[out] address Remote address from which the connection was accepted.
  *  \param[out] conn_sock Filled in on success with handle to connected socket.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (failure).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (failure).
  */
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t *conn_sock);
 
@@ -43,7 +43,7 @@ lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t 
  *
  *  \param[in] id Socket to which to bind an address (traditionally called a 'name').
  *  \param[in] address Address to assign to the socket.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr *address);
 
@@ -56,7 +56,7 @@ lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr *address);
  *  an lwpa_* function.
  *
  *  \param[in] id Socket to close.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_close(lwpa_socket_t id);
 
@@ -69,7 +69,7 @@ lwpa_error_t lwpa_close(lwpa_socket_t id);
  *
  *  \param[in] id Socket to connect.
  *  \param[in] address Address to which to connect.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr *address);
 
@@ -82,7 +82,7 @@ lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr *address);
  *
  *  \param[in] id Connected socket for which to get the peer address.
  *  \param[in] address Filled in with peer address on success.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr *address);
 
@@ -95,7 +95,7 @@ lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr *address);
  *
  *  \param[in] id Connected socket for which to get the bound address.
  *  \param[in] address Filled in with bound address on success.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address);
 
@@ -113,7 +113,7 @@ lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address);
  *  \param[out] option_value Filled in with option value on success.
  *  \param[in,out] option_len Contains size of buffer pointed to by option_value, filled in with
  *                            actual size of value returned.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void *option_value, size_t *option_len);
 
@@ -123,7 +123,7 @@ lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void 
  *
  *  \param[in] id LWPA_STREAM socket on which to listen.
  *  \param[in] backlog Maximum length of pending connection queue.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog);
 
@@ -135,7 +135,7 @@ lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog);
  *  \param[out] buffer Buffer in which to place received data.
  *  \param[in] length Size in bytes of buffer.
  *  \param[in] flags Receive flags.
- *  \return Number of bytes received (success) or lwpa_error_t code from system (error occurred).
+ *  \return Number of bytes received (success) or #lwpa_error_t code from system (error occurred).
  */
 int lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags);
 
@@ -152,7 +152,7 @@ int lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags);
  *  \param[in] flags Receive flags.
  *  \param[out] address If provided, filled in on success with peer address from which the data was
  *                      received.
- *  \return Number of bytes received (success) or lwpa_error_t code from system (error occurred).
+ *  \return Number of bytes received (success) or #lwpa_error_t code from system (error occurred).
  */
 int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, LwpaSockaddr *address);
 
@@ -166,7 +166,7 @@ int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, Lwpa
  *  \param[in] message Message to send.
  *  \param[in] length Size in bytes of message.
  *  \param[in] flags Send flags.
- *  \return Number of bytes sent (success) or lwpa_error_t code from system (error occurred).
+ *  \return Number of bytes sent (success) or #lwpa_error_t code from system (error occurred).
  */
 int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags);
 
@@ -182,7 +182,7 @@ int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags);
  *  \param[in] length Size in bytes of message.
  *  \param[in] flags Send flags.
  *  \param[in] dest_addr Address to which to send the message.
- *  \return Number of bytes sent (success) or lwpa_error_t code from system (error occurred).
+ *  \return Number of bytes sent (success) or #lwpa_error_t code from system (error occurred).
  */
 int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags, const LwpaSockaddr *dest_addr);
 
@@ -199,7 +199,7 @@ int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags,
  *  \param[in] option_name Name of the option for which to set the value.
  *  \param[out] option_value Value to set for the option.
  *  \param[in,out] option_len Size of value pointed to by option_value.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void *option_value, size_t option_len);
 
@@ -209,7 +209,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
  *
  *  \param[in] id Socket to be shut down.
  *  \param[in] how How to shut down the socket, one of the LWPA_SHUT_* values.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how);
 
@@ -224,7 +224,7 @@ lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how);
  *  \param[in] type Socket communication type.
  *  \param[out] id Filled in with socket handle on success. Filled in with #LWPA_SOCKET_INVALID on
  *                 failure.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id);
 
@@ -235,7 +235,7 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
  *
  *  \param[in] id Socket for which to change the blocking behavior.
  *  \param[in] blocking true (socket should block) or false (socket should not block).
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
  */
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
 
@@ -255,9 +255,9 @@ typedef PLATFORM_DEFINED LwpaPollContext;
  *  lwpa_poll_* function.
  * 
  *  \param[in,out] context Pointer to LwpaPollContext to initialize.
- *  \return #kLwpaErrOk: Init successful.\n
- *          #kLwpaErrInvalid: Invalid argument.\n
- *          #kLwpaErrSys: System call failed.
+ *  \return #kLwpaErrOk: Init successful.
+ *  \return #kLwpaErrInvalid: Invalid argument.
+ *  \return #kLwpaErrSys: System call failed.
  */
 lwpa_error_t lwpa_poll_context_init(LwpaPollContext *context);
 
@@ -267,10 +267,8 @@ lwpa_error_t lwpa_poll_context_init(LwpaPollContext *context);
  *  resources being used to track polling context.
  *
  *  \param[in] context Pointer to LwpaPollContext to deinitialize.
- *  \return #kLwpaErrOk: Deinit successful.\n
- *          #kLwpaErrInvalid: Invalid argument.
  */
-lwpa_error_t lwpa_poll_context_deinit(LwpaPollContext *context);
+void lwpa_poll_context_deinit(LwpaPollContext *context);
 
 /*! \brief Add a new socket to an LwpaPollContext.
  *
@@ -287,12 +285,31 @@ lwpa_error_t lwpa_poll_context_deinit(LwpaPollContext *context);
  *  \param[in,out] context Pointer to LwpaPollContext to which to add new socket.
  *  \param[in] socket Socket to start monitoring.
  *  \param[in] events Events to monitor for on this socket.
- *  \return #kLwpaErrOk: Socket added successfully.\n
- *          #kLwpaErrInvalid: Invalid argument.\n
- *          #kLwpaErrNoMem: #LWPA_SOCKET_MAX_POLL_SIZE is exceeded in this context.\n
- *          #kLwpaErrSys: System call failed.
+ *  \param[in] user_data Opaque data pointer that is passed back with events on this socket.
+ *  \return #kLwpaErrOk: Socket added successfully.
+ *  \return #kLwpaErrInvalid: Invalid argument.
+ *  \return #kLwpaErrNoMem: #LWPA_SOCKET_MAX_POLL_SIZE is exceeded in this context.
+ *  \return #kLwpaErrSys: System call failed.
  */
-lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events);
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events, void *user_data);
+
+/*! \brief Change the set of events or user data associated with a monitored socket.
+ *
+ *  The new events and/or user data will be used on the next call to lwpa_poll_wait().
+ *
+ * \param[in,out] context Pointer to LwpaPollContext on which to modify socket parameters.
+ * \param[in] socket Socket to modify.
+ * \param[in] new_events New set of events to monitor for on this socket. Passing the same events as
+ *                       before is also valid if only the user data is being changed.
+ * \param[in] new_user_data New opaque data pointer that is passed back with events on this socket.
+ *                          Passing the same pointer as before is also valid if only the events are
+ *                          being changed.
+ * \return #kLwpaErrOk: Socket modified successfully.
+ * \return #kLwpaErrInvalid: Invalid argument.
+ * \return #kLwpaErrNotFound: Socket was not previously added to this context.
+ * \return #kLwpaErrSys: System call failed.
+ */
+lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t new_events, void *new_user_data);
 
 /*! \brief Remove a monitored socket from an LwpaPollContext.
  *
@@ -300,12 +317,8 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket
  *
  *  \param[in,out] context Pointer to LwpaPollContext from which to remove socket.
  *  \param[in] socket Socket to remove.
- *  \return #kLwpaErrOk: Socket removed successfully.\n
- *          #kLwpaErrInvalid: Invalid argument.\n
- *          #kLwpaErrNotFound: Socket was not previously added to the context.\n
- *          #kLwpaErrSys: System call failed.
  */
-lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
+void lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
 
 /*! \brief Wait for an event on a set of sockets defined by an LwpaPollContext.
  *
@@ -324,12 +337,12 @@ lwpa_error_t lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t soc
  *  \param[out] event On success, contains information about the event that occurred.
  *  \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #LWPA_WAIT_FOREVER to
  *                        wait indefinitely.
- *  \return #kLwpaErrOk: An event occurred, and information is available in the event argument.\n
- *          #kLwpaErrInvalid: Invalid argument.\n
- *          #kLwpaErrNoSockets: The context has no sockets added to it.\n
- *          #kLwpaErrTimedOut: Timed out waiting for an event to occur.\n
- *          #kLwpaErrSys: System or socket call failed.\n
- *          Other lwpa_error_t values are possible from underlying socket calls.
+ *  \return #kLwpaErrOk: An event occurred, and information is available in the event argument.
+ *  \return #kLwpaErrInvalid: Invalid argument.
+ *  \return #kLwpaErrNoSockets: The context has no sockets added to it.
+ *  \return #kLwpaErrTimedOut: Timed out waiting for an event to occur.
+ *  \return #kLwpaErrSys: System or socket call failed.
+ *  \return Other #lwpa_error_t values are possible from underlying socket calls.
  */
 lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
 
@@ -375,7 +388,7 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int 
  *  \param[in] service Either a string-represented numerical port number or a service name.
  *  \param[in] hints Structure containing hints restricting the address types that can be returned.
  *  \param[out] result On success, filled in with the first address result.
- *  \return #kLwpaErrOk (success) or lwpa_error_t code from system (an error occurred).
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (an error occurred).
  */
 lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints,
                               LwpaAddrinfo *result);
@@ -415,9 +428,9 @@ void lwpa_freeaddrinfo(LwpaAddrinfo *ai);
  *  \param[in] src Address to convert to string form.
  *  \param[out] dest Filled in on success with the string-represented address.
  *  \param[in] size Size in bytes of dest buf.
- *  \return #kLwpaErrOk: Success.\n
- *          #kLwpaErrInvalid: Invalid parameter.\n
- *          #kLwpaErrSys: System call failed.
+ *  \return #kLwpaErrOk: Success.
+ *  \return #kLwpaErrInvalid: Invalid parameter.
+ *  \return #kLwpaErrSys: System call failed.
  */
 lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
 
@@ -431,9 +444,9 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
  *  \param[in] type Type of string-represented IP address pointed to by src.
  *  \param[in] src Character string containing a string-represented IP address.
  *  \param[out] dest Filled in on success with the address.
- *  \return #kLwpaErrOk: Success.\n
- *          #kLwpaErrInvalid: Invalid parameter.\n
- *          #kLwpaErrSys: System call failed.
+ *  \return #kLwpaErrOk: Success.
+ *  \return #kLwpaErrInvalid: Invalid parameter.
+ *  \return #kLwpaErrSys: System call failed.
  */
 lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest);
 

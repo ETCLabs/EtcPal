@@ -360,6 +360,13 @@
       <anchor>a2d84f39897e3cbaf81be57d00dce398b</anchor>
       <arglist></arglist>
     </member>
+    <member kind="variable">
+      <type>void *</type>
+      <name>user_data</name>
+      <anchorfile>struct_lwpa_poll_event.html</anchorfile>
+      <anchor>a0f53d287ac7c064d1a49d4bd93ca1cb9</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>LwpaRbIter</name>
@@ -1106,6 +1113,12 @@
       <name>kLwpaErrNoNetints</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa2c6066ceb92f5c9ca1ad8aa83694d88c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>kLwpaErrNoSockets</name>
+      <anchorfile>group__lwpa__error.html</anchorfile>
+      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfad52bd3d08c7896fc789446dfb635243f</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
@@ -2481,24 +2494,31 @@
       <arglist>(LwpaPollContext *context)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
+      <type>void</type>
       <name>lwpa_poll_context_deinit</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gad9288a5d2dd28f1b91ab57b9a2029f46</anchor>
+      <anchor>ga3f5214a5a60d0727cd87509331ac31c7</anchor>
       <arglist>(LwpaPollContext *context)</arglist>
     </member>
     <member kind="function">
       <type>lwpa_error_t</type>
       <name>lwpa_poll_add_socket</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac127a40cf706e64bdb123785edd95be4</anchor>
-      <arglist>(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events)</arglist>
+      <anchor>ga4659720223c84abac2541a05b11eb371</anchor>
+      <arglist>(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events, void *user_data)</arglist>
     </member>
     <member kind="function">
       <type>lwpa_error_t</type>
+      <name>lwpa_poll_modify_socket</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga1961577a68ff72d7d5924928202712fc</anchor>
+      <arglist>(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t new_events, void *new_user_data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>lwpa_poll_remove_socket</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaf3ae48fe4943073bbfc3ce2e32f2aea2</anchor>
+      <anchor>gaccbbb8445bb7a6c467807e4f7b8d2605</anchor>
       <arglist>(LwpaPollContext *context, lwpa_socket_t socket)</arglist>
     </member>
     <member kind="function">
