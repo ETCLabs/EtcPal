@@ -19,9 +19,6 @@
 
 #include "lwpa_mock/socket.h"
 
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket_init, void *);
-DEFINE_FAKE_VOID_FUNC(lwpa_socket_deinit);
-
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_accept, lwpa_socket_t, LwpaSockaddr *, lwpa_socket_t *);
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_bind, lwpa_socket_t, const LwpaSockaddr *);
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_close, lwpa_socket_t);
@@ -40,7 +37,14 @@ DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket, unsigned int, unsigned int, lw
 
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setblocking, lwpa_socket_t, bool);
 
-DEFINE_FAKE_VALUE_FUNC(int, lwpa_poll, LwpaPollfd *, size_t, int);
+DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_context_init, LwpaPollContext *);
+DEFINE_FAKE_VOID_FUNC(lwpa_poll_context_deinit, LwpaPollContext *);
+DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_add_socket, LwpaPollContext *, lwpa_socket_t, lwpa_poll_events_t,
+                       void *);
+DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_modify_socket, LwpaPollContext *, lwpa_socket_t, lwpa_poll_events_t,
+                       void *);
+DEFINE_FAKE_VOID_FUNC(lwpa_poll_remove_socket, LwpaPollContext *, lwpa_socket_t);
+DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_wait, LwpaPollContext *, LwpaPollEvent *, int);
 
 DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getaddrinfo, const char *, const char *, const LwpaAddrinfo *,
                        LwpaAddrinfo *);

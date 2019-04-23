@@ -23,7 +23,7 @@ jobs:
       mkdir build
       cd build
       cmake --version
-      cmake -G "Visual Studio 15 2017 Win64" ..
+      cmake -G "Visual Studio 15 2017 Win64" -DLWPA_BUILD_MOCK_LIB=ON ..
       cmake --build . --config %LWPA_BUILD_CONFIG%
     displayName: 'lwpa Windows build'
   - script: build\tests\%LWPA_BUILD_CONFIG%\test_lwpa.exe

@@ -34,9 +34,6 @@
 extern "C" {
 #endif
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket_init, void *);
-DECLARE_FAKE_VOID_FUNC(lwpa_socket_deinit);
-
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_accept, lwpa_socket_t, LwpaSockaddr *, lwpa_socket_t *);
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_bind, lwpa_socket_t, const LwpaSockaddr *);
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_close, lwpa_socket_t);
@@ -55,7 +52,14 @@ DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket, unsigned int, unsigned int, l
 
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setblocking, lwpa_socket_t, bool);
 
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_poll, LwpaPollfd *, size_t, int);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_context_init, LwpaPollContext *);
+DECLARE_FAKE_VOID_FUNC(lwpa_poll_context_deinit, LwpaPollContext *);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_add_socket, LwpaPollContext *, lwpa_socket_t, lwpa_poll_events_t,
+                        void *);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_modify_socket, LwpaPollContext *, lwpa_socket_t, lwpa_poll_events_t,
+                        void *);
+DECLARE_FAKE_VOID_FUNC(lwpa_poll_remove_socket, LwpaPollContext *, lwpa_socket_t);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_wait, LwpaPollContext *, LwpaPollEvent *, int);
 
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getaddrinfo, const char *, const char *, const LwpaAddrinfo *,
                         LwpaAddrinfo *);
@@ -81,7 +85,12 @@ DECLARE_FAKE_VOID_FUNC(lwpa_freeaddrinfo, LwpaAddrinfo *);
   operation(lwpa_shutdown);                     \
   operation(lwpa_socket);                       \
   operation(lwpa_setblocking);                  \
-  operation(lwpa_poll);                         \
+  operation(lwpa_poll_context_init);            \
+  operation(lwpa_poll_context_deinit);          \
+  operation(lwpa_poll_add_socket);              \
+  operation(lwpa_poll_modify_socket);           \
+  operation(lwpa_poll_remove_socket);           \
+  operation(lwpa_poll_wait);                    \
   operation(lwpa_getaddrinfo);                  \
   operation(lwpa_nextaddr);                     \
   operation(lwpa_freeaddrinfo);
