@@ -67,8 +67,6 @@ DECLARE_FAKE_VALUE_FUNC(bool, lwpa_nextaddr, LwpaAddrinfo *);
 DECLARE_FAKE_VOID_FUNC(lwpa_freeaddrinfo, LwpaAddrinfo *);
 
 #define LWPA_SOCKET_DO_FOR_ALL_FAKES(operation) \
-  operation(lwpa_socket_init);                  \
-  operation(lwpa_socket_deinit);                \
   operation(lwpa_accept);                       \
   operation(lwpa_bind);                         \
   operation(lwpa_close);                        \
