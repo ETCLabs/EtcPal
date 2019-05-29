@@ -97,8 +97,8 @@ def prompt_to_continue():
 def commit_and_tag(repo, new_version, release_build):
     """Commit the updated version files and tag the version."""
     index = repo.index
-    index.add(os.path.join(repo.working_tree_dir, VERSION_H_OUT_FILE_REL_PATH))
-    index.add(os.path.join(repo.working_tree_dir, CURRENT_VERSION_TXT_FILE_REL_PATH))
+    index.add([os.path.join(repo.working_tree_dir, VERSION_H_OUT_FILE_REL_PATH),
+               os.path.join(repo.working_tree_dir, CURRENT_VERSION_TXT_FILE_REL_PATH)])
 
     vers_string_long = '{}.{}.{}.{}'.format(new_version[0], new_version[1], new_version[2], new_version[3])
     vers_string_short = '{}.{}.{}'.format(new_version[0], new_version[1], new_version[2])
