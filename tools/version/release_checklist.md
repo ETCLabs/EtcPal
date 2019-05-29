@@ -17,3 +17,7 @@
   * Include `-r` flag to specify a release build
 - [ ] Mark as release on the releases page
 - [ ] Create build report
+- [ ] Merge `master` back into `develop`
+- [ ] Update 3-digit versions to next planned version in all relevant places:
+  * CMakeLists.txt
+  * Doxyfile
