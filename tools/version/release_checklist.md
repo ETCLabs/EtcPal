@@ -18,6 +18,10 @@
 - [ ] Mark as release on the releases page
 - [ ] Create build report
 - [ ] Merge `master` back into `develop`
+
+## Starting work on a new release
+
 - [ ] Update 3-digit versions to next planned version in all relevant places:
   * CMakeLists.txt
   * Doxyfile
+- [ ] Pick a new color for Doxygen
