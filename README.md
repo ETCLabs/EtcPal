@@ -1,6 +1,6 @@
 # LightWeight Platform Abstraction
 
-[![Build status](https://ci.appveyor.com/api/projects/status/d2u9dm8kq8svtaq1?svg=true)](https://ci.appveyor.com/project/ETCLabs/lwpa)
+[![Build Status](https://dev.azure.com/ETCLabs/lwpa/_apis/build/status/ETCLabs.lwpa?branchName=develop)](https://dev.azure.com/ETCLabs/lwpa/_build/latest?definitionId=1&branchName=develop)
 
 This repository contains the LightWeight Platform Abstraction (lwpa) library,
 which supports other open-source libraries by [ETC](http://www.etcconnect.com).
@@ -22,7 +22,7 @@ lwpa is currently ported for the following platforms:
 
 lwpa is typically included as a dependency by other software libraries.
 However, if you would like to build lwpa on its own as a static lib, there are
-instructions in the [documentation](https://etclabs.github.io/lwpa)
+instructions in the [documentation](https://etclabs.github.io/lwpa).
 
 ## About this ETCLabs Project
 

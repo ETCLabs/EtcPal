@@ -1,21 +1,29 @@
 ############################### Platform support ############################## 
 
+if(DEFINED LWPA_CONFIG)
+  get_filename_component(LWPA_CONFIG_LOC LWPA_CONFIG DIRECTORY)
+  set(${LWPA_HAVE_CONFIG_H} LWPA_HAVE_CONFIG_H)
+endif()
+
 # The set of supported platforms
 set(VALID_LWPA_PLATFORMS
   windows
+  linux
   mqx
 )
 
-if (NOT DEFINED LWPA_PLATFORM)
+if(NOT DEFINED LWPA_PLATFORM)
   message(STATUS "LWPA_PLATFORM not supplied, assuming native compile by default...")
-  if (WIN32)
-    set (LWPA_PLATFORM windows)
+  if(WIN32)
+    set(LWPA_PLATFORM windows)
+  elseif(UNIX AND NOT APPLE)
+    set(LWPA_PLATFORM linux)
   else()
     message(FATAL_ERROR "lwpa is not ported for this platform.")
   endif()
 endif()
 
-if (NOT ${LWPA_PLATFORM} IN_LIST VALID_LWPA_PLATFORMS)
+if(NOT ${LWPA_PLATFORM} IN_LIST VALID_LWPA_PLATFORMS)
   message(FATAL_ERROR "${LWPA_PLATFORM} is not a valid platform.")
 endif()
 
@@ -35,53 +43,59 @@ set(LWPA_PLATFORM ${LWPA_PLATFORM} PARENT_SCOPE)
 set(LWPA_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
 
 add_library(lwpa
-# lwpa headers
-  ${LWPA_ROOT}/include/acn_prot.h
-  ${LWPA_ROOT}/include/estardm.h
-  ${LWPA_ROOT}/include/estardmnet.h
-  ${LWPA_ROOT}/include/lwpa_bool.h
-  ${LWPA_ROOT}/include/lwpa_cid.h
-  ${LWPA_ROOT}/include/lwpa_common.h
-  ${LWPA_ROOT}/include/lwpa_error.h
-  ${LWPA_ROOT}/include/lwpa_inet.h
-  ${LWPA_ROOT}/include/lwpa_int.h
-  ${LWPA_ROOT}/include/lwpa_log.h
-  ${LWPA_ROOT}/include/lwpa_mempool.h
-  ${LWPA_ROOT}/include/lwpa_netint.h
-  ${LWPA_ROOT}/include/lwpa_pack.h
-  ${LWPA_ROOT}/include/lwpa_pdu.h
-  ${LWPA_ROOT}/include/lwpa_rbtree.h
-  ${LWPA_ROOT}/include/lwpa_rootlayerpdu.h
-  ${LWPA_ROOT}/include/lwpa_socket.h
-  ${LWPA_ROOT}/include/lwpa_timer.h
-  ${LWPA_ROOT}/include/lwpa_uid.h
-  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa_lock.h
-  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa_thread.h
-  ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa_socket_plat.h
-# lwpa sources
-  ${LWPA_ROOT}/src/lwpa_cid.c
-  ${LWPA_ROOT}/src/lwpa_error.c
-  ${LWPA_ROOT}/src/lwpa_log.c
-  ${LWPA_ROOT}/src/lwpa_mempool.c
-  ${LWPA_ROOT}/src/lwpa_pdu.c
-  ${LWPA_ROOT}/src/lwpa_rbtree.c
-  ${LWPA_ROOT}/src/lwpa_rootlayerpdu.c
-  ${LWPA_ROOT}/src/lwpa_uid.c
-  ${LWPA_ROOT}/src/md5.h
-  ${LWPA_ROOT}/src/md5c.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_lock.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_netint.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_socket.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_thread.c
-  ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa_timer.c
+  # lwpa headers
+  ${LWPA_ROOT}/include/lwpa/acn_prot.h
+  ${LWPA_ROOT}/include/lwpa/bool.h
+  ${LWPA_ROOT}/include/lwpa/uuid.h
+  ${LWPA_ROOT}/include/lwpa/common.h
+  ${LWPA_ROOT}/include/lwpa/error.h
+  ${LWPA_ROOT}/include/lwpa/inet.h
+  ${LWPA_ROOT}/include/lwpa/int.h
+  ${LWPA_ROOT}/include/lwpa/log.h
+  ${LWPA_ROOT}/include/lwpa/mempool.h
+  ${LWPA_ROOT}/include/lwpa/netint.h
+  ${LWPA_ROOT}/include/lwpa/opts.h
+  ${LWPA_ROOT}/include/lwpa/pack.h
+  ${LWPA_ROOT}/include/lwpa/pdu.h
+  ${LWPA_ROOT}/include/lwpa/rbtree.h
+  ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
+  ${LWPA_ROOT}/include/lwpa/socket.h
+  ${LWPA_ROOT}/include/lwpa/timer.h
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
+  # lwpa sources
+  ${LWPA_ROOT}/src/lwpa/uuid.c
+  ${LWPA_ROOT}/src/lwpa/error.c
+  ${LWPA_ROOT}/src/lwpa/log.c
+  ${LWPA_ROOT}/src/lwpa/mempool.c
+  ${LWPA_ROOT}/src/lwpa/pdu.c
+  ${LWPA_ROOT}/src/lwpa/rbtree.c
+  ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
+  ${LWPA_ROOT}/src/lwpa/md5.h
+  ${LWPA_ROOT}/src/lwpa/md5c.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/common.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
+  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
 )
 
 # lwpa public include directories and library dependencies
-target_include_directories(lwpa PUBLIC ${LWPA_ROOT}/include ${LWPA_ROOT}/include/${LWPA_PLATFORM})
+target_include_directories(lwpa PUBLIC
+  ${LWPA_ROOT}/include
+  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
+  ${LWPA_CONFIG_LOC}
+)
+target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
 
 # Add include paths and library dependencies based on platform for which we are being compiled
 if(LWPA_PLATFORM STREQUAL windows)
-  target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi)
+  target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
+elseif(LWPA_PLATFORM STREQUAL linux)
+  target_link_libraries(lwpa PUBLIC uuid)
 elseif(LWPA_PLATFORM STREQUAL mqx)
   # Include the debug versions of the MQX libs if a Debug configuration is specified.
   # I think there's probably a better way of doing this and I'm missing something here.
@@ -104,3 +118,65 @@ elseif(LWPA_PLATFORM STREQUAL mqx)
 endif()
 
 set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
+
+###############################################################################
+# Mock lwpa library
+###############################################################################
+
+if(LWPA_BUILD_MOCK_LIB)
+  add_library(lwpa_mock
+    # lwpa headers
+    ${LWPA_ROOT}/include/lwpa/acn_prot.h
+    ${LWPA_ROOT}/include/lwpa/bool.h
+    ${LWPA_ROOT}/include/lwpa/uuid.h
+    ${LWPA_ROOT}/include/lwpa/common.h
+    ${LWPA_ROOT}/include/lwpa/error.h
+    ${LWPA_ROOT}/include/lwpa/inet.h
+    ${LWPA_ROOT}/include/lwpa/int.h
+    ${LWPA_ROOT}/include/lwpa/log.h
+    ${LWPA_ROOT}/include/lwpa/mempool.h
+    ${LWPA_ROOT}/include/lwpa/netint.h
+    ${LWPA_ROOT}/include/lwpa/opts.h
+    ${LWPA_ROOT}/include/lwpa/pack.h
+    ${LWPA_ROOT}/include/lwpa/pdu.h
+    ${LWPA_ROOT}/include/lwpa/rbtree.h
+    ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
+    ${LWPA_ROOT}/include/lwpa/socket.h
+    ${LWPA_ROOT}/include/lwpa/timer.h
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
+
+    ${LWPA_ROOT}/include/lwpa_mock/socket.h
+
+    # lwpa sources
+    # We will gradually substitute these with mocks as needed
+    ${LWPA_ROOT}/src/lwpa/uuid.c
+    ${LWPA_ROOT}/src/lwpa/error.c
+    ${LWPA_ROOT}/src/lwpa/log.c
+    ${LWPA_ROOT}/src/lwpa/mempool.c
+    ${LWPA_ROOT}/src/lwpa/pdu.c
+    ${LWPA_ROOT}/src/lwpa/rbtree.c
+    ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
+    ${LWPA_ROOT}/src/lwpa/md5.h
+    ${LWPA_ROOT}/src/lwpa/md5c.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
+
+    ${LWPA_ROOT}/src/lwpa_mock/socket.c
+  )
+  target_include_directories(lwpa_mock PUBLIC
+    ${LWPA_ROOT}/include
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
+  )
+  target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
+  target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)
+  if(LWPA_PLATFORM STREQUAL windows)
+    target_link_libraries(lwpa_mock PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
+  endif()
+  set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
+endif()
