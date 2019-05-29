@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
+  <compound kind="file">
+    <name>version.h</name>
+    <path>D:/git/ETCLabs/RDMnetWS/lwpa/include/lwpa/</path>
+    <filename>version_8h</filename>
+  </compound>
   <compound kind="union">
     <name>LwpaIpAddr::AddrUnion</name>
     <filename>union_lwpa_ip_addr_1_1_addr_union.html</filename>
