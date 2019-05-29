@@ -11,6 +11,8 @@
     versions
   * Commit the updated `lwpa.tag` file on the current branch (`develop` or `release/v*`)
 - [ ] Merge changes to `master`
+  * `git checkout master`
+  * `git merge --no-ff [develop|release/v*]`
 - [ ] Create build and tag with `tools/version/create_build.py`
   * Include `-r` flag to specify a release build
 - [ ] Mark as release on the releases page
