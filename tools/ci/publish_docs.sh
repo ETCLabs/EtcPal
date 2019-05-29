@@ -30,7 +30,7 @@ cd ${GH_REPO_NAME}
 git config --global push.default simple
 # Pretend to be an user called ETCLabs CI.
 git config user.name "ETCLabs CI"
-git config user.email "noreply@noemail.com"
+git config user.email "noreply.etclabs@etcconnect.com"
 
 # Remove everything currently in the relevant documentation directory on the
 # gh-pages branch. GitHub is smart enough to know which files have changed and
