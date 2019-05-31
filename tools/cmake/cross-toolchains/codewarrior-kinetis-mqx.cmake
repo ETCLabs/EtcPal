@@ -15,13 +15,13 @@ if(NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
   message(FATAL_ERROR "CodeWarrior is Windows-only.")
 endif()
 
-if(NOT DEFINED CODEWARRIOR_ROOT)
-  set(CODEWARRIOR_ROOT "C:/Freescale/CW MCU v10.6") # The default install location on Windows.
+if(NOT DEFINED CODEWARRIOR_INSTALL_DIR)
+  set(CODEWARRIOR_INSTALL_DIR "C:/Freescale/CW MCU v10.6") # The default install location on Windows.
 endif()
 
-set(TOOLS_ROOT ${CODEWARRIOR_ROOT}/Cross_Tools/arm-none-eabi-gcc-4_7_3)
-set(CMAKE_C_COMPILER ${TOOLS_ROOT}/bin/arm-none-eabi-gcc.exe)
-set(CMAKE_CXX_COMPILER ${TOOLS_ROOT}/bin/arm-none-eabi-g++.exe)
+set(TOOLS_DIR ${CODEWARRIOR_INSTALL_DIR}/Cross_Tools/arm-none-eabi-gcc-4_7_3)
+set(CMAKE_C_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-gcc.exe)
+set(CMAKE_CXX_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-g++.exe)
 
 set(LWPA_PLATFORM mqx)
 add_compile_options(
@@ -36,8 +36,8 @@ add_compile_options(
 )
 add_compile_definitions(_EWL_C99 _DEBUG)
 include_directories(
-  ${CODEWARRIOR_ROOT}/MCU/ARM_GCC_Support/ewl/EWL_C/include
-  ${CODEWARRIOR_ROOT}/MCU/ARM_GCC_Support/ewl/EWL_Runtime/include
+  ${CODEWARRIOR_INSTALL_DIR}/MCU/ARM_GCC_Support/ewl/EWL_C/include
+  ${CODEWARRIOR_INSTALL_DIR}/MCU/ARM_GCC_Support/ewl/EWL_Runtime/include
 )
 
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
