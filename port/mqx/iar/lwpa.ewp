@@ -2056,7 +2056,7 @@
       <name>$PROJ_DIR$\..\..\..\src\lwpa_uid.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\md5c.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\md5.c</name>
     </file>
   </group>
 </project>

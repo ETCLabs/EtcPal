@@ -12,7 +12,7 @@ The following sources in this repository are derived from the RSA Data
 Security, Inc. MD5 Message-Digest algorithm:
 
 src/md5.h
-src/md5c.c
+src/md5.c
 
 See the license information at the top of those source files for more details.
 

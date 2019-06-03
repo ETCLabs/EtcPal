@@ -75,7 +75,7 @@ add_library(lwpa
   ${LWPA_ROOT}/src/lwpa/rbtree.c
   ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
   ${LWPA_ROOT}/src/lwpa/md5.h
-  ${LWPA_ROOT}/src/lwpa/md5c.c
+  ${LWPA_ROOT}/src/lwpa/md5.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_common.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c
@@ -161,7 +161,7 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/src/lwpa/rbtree.c
     ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
     ${LWPA_ROOT}/src/lwpa/md5.h
-    ${LWPA_ROOT}/src/lwpa/md5c.c
+    ${LWPA_ROOT}/src/lwpa/md5.c
     ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
     ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c
     ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_uuid.c
