@@ -18,3 +18,58 @@
  ******************************************************************************/
 
 #include "lwpa/netint.h"
+
+#include <sys/types.h>
+#include <ifaddrs.h>
+#include <errno.h>
+#include "lwpa/private/netint.h"
+#include "os_error.h"
+
+/**************************** Private variables ******************************/
+
+bool module_initialized;
+struct ifaddrs* os_addrs;
+size_t num_addrs;
+
+/*********************** Private function prototypes *************************/
+
+static lwpa_error_t re_enumerate_os_addrs();
+
+/*************************** Function definitions ****************************/
+
+lwpa_error_t lwpa_netint_init()
+{
+  lwpa_error_t res = kLwpaErrOk;
+  if (!module_initialized)
+  {
+    res = re_enumerate_os_addrs();
+    if (res == kLwpaErrOk)
+      module_initialized = true;
+  }
+  return res;
+}
+
+void lwpa_netint_deinit()
+{
+  if (module_initialized)
+  {
+    freeifaddrs(os_addrs);
+    module_initialized = false;
+  }
+}
+
+lwpa_error_t re_enumerate_os_addrs()
+{
+  if (getifaddrs(&os_addrs) < 0)
+  {
+    return errno_os_to_lwpa(errno);
+  }
+
+  num_addrs = 0;
+  for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    // TODO more logic...
+    ++num_addrs;
+  }
+  return kLwpaErrOk;
+}

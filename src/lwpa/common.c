@@ -18,24 +18,42 @@
  ******************************************************************************/
 
 #include "lwpa/common.h"
+
+#include "lwpa/bool.h"
 #include "lwpa/private/common.h"
 #include "lwpa/private/log.h"
+#include "lwpa/private/netint.h"
 
 lwpa_error_t lwpa_init(lwpa_features_t features)
 {
+  bool os_initted = false;
+  bool logging_initted = false;
+
   // Step 1: OS-specific init
   lwpa_error_t res = lwpa_os_init(features);
-  if (res != kLwpaErrOk)
-    return res;
+  os_initted = (res == kLwpaErrOk);
 
   // Step 2: OS-neutral init
-  if (features & LWPA_FEATURE_LOGGING)
+  if (res == kLwpaErrOk)
   {
-    res = lwpa_log_init();
-    if (res != kLwpaErrOk)
+    if (features & LWPA_FEATURE_LOGGING)
     {
-      lwpa_os_deinit(features);
+      logging_initted = ((res = lwpa_log_init()) == kLwpaErrOk);
     }
+  }
+
+  if (features & LWPA_FEATURE_NETINTS)
+  {
+    res = lwpa_netint_init();
+  }
+
+  if (res != kLwpaErrOk)
+  {
+    // Clean up on failure
+    if (logging_initted)
+      lwpa_log_deinit();
+    if (os_initted)
+      lwpa_os_deinit(features);
   }
   return res;
 }
@@ -43,6 +61,10 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
 void lwpa_deinit(lwpa_features_t features)
 {
   // Step 1: OS-neutral deinit
+  if (features & LWPA_FEATURE_NETINTS)
+  {
+    lwpa_netint_deinit();
+  }
   if (features & LWPA_FEATURE_LOGGING)
   {
     lwpa_log_deinit();

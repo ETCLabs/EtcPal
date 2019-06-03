@@ -347,7 +347,7 @@ void lwpa_log(const LwpaLogParams* params, int pri, const char* format, ...)
  */
 void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args)
 {
-  if (!params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
+  if (!module_initialized || !params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
     return;
 
   LwpaLogTimeParams time_params;

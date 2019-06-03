@@ -67,15 +67,16 @@ add_library(lwpa
   ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_thread.h
   ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_socket.h
   # lwpa sources
-  ${LWPA_ROOT}/src/lwpa/uuid.c
+  ${LWPA_ROOT}/src/lwpa/common.c
   ${LWPA_ROOT}/src/lwpa/error.c
   ${LWPA_ROOT}/src/lwpa/log.c
+  ${LWPA_ROOT}/src/lwpa/md5.h
+  ${LWPA_ROOT}/src/lwpa/md5.c
   ${LWPA_ROOT}/src/lwpa/mempool.c
   ${LWPA_ROOT}/src/lwpa/pdu.c
   ${LWPA_ROOT}/src/lwpa/rbtree.c
   ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
-  ${LWPA_ROOT}/src/lwpa/md5.h
-  ${LWPA_ROOT}/src/lwpa/md5.c
+  ${LWPA_ROOT}/src/lwpa/uuid.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_common.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c

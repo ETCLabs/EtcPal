@@ -21,6 +21,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "os_error.h"
 
 bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa)
 {
@@ -62,83 +63,6 @@ size_t sockaddr_lwpa_to_os(struct sockaddr* pfsa, const LwpaSockaddr* sa)
   }
   return ret;
 }
-
-/*
-static lwpa_error_t err_os_to_lwpa(int wsaerror)
-{
-  switch (wsaerror)
-  {
-    case WSAEBADF:
-    case WSAENOTSOCK:
-    case WSATYPE_NOT_FOUND:
-    case WSAHOST_NOT_FOUND:
-    case WSAESTALE:
-      return kLwpaErrNotFound;
-    case WSA_INVALID_HANDLE:
-    case WSA_INVALID_PARAMETER:
-    case WSAEFAULT:
-    case WSAEINVAL:
-    case WSAEDESTADDRREQ:
-    case WSAENOPROTOOPT:
-      return kLwpaErrInvalid;
-    case WSA_NOT_ENOUGH_MEMORY:
-    case WSAEMFILE:
-    case WSAETOOMANYREFS:
-    case WSAEPROCLIM:
-    case WSAEUSERS:
-      return kLwpaErrNoMem;
-    case WSA_IO_PENDING:
-    case WSAEINPROGRESS:
-      return kLwpaErrInProgress;
-    case WSA_IO_INCOMPLETE:
-    case WSAEALREADY:
-      return kLwpaErrAlready;
-    case WSAEWOULDBLOCK:
-      return kLwpaErrWouldBlock;
-    case WSAEMSGSIZE:
-      return kLwpaErrMsgSize;
-    case WSAEADDRINUSE:
-      return kLwpaErrAddrInUse;
-    case WSAEADDRNOTAVAIL:
-      return kLwpaErrAddrNotAvail;
-    case WSAENETDOWN:
-    case WSAENETUNREACH:
-    case WSAENETRESET:
-    case WSAEHOSTDOWN:
-    case WSAEHOSTUNREACH:
-      return kLwpaErrNetwork;
-    case WSAECONNRESET:
-    case WSAECONNABORTED:
-      return kLwpaErrConnReset;
-    case WSAEISCONN:
-      return kLwpaErrIsConn;
-    case WSAENOTCONN:
-      return kLwpaErrNotConn;
-    case WSAESHUTDOWN:
-      return kLwpaErrShutdown;
-    case WSAETIMEDOUT:
-      return kLwpaErrTimedOut;
-    case WSAECONNREFUSED:
-      return kLwpaErrConnRefused;
-    case WSAENOBUFS:
-      return kLwpaErrBufSize;
-    case WSANOTIMPLIALISED:
-    case WSASYSNOTREADY:
-      return kLwpaErrNotImpl;
-    case WSAEACCES:
-    case WSA_OPERATION_ABORTED:
-    case WSAEPROTOTYPE:
-    case WSAEPROTONOSUPPORT:
-    case WSAESOCKTNOSUPPORT:
-    case WSAEOPNOTSUPP:
-    case WSAEPFNOSUPPORT:
-    case WSAEAFNOSUPPORT:
-    case WSASYSCALLFAILURE:
-    default:
-      return kLwpaErrSys;
-  }
-}
-*/
 
 lwpa_error_t lwpa_socket_init(void* os_data)
 {

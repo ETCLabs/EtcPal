@@ -42,9 +42,12 @@
 #define LWPA_WAIT_FOREVER -1
 
 #define LWPA_FEATURE_SOCKETS 0x00000001u
-#define LWPA_FEATURE_TIMERS 0x00000002u
-#define LWPA_FEATURE_LOGGING 0x00000004u
+#define LWPA_FEATURE_NETINTS 0x00000002u
+#define LWPA_FEATURE_TIMERS 0x00000004u
+#define LWPA_FEATURE_LOGGING 0x00000008u
 #define LWPA_FEATURES_ALL 0xffffffffu
+
+#define LWPA_FEATURES_ALL_BUT(mask) (((uint32_t)LWPA_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
 
 typedef uint32_t lwpa_features_t;
 

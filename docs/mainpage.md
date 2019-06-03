@@ -19,25 +19,27 @@ To jump right into the documentation, check out the
 the sources for lwpa are located in the heirarchy:
 ```
 src/
-  [platform_name]/
-    [platform-specific lwpa sources]
+  os/
+    [OS name]/
+      [platform-specific lwpa sources]
   [platform-neutral lwpa sources]
 ```
 
 The includes are in the heirarchy:
 ```
 include/
-  [platform_name]/
-    [platform-specific lwpa headers]
+  os/
+    [OS name]/
+      [platform-specific lwpa headers]
   [platform-neutral lwpa headers]
 ```
-Some lwpa headers are platform-specific and duplicated for each platform.
+Some lwpa headers are platform-specific and duplicated for each OS.
 Platform-specific headers for the same module will always conform to an
 identical interface, as documented in that module's documentation.
 
-## Platforms
+## Supported Platforms
 
-lwpa is currently ported for the following platforms:
+lwpa is currently ported for the following operating systems:
 
 + Microsoft Windows
 + Linux
