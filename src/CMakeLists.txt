@@ -143,9 +143,9 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
     ${LWPA_ROOT}/include/lwpa/socket.h
     ${LWPA_ROOT}/include/lwpa/timer.h
-    ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_lock.h
-    ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_socket.h
-    ${LWPA_ROOT}/include/${LWPA_PLATFORM}/lwpa/plat_thread.h
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
 
     ${LWPA_ROOT}/include/lwpa_mock/socket.h
 
@@ -160,18 +160,18 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
     ${LWPA_ROOT}/src/lwpa/md5.h
     ${LWPA_ROOT}/src/lwpa/md5c.c
-    ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/lock.c
-    ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/netint.c
-    ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/plat_uuid.c
-    ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/socket.c
-    ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/thread.c
-    ${LWPA_ROOT}/src/${LWPA_PLATFORM}/lwpa/timer.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
+    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
 
     ${LWPA_ROOT}/src/lwpa_mock/socket.c
   )
   target_include_directories(lwpa_mock PUBLIC
     ${LWPA_ROOT}/include
-    ${LWPA_ROOT}/include/${LWPA_PLATFORM}
+    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
   )
   target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
   target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)

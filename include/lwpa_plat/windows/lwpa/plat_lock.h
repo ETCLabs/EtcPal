@@ -20,8 +20,16 @@
 #ifndef _LWPA_PLAT_LOCK_H_
 #define _LWPA_PLAT_LOCK_H_
 
+#ifndef NOMINMAX
+#define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
 #include <winsock2.h> /* To fix winsock include order issues */
 #include <windows.h>
+#undef NOMINMAX
+#else
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
 #include "lwpa/common.h"
 #include "lwpa/bool.h"
 

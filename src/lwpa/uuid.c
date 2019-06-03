@@ -29,7 +29,7 @@
 #define LWPA_SPRINTF sprintf
 #endif
 
-const LwpaUuid LWPA_NULL_UUID = {{0}};
+const LwpaUuid kLwpaNullUuid = {{0}};
 
 /*! \brief Create a string representation of a UUID.
  *

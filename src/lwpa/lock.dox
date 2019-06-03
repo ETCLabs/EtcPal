@@ -20,11 +20,11 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *
  *  lwpa_mutex implementations use the following constructs under the hood on various platforms:
  * 
- *  On: | lwpa_mutex uses:
- *  ----------------------
- *  Windows | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx)
- *  FreeRTOS/lwIP | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html)
- *  MQX | Lightweight Semaphores
+ *  | On:           | lwpa_mutex uses: |
+ *  |---------------|------------------|
+ *  | Windows       | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ *  | FreeRTOS/lwIP | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
+ *  | MQX           | Lightweight Semaphores |
  *
  *  @{
  */
@@ -36,8 +36,8 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef UNDEFINED lwpa_mutex_t;
 
 /*! \brief Create a new mutex.
- *  \param[in,out] id Mutex identifier on which to create a mutex. If this function returns true, id
- *                    becomes valid for calls to lwpa_mutex_take() and lwpa_mutex_give().
+ *  \param[out] id Mutex identifier on which to create a mutex. If this function returns true, id
+ *                 becomes valid for calls to lwpa_mutex_take() and lwpa_mutex_give().
  *  \return true (the mutex was created) or false (the mutex was not created).
  */
 bool lwpa_mutex_create(lwpa_mutex_t *id);
@@ -61,7 +61,7 @@ void lwpa_mutex_give(lwpa_mutex_t *id);
  */
 void lwpa_mutex_destroy(lwpa_mutex_t *id);
 
-/*!@}*/
+/*! @} */
 
 /*! \defgroup lwpa_signal lwpa_signal
  *  \brief A signal object.
@@ -83,8 +83,8 @@ typedef UNDEFINED lwpa_signal_t;
  *  Signals are created in the "unsignaled" state; that is, the first call to lwpa_signal_wait()
  *  will block.
  *
- *  \param[in,out] id Signal identifier on which to create a signal. If this function returns true,
- *                    id becomes valid for calls to lwpa_signal_wait() and lwpa_signal_post().
+ *  \param[out] id Signal identifier on which to create a signal. If this function returns true,
+ *                 id becomes valid for calls to lwpa_signal_wait() and lwpa_signal_post().
  *  \return true (the signal was created) or false (the signal was not created).
  */
 bool lwpa_signal_create(lwpa_signal_t *id);
@@ -118,7 +118,7 @@ void lwpa_signal_post(lwpa_signal_t *id);
  */
 void lwpa_signal_destroy(lwpa_signal_t *id);
 
-/*!@}*/
+/*! @} */
 
 /*! \defgroup lwpa_rwlock lwpa_rwlock
  *  \brief A reader-writer lock object.
@@ -189,6 +189,6 @@ void lwpa_rwlock_writeunlock(lwpa_rwlock_t *id);
  */
 void lwpa_rwlock_destroy(lwpa_rwlock_t *id);
 
-/*!@}*/
+/*! @} */
 
-/*!@}*/
+/*! @} */

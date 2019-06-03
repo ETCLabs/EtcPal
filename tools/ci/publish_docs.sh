@@ -16,25 +16,21 @@ echo 'Publishing documentation...'
 # Exit with nonzero exit code if anything fails
 set -e
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" ] || [ "$TRAVIS_BRANCH" != "develop" ]; then
-  exit 0
-fi
-
 # Create a clean working directory for this script.
-cd $TRAVIS_BUILD_DIR/docs
+cd ${BUILD_SOURCESDIRECTORY}/docs
 mkdir output
 cd output
 
 # Get the current gh-pages branch
-git clone -b gh-pages https://git@$GH_REPO_REF
-cd $GH_REPO_NAME
+git clone -b gh-pages https://git@${GH_REPO_REF}
+cd ${GH_REPO_NAME}
 
 ##### Configure git.
 # Set the push default to simple i.e. push only the current branch.
 git config --global push.default simple
-# Pretend to be an user called Travis CI.
-git config user.name "Travis CI"
-git config user.email "travis@travis-ci.org"
+# Pretend to be an user called ETCLabs CI.
+git config user.name "ETCLabs CI"
+git config user.email "noreply.etclabs@etcconnect.com"
 
 # Remove everything currently in the relevant documentation directory on the
 # gh-pages branch. GitHub is smart enough to know which files have changed and
@@ -49,11 +45,11 @@ echo 'Generating Doxygen code documentation...'
 # Redirect both stderr and stdout to the log file AND the console.
 cd ../..
 ( cat Doxyfile ; echo "PROJECT_NUMBER=\"HEAD (unstable)\"" ; \
-                 echo "OUTPUT_DIRECTORY=${TRAVIS_BUILD_DIR}/docs/output/${GH_REPO_NAME}/docs/head" ; \
+                 echo "OUTPUT_DIRECTORY=${BUILD_SOURCESDIRECTORY}/docs/output/${GH_REPO_NAME}/docs/head" ; \
                  echo "HTML_OUTPUT=." ) \
                  | doxygen - 2>&1 | tee doxygen.log
 
-cd output/$GH_REPO_NAME
+cd output/${GH_REPO_NAME}
 
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
@@ -71,9 +67,9 @@ if [ -d "docs/head" ] && [ -f "docs/head/index.html" ]; then
     # Check to see if there are any differences in the documentation.
     if ! git diff-index --quiet HEAD; then
       echo 'Uploading documentation to the gh-pages branch...'
-      # Commit the added files with a title and description containing the Travis CI
+      # Commit the added files with a title and description containing the Azure Pipelines
       # build number and the GitHub commit reference that issued this build.
-      git commit -m "Deploy code docs to GitHub Pages Travis build: ${TRAVIS_BUILD_NUMBER}" -m "Commit: ${TRAVIS_COMMIT}"
+      git commit -m "Deploy code docs to GitHub Pages" -m "Azure build: ${BUILD_BUILDNUMBER}" -m "Commit: ${BUILD_SOURCEVERSION}"
 
       # Force push to the remote gh-pages branch.
       # The ouput is redirected to /dev/null to hide any sensitive credential data

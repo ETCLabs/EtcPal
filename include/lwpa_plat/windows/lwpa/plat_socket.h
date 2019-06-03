@@ -20,9 +20,18 @@
 #ifndef _LWPA_WINDOWS_SOCKET_H_
 #define _LWPA_WINDOWS_SOCKET_H_
 
-#include <WinSock2.h>
-#include <Windows.h>
+#ifndef NOMINMAX
+#define NOMINMAX 1 /* Suppress some conflicting definitions in the Windows headers */
+#include <winsock2.h>
+#include <windows.h>
+#undef NOMINMAX
+#else
+#include <winsock2.h>
+#include <windows.h>
+#endif
+
 #include "lwpa/inet.h"
+#include "lwpa/lock.h"
 
 typedef SOCKET lwpa_socket_t;
 
@@ -31,6 +40,34 @@ typedef SOCKET lwpa_socket_t;
 #define LWPA_SOCKET_INVALID INVALID_SOCKET
 
 #define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
+
+typedef struct LwpaPollCtxSocket
+{
+  lwpa_socket_t socket;
+  lwpa_poll_events_t events;
+  void *user_data;
+} LwpaPollCtxSocket;
+
+typedef struct LwpaPollFdSet
+{
+  fd_set set;
+  size_t count;
+} LwpaPollFdSet;
+
+typedef struct LwpaPollContext
+{
+  bool valid;
+  lwpa_mutex_t lock;
+
+  LwpaPollCtxSocket *sockets;
+  size_t socket_arr_size;
+  size_t num_valid_sockets;
+
+  LwpaPollFdSet readfds;
+  LwpaPollFdSet writefds;
+  LwpaPollFdSet exceptfds;
+
+} LwpaPollContext;
 
 #ifdef __cplusplus
 extern "C" {

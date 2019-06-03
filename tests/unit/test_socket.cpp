@@ -18,7 +18,6 @@
  ******************************************************************************/
 #include "lwpa/socket.h"
 #include "gtest/gtest.h"
-#include <cstdio>
 #include <cstddef>
 #include <thread>
 
@@ -28,15 +27,6 @@ extern LwpaIpAddr g_netint;
 
 class SocketTest : public ::testing::Test
 {
-protected:
-  SocketTest() : send_sock(LWPA_SOCKET_INVALID)
-  {
-    if (kLwpaErrOk != lwpa_socket_init(NULL))
-      printf("Error starting lwpa_socket library!\n");
-  }
-
-  virtual ~SocketTest() { lwpa_socket_deinit(); }
-
 public:
   static const size_t NUM_TEST_PACKETS = 1000;
   static const char *SEND_MSG;
@@ -44,7 +34,6 @@ public:
   static const uint32_t TEST_MCAST_ADDR = 0xec02054d;  // 236.2.5.77
   lwpa_socket_t send_sock = LWPA_SOCKET_INVALID;
   LwpaSockaddr send_addr_1;
-  LwpaSockaddr send_addr_2;
 
 protected:
   // For inet_xtox
@@ -258,91 +247,6 @@ TEST_F(SocketTest, multicast_udp)
   // recvfrom should time out because this socket is bound to a different port and we set the
   // timeout option on this socket.
   ASSERT_GE(0, lwpa_recvfrom(rcvsock2, buf, SEND_MSG_LEN, 0, &from_addr));
-
-  // Let the send thread end
-  send_thr.join();
-
-  ASSERT_EQ(kLwpaErrOk, lwpa_close(rcvsock1));
-  ASSERT_EQ(kLwpaErrOk, lwpa_close(rcvsock2));
-  ASSERT_EQ(kLwpaErrOk, lwpa_close(send_sock));
-}
-
-static void polltest_sendthread(SocketTest *fixture)
-{
-  if (fixture)
-  {
-    const uint8_t *send_buf = (const uint8_t *)(SocketTest::SEND_MSG);
-    lwpa_sendto(fixture->send_sock, send_buf, SocketTest::SEND_MSG_LEN, 0, &fixture->send_addr_1);
-    lwpa_sendto(fixture->send_sock, send_buf, SocketTest::SEND_MSG_LEN, 0, &fixture->send_addr_2);
-  }
-}
-
-TEST_F(SocketTest, poll)
-{
-  lwpa_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
-  lwpa_socket_t rcvsock2 = LWPA_SOCKET_INVALID;
-  LwpaSockaddr bind_addr;
-
-  ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
-  ASSERT_NE(rcvsock1, LWPA_SOCKET_INVALID);
-
-  ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
-  ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
-
-  ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
-  ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
-
-  // Bind socket 1 to the wildcard address and port 8888.
-  lwpaip_make_any_v4(&bind_addr.ip);
-  bind_addr.port = 8888;
-  ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock1, &bind_addr));
-
-  // Bind socket 2 to the wildcard address and port 9999.
-  bind_addr.port = 9999;
-  ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock2, &bind_addr));
-
-  // Test poll with nothing sending - should time out.
-  LwpaPollfd pfds[2];
-  pfds[0].fd = rcvsock1;
-  pfds[0].events = LWPA_POLLIN;
-  pfds[1].fd = rcvsock2;
-  pfds[1].events = LWPA_POLLIN;
-  ASSERT_EQ(kLwpaErrTimedOut, lwpa_poll(pfds, 2, 100));
-
-  send_addr_1.ip = g_netint;
-  send_addr_1.port = 8888;
-  send_addr_2.ip = g_netint;
-  send_addr_2.port = 9999;
-
-  // Start the send thread.
-  std::thread send_thr(polltest_sendthread, this);
-  ASSERT_TRUE(send_thr.joinable());
-
-  bool already_polled = false;
-
-poll_again:
-  int poll_res = lwpa_poll(pfds, 2, LWPA_WAIT_FOREVER);
-  ASSERT_GT(poll_res, 0);
-  for (int i = 0; i < 2; ++i)
-  {
-    if (pfds[i].revents & LWPA_POLLIN)
-    {
-      LwpaSockaddr from_addr;
-      uint8_t buf[SEND_MSG_LEN + 1];
-
-      ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(pfds[i].fd, buf, SEND_MSG_LEN, 0, &from_addr));
-      ASSERT_TRUE(lwpaip_equal(&send_addr_1.ip, &from_addr.ip));
-      ASSERT_NE(from_addr.port, 8888);
-
-      buf[SEND_MSG_LEN] = '\0';
-      ASSERT_EQ(0, strcmp((char *)buf, SEND_MSG));
-    }
-  }
-  if (poll_res < 2 && !already_polled)
-  {
-    already_polled = true;
-    goto poll_again;  // Yeah, yeah, shut up. It's a test app.
-  }
 
   // Let the send thread end
   send_thr.join();

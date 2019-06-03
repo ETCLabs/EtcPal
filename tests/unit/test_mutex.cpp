@@ -46,8 +46,15 @@ TEST_F(MutexTest, create_destroy)
   // On Windows, take succeeds when taking a mutex again from the same thread.
   ASSERT_TRUE(lwpa_mutex_take(&mutex, LWPA_WAIT_FOREVER));
 
-  // Take should fail on a destroyed mutex.
   lwpa_mutex_give(&mutex);
+
+  // Test the guard class
+  {  // Mutex lock scope
+    lwpa::MutexGuard lock(mutex);
+    // Just make sure it doesn't throw
+  }
+
+  // Take should fail on a destroyed mutex.
   lwpa_mutex_destroy(&mutex);
   ASSERT_FALSE(lwpa_mutex_take(&mutex, LWPA_WAIT_FOREVER));
 }

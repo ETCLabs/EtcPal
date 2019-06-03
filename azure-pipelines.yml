@@ -1,0 +1,55 @@
+# The lwpa build and test pipeline.
+
+trigger:
+- develop
+- master
+- release/*
+
+pr:
+- develop
+
+jobs:
+# Build and test lwpa on Windows using CMake and Visual Studio 2017.
+- job: windows_build
+  displayName: 'Windows Build and Test'
+  pool:
+    vmImage: 'vs2017-win2016'
+  strategy:
+    matrix:
+      Debug:
+        LWPA_BUILD_CONFIG: 'Debug'
+      Release:
+        LWPA_BUILD_CONFIG: 'Release'
+  steps:
+  - script: |
+      mkdir build
+      cd build
+      cmake --version
+      cmake -G "Visual Studio 15 2017 Win64" -DLWPA_BUILD_MOCK_LIB=ON ..
+      cmake --build . --config %LWPA_BUILD_CONFIG%
+    displayName: 'lwpa Windows build'
+  - script: build\tests\%LWPA_BUILD_CONFIG%\test_lwpa.exe
+    displayName: 'lwpa Windows test'
+# Generate documentation with doxygen. Documentation is generated from the
+# develop branch and posted to the 'head' portion of the Github page
+# (etclabs.github.io/lwpa)
+- job: docs
+  displayName: 'Deploy documentation'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+  pool:
+    vmImage: 'ubuntu-16.04'
+  variables: 
+  - group: github-push-access
+  steps:
+  - script: sudo apt-get install doxygen
+    displayName: 'Install dependencies'
+  - script: |
+      cd tools/ci
+      chmod +x publish_docs.sh
+      ./publish_docs.sh
+    displayName: 'Generate and deploy documentation'
+    env:
+      GH_REPO_NAME: lwpa
+      GH_REPO_REF: github.com/ETCLabs/lwpa.git
+      GH_REPO_TOKEN: $(GH_ACCESS_TOKEN)
+  

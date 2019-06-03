@@ -42,7 +42,7 @@
 
 #include "lwpa/opts.h"
 
-#ifndef __cplusplus
+#if (!defined(__cplusplus)) || defined(DOXYGEN)
 
 #if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || (defined(_MSC_VER) && _MSC_VER >= 1800) || \
      HAVE_STDBOOL_H)
@@ -68,7 +68,7 @@
 
 #endif /* __STDC_VERSION__ */
 
-#endif /* __cplusplus */
+#endif /* __cplusplus || DOXYGEN */
 
 /*!@}*/
 

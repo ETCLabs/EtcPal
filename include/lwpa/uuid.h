@@ -61,7 +61,7 @@ typedef struct LwpaUuid
 #define lwpa_uuid_cmp(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, LWPA_UUID_BYTES)
 
 /*! A null (all 0's) UUID, used by uuid_isnull() for comparison. */
-extern const LwpaUuid LWPA_NULL_UUID;
+extern const LwpaUuid kLwpaNullUuid;
 
 /*! \brief Determine if a UUID is null.
  *
@@ -70,7 +70,7 @@ extern const LwpaUuid LWPA_NULL_UUID;
  *  \param uuidptr Pointer to UUID to null-check.
  *  \return true (UUID is null) or false (UUID is not null).
  */
-#define lwpa_uuid_is_null(uuidptr) (memcmp((uuidptr)->data, LWPA_NULL_UUID.data, LWPA_UUID_BYTES) == 0)
+#define lwpa_uuid_is_null(uuidptr) (memcmp((uuidptr)->data, kLwpaNullUuid.data, LWPA_UUID_BYTES) == 0)
 
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
 #define LWPA_UUID_STRING_BYTES 37
