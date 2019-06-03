@@ -91,7 +91,7 @@ uint32_t lwpa_getms();
  *  \param timer Pointer to the LwpaTimer of which to get the remaining time.
  *  \return Remaining time in milliseconds or 0 (timer is expired).
  */
-uint32_t lwpa_timer_remaining(const LwpaTimer *timer);
+uint32_t lwpa_timer_remaining(const LwpaTimer* timer);
 
 #ifdef __cplusplus
 }

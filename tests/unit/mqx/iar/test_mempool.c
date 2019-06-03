@@ -30,7 +30,7 @@ struct test_elem
 LWPA_MEMPOOL_DEFINE(alloc_test, struct test_elem, TEST_ALLOC_MEMP_SIZE);
 struct alloctest
 {
-  struct test_elem *elem;
+  struct test_elem* elem;
   bool freed;
 } test_array[TEST_ALLOC_MEMP_SIZE];
 
@@ -47,7 +47,7 @@ bool test_alloc()
     /* Allocate the entire pool. */
     for (i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
     {
-      test_array[i].elem = (struct test_elem *)lwpa_mempool_alloc(alloc_test);
+      test_array[i].elem = (struct test_elem*)lwpa_mempool_alloc(alloc_test);
       if (!test_array[i].elem)
       {
         ok = false;
@@ -80,7 +80,7 @@ bool test_alloc()
     /* Make sure we can allocate the entire pool again. */
     for (i = 0; i < TEST_ALLOC_MEMP_SIZE; ++i)
     {
-      test_array[i].elem = (struct test_elem *)lwpa_mempool_alloc(alloc_test);
+      test_array[i].elem = (struct test_elem*)lwpa_mempool_alloc(alloc_test);
       if (!test_array[i].elem)
       {
         ok = false;

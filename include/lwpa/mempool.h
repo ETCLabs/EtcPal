@@ -43,7 +43,7 @@
 typedef struct LwpaMempool LwpaMempool;
 struct LwpaMempool
 {
-  LwpaMempool *next;
+  LwpaMempool* next;
 };
 
 /*! (Not for direct usage) A memory pool description structure. Do not declare or use this structure
@@ -53,10 +53,10 @@ typedef struct LwpaMempoolDesc
 {
   const size_t elem_size;  /*!< The size of each element. */
   const size_t pool_size;  /*!< The number of elements in the pool. */
-  LwpaMempool *freelist;   /*!< The current freelist. */
-  LwpaMempool *const list; /*!< The array of mempool list structs. */
+  LwpaMempool* freelist;   /*!< The current freelist. */
+  LwpaMempool* const list; /*!< The array of mempool list structs. */
   size_t current_used;     /*!< The number of pool elements that have currently been allocated. */
-  void *const pool;        /*!< The actual pool memory. */
+  void* const pool;        /*!< The actual pool memory. */
 } LwpaMempoolDesc;
 
 /*! \brief Declare a pool as an external variable.
@@ -156,10 +156,10 @@ typedef struct LwpaMempoolDesc
 extern "C" {
 #endif
 
-lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc *desc);
-void *lwpa_mempool_alloc_priv(LwpaMempoolDesc *desc);
-void lwpa_mempool_free_priv(LwpaMempoolDesc *desc, void *elem);
-size_t lwpa_mempool_used_priv(LwpaMempoolDesc *desc);
+lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc* desc);
+void* lwpa_mempool_alloc_priv(LwpaMempoolDesc* desc);
+void lwpa_mempool_free_priv(LwpaMempoolDesc* desc, void* elem);
+size_t lwpa_mempool_used_priv(LwpaMempoolDesc* desc);
 
 #ifdef __cplusplus
 }

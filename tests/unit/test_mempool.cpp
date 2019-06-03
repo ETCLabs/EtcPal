@@ -38,7 +38,7 @@ protected:
   LWPA_MEMPOOL_DEFINE(alloc_test, TestElem, kAllocTestMempSize);
   LWPA_MEMPOOL_DEFINE_ARRAY(alloc_array_test, TestElem, kAllocTestMempArraySize, kAllocTestMempSize);
 
-  std::vector<TestElem *> test_vec;
+  std::vector<TestElem*> test_vec;
 };
 
 constexpr size_t MempoolTest::kAllocTestMempSize;
@@ -54,7 +54,7 @@ TEST_F(MempoolTest, alloc_free)
   test_vec.reserve(kAllocTestMempSize);
   for (size_t i = 0; i < kAllocTestMempSize; ++i)
   {
-    auto elem = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_test));
+    auto elem = static_cast<TestElem*>(lwpa_mempool_alloc(alloc_test));
     ASSERT_TRUE(elem != NULL);
     test_vec.push_back(elem);
   }
@@ -78,7 +78,7 @@ TEST_F(MempoolTest, alloc_free)
   // Make sure we can allocate the entire pool again.
   for (size_t i = 0; i < kAllocTestMempSize; ++i)
   {
-    test_vec[i] = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_test));
+    test_vec[i] = static_cast<TestElem*>(lwpa_mempool_alloc(alloc_test));
     ASSERT_TRUE(test_vec[i] != NULL);
   }
 }
@@ -93,7 +93,7 @@ TEST_F(MempoolTest, alloc_free_array)
   test_vec.reserve(kAllocTestMempSize);
   for (size_t i = 0; i < kAllocTestMempSize; ++i)
   {
-    auto elem_arr = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_array_test));
+    auto elem_arr = static_cast<TestElem*>(lwpa_mempool_alloc(alloc_array_test));
     ASSERT_TRUE(elem_arr != NULL);
 
     // Write to each spot in the array - failure could be caught by a segfault or similar
@@ -125,7 +125,7 @@ TEST_F(MempoolTest, alloc_free_array)
   // Make sure we can allocate the entire pool again.
   for (size_t i = 0; i < kAllocTestMempSize; ++i)
   {
-    test_vec[i] = static_cast<TestElem *>(lwpa_mempool_alloc(alloc_array_test));
+    test_vec[i] = static_cast<TestElem*>(lwpa_mempool_alloc(alloc_array_test));
 
     // Make sure the sentinel values we set before are still there.
     for (size_t j = 0; j < kAllocTestMempArraySize; ++j)

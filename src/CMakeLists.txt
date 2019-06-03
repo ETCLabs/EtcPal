@@ -5,36 +5,38 @@ if(DEFINED LWPA_CONFIG)
   set(${LWPA_HAVE_CONFIG_H} LWPA_HAVE_CONFIG_H)
 endif()
 
-# The set of supported platforms
-set(VALID_LWPA_PLATFORMS
+# The set of supported target OS
+set(VALID_LWPA_TARGETS
   windows
   linux
   mqx
 )
 
-if(NOT DEFINED LWPA_PLATFORM)
-  message(STATUS "LWPA_PLATFORM not supplied, assuming native compile by default...")
+if(NOT DEFINED LWPA_TARGET_OS)
+  message(STATUS "LWPA_TARGET_OS not supplied, assuming native compile by default...")
   if(WIN32)
-    set(LWPA_PLATFORM windows)
+    set(LWPA_TARGET_OS windows)
   elseif(UNIX AND NOT APPLE)
-    set(LWPA_PLATFORM linux)
+    set(LWPA_TARGET_OS linux)
   else()
-    message(FATAL_ERROR "lwpa is not ported for this platform.")
+    # The error check below will catch this and print the fatal error.
+    set(LWPA_TARGET_OS ${CMAKE_HOST_SYSTEM_NAME})
   endif()
 endif()
 
-if(NOT ${LWPA_PLATFORM} IN_LIST VALID_LWPA_PLATFORMS)
-  message(FATAL_ERROR "${LWPA_PLATFORM} is not a valid platform.")
+if(NOT ${LWPA_TARGET_OS} IN_LIST VALID_LWPA_TARGETS)
+  message(FATAL_ERROR "${LWPA_TARGET_OS} is not a valid target OS. "
+          "Specify LWPA_TARGET_OS from these options: ${VALID_LWPA_TARGETS}")
 endif()
 
-# MQX platform support
-if(LWPA_PLATFORM STREQUAL mqx)
+# MQX compilation support
+if(LWPA_TARGET_OS STREQUAL mqx)
   if(NOT DEFINED MQX_BOARD_DIR)
     message(FATAL_ERROR "You must provide a variable MQX_BOARD_DIR to indicate the location of your MQX libraries.")
   endif()
 endif()
 
-set(LWPA_PLATFORM ${LWPA_PLATFORM} PARENT_SCOPE)
+set(LWPA_TARGET_OS ${LWPA_TARGET_OS} PARENT_SCOPE)
 
 ###############################################################################
 # Core lwpa library
@@ -61,9 +63,9 @@ add_library(lwpa
   ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
   ${LWPA_ROOT}/include/lwpa/socket.h
   ${LWPA_ROOT}/include/lwpa/timer.h
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
+  ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_lock.h
+  ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_thread.h
+  ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_socket.h
   # lwpa sources
   ${LWPA_ROOT}/src/lwpa/uuid.c
   ${LWPA_ROOT}/src/lwpa/error.c
@@ -73,30 +75,30 @@ add_library(lwpa
   ${LWPA_ROOT}/src/lwpa/rbtree.c
   ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
   ${LWPA_ROOT}/src/lwpa/md5.h
-  ${LWPA_ROOT}/src/lwpa/md5c.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/common.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
+  ${LWPA_ROOT}/src/lwpa/md5.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_common.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_uuid.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_socket.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_thread.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_timer.c
 )
 
 # lwpa public include directories and library dependencies
 target_include_directories(lwpa PUBLIC
   ${LWPA_ROOT}/include
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
+  ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}
   ${LWPA_CONFIG_LOC}
 )
 target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
 
-# Add include paths and library dependencies based on platform for which we are being compiled
-if(LWPA_PLATFORM STREQUAL windows)
+# Add include paths and library dependencies based on OS for which we are being compiled
+if(LWPA_TARGET_OS STREQUAL windows)
   target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
-elseif(LWPA_PLATFORM STREQUAL linux)
+elseif(LWPA_TARGET_OS STREQUAL linux)
   target_link_libraries(lwpa PUBLIC uuid)
-elseif(LWPA_PLATFORM STREQUAL mqx)
+elseif(LWPA_TARGET_OS STREQUAL mqx)
   # Include the debug versions of the MQX libs if a Debug configuration is specified.
   # I think there's probably a better way of doing this and I'm missing something here.
   if(CMAKE_BUILD_TYPE STREQUAL Debug)
@@ -143,9 +145,9 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
     ${LWPA_ROOT}/include/lwpa/socket.h
     ${LWPA_ROOT}/include/lwpa/timer.h
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
+    ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_lock.h
+    ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_socket.h
+    ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_thread.h
 
     ${LWPA_ROOT}/include/lwpa_mock/socket.h
 
@@ -159,23 +161,23 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/src/lwpa/rbtree.c
     ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
     ${LWPA_ROOT}/src/lwpa/md5.h
-    ${LWPA_ROOT}/src/lwpa/md5c.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
+    ${LWPA_ROOT}/src/lwpa/md5.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_uuid.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_socket.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_thread.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_timer.c
 
     ${LWPA_ROOT}/src/lwpa_mock/socket.c
   )
   target_include_directories(lwpa_mock PUBLIC
     ${LWPA_ROOT}/include
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
+    ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}
   )
   target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
   target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)
-  if(LWPA_PLATFORM STREQUAL windows)
+  if(LWPA_TARGET_OS STREQUAL windows)
     target_link_libraries(lwpa_mock PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
   endif()
   set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)

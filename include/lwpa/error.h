@@ -104,7 +104,7 @@ typedef enum
 extern "C" {
 #endif
 
-extern const char *lwpa_error_strings[LWPA_NUM_ERROR_CODES];
+extern const char* lwpa_error_strings[LWPA_NUM_ERROR_CODES];
 
 /*! \brief Get a string representation of an error code.
  *  \param errcode lwpa error code.

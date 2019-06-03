@@ -110,9 +110,9 @@
 #define LWPA_LOG_TIMESTAMP_LEN (10u /*Date*/ + 1u /*T*/ + 12u /*Time*/ + 6u /*Offset*/ + 1u /*Nullterm*/)
 
 /*! The maximum length of the syslog header. */
-#define LWPA_SYSLOG_HEADER_MAX_LEN                                                                   \
+#define LWPA_SYSLOG_HEADER_MAX_LEN                                                                        \
   (5u /*PRIVAL*/ + 3u /*Version*/ + 1u /*SP*/ + (LWPA_LOG_TIMESTAMP_LEN - 1u) /*Timestamp*/ + 1u /*SP*/ + \
-   (LWPA_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (LWPA_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +         \
+   (LWPA_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (LWPA_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +          \
    (LWPA_LOG_PROCID_MAX_LEN - 1u) + 1u /*SP*/ + 1u /*MSGID*/ + 1u /*SP*/ + 1u /*STRUCTURED-DATA*/ + 1u /*SP*/)
 
 /*! The minimum length of a buffer passed to lwpa_create_syslog_str(). */
@@ -160,7 +160,7 @@ typedef struct LwpaLogTimeParams
  *  \param[in] raw_str The original log string that was passed to lwpa_log() or lwpa_vlog(). Will
  *                     overlap with one of syslog_str or human_str.
  */
-typedef void (*lwpa_log_callback)(void *context, const char *syslog_str, const char *human_str, const char *raw_str);
+typedef void (*lwpa_log_callback)(void* context, const char* syslog_str, const char* human_str, const char* raw_str);
 
 /*! \brief Time callback function.
  *
@@ -170,7 +170,7 @@ typedef void (*lwpa_log_callback)(void *context, const char *syslog_str, const c
  *                     module.
  *  \param[out] time_params Fill this in with the current local time.
  */
-typedef void (*lwpa_log_time_fn)(void *context, LwpaLogTimeParams *time_params);
+typedef void (*lwpa_log_time_fn)(void* context, LwpaLogTimeParams* time_params);
 
 /*! Which types of log message(s) the lwpa_log() and lwpa_vlog() functions create. */
 typedef enum
@@ -214,7 +214,7 @@ typedef struct LwpaLogParams
    *  NULL, no timestamp will be added to log messages. */
   lwpa_log_time_fn time_fn;
   /*! Application context that will be passed back with the log callback function. */
-  void *context;
+  void* context;
 } LwpaLogParams;
 
 #define lwpa_setlogmask(logparamsptr, newlogmask) ((logparamsptr)->log_mask = newlogmask)
@@ -231,8 +231,8 @@ extern "C" {
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool lwpa_create_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *time,
-                            const LwpaSyslogParams *syslog_params, int pri, const char *format, ...)
+bool lwpa_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* time,
+                            const LwpaSyslogParams* syslog_params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 6, 7)))
 #endif
@@ -241,25 +241,25 @@ bool lwpa_create_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *t
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool lwpa_create_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format, ...)
+bool lwpa_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 4, 5)))
 #endif
     ;
 
-void lwpa_sanitize_syslog_params(LwpaSyslogParams *params);
-bool lwpa_validate_log_params(LwpaLogParams *params);
+void lwpa_sanitize_syslog_params(LwpaSyslogParams* params);
+bool lwpa_validate_log_params(LwpaLogParams* params);
 
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-void lwpa_log(const LwpaLogParams *params, int pri, const char *format, ...)
+void lwpa_log(const LwpaLogParams* params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 3, 4)))
 #endif
     ;
 
-void lwpa_vlog(const LwpaLogParams *params, int pri, const char *format, va_list args);
+void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args);
 
 #ifdef __cplusplus
 }

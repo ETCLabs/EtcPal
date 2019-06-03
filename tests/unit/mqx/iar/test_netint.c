@@ -21,7 +21,7 @@
 #include <string.h>
 #include "lwpa_netint.h"
 
-static LwpaNetintInfo *g_interfaces;
+static LwpaNetintInfo* g_interfaces;
 static size_t g_num_interfaces;
 
 bool test_enumerate()
@@ -85,7 +85,7 @@ bool test_default()
 bool test_route()
 {
   bool ok = true;
-  LwpaNetintInfo *iface;
+  LwpaNetintInfo* iface;
 
   for (iface = g_interfaces; iface < g_interfaces + g_num_interfaces; ++iface)
   {
@@ -95,7 +95,7 @@ bool test_route()
     uint32_t remote;
     uint32_t mask;
     LwpaIpAddr dest_ip;
-    const LwpaNetintInfo *dest;
+    const LwpaNetintInfo* dest;
 
     if (lwpaip_is_v6(&iface->addr))
       continue;

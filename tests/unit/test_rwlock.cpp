@@ -87,7 +87,7 @@ TEST_F(RwlockTest, create_destroy)
   ASSERT_FALSE(lwpa_rwlock_writelock(&rwlock, LWPA_WAIT_FOREVER));
 }
 
-static void write_test_thread(RwlockTest *fixture)
+static void write_test_thread(RwlockTest* fixture)
 {
   if (fixture)
   {
@@ -106,7 +106,7 @@ static void write_test_thread(RwlockTest *fixture)
 
 using namespace std::chrono_literals;
 
-static void read_test_thread(RwlockTest *fixture)
+static void read_test_thread(RwlockTest* fixture)
 {
   if (fixture)
   {
@@ -156,7 +156,7 @@ TEST_F(RwlockTest, threads)
     threads.push_back(std::move(write_thread));
   }
 
-  for (auto &thread : threads)
+  for (auto& thread : threads)
     thread.join();
 
   ASSERT_TRUE(read_thread_pass);

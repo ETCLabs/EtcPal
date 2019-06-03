@@ -27,44 +27,42 @@
 // We don't mock:
 // lwpa_inet_pton()
 // lwpa_inet_ntop()
-// sockaddr_plat_to_lwpa()
-// sockaddr_lwpa_to_plat()
+// sockaddr_os_to_lwpa()
+// sockaddr_lwpa_to_os()
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_accept, lwpa_socket_t, LwpaSockaddr *, lwpa_socket_t *);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_bind, lwpa_socket_t, const LwpaSockaddr *);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_accept, lwpa_socket_t, LwpaSockaddr*, lwpa_socket_t*);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_bind, lwpa_socket_t, const LwpaSockaddr*);
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_close, lwpa_socket_t);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_connect, lwpa_socket_t, const LwpaSockaddr *);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getpeername, lwpa_socket_t, LwpaSockaddr *);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockname, lwpa_socket_t, LwpaSockaddr *);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockopt, lwpa_socket_t, int, int, void *, size_t *);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_connect, lwpa_socket_t, const LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getpeername, lwpa_socket_t, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockname, lwpa_socket_t, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockopt, lwpa_socket_t, int, int, void*, size_t*);
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_listen, lwpa_socket_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_recv, lwpa_socket_t, void *, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_recvfrom, lwpa_socket_t, void *, size_t, int, LwpaSockaddr *);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_send, lwpa_socket_t, const void *, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_sendto, lwpa_socket_t, const void *, size_t, int, const LwpaSockaddr *);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setsockopt, lwpa_socket_t, int, int, const void *, size_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwpa_recv, lwpa_socket_t, void*, size_t, int);
+DECLARE_FAKE_VALUE_FUNC(int, lwpa_recvfrom, lwpa_socket_t, void*, size_t, int, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(int, lwpa_send, lwpa_socket_t, const void*, size_t, int);
+DECLARE_FAKE_VALUE_FUNC(int, lwpa_sendto, lwpa_socket_t, const void*, size_t, int, const LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setsockopt, lwpa_socket_t, int, int, const void*, size_t);
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_shutdown, lwpa_socket_t, int);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket, unsigned int, unsigned int, lwpa_socket_t *);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket, unsigned int, unsigned int, lwpa_socket_t*);
 
 DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setblocking, lwpa_socket_t, bool);
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_context_init, LwpaPollContext *);
-DECLARE_FAKE_VOID_FUNC(lwpa_poll_context_deinit, LwpaPollContext *);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_add_socket, LwpaPollContext *, lwpa_socket_t, lwpa_poll_events_t,
-                        void *);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_modify_socket, LwpaPollContext *, lwpa_socket_t, lwpa_poll_events_t,
-                        void *);
-DECLARE_FAKE_VOID_FUNC(lwpa_poll_remove_socket, LwpaPollContext *, lwpa_socket_t);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_wait, LwpaPollContext *, LwpaPollEvent *, int);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_context_init, LwpaPollContext*);
+DECLARE_FAKE_VOID_FUNC(lwpa_poll_context_deinit, LwpaPollContext*);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_add_socket, LwpaPollContext*, lwpa_socket_t, lwpa_poll_events_t, void*);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_modify_socket, LwpaPollContext*, lwpa_socket_t, lwpa_poll_events_t,
+                        void*);
+DECLARE_FAKE_VOID_FUNC(lwpa_poll_remove_socket, LwpaPollContext*, lwpa_socket_t);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_wait, LwpaPollContext*, LwpaPollEvent*, int);
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getaddrinfo, const char *, const char *, const LwpaAddrinfo *,
-                        LwpaAddrinfo *);
-DECLARE_FAKE_VALUE_FUNC(bool, lwpa_nextaddr, LwpaAddrinfo *);
-DECLARE_FAKE_VOID_FUNC(lwpa_freeaddrinfo, LwpaAddrinfo *);
+DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getaddrinfo, const char*, const char*, const LwpaAddrinfo*, LwpaAddrinfo*);
+DECLARE_FAKE_VALUE_FUNC(bool, lwpa_nextaddr, LwpaAddrinfo*);
+DECLARE_FAKE_VOID_FUNC(lwpa_freeaddrinfo, LwpaAddrinfo*);
 
 #define LWPA_SOCKET_DO_FOR_ALL_FAKES(operation) \
   operation(lwpa_accept);                       \

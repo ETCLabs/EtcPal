@@ -1,6 +1,6 @@
 ################################### testing ###################################
 
-if(LWPA_PLATFORM STREQUAL windows OR LWPA_PLATFORM STREQUAL linux)
+if(LWPA_TARGET_OS STREQUAL windows OR LWPA_TARGET_OS STREQUAL linux)
   message(STATUS "Adding GoogleTest dependency...")
   include(AddGoogleTest)
 

@@ -66,7 +66,7 @@
 typedef struct LwpaTcpPreamble
 {
   /*! Pointer to the beginning of the Root Layer PDU block */
-  const uint8_t *rlp_block;
+  const uint8_t* rlp_block;
   /*! Length of the Root Layer PDU block */
   size_t rlp_block_len;
 } LwpaTcpPreamble;
@@ -75,7 +75,7 @@ typedef struct LwpaTcpPreamble
 typedef struct LwpaUdpPreamble
 {
   /*! Pointer to the beginning of the Root Layer PDU block */
-  const uint8_t *rlp_block;
+  const uint8_t* rlp_block;
   /*! Length of the Root Layer PDU block */
   size_t rlp_block_len;
 } LwpaUdpPreamble;
@@ -88,7 +88,7 @@ typedef struct LwpaRootLayerPdu
   /*! The Vector indicates the type of data contained in the Data segment. */
   uint32_t vector;
   /*! A pointer to the Data segment of this PDU. */
-  const uint8_t *pdata;
+  const uint8_t* pdata;
   /*! The length of the Data segment of this PDU. */
   size_t datalen;
 } LwpaRootLayerPdu;
@@ -97,16 +97,16 @@ typedef struct LwpaRootLayerPdu
 extern "C" {
 #endif
 
-bool lwpa_parse_tcp_preamble(const uint8_t *buf, size_t buflen, LwpaTcpPreamble *preamble);
-bool lwpa_parse_udp_preamble(const uint8_t *buf, size_t buflen, LwpaUdpPreamble *preamble);
-bool lwpa_parse_root_layer_header(const uint8_t *buf, size_t buflen, LwpaRootLayerPdu *pdu, LwpaRootLayerPdu *last_pdu);
-bool lwpa_parse_root_layer_pdu(const uint8_t *buf, size_t buflen, LwpaRootLayerPdu *pdu, LwpaPdu *last_pdu);
+bool lwpa_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble* preamble);
+bool lwpa_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble* preamble);
+bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaRootLayerPdu* last_pdu);
+bool lwpa_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaPdu* last_pdu);
 
-size_t lwpa_pack_tcp_preamble(uint8_t *buf, size_t buflen, size_t rlp_block_len);
-size_t lwpa_pack_udp_preamble(uint8_t *buf, size_t buflen);
-size_t lwpa_root_layer_buf_size(const LwpaRootLayerPdu *pdu_block, size_t num_pdus);
-size_t lwpa_pack_root_layer_header(uint8_t *buf, size_t buflen, const LwpaRootLayerPdu *pdu);
-size_t lwpa_pack_root_layer_block(uint8_t *buf, size_t buflen, const LwpaRootLayerPdu *pdu_block, size_t num_pdus);
+size_t lwpa_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len);
+size_t lwpa_pack_udp_preamble(uint8_t* buf, size_t buflen);
+size_t lwpa_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
+size_t lwpa_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu);
+size_t lwpa_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
 
 #ifdef __cplusplus
 }

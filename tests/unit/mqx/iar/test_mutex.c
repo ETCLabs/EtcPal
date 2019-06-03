@@ -65,13 +65,13 @@ static bool mt_terminated[MUTEX_TEST_NUM_THREADS];
 static int g_shared_var;
 struct thread_data
 {
-  lwpa_mutex_t *mutex;
+  lwpa_mutex_t* mutex;
   int thread_num;
 };
 
 void mutex_test_thread(uint32_t initial_data)
 {
-  struct thread_data *td = (struct thread_data *)initial_data;
+  struct thread_data* td = (struct thread_data*)initial_data;
   int i;
 
   for (i = 0; i < MUTEX_TEST_NUM_ITERATIONS; ++i)

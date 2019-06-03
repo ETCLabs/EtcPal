@@ -59,7 +59,7 @@ TEST_F(MutexTest, create_destroy)
   ASSERT_FALSE(lwpa_mutex_take(&mutex, LWPA_WAIT_FOREVER));
 }
 
-static void mutex_test_thread(MutexTest *fixture)
+static void mutex_test_thread(MutexTest* fixture)
 {
   if (fixture)
   {
@@ -96,7 +96,7 @@ TEST_F(MutexTest, threads)
     threads.push_back(std::move(thread));
   }
 
-  for (auto &thread : threads)
+  for (auto& thread : threads)
     thread.join();
 
   ASSERT_EQ(shared_var, (kNumThreads * kNumIterations));

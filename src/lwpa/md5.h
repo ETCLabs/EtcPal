@@ -1,5 +1,5 @@
-/* MD5.H - header file for MD5C.C
-*/
+/* MD5.H - header file for MD5.C
+ */
 
 /* Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
 rights reserved.
@@ -30,14 +30,15 @@ documentation and/or software.
 
 #include "lwpa/int.h"
 
-typedef struct {
-    uint32_t state[4];  // state (ABCD)
-    uint32_t count[2];  // number of bits, modulo 2^64 (lsb first)
-    uint8_t buffer[64]; // input buffer
+typedef struct
+{
+  uint32_t state[4];   // state (ABCD)
+  uint32_t count[2];   // number of bits, modulo 2^64 (lsb first)
+  uint8_t buffer[64];  // input buffer
 } MD5_CTX;
 
 void MD5Init(MD5_CTX* context);
 void MD5Update(MD5_CTX* context, const uint8_t* input, unsigned int inputLen);
 void MD5Final(uint8_t digest[16], MD5_CTX* context);
 
-#endif //_MD5_H_
+#endif  //_MD5_H_

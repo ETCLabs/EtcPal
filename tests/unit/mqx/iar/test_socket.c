@@ -28,17 +28,17 @@ bool test_inet_xtox()
   bool ok;
   LwpaIpAddr addr;
   char str[LWPA_INET6_ADDRSTRLEN];
-  const char *test_ip4_1 = "0.0.0.0";
-  const char *test_ip4_2 = "255.255.255.255";
-  const char *test_ip4_fail = "256.256.256.256";
-  const char *test_ip6_1 = "::";
+  const char* test_ip4_1 = "0.0.0.0";
+  const char* test_ip4_2 = "255.255.255.255";
+  const char* test_ip4_fail = "256.256.256.256";
+  const char* test_ip6_1 = "::";
   const uint8_t test_ip6_1_bin[IPV6_BYTES] = {0};
-  const char *test_ip6_2 = "::1";
+  const char* test_ip6_2 = "::1";
   const uint8_t test_ip6_2_bin[IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-  const char *test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
+  const char* test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
   const uint8_t test_ip6_3_bin[IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
                                               0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-  const char *test_ip6_fail = "abcd::ef01::2345";
+  const char* test_ip6_fail = "abcd::ef01::2345";
 
   /* Test lwpa_inet_pton() */
   ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV4, test_ip4_1, &addr));
@@ -124,8 +124,8 @@ struct sendthread_inf
 
 void send_thread(uint32_t initial_data)
 {
-  struct sendthread_inf *inf = (struct sendthread_inf *)initial_data;
-  const uint8_t *send_buf = (const uint8_t *)SEND_MSG;
+  struct sendthread_inf* inf = (struct sendthread_inf*)initial_data;
+  const uint8_t* send_buf = (const uint8_t*)SEND_MSG;
   size_t i;
 
   for (i = 0; i < NUM_TEST_PACKETS; ++i)
@@ -219,7 +219,7 @@ bool test_unicast_udp()
       if (!ok)
         break;
       buf[SEND_MSG_LEN] = '\0';
-      ok = (0 == strcmp((char *)buf, SEND_MSG));
+      ok = (0 == strcmp((char*)buf, SEND_MSG));
       if (!ok)
         break;
     }
@@ -344,7 +344,7 @@ bool test_multicast_udp()
       if (!ok)
         break;
       buf[SEND_MSG_LEN] = '\0';
-      ok = (0 == strcmp((char *)buf, SEND_MSG));
+      ok = (0 == strcmp((char*)buf, SEND_MSG));
       if (!ok)
         break;
     }
@@ -379,8 +379,8 @@ struct pt_sendthread_inf
 
 void polltest_sendthread(uint32_t initial_data)
 {
-  struct pt_sendthread_inf *inf = (struct pt_sendthread_inf *)initial_data;
-  const uint8_t *send_buf = (const uint8_t *)SEND_MSG;
+  struct pt_sendthread_inf* inf = (struct pt_sendthread_inf*)initial_data;
+  const uint8_t* send_buf = (const uint8_t*)SEND_MSG;
 
   lwpa_sendto(inf->send_sock, send_buf, SEND_MSG_LEN, 0, &inf->send_addr_1);
   lwpa_sendto(inf->send_sock, send_buf, SEND_MSG_LEN, 0, &inf->send_addr_2);
@@ -482,7 +482,7 @@ bool test_poll()
           if (!ok)
             break;
           buf[SEND_MSG_LEN] = '\0';
-          ok = (0 == strcmp((char *)buf, SEND_MSG));
+          ok = (0 == strcmp((char*)buf, SEND_MSG));
           if (!ok)
             break;
         }

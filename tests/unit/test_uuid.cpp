@@ -126,7 +126,7 @@ TEST_F(UuidTest, generate_v3)
   // Make sure the Variant Version bits are correct.
   // We should always have Variant 1, Version 3.
   std::vector<LwpaUuid> uuid_vect{uuid1, uuid2, uuid3, uuid4, uuid1_dup};
-  std::for_each(uuid_vect.begin(), uuid_vect.end(), [](const LwpaUuid &uuid) {
+  std::for_each(uuid_vect.begin(), uuid_vect.end(), [](const LwpaUuid& uuid) {
     ASSERT_EQ((uuid.data[6] & 0xf0u), 0x30u);
     ASSERT_EQ((uuid.data[8] & 0xc0u), 0x80u);
   });

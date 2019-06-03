@@ -17,6 +17,9 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   endif()
 
   list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tools/cmake)
+  set(OPTION_DEFAULTS ON)
+else()
+  set(OPTION_DEFAULTS OFF)
 endif()
 
 option(LWPA_BUILD_MOCK_LIB "Build the lwpa_mock library" OFF)
@@ -27,12 +30,6 @@ endif()
 # Main library
 
 add_subdirectory(src)
-
-if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-  set(OPTION_DEFAULTS ON)
-else()
-  set(OPTION_DEFAULTS OFF)
-endif()
 
 # Tests
 

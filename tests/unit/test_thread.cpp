@@ -38,9 +38,9 @@ public:
   volatile bool oneshot_task_ran{false};
 };
 
-void wait_and_exit(void *param)
+void wait_and_exit(void* param)
 {
-  ThreadTest *tt = static_cast<ThreadTest *>(param);
+  ThreadTest* tt = static_cast<ThreadTest*>(param);
   if (tt)
   {
     while (tt->waitthread_run)
@@ -77,9 +77,9 @@ TEST_F(ThreadTest, create_destroy)
   ASSERT_TRUE(lwpa_thread_stop(&wait_thread, LWPA_WAIT_FOREVER));
 }
 
-void increment_and_spin(void *param)
+void increment_and_spin(void* param)
 {
-  ThreadTest *tt = static_cast<ThreadTest *>(param);
+  ThreadTest* tt = static_cast<ThreadTest*>(param);
   if (tt)
   {
     tt->spin_task_ran = true;
@@ -88,9 +88,9 @@ void increment_and_spin(void *param)
   }
 }
 
-void oneshot(void *param)
+void oneshot(void* param)
 {
-  ThreadTest *tt = static_cast<ThreadTest *>(param);
+  ThreadTest* tt = static_cast<ThreadTest*>(param);
   if (tt)
   {
     if (tt->oneshot_task_run)
