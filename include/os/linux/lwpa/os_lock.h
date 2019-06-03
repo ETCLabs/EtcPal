@@ -17,17 +17,36 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_THREAD_H_
-#define _LWPA_THREAD_H_
+#ifndef _LWPA_OS_LOCK_H_
+#define _LWPA_OS_LOCK_H_
 
-typedef struct LwpaThreadParams
-{
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char* thread_name;
-  void* platform_data;
-} LwpaThreadParams;
+#include <pthread.h>
+#include "lwpa/bool.h"
 
-#include "lwpa/os_thread.h"
+typedef pthread_mutex_t lwpa_mutex_t;
 
-#endif /* _LWPA_THREAD_H_ */
+/* Temporary placeholders */
+#define lwpa_mutex_create(idptr) false
+#define lwpa_mutex_take(idptr, wait_ms) false
+#define lwpa_mutex_give(idptr)
+#define lwpa_mutex_destroy(idptr)
+
+typedef pthread_cond_t lwpa_signal_t;
+
+/* Temporary placeholders */
+#define lwpa_signal_create(idptr) false
+#define lwpa_signal_wait(idptr, wait_ms) false
+#define lwpa_signal_post(idptr)
+#define lwpa_signal_destroy(idptr)
+
+typedef pthread_rwlock_t lwpa_rwlock_t;
+
+/* Temporary placeholders */
+#define lwpa_rwlock_create(idptr) false
+#define lwpa_rwlock_readlock(idptr, wait_ms) false
+#define lwpa_rwlock_readunlock(idptr)
+#define lwpa_rwlock_writelock(idptr, wait_ms) false
+#define lwpa_rwlock_writeunlock(idptr)
+#define lwpa_rwlock_destroy(idptr)
+
+#endif /* _LWPA_OS_LOCK_H_ */

@@ -17,17 +17,42 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_THREAD_H_
-#define _LWPA_THREAD_H_
+#include "lwpa/uuid.h"
 
-typedef struct LwpaThreadParams
+#include <uuid/uuid.h>
+
+// Use Linux APIs to generate UUIDs.
+// https://linux.die.net/man/3/uuid_generate
+
+lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
 {
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char* thread_name;
-  void* platform_data;
-} LwpaThreadParams;
+  if (!uuid)
+    return kLwpaErrInvalid;
 
-#include "lwpa/os_thread.h"
+  uuid_t os_uuid;
+  uuid_generate_time(os_uuid);
+  memcpy(uuid->data, os_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
+}
 
-#endif /* _LWPA_THREAD_H_ */
+lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
+{
+  if (!uuid)
+    return kLwpaErrInvalid;
+
+  uuid_t os_uuid;
+  uuid_generate_random(os_uuid);
+  memcpy(uuid->data, os_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
+}
+
+lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid)
+{
+  if (!uuid)
+    return kLwpaErrInvalid;
+
+  uuid_t os_uuid;
+  uuid_generate(os_uuid);
+  memcpy(uuid->data, os_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
+}

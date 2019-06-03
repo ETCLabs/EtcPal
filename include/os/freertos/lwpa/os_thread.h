@@ -17,8 +17,18 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_THREAD_H_
-#define _LWPA_THREAD_H_
+#ifndef _LWPA_OS_THREAD_H_
+#define _LWPA_OS_THREAD_H_
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#include "lwpa/common.h"
+#include "lwpa/bool.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct LwpaThreadParams
 {
@@ -28,6 +38,24 @@ typedef struct LwpaThreadParams
   void* platform_data;
 } LwpaThreadParams;
 
-#include "lwpa/os_thread.h"
+#define LWPA_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
+#define LWPA_THREAD_DEFAULT_STACK 2000
+#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
 
-#endif /* _LWPA_THREAD_H_ */
+typedef struct
+{
+  void (*fn)(void*);
+  void* arg;
+  SemaphoreHandle_t sig;
+  TaskHandle_t tid;
+} lwpa_thread_t;
+
+bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
+bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms);
+#define lwpa_thread_sleep(sleep_ms) vTaskDelay(pdMS_TO_TICKS(sleep_ms))
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _LWPA_OS_THREAD_H_ */

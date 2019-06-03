@@ -17,17 +17,16 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_THREAD_H_
-#define _LWPA_THREAD_H_
+#include "lwpa/timer.h"
 
-typedef struct LwpaThreadParams
+#include <time.h>
+
+uint32_t lwpa_getms()
 {
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char* thread_name;
-  void* platform_data;
-} LwpaThreadParams;
-
-#include "lwpa/os_thread.h"
-
-#endif /* _LWPA_THREAD_H_ */
+  struct timespec os_time;
+  if (0 == clock_gettime(CLOCK_MONOTONIC, &os_time))
+  {
+    return (uint32_t)(os_time.tv_sec * 1000 + (os_time.tv_nsec / 1000000));
+  }
+  return 0;
+}

@@ -20,7 +20,7 @@
 #ifndef _LWPA_LOCK_H_
 #define _LWPA_LOCK_H_
 
-#include "lwpa/plat_lock.h"
+#include "lwpa/os_lock.h"
 
 #if defined(__cplusplus) || defined(DOXYGEN)
 // C++ extras defined if including lwpa in a C++ application.

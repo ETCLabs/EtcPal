@@ -17,17 +17,22 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_THREAD_H_
-#define _LWPA_THREAD_H_
+#ifndef _LWPA_OS_THREAD_H_
+#define _LWPA_OS_THREAD_H_
 
-typedef struct LwpaThreadParams
-{
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char* thread_name;
-  void* platform_data;
-} LwpaThreadParams;
+#include <pthread.h>
 
-#include "lwpa/os_thread.h"
+/* placeholders */
+#define LWPA_THREAD_DEFAULT_PRIORITY SCHED_OTHER
+#define LWPA_THREAD_DEFAULT_STACK 0
+#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
 
-#endif /* _LWPA_THREAD_H_ */
+#define LWPA_THREAD_NAME_MAX_LENGTH 32
+
+typedef pthread_t lwpa_thread_t;
+
+#define lwpa_thread_create(idptr, paramsptr, thread_fn, thread_arg) false
+#define lwpa_thread_stop(idptr, wait_ms) false
+#define lwpa_thread_sleep(sleep_ms)
+
+#endif /* _LWPA_OS_THREAD_H_ */

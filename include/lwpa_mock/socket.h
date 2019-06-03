@@ -27,8 +27,8 @@
 // We don't mock:
 // lwpa_inet_pton()
 // lwpa_inet_ntop()
-// sockaddr_plat_to_lwpa()
-// sockaddr_lwpa_to_plat()
+// sockaddr_os_to_lwpa()
+// sockaddr_lwpa_to_os()
 
 #ifdef __cplusplus
 extern "C" {

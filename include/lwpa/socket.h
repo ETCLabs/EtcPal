@@ -44,7 +44,7 @@
 /*! Event flags for the lwpa_poll_*() API functions. */
 typedef uint32_t lwpa_poll_events_t;
 
-#include "lwpa/plat_socket.h" /* The platform-specific socket definitions */
+#include "lwpa/os_socket.h" /* The os-specific socket definitions */
 
 /* clang-format off */
 
