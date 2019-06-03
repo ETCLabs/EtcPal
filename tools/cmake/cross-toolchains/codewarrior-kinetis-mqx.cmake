@@ -23,7 +23,7 @@ set(TOOLS_DIR ${CODEWARRIOR_INSTALL_DIR}/Cross_Tools/arm-none-eabi-gcc-4_7_3)
 set(CMAKE_C_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-gcc.exe)
 set(CMAKE_CXX_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-g++.exe)
 
-set(LWPA_PLATFORM mqx)
+set(LWPA_TARGET_OS mqx)
 add_compile_options(
   -nostdinc
   -ffunction-sections

@@ -19,12 +19,14 @@ if(NOT DEFINED LWPA_TARGET_OS)
   elseif(UNIX AND NOT APPLE)
     set(LWPA_TARGET_OS linux)
   else()
-    message(FATAL_ERROR "lwpa is not ported for this target OS.")
+    # The error check below will catch this and print the fatal error.
+    set(LWPA_TARGET_OS ${CMAKE_HOST_SYSTEM_NAME})
   endif()
 endif()
 
 if(NOT ${LWPA_TARGET_OS} IN_LIST VALID_LWPA_TARGETS)
-  message(FATAL_ERROR "${LWPA_TARGET_OS} is not a valid target OS.")
+  message(FATAL_ERROR "${LWPA_TARGET_OS} is not a valid target OS. "
+          "Specify LWPA_TARGET_OS from these options: ${VALID_LWPA_TARGETS}")
 endif()
 
 # MQX compilation support
@@ -160,12 +162,12 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
     ${LWPA_ROOT}/src/lwpa/md5.h
     ${LWPA_ROOT}/src/lwpa/md5c.c
-    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/lock.c
-    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/netint.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c
     ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_uuid.c
-    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/socket.c
-    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/thread.c
-    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/timer.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_socket.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_thread.c
+    ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_timer.c
 
     ${LWPA_ROOT}/src/lwpa_mock/socket.c
   )

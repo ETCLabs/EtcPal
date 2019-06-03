@@ -22,7 +22,7 @@ endif()
 set(CMAKE_C_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe)
 set(CMAKE_CXX_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe)
 
-set(LWPA_PLATFORM mqx)
+set(LWPA_TARGET_OS mqx)
 add_compile_options(
   --endian=little
   --cpu=Cortex-M4
