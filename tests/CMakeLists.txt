@@ -24,6 +24,6 @@ if(LWPA_TARGET_OS STREQUAL windows OR LWPA_TARGET_OS STREQUAL linux)
     ${TEST_SRC_DIR}/test_timer.cpp
     ${TEST_SRC_DIR}/test_uuid.cpp
   )
-
+  set_target_properties(test_lwpa PROPERTIES CXX_STANDARD 14)
   target_link_libraries(test_lwpa lwpa gmock)
 endif()

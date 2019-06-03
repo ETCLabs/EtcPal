@@ -29,11 +29,6 @@ static_assert(std::ratio_less_equal<std::chrono::high_resolution_clock::period, 
 
 class RwlockTest : public ::testing::Test
 {
-protected:
-  RwlockTest() : shared_var(0), read_thread_pass(false) { timeBeginPeriod(1); }
-
-  virtual ~RwlockTest() { timeEndPeriod(1); }
-
 public:
   // Constants
   static const int RWLOCK_TEST_NUM_WRITE_THREADS = 10;
@@ -43,8 +38,8 @@ public:
   lwpa_rwlock_t rwlock;
 
   // For thread test
-  int shared_var;
-  bool read_thread_pass;
+  int shared_var{0};
+  bool read_thread_pass{false};
 };
 
 TEST_F(RwlockTest, create_destroy)

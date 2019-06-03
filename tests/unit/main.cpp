@@ -32,8 +32,6 @@ int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURES_ALL));
-
   // Only check our custom argument if we haven't been given the "list_tests" flag
   if (!testing::GTEST_FLAG(list_tests))
   {

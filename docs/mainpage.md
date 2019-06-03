@@ -40,6 +40,7 @@ identical interface, as documented in that module's documentation.
 lwpa is currently ported for the following platforms:
 
 + Microsoft Windows
++ Linux
 + MQX RTOS
 
 ### Building lwpa for Your Platform
@@ -98,4 +99,5 @@ The platform ports of lwpa have the following dependencies:
 + MQX RTOS
   - MQX 4.2.0
 + Linux
-  - libuuid (`sudo apt-get install uuid-dev`)
+  - libuuid (if compiling lwpa, use `sudo apt-get install uuid-dev` or the
+             equivalent method for your distribution)

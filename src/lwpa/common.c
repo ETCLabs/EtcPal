@@ -19,20 +19,34 @@
 
 #include "lwpa/common.h"
 #include "lwpa/private/common.h"
+#include "lwpa/private/log.h"
 
-#include <unistd.h>
-
-lwpa_error_t lwpa_os_init(lwpa_features_t features)
+lwpa_error_t lwpa_init(lwpa_features_t features)
 {
-  if (features & LWPA_FEATURE_TIMERS)
+  // Step 1: OS-specific init
+  lwpa_error_t res = lwpa_os_init(features);
+  if (res != kLwpaErrOk)
+    return res;
+
+  // Step 2: OS-neutral init
+  if (features & LWPA_FEATURE_LOGGING)
   {
-    if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
-      return kLwpaErrSys;
+    res = lwpa_log_init();
+    if (res != kLwpaErrOk)
+    {
+      lwpa_os_deinit(features);
+    }
   }
-  return kLwpaErrOk;
+  return res;
 }
 
-void lwpa_os_deinit(lwpa_features_t features)
+void lwpa_deinit(lwpa_features_t features)
 {
-  (void)features;
+  // Step 1: OS-neutral deinit
+  if (features & LWPA_FEATURE_LOGGING)
+  {
+    lwpa_log_deinit();
+  }
+
+  lwpa_os_deinit(features);
 }

@@ -91,6 +91,7 @@ target_include_directories(lwpa PUBLIC
   ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}
   ${LWPA_CONFIG_LOC}
 )
+target_include_directories(lwpa PRIVATE ${LWPA_ROOT}/src)
 target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
 
 # Add include paths and library dependencies based on OS for which we are being compiled

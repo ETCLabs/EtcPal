@@ -29,11 +29,6 @@ static_assert(std::ratio_less_equal<std::chrono::high_resolution_clock::period, 
 
 class SignalTest : public ::testing::Test
 {
-protected:
-  SignalTest() { timeBeginPeriod(1); }
-
-  virtual ~SignalTest() { timeEndPeriod(1); }
-
 public:
   // For general usage
   lwpa_signal_t signal;

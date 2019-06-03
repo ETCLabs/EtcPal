@@ -24,20 +24,25 @@
 #include <sys/select.h>
 #include "lwpa/inet.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef int lwpa_socket_t;
 
 #define LWPA_SOCKET_INVALID -1
 
-#define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
+#define LWPA_SOCKET_MAX_POLL_SIZE -1
+
+typedef struct LwpaPollContext
+{
+  int epoll_fd;
+} LwpaPollContext;
 
 #define ip_os_to_lwpa_v4(lwpaipptr, pfipptr) lwpaip_set_v4_address((lwpaipptr), ntohl((pfipptr)->s_addr))
 #define ip_lwpa_to_os_v4(pfipptr, lwpaipptr) ((pfipptr)->s_addr = htonl(lwpaip_v4_address(lwpaipptr)))
 #define ip_os_to_lwpa_v6(lwpaipptr, pfipptr) lwpaip_set_v6_address((lwpaipptr), (pfipptr)->s6_addr)
 #define ip_lwpa_to_os_v6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, lwpaip_v6_address(lwpaipptr), IPV6_BYTES)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa);
 size_t sockaddr_lwpa_to_os(struct sockaddr* pfsa, const LwpaSockaddr* sa);

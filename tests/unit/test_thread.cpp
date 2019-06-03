@@ -23,7 +23,6 @@
 
 static_assert(std::ratio_less_equal<std::chrono::high_resolution_clock::period, std::milli>::value,
               "This platform does not have access to a millisecond-resolution clock. This test cannot be run.");
-static_assert(std::chrono::high_resolution_clock::is_steady, "No");
 
 class ThreadTest : public ::testing::Test
 {

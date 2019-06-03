@@ -567,8 +567,32 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
   return kLwpaErrNotImpl;
 }
 
-/* TODO move to an overlapped IO implementation on Windows for better performance. */
-int lwpa_poll(LwpaPollfd* fds, size_t nfds, int timeout_ms)
+lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)
+{
+  return kLwpaErrNotImpl;
+}
+
+void lwpa_poll_context_deinit(LwpaPollContext* context)
+{
+}
+
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t events,
+                                  void* user_data)
+{
+  return kLwpaErrNotImpl;
+}
+
+lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
+                                     void* new_user_data)
+{
+  return kLwpaErrNotImpl;
+}
+
+void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket)
+{
+}
+
+lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms)
 {
   //  fd_set readfds, writefds, exceptfds;
   //  LwpaPollfd *fd;
@@ -664,7 +688,7 @@ int lwpa_poll(LwpaPollfd* fds, size_t nfds, int timeout_ms)
   //    }
   //  }
   //  return sel_res;
-  return (int)kLwpaErrNotImpl;
+  return kLwpaErrNotImpl;
 }
 
 lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,

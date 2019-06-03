@@ -33,6 +33,10 @@
 #include "lwpa/inet.h"
 #include "lwpa/lock.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef SOCKET lwpa_socket_t;
 
 /*! An identifier for an invalid socket handle. The ONLY invalid socket descriptor is
@@ -68,10 +72,6 @@ typedef struct LwpaPollContext
   LwpaPollFdSet exceptfds;
 
 } LwpaPollContext;
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #define ip_os_to_lwpa_v4(lwpaipptr, pfipptr) lwpaip_set_v4_address((lwpaipptr), ntohl((pfipptr)->s_addr))
 #define ip_lwpa_to_os_v4(pfipptr, lwpaipptr) ((pfipptr)->s_addr = htonl(lwpaip_v4_address(lwpaipptr)))

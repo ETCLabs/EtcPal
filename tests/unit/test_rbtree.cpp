@@ -36,7 +36,7 @@ protected:
     dealloc_call_count = 0;
 
     // Initialize an array of monotonically increasing ints
-    for (int i = 0; i < INT_ARRAY_SIZE; ++i)
+    for (int i = 0; i < kIntArraySize; ++i)
       incrementing_int_array[i] = i;
 
     // Copy and shuffle the integer array
@@ -46,10 +46,10 @@ protected:
     std::shuffle(random_int_array.begin(), random_int_array.end(), rand);
   }
 
-  static constexpr size_t INT_ARRAY_SIZE = 100;
-  std::array<int, INT_ARRAY_SIZE> incrementing_int_array;
-  std::array<int, INT_ARRAY_SIZE> random_int_array;
-  std::array<LwpaRbNode, INT_ARRAY_SIZE> node_pool;
+  static constexpr size_t kIntArraySize = 100;
+  std::array<int, kIntArraySize> incrementing_int_array;
+  std::array<int, kIntArraySize> random_int_array;
+  std::array<LwpaRbNode, kIntArraySize> node_pool;
 
 public:
   static unsigned int alloc_call_count;
@@ -57,11 +57,12 @@ public:
 
   unsigned int clearfunc_call_count;
   bool remove_one_flag;
-  static const int MAGIC_REMOVE_VALUE = INT_ARRAY_SIZE / 2;
+  static const int kMagicRemoveValue = kIntArraySize / 2;
 };
 
 unsigned int RbTreeTest::alloc_call_count;
 unsigned int RbTreeTest::dealloc_call_count;
+constexpr size_t RbTreeTest::kIntArraySize;
 
 LwpaRbNode* node_alloc()
 {
@@ -88,7 +89,7 @@ static void clear_func(const LwpaRbTree* self, LwpaRbNode* node)
   RbTreeTest* rbtt = static_cast<RbTreeTest*>(self->info);
   if (rbtt)
   {
-    if (rbtt->remove_one_flag && *(int*)node->value == RbTreeTest::MAGIC_REMOVE_VALUE)
+    if (rbtt->remove_one_flag && *(int*)node->value == RbTreeTest::kMagicRemoveValue)
     {
       rbtt->remove_one_flag = false;
     }
@@ -103,31 +104,31 @@ TEST_F(RbTreeTest, insert_static)
   tree.info = this;
 
   // Point each node at its respective value and insert it into the tree
-  for (size_t i = 0; i < INT_ARRAY_SIZE; ++i)
+  for (size_t i = 0; i < kIntArraySize; ++i)
   {
     LwpaRbNode* node = &node_pool[i];
     ASSERT_TRUE(NULL != lwpa_rbnode_init(node, &random_int_array[i]));
     ASSERT_NE(0, lwpa_rbtree_insert_node(&tree, node));
   }
-  ASSERT_EQ(INT_ARRAY_SIZE, lwpa_rbtree_size(&tree));
+  ASSERT_EQ(kIntArraySize, lwpa_rbtree_size(&tree));
   ASSERT_NE(0, lwpa_rbtree_test(&tree, tree.root));
 
   // Find a random number
-  int to_find = rand() / (RAND_MAX / INT_ARRAY_SIZE + 1);
+  int to_find = rand() / (RAND_MAX / kIntArraySize + 1);
   int* found = (int*)lwpa_rbtree_find(&tree, &to_find);
   ASSERT_TRUE(found != NULL);
   ASSERT_EQ(*found, to_find);
 
   // Try removing one item
   remove_one_flag = true;
-  int to_remove = MAGIC_REMOVE_VALUE;
+  int to_remove = kMagicRemoveValue;
   ASSERT_NE(0, lwpa_rbtree_remove_with_cb(&tree, &to_remove, clear_func));
   ASSERT_FALSE(remove_one_flag);
 
-  // Clear the tree
+  // Clear the tre
   ASSERT_NE(0, lwpa_rbtree_clear_with_cb(&tree, clear_func));
   ASSERT_EQ(0u, lwpa_rbtree_size(&tree));
-  ASSERT_EQ(clearfunc_call_count, INT_ARRAY_SIZE);
+  ASSERT_EQ(clearfunc_call_count, kIntArraySize);
 }
 
 TEST_F(RbTreeTest, insert_dynamic)
@@ -136,26 +137,26 @@ TEST_F(RbTreeTest, insert_dynamic)
   ASSERT_TRUE(NULL != lwpa_rbtree_init(&tree, int_cmp, node_alloc, node_dealloc));
 
   // Insert each value into the tree; dynamic alloc functions should be called.
-  for (size_t i = 0; i < INT_ARRAY_SIZE; ++i)
+  for (size_t i = 0; i < kIntArraySize; ++i)
     ASSERT_NE(0, lwpa_rbtree_insert(&tree, &random_int_array[i]));
-  ASSERT_EQ(INT_ARRAY_SIZE, lwpa_rbtree_size(&tree));
-  ASSERT_EQ(INT_ARRAY_SIZE, alloc_call_count);
+  ASSERT_EQ(kIntArraySize, lwpa_rbtree_size(&tree));
+  ASSERT_EQ(kIntArraySize, alloc_call_count);
   ASSERT_NE(0, lwpa_rbtree_test(&tree, tree.root));
 
   // Find a random number
-  int to_find = rand() / (RAND_MAX / INT_ARRAY_SIZE + 1);
+  int to_find = rand() / (RAND_MAX / kIntArraySize + 1);
   int* found = (int*)lwpa_rbtree_find(&tree, &to_find);
   ASSERT_TRUE(found != NULL);
   ASSERT_EQ(*found, to_find);
 
   // Make sure removing something that wasn't in the tree fails.
-  int not_in_tree = INT_ARRAY_SIZE + 1;
+  int not_in_tree = kIntArraySize + 1;
   ASSERT_EQ(0, lwpa_rbtree_remove(&tree, &not_in_tree));
 
   // Clear the tree
   ASSERT_NE(0, lwpa_rbtree_clear(&tree));
   ASSERT_EQ(0u, lwpa_rbtree_size(&tree));
-  ASSERT_EQ(dealloc_call_count, INT_ARRAY_SIZE);
+  ASSERT_EQ(dealloc_call_count, kIntArraySize);
 }
 
 TEST_F(RbTreeTest, iter)
@@ -164,9 +165,9 @@ TEST_F(RbTreeTest, iter)
   ASSERT_TRUE(NULL != lwpa_rbtree_init(&tree, int_cmp, node_alloc, node_dealloc));
 
   // Insert each value into the tree; dynamic alloc functions should be called.
-  for (size_t i = 0; i < INT_ARRAY_SIZE; ++i)
+  for (size_t i = 0; i < kIntArraySize; ++i)
     ASSERT_NE(0, lwpa_rbtree_insert(&tree, &random_int_array[i]));
-  ASSERT_EQ(INT_ARRAY_SIZE, lwpa_rbtree_size(&tree));
+  ASSERT_EQ(kIntArraySize, lwpa_rbtree_size(&tree));
 
   // Initialize an iterator
   LwpaRbIter iter;
@@ -189,11 +190,11 @@ TEST_F(RbTreeTest, iter)
     ASSERT_GT(*val, last_val);
     last_val = *val;
   }
-  ASSERT_EQ(num_iterations, INT_ARRAY_SIZE);
+  ASSERT_EQ(num_iterations, kIntArraySize);
 
   // Get the last value.
   val = (int*)lwpa_rbiter_last(&iter, &tree);
-  ASSERT_EQ(*val, static_cast<int>(INT_ARRAY_SIZE - 1));
+  ASSERT_EQ(*val, static_cast<int>(kIntArraySize - 1));
 
   // Test iterating through the tree in reverse order.
   num_iterations = 1;
@@ -206,12 +207,12 @@ TEST_F(RbTreeTest, iter)
     ASSERT_LT(*val, last_val);
     last_val = *val;
   }
-  ASSERT_EQ(num_iterations, INT_ARRAY_SIZE);
+  ASSERT_EQ(num_iterations, kIntArraySize);
 
   // Clear the tree.
   ASSERT_NE(0, lwpa_rbtree_clear(&tree));
   ASSERT_EQ(0u, lwpa_rbtree_size(&tree));
-  ASSERT_EQ(INT_ARRAY_SIZE, dealloc_call_count);
+  ASSERT_EQ(kIntArraySize, dealloc_call_count);
 }
 
 TEST_F(RbTreeTest, max_height)
@@ -219,11 +220,11 @@ TEST_F(RbTreeTest, max_height)
   LwpaRbTree tree;
   ASSERT_TRUE(NULL != lwpa_rbtree_init(&tree, int_cmp, node_alloc, node_dealloc));
   // Insert monotonically incrementing values into the tree. In a traditional binary tree, this
-  // would result in a worst-case unbalanced tree of height INT_ARRAY_SIZE. In the red-black tree,
-  // the maximum height should be determined by the formula 2 * log2(INT_ARRAY_SIZE + 1).
-  for (size_t i = 0; i < INT_ARRAY_SIZE; ++i)
+  // would result in a worst-case unbalanced tree of height kIntArraySize. In the red-black tree,
+  // the maximum height should be determined by the formula 2 * log2(kIntArraySize + 1).
+  for (size_t i = 0; i < kIntArraySize; ++i)
     ASSERT_NE(0, lwpa_rbtree_insert(&tree, &incrementing_int_array[i]));
-  ASSERT_EQ(INT_ARRAY_SIZE, lwpa_rbtree_size(&tree));
+  ASSERT_EQ(kIntArraySize, lwpa_rbtree_size(&tree));
 
   // Get the height of the tree and compare it against the theoretical maximum.
   LwpaRbIter iter;
@@ -238,11 +239,11 @@ TEST_F(RbTreeTest, max_height)
   } while (NULL != lwpa_rbiter_next(&iter));
   max_height += 1;
   // http://www.doctrina.org/maximum-height-of-red-black-tree.html
-  theoretical_max_height = 2 * (size_t)(log(INT_ARRAY_SIZE + 1) / log(2));
+  theoretical_max_height = 2 * (size_t)(log(kIntArraySize + 1) / log(2));
   ASSERT_LE(max_height, theoretical_max_height);
 
   // Clear the tree
   ASSERT_NE(0, lwpa_rbtree_clear(&tree));
   ASSERT_EQ(0u, lwpa_rbtree_size(&tree));
-  ASSERT_EQ(INT_ARRAY_SIZE, dealloc_call_count);
+  ASSERT_EQ(kIntArraySize, dealloc_call_count);
 }
