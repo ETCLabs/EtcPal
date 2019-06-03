@@ -21,10 +21,10 @@
 #include <string.h>
 #include "lwip/netif.h"
 
-static bool mask_is_empty(const LwpaIpAddr *mask);
-static bool mask_compare(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr *mask);
+static bool mask_is_empty(const LwpaIpAddr* mask);
+static bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask);
 
-static void copy_interface_info(struct netif *lwip_netint, LwpaNetintInfo *netint)
+static void copy_interface_info(struct netif* lwip_netint, LwpaNetintInfo* netint)
 {
   netint->ifindex = (int)lwip_netint->num;
   if (lwip_netint->hwaddr_len == NETINTINFO_MAC_LEN)
@@ -82,7 +82,7 @@ static void copy_interface_info(struct netif *lwip_netint, LwpaNetintInfo *netin
 size_t netint_get_num_interfaces()
 {
   size_t num_interfaces = 0;
-  struct netif *netint;
+  struct netif* netint;
   for (netint = netif_list; netint; netint = netint->next)
   {
     /* Skip loopback interfaces */
@@ -92,10 +92,10 @@ size_t netint_get_num_interfaces()
   return num_interfaces;
 }
 
-size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size)
+size_t netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
 {
   size_t num_interfaces = 0;
-  struct netif *lwip_netint;
+  struct netif* lwip_netint;
 
   if (!netint_arr || netint_arr_size == 0)
     return 0;
@@ -116,7 +116,7 @@ size_t netint_get_interfaces(LwpaNetintInfo *netint_arr, size_t netint_arr_size)
   return num_interfaces;
 }
 
-bool netint_get_default_interface(LwpaNetintInfo *netint)
+bool netint_get_default_interface(LwpaNetintInfo* netint)
 {
   if (netint && netif_default)
   {
@@ -126,7 +126,7 @@ bool netint_get_default_interface(LwpaNetintInfo *netint)
   return false;
 }
 
-bool mask_compare(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr *mask)
+bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask)
 {
   if (lwpaip_is_v4(ip1) && lwpaip_is_v4(ip2) && lwpaip_is_v4(mask))
   {
@@ -135,9 +135,9 @@ bool mask_compare(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr
   else if (lwpaip_is_v6(ip1) && lwpaip_is_v6(ip2) && lwpaip_is_v6(mask))
   {
     size_t i;
-    const uint32_t *p1 = (const uint32_t *)lwpaip_v6_address(ip1);
-    const uint32_t *p2 = (const uint32_t *)lwpaip_v6_address(ip2);
-    const uint32_t *pm = (const uint32_t *)lwpaip_v6_address(mask);
+    const uint32_t* p1 = (const uint32_t*)lwpaip_v6_address(ip1);
+    const uint32_t* p2 = (const uint32_t*)lwpaip_v6_address(ip2);
+    const uint32_t* pm = (const uint32_t*)lwpaip_v6_address(mask);
 
     for (i = 0; i < IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
     {
@@ -149,7 +149,7 @@ bool mask_compare(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr
   return false;
 }
 
-bool mask_is_empty(const LwpaIpAddr *mask)
+bool mask_is_empty(const LwpaIpAddr* mask)
 {
   uint32_t mask_part = 0;
 
@@ -158,19 +158,19 @@ bool mask_is_empty(const LwpaIpAddr *mask)
   else if (lwpaip_is_v6(mask))
   {
     size_t i;
-    const uint32_t *p = (const uint32_t *)lwpaip_v6_address(mask);
+    const uint32_t* p = (const uint32_t*)lwpaip_v6_address(mask);
     for (i = 0; i < IPV6_BYTES / 4; ++i, ++p)
       mask_part |= *p;
   }
   return (mask_part == 0);
 }
 
-const LwpaNetintInfo *netint_get_iface_for_dest(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr,
+const LwpaNetintInfo* netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
                                                 size_t netint_arr_size)
 {
-  const LwpaNetintInfo *res = NULL;
-  const LwpaNetintInfo *def = NULL;
-  const LwpaNetintInfo *netint;
+  const LwpaNetintInfo* res = NULL;
+  const LwpaNetintInfo* def = NULL;
+  const LwpaNetintInfo* netint;
 
   if (!dest || !netint_arr || netint_arr_size == 0)
     return false;

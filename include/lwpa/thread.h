@@ -24,8 +24,8 @@ typedef struct LwpaThreadParams
 {
   unsigned int thread_priority;
   unsigned int stack_size;
-  char *thread_name;
-  void *platform_data;
+  char* thread_name;
+  void* platform_data;
 } LwpaThreadParams;
 
 #include "lwpa/plat_thread.h"

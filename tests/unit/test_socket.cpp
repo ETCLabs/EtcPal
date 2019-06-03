@@ -29,7 +29,7 @@ class SocketTest : public ::testing::Test
 {
 public:
   static const size_t NUM_TEST_PACKETS = 1000;
-  static const char *SEND_MSG;
+  static const char* SEND_MSG;
   static const size_t SEND_MSG_LEN = 12;
   static const uint32_t TEST_MCAST_ADDR = 0xec02054d;  // 236.2.5.77
   lwpa_socket_t send_sock = LWPA_SOCKET_INVALID;
@@ -38,29 +38,29 @@ public:
 protected:
   // For inet_xtox
   char str[LWPA_INET6_ADDRSTRLEN];
-  const char *test_ip4_1 = "0.0.0.0";
-  const char *test_ip4_2 = "255.255.255.255";
-  const char *test_ip4_fail = "256.256.256.256";
-  const char *test_ip6_1 = "::";
+  const char* test_ip4_1 = "0.0.0.0";
+  const char* test_ip4_2 = "255.255.255.255";
+  const char* test_ip4_fail = "256.256.256.256";
+  const char* test_ip6_1 = "::";
   const uint8_t test_ip6_1_bin[LWPA_IPV6_BYTES] = {0};
-  const char *test_ip6_2 = "::1";
+  const char* test_ip6_2 = "::1";
   const uint8_t test_ip6_2_bin[LWPA_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-  const char *test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
+  const char* test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
   const uint8_t test_ip6_3_bin[LWPA_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
                                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-  const char *test_ip6_fail = "abcd::ef01::2345";
+  const char* test_ip6_fail = "abcd::ef01::2345";
 
   // For getaddrinfo
-  const char *test_hostname = "www.google.com";
-  const char *test_service = "http";
+  const char* test_hostname = "www.google.com";
+  const char* test_service = "http";
 
-  const char *test_gai_ip_str = "10.101.1.1";
+  const char* test_gai_ip_str = "10.101.1.1";
   const uint32_t test_gai_ip = 0x0a650101;
-  const char *test_gai_port_str = "8080";
+  const char* test_gai_port_str = "8080";
   const uint16_t test_gai_port = 8080;
 };
 
-const char *SocketTest::SEND_MSG = "testtesttest";
+const char* SocketTest::SEND_MSG = "testtesttest";
 
 TEST_F(SocketTest, inet_xtox)
 {
@@ -104,11 +104,11 @@ TEST_F(SocketTest, sockopts)
   // TODO, need getsockopt() implemented for this
 }
 
-static void send_thread(SocketTest *fixture)
+static void send_thread(SocketTest* fixture)
 {
   if (fixture)
   {
-    const uint8_t *send_buf = (const uint8_t *)(SocketTest::SEND_MSG);
+    const uint8_t* send_buf = (const uint8_t*)(SocketTest::SEND_MSG);
     for (size_t i = 0; i < SocketTest::NUM_TEST_PACKETS; ++i)
       lwpa_sendto(fixture->send_sock, send_buf, SocketTest::SEND_MSG_LEN, 0, &fixture->send_addr_1);
   }
@@ -166,7 +166,7 @@ TEST_F(SocketTest, unicast_udp)
     ASSERT_NE(from_addr.port, 8888);
 
     buf[SEND_MSG_LEN] = '\0';
-    ASSERT_EQ(0, strcmp((char *)buf, SEND_MSG));
+    ASSERT_EQ(0, strcmp((char*)buf, SEND_MSG));
   }
 
   // recvfrom should time out because this socket is bound to a different port and we set the
@@ -240,7 +240,7 @@ TEST_F(SocketTest, multicast_udp)
     ASSERT_NE(from_addr.port, 8888);
 
     buf[SEND_MSG_LEN] = '\0';
-    ASSERT_EQ(0, strcmp((char *)buf, SEND_MSG));
+    ASSERT_EQ(0, strcmp((char*)buf, SEND_MSG));
   }
   LwpaSockaddr from_addr;
   uint8_t buf[SEND_MSG_LEN + 1];

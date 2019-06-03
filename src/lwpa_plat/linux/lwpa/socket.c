@@ -22,18 +22,18 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa)
+bool sockaddr_plat_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa)
 {
   if (pfsa->sa_family == AF_INET)
   {
-    struct sockaddr_in *sin = (struct sockaddr_in *)pfsa;
+    struct sockaddr_in* sin = (struct sockaddr_in*)pfsa;
     sa->port = ntohs(sin->sin_port);
     lwpaip_set_v4_address(&sa->ip, ntohl(sin->sin_addr.s_addr));
     return true;
   }
   else if (pfsa->sa_family == AF_INET6)
   {
-    struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)pfsa;
+    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)pfsa;
     sa->port = ntohs(sin6->sin6_port);
     lwpaip_set_v6_address(&sa->ip, sin6->sin6_addr.s6_addr);
     return true;
@@ -41,12 +41,12 @@ bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa)
   return false;
 }
 
-size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
+size_t sockaddr_lwpa_to_plat(struct sockaddr* pfsa, const LwpaSockaddr* sa)
 {
   size_t ret = 0;
   if (lwpaip_is_v4(&sa->ip))
   {
-    struct sockaddr_in *sin = (struct sockaddr_in *)pfsa;
+    struct sockaddr_in* sin = (struct sockaddr_in*)pfsa;
     sin->sin_family = AF_INET;
     sin->sin_port = htons(sa->port);
     sin->sin_addr.s_addr = htonl(lwpaip_v4_address(&sa->ip));
@@ -54,7 +54,7 @@ size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa)
   }
   else if (lwpaip_is_v6(&sa->ip))
   {
-    struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)pfsa;
+    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)pfsa;
     sin6->sin6_family = AF_INET6;
     sin6->sin6_port = htons(sa->port);
     memcpy(sin6->sin6_addr.s6_addr, lwpaip_v6_address(&sa->ip), LWPA_IPV6_BYTES);
@@ -140,7 +140,7 @@ static lwpa_error_t err_plat_to_lwpa(int wsaerror)
 }
 */
 
-lwpa_error_t lwpa_socket_init(void *platform_data)
+lwpa_error_t lwpa_socket_init(void* platform_data)
 {
   return kLwpaErrNotImpl;
 }
@@ -149,7 +149,7 @@ void lwpa_socket_deinit()
 {
 }
 
-lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t *conn_sock)
+lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t* conn_sock)
 {
   /*
   struct sockaddr_storage ss;
@@ -176,7 +176,7 @@ lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t 
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr *address)
+lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr* address)
 {
   /*
   struct sockaddr_storage ss;
@@ -205,7 +205,7 @@ lwpa_error_t lwpa_close(lwpa_socket_t id)
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr *address)
+lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr* address)
 {
   /*
   struct sockaddr_storage ss;
@@ -225,7 +225,7 @@ lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr *address)
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr *address)
+lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr* address)
 {
   /* TODO */
   (void)id;
@@ -233,7 +233,7 @@ lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr *address)
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address)
+lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr* address)
 {
   /*
   int res;
@@ -255,7 +255,7 @@ lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address)
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void *option_value, size_t *option_len)
+lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
   /* TODO */
   (void)id;
@@ -275,7 +275,7 @@ lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog)
   return kLwpaErrNotImpl;
 }
 
-int lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags)
+int lwpa_recv(lwpa_socket_t id, void* buffer, size_t length, int flags)
 {
   /*
   int res;
@@ -290,7 +290,7 @@ int lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags)
   return kLwpaErrNotImpl;
 }
 
-int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, LwpaSockaddr *address)
+int lwpa_recvfrom(lwpa_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address)
 {
   /*
   int res;
@@ -317,7 +317,7 @@ int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, Lwpa
   return kLwpaErrNotImpl;
 }
 
-int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags)
+int lwpa_send(lwpa_socket_t id, const void* message, size_t length, int flags)
 {
   /*
   int res;
@@ -332,7 +332,7 @@ int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags)
   return kLwpaErrNotImpl;
 }
 
-int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags, const LwpaSockaddr *dest_addr)
+int lwpa_sendto(lwpa_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr)
 {
   /*
   int res = -1;
@@ -351,7 +351,7 @@ int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags,
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void *option_value, size_t option_len)
+lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void* option_value, size_t option_len)
 {
   //  int res = -1;
   //
@@ -548,7 +548,7 @@ lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how)
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id)
+lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t* id)
 {
   if (id)
   {
@@ -568,7 +568,7 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
 }
 
 /* TODO move to an overlapped IO implementation on Windows for better performance. */
-int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
+int lwpa_poll(LwpaPollfd* fds, size_t nfds, int timeout_ms)
 {
   //  fd_set readfds, writefds, exceptfds;
   //  LwpaPollfd *fd;
@@ -667,8 +667,8 @@ int lwpa_poll(LwpaPollfd *fds, size_t nfds, int timeout_ms)
   return (int)kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints,
-                              LwpaAddrinfo *result)
+lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
+                              LwpaAddrinfo* result)
 {
   /*
   int res;
@@ -700,7 +700,7 @@ lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const L
   return kLwpaErrNotImpl;
 }
 
-bool lwpa_nextaddr(LwpaAddrinfo *ai)
+bool lwpa_nextaddr(LwpaAddrinfo* ai)
 {
   //  if (ai && ai->pd[1])
   //  {
@@ -736,7 +736,7 @@ bool lwpa_nextaddr(LwpaAddrinfo *ai)
   return false;
 }
 
-void lwpa_freeaddrinfo(LwpaAddrinfo *ai)
+void lwpa_freeaddrinfo(LwpaAddrinfo* ai)
 {
   /*
   if (ai)
@@ -744,7 +744,7 @@ void lwpa_freeaddrinfo(LwpaAddrinfo *ai)
   */
 }
 
-lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
+lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
 {
   if (!src || !dest)
     return kLwpaErrInvalid;
@@ -772,7 +772,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)
   }
 }
 
-lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest)
+lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* dest)
 {
   if (!src || !dest)
     return kLwpaErrInvalid;

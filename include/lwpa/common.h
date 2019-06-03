@@ -38,13 +38,12 @@
  * @{
  */
 
-
 /*! For lwpa_ functions that take a millisecond timeout, this means to wait indefinitely. */
 #define LWPA_WAIT_FOREVER -1
 
 #define LWPA_FEATURE_SOCKETS 0x00000001u
-#define LWPA_FEATURE_TIMERS  0x00000002u
-#define LWPA_FEATURES_ALL    0xffffffffu
+#define LWPA_FEATURE_TIMERS 0x00000002u
+#define LWPA_FEATURES_ALL 0xffffffffu
 
 typedef uint32_t lwpa_features_t;
 

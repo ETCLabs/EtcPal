@@ -25,23 +25,23 @@
 int incrementing_int_array[INT_ARRAY_SIZE];
 
 static int g_alloc_call_count;
-static LwpaRbNode *node_alloc()
+static LwpaRbNode* node_alloc()
 {
   ++g_alloc_call_count;
-  return (LwpaRbNode *)_mem_alloc(sizeof(LwpaRbNode));
+  return (LwpaRbNode*)_mem_alloc(sizeof(LwpaRbNode));
 }
 
 static int g_dealloc_call_count;
-static void node_dealloc(LwpaRbNode *node)
+static void node_dealloc(LwpaRbNode* node)
 {
   ++g_dealloc_call_count;
   _mem_free(node);
 }
 
-static int int_cmp(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node_b)
+static int int_cmp(const LwpaRbTree* self, const LwpaRbNode* node_a, const LwpaRbNode* node_b)
 {
-  int a = *(int *)node_a->value;
-  int b = *(int *)node_b->value;
+  int a = *(int*)node_a->value;
+  int b = *(int*)node_b->value;
   return a - b;
 }
 
@@ -51,9 +51,9 @@ static LwpaRbNode node_pool[INT_ARRAY_SIZE];
 static int g_clearfunc_call_count;
 bool remove_one_flag;
 #define MAGIC_REMOVE_VALUE (INT_ARRAY_SIZE / 2)
-static void clear_func(const LwpaRbTree *self, LwpaRbNode *node)
+static void clear_func(const LwpaRbTree* self, LwpaRbNode* node)
 {
-  if (remove_one_flag && *(int *)node->value == MAGIC_REMOVE_VALUE)
+  if (remove_one_flag && *(int*)node->value == MAGIC_REMOVE_VALUE)
     remove_one_flag = false;
   ++g_clearfunc_call_count;
 }
@@ -80,7 +80,7 @@ bool test_insert_static()
     /* Now, point each node at its respective value and insert it into the tree */
     for (i = 0; i < INT_ARRAY_SIZE; ++i)
     {
-      LwpaRbNode *node = &node_pool[i];
+      LwpaRbNode* node = &node_pool[i];
       ok = (NULL != rb_node_init(node, &intval_pool[i]));
       if (!ok)
         break;
@@ -96,7 +96,7 @@ bool test_insert_static()
   if (ok)
   {
     int to_find = rand() / (RAND_MAX / INT_ARRAY_SIZE + 1);
-    int *found = (int *)rb_tree_find(&tree, &to_find);
+    int* found = (int*)rb_tree_find(&tree, &to_find);
     ok = (found != NULL && *found == to_find);
   }
   if (ok)
@@ -152,7 +152,7 @@ bool test_insert_dynamic()
   if (ok)
   {
     int to_find = rand() / (RAND_MAX / INT_ARRAY_SIZE + 1);
-    int *found = (int *)rb_tree_find(&tree, &to_find);
+    int* found = (int*)rb_tree_find(&tree, &to_find);
     ok = (found != NULL && *found == to_find);
   }
   if (ok)
@@ -174,7 +174,7 @@ bool test_iter()
   int i;
   LwpaRbTree tree;
   LwpaRbIter iter;
-  int *val = NULL;
+  int* val = NULL;
   bool ok;
 
   ok = (NULL != rb_tree_init(&tree, int_cmp, node_alloc, node_dealloc));
@@ -204,7 +204,7 @@ bool test_iter()
     ok = (NULL != rb_iter_init(&iter));
   if (ok)
   {
-    val = (int *)rb_iter_first(&iter, &tree);
+    val = (int*)rb_iter_first(&iter, &tree);
     /* Although the elements were inserted in random order, the tree should be sorted so 0 should be
      * the first value. */
     ok = (*val == 0);
@@ -213,7 +213,7 @@ bool test_iter()
   {
     size_t num_iterations = 1;
     int last_val = *val;
-    while ((val = (int *)rb_iter_next(&iter)))
+    while ((val = (int*)rb_iter_next(&iter)))
     {
       ++num_iterations;
       /* Each value given by the iterator should be numerically higher than the one that came before
@@ -230,7 +230,7 @@ bool test_iter()
   }
   if (ok)
   {
-    val = (int *)rb_iter_last(&iter, &tree);
+    val = (int*)rb_iter_last(&iter, &tree);
     /* Although the elements were inserted in random order, the tree should be sorted so
      * INT_ARRAY_SIZE - 1 should be the last value. */
     ok = (*val == (INT_ARRAY_SIZE - 1));
@@ -239,7 +239,7 @@ bool test_iter()
   {
     size_t num_iterations = 1;
     int last_val = *val;
-    while ((val = (int *)rb_iter_prev(&iter)))
+    while ((val = (int*)rb_iter_prev(&iter)))
     {
       ++num_iterations;
       /* Each value given by the reverse iterator should be numerically smaller than the one that

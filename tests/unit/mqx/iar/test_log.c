@@ -21,14 +21,14 @@
 #include <stdarg.h>
 #include "lwpa_log.h"
 
-static void *expect_context;
+static void* expect_context;
 static bool expect_syslog_str_present, expect_human_str_present;
 static char expect_syslog_str[LWPA_SYSLOG_STR_MAX_LEN];
 static char expect_human_str[LWPA_HUMAN_LOG_STR_MAX_LEN];
 static char expect_raw_str[LWPA_LOG_MSG_MAX_LEN];
 static bool log_passed_flag;
 
-static void log_cb(void *context, const char *syslog_str, const char *human_str, const char *raw_str)
+static void log_cb(void* context, const char* syslog_str, const char* human_str, const char* raw_str)
 {
   if (context != expect_context || !raw_str || 0 != strcmp(raw_str, expect_raw_str) ||
       (expect_syslog_str_present && (!syslog_str || 0 != strcmp(syslog_str, expect_syslog_str))) ||
@@ -47,7 +47,7 @@ static void log_cb(void *context, const char *syslog_str, const char *human_str,
 LwpaLogTimeParams tparams;
 bool time_fn_called;
 
-static void time_cb(void *context, LwpaLogTimeParams *time_params)
+static void time_cb(void* context, LwpaLogTimeParams* time_params)
 {
   (void)context;
   *time_params = tparams;
@@ -228,7 +228,7 @@ bool test_log_intval()
 
 // Used by the following tests. Try using lwpa_vlog() to log various combinations of syslog and
 // human-readable logging.
-bool vlog_helper(LwpaLogParams *lparams, int pri, const char *format, ...)
+bool vlog_helper(LwpaLogParams* lparams, int pri, const char* format, ...)
 {
   va_list args;
   va_start(args, format);
@@ -346,9 +346,9 @@ bool test_log_maxlength()
   LwpaLogParams lparams;
   char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
   char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
-  char *expect_syslog_str_ptr;
-  char *expect_human_str_ptr;
-  char *expect_raw_str_ptr;
+  char* expect_syslog_str_ptr;
+  char* expect_human_str_ptr;
+  char* expect_raw_str_ptr;
 
   init_flags();
 

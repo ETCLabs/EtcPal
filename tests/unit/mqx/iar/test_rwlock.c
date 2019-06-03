@@ -118,7 +118,7 @@ bool test_rwlock_create_destroy()
 static int g_shared_var;
 struct thread_data
 {
-  lwpa_rwlock_t *rwlock;
+  lwpa_rwlock_t* rwlock;
   int thread_num;
   bool done;
   bool passed;
@@ -126,7 +126,7 @@ struct thread_data
 
 void write_test_thread(uint32_t initial_data)
 {
-  struct thread_data *td = (struct thread_data *)initial_data;
+  struct thread_data* td = (struct thread_data*)initial_data;
   int i;
 
   for (i = 0; i < RWLOCK_TEST_NUM_ITERATIONS; ++i)
@@ -141,7 +141,7 @@ void write_test_thread(uint32_t initial_data)
 
 void read_test_thread(uint32_t initial_data)
 {
-  struct thread_data *td = (struct thread_data *)initial_data;
+  struct thread_data* td = (struct thread_data*)initial_data;
   int i;
 
   td->passed = true;

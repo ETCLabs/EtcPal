@@ -54,17 +54,17 @@ static bool sem_take(LWSEM_STRUCT_PTR id, int wait_ms)
   return (MQX_OK == _lwsem_wait_ticks(id, ticks));
 }
 
-bool lwpa_mutex_create(lwpa_mutex_t *id)
+bool lwpa_mutex_create(lwpa_mutex_t* id)
 {
   return sem_create((LWSEM_STRUCT_PTR)id, 1);
 }
 
-bool lwpa_mutex_take(lwpa_mutex_t *id, int wait_ms)
+bool lwpa_mutex_take(lwpa_mutex_t* id, int wait_ms)
 {
   return sem_take(id, wait_ms);
 }
 
-bool lwpa_signal_create(lwpa_signal_t *id)
+bool lwpa_signal_create(lwpa_signal_t* id)
 {
   if (!msec_per_tick_initted)
   {
@@ -75,7 +75,7 @@ bool lwpa_signal_create(lwpa_signal_t *id)
   return (MQX_OK == _lwevent_create((LWEVENT_STRUCT_PTR)id, LWEVENT_AUTO_CLEAR));
 }
 
-bool lwpa_signal_wait(lwpa_signal_t *id, int wait_ms)
+bool lwpa_signal_wait(lwpa_signal_t* id, int wait_ms)
 {
   _mqx_uint ticks = convert_ms_to_ticks(wait_ms);
   if (MQX_OK == _lwevent_wait_ticks((LWEVENT_STRUCT_PTR)id, 1u, true, ticks))
@@ -86,21 +86,21 @@ bool lwpa_signal_wait(lwpa_signal_t *id, int wait_ms)
   return false;
 }
 
-static void atomic_inc(unsigned int *count)
+static void atomic_inc(unsigned int* count)
 {
   _int_disable();
   (*count)++;
   _int_enable();
 }
 
-static void atomic_dec(unsigned int *count)
+static void atomic_dec(unsigned int* count)
 {
   _int_disable();
   (*count)--;
   _int_enable();
 }
 
-bool lwpa_rwlock_create(lwpa_rwlock_t *id)
+bool lwpa_rwlock_create(lwpa_rwlock_t* id)
 {
   if (id && sem_create(&id->sem, 1))
   {
@@ -110,7 +110,7 @@ bool lwpa_rwlock_create(lwpa_rwlock_t *id)
   return false;
 }
 
-bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms)
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms)
 {
   if (!id)
     return false;
@@ -126,13 +126,13 @@ bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms)
   return false;
 }
 
-void lwpa_rwlock_readunlock(lwpa_rwlock_t *id)
+void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)
 {
   if (id)
     atomic_dec(&id->reader_count);
 }
 
-bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms)
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id, int wait_ms)
 {
   uint32_t initial_time;
   TIME_STRUCT tm;
@@ -172,7 +172,7 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms)
   return false;
 }
 
-void lwpa_rwlock_writeunlock(lwpa_rwlock_t *id)
+void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id)
 {
   _lwsem_post(&id->sem);
 }

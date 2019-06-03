@@ -45,7 +45,7 @@ typedef struct
   CRITICAL_SECTION cs;
 } lwpa_mutex_t;
 
-bool lwpa_mutex_create(lwpa_mutex_t *id);
+bool lwpa_mutex_create(lwpa_mutex_t* id);
 #define lwpa_mutex_take(idptr, wait_ms)                                                                          \
   (((idptr) && (idptr)->valid)                                                                                   \
        ? (((wait_ms) == 0) ? TryEnterCriticalSection(&(idptr)->cs) : (EnterCriticalSection(&(idptr)->cs), true)) \
@@ -68,7 +68,7 @@ bool lwpa_mutex_create(lwpa_mutex_t *id);
 
 typedef HANDLE lwpa_signal_t;
 
-bool lwpa_signal_create(lwpa_signal_t *id);
+bool lwpa_signal_create(lwpa_signal_t* id);
 #define lwpa_signal_wait(idptr, wait_ms)                                                                   \
   ((idptr) ? (WAIT_OBJECT_0 ==                                                                             \
               WaitForSingleObject(*(idptr), ((wait_ms) == LWPA_WAIT_FOREVER ? INFINITE : (DWORD)wait_ms))) \
@@ -93,15 +93,15 @@ typedef struct
   LONG reader_count;
 } lwpa_rwlock_t;
 
-bool lwpa_rwlock_create(lwpa_rwlock_t *id);
-bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms);
+bool lwpa_rwlock_create(lwpa_rwlock_t* id);
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms);
 #define lwpa_rwlock_readunlock(idptr)               \
   do                                                \
   {                                                 \
     if (idptr)                                      \
       InterlockedDecrement(&(idptr)->reader_count); \
   } while (0)
-bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms);
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id, int wait_ms);
 #define lwpa_rwlock_writeunlock(idptr)    \
   do                                      \
   {                                       \

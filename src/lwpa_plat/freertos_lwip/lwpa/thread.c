@@ -21,9 +21,9 @@
 
 #define convert_ms_to_ticks(ms) ((ms == LWPA_WAIT_FOREVER) ? portMAX_DELAY : pdMS_TO_TICKS(ms))
 
-static void thread_func_internal(void *pvParameters)
+static void thread_func_internal(void* pvParameters)
 {
-  lwpa_thread_t *thread_data = (lwpa_thread_t *)pvParameters;
+  lwpa_thread_t* thread_data = (lwpa_thread_t*)pvParameters;
   if (thread_data)
   {
     thread_data->fn(thread_data->arg);
@@ -32,7 +32,7 @@ static void thread_func_internal(void *pvParameters)
   vTaskDelete(NULL);
 }
 
-bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg)
+bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;
@@ -51,7 +51,7 @@ bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void 
   return false;
 }
 
-bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms)
+bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms)
 {
   bool res;
 

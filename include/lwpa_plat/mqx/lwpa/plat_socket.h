@@ -39,8 +39,8 @@ extern "C" {
 #define ip_plat_to_lwpa_v6(lwpaipptr, pfipptr) lwpaip_set_v6_address((lwpaipptr), (pfipptr)->s6_addr)
 #define ip_lwpa_to_plat_v6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, lwpaip_v6_address(lwpaipptr), IPV6_BYTES)
 
-bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa);
-size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa);
+bool sockaddr_plat_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa);
+size_t sockaddr_lwpa_to_plat(struct sockaddr* pfsa, const LwpaSockaddr* sa);
 
 #ifdef __cplusplus
 }

@@ -21,7 +21,7 @@
 #include "lwpa/int.h"
 #include "mmsystem.h"
 
-bool lwpa_mutex_create(lwpa_mutex_t *id)
+bool lwpa_mutex_create(lwpa_mutex_t* id)
 {
   if (id)
   {
@@ -32,7 +32,7 @@ bool lwpa_mutex_create(lwpa_mutex_t *id)
   return false;
 }
 
-bool lwpa_signal_create(lwpa_signal_t *id)
+bool lwpa_signal_create(lwpa_signal_t* id)
 {
   if (id)
   {
@@ -43,7 +43,7 @@ bool lwpa_signal_create(lwpa_signal_t *id)
   return false;
 }
 
-bool lwpa_rwlock_create(lwpa_rwlock_t *id)
+bool lwpa_rwlock_create(lwpa_rwlock_t* id)
 {
   if (id)
   {
@@ -55,7 +55,7 @@ bool lwpa_rwlock_create(lwpa_rwlock_t *id)
   return false;
 }
 
-bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms)
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms)
 {
   (void)wait_ms;
   if (id && id->valid)
@@ -68,7 +68,7 @@ bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms)
   return false;
 }
 
-bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms)
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id, int wait_ms)
 {
   DWORD initial_time;
 

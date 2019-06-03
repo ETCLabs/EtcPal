@@ -23,12 +23,12 @@
 
 #define convert_ms_to_ticks(ms) ((ms == LWPA_WAIT_FOREVER) ? portMAX_DELAY : pdMS_TO_TICKS(ms))
 
-bool lwpa_mutex_create(lwpa_mutex_t *id)
+bool lwpa_mutex_create(lwpa_mutex_t* id)
 {
   return id ? ((*id = (lwpa_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
 }
 
-bool lwpa_mutex_take(lwpa_mutex_t *id, int wait_ms)
+bool lwpa_mutex_take(lwpa_mutex_t* id, int wait_ms)
 {
   if (id)
   {
@@ -38,13 +38,13 @@ bool lwpa_mutex_take(lwpa_mutex_t *id, int wait_ms)
   return false;
 }
 
-void lwpa_mutex_give(lwpa_mutex_t *id)
+void lwpa_mutex_give(lwpa_mutex_t* id)
 {
   if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
-void lwpa_mutex_destroy(lwpa_mutex_t *id)
+void lwpa_mutex_destroy(lwpa_mutex_t* id)
 {
   if (id && *id)
   {
@@ -53,23 +53,23 @@ void lwpa_mutex_destroy(lwpa_mutex_t *id)
   }
 }
 
-bool lwpa_signal_create(lwpa_signal_t *id)
+bool lwpa_signal_create(lwpa_signal_t* id)
 {
   return id ? ((*id = (lwpa_signal_t)xSemaphoreCreateBinary()) != NULL) : false;
 }
 
-bool lwpa_signal_wait(lwpa_signal_t *id, int wait_ms)
+bool lwpa_signal_wait(lwpa_signal_t* id, int wait_ms)
 {
   return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, convert_ms_to_ticks(wait_ms))) : false;
 }
 
-void lwpa_signal_post(lwpa_signal_t *id)
+void lwpa_signal_post(lwpa_signal_t* id)
 {
   if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
-void lwpa_signal_destroy(lwpa_signal_t *id)
+void lwpa_signal_destroy(lwpa_signal_t* id)
 {
   if (id && *id)
   {
@@ -78,21 +78,21 @@ void lwpa_signal_destroy(lwpa_signal_t *id)
   }
 }
 
-static void atomic_inc(unsigned int *count)
+static void atomic_inc(unsigned int* count)
 {
   portENTER_CRITICAL();
   (*count)++;
   portEXIT_CRITICAL();
 }
 
-static void atomic_dec(unsigned int *count)
+static void atomic_dec(unsigned int* count)
 {
   portENTER_CRITICAL();
   (*count)--;
   portEXIT_CRITICAL();
 }
 
-bool lwpa_rwlock_create(lwpa_rwlock_t *id)
+bool lwpa_rwlock_create(lwpa_rwlock_t* id)
 {
   if (id && (NULL != (id->sem = xSemaphoreCreateMutex())))
   {
@@ -102,7 +102,7 @@ bool lwpa_rwlock_create(lwpa_rwlock_t *id)
   return false;
 }
 
-bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms)
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms)
 {
   if (!id || !id->sem)
     return false;
@@ -118,13 +118,13 @@ bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms)
   return false;
 }
 
-void lwpa_rwlock_readunlock(lwpa_rwlock_t *id)
+void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)
 {
   if (id && id->sem)
     atomic_dec(&id->reader_count);
 }
 
-bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms)
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id, int wait_ms)
 {
   TickType_t initial_time;
 
@@ -162,13 +162,13 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms)
   return false;
 }
 
-void lwpa_rwlock_writeunlock(lwpa_rwlock_t *id)
+void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id)
 {
   if (id && id->sem)
     xSemaphoreGive(id->sem);
 }
 
-void lwpa_rwlock_destroy(lwpa_rwlock_t *id)
+void lwpa_rwlock_destroy(lwpa_rwlock_t* id)
 {
   if (id && id->sem)
   {

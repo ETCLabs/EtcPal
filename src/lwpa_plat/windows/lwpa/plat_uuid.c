@@ -26,7 +26,7 @@
 // Use Windows APIs to generate UUIDs.
 // https://docs.microsoft.com/en-us/windows/desktop/api/rpcdce/nf-rpcdce-uuidcreate
 
-lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -46,7 +46,7 @@ lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
   }
 }
 
-lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -66,7 +66,7 @@ lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
   }
 }
 
-lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid)
 {
   return lwpa_generate_v4_uuid(uuid);
 }

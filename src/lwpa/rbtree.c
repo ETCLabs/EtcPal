@@ -38,7 +38,7 @@
 
 /* lwpa_rbnode */
 
-static LwpaRbNode *lwpa_rbnode_alloc(LwpaRbTree *tree)
+static LwpaRbNode* lwpa_rbnode_alloc(LwpaRbTree* tree)
 {
   if (tree && tree->alloc_f)
     return tree->alloc_f();
@@ -55,7 +55,7 @@ static LwpaRbNode *lwpa_rbnode_alloc(LwpaRbTree *tree)
  *  \param[in] value Pointer to the value to assign to the node.
  *  \return Pointer to the node that was initialized.
  */
-LwpaRbNode *lwpa_rbnode_init(LwpaRbNode *self, void *value)
+LwpaRbNode* lwpa_rbnode_init(LwpaRbNode* self, void* value)
 {
   if (self)
   {
@@ -66,12 +66,12 @@ LwpaRbNode *lwpa_rbnode_init(LwpaRbNode *self, void *value)
   return self;
 }
 
-static LwpaRbNode *rb_node_create(LwpaRbTree *tree, void *value)
+static LwpaRbNode* rb_node_create(LwpaRbTree* tree, void* value)
 {
   return lwpa_rbnode_init(lwpa_rbnode_alloc(tree), value);
 }
 
-static void rb_node_dealloc(LwpaRbNode *self, const LwpaRbTree *tree)
+static void rb_node_dealloc(LwpaRbNode* self, const LwpaRbTree* tree)
 {
   if (self && tree && tree->dealloc_f)
   {
@@ -79,14 +79,14 @@ static void rb_node_dealloc(LwpaRbNode *self, const LwpaRbTree *tree)
   }
 }
 
-static int rb_node_is_red(const LwpaRbNode *self)
+static int rb_node_is_red(const LwpaRbNode* self)
 {
   return self ? self->red : 0;
 }
 
-static LwpaRbNode *rb_node_rotate(LwpaRbNode *self, int dir)
+static LwpaRbNode* rb_node_rotate(LwpaRbNode* self, int dir)
 {
-  LwpaRbNode *result = NULL;
+  LwpaRbNode* result = NULL;
   if (self)
   {
     result = self->link[!dir];
@@ -98,9 +98,9 @@ static LwpaRbNode *rb_node_rotate(LwpaRbNode *self, int dir)
   return result;
 }
 
-static LwpaRbNode *rb_node_rotate2(LwpaRbNode *self, int dir)
+static LwpaRbNode* rb_node_rotate2(LwpaRbNode* self, int dir)
 {
-  LwpaRbNode *result = NULL;
+  LwpaRbNode* result = NULL;
   if (self)
   {
     self->link[!dir] = rb_node_rotate(self->link[!dir], !dir);
@@ -116,7 +116,7 @@ static LwpaRbNode *rb_node_rotate2(LwpaRbNode *self, int dir)
  *  This function can be supplied as an argument to any function that takes a
  *  #lwpa_rbtree_node_cmp_f. Simply compares the pointer addresses of the two node values.
  */
-int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree *self, const LwpaRbNode *a, const LwpaRbNode *b)
+int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b)
 {
   (void)self;
   return (a->value > b->value) - (a->value < b->value);
@@ -127,7 +127,7 @@ int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree *self, const LwpaRbNode *a, con
  *  This function can be supplied as an argument to any function that takes a #lwpa_rbtree_node_f.
  *  Simply deallocates the node using the tree's dealloc_f.
  */
-void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree *self, LwpaRbNode *node)
+void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node)
 {
   rb_node_dealloc(node, self);
 }
@@ -145,7 +145,7 @@ void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree *self, LwpaRbNode *node)
  *  \param[in] dealloc_f A function to use for deallocating node structures.
  *  \return Pointer to the tree that was initialized.
  */
-LwpaRbTree *lwpa_rbtree_init(LwpaRbTree *self, lwpa_rbtree_node_cmp_f node_cmp_cb, lwpa_rbnode_alloc_f alloc_f,
+LwpaRbTree* lwpa_rbtree_init(LwpaRbTree* self, lwpa_rbtree_node_cmp_f node_cmp_cb, lwpa_rbnode_alloc_f alloc_f,
                              lwpa_rbnode_dealloc_f dealloc_f)
 {
   if (self)
@@ -168,13 +168,13 @@ LwpaRbTree *lwpa_rbtree_init(LwpaRbTree *self, lwpa_rbtree_node_cmp_f node_cmp_c
  *  \param[in] value Value to find.
  *  \return Pointer to the value (value found) or NULL (value not found).
  */
-void *lwpa_rbtree_find(LwpaRbTree *self, void *value)
+void* lwpa_rbtree_find(LwpaRbTree* self, void* value)
 {
-  void *result = NULL;
+  void* result = NULL;
   if (self)
   {
     LwpaRbNode node;
-    LwpaRbNode *it = self->root;
+    LwpaRbNode* it = self->root;
     int cmp = 0;
 
     node.value = value;
@@ -207,7 +207,7 @@ void *lwpa_rbtree_find(LwpaRbTree *self, void *value)
  *  \return 1 (the value was inserted or the value already existed in the tree) or 0 (an error
  *          occurred).
  */
-int lwpa_rbtree_insert(LwpaRbTree *self, void *value)
+int lwpa_rbtree_insert(LwpaRbTree* self, void* value)
 {
   return lwpa_rbtree_insert_node(self, rb_node_create(self, value));
 }
@@ -224,7 +224,7 @@ int lwpa_rbtree_insert(LwpaRbTree *self, void *value)
  *  \return 1 (the value was inserted or the value already existed in the tree) or 0 (an error
  *          occurred).
  */
-int lwpa_rbtree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
+int lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
 {
   int result = 0;
   if (self && node)
@@ -313,7 +313,7 @@ int lwpa_rbtree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
  *  \return 1 (the value was removed) or 0 (the value did not exist in the tree or an error
  *          occurred).
  */
-int lwpa_rbtree_remove(LwpaRbTree *self, void *value)
+int lwpa_rbtree_remove(LwpaRbTree* self, void* value)
 {
   int result = 0;
   if (self)
@@ -334,12 +334,12 @@ int lwpa_rbtree_remove(LwpaRbTree *self, void *value)
  *  \return 1 (the value was removed) or 0 (the value did not exist in the tree or an error
  *          occurred).
  */
-int lwpa_rbtree_remove_with_cb(LwpaRbTree *self, void *value, lwpa_rbtree_node_f node_cb)
+int lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb)
 {
   LwpaRbNode head = {0}; /* False tree root */
   LwpaRbNode node;       /* Value wrapper node */
   LwpaRbNode *q, *p, *g; /* Helpers */
-  LwpaRbNode *f = NULL;  /* Found item */
+  LwpaRbNode* f = NULL;  /* Found item */
   int dir = 1;
 
   if (!self || self->root == NULL)
@@ -379,7 +379,7 @@ int lwpa_rbtree_remove_with_cb(LwpaRbTree *self, void *value, lwpa_rbtree_node_f
       }
       else if (!rb_node_is_red(q->link[!dir]))
       {
-        LwpaRbNode *s = p->link[!last];
+        LwpaRbNode* s = p->link[!last];
         if (s)
         {
           if (!rb_node_is_red(s->link[!last]) && !rb_node_is_red(s->link[last]))
@@ -410,7 +410,7 @@ int lwpa_rbtree_remove_with_cb(LwpaRbTree *self, void *value, lwpa_rbtree_node_f
   /* Replace and remove the saved node */
   if (f)
   {
-    void *tmp = f->value;
+    void* tmp = f->value;
     f->value = q->value;
     q->value = tmp;
 
@@ -440,7 +440,7 @@ int lwpa_rbtree_remove_with_cb(LwpaRbTree *self, void *value, lwpa_rbtree_node_f
  *  \param[in] self Tree to clear.
  *  \return 1 (the tree was cleared) or 0 (an error occurred).
  */
-int lwpa_rbtree_clear(LwpaRbTree *self)
+int lwpa_rbtree_clear(LwpaRbTree* self)
 {
   int result = 0;
   if (self)
@@ -458,13 +458,13 @@ int lwpa_rbtree_clear(LwpaRbTree *self)
  *  \param[in] node_cb Callback function to call with each node and value being removed.
  *  \return 1 (the tree was cleared) or 0 (an error occurred).
  */
-int lwpa_rbtree_clear_with_cb(LwpaRbTree *self, lwpa_rbtree_node_f node_cb)
+int lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb)
 {
   int result = 0;
   if (self && node_cb)
   {
-    LwpaRbNode *node = self->root;
-    LwpaRbNode *save = NULL;
+    LwpaRbNode* node = self->root;
+    LwpaRbNode* save = NULL;
 
     /* Rotate away the left links so that we can treat this like the destruction of a linked list */
     while (node)
@@ -496,7 +496,7 @@ int lwpa_rbtree_clear_with_cb(LwpaRbTree *self, lwpa_rbtree_node_f node_cb)
  *  \param[in] self The tree of which to get the size.
  *  \return The number of values currently in the tree.
  */
-size_t lwpa_rbtree_size(LwpaRbTree *self)
+size_t lwpa_rbtree_size(LwpaRbTree* self)
 {
   size_t result = 0;
   if (self)
@@ -513,7 +513,7 @@ size_t lwpa_rbtree_size(LwpaRbTree *self)
  *  \param[in] root Node at which to start the test. All nodes beneath this node will be tested.
  *  \return 1 (no violations were found) or 0 (a violation was found).
  */
-int lwpa_rbtree_test(LwpaRbTree *self, LwpaRbNode *root)
+int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
 {
   int lh, rh;
 
@@ -523,8 +523,8 @@ int lwpa_rbtree_test(LwpaRbTree *self, LwpaRbNode *root)
   }
   else
   {
-    LwpaRbNode *ln = root->link[0];
-    LwpaRbNode *rn = root->link[1];
+    LwpaRbNode* ln = root->link[0];
+    LwpaRbNode* rn = root->link[1];
 
     /* Consecutive red links */
     if (rb_node_is_red(root))
@@ -568,7 +568,7 @@ int lwpa_rbtree_test(LwpaRbTree *self, LwpaRbNode *root)
  *  \param[in] self The iterator to be initialized.
  *  \return Pointer to the iterator that was initialized.
  */
-LwpaRbIter *lwpa_rbiter_init(LwpaRbIter *self)
+LwpaRbIter* lwpa_rbiter_init(LwpaRbIter* self)
 {
   if (self)
   {
@@ -581,9 +581,9 @@ LwpaRbIter *lwpa_rbiter_init(LwpaRbIter *self)
 
 /* Internal function, init traversal object, dir determines whether to begin traversal at the
  * smallest or largest valued node. */
-static void *rb_iter_start(LwpaRbIter *self, LwpaRbTree *tree, int dir)
+static void* rb_iter_start(LwpaRbIter* self, LwpaRbTree* tree, int dir)
 {
-  void *result = NULL;
+  void* result = NULL;
   if (self)
   {
     self->tree = tree;
@@ -606,7 +606,7 @@ static void *rb_iter_start(LwpaRbIter *self, LwpaRbTree *tree, int dir)
 }
 
 /* Traverse a red black tree in the user-specified direction (0 asc, 1 desc) */
-static void *rb_iter_move(LwpaRbIter *self, int dir)
+static void* rb_iter_move(LwpaRbIter* self, int dir)
 {
   if (self->node->link[dir] != NULL)
   {
@@ -622,7 +622,7 @@ static void *rb_iter_move(LwpaRbIter *self, int dir)
   else
   {
     /* Move to the next branch */
-    LwpaRbNode *last = NULL;
+    LwpaRbNode* last = NULL;
     do
     {
       if (self->top == 0)
@@ -646,7 +646,7 @@ static void *rb_iter_move(LwpaRbIter *self, int dir)
  *  \param[in] tree Tree of which to get the first value.
  *  \return Pointer to the first value or NULL (the tree was empty or invalid).
  */
-void *lwpa_rbiter_first(LwpaRbIter *self, LwpaRbTree *tree)
+void* lwpa_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree)
 {
   return rb_iter_start(self, tree, 0);
 }
@@ -660,7 +660,7 @@ void *lwpa_rbiter_first(LwpaRbIter *self, LwpaRbTree *tree)
  *  \param[in] tree Tree of which to get the last value.
  *  \return Pointer to the last value or NULL (the tree was empty or invalid).
  */
-void *lwpa_rbiter_last(LwpaRbIter *self, LwpaRbTree *tree)
+void* lwpa_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree)
 {
   return rb_iter_start(self, tree, 1);
 }
@@ -673,7 +673,7 @@ void *lwpa_rbiter_last(LwpaRbIter *self, LwpaRbTree *tree)
  *  \param[in] self Iterator to advance.
  *  \return Pointer to next higher value, or NULL (the end of the tree has been reached).
  */
-void *lwpa_rbiter_next(LwpaRbIter *self)
+void* lwpa_rbiter_next(LwpaRbIter* self)
 {
   return rb_iter_move(self, 1);
 }
@@ -686,7 +686,7 @@ void *lwpa_rbiter_next(LwpaRbIter *self)
  *  \param[in] self Iterator to reverse-advance.
  *  \return Pointer to next lower value, or NULL (the beginning of the tree has been reached).
  */
-void *lwpa_rbiter_prev(LwpaRbIter *self)
+void* lwpa_rbiter_prev(LwpaRbIter* self)
 {
   return rb_iter_move(self, 0);
 }

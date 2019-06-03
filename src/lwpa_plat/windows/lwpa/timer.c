@@ -26,7 +26,7 @@ uint32_t lwpa_getms()
   return timeGetTime();
 }
 
-uint32_t lwpa_timer_remaining(const LwpaTimer *timer)
+uint32_t lwpa_timer_remaining(const LwpaTimer* timer)
 {
   uint32_t res = 0;
   if (timer->interval != 0)

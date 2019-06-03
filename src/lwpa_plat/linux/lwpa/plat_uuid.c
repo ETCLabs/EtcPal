@@ -24,7 +24,7 @@
 // Use Linux APIs to generate UUIDs.
 // https://linux.die.net/man/3/uuid_generate
 
-lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -35,7 +35,7 @@ lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
   return kLwpaErrOk;
 }
 
-lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -46,7 +46,7 @@ lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
   return kLwpaErrOk;
 }
 
-lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;

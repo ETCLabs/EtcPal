@@ -24,10 +24,10 @@
 class PackTest : public ::testing::Test
 {
 protected:
-  bool test_pack16b(uint8_t *buffer)
+  bool test_pack16b(uint8_t* buffer)
   {
     const uint16_t tst = 0x1234;
-    const uint8_t *ptst = (const uint8_t *)(&tst);
+    const uint8_t* ptst = (const uint8_t*)(&tst);
     memset(buffer, 0, sizeof(uint16_t));
 
     lwpa_pack_16b(buffer, tst);
@@ -36,10 +36,10 @@ protected:
     return false;
   }
 
-  bool test_pack16l(uint8_t *buffer)
+  bool test_pack16l(uint8_t* buffer)
   {
     const uint16_t tst = 0x1234;
-    const uint8_t *ptst = (const uint8_t *)(&tst);
+    const uint8_t* ptst = (const uint8_t*)(&tst);
     memset(buffer, 0, sizeof(uint16_t));
 
     lwpa_pack_16l(buffer, tst);
@@ -48,7 +48,7 @@ protected:
     return false;
   }
 
-  bool test_upack16b(uint8_t *buffer)
+  bool test_upack16b(uint8_t* buffer)
   {
     const uint16_t tst = 0x1234;
     uint16_t var;
@@ -61,7 +61,7 @@ protected:
     return false;
   }
 
-  bool test_upack16l(uint8_t *buffer)
+  bool test_upack16l(uint8_t* buffer)
   {
     const uint16_t tst = 0x1234;
     uint16_t var;
@@ -74,10 +74,10 @@ protected:
     return false;
   }
 
-  bool test_pack32b(uint8_t *buffer)
+  bool test_pack32b(uint8_t* buffer)
   {
     const uint32_t tst = 0x12345678;
-    const uint8_t *ptst = (const uint8_t *)(&tst);
+    const uint8_t* ptst = (const uint8_t*)(&tst);
     memset(buffer, 0, sizeof(uint32_t));
 
     lwpa_pack_32b(buffer, tst);
@@ -88,10 +88,10 @@ protected:
     return false;
   }
 
-  bool test_pack32l(uint8_t *buffer)
+  bool test_pack32l(uint8_t* buffer)
   {
     const uint32_t tst = 0x12345678;
-    const uint8_t *ptst = (const uint8_t *)(&tst);
+    const uint8_t* ptst = (const uint8_t*)(&tst);
     memset(buffer, 0, sizeof(uint32_t));
 
     lwpa_pack_32l(buffer, tst);
@@ -102,7 +102,7 @@ protected:
     return false;
   }
 
-  bool test_upack32b(uint8_t *buffer)
+  bool test_upack32b(uint8_t* buffer)
   {
     const uint32_t tst = 0x12345678;
     uint32_t var;
@@ -115,7 +115,7 @@ protected:
     return false;
   }
 
-  bool test_upack32l(uint8_t *buffer)
+  bool test_upack32l(uint8_t* buffer)
   {
     const uint32_t tst = 0x12345678;
     uint32_t var;
@@ -128,10 +128,10 @@ protected:
     return false;
   }
 
-  bool test_pack64b(uint8_t *buffer)
+  bool test_pack64b(uint8_t* buffer)
   {
     const uint64_t tst = 0x1234567890abcdef;
-    const uint8_t *ptst = (const uint8_t *)(&tst);
+    const uint8_t* ptst = (const uint8_t*)(&tst);
     memset(buffer, 0, sizeof(uint64_t));
 
     lwpa_pack_64b(buffer, tst);
@@ -143,10 +143,10 @@ protected:
     return false;
   }
 
-  bool test_pack64l(uint8_t *buffer)
+  bool test_pack64l(uint8_t* buffer)
   {
     const uint64_t tst = 0x1234567890abcdef;
-    const uint8_t *ptst = (const uint8_t *)(&tst);
+    const uint8_t* ptst = (const uint8_t*)(&tst);
     memset(buffer, 0, sizeof(uint64_t));
 
     lwpa_pack_64l(buffer, tst);
@@ -158,7 +158,7 @@ protected:
     return false;
   }
 
-  bool test_upack64b(uint8_t *buffer)
+  bool test_upack64b(uint8_t* buffer)
   {
     const uint64_t tst = 0x1234567890abcdef;
     uint64_t var;
@@ -171,7 +171,7 @@ protected:
     return false;
   }
 
-  bool test_upack64l(uint8_t *buffer)
+  bool test_upack64l(uint8_t* buffer)
   {
     const uint64_t tst = 0x1234567890abcdef;
     uint64_t var;

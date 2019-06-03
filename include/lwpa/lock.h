@@ -53,7 +53,7 @@ namespace lwpa
 class MutexGuard
 {
 public:
-  explicit MutexGuard(lwpa_mutex_t &mutex) : mutex_(mutex)
+  explicit MutexGuard(lwpa_mutex_t& mutex) : mutex_(mutex)
   {
     if (!lwpa_mutex_take(&mutex_, LWPA_WAIT_FOREVER))
       throw std::runtime_error("lwpa_mutex_take failed.");
@@ -61,7 +61,7 @@ public:
   ~MutexGuard() { lwpa_mutex_give(&mutex_); }
 
 private:
-  lwpa_mutex_t &mutex_;
+  lwpa_mutex_t& mutex_;
 };
 
 /// \brief Read lock guard around an \ref lwpa_rwlock.
@@ -80,7 +80,7 @@ private:
 class ReadGuard
 {
 public:
-  explicit ReadGuard(lwpa_rwlock_t &rwlock) : rwlock_(rwlock)
+  explicit ReadGuard(lwpa_rwlock_t& rwlock) : rwlock_(rwlock)
   {
     if (!lwpa_rwlock_readlock(&rwlock_, LWPA_WAIT_FOREVER))
       throw std::runtime_error("lwpa_rwlock_readlock failed.");
@@ -88,7 +88,7 @@ public:
   ~ReadGuard() { lwpa_rwlock_readunlock(&rwlock_); }
 
 private:
-  lwpa_rwlock_t &rwlock_;
+  lwpa_rwlock_t& rwlock_;
 };
 
 /// \brief Write lock guard around an \ref lwpa_rwlock.
@@ -107,7 +107,7 @@ private:
 class WriteGuard
 {
 public:
-  explicit WriteGuard(lwpa_rwlock_t &rwlock) : rwlock_(rwlock)
+  explicit WriteGuard(lwpa_rwlock_t& rwlock) : rwlock_(rwlock)
   {
     if (!lwpa_rwlock_writelock(&rwlock_, LWPA_WAIT_FOREVER))
       throw std::runtime_error("lwpa_rwlock_writelock failed.");
@@ -115,7 +115,7 @@ public:
   ~WriteGuard() { lwpa_rwlock_writeunlock(&rwlock_); }
 
 private:
-  lwpa_rwlock_t &rwlock_;
+  lwpa_rwlock_t& rwlock_;
 };
 
 /// @}

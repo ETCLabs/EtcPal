@@ -75,7 +75,7 @@ typedef struct LwpaRbTree LwpaRbTree;
  *            0 (node_a's value is equal to node_b's value)\n
  *          > 0 (node_a's value is greater than node_b's value)
  */
-typedef int (*lwpa_rbtree_node_cmp_f)(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node_b);
+typedef int (*lwpa_rbtree_node_cmp_f)(const LwpaRbTree* self, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
 
 /*! \brief A function type to be called for each node in a tree.
  *
@@ -87,7 +87,7 @@ typedef int (*lwpa_rbtree_node_cmp_f)(const LwpaRbTree *self, const LwpaRbNode *
  *  \param[in] self The tree in which the node resides.
  *  \param[in] node The node for which an action should be performed.
  */
-typedef void (*lwpa_rbtree_node_f)(const LwpaRbTree *self, LwpaRbNode *node);
+typedef void (*lwpa_rbtree_node_f)(const LwpaRbTree* self, LwpaRbNode* node);
 
 /*! \brief A function type to allocate a new node.
  *
@@ -97,7 +97,7 @@ typedef void (*lwpa_rbtree_node_f)(const LwpaRbTree *self, LwpaRbNode *node);
  *
  *  \return Pointer to the newly allocated node.
  */
-typedef LwpaRbNode *(*lwpa_rbnode_alloc_f)();
+typedef LwpaRbNode* (*lwpa_rbnode_alloc_f)();
 
 /*! \brief A function type to deallocate a node.
  *
@@ -107,7 +107,7 @@ typedef LwpaRbNode *(*lwpa_rbnode_alloc_f)();
  *
  *  \param[in] node Pointer to node to deallocate.
  */
-typedef void (*lwpa_rbnode_dealloc_f)(LwpaRbNode *node);
+typedef void (*lwpa_rbnode_dealloc_f)(LwpaRbNode* node);
 
 /*!@}*/
 
@@ -115,8 +115,8 @@ typedef void (*lwpa_rbnode_dealloc_f)(LwpaRbNode *node);
 struct LwpaRbNode
 {
   int red;             /*!< The node color: red (1), black (0) */
-  LwpaRbNode *link[2]; /*!< Child node links: left [0], right [1] */
-  void *value;         /*!< The value object represented by this node. */
+  LwpaRbNode* link[2]; /*!< Child node links: left [0], right [1] */
+  void* value;         /*!< The value object represented by this node. */
 };
 
 /*! \brief A red-black tree.
@@ -125,12 +125,12 @@ struct LwpaRbNode
  */
 struct LwpaRbTree
 {
-  LwpaRbNode *root;                /*!< The root node of the tree. */
+  LwpaRbNode* root;                /*!< The root node of the tree. */
   lwpa_rbtree_node_cmp_f cmp;      /*!< A function to use for comparing two nodes. */
   size_t size;                     /*!< The current count of nodes in the tree. */
   lwpa_rbnode_alloc_f alloc_f;     /*!< A function to use for allocating a new node.*/
   lwpa_rbnode_dealloc_f dealloc_f; /*!< A function to use for deallocating a node. */
-  void *info;                      /*!< User provided, not used by lwpa_rbtree. */
+  void* info;                      /*!< User provided, not used by lwpa_rbtree. */
 };
 
 /*! \brief A red-black tree iterator.
@@ -139,41 +139,41 @@ struct LwpaRbTree
  */
 typedef struct LwpaRbIter
 {
-  LwpaRbTree *tree;                          /*!< The tree being iterated over. */
-  LwpaRbNode *node;                          /*!< The current node. */
-  LwpaRbNode *path[LWPA_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
+  LwpaRbTree* tree;                          /*!< The tree being iterated over. */
+  LwpaRbNode* node;                          /*!< The current node. */
+  LwpaRbNode* path[LWPA_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
   size_t top;                                /*!< Top of the traversal stack. */
-  void *info;                                /*!< User provided, not used by lwpa_rbiter. */
+  void* info;                                /*!< User provided, not used by lwpa_rbiter. */
 } LwpaRbIter;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree *self, const LwpaRbNode *a, const LwpaRbNode *b);
-void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree *self, LwpaRbNode *node);
+int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b);
+void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node);
 
-LwpaRbNode *lwpa_rbnode_init(LwpaRbNode *self, void *value);
+LwpaRbNode* lwpa_rbnode_init(LwpaRbNode* self, void* value);
 
-LwpaRbTree *lwpa_rbtree_init(LwpaRbTree *self, lwpa_rbtree_node_cmp_f cmp, lwpa_rbnode_alloc_f alloc_f,
+LwpaRbTree* lwpa_rbtree_init(LwpaRbTree* self, lwpa_rbtree_node_cmp_f cmp, lwpa_rbnode_alloc_f alloc_f,
                              lwpa_rbnode_dealloc_f dealloc_f);
-void *lwpa_rbtree_find(LwpaRbTree *self, void *value);
-int lwpa_rbtree_insert(LwpaRbTree *self, void *value);
-int lwpa_rbtree_remove(LwpaRbTree *self, void *value);
-int lwpa_rbtree_clear(LwpaRbTree *self);
-size_t lwpa_rbtree_size(LwpaRbTree *self);
+void* lwpa_rbtree_find(LwpaRbTree* self, void* value);
+int lwpa_rbtree_insert(LwpaRbTree* self, void* value);
+int lwpa_rbtree_remove(LwpaRbTree* self, void* value);
+int lwpa_rbtree_clear(LwpaRbTree* self);
+size_t lwpa_rbtree_size(LwpaRbTree* self);
 
-int lwpa_rbtree_insert_node(LwpaRbTree *self, LwpaRbNode *node);
-int lwpa_rbtree_remove_with_cb(LwpaRbTree *self, void *value, lwpa_rbtree_node_f node_cb);
-int lwpa_rbtree_clear_with_cb(LwpaRbTree *self, lwpa_rbtree_node_f node_cb);
+int lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node);
+int lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb);
+int lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb);
 
-int lwpa_rbtree_test(LwpaRbTree *self, LwpaRbNode *root);
+int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root);
 
-LwpaRbIter *lwpa_rbiter_init(LwpaRbIter *self);
-void *lwpa_rbiter_first(LwpaRbIter *self, LwpaRbTree *tree);
-void *lwpa_rbiter_last(LwpaRbIter *self, LwpaRbTree *tree);
-void *lwpa_rbiter_next(LwpaRbIter *self);
-void *lwpa_rbiter_prev(LwpaRbIter *self);
+LwpaRbIter* lwpa_rbiter_init(LwpaRbIter* self);
+void* lwpa_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree);
+void* lwpa_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree);
+void* lwpa_rbiter_next(LwpaRbIter* self);
+void* lwpa_rbiter_prev(LwpaRbIter* self);
 
 #ifdef __cplusplus
 }

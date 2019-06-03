@@ -39,12 +39,11 @@ typedef int lwpa_socket_t;
 extern "C" {
 #endif
 
-bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa);
-size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa);
+bool sockaddr_plat_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa);
+size_t sockaddr_lwpa_to_plat(struct sockaddr* pfsa, const LwpaSockaddr* sa);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* _LWPA_PLAT_SOCKET_H_ */
-

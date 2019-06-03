@@ -40,9 +40,9 @@ const LwpaUuid kLwpaNullUuid = {{0}};
  *                  behavior, this buffer should be at least of size #LWPA_UUID_STRING_BYTES.
  *  \param[in] uuid UUID to convert to a string.
  */
-void lwpa_uuid_to_string(char *buf, const LwpaUuid *uuid)
+void lwpa_uuid_to_string(char* buf, const LwpaUuid* uuid)
 {
-  const uint8_t *c = uuid->data;
+  const uint8_t* c = uuid->data;
 
   /* Automatically suppresses MSVC warning - minimum buffer size is well documented and cannot be
    * exceeded by this format string. */
@@ -61,11 +61,11 @@ void lwpa_uuid_to_string(char *buf, const LwpaUuid *uuid)
  *  \param[in] buflen Size in bytes of buf.
  *  \return true (parse successful) or false (parse failure).
  */
-bool lwpa_string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen)
+bool lwpa_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
 {
-  const char *from_ptr = buf;
+  const char* from_ptr = buf;
   uint8_t to_buf[LWPA_UUID_BYTES];
-  uint8_t *to_ptr = to_buf;
+  uint8_t* to_ptr = to_buf;
   bool first = true; /* Whether we are doing the first or second nibble of the byte */
 
   if (!uuid || !buf || buflen == 0)
@@ -129,7 +129,7 @@ bool lwpa_string_to_uuid(LwpaUuid *uuid, const char *buf, size_t buflen)
  */
 
 /* Quick utility for generating a uuid out of a md5 hash buffer */
-static void generate_from_hash(LwpaUuid *uuid_out, MD5_CTX *pmd5)
+static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
 {
   uint8_t buffer[LWPA_UUID_BYTES];
   MD5Final(buffer, pmd5);
@@ -162,7 +162,7 @@ static void generate_from_hash(LwpaUuid *uuid_out, MD5_CTX *pmd5)
  *  \return #kLwpaErrOk: UUID generated successfully.\n
  *          #kLwpaErrInvalid: Invalid argument provided.
  */
-lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)
+lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
 {
   MD5_CTX md5;
   uint8_t num[4];
@@ -176,9 +176,9 @@ lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid *uuid, const char *devstr, const uin
   MD5Update(&md5, ns, 16);
 
   /* The string we'll be encoding is "lwpa device,[devstr][macaddr][uuidnum in network order]" */
-  MD5Update(&md5, (uint8_t *)"lwpa device, ", 13);
+  MD5Update(&md5, (uint8_t*)"lwpa device, ", 13);
   if (devstr)
-    MD5Update(&md5, (uint8_t *)(devstr), (unsigned int)strlen(devstr));
+    MD5Update(&md5, (uint8_t*)(devstr), (unsigned int)strlen(devstr));
 
   MD5Update(&md5, macaddr, 6);
 

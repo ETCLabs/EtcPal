@@ -38,7 +38,7 @@ typedef struct tagTHREADNAME_INFO
   DWORD dwFlags;    /* Reserved for future use, must be zero. */
 } THREADNAME_INFO;
 #pragma pack(pop)
-void SetThreadName(DWORD dwThreadID, const char *threadName)
+void SetThreadName(DWORD dwThreadID, const char* threadName)
 {
   THREADNAME_INFO info;
   info.dwType = 0x1000;
@@ -49,7 +49,7 @@ void SetThreadName(DWORD dwThreadID, const char *threadName)
 #pragma warning(disable : 6320 6322)
   __try
   {
-    RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR *)&info);
+    RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
   }
   __except (EXCEPTION_EXECUTE_HANDLER)
   {
@@ -57,9 +57,9 @@ void SetThreadName(DWORD dwThreadID, const char *threadName)
 #pragma warning(pop)
 }
 
-unsigned __stdcall thread_func_internal(void *pthread)
+unsigned __stdcall thread_func_internal(void* pthread)
 {
-  lwpa_thread_t *thread_data = (lwpa_thread_t *)pthread;
+  lwpa_thread_t* thread_data = (lwpa_thread_t*)pthread;
   if (thread_data)
   {
     SetThreadName((DWORD)-1, thread_data->name);
@@ -70,7 +70,7 @@ unsigned __stdcall thread_func_internal(void *pthread)
   return 1;
 }
 
-bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg)
+bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;
@@ -87,7 +87,7 @@ bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void 
   return true;
 }
 
-bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms)
+bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms)
 {
   if (id)
   {

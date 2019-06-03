@@ -31,17 +31,17 @@ extern "C" {
 
 typedef SemaphoreHandle_t lwpa_mutex_t;
 
-bool lwpa_mutex_create(lwpa_mutex_t *id);
-bool lwpa_mutex_take(lwpa_mutex_t *id, int wait_ms);
-void lwpa_mutex_give(lwpa_mutex_t *id);
-void lwpa_mutex_destroy(lwpa_mutex_t *id);
+bool lwpa_mutex_create(lwpa_mutex_t* id);
+bool lwpa_mutex_take(lwpa_mutex_t* id, int wait_ms);
+void lwpa_mutex_give(lwpa_mutex_t* id);
+void lwpa_mutex_destroy(lwpa_mutex_t* id);
 
 typedef SemaphoreHandle_t lwpa_signal_t;
 
-bool lwpa_signal_create(lwpa_signal_t *id);
-bool lwpa_signal_wait(lwpa_signal_t *id, int wait_ms);
-void lwpa_signal_post(lwpa_signal_t *id);
-void lwpa_signal_destroy(lwpa_signal_t *id);
+bool lwpa_signal_create(lwpa_signal_t* id);
+bool lwpa_signal_wait(lwpa_signal_t* id, int wait_ms);
+void lwpa_signal_post(lwpa_signal_t* id);
+void lwpa_signal_destroy(lwpa_signal_t* id);
 
 typedef struct
 {
@@ -49,12 +49,12 @@ typedef struct
   unsigned int reader_count;
 } lwpa_rwlock_t;
 
-bool lwpa_rwlock_create(lwpa_rwlock_t *id);
-bool lwpa_rwlock_readlock(lwpa_rwlock_t *id, int wait_ms);
-void lwpa_rwlock_readunlock(lwpa_rwlock_t *id);
-bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms);
-void lwpa_rwlock_writeunlock(lwpa_rwlock_t *id);
-void lwpa_rwlock_destroy(lwpa_rwlock_t *id);
+bool lwpa_rwlock_create(lwpa_rwlock_t* id);
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms);
+void lwpa_rwlock_readunlock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id, int wait_ms);
+void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id);
+void lwpa_rwlock_destroy(lwpa_rwlock_t* id);
 
 #ifdef __cplusplus
 }

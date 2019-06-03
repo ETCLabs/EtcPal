@@ -33,5 +33,5 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
 
 void lwpa_deinit(lwpa_features_t features)
 {
-  (void) features;
+  (void)features;
 }

@@ -21,7 +21,7 @@
 
 static bool g_waitthread_run;
 
-void wait_and_exit(void *param)
+void wait_and_exit(void* param)
 {
   while (g_waitthread_run)
     lwpa_thread_sleep(50);
@@ -65,14 +65,14 @@ static volatile bool spin_task_run, oneshot_task_run;
 static volatile bool spin_task_ran = false;
 static volatile bool oneshot_task_ran = false;
 
-void increment_and_spin(void *param)
+void increment_and_spin(void* param)
 {
   spin_task_ran = true;
   while (spin_task_run)
     ;
 }
 
-void oneshot(void *param)
+void oneshot(void* param)
 {
   if (oneshot_task_run)
     oneshot_task_ran = true;
@@ -121,13 +121,13 @@ bool test_thread_time_slice()
 static int shared_var;
 static bool lp_thread_done, lp_thread_passed, hp_thread_done;
 
-void low_priority_thread(void *param)
+void low_priority_thread(void* param)
 {
   lp_thread_passed = (shared_var == 1000);
   lp_thread_done = true;
 }
 
-void high_priority_thread(void *param)
+void high_priority_thread(void* param)
 {
   int i;
   for (i = 0; i < 1000; ++i)

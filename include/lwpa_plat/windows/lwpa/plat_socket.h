@@ -45,7 +45,7 @@ typedef struct LwpaPollCtxSocket
 {
   lwpa_socket_t socket;
   lwpa_poll_events_t events;
-  void *user_data;
+  void* user_data;
 } LwpaPollCtxSocket;
 
 typedef struct LwpaPollFdSet
@@ -59,7 +59,7 @@ typedef struct LwpaPollContext
   bool valid;
   lwpa_mutex_t lock;
 
-  LwpaPollCtxSocket *sockets;
+  LwpaPollCtxSocket* sockets;
   size_t socket_arr_size;
   size_t num_valid_sockets;
 
@@ -78,8 +78,8 @@ extern "C" {
 #define ip_plat_to_lwpa_v6(lwpaipptr, pfipptr) lwpaip_set_v6_address((lwpaipptr), (pfipptr)->s6_addr)
 #define ip_lwpa_to_plat_v6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, lwpaip_v6_address(lwpaipptr), IPV6_BYTES)
 
-bool sockaddr_plat_to_lwpa(LwpaSockaddr *sa, const struct sockaddr *pfsa);
-size_t sockaddr_lwpa_to_plat(struct sockaddr *pfsa, const LwpaSockaddr *sa);
+bool sockaddr_plat_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa);
+size_t sockaddr_lwpa_to_plat(struct sockaddr* pfsa, const LwpaSockaddr* sa);
 
 #ifdef __cplusplus
 }

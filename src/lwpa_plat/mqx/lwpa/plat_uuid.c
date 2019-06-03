@@ -20,12 +20,12 @@
 #include "lwpa/uuid.h"
 
 /* We don't have the capability to generate V1 or V4 UUIDs on MQX RTOS. */
-lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
 {
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
+lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
 {
   return kLwpaErrNotImpl;
 }

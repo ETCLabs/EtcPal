@@ -111,11 +111,11 @@
 /*! Holds state data used when parsing multiple PDUs in a PDU block. */
 typedef struct LwpaPdu
 {
-  const uint8_t *pvector;
-  const uint8_t *pheader;
-  const uint8_t *pdata;
+  const uint8_t* pvector;
+  const uint8_t* pheader;
+  const uint8_t* pdata;
   size_t datalen;
-  const uint8_t *pnextpdu;
+  const uint8_t* pnextpdu;
 } LwpaPdu;
 
 /*! Default LwpaPdu initializer values; must be used to intialize an LwpaPdu when parsing the first
@@ -149,7 +149,7 @@ typedef struct LwpaPduConstraints
 extern "C" {
 #endif
 
-bool lwpa_parse_pdu(const uint8_t *buf, size_t buflen, const LwpaPduConstraints *constraints, LwpaPdu *pdu);
+bool lwpa_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints* constraints, LwpaPdu* pdu);
 
 #ifdef __cplusplus
 }

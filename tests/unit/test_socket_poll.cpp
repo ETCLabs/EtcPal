@@ -37,7 +37,7 @@ extern LwpaIpAddr g_netint;
 class SocketPollTest : public ::testing::Test
 {
 protected:
-  static const char *SEND_MSG;
+  static const char* SEND_MSG;
   static const size_t SEND_MSG_LEN{12};
 
   void SetUp() override { ASSERT_EQ(kLwpaErrOk, lwpa_poll_context_init(&context_)); }
@@ -46,7 +46,7 @@ protected:
   LwpaPollContext context_{};
 };
 
-const char *SocketPollTest::SEND_MSG = "testtesttest";
+const char* SocketPollTest::SEND_MSG = "testtesttest";
 
 // Test to make sure various invalid calls to lwpa_poll_* functions fail properly.
 TEST_F(SocketPollTest, invalid_calls)
@@ -90,8 +90,8 @@ TEST_F(SocketPollTest, invalid_calls)
 TEST_F(SocketPollTest, user_data)
 {
   lwpa_socket_t sock_1, sock_2;
-  void *user_data_1 = reinterpret_cast<void *>(1);
-  void *user_data_2 = reinterpret_cast<void *>(2);
+  void* user_data_1 = reinterpret_cast<void*>(1);
+  void* user_data_2 = reinterpret_cast<void*>(2);
 
   // Create two UDP sockets and poll for writability, make sure our user data gets passed back to us
   // intact.
@@ -282,7 +282,7 @@ TEST_F(SocketPollTest, udp_in)
   ASSERT_NE(from_addr.port, 8888);
   ASSERT_NE(from_addr.port, 9999);
   recv_buf[SEND_MSG_LEN] = '\0';
-  ASSERT_EQ(0, strcmp((char *)recv_buf.data(), SEND_MSG));
+  ASSERT_EQ(0, strcmp((char*)recv_buf.data(), SEND_MSG));
 
   lwpa_socket_t first_socket = event.socket;
 

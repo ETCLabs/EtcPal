@@ -24,7 +24,7 @@ static bool msec_per_tick_initted = false;
 
 static void thread_func_internal(uint32_t initial_data)
 {
-  lwpa_thread_t *thread_data = (lwpa_thread_t *)initial_data;
+  lwpa_thread_t* thread_data = (lwpa_thread_t*)initial_data;
   if (thread_data)
   {
     thread_data->fn(thread_data->arg);
@@ -32,7 +32,7 @@ static void thread_func_internal(uint32_t initial_data)
   }
 }
 
-bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg)
+bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   _task_id t_id;
   TASK_TEMPLATE_STRUCT template;
@@ -49,7 +49,7 @@ bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void 
   template.TASK_STACKSIZE = params->stack_size;
   if (params->platform_data)
   {
-    LwpaThreadParamsMqx *platform_params = (LwpaThreadParamsMqx *)params->platform_data;
+    LwpaThreadParamsMqx* platform_params = (LwpaThreadParamsMqx*)params->platform_data;
     template.TASK_ATTRIBUTES = platform_params->task_attributes;
     template.DEFAULT_TIME_SLICE = platform_params->time_slice;
   }
@@ -73,7 +73,7 @@ bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void 
   return false;
 }
 
-bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms)
+bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms)
 {
   _mqx_uint ticks;
   _mqx_uint res;

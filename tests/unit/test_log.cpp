@@ -26,7 +26,7 @@
 
 // Disable strcpy() warning on Windows/MSVC
 #ifdef _MSC_VER
-#pragma warning(disable: 4996)
+#pragma warning(disable : 4996)
 #endif
 
 using testing::Mock;
@@ -34,39 +34,34 @@ using testing::Mock;
 class LogTest : public ::testing::Test
 {
 protected:
-  LogTest()
-  {
-    FillDefaultTime(cur_time);
-  }
+  LogTest() { FillDefaultTime(cur_time); }
 
   virtual ~LogTest() {}
 
-  void TestLwpaVlogHelper(std::string expect_syslog_str, std::string expect_human_str,
-                          std::string expect_raw_str, LwpaLogParams *lparams, int pri,
-                          const char *format, ...);
+  void TestLwpaVlogHelper(std::string expect_syslog_str, std::string expect_human_str, std::string expect_raw_str,
+                          LwpaLogParams* lparams, int pri, const char* format, ...);
 
 public:
-  static void FillDefaultTime(LwpaLogTimeParams &tparams);
+  static void FillDefaultTime(LwpaLogTimeParams& tparams);
 
-  MOCK_METHOD3(VerifyLogCallback, void(std::string syslog_str, std::string human_str,
-                                       std::string raw_str));
+  MOCK_METHOD3(VerifyLogCallback, void(std::string syslog_str, std::string human_str, std::string raw_str));
 
   LwpaLogTimeParams cur_time;
   bool time_fn_called;
 };
 
-static void log_cb(void *context, const char *syslog_str, const char *human_str, const char *raw_str)
+static void log_cb(void* context, const char* syslog_str, const char* human_str, const char* raw_str)
 {
-  LogTest *lt = static_cast<LogTest *>(context);
+  LogTest* lt = static_cast<LogTest*>(context);
   if (lt)
   {
     lt->VerifyLogCallback(syslog_str ? syslog_str : "", human_str ? human_str : "", raw_str ? raw_str : "");
   }
 }
 
-static void time_cb(void *context, LwpaLogTimeParams *time_params)
+static void time_cb(void* context, LwpaLogTimeParams* time_params)
 {
-  LogTest *lt = static_cast<LogTest *>(context);
+  LogTest* lt = static_cast<LogTest*>(context);
   if (lt && time_params)
   {
     *time_params = lt->cur_time;
@@ -74,7 +69,7 @@ static void time_cb(void *context, LwpaLogTimeParams *time_params)
   }
 }
 
-void LogTest::FillDefaultTime(LwpaLogTimeParams &time_params)
+void LogTest::FillDefaultTime(LwpaLogTimeParams& time_params)
 {
   time_params.year = 1970;     // absolute year
   time_params.month = 1;       // month of the year - [1, 12]
@@ -165,7 +160,8 @@ TEST_F(LogTest, log_intval)
   lparams.time_fn = time_cb;
   lparams.context = this;
 
-  std::string expect_syslog_str = "<0>1 1970-01-01T00:00:00.000Z host?name My_App - - - Here are some int values: 1 42 4294967295";
+  std::string expect_syslog_str =
+      "<0>1 1970-01-01T00:00:00.000Z host?name My_App - - - Here are some int values: 1 42 4294967295";
   std::string expect_human_str = "1970-01-01 00:00:00.000Z Here are some int values: 1 42 4294967295";
   std::string expect_raw_str = "Here are some int values: 1 42 4294967295";
 
@@ -207,8 +203,7 @@ TEST_F(LogTest, log_intval)
 // Used by the following tests. Try using lwpa_vlog() to log various combinations of syslog and
 // human-readable logging.
 void LogTest::TestLwpaVlogHelper(std::string expect_syslog_str, std::string expect_human_str,
-                                 std::string expect_raw_str, LwpaLogParams *lparams, int pri,
-                                 const char *format, ...)
+                                 std::string expect_raw_str, LwpaLogParams* lparams, int pri, const char* format, ...)
 {
   va_list args;
   va_start(args, format);
@@ -373,6 +368,5 @@ TEST_F(LogTest, log_maxlength)
 
   // Now try the actual logging using lwpa_vlog().
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
-  TestLwpaVlogHelper(expect_syslog_str, expect_human_str, expect_raw_str, &lparams, LWPA_LOG_DEBUG,
-                     to_log_str);
+  TestLwpaVlogHelper(expect_syslog_str, expect_human_str, expect_raw_str, &lparams, LWPA_LOG_DEBUG, to_log_str);
 }

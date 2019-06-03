@@ -64,7 +64,7 @@ TEST_F(SignalTest, create_destroy)
   ASSERT_FALSE(lwpa_signal_wait(&signal, LWPA_WAIT_FOREVER));
 }
 
-static void signal_test_thread(SignalTest *fixture)
+static void signal_test_thread(SignalTest* fixture)
 {
   if (fixture)
   {
@@ -97,7 +97,7 @@ TEST_F(SignalTest, threads)
     lwpa_signal_post(&signal);
   }
 
-  for (auto &thread : threads)
+  for (auto& thread : threads)
     thread.join();
 
   lwpa_signal_destroy(&signal);

@@ -67,14 +67,14 @@ bool test_signal_create_destroy()
 
 struct thread_data
 {
-  lwpa_signal_t *signal;
+  lwpa_signal_t* signal;
   int thread_num;
   bool passed;
 };
 
 void signal_test_thread(uint32_t initial_data)
 {
-  struct thread_data *td = (struct thread_data *)initial_data;
+  struct thread_data* td = (struct thread_data*)initial_data;
   int i;
 
   for (i = 0; i < 3; ++i)

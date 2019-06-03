@@ -35,12 +35,12 @@ protected:
 TEST_F(NetintTest, enumerate)
 {
   ASSERT_GT(num_netints, 0u);
-  LwpaNetintInfo *netint_arr = new LwpaNetintInfo[num_netints];
+  LwpaNetintInfo* netint_arr = new LwpaNetintInfo[num_netints];
   size_t num_netints_returned = lwpa_netint_get_interfaces(netint_arr, num_netints);
   ASSERT_EQ(num_netints_returned, num_netints);
 
   size_t num_defaults = 0;
-  for (LwpaNetintInfo *netint = netint_arr; netint < netint_arr + num_netints_returned; ++netint)
+  for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints_returned; ++netint)
   {
     if (netint->is_default)
       ++num_defaults;
@@ -55,14 +55,14 @@ TEST_F(NetintTest, default)
   ASSERT_GT(num_netints, 0u);
 
   LwpaNetintInfo def;
-  LwpaNetintInfo *netint_arr = new LwpaNetintInfo[num_netints];
+  LwpaNetintInfo* netint_arr = new LwpaNetintInfo[num_netints];
   memset(&def, 0, sizeof def);
   memset(netint_arr, 0, sizeof(struct LwpaNetintInfo) * num_netints);
 
   num_netints = lwpa_netint_get_interfaces(netint_arr, num_netints);
   ASSERT_TRUE(lwpa_netint_get_default_interface(&def));
   ASSERT_TRUE(def.is_default);
-  for (LwpaNetintInfo *netint = netint_arr; netint < netint_arr + num_netints; ++netint)
+  for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
     if (netint->is_default)
     {
@@ -77,12 +77,12 @@ TEST_F(NetintTest, IPv4routing)
 {
   ASSERT_GT(num_netints, 0u);
 
-  LwpaNetintInfo *netint_arr = new LwpaNetintInfo[num_netints];
+  LwpaNetintInfo* netint_arr = new LwpaNetintInfo[num_netints];
   num_netints = lwpa_netint_get_interfaces(netint_arr, num_netints);
 
   std::set<uint32_t> nets_already_tried;
 
-  for (LwpaNetintInfo *netint = netint_arr; netint < netint_arr + num_netints; ++netint)
+  for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
     uint32_t net = lwpaip_v4_address(&netint->addr) & lwpaip_v4_address(&netint->mask);
     LwpaIpAddr test_addr;
@@ -96,7 +96,7 @@ TEST_F(NetintTest, IPv4routing)
 
   LwpaIpAddr ext_addr;
   lwpaip_set_v4_address(&ext_addr, 0xc8dc0302);  // 200.220.3.2
-  const LwpaNetintInfo *def = lwpa_netint_get_iface_for_dest(&ext_addr, netint_arr, num_netints);
+  const LwpaNetintInfo* def = lwpa_netint_get_iface_for_dest(&ext_addr, netint_arr, num_netints);
   ASSERT_TRUE(def != NULL);
   ASSERT_TRUE(def->is_default);
 }

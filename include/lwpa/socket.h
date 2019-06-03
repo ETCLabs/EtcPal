@@ -142,23 +142,23 @@ typedef struct LwpaMreq
 extern "C" {
 #endif
 
-lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t *conn_sock);
-lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr *address);
+lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t* conn_sock);
+lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr* address);
 lwpa_error_t lwpa_close(lwpa_socket_t id);
-lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr *address);
-lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr *address);
-lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr *address);
-lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void *option_value, size_t *option_len);
+lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr* address);
+lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr* address);
+lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr* address);
+lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void* option_value, size_t* option_len);
 lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog);
-int lwpa_recv(lwpa_socket_t id, void *buffer, size_t length, int flags);
-int lwpa_recvfrom(lwpa_socket_t id, void *buffer, size_t length, int flags, LwpaSockaddr *address);
+int lwpa_recv(lwpa_socket_t id, void* buffer, size_t length, int flags);
+int lwpa_recvfrom(lwpa_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address);
 /* recvmsg - not implemented */
-int lwpa_send(lwpa_socket_t id, const void *message, size_t length, int flags);
+int lwpa_send(lwpa_socket_t id, const void* message, size_t length, int flags);
 /* sendmsg - not implemented */
-int lwpa_sendto(lwpa_socket_t id, const void *message, size_t length, int flags, const LwpaSockaddr *dest_addr);
-lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void *option_value, size_t option_len);
+int lwpa_sendto(lwpa_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr);
+lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void* option_value, size_t option_len);
 lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how);
-lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *id);
+lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t* id);
 /* int protocol - not necessary */
 /* socketpair - not implemented */
 
@@ -187,17 +187,17 @@ typedef struct LwpaPollEvent
   lwpa_socket_t socket;      /*!< Socket which had activity. */
   lwpa_poll_events_t events; /*!< Event(s) that occurred on the socket. */
   lwpa_error_t err;          /*!< More information about an error that occurred on the socket. */
-  void *user_data;           /*!< The user data that was given when this socket was added. */
+  void* user_data;           /*!< The user data that was given when this socket was added. */
 } LwpaPollEvent;
 
-lwpa_error_t lwpa_poll_context_init(LwpaPollContext *context);
-void lwpa_poll_context_deinit(LwpaPollContext *context);
-lwpa_error_t lwpa_poll_add_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events,
-                                  void *user_data);
-lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
-                                     void *new_user_data);
-void lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
-lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
+lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context);
+void lwpa_poll_context_deinit(LwpaPollContext* context);
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t events,
+                                  void* user_data);
+lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
+                                     void* new_user_data);
+void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket);
+lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms);
 
 /************************ Mimic getaddrinfo() API ****************************/
 
@@ -218,18 +218,18 @@ typedef struct LwpaAddrinfo
   int ai_family;        /*!< i.e. LWPA_AF_xxx */
   int ai_socktype;      /*!< i.e. LWPA_STREAM or LWPA_DGRAM */
   int ai_protocol;      /*!< i.e. LWPA_IPPROTO_xxx */
-  char *ai_canonname;   /*!< Canonical name for host */
+  char* ai_canonname;   /*!< Canonical name for host */
   LwpaSockaddr ai_addr; /*!< Address of host */
-  void *pd[2];          /*!< Used by internal platform logic; don't touch */
+  void* pd[2];          /*!< Used by internal platform logic; don't touch */
 } LwpaAddrinfo;
 
-lwpa_error_t lwpa_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints,
-                              LwpaAddrinfo *result);
+lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
+                              LwpaAddrinfo* result);
 
-bool lwpa_nextaddr(LwpaAddrinfo *ai);
+bool lwpa_nextaddr(LwpaAddrinfo* ai);
 
 /* Call with any of the LwpaAddrinfos in the list to free the whole list */
-void lwpa_freeaddrinfo(LwpaAddrinfo *ai);
+void lwpa_freeaddrinfo(LwpaAddrinfo* ai);
 
 /************************* Mimic inet_xtox() API *****************************/
 
@@ -238,8 +238,8 @@ void lwpa_freeaddrinfo(LwpaAddrinfo *ai);
 /*! Maximum length of the string representation of an IPv6 address. */
 #define LWPA_INET6_ADDRSTRLEN 46
 
-lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
-lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest);
+lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size);
+lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* dest);
 
 #ifdef __cplusplus
 }
