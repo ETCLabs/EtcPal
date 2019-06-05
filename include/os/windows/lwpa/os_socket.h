@@ -73,10 +73,10 @@ typedef struct LwpaPollContext
 
 } LwpaPollContext;
 
-#define ip_os_to_lwpa_v4(lwpaipptr, pfipptr) lwpaip_set_v4_address((lwpaipptr), ntohl((pfipptr)->s_addr))
-#define ip_lwpa_to_os_v4(pfipptr, lwpaipptr) ((pfipptr)->s_addr = htonl(lwpaip_v4_address(lwpaipptr)))
-#define ip_os_to_lwpa_v6(lwpaipptr, pfipptr) lwpaip_set_v6_address((lwpaipptr), (pfipptr)->s6_addr)
-#define ip_lwpa_to_os_v6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, lwpaip_v6_address(lwpaipptr), IPV6_BYTES)
+#define IP_OS_TO_LWPA_V4(lwpaipptr, pfipptr) LWPA_IP_SET_V4_ADDRESS((lwpaipptr), ntohl((pfipptr)->s_addr))
+#define IP_LWPA_TO_OS_V4(pfipptr, lwpaipptr) ((pfipptr)->s_addr = htonl(LWPA_IP_V4_ADDRESS(lwpaipptr)))
+#define IP_OS_TO_LWPA_V6(lwpaipptr, pfipptr) LWPA_IP_SET_V6_ADDRESS((lwpaipptr), (pfipptr)->s6_addr)
+#define IP_LWPA_TO_OS_V6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, LWPA_IP_V6_ADDRESS(lwpaipptr), IPV6_BYTES)
 
 bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa);
 size_t sockaddr_lwpa_to_os(struct sockaddr* pfsa, const LwpaSockaddr* sa);

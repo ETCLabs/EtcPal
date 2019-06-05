@@ -34,9 +34,15 @@ using testing::Mock;
 class LogTest : public ::testing::Test
 {
 protected:
-  LogTest() { FillDefaultTime(cur_time); }
-
-  virtual ~LogTest() {}
+  LogTest()
+  {
+    lwpa_init(LWPA_FEATURE_LOGGING);
+    FillDefaultTime(cur_time);
+  }
+  ~LogTest()
+  {
+    lwpa_deinit(LWPA_FEATURE_LOGGING);
+  }
 
   void TestLwpaVlogHelper(std::string expect_syslog_str, std::string expect_human_str, std::string expect_raw_str,
                           LwpaLogParams* lparams, int pri, const char* format, ...);

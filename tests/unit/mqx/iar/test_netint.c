@@ -97,12 +97,12 @@ bool test_route()
     LwpaIpAddr dest_ip;
     const LwpaNetintInfo* dest;
 
-    if (lwpaip_is_v6(&iface->addr))
+    if (LWPA_IP_IS_V6(&iface->addr))
       continue;
 
-    mask = lwpaip_v4_address(&iface->mask);
-    host = lwpaip_v4_address(&iface->addr) & (~mask);
-    net = lwpaip_v4_address(&iface->addr) & mask;
+    mask = LWPA_IP_V4_ADDRESS(&iface->mask);
+    host = LWPA_IP_V4_ADDRESS(&iface->addr) & (~mask);
+    net = LWPA_IP_V4_ADDRESS(&iface->addr) & mask;
 
     /* Simulate another host on the same subnet. */
     neighbor = net | ((host + 1) & (~mask));
@@ -111,14 +111,14 @@ bool test_route()
     remote = 0x1u | (net ^ ((~mask) + 1));
 
     /* Test the local neighbor */
-    lwpaip_set_v4_address(&dest_ip, neighbor);
+    LWPA_IP_SET_V4_ADDRESS(&dest_ip, neighbor);
     dest = netint_get_iface_for_dest(&dest_ip, g_interfaces, g_num_interfaces);
     ok = (dest == iface);
     if (!ok)
       break;
 
     /* Test the remote host */
-    lwpaip_set_v4_address(&dest_ip, remote);
+    LWPA_IP_SET_V4_ADDRESS(&dest_ip, remote);
     dest = netint_get_iface_for_dest(&dest_ip, g_interfaces, g_num_interfaces);
     ok = (dest->is_default);
     if (!ok)

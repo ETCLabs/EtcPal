@@ -39,9 +39,9 @@ static void copy_interface_info(size_t mqx_index, LwpaNetintInfo* netint)
   netint->ifindex = (int)RTCS_if_get_handle(mqx_index);
 
   ipcfg_get_ip(mqx_index, &ip_data);
-  lwpaip_set_v4_address(&netint->addr, ip_data.ip);
-  lwpaip_set_v4_address(&netint->mask, ip_data.mask);
-  lwpaip_set_v4_address(&netint->gate, ip_data.gateway);
+  LWPA_IP_SET_V4_ADDRESS(&netint->addr, ip_data.ip);
+  LWPA_IP_SET_V4_ADDRESS(&netint->mask, ip_data.mask);
+  LWPA_IP_SET_V4_ADDRESS(&netint->gate, ip_data.gateway);
 
   ipcfg_get_mac(mqx_index, netint->mac);
   sprintf(netint->name, "en%d", mqx_index);
@@ -84,16 +84,16 @@ bool netint_get_default_interface(LwpaNetintInfo* netint)
 
 bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask)
 {
-  if (lwpaip_is_v4(ip1) && lwpaip_is_v4(ip2) && lwpaip_is_v4(mask))
+  if (LWPA_IP_IS_V4(ip1) && LWPA_IP_IS_V4(ip2) && LWPA_IP_IS_V4(mask))
   {
-    return ((lwpaip_v4_address(ip1) & lwpaip_v4_address(mask)) == (lwpaip_v4_address(ip2) & lwpaip_v4_address(mask)));
+    return ((LWPA_IP_V4_ADDRESS(ip1) & LWPA_IP_V4_ADDRESS(mask)) == (LWPA_IP_V4_ADDRESS(ip2) & LWPA_IP_V4_ADDRESS(mask)));
   }
-  else if (lwpaip_is_v6(ip1) && lwpaip_is_v6(ip2) && lwpaip_is_v6(mask))
+  else if (LWPA_IP_IS_V6(ip1) && LWPA_IP_IS_V6(ip2) && LWPA_IP_IS_V6(mask))
   {
     size_t i;
-    const uint32_t* p1 = (const uint32_t*)lwpaip_v6_address(ip1);
-    const uint32_t* p2 = (const uint32_t*)lwpaip_v6_address(ip2);
-    const uint32_t* pm = (const uint32_t*)lwpaip_v6_address(mask);
+    const uint32_t* p1 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip1);
+    const uint32_t* p2 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip2);
+    const uint32_t* pm = (const uint32_t*)LWPA_IP_V6_ADDRESS(mask);
 
     for (i = 0; i < IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
     {
@@ -109,12 +109,12 @@ bool mask_is_empty(const LwpaIpAddr* mask)
 {
   uint32_t mask_part = 0;
 
-  if (lwpaip_is_v4(mask))
-    mask_part = lwpaip_v4_address(mask);
-  else if (lwpaip_is_v6(mask))
+  if (LWPA_IP_IS_V4(mask))
+    mask_part = LWPA_IP_V4_ADDRESS(mask);
+  else if (LWPA_IP_IS_V6(mask))
   {
     size_t i;
-    const uint32_t* p = (const uint32_t*)lwpaip_v6_address(mask);
+    const uint32_t* p = (const uint32_t*)LWPA_IP_V6_ADDRESS(mask);
     for (i = 0; i < IPV6_BYTES / 4; ++i, ++p)
       mask_part |= *p;
   }

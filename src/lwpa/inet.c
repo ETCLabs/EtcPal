@@ -19,6 +19,12 @@
 
 #include "lwpa/inet.h"
 
+/**************************** Private variables ******************************/
+
+static const uint8_t v6_wildcard[LWPA_IPV6_BYTES] = {0};
+
+/*************************** Function definitions ****************************/
+
 /*! \brief Determine whether a LwpaIpAddr contains a multicast address.
  *
  *  Works for both IPv4 and IPv6 addresses.
@@ -43,9 +49,6 @@ bool lwpa_ip_is_multicast(const LwpaIpAddr* ip)
   return false;
 }
 
-// Static storage causes this to be initialized to our desired value (all 0's) automatically
-static const uint8_t v6_wildcard[LWPA_IPV6_BYTES];
-
 bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip)
 {
   if (ip)
@@ -62,17 +65,20 @@ bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip)
   return false;
 }
 
-void lwpa_ip_set_wildcard(LwpaIpAddr* ip, lwpa_iptype_t type)
+void lwpa_ip_set_wildcard(lwpa_iptype_t type, LwpaIpAddr* ip)
 {
   if (ip)
   {
-    if (LWPA_IP_IS_V4(ip))
+    switch (type)
     {
-      LWPA_IP_SET_V4_ADDRESS(ip, 0);
-    }
-    else if (LWPA_IP_IS_V6(ip))
-    {
-      LWPA_IP_SET_V6_ADDRESS(ip, v6_wildcard);
+      case kLwpaIpTypeV4:
+        LWPA_IP_SET_V4_ADDRESS(ip, 0);
+        break;
+      case kLwpaIpTypeV6:
+        LWPA_IP_SET_V6_ADDRESS(ip, v6_wildcard);
+        break;
+      default:
+        break;
     }
   }
 }

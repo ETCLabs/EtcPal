@@ -21,6 +21,7 @@
 
 #include <array>
 #include "lwpa/socket.h"
+#include "lwpa/netint.h"
 #include "gtest/gtest.h"
 
 #if LWPA_SOCKET_MAX_POLL_SIZE <= 0 || LWPA_SOCKET_MAX_POLL_SIZE > 1024
@@ -30,13 +31,21 @@
 #define BULK_POLL_TEST_NUM_SOCKETS LWPA_SOCKET_MAX_POLL_SIZE
 #endif
 
-// Need to pass this from the command line to a test case; there doesn't seem to be a better way to
-// do this than using a global variable.
-extern LwpaIpAddr g_netint;
-
 class SocketPollTest : public ::testing::Test
 {
 protected:
+  SocketPollTest()
+  {
+    lwpa_init(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS);
+    lwpa_netint_get_default_interface(&default_netint_);
+  }
+  ~SocketPollTest()
+  {
+    lwpa_deinit(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS);
+  }
+
+  LwpaNetintInfo default_netint_;
+
   static const char* SEND_MSG;
   static const size_t SEND_MSG_LEN{12};
 
@@ -133,7 +142,7 @@ TEST_F(SocketPollTest, modify)
 
   // Bind the socket to the wildcard address and port 8888.
   LwpaSockaddr bind_addr;
-  lwpaip_make_any_v4(&bind_addr.ip);
+  lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
   bind_addr.port = 8888;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(sock, &bind_addr));
 
@@ -155,7 +164,7 @@ TEST_F(SocketPollTest, modify)
 
   // Send data to socket
   LwpaSockaddr send_addr;
-  send_addr.ip = g_netint;
+  send_addr.ip = default_netint_.addr;
   send_addr.port = 8888;
   lwpa_sendto(sock, SEND_MSG, SEND_MSG_LEN, 0, &send_addr);
 
@@ -185,7 +194,7 @@ TEST_F(SocketPollTest, bulk_poll)
     if (i < BULK_POLL_TEST_NUM_SOCKETS)
     {
       LwpaSockaddr bind_addr;
-      lwpaip_make_any_v4(&bind_addr.ip);
+      lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
       bind_addr.port = 0;
       ASSERT_EQ(kLwpaErrOk, lwpa_bind(socket_arr[i], &bind_addr)) << "Failed on iteration " << i;
       ASSERT_EQ(kLwpaErrOk, lwpa_getsockname(socket_arr[i], &bind_addr)) << "Failed on iteration " << i;
@@ -203,7 +212,7 @@ TEST_F(SocketPollTest, bulk_poll)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
 
   LwpaSockaddr send_addr;
-  lwpaip_set_v4_address(&send_addr.ip, 0x7f000001);
+  LWPA_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   for (size_t i = 0; i < BULK_POLL_TEST_NUM_SOCKETS; ++i)
   {
     // Send to each socket in turn and make sure poll works for it
@@ -244,7 +253,7 @@ TEST_F(SocketPollTest, udp_in)
 
   // Bind socket 1 to the wildcard address and port 8888.
   LwpaSockaddr bind_addr;
-  lwpaip_make_any_v4(&bind_addr.ip);
+  lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
   bind_addr.port = 8888;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock1, &bind_addr));
 
@@ -261,7 +270,7 @@ TEST_F(SocketPollTest, udp_in)
   ASSERT_EQ(kLwpaErrTimedOut, lwpa_poll_wait(&context_, &event, 100));
 
   LwpaSockaddr send_addr;
-  send_addr.ip = g_netint;
+  send_addr.ip = default_netint_.addr;
   send_addr.port = 8888;
 
   lwpa_sendto(send_sock, SEND_MSG, SEND_MSG_LEN, 0, &send_addr);
@@ -278,7 +287,7 @@ TEST_F(SocketPollTest, udp_in)
   std::array<uint8_t, SEND_MSG_LEN + 1> recv_buf;
   LwpaSockaddr from_addr;
   ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(event.socket, recv_buf.data(), SEND_MSG_LEN, 0, &from_addr));
-  ASSERT_TRUE(lwpaip_equal(&send_addr.ip, &from_addr.ip));
+  ASSERT_TRUE(lwpa_ip_equal(&send_addr.ip, &from_addr.ip));
   ASSERT_NE(from_addr.port, 8888);
   ASSERT_NE(from_addr.port, 9999);
   recv_buf[SEND_MSG_LEN] = '\0';

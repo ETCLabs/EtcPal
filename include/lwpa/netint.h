@@ -23,6 +23,7 @@
 
 #include <stddef.h>
 #include "lwpa/bool.h"
+#include "lwpa/common.h"
 #include "lwpa/inet.h"
 
 /*! \defgroup lwpa_netint lwpa_netint

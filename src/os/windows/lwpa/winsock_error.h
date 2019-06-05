@@ -16,42 +16,13 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include <cstdio>
-#include <cstdint>
-#include "gtest/gtest.h"
-#include "lwpa/common.h"
-#include "lwpa/netint.h"
-#include "lwpa/socket.h"
-#include "lwpa/common.h"
 
-//LwpaIpAddr g_netint;
+#ifndef _LWPA_OS_ERROR_H_
+#define _LWPA_OS_ERROR_H_
 
-int main(int argc, char** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
+#include "lwpa/error.h"
 
-  // Only check our custom argument if we haven't been given the "list_tests" flag
-//  if (!testing::GTEST_FLAG(list_tests))
-//  {
-//    if (argc == 2)
-//    {
-//      if (0 >= lwpa_inet_pton(kLwpaIpTypeV4, argv[1], &g_netint))
-//      {
-//        printf(
-//            "Usage: %s <interface_addr>\n"
-//            "  interface_addr: IP address of network interface to use for test.\n",
-//            argv[0]);
-//
-//        return 1;
-//      }
-//    }
-//    else
-//    {
-//      LwpaNetintInfo default_netint;
-//      lwpa_netint_get_default_interface(&default_netint);
-//      g_netint = default_netint.addr;
-//    }
-//  }
+lwpa_error_t err_winsock_to_lwpa(int wsaerror);
 
-  return RUN_ALL_TESTS();
-}
+#endif /* _LWPA_OS_ERROR_H_ */
+

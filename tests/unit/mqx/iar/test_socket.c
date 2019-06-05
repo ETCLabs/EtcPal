@@ -43,60 +43,60 @@ bool test_inet_xtox()
   /* Test lwpa_inet_pton() */
   ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV4, test_ip4_1, &addr));
   if (ok)
-    ok = (lwpaip_v4_address(&addr) == 0);
+    ok = (LWPA_IP_V4_ADDRESS(&addr) == 0);
   if (ok)
     ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV4, test_ip4_2, &addr));
   if (ok)
-    ok = (lwpaip_v4_address(&addr) == 0xffffffff);
+    ok = (LWPA_IP_V4_ADDRESS(&addr) == 0xffffffff);
   if (ok)
     ok = (kLwpaErrOk != lwpa_inet_pton(LWPA_IPV4, test_ip4_fail, &addr));
   if (ok)
     ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV6, test_ip6_1, &addr));
   if (ok)
-    ok = (0 == memcmp(lwpaip_v6_address(&addr), test_ip6_1_bin, IPV6_BYTES));
+    ok = (0 == memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_1_bin, IPV6_BYTES));
   if (ok)
     ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV6, test_ip6_2, &addr));
   if (ok)
-    ok = (0 == memcmp(lwpaip_v6_address(&addr), test_ip6_2_bin, IPV6_BYTES));
+    ok = (0 == memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_2_bin, IPV6_BYTES));
   if (ok)
     ok = (kLwpaErrOk == lwpa_inet_pton(LWPA_IPV6, test_ip6_3, &addr));
   if (ok)
-    ok = (0 == memcmp(lwpaip_v6_address(&addr), test_ip6_3_bin, IPV6_BYTES));
+    ok = (0 == memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_3_bin, IPV6_BYTES));
   if (ok)
     ok = (kLwpaErrOk != lwpa_inet_pton(LWPA_IPV6, test_ip6_fail, &addr));
 
   /* Test lwpa_inet_ntop() */
   if (ok)
   {
-    lwpaip_set_v4_address(&addr, 0);
+    LWPA_IP_SET_V4_ADDRESS(&addr, 0);
     ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip4_1));
   if (ok)
   {
-    lwpaip_set_v4_address(&addr, 0xffffffff);
+    LWPA_IP_SET_V4_ADDRESS(&addr, 0xffffffff);
     ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip4_2));
   if (ok)
   {
-    lwpaip_set_v6_address(&addr, test_ip6_1_bin);
+    LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_1_bin);
     ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip6_1));
   if (ok)
   {
-    lwpaip_set_v6_address(&addr, test_ip6_2_bin);
+    LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_2_bin);
     ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   }
   if (ok)
     ok = (0 == strcmp(str, test_ip6_2));
   if (ok)
   {
-    lwpaip_set_v6_address(&addr, test_ip6_3_bin);
+    LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_3_bin);
     ok = (kLwpaErrOk == lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   }
   if (ok)
@@ -190,7 +190,7 @@ bool test_unicast_udp()
   }
   if (ok)
   {
-    lwpaip_set_v4_address(&stinf.send_addr.ip, ip_data.ip);
+    LWPA_IP_SET_V4_ADDRESS(&stinf.send_addr.ip, ip_data.ip);
     stinf.send_addr.port = 8888;
 
     /* Start the send thread. */
@@ -215,7 +215,7 @@ bool test_unicast_udp()
       ok = (SEND_MSG_LEN == lwpa_recvfrom(rcvsock1, buf, SEND_MSG_LEN, 0, &from_addr));
       if (!ok)
         break;
-      ok = (lwpaip_equal(&stinf.send_addr.ip, &from_addr.ip) && (from_addr.port != 8888));
+      ok = (lwpa_ip_equal(&stinf.send_addr.ip, &from_addr.ip) && (from_addr.port != 8888));
       if (!ok)
         break;
       buf[SEND_MSG_LEN] = '\0';
@@ -290,7 +290,7 @@ bool test_multicast_udp()
   if (ok)
   {
     /* Bind socket 1 to the multicast address and port 8888. */
-    lwpaip_set_v4_address(&bind_addr.ip, TEST_MCAST_ADDR);
+    LWPA_IP_SET_V4_ADDRESS(&bind_addr.ip, TEST_MCAST_ADDR);
     bind_addr.port = 8888;
     ok = (0 == lwpa_bind(rcvsock1, &bind_addr));
   }
@@ -304,8 +304,8 @@ bool test_multicast_udp()
   {
     /* Subscribe socket 1 to the multicast address. */
     LwpaMreq mreq;
-    lwpaip_set_v4_address(&mreq.netint, ip_data.ip);
-    lwpaip_set_v4_address(&mreq.group, TEST_MCAST_ADDR);
+    LWPA_IP_SET_V4_ADDRESS(&mreq.netint, ip_data.ip);
+    LWPA_IP_SET_V4_ADDRESS(&mreq.group, TEST_MCAST_ADDR);
     ok = (0 == lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &mreq, sizeof mreq));
     /* Subscribe socket 2 to the multicast address */
     if (ok)
@@ -315,7 +315,7 @@ bool test_multicast_udp()
   }
   if (ok)
   {
-    lwpaip_set_v4_address(&stinf.send_addr.ip, TEST_MCAST_ADDR);
+    LWPA_IP_SET_V4_ADDRESS(&stinf.send_addr.ip, TEST_MCAST_ADDR);
     stinf.send_addr.port = 8888;
 
     /* Start the send thread. */
@@ -436,8 +436,8 @@ bool test_poll()
   }
   if (ok)
   {
-    lwpaip_set_v4_address(&stinf.send_addr_1.ip, ip_data.ip);
-    lwpaip_set_v4_address(&stinf.send_addr_2.ip, ip_data.ip);
+    LWPA_IP_SET_V4_ADDRESS(&stinf.send_addr_1.ip, ip_data.ip);
+    LWPA_IP_SET_V4_ADDRESS(&stinf.send_addr_2.ip, ip_data.ip);
     stinf.send_addr_1.port = 8888;
     stinf.send_addr_2.port = 9999;
 
@@ -478,7 +478,7 @@ bool test_poll()
           ok = (SEND_MSG_LEN == lwpa_recvfrom(pfds[i].fd, buf, SEND_MSG_LEN, 0, &from_addr));
           if (!ok)
             break;
-          ok = (lwpaip_equal(&stinf.send_addr_1.ip, &from_addr.ip) && (from_addr.port != 8888));
+          ok = (lwpa_ip_equal(&stinf.send_addr_1.ip, &from_addr.ip) && (from_addr.port != 8888));
           if (!ok)
             break;
           buf[SEND_MSG_LEN] = '\0';

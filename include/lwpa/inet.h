@@ -88,13 +88,13 @@ typedef struct LwpaIpAddr
  *  \return true (is invalid) or false (is not invalid). */
 #define LWPA_IP_IS_INVALID(lwpa_ip_ptr) ((lwpa_ip_ptr)->type == kLwpaIpTypeInvalid)
 
-/*! Get the IPv4 address from a LwpaIpAddr. It is recommended to first use lwpaip_is_v4() to make
+/*! Get the IPv4 address from a LwpaIpAddr. It is recommended to first use LWPA_IP_IS_V4() to make
  *  sure this LwpaIpAddr contains a valid IPv4 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return The IPv4 address (uint32_t). */
 #define LWPA_IP_V4_ADDRESS(lwpa_ip_ptr) ((lwpa_ip_ptr)->addr.v4)
 
-/*! Get the IPv6 address from a LwpaIpAddr. It is recommended to first use lwpaip_is_v6() to make
+/*! Get the IPv6 address from a LwpaIpAddr. It is recommended to first use LWPA_IP_IS_V6() to make
  *  sure this LwpaIpAddr contains a valid IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return The IPv6 address (uint8_t[]). */
@@ -162,7 +162,7 @@ typedef struct LwpaNetintInfo
 
 bool lwpa_ip_is_multicast(const LwpaIpAddr* ip);
 bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip);
-void lwpa_ip_set_wildcard(LwpaIpAddr* ip, lwpa_iptype_t type);
+void lwpa_ip_set_wildcard(lwpa_iptype_t type, LwpaIpAddr *ip);
 
 bool lwpa_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);
 int lwpa_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);

@@ -21,28 +21,11 @@
 
 #include <windows.h>
 #include "lwpa/bool.h"
+#include "winsock_error.h"
 
 #define LWPA_WINDOWS_TIMER_RESOLUTION 1  // ms
 
-static lwpa_error_t err_os_to_lwpa(int wsaerror)
-{
-  // Only dealing with the possible errors from WSAStartup() below.
-  switch (wsaerror)
-  {
-    case WSAEPROCLIM:
-      return kLwpaErrNoMem;
-    case WSAEINPROGRESS:
-      return kLwpaErrInProgress;
-    case WSASYSNOTREADY:
-      return kLwpaErrNotInit;
-    case WSAVERNOTSUPPORTED:
-    case WSAEFAULT:
-    default:
-      return kLwpaErrSys;
-  }
-}
-
-lwpa_error_t lwpa_init(lwpa_features_t features)
+lwpa_error_t lwpa_os_init(lwpa_features_t features)
 {
   bool timer_initted = false;
 
@@ -62,13 +45,13 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
     {
       if (timer_initted)
         timeEndPeriod(LWPA_WINDOWS_TIMER_RESOLUTION);
-      return err_os_to_lwpa(startup_res);
+      return err_winsock_to_lwpa(startup_res);
     }
   }
   return kLwpaErrOk;
 }
 
-void lwpa_deinit(lwpa_features_t features)
+void lwpa_os_deinit(lwpa_features_t features)
 {
   if (features & LWPA_FEATURE_TIMERS)
   {

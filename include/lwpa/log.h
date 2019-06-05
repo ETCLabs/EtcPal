@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include "lwpa/bool.h"
+#include "lwpa/common.h"
 
 /*! \defgroup lwpa_log lwpa_log
  *  \ingroup lwpa

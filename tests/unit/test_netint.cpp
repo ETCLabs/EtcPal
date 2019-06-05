@@ -25,11 +25,17 @@
 class NetintTest : public ::testing::Test
 {
 protected:
-  NetintTest() : num_netints(0) { num_netints = lwpa_netint_get_num_interfaces(); }
+  NetintTest()
+  { 
+    lwpa_init(LWPA_FEATURE_NETINTS);
+    num_netints = lwpa_netint_get_num_interfaces();
+  }
+  ~NetintTest()
+  {
+    lwpa_deinit(LWPA_FEATURE_NETINTS);
+  }
 
-  virtual ~NetintTest() {}
-
-  size_t num_netints;
+  size_t num_netints{0};
 };
 
 TEST_F(NetintTest, enumerate)
@@ -84,18 +90,18 @@ TEST_F(NetintTest, IPv4routing)
 
   for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
-    uint32_t net = lwpaip_v4_address(&netint->addr) & lwpaip_v4_address(&netint->mask);
+    uint32_t net = LWPA_IP_V4_ADDRESS(&netint->addr) & LWPA_IP_V4_ADDRESS(&netint->mask);
     LwpaIpAddr test_addr;
 
     if (nets_already_tried.find(net) != nets_already_tried.end())
       continue;
     nets_already_tried.insert(net);
-    lwpaip_set_v4_address(&test_addr, net + 1);
+    LWPA_IP_SET_V4_ADDRESS(&test_addr, net + 1);
     ASSERT_EQ(lwpa_netint_get_iface_for_dest(&test_addr, netint_arr, num_netints), netint);
   }
 
   LwpaIpAddr ext_addr;
-  lwpaip_set_v4_address(&ext_addr, 0xc8dc0302);  // 200.220.3.2
+  LWPA_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
   const LwpaNetintInfo* def = lwpa_netint_get_iface_for_dest(&ext_addr, netint_arr, num_netints);
   ASSERT_TRUE(def != NULL);
   ASSERT_TRUE(def->is_default);

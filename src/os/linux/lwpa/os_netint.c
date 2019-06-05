@@ -83,8 +83,8 @@ static struct LwpaNetintState
   RoutingTable routing_table_v6;
 
   struct ifaddrs* os_addrs;
-  size_t num_addrs;
-  LwpaNetintInfo* lwpa_addrs;
+  size_t num_netints;
+  LwpaNetintInfo* lwpa_netints;
 } state;
 
 /*********************** Private function prototypes *************************/
@@ -106,8 +106,8 @@ static void init_routing_table_entry(RoutingTableEntry* entry);
 static int compare_routing_table_entries(const void* a, const void* b);
 
 // Functions for enumerating the interfaces
-static lwpa_error_t enumerate_os_addrs();
-static void free_os_addrs();
+static lwpa_error_t enumerate_netints();
+static void free_netints();
 
 /*************************** Function definitions ****************************/
 
@@ -116,7 +116,7 @@ lwpa_error_t lwpa_netint_init()
   lwpa_error_t res = kLwpaErrOk;
   if (!state.initialized)
   {
-    res = enumerate_os_addrs();
+    res = enumerate_netints();
     if (res == kLwpaErrOk)
       state.initialized = true;
   }
@@ -127,14 +127,14 @@ void lwpa_netint_deinit()
 {
   if (state.initialized)
   {
-    free_os_addrs();
+    free_netints();
     state.initialized = false;
   }
 }
 
 size_t lwpa_netint_get_num_interfaces()
 {
-  return state.num_addrs;
+  return state.num_netints;
 }
 
 size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
@@ -142,8 +142,8 @@ size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_
   if (!netint_arr || netint_arr_size == 0)
     return 0;
 
-  size_t addrs_copied = (netint_arr_size < state.num_addrs ? netint_arr_size : state.num_addrs);
-  memcpy(netint_arr, state.lwpa_addrs, addrs_copied * sizeof(LwpaNetintInfo));
+  size_t addrs_copied = (netint_arr_size < state.num_netints ? netint_arr_size : state.num_netints);
+  memcpy(netint_arr, state.lwpa_netints, addrs_copied * sizeof(LwpaNetintInfo));
   return addrs_copied;
 }
 
@@ -417,14 +417,14 @@ void cidr_length_to_v6_mask(unsigned char length, LwpaIpAddr* v6_mask)
   LWPA_IP_SET_V6_ADDRESS(v6_mask, mask_buf);
 }
 
-/* Quick helper for enumerate_os_addrs() to determine entries to skip in the linked list. */
+/* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
 static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
 {
   // Skip an entry if it doesn't have an address, or if the address is not IPv4 or IPv6.
   return (!ifaddr->ifa_addr || (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
 }
 
-lwpa_error_t enumerate_os_addrs()
+lwpa_error_t enumerate_netints()
 {
   lwpa_error_t res = build_routing_tables();
   if (res != kLwpaErrOk)
@@ -436,24 +436,24 @@ lwpa_error_t enumerate_os_addrs()
   }
 
   // Pass 1: Total the number of addresses
-  state.num_addrs = 0;
+  state.num_netints = 0;
   for (struct ifaddrs* ifaddr = state.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
     if (should_skip_ifaddr(ifaddr))
       continue;
 
-    ++state.num_addrs;
+    ++state.num_netints;
   }
 
-  if (state.num_addrs == 0)
+  if (state.num_netints == 0)
   {
     freeifaddrs(state.os_addrs);
     return kLwpaErrNoNetints;
   }
 
   // Allocate our interface array
-  state.lwpa_addrs = calloc(state.num_addrs, sizeof(LwpaNetintInfo));
-  if (!state.lwpa_addrs)
+  state.lwpa_netints = calloc(state.num_netints, sizeof(LwpaNetintInfo));
+  if (!state.lwpa_netints)
   {
     freeifaddrs(state.os_addrs);
     return kLwpaErrNoMem;
@@ -466,7 +466,7 @@ lwpa_error_t enumerate_os_addrs()
     if (should_skip_ifaddr(ifaddr))
       continue;
 
-    LwpaNetintInfo* current_info = &state.lwpa_addrs[current_lwpa_index];
+    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index];
 
     // Interface name
     strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
@@ -501,16 +501,16 @@ void free_routing_table(RoutingTable* table)
   table->size = 0;
 }
 
-void free_os_addrs()
+void free_netints()
 {
   if (state.os_addrs)
   {
     freeifaddrs(state.os_addrs);
     state.os_addrs = NULL;
   }
-  if (state.lwpa_addrs)
+  if (state.lwpa_netints)
   {
-    free(state.lwpa_addrs);
-    state.lwpa_addrs = NULL;
+    free(state.lwpa_netints);
+    state.lwpa_netints = NULL;
   }
 }

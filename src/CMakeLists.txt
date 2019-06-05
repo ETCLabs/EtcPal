@@ -98,9 +98,17 @@ target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
 
 # Add include paths and library dependencies based on OS for which we are being compiled
 if(LWPA_TARGET_OS STREQUAL windows)
+  target_sources(lwpa PRIVATE
+    ${LWPA_ROOT}/src/os/windows/lwpa/winsock_error.h
+    ${LWPA_ROOT}/src/os/windows/lwpa/winsock_error.c
+  )
   target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
 elseif(LWPA_TARGET_OS STREQUAL linux)
   target_link_libraries(lwpa PUBLIC uuid)
+  target_sources(lwpa PRIVATE
+    ${LWPA_ROOT}/src/os/linux/lwpa/os_error.h
+    ${LWPA_ROOT}/src/os/linux/lwpa/os_error.c
+  )
 elseif(LWPA_TARGET_OS STREQUAL mqx)
   # Include the debug versions of the MQX libs if a Debug configuration is specified.
   # I think there's probably a better way of doing this and I'm missing something here.
@@ -178,6 +186,7 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/include
     ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}
   )
+  target_include_directories(lwpa_mock PRIVATE ${LWPA_ROOT}/src)
   target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
   target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)
   if(LWPA_TARGET_OS STREQUAL windows)
