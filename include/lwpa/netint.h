@@ -44,11 +44,6 @@ bool lwpa_netint_get_default_interface(LwpaNetintInfo* netint);
 const LwpaNetintInfo* lwpa_netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
                                                      size_t netint_arr_size);
 
-// typedef void (*netint_change_notification)(void *context);
-
-// int    netint_register_change_cb(netint_change_notification fn, void
-// *context); void   netint_unregister_change_cb(int handle);
-
 #ifdef __cplusplus
 }
 #endif

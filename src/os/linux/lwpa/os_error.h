@@ -22,6 +22,6 @@
 
 #include "lwpa/error.h"
 
-lwpa_error_t errno_os_to_lwpa(int errno);
+lwpa_error_t errno_os_to_lwpa(int os_errno);
 
 #endif /* _LWPA_OS_ERROR_H_ */

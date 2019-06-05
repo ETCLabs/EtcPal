@@ -221,29 +221,6 @@ bool lwpa_netint_get_default_interface(LwpaNetintInfo* netint)
   return res;
 }
 
-bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask)
-{
-  if (lwpaip_is_v4(ip1) && lwpaip_is_v4(ip2) && lwpaip_is_v4(mask))
-  {
-    return ((lwpaip_v4_address(ip1) & lwpaip_v4_address(mask)) == (lwpaip_v4_address(ip2) & lwpaip_v4_address(mask)));
-  }
-  else if (lwpaip_is_v6(ip1) && lwpaip_is_v6(ip2) && lwpaip_is_v6(mask))
-  {
-    size_t i;
-    const uint32_t* p1 = (const uint32_t*)lwpaip_v6_address(ip1);
-    const uint32_t* p2 = (const uint32_t*)lwpaip_v6_address(ip2);
-    const uint32_t* pm = (const uint32_t*)lwpaip_v6_address(mask);
-
-    for (i = 0; i < LWPA_IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
-    {
-      if ((*p1 & *pm) != (*p2 & *pm))
-        return false;
-    }
-    return true;
-  }
-  return false;
-}
-
 bool mask_is_empty(const LwpaIpAddr* mask)
 {
   uint32_t mask_part = 0;
@@ -276,7 +253,7 @@ const LwpaNetintInfo* lwpa_netint_get_iface_for_dest(const LwpaIpAddr* dest, con
   {
     if (netint->is_default)
       def = netint;
-    if (!mask_is_empty(&netint->mask) && mask_compare(&netint->addr, dest, &netint->mask))
+    if (!lwpa_ip_is_wildcard(&netint->mask) && lwpa_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {
       res = netint;
       break;
@@ -286,23 +263,3 @@ const LwpaNetintInfo* lwpa_netint_get_iface_for_dest(const LwpaIpAddr* dest, con
     res = def;
   return res;
 }
-
-// static struct change_cb
-//{
-//  netint_change_notification fn;
-//  void *context;
-//  int handle;
-//  struct change_cb *next;
-//} *change_cb_head;
-// int next_handle;
-
-// int
-// netint_register_change_cb(netint_change_notification fn, void *context)
-//{
-//  return -1;
-//}
-
-// void netint_unregister_change_cb(int handle)
-//{
-
-//}

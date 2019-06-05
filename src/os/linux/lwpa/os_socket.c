@@ -29,14 +29,14 @@ bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa)
   {
     struct sockaddr_in* sin = (struct sockaddr_in*)pfsa;
     sa->port = ntohs(sin->sin_port);
-    lwpaip_set_v4_address(&sa->ip, ntohl(sin->sin_addr.s_addr));
+    LWPA_IP_SET_V4_ADDRESS(&sa->ip, ntohl(sin->sin_addr.s_addr));
     return true;
   }
   else if (pfsa->sa_family == AF_INET6)
   {
     struct sockaddr_in6* sin6 = (struct sockaddr_in6*)pfsa;
     sa->port = ntohs(sin6->sin6_port);
-    lwpaip_set_v6_address(&sa->ip, sin6->sin6_addr.s6_addr);
+    LWPA_IP_SET_V6_ADDRESS(&sa->ip, sin6->sin6_addr.s6_addr);
     return true;
   }
   return false;
@@ -45,20 +45,20 @@ bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa)
 size_t sockaddr_lwpa_to_os(struct sockaddr* pfsa, const LwpaSockaddr* sa)
 {
   size_t ret = 0;
-  if (lwpaip_is_v4(&sa->ip))
+  if (LWPA_IP_IS_V4(&sa->ip))
   {
     struct sockaddr_in* sin = (struct sockaddr_in*)pfsa;
     sin->sin_family = AF_INET;
     sin->sin_port = htons(sa->port);
-    sin->sin_addr.s_addr = htonl(lwpaip_v4_address(&sa->ip));
+    sin->sin_addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&sa->ip));
     ret = sizeof(struct sockaddr_in);
   }
-  else if (lwpaip_is_v6(&sa->ip))
+  else if (LWPA_IP_IS_V6(&sa->ip))
   {
     struct sockaddr_in6* sin6 = (struct sockaddr_in6*)pfsa;
     sin6->sin6_family = AF_INET6;
     sin6->sin6_port = htons(sa->port);
-    memcpy(sin6->sin6_addr.s6_addr, lwpaip_v6_address(&sa->ip), LWPA_IPV6_BYTES);
+    memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(&sa->ip), LWPA_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
   }
   return ret;
@@ -91,7 +91,7 @@ lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t*
     {
       closesocket(res);
       return kLwpaErrSys;
-    }
+}
     *conn_sock = res;
     return kLwpaErrOk;
   }
@@ -359,11 +359,11 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   //          if (option_len == sizeof(LwpaMreq))
   //          {
   //            LwpaMreq *amreq = (LwpaMreq *)option_value;
-  //            if (lwpaip_is_v4(&amreq->group))
+  //            if (LWPA_IP_IS_V4(&amreq->group))
   //            {
   //              struct ip_mreq val;
-  //              val.imr_multiaddr.s_addr = htonl(lwpaip_v4_address(&amreq->group));
-  //              val.imr_interface.s_addr = htonl(lwpaip_v4_address(&amreq->netint));
+  //              val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->group));
+  //              val.imr_interface.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->netint));
   //              res = setsockopt(id, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&val, sizeof val);
   //            }
   //          }
@@ -372,11 +372,11 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   //          if (option_len == sizeof(LwpaMreq))
   //          {
   //            LwpaMreq *amreq = (LwpaMreq *)option_value;
-  //            if (lwpaip_is_v4(&amreq->group))
+  //            if (LWPA_IP_IS_V4(&amreq->group))
   //            {
   //              struct ip_mreq val;
-  //              val.imr_multiaddr.s_addr = htonl(lwpaip_v4_address(&amreq->group));
-  //              val.imr_interface.s_addr = htonl(lwpaip_v4_address(&amreq->netint));
+  //              val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->group));
+  //              val.imr_interface.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->netint));
   //              res = setsockopt(id, IPPROTO_IP, IP_DROP_MEMBERSHIP, (char *)&val, sizeof val);
   //            }
   //          }
@@ -385,9 +385,9 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   //          if (option_len == sizeof(LwpaIpAddr))
   //          {
   //            LwpaIpAddr *netint = (LwpaIpAddr *)option_value;
-  //            if (lwpaip_is_v4(netint))
+  //            if (LWPA_IP_IS_V4(netint))
   //            {
-  //              DWORD val = htonl(lwpaip_v4_address(netint));
+  //              DWORD val = htonl(LWPA_IP_V4_ADDRESS(netint));
   //              res = setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, (char *)&val, sizeof val);
   //            }
   //          }
@@ -418,12 +418,12 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   //          if (option_len == sizeof(struct lwpa_mreq))
   //          {
   //            LwpaMreq *amreq = (LwpaMreq *)option_value;
-  //            if (lwpaip_is_v6(&amreq->group))
+  //            if (LWPA_IP_IS_V6(&amreq->group))
   //            {
   //              struct ipv6_mreq val;
   //              val.ipv6imr_interface = 0;
   //              memcpy(&val.ipv6imr_multiaddr.s6_addr,
-  //                     lwpaip_v6_address(&amreq->group), LWPA_IPV6_BYTES);
+  //                     LWPA_IP_V6_ADDRESS(&amreq->group), LWPA_IPV6_BYTES);
   //              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
   //                               sizeof val);
   //            }
@@ -435,12 +435,12 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
   //          if (option_len == sizeof(struct lwpa_mreq))
   //          {
   //            LwpaMreq *amreq = (LwpaMreq *)option_value;
-  //            if (lwpaip_is_v6(&amreq->group))
+  //            if (LWPA_IP_IS_V6(&amreq->group))
   //            {
   //              struct ipv6_mreq val;
   //              val.ipv6imr_interface = 0;
   //              memcpy(&val.ipv6imr_multiaddr.s6_addr,
-  //                     lwpaip_v6_address(&amreq->group), LWPA_IPV6_BYTES);
+  //                     LWPA_IP_V6_ADDRESS(&amreq->group), LWPA_IPV6_BYTES);
   //              res = setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val,
   //                               sizeof val);
   //            }
@@ -702,7 +702,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
     case kLwpaIpTypeV4:
     {
       struct in_addr addr;
-      addr.s_addr = htonl(lwpaip_v4_address(src));
+      addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(src));
       if (NULL != inet_ntop(AF_INET, &addr, dest, (socklen_t)size))
         return kLwpaErrOk;
       return kLwpaErrSys;
@@ -710,7 +710,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
     case kLwpaIpTypeV6:
     {
       struct in6_addr addr;
-      memcpy(addr.s6_addr, lwpaip_v6_address(src), LWPA_IPV6_BYTES);
+      memcpy(addr.s6_addr, LWPA_IP_V6_ADDRESS(src), LWPA_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, (socklen_t)size))
         return kLwpaErrOk;
       return kLwpaErrSys;
@@ -732,7 +732,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* des
       struct in_addr addr;
       if (1 != inet_pton(AF_INET, src, &addr))
         return kLwpaErrSys;
-      lwpaip_set_v4_address(dest, ntohl(addr.s_addr));
+      LWPA_IP_SET_V4_ADDRESS(dest, ntohl(addr.s_addr));
       return kLwpaErrOk;
     }
     case kLwpaIpTypeV6:
@@ -740,7 +740,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* des
       struct in6_addr addr;
       if (1 != inet_pton(AF_INET6, src, &addr))
         return kLwpaErrSys;
-      lwpaip_set_v6_address(dest, addr.s6_addr);
+      LWPA_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kLwpaErrOk;
     }
     default:

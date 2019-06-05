@@ -69,6 +69,7 @@ add_library(lwpa
   # lwpa sources
   ${LWPA_ROOT}/src/lwpa/common.c
   ${LWPA_ROOT}/src/lwpa/error.c
+  ${LWPA_ROOT}/src/lwpa/inet.c
   ${LWPA_ROOT}/src/lwpa/log.c
   ${LWPA_ROOT}/src/lwpa/md5.h
   ${LWPA_ROOT}/src/lwpa/md5.c
