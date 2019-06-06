@@ -39,7 +39,7 @@ bool lwpa_ip_is_multicast(const LwpaIpAddr* ip)
   {
     if (LWPA_IP_IS_V4(ip))
     {
-      return (LWPA_IP_V4_ADDRESS(ip) > 0xe0000000 && LWPA_IP_V4_ADDRESS(ip) < 0xefffffff);
+      return (LWPA_IP_V4_ADDRESS(ip) >= 0xe0000000 && LWPA_IP_V4_ADDRESS(ip) <= 0xefffffff);
     }
     else if (LWPA_IP_IS_V6(ip))
     {
@@ -49,6 +49,17 @@ bool lwpa_ip_is_multicast(const LwpaIpAddr* ip)
   return false;
 }
 
+/*! \brief Determine whether a LwpaIpAddr contains a wildcard address.
+ *
+ *  Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
+ *  lwpa_bind() to indicate that a socket should be bound to all available network interfaces. It
+ *  should not be used as a placeholder or invalid address - use LWPA_IP_SET_INVALID() and
+ *  LWPA_IP_IS_INVALID() for that.
+ *
+ *  \param[in] ip Address to check.
+ *  \return true: ip contains a wildcard address.
+ *  \return false: ip does not contain a wildcard address.
+ */
 bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip)
 {
   if (ip)
@@ -65,6 +76,16 @@ bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip)
   return false;
 }
 
+/*! \brief Initialize a LwpaIpAddr with a wildcard address.
+ *
+ *  Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
+ *  lwpa_bind() to indicate that a socket should be bound to all available network interfaces. It
+ *  should not be used as a placeholder or invalid address - use LWPA_IP_SET_INVALID() and
+ *  LWPA_IP_IS_INVALID() for that.
+ *
+ *  \param[in] type Type of wildcard to create, either IPv4 or IPv6.
+ *  \param[out] ip Address in which to store the wildcard value.
+ */
 void lwpa_ip_set_wildcard(lwpa_iptype_t type, LwpaIpAddr* ip)
 {
   if (ip)
@@ -78,6 +99,7 @@ void lwpa_ip_set_wildcard(lwpa_iptype_t type, LwpaIpAddr* ip)
         LWPA_IP_SET_V6_ADDRESS(ip, v6_wildcard);
         break;
       default:
+        LWPA_IP_SET_INVALID(ip);
         break;
     }
   }
@@ -116,8 +138,8 @@ bool lwpa_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
  *  * All IPv4 addresses are considered to be < all IPv6 addresses
  *  * For two IPv4 or IPv6 addresses, the numerical address value is compared
  *
- *  \param ip1 First LwpaIpAddr to compare.
- *  \param ip2 Second LwpaIpAddr to compare.
+ *  \param[in] ip1 First LwpaIpAddr to compare.
+ *  \param[in] ip2 Second LwpaIpAddr to compare.
  *  \return < 0: ip1 < ip2
  *  \return 0: ip1 == ip2
  *  \return > 0: ip1 > ip2
@@ -177,29 +199,32 @@ unsigned int lwpa_ip_mask_length(const LwpaIpAddr* netmask)
     if (LWPA_IP_IS_V4(netmask))
     {
       uint32_t addr_val = LWPA_IP_V4_ADDRESS(netmask);
-      while (addr_val & 0x8000)
+      uint32_t bit_mask = 0x80000000u;
+      while (addr_val & bit_mask)
       {
         ++length;
-        addr_val >>= 1;
+        bit_mask >>= 1;
       }
     }
     else if (LWPA_IP_IS_V6(netmask))
     {
       const uint8_t* addr_buf = LWPA_IP_V6_ADDRESS(netmask);
-      for (size_t i = 0; i < LWPA_IPV6_BYTES; ++i)
+      size_t addr_index = 0;
+      while (addr_buf[addr_index] == 0xff && addr_index < LWPA_IPV6_BYTES)
       {
-        uint8_t addr_val = addr_buf[i];
-        bool break_early = false;
-        for (size_t j = 0; j < 8; ++j, ++length)
+        length += 8;
+        addr_index++;
+      }
+
+      if (addr_index < LWPA_IPV6_BYTES)
+      {
+        uint8_t addr_val = addr_buf[addr_index];
+        uint8_t bit_mask = 0x80u;
+        for (; bit_mask != 0; bit_mask >>= 1, ++length)
         {
-          if (!(addr_val & 0x80))
-          {
-            break_early = true;
+          if (!(addr_val & bit_mask))
             break;
-          }
         }
-        if (break_early)
-          break;
       }
     }
   }
@@ -207,19 +232,63 @@ unsigned int lwpa_ip_mask_length(const LwpaIpAddr* netmask)
   return length;
 }
 
-LwpaIpAddr lwpa_ipv4_mask_from_length(unsigned int mask_length)
+/*! \brief Create a netmask given a length in bits.
+ *
+ *  Creates either an IPv4 or IPv6 netmask, setting the most-significant mask_length bits.
+ *
+ *  For example:
+ *  type = kLwpaIpTypeV4; mask_length = 16; result = 255.255.0.0
+ *  type = kLwpaIpTypeV6; mask_length = 64; result = ffff:ffff:ffff:ffff::
+ *
+ *  \param[in] type Type of netmask to create, either IPv4 or IPv6.
+ *  \param[in] mask_length Length in bits of the mask, counting from the MSB.
+ *  \return LwpaIpAddr containing the netmask.
+ */
+LwpaIpAddr lwpa_ip_mask_from_length(lwpa_iptype_t type, unsigned int mask_length)
 {
   LwpaIpAddr result;
-  LWPA_IP_SET_INVALID(&result);
 
-  return result;
-}
+  if (type == kLwpaIpTypeV4)
+  {
+    uint32_t mask_val = 0;
+    uint32_t bit_mask = 0x80000000u;
+    unsigned int adjusted_length = (mask_length > 32 ? 32 : mask_length);
+    for (unsigned int i = 0; i < adjusted_length; ++i, bit_mask >>= 1)
+    {
+      mask_val |= bit_mask;
+    }
 
-LwpaIpAddr lwpa_ipv6_mask_from_length(unsigned int mask_length)
-{
-  LwpaIpAddr result;
-  LWPA_IP_SET_INVALID(&result);
+    LWPA_IP_SET_V4_ADDRESS(&result, mask_val);
+  }
+  else if (type == kLwpaIpTypeV6)
+  {
+    uint8_t mask_buf[LWPA_IPV6_BYTES];
+    memset(mask_buf, 0, sizeof(mask_buf));
+    unsigned int adjusted_length = (mask_length > 128 ? 128 : mask_length);
 
+    size_t mask_index = 0;
+    while (adjusted_length / 8 > 0)
+    {
+      mask_buf[mask_index++] = 0xff;
+      adjusted_length -= 8;
+    }
+
+    uint8_t bit_mask = 0x80u;
+    do
+    {
+      if (adjusted_length == 0)
+        break;
+      mask_buf[mask_index] |= bit_mask;
+      --adjusted_length;
+      bit_mask >>= 1;
+    } while (bit_mask != 0);
+
+    LWPA_IP_SET_V6_ADDRESS(&result, mask_buf);
+  }
+  else
+  {
+    LWPA_IP_SET_INVALID(&result);
+  }
   return result;
 }
 

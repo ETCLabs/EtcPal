@@ -26,14 +26,11 @@ class NetintTest : public ::testing::Test
 {
 protected:
   NetintTest()
-  { 
+  {
     lwpa_init(LWPA_FEATURE_NETINTS);
     num_netints = lwpa_netint_get_num_interfaces();
   }
-  ~NetintTest()
-  {
-    lwpa_deinit(LWPA_FEATURE_NETINTS);
-  }
+  ~NetintTest() { lwpa_deinit(LWPA_FEATURE_NETINTS); }
 
   size_t num_netints{0};
 };
@@ -79,7 +76,7 @@ TEST_F(NetintTest, default)
   delete[] netint_arr;
 }
 
-TEST_F(NetintTest, IPv4routing)
+TEST_F(NetintTest, ipv4_routing)
 {
   ASSERT_GT(num_netints, 0u);
 
@@ -97,12 +94,15 @@ TEST_F(NetintTest, IPv4routing)
       continue;
     nets_already_tried.insert(net);
     LWPA_IP_SET_V4_ADDRESS(&test_addr, net + 1);
-    ASSERT_EQ(lwpa_netint_get_iface_for_dest(&test_addr, netint_arr, num_netints), netint);
+
+    LwpaNetintInfo netint_res;
+    ASSERT_EQ(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&test_addr, &netint_res));
+    EXPECT_TRUE(lwpa_ip_equal(&netint_res.addr, &netint->addr));
   }
 
   LwpaIpAddr ext_addr;
   LWPA_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
-  const LwpaNetintInfo* def = lwpa_netint_get_iface_for_dest(&ext_addr, netint_arr, num_netints);
-  ASSERT_TRUE(def != NULL);
-  ASSERT_TRUE(def->is_default);
+  LwpaNetintInfo def;
+  ASSERT_EQ(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&ext_addr, &def));
+  ASSERT_TRUE(def.is_default);
 }

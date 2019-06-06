@@ -42,8 +42,7 @@ extern "C" {
 size_t lwpa_netint_get_num_interfaces();
 size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size);
 bool lwpa_netint_get_default_interface(LwpaNetintInfo* netint);
-const LwpaNetintInfo* lwpa_netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
-                                                     size_t netint_arr_size);
+lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNetintInfo* netint);
 
 #ifdef __cplusplus
 }

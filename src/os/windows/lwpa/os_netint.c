@@ -45,7 +45,7 @@ static struct LwpaNetintState
 
 static IP_ADAPTER_ADDRESSES* get_windows_adapters();
 static void copy_ipv4_info(IP_ADAPTER_UNICAST_ADDRESS* pip, IP_ADAPTER_GATEWAY_ADDRESS* pgate, LwpaNetintInfo* info);
-static void copy_all_netint_info(IP_ADAPTER_ADDRESSES *adapters);
+static void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters);
 static lwpa_error_t enumerate_netints();
 static void free_netints();
 
@@ -97,29 +97,38 @@ bool lwpa_netint_get_default_interface(LwpaNetintInfo* netint)
   return false;
 }
 
-const LwpaNetintInfo* lwpa_netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
-                                                     size_t netint_arr_size)
+lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNetintInfo* netint)
 {
   const LwpaNetintInfo* res = NULL;
   const LwpaNetintInfo* def = NULL;
-  const LwpaNetintInfo* netint;
 
-  if (!dest || !netint_arr || netint_arr_size == 0)
-    return false;
+  if (!dest || !netint)
+    return kLwpaErrInvalid;
 
-  for (netint = netint_arr; netint < netint_arr + netint_arr_size; ++netint)
+  for (const LwpaNetintInfo* netint_entry = state.lwpa_netints; netint_entry < state.lwpa_netints + state.num_netints;
+       ++netint_entry)
   {
-    if (netint->is_default)
-      def = netint;
-    if (!lwpa_ip_is_wildcard(&netint->mask) && lwpa_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
+    if (netint_entry->is_default)
+      def = netint_entry;
+    if (!lwpa_ip_is_wildcard(&netint_entry->mask) &&
+        lwpa_ip_network_portions_equal(&netint_entry->addr, dest, &netint_entry->mask))
     {
-      res = netint;
+      res = netint_entry;
       break;
     }
   }
   if (!res)
     res = def;
-  return res;
+
+  if (res)
+  {
+    *netint = *res;
+    return kLwpaErrOk;
+  }
+  else
+  {
+    return kLwpaErrNotFound;
+  }
 }
 
 lwpa_error_t enumerate_netints()
@@ -219,9 +228,9 @@ void copy_ipv4_info(IP_ADAPTER_UNICAST_ADDRESS* pip, IP_ADAPTER_GATEWAY_ADDRESS*
     LWPA_IP_SET_V4_ADDRESS(&info->gate, 0u);
 }
 
-void copy_all_netint_info(IP_ADAPTER_ADDRESSES *adapters)
+void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters)
 {
-  IP_ADAPTER_ADDRESSES *pcur = adapters;
+  IP_ADAPTER_ADDRESSES* pcur = adapters;
   DWORD def_ifindex;
   bool have_def_index = false;
   if (NO_ERROR == GetBestInterface(0, &def_ifindex))

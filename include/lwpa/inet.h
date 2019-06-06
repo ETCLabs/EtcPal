@@ -169,8 +169,7 @@ int lwpa_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);
 bool lwpa_ip_and_port_equal(const LwpaSockaddr* sock1, const LwpaSockaddr* sock2);
 
 unsigned int lwpa_ip_mask_length(const LwpaIpAddr* netmask);
-LwpaIpAddr lwpa_ipv4_mask_from_length(unsigned int mask_length);
-LwpaIpAddr lwpa_ipv6_mask_from_length(unsigned int mask_length);
+LwpaIpAddr lwpa_ip_mask_from_length(lwpa_iptype_t type, unsigned int mask_length);
 bool lwpa_ip_network_portions_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* netmask);
 
 #ifdef __cplusplus
