@@ -22,8 +22,33 @@
 /**************************** Private variables ******************************/
 
 static const uint8_t v6_wildcard[LWPA_IPV6_BYTES] = {0};
+static const uint8_t v6_loopback[LWPA_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
 
 /*************************** Function definitions ****************************/
+
+/*! \brief Determine whether a LwpaIpAddr contains a loopback address.
+ *
+ *  Works for both IPv4 and IPv6 addresses.
+ *
+ *  \param[in] ip Address to check.
+ *  \return true: ip contains a loopback address.
+ *  \return false: ip does not contain a loopback address.
+ */
+bool lwpa_ip_is_loopback(const LwpaIpAddr* ip)
+{
+  if (ip)
+  {
+    if (LWPA_IP_IS_V4(ip))
+    {
+      return ((LWPA_IP_V4_ADDRESS(ip) & 0xff000000u) == 0x7f000000u);
+    }
+    else if (LWPA_IP_IS_V6(ip))
+    {
+      return (0 == memcmp(LWPA_IP_V6_ADDRESS(ip), v6_loopback, LWPA_IPV6_BYTES));
+    }
+  }
+  return false;
+}
 
 /*! \brief Determine whether a LwpaIpAddr contains a multicast address.
  *

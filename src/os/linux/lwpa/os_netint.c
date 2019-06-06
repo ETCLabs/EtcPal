@@ -36,6 +36,11 @@
 #include <stdlib.h>
 #include <limits.h>
 
+#ifdef LWPA_NETINT_DEBUG_OUTPUT
+#include <stdio.h>
+#include <string.h>
+#endif
+
 #include <ifaddrs.h>
 #include <errno.h>
 #include <asm/types.h>
@@ -97,9 +102,8 @@ static void free_routing_table(RoutingTable* table);
 
 // Interacting with RTNETLINK
 static lwpa_error_t send_netlink_route_request(int socket, int family);
-static lwpa_error_t receive_netlink_route_reply(int sock, size_t buf_size, RoutingTable* table);
-static void cidr_length_to_v4_mask(unsigned char length, LwpaIpAddr* v4_mask);
-static void cidr_length_to_v6_mask(unsigned char length, LwpaIpAddr* v6_mask);
+static lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
+static lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table);
 
 // Manipulating
 static void init_routing_table_entry(RoutingTableEntry* entry);
@@ -108,6 +112,10 @@ static int compare_routing_table_entries(const void* a, const void* b);
 // Functions for enumerating the interfaces
 static lwpa_error_t enumerate_netints();
 static void free_netints();
+
+#if LWPA_NETINT_DEBUG_OUTPUT
+static void debug_print_routing_table(RoutingTable* table);
+#endif
 
 /*************************** Function definitions ****************************/
 
@@ -158,6 +166,11 @@ lwpa_error_t build_routing_tables()
   if (res != kLwpaErrOk)
     free_routing_tables();
 
+#if LWPA_NETINT_DEBUG_OUTPUT
+  debug_print_routing_table(&state.routing_table_v4);
+  debug_print_routing_table(&state.routing_table_v6);
+#endif
+
   return res;
 }
 
@@ -186,12 +199,12 @@ lwpa_error_t build_routing_table(int family, RoutingTable* table)
         result = errno_os_to_lwpa(errno);
     }
 
-    if (result)
+    if (result == kLwpaErrOk)
       result = send_netlink_route_request(sock, family);
 
-    if (result)
+    if (result == kLwpaErrOk)
     {
-      result = receive_netlink_route_reply(sock, recv_buf_size, table);
+      result = receive_netlink_route_reply(sock, family, recv_buf_size, table);
       switch (result)
       {
         case kLwpaErrOk:
@@ -234,7 +247,7 @@ lwpa_error_t send_netlink_route_request(int socket, int family)
     return errno_os_to_lwpa(errno);
 }
 
-lwpa_error_t receive_netlink_route_reply(int sock, size_t buf_size, RoutingTable* table)
+lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
 {
   // Allocate slightly larger than buf_size, so we can detect when more room is needed
   size_t real_size = buf_size + 20;
@@ -243,7 +256,6 @@ lwpa_error_t receive_netlink_route_reply(int sock, size_t buf_size, RoutingTable
     return kLwpaErrNoMem;
   memset(buffer, 0, real_size);
 
-  struct nlmsghdr* nl_header;
   char* cur_ptr = buffer;
   size_t nl_msg_size = 0;
 
@@ -265,90 +277,106 @@ lwpa_error_t receive_netlink_route_reply(int sock, size_t buf_size, RoutingTable
       return errno_os_to_lwpa(errno);
     }
 
-    nl_header = (struct nlmsghdr*)cur_ptr;
+    struct nlmsghdr* nl_header = (struct nlmsghdr*)cur_ptr;
 
     if (nl_header->nlmsg_type == NLMSG_DONE)
       break;
-
-    // Each message represents one route
-    ++table->size;
 
     // Adjust our position in the buffer and size received
     cur_ptr += recv_res;
     nl_msg_size += (size_t)recv_res;
   }
 
-  table->entries = calloc(table->size, sizeof(RoutingTableEntry));
-  if (!table->entries)
-  {
-    table->size = 0;
-    free(buffer);
-    return kLwpaErrNoMem;
-  }
+  lwpa_error_t parse_res = parse_netlink_route_reply(family, buffer, nl_msg_size, table);
+
+  free(buffer);
+  return parse_res;
+}
+
+lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table)
+{
+  table->size = 0;
+  table->entries = NULL;
 
   // Parse the result
   // outer loop: loops thru all the NETLINK headers that also include the route entry header
-  nl_header = (struct nlmsghdr*)buffer;
-  RoutingTableEntry* entry = table->entries;
+  struct nlmsghdr* nl_header = (struct nlmsghdr*)buffer;
   for (; NLMSG_OK(nl_header, nl_msg_size); nl_header = NLMSG_NEXT(nl_header, nl_msg_size))
   {
-    init_routing_table_entry(entry);
+    RoutingTableEntry new_entry;
+    init_routing_table_entry(&new_entry);
 
-    struct rtmsg* rt_message;
-    int rt_attr_size;
-    struct rtattr* rt_attributes;
+    bool new_entry_valid = true;
 
     // get route entry header
-    rt_message = (struct rtmsg*)NLMSG_DATA(nl_header);
+    struct rtmsg* rt_message = (struct rtmsg*)NLMSG_DATA(nl_header);
 
-    // inner loop: loop thru all the attributes of one route entry.
-    rt_attributes = (struct rtattr*)RTM_RTA(rt_message);
-    rt_attr_size = (int)RTM_PAYLOAD(nl_header);
-    for (; RTA_OK(rt_attributes, rt_attr_size); rt_attributes = RTA_NEXT(rt_attributes, rt_attr_size))
+    // Filter out entries from the local routing table. Netlink seems to give us those even though
+    // we only asked for the main one.
+    if (rt_message->rtm_type != RTN_LOCAL && rt_message->rtm_type != RTN_BROADCAST &&
+        rt_message->rtm_type != RTN_ANYCAST)
     {
-      // We only care about the gateway and DST attribute
-      if (rt_attributes->rta_type == RTA_DST)
+      // inner loop: loop thru all the attributes of one route entry.
+      struct rtattr* rt_attributes = (struct rtattr*)RTM_RTA(rt_message);
+      int rt_attr_size = (int)RTM_PAYLOAD(nl_header);
+      for (; RTA_OK(rt_attributes, rt_attr_size); rt_attributes = RTA_NEXT(rt_attributes, rt_attr_size))
       {
-        if (rt_attributes->rta_len == sizeof(struct in6_addr))
-          LWPA_IP_SET_V6_ADDRESS(&entry->addr, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
-        else
-          LWPA_IP_SET_V4_ADDRESS(&entry->addr, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
-      }
-      else if (rt_attributes->rta_type == RTA_GATEWAY)
-      {
-        if (rt_attributes->rta_len == sizeof(struct in6_addr))
-          LWPA_IP_SET_V6_ADDRESS(&entry->gateway, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
-        else
-          LWPA_IP_SET_V4_ADDRESS(&entry->gateway, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
-      }
-      else if (rt_attributes->rta_type == RTA_OIF)
-      {
-        entry->interface_index = *((int*)RTA_DATA(rt_attributes));
-      }
-      else if (rt_attributes->rta_type == RTA_METRICS)
-      {
-        entry->metric = *((int*)RTA_DATA(rt_attributes));
+        // We only care about the gateway and DST attribute
+        if (rt_attributes->rta_type == RTA_DST)
+        {
+          if (family == AF_INET6)
+            LWPA_IP_SET_V6_ADDRESS(&new_entry.addr, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
+          else
+            LWPA_IP_SET_V4_ADDRESS(&new_entry.addr, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
+        }
+        else if (rt_attributes->rta_type == RTA_GATEWAY)
+        {
+          if (family == AF_INET6)
+            LWPA_IP_SET_V6_ADDRESS(&new_entry.gateway, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
+          else
+            LWPA_IP_SET_V4_ADDRESS(&new_entry.gateway, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
+        }
+        else if (rt_attributes->rta_type == RTA_OIF)
+        {
+          new_entry.interface_index = *((int*)RTA_DATA(rt_attributes));
+        }
+        else if (rt_attributes->rta_type == RTA_PRIORITY)
+        {
+          new_entry.metric = *((int*)RTA_DATA(rt_attributes));
+        }
       }
     }
-
-    if (LWPA_IP_IS_V4(&entry->addr))
+    else
     {
-      cidr_length_to_v4_mask(rt_message->rtm_dst_len, &entry->mask);
-    }
-    else if (LWPA_IP_IS_V6(&entry->addr))
-    {
-      cidr_length_to_v6_mask(rt_message->rtm_dst_len, &entry->mask);
+      new_entry_valid = false;
     }
 
-    ++entry;
+    if (!LWPA_IP_IS_INVALID(&new_entry.addr))
+    {
+      new_entry.mask = lwpa_ip_mask_from_length(new_entry.addr.type, rt_message->rtm_dst_len);
+    }
+
+    // Insert the new entry into the list
+    if (new_entry_valid)
+    {
+      ++table->size;
+      if (table->entries)
+        table->entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
+      else
+        table->entries = (RoutingTableEntry*)malloc(sizeof(RoutingTableEntry));
+      table->entries[table->size - 1] = new_entry;
+    }
   }
 
-  if (buffer)
-    free(buffer);
-
-  qsort(table->entries, table->size, sizeof(RoutingTableEntry), compare_routing_table_entries);
-
-  return kLwpaErrOk;
+  if (table->size > 0)
+  {
+    qsort(table->entries, table->size, sizeof(RoutingTableEntry), compare_routing_table_entries);
+    return kLwpaErrOk;
+  }
+  else
+  {
+    return kLwpaErrSys;
+  }
 }
 
 void init_routing_table_entry(RoutingTableEntry* entry)
@@ -368,53 +396,22 @@ int compare_routing_table_entries(const void* a, const void* b)
   unsigned int mask_length_1 = lwpa_ip_mask_length(&e1->mask);
   unsigned int mask_length_2 = lwpa_ip_mask_length(&e2->mask);
   if (mask_length_1 > mask_length_2)
-    return 1;
-  else if (mask_length_1 == mask_length_2)
-    return 0;
-  else
+  {
     return -1;
-}
-
-void cidr_length_to_v4_mask(unsigned char length, LwpaIpAddr* v4_mask)
-{
-  unsigned char length_remaining = length;
-  uint32_t mask_val = 0;
-  uint32_t bit_to_set = 0x8000;
-
-  // Cannot rely on signed/arithmetic shifts here because that behavior is implementation-defined
-  // in ANSI C
-  for (; length_remaining > 0; --length_remaining)
-  {
-    mask_val |= bit_to_set;
-    bit_to_set >>= 1;
   }
-
-  LWPA_IP_SET_V4_ADDRESS(v4_mask, mask_val);
-}
-
-void cidr_length_to_v6_mask(unsigned char length, LwpaIpAddr* v6_mask)
-{
-  uint8_t mask_buf[LWPA_IPV6_BYTES];
-  size_t mask_buf_index = 0;
-  unsigned char length_remaining = length;
-  uint8_t bit_to_set = 0x80;
-
-  // Cannot rely on signed/arithmetic shifts here because that behavior is implementation-defined
-  // in ANSI C
-  for (; length_remaining > 0; --length_remaining)
+  else if (mask_length_1 < mask_length_2)
   {
-    mask_buf[mask_buf_index] |= bit_to_set;
-    bit_to_set >>= 1;
-    if (bit_to_set == 0)
-    {
-      if (++mask_buf_index >= LWPA_IPV6_BYTES)
-        break;
-
-      bit_to_set = 0x80;
-    }
+    return 1;
   }
-
-  LWPA_IP_SET_V6_ADDRESS(v6_mask, mask_buf);
+  else
+  {
+    if (e1->metric < e2->metric)
+      return -1;
+    else if (e1->metric > e2->metric)
+      return 1;
+    else
+      return 0;
+  }
 }
 
 /* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
@@ -452,7 +449,7 @@ lwpa_error_t enumerate_netints()
   }
 
   // Allocate our interface array
-  state.lwpa_netints = calloc(state.num_netints, sizeof(LwpaNetintInfo));
+  state.lwpa_netints = (LwpaNetintInfo*)calloc(state.num_netints, sizeof(LwpaNetintInfo));
   if (!state.lwpa_netints)
   {
     freeifaddrs(state.os_addrs);
@@ -466,7 +463,7 @@ lwpa_error_t enumerate_netints()
     if (should_skip_ifaddr(ifaddr))
       continue;
 
-    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index];
+    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index++];
 
     // Interface name
     strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
@@ -514,3 +511,33 @@ void free_netints()
     state.lwpa_netints = NULL;
   }
 }
+
+#if LWPA_NETINT_DEBUG_OUTPUT
+void debug_print_routing_table(RoutingTable* table)
+{
+  printf("%-40s %-40s %-40s %s %s\n", "Address", "Mask", "Gateway", "Metric", "Index");
+  for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
+  {
+    char addr_str[LWPA_INET6_ADDRSTRLEN];
+    char mask_str[LWPA_INET6_ADDRSTRLEN];
+    char gw_str[LWPA_INET6_ADDRSTRLEN];
+
+    if (!LWPA_IP_IS_INVALID(&entry->addr))
+      lwpa_inet_ntop(&entry->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
+    else
+      strcpy(addr_str, "0.0.0.0");
+
+    if (!LWPA_IP_IS_INVALID(&entry->mask))
+      lwpa_inet_ntop(&entry->mask, mask_str, LWPA_INET6_ADDRSTRLEN);
+    else
+      strcpy(mask_str, "0.0.0.0");
+
+    if (!LWPA_IP_IS_INVALID(&entry->gateway))
+      lwpa_inet_ntop(&entry->gateway, gw_str, LWPA_INET6_ADDRSTRLEN);
+    else
+      strcpy(gw_str, "0.0.0.0");
+
+    printf("%-40s %-40s %-40s %d %d\n", addr_str, mask_str, gw_str, entry->metric, entry->interface_index);
+  }
+}
+#endif

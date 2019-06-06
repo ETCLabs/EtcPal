@@ -19,7 +19,7 @@
 
 #include "os_error.h"
 
-lwpa_error_t err_os_to_lwpa(int errno)
+lwpa_error_t errno_os_to_lwpa(int errno)
 {
   switch (errno)
   {

@@ -160,9 +160,10 @@ typedef struct LwpaNetintInfo
   bool is_default;
 } LwpaNetintInfo;
 
+bool lwpa_ip_is_loopback(const LwpaIpAddr* ip);
 bool lwpa_ip_is_multicast(const LwpaIpAddr* ip);
 bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip);
-void lwpa_ip_set_wildcard(lwpa_iptype_t type, LwpaIpAddr *ip);
+void lwpa_ip_set_wildcard(lwpa_iptype_t type, LwpaIpAddr* ip);
 
 bool lwpa_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);
 int lwpa_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);

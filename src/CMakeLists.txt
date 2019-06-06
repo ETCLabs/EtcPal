@@ -95,6 +95,9 @@ target_include_directories(lwpa PUBLIC
 )
 target_include_directories(lwpa PRIVATE ${LWPA_ROOT}/src)
 target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
+if(LWPA_NETINT_DEBUG_OUTPUT)
+  target_compile_definitions(lwpa PRIVATE LWPA_NETINT_DEBUG_OUTPUT)
+endif()
 
 # Add include paths and library dependencies based on OS for which we are being compiled
 if(LWPA_TARGET_OS STREQUAL windows)
