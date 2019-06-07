@@ -18,10 +18,45 @@
  ******************************************************************************/
 #include "lwpa/socket.h"
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include <errno.h>
+
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
 #include "os_error.h"
+
+/**************************** Private variables ******************************/
+
+/* clang-format off */
+
+#define LWPA_NUM_SHUT 3
+static const int shutmap[LWPA_NUM_SHUT] =
+{
+  SHUT_RD,
+  SHUT_WR,
+  SHUT_RDWR
+};
+
+#define LWPA_NUM_AF 3
+static const int sfmap[LWPA_NUM_AF] =
+{
+  AF_UNSPEC,
+  AF_INET,
+  AF_INET6
+};
+
+#define LWPA_NUM_TYPE 2
+static const int stmap[LWPA_NUM_TYPE] =
+{
+  SOCK_STREAM,
+  SOCK_DGRAM
+};
+
+/* clang-format on */
+
+/*************************** Function definitions ****************************/
 
 bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa)
 {
@@ -64,89 +99,60 @@ size_t sockaddr_lwpa_to_os(struct sockaddr* pfsa, const LwpaSockaddr* sa)
   return ret;
 }
 
-lwpa_error_t lwpa_socket_init(void* os_data)
-{
-  return kLwpaErrNotImpl;
-}
-
-void lwpa_socket_deinit()
-{
-}
-
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t* conn_sock)
 {
-  /*
-  struct sockaddr_storage ss;
-  int sa_size = sizeof ss;
-  SOCKET res;
-
   if (!conn_sock)
     return kLwpaErrInvalid;
 
-  res = accept(id, (struct sockaddr *)&ss, &sa_size);
+  struct sockaddr_storage ss;
+  socklen_t sa_size = sizeof ss;
+  int res = accept(id, (struct sockaddr*)&ss, &sa_size);
 
-  if (res != INVALID_SOCKET)
+  if (res != -1)
   {
-    if (address && !sockaddr_os_to_lwpa(address, (struct sockaddr *)&ss))
+    if (address && !sockaddr_os_to_lwpa(address, (struct sockaddr*)&ss))
     {
-      closesocket(res);
+      close(res);
       return kLwpaErrSys;
-}
+    }
     *conn_sock = res;
     return kLwpaErrOk;
   }
-  return err_os_to_lwpa(WSAGetLastError());
-  */
-  return kLwpaErrNotImpl;
+  return errno_os_to_lwpa(errno);
 }
 
 lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr* address)
 {
-  /*
-  struct sockaddr_storage ss;
-  size_t sa_size;
-  int res;
-
   if (!address)
     return kLwpaErrInvalid;
 
-  sa_size = sockaddr_lwpa_to_os((struct sockaddr *)&ss, address);
+  struct sockaddr_storage ss;
+  socklen_t sa_size = (socklen_t)sockaddr_lwpa_to_os((struct sockaddr*)&ss, address);
   if (sa_size == 0)
     return kLwpaErrInvalid;
 
-  res = bind(id, (struct sockaddr *)&ss, (int)sa_size);
-  return (res == 0 ? kLwpaErrOk : err_os_to_lwpa(WSAGetLastError()));
-  */
-  return kLwpaErrNotImpl;
+  int res = bind(id, (struct sockaddr*)&ss, sa_size);
+  return (res == 0 ? kLwpaErrOk : errno_os_to_lwpa(errno));
 }
 
 lwpa_error_t lwpa_close(lwpa_socket_t id)
 {
-  /*
-  int res = closesocket(id);
-  return (res == 0 ? kLwpaErrOk : err_os_to_lwpa(WSAGetLastError()));
-  */
-  return kLwpaErrNotImpl;
+  int res = close(id);
+  return (res == 0 ? kLwpaErrOk : errno_os_to_lwpa(errno));
 }
 
 lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr* address)
 {
-  /*
-  struct sockaddr_storage ss;
-  size_t sa_size;
-  int res;
-
   if (!address)
     return kLwpaErrInvalid;
 
-  sa_size = sockaddr_lwpa_to_os((struct sockaddr *)&ss, address);
+  struct sockaddr_storage ss;
+  socklen_t sa_size = (socklen_t)sockaddr_lwpa_to_os((struct sockaddr*)&ss, address);
   if (sa_size == 0)
     return kLwpaErrInvalid;
 
-  res = connect(id, (struct sockaddr *)&ss, (int)sa_size);
-  return (res == 0 ? kLwpaErrOk : err_os_to_lwpa(WSAGetLastError()));
-  */
-  return kLwpaErrNotImpl;
+  int res = connect(id, (struct sockaddr*)&ss, sa_size);
+  return (res == 0 ? kLwpaErrOk : errno_os_to_lwpa(errno));
 }
 
 lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr* address)
@@ -159,24 +165,19 @@ lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr* address)
 
 lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr* address)
 {
-  /*
-  int res;
-  struct sockaddr_storage ss;
-  socklen_t size = sizeof ss;
-
   if (!address)
     return kLwpaErrInvalid;
 
-  res = getsockname(id, (struct sockaddr *)&ss, &size);
+  struct sockaddr_storage ss;
+  socklen_t size = sizeof ss;
+  int res = getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
-    if (!sockaddr_os_to_lwpa(address, (struct sockaddr *)&ss))
+    if (!sockaddr_os_to_lwpa(address, (struct sockaddr*)&ss))
       return kLwpaErrSys;
     return kLwpaErrOk;
   }
-  return err_os_to_lwpa(WSAGetLastError());
-  */
-  return kLwpaErrNotImpl;
+  return errno_os_to_lwpa(errno);
 }
 
 lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
@@ -192,87 +193,68 @@ lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void*
 
 lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog)
 {
-  /*
   int res = listen(id, backlog);
-  return (res == 0 ? kLwpaErrOk : err_os_to_lwpa(WSAGetLastError()));
-  */
-  return kLwpaErrNotImpl;
+  return (res == 0 ? kLwpaErrOk : errno_os_to_lwpa(errno));
 }
 
 int lwpa_recv(lwpa_socket_t id, void* buffer, size_t length, int flags)
 {
-  /*
-  int res;
-  int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
-
   if (!buffer)
     return kLwpaErrInvalid;
 
-  res = recv(id, buffer, (int)length, impl_flags);
-  return (res >= 0 ? res : (int)err_os_to_lwpa(WSAGetLastError()));
-  */
-  return kLwpaErrNotImpl;
+  int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
+  int res = (int)recv(id, buffer, length, impl_flags);
+  return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
 }
 
 int lwpa_recvfrom(lwpa_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address)
 {
-  /*
-  int res;
-  int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
-  struct sockaddr_storage fromaddr;
-  socklen_t fromlen = sizeof fromaddr;
-
   if (!buffer)
     return (int)kLwpaErrInvalid;
 
-  res = recvfrom(id, buffer, (int)length, impl_flags, (struct sockaddr *)&fromaddr, &fromlen);
+  struct sockaddr_storage fromaddr;
+  socklen_t fromlen = sizeof fromaddr;
+  int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
+  int res = (int)recvfrom(id, buffer, length, impl_flags, (struct sockaddr*)&fromaddr, &fromlen);
 
   if (res >= 0)
   {
     if (address && fromlen > 0)
     {
-      if (!sockaddr_os_to_lwpa(address, (struct sockaddr *)&fromaddr))
+      if (!sockaddr_os_to_lwpa(address, (struct sockaddr*)&fromaddr))
         return kLwpaErrSys;
     }
     return res;
   }
-  return (int)err_os_to_lwpa(WSAGetLastError());
-  */
-  return kLwpaErrNotImpl;
+  return (int)errno_os_to_lwpa(errno);
 }
 
 int lwpa_send(lwpa_socket_t id, const void* message, size_t length, int flags)
 {
-  /*
-  int res;
   (void)flags;
 
   if (!message)
-    return kLwpaErrInvalid;
+    return (int)kLwpaErrInvalid;
 
-  res = send(id, message, (int)length, 0);
-  return (res >= 0 ? res : (int)err_os_to_lwpa(WSAGetLastError()));
-  */
-  return kLwpaErrNotImpl;
+  int res = (int)send(id, message, length, 0);
+  return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
 }
 
 int lwpa_sendto(lwpa_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr)
 {
-  /*
-  int res = -1;
-  size_t ss_size;
-  struct sockaddr_storage ss;
   (void)flags;
 
   if (!dest_addr || !message)
     return (int)kLwpaErrInvalid;
 
-  if ((ss_size = sockaddr_lwpa_to_os((struct sockaddr *)&ss, dest_addr)) > 0)
-    res = sendto(id, message, (int)length, 0, (struct sockaddr *)&ss, (int)ss_size);
+  struct sockaddr_storage ss;
+  socklen_t ss_size = (socklen_t)sockaddr_lwpa_to_os((struct sockaddr*)&ss, dest_addr);
+  if (ss_size == 0)
+    return (int)kLwpaErrSys;
 
-  return (res >= 0 ? res : (int)err_os_to_lwpa(WSAGetLastError()));
-  */
-  return kLwpaErrNotImpl;
+  int res = (int)sendto(id, message, length, 0, (struct sockaddr*)&ss, ss_size);
+
+  return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
 }
 
 lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void* option_value, size_t option_len)
@@ -461,24 +443,38 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
 
 lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how)
 {
-  /*
   if (how >= 0 && how < LWPA_NUM_SHUT)
   {
     int res = shutdown(id, shutmap[how]);
-    return (res == 0 ? kLwpaErrOk : err_os_to_lwpa(WSAGetLastError()));
+    return (res == 0 ? kLwpaErrOk : errno_os_to_lwpa(errno));
   }
   return kLwpaErrInvalid;
-  */
-  return kLwpaErrNotImpl;
 }
 
 lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t* id)
 {
   if (id)
   {
-    *id = LWPA_SOCKET_INVALID;
+    if (family < LWPA_NUM_AF && type < LWPA_NUM_TYPE)
+    {
+      int sock = socket(sfmap[family], stmap[type], 0);
+      if (sock != -1)
+      {
+        *id = sock;
+        return kLwpaErrOk;
+      }
+      else
+      {
+        *id = LWPA_SOCKET_INVALID;
+        return errno_os_to_lwpa(errno);
+      }
+    }
+    else
+    {
+      *id = LWPA_SOCKET_INVALID;
+    }
   }
-  return kLwpaErrNotImpl;
+  return kLwpaErrInvalid;
 }
 
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
