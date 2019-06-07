@@ -44,6 +44,39 @@ TEST_F(InetTest, addr_macros)
   EXPECT_TRUE(LWPA_IP_IS_INVALID(&test_addr));
 }
 
+// Test the lwpa_ip_is_loopback() function
+TEST_F(InetTest, loopback)
+{
+  LwpaIpAddr test_addr;
+
+  // An invalid IP is not loopback
+  LWPA_IP_SET_INVALID(&test_addr);
+  EXPECT_FALSE(lwpa_ip_is_loopback(&test_addr));
+
+  // Test the edges of the IPv4 loopback range
+  LWPA_IP_SET_V4_ADDRESS(&test_addr, 0x7effffff);
+  EXPECT_FALSE(lwpa_ip_is_loopback(&test_addr));
+
+  LWPA_IP_SET_V4_ADDRESS(&test_addr, 0x7f000000);
+  EXPECT_TRUE(lwpa_ip_is_loopback(&test_addr));
+
+  LWPA_IP_SET_V4_ADDRESS(&test_addr, 0x7fffffff);
+  EXPECT_TRUE(lwpa_ip_is_loopback(&test_addr));
+
+  LWPA_IP_SET_V4_ADDRESS(&test_addr, 0x80000000);
+  EXPECT_FALSE(lwpa_ip_is_loopback(&test_addr));
+
+  // Test the IPv6 loopback address
+  std::array<uint8_t, LWPA_IPV6_BYTES> v6_data = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+  LWPA_IP_SET_V6_ADDRESS(&test_addr, v6_data.data());
+  EXPECT_TRUE(lwpa_ip_is_loopback(&test_addr));
+
+  v6_data[15] = 0;
+  LWPA_IP_SET_V6_ADDRESS(&test_addr, v6_data.data());
+  EXPECT_FALSE(lwpa_ip_is_loopback(&test_addr));
+}
+
+// Test the lwpa_ip_is_multicast() function
 TEST_F(InetTest, multicast)
 {
   LwpaIpAddr test_addr;
