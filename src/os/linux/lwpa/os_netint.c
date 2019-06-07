@@ -70,6 +70,7 @@ typedef struct RoutingTableEntry
 typedef struct RoutingTable
 {
   RoutingTableEntry* entries;
+  RoutingTableEntry* default_route;
   size_t size;
 } RoutingTable;
 
@@ -92,6 +93,12 @@ static struct LwpaNetintState
   struct ifaddrs* os_addrs;
   size_t num_netints;
   LwpaNetintInfo* lwpa_netints;
+
+  bool have_default_netint_index_v4;
+  size_t default_netint_index_v4;
+
+  bool have_default_netint_index_v6;
+  size_t default_netint_index_v6;
 } state;
 
 /*********************** Private function prototypes *************************/
@@ -113,7 +120,7 @@ static int compare_routing_table_entries(const void* a, const void* b);
 
 // Functions for enumerating the interfaces
 static lwpa_error_t enumerate_netints();
-static void get_default_gateway(LwpaNetintInfo* netint);
+static int compare_netints(const void* a, const void* b);
 static void free_netints();
 
 #if LWPA_NETINT_DEBUG_OUTPUT
@@ -139,24 +146,95 @@ void lwpa_netint_deinit()
   if (state.initialized)
   {
     free_netints();
-    state.initialized = false;
+    memset(&state, 0, sizeof(state));
   }
 }
 
+/******************************************************************************
+ * API Functions
+ *****************************************************************************/
+
 size_t lwpa_netint_get_num_interfaces()
 {
-  return state.num_netints;
+  return (state.initialized ? state.num_netints : 0);
 }
 
 size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
 {
-  if (!netint_arr || netint_arr_size == 0)
+  if (!state.initialized || !netint_arr || netint_arr_size == 0)
     return 0;
 
   size_t addrs_copied = (netint_arr_size < state.num_netints ? netint_arr_size : state.num_netints);
   memcpy(netint_arr, state.lwpa_netints, addrs_copied * sizeof(LwpaNetintInfo));
   return addrs_copied;
 }
+
+bool lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint)
+{
+  if (state.initialized && netint)
+  {
+    if (type == kLwpaIpTypeV4 && state.have_default_netint_index_v4)
+    {
+      *netint = state.lwpa_netints[state.default_netint_index_v4];
+      return true;
+    }
+    else if (type == kLwpaIpTypeV6 && state.have_default_netint_index_v6)
+    {
+      *netint = state.lwpa_netints[state.default_netint_index_v6];
+      return true;
+    }
+  }
+  return false;
+}
+
+lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNetintInfo* netint)
+{
+  if (!dest || !netint)
+    return kLwpaErrInvalid;
+  if (!state.initialized)
+    return kLwpaErrNotInit;
+  if (state.num_netints == 0)
+    return kLwpaErrNoNetints;
+
+  RoutingTable* table_to_use = (LWPA_IP_IS_V6(dest) ? &state.routing_table_v6 : &state.routing_table_v4);
+
+  int index_found = -1;
+  for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
+  {
+    if (entry->interface_index < 0 || LWPA_IP_IS_INVALID(&entry->mask))
+      continue;
+
+    // Check each route to see if it matches the destination address explicitly
+    if (lwpa_ip_network_portions_equal(&entry->addr, dest, &entry->mask))
+    {
+      index_found = entry->interface_index;
+      break;
+    }
+  }
+
+  // Fall back to the default route
+  if (index_found < 0 && table_to_use->default_route)
+    index_found = table_to_use->default_route->interface_index;
+
+  // Find the network interface with the correct index
+  if (index_found >= 0)
+  {
+    for (LwpaNetintInfo* netint_entry = state.lwpa_netints; netint_entry < state.lwpa_netints + state.num_netints;
+         ++netint_entry)
+    {
+      if (netint_entry->ifindex == index_found)
+      {
+        *netint = *netint_entry;
+        return kLwpaErrOk;
+      }
+    }
+  }
+  return kLwpaErrNotFound;
+}
+
+/******************************************************************************
+ * Internal Functions
+ *****************************************************************************/
 
 lwpa_error_t build_routing_tables()
 {
@@ -300,6 +378,7 @@ lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl
 {
   table->size = 0;
   table->entries = NULL;
+  table->default_route = NULL;
 
   // Parse the result
   // outer loop: loops thru all the NETLINK headers that also include the route entry header
@@ -374,6 +453,17 @@ lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl
   if (table->size > 0)
   {
     qsort(table->entries, table->size, sizeof(RoutingTableEntry), compare_routing_table_entries);
+
+    // Mark the default route with the lowest metric (the first one we encounter after sorting the
+    // table)
+    for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
+    {
+      if (LWPA_IP_IS_INVALID(&entry->addr) && LWPA_IP_IS_INVALID(&entry->mask))
+      {
+        table->default_route = entry;
+        break;
+      }
+    }
     return kLwpaErrOk;
   }
   else
@@ -398,22 +488,16 @@ int compare_routing_table_entries(const void* a, const void* b)
 
   unsigned int mask_length_1 = lwpa_ip_mask_length(&e1->mask);
   unsigned int mask_length_2 = lwpa_ip_mask_length(&e2->mask);
-  if (mask_length_1 > mask_length_2)
+
+  // Sort by mask length in descending order - within the same mask length, sort by metric in
+  // ascending order.
+  if (mask_length_1 == mask_length_2)
   {
-    return -1;
-  }
-  else if (mask_length_1 < mask_length_2)
-  {
-    return 1;
+    return (e1->metric > e2->metric) - (e1->metric < e2->metric);
   }
   else
   {
-    if (e1->metric < e2->metric)
-      return -1;
-    else if (e1->metric > e2->metric)
-      return 1;
-    else
-      return 0;
+    return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
   }
 }
 
@@ -473,7 +557,7 @@ lwpa_error_t enumerate_netints()
     if (should_skip_ifaddr(ifaddr))
       continue;
 
-    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index++];
+    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index];
 
     // Interface name
     strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
@@ -487,9 +571,6 @@ lwpa_error_t enumerate_netints()
     // Interface netmask
     sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_netmask);
     current_info->mask = temp_sockaddr.ip;
-
-    // Default gateway
-    get_default_gateway(current_info);
 
     // Struct ifreq to use with ioctl() calls
     struct ifreq if_req;
@@ -508,26 +589,50 @@ lwpa_error_t enumerate_netints()
       current_info->ifindex = if_req.ifr_ifindex;
     else
       current_info->ifindex = -1;
+
+    // Is Default
+    if (LWPA_IP_IS_V4(&current_info->addr) && state.routing_table_v4.default_route &&
+        current_info->ifindex == state.routing_table_v4.default_route->interface_index)
+    {
+      current_info->is_default = true;
+    }
+    else if (LWPA_IP_IS_V6(&current_info->addr) && state.routing_table_v6.default_route &&
+             current_info->ifindex == state.routing_table_v6.default_route->interface_index)
+    {
+      current_info->is_default = true;
+    }
+
+    current_lwpa_index++;
   }
 
+  // Sort the interfaces by OS index
+  qsort(state.lwpa_netints, state.num_netints, sizeof(LwpaNetintInfo), compare_netints);
+
+  // Store the locations of the default netints for access by the API function
+  for (size_t i = 0; i < state.num_netints; ++i)
+  {
+    LwpaNetintInfo* netint = &state.lwpa_netints[i];
+    if (LWPA_IP_IS_V4(&netint->addr) && netint->is_default)
+    {
+      state.have_default_netint_index_v4 = true;
+      state.default_netint_index_v4 = i;
+    }
+    else if (LWPA_IP_IS_V6(&netint->addr) && netint->is_default)
+    {
+      state.have_default_netint_index_v6 = true;
+      state.default_netint_index_v6 = i;
+    }
+  }
+  close(ioctl_sock);
   return kLwpaErrOk;
 }
 
-void get_default_gateway(LwpaNetintInfo* netint)
+int compare_netints(const void* a, const void* b)
 {
-  RoutingTable* table_to_use = (LWPA_IP_IS_V6(&netint->addr) ? &state.routing_table_v6 : &state.routing_table_v4);
+  LwpaNetintInfo* netint1 = (LwpaNetintInfo*)a;
+  LwpaNetintInfo* netint2 = (LwpaNetintInfo*)b;
 
-  for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
-  {
-    if (!LWPA_IP_IS_INVALID(&entry->gateway) &&
-        lwpa_ip_network_portions_equal(&entry->addr, &netint->addr, &netint->mask))
-    {
-      netint->gate = entry->gateway;
-      return;
-    }
-  }
-  // Reached the end of the routing table - no default gateway
-  LWPA_IP_SET_INVALID(&netint->gate);
+  return (netint1->ifindex > netint2->ifindex) - (netint1->ifindex < netint2->ifindex);
 }
 
 void free_routing_tables()
@@ -565,7 +670,7 @@ void free_netints()
 #if LWPA_NETINT_DEBUG_OUTPUT
 void debug_print_routing_table(RoutingTable* table)
 {
-  printf("%-40s %-40s %-40s %s %s\n", "Address", "Mask", "Gateway", "Metric", "Index");
+  printf("%-40s %-40s %-40s %-10s %s\n", "Address", "Mask", "Gateway", "Metric", "Index");
   for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
   {
     char addr_str[LWPA_INET6_ADDRSTRLEN];
@@ -587,7 +692,7 @@ void debug_print_routing_table(RoutingTable* table)
     else
       strcpy(gw_str, "0.0.0.0");
 
-    printf("%-40s %-40s %-40s %d %d\n", addr_str, mask_str, gw_str, entry->metric, entry->interface_index);
+    printf("%-40s %-40s %-40s %-10d %d\n", addr_str, mask_str, gw_str, entry->metric, entry->interface_index);
   }
 }
 #endif

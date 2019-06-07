@@ -150,8 +150,6 @@ typedef struct LwpaNetintInfo
   LwpaIpAddr addr;
   /*! The subnet mask for this interface. */
   LwpaIpAddr mask;
-  /*! The address of the default gateway for this interface. */
-  LwpaIpAddr gate;
   /*! The adapter MAC address. */
   uint8_t mac[LWPA_NETINTINFO_MAC_LEN];
   /*! The adapter name as a string. */
