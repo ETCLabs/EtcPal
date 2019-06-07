@@ -35,10 +35,10 @@
 
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 
 #ifdef LWPA_NETINT_DEBUG_OUTPUT
 #include <stdio.h>
-#include <string.h>
 #endif
 
 #include <ifaddrs.h>
@@ -46,6 +46,8 @@
 #include <asm/types.h>
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -105,12 +107,13 @@ static lwpa_error_t send_netlink_route_request(int socket, int family);
 static lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
 static lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table);
 
-// Manipulating
+// Manipulating routing table entries
 static void init_routing_table_entry(RoutingTableEntry* entry);
 static int compare_routing_table_entries(const void* a, const void* b);
 
 // Functions for enumerating the interfaces
 static lwpa_error_t enumerate_netints();
+static void get_default_gateway(LwpaNetintInfo* netint);
 static void free_netints();
 
 #if LWPA_NETINT_DEBUG_OUTPUT
@@ -427,8 +430,13 @@ lwpa_error_t enumerate_netints()
   if (res != kLwpaErrOk)
     return res;
 
+  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+  if (ioctl_sock == -1)
+    return errno_os_to_lwpa(errno);
+
   if (getifaddrs(&state.os_addrs) < 0)
   {
+    close(ioctl_sock);
     return errno_os_to_lwpa(errno);
   }
 
@@ -445,6 +453,7 @@ lwpa_error_t enumerate_netints()
   if (state.num_netints == 0)
   {
     freeifaddrs(state.os_addrs);
+    close(ioctl_sock);
     return kLwpaErrNoNetints;
   }
 
@@ -453,6 +462,7 @@ lwpa_error_t enumerate_netints()
   if (!state.lwpa_netints)
   {
     freeifaddrs(state.os_addrs);
+    close(ioctl_sock);
     return kLwpaErrNoMem;
   }
 
@@ -477,9 +487,47 @@ lwpa_error_t enumerate_netints()
     // Interface netmask
     sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_netmask);
     current_info->mask = temp_sockaddr.ip;
+
+    // Default gateway
+    get_default_gateway(current_info);
+
+    // Struct ifreq to use with ioctl() calls
+    struct ifreq if_req;
+    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
+
+    // Hardware address
+    int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
+    if (ioctl_res == 0)
+      memcpy(current_info->mac, if_req.ifr_hwaddr.sa_data, LWPA_NETINTINFO_MAC_LEN);
+    else
+      memset(current_info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
+
+    // Interface index
+    ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
+    if (ioctl_res == 0)
+      current_info->ifindex = if_req.ifr_ifindex;
+    else
+      current_info->ifindex = -1;
   }
 
   return kLwpaErrOk;
+}
+
+void get_default_gateway(LwpaNetintInfo* netint)
+{
+  RoutingTable* table_to_use = (LWPA_IP_IS_V6(&netint->addr) ? &state.routing_table_v6 : &state.routing_table_v4);
+
+  for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
+  {
+    if (!LWPA_IP_IS_INVALID(&entry->gateway) &&
+        lwpa_ip_network_portions_equal(&entry->addr, &netint->addr, &netint->mask))
+    {
+      netint->gate = entry->gateway;
+      return;
+    }
+  }
+  // Reached the end of the routing table - no default gateway
+  LWPA_IP_SET_INVALID(&netint->gate);
 }
 
 void free_routing_tables()
@@ -510,6 +558,8 @@ void free_netints()
     free(state.lwpa_netints);
     state.lwpa_netints = NULL;
   }
+
+  free_routing_tables();
 }
 
 #if LWPA_NETINT_DEBUG_OUTPUT
