@@ -22,8 +22,8 @@
 
 #include <string.h>
 
-#define ACN_RLP_HEADER_SIZE 16
-#define RLP_VECTOR_SIZE 4
+#define ACN_RLP_HEADER_SIZE 16u
+#define RLP_VECTOR_SIZE 4u
 
 #define rlp_extended_length(inheritvec, inherithead, datalen) \
   ((datalen + (inheritvec ? 0 : RLP_VECTOR_SIZE) + (inherithead ? 0 : ACN_RLP_HEADER_SIZE)) > 4095)
@@ -166,7 +166,7 @@ bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLay
   else
   {
     pdu->pdata = cur_ptr;
-    pdu->datalen = pdu_len - (cur_ptr - buf);
+    pdu->datalen = (size_t)(pdu_len - (cur_ptr - buf));
   }
   return true;
 }
@@ -247,7 +247,7 @@ size_t lwpa_pack_udp_preamble(uint8_t* buf, size_t buflen)
   cur_ptr += 2;
   memcpy(cur_ptr, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE);
   cur_ptr += ACN_PACKET_IDENT_SIZE;
-  return cur_ptr - buf;
+  return (size_t)(cur_ptr - buf);
 }
 
 /*! \brief Pack an ACN TCP Preamble into a buffer.
@@ -273,7 +273,7 @@ size_t lwpa_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
   cur_ptr += ACN_PACKET_IDENT_SIZE;
   lwpa_pack_32b(cur_ptr, rlp_block_len);
   cur_ptr += 4;
-  return cur_ptr - buf;
+  return (size_t)(cur_ptr - buf);
 }
 
 /*! \brief Get the buffer size to allocate for a Root Layer PDU block.
@@ -334,7 +334,7 @@ size_t lwpa_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLa
   cur_ptr += 4;
   memcpy(cur_ptr, pdu->sender_cid.data, LWPA_UUID_BYTES);
   cur_ptr += LWPA_UUID_BYTES;
-  return cur_ptr - buf;
+  return (size_t)(cur_ptr - buf);
 }
 
 /*! \brief Pack a Root Layer PDU block into a buffer.
@@ -412,16 +412,16 @@ size_t lwpa_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLay
     if (prot_mandates_l_flag(pdu->vector) ||
         rlp_extended_length(inheritvec, inherithead, inheritdata ? 0 : pdu->datalen))
     {
-      size_t len = 3 + (inheritvec ? 0 : RLP_VECTOR_SIZE) + (inherithead ? 0 : ACN_RLP_HEADER_SIZE) +
-                   (inheritdata ? 0 : pdu->datalen);
+      size_t len = 3u + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
+                   (inheritdata ? 0u : pdu->datalen);
       lwpa_pdu_set_l_flag(*cur_ptr);
       lwpa_pdu_pack_ext_len(cur_ptr, len);
       cur_ptr += 3;
     }
     else
     {
-      size_t len = 2 + (inheritvec ? 0 : RLP_VECTOR_SIZE) + (inherithead ? 0 : ACN_RLP_HEADER_SIZE) +
-                   (inheritdata ? 0 : pdu->datalen);
+      size_t len = 2 + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
+                   (inheritdata ? 0u : pdu->datalen);
       lwpa_pdu_pack_normal_len(cur_ptr, len);
       cur_ptr += 2;
     }
@@ -442,5 +442,5 @@ size_t lwpa_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLay
       cur_ptr += pdu->datalen;
     }
   }
-  return cur_ptr - buf;
+  return (size_t)(cur_ptr - buf);
 }
