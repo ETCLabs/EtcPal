@@ -131,7 +131,7 @@ typedef struct LwpaGroupReq
 {
   /*! Index of newtork interface on which to join the multicast group. This index is provided in
    *  LwpaNetintInfo structures. */
-  int interface;
+  int ifindex;
   /*! Multicast group to join. */
   LwpaIpAddr group;
 } LwpaGroupReq;

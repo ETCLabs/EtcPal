@@ -21,11 +21,7 @@
 #include <cstddef>
 #include <vector>
 #include <thread>
-#include <chrono>
 #include <utility>
-
-static_assert(std::ratio_less_equal<std::chrono::high_resolution_clock::period, std::milli>::value,
-              "This platform does not have access to a millisecond-resolution clock. Some tests may fail.");
 
 class RwlockTest : public ::testing::Test
 {

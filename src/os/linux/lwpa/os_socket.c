@@ -441,10 +441,10 @@ int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, s
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
-        if (LWPA_IP_IS_V4(&greq->group) && greq->interface >= 0)
+        if (LWPA_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
-          val.gr_interface = (uint32_t)greq->interface;
+          val.gr_interface = (uint32_t)greq->ifindex;
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
@@ -458,10 +458,10 @@ int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, s
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
-        if (LWPA_IP_IS_V4(&greq->group) && greq->interface >= 0)
+        if (LWPA_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
-          val.gr_interface = (uint32_t)greq->interface;
+          val.gr_interface = (uint32_t)greq->ifindex;
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
@@ -503,10 +503,10 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
-        if (LWPA_IP_IS_V6(&greq->group) && greq->interface >= 0)
+        if (LWPA_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
-          val.gr_interface = (uint32_t)greq->interface;
+          val.gr_interface = (uint32_t)greq->ifindex;
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;
@@ -520,10 +520,10 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
-        if (LWPA_IP_IS_V6(&greq->group) && greq->interface >= 0)
+        if (LWPA_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
-          val.gr_interface = (uint32_t)greq->interface;
+          val.gr_interface = (uint32_t)greq->ifindex;
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;

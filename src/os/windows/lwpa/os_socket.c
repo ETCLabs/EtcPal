@@ -701,7 +701,7 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
     return kLwpaErrInvalid;
 
   lwpa_error_t res = kLwpaErrSys;
-  if (lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&context->lock))
   {
     if (context->num_valid_sockets >= LWPA_SOCKET_MAX_POLL_SIZE)
     {
@@ -736,7 +736,7 @@ lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t soc
     return kLwpaErrInvalid;
 
   lwpa_error_t res = kLwpaErrSys;
-  if (lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&context->lock))
   {
     LwpaPollCtxSocket* sock_desc = find_socket(context, socket);
     if (sock_desc)
@@ -761,7 +761,7 @@ void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket)
   if (!context || !context->valid || socket == LWPA_SOCKET_INVALID)
     return;
 
-  if (lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&context->lock))
   {
     LwpaPollCtxSocket* sock_desc = find_socket(context, socket);
     if (sock_desc)
@@ -784,7 +784,7 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
   LWPA_FD_ZERO(&readfds);
   LWPA_FD_ZERO(&writefds);
   LWPA_FD_ZERO(&exceptfds);
-  if (lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&context->lock))
   {
     if (context->num_valid_sockets != 0)
     {
@@ -825,7 +825,7 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
   else
   {
     lwpa_error_t res = kLwpaErrSys;
-    if (context->valid && lwpa_mutex_take(&context->lock, LWPA_WAIT_FOREVER))
+    if (context->valid && lwpa_mutex_take(&context->lock))
     {
       res = handle_select_result(context, event, &readfds, &writefds, &exceptfds);
       lwpa_mutex_give(&context->lock);
