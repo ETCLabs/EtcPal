@@ -39,10 +39,7 @@ protected:
     lwpa_init(LWPA_FEATURE_LOGGING);
     FillDefaultTime(cur_time);
   }
-  ~LogTest()
-  {
-    lwpa_deinit(LWPA_FEATURE_LOGGING);
-  }
+  ~LogTest() { lwpa_deinit(LWPA_FEATURE_LOGGING); }
 
   void TestLwpaVlogHelper(std::string expect_syslog_str, std::string expect_human_str, std::string expect_raw_str,
                           LwpaLogParams* lparams, int pri, const char* format, ...);
@@ -220,19 +217,23 @@ void LogTest::TestLwpaVlogHelper(std::string expect_syslog_str, std::string expe
   lwpa_vlog(lparams, pri, format, args);
   Mock::VerifyAndClearExpectations(this);
 
+  va_end(args);
+  va_start(args, format);
+
   // Try logging both
   lparams->action = kLwpaLogCreateBoth;
   EXPECT_CALL(*this, VerifyLogCallback(expect_syslog_str, expect_human_str, expect_raw_str));
   lwpa_vlog(lparams, pri, format, args);
   Mock::VerifyAndClearExpectations(this);
 
+  va_end(args);
+  va_start(args, format);
+
   // Try logging only human-readable
   lparams->action = kLwpaLogCreateHumanReadableLog;
   EXPECT_CALL(*this, VerifyLogCallback(std::string(), expect_human_str, expect_raw_str));
   lwpa_vlog(lparams, pri, format, args);
   Mock::VerifyAndClearExpectations(this);
-
-  va_end(args);
 }
 
 // Test logging of:

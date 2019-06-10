@@ -63,7 +63,7 @@ TEST_F(NetintTest, default)
   memset(netint_arr, 0, sizeof(struct LwpaNetintInfo) * num_netints);
 
   num_netints = lwpa_netint_get_interfaces(netint_arr, num_netints);
-  ASSERT_TRUE(lwpa_netint_get_default_interface(&def));
+  ASSERT_TRUE(lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def));
   ASSERT_TRUE(def.is_default);
   for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
@@ -87,6 +87,9 @@ TEST_F(NetintTest, ipv4_routing)
 
   for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
+    if (!LWPA_IP_IS_V4(&netint->addr) || lwpa_ip_is_loopback(&netint->addr))
+      continue;
+
     uint32_t net = LWPA_IP_V4_ADDRESS(&netint->addr) & LWPA_IP_V4_ADDRESS(&netint->mask);
     LwpaIpAddr test_addr;
 

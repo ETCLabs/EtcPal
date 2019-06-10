@@ -353,7 +353,7 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
   LwpaLogTimeParams time_params;
   bool have_time = get_time(params, &time_params);
 
-  if (lwpa_mutex_take(&buf_lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&buf_lock))
   {
     static char syslogmsg[LWPA_SYSLOG_STR_MAX_LEN + 1];
     static char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];

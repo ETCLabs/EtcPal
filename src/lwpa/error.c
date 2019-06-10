@@ -24,32 +24,34 @@
 /* The lwpa_error string array, for use by lwpa_strerror(). */
 const char *lwpa_error_strings[LWPA_NUM_ERROR_CODES] =
 {
-  "No error",                        /* kLwpaErrOk */
-  "Handle not found",                /* kLwpaErrNotFound */
-  "Out of memory",                   /* kLwpaErrNoMem */
-  "Resource unavailable",            /* kLwpaErrBusy */
-  "Already exists",                  /* kLwpaErrExists */
-  "Invalid argument",                /* kLwpaErrInvalid */
-  "Operation would block",           /* kLwpaErrWouldBlock */
-  "No data available",               /* kLwpaErrNoData */
-  "Malformed packet",                /* kLwpaErrProtocol */
-  "Message too long",                /* kLwpaErrMsgSize */
-  "Address already in use",          /* kLwpaErrAddrInUse */
-  "Cannot assign requested address", /* kLwpaErrAddrNotAvail */
-  "Network down or unreachable",     /* kLwpaErrNetwork */
-  "Connection reset by peer",        /* kLwpaErrConnReset */
-  "Connection closed by peer",       /* kLwpaErrConnClosed */
-  "Already connected",               /* kLwpaErrIsConn */
-  "Not connected",                   /* kLwpaErrNotConn */
-  "Transport endpoint shut down",    /* kLwpaErrShutdown */
-  "Operation timed out",             /* kLwpaErrTimedOut */
-  "Connection refused",              /* kLwpaErrConnRefused */
-  "Operation already in progress",   /* kLwpaErrAlready */
-  "Operation now in progress",       /* kLwpaErrInProgress */
-  "Buffer not big enough",           /* kLwpaErrBufSize */
-  "Module not initialized",          /* kLwpaErrNotInit */
-  "No network interfaces",           /* kLwpaErrNoNetints */
-  "No sockets",                      /* kLwpaErrNoSockets */
-  "Not implemented",                 /* kLwpaErrNotImpl */
-  "System or library call failed",   /* kLwpaErrSys */
+  "No error",                         /* kLwpaErrOk */
+  "Handle not found",                 /* kLwpaErrNotFound */
+  "Out of memory",                    /* kLwpaErrNoMem */
+  "Resource unavailable",             /* kLwpaErrBusy */
+  "Already exists",                   /* kLwpaErrExists */
+  "Invalid argument",                 /* kLwpaErrInvalid */
+  "Operation would block",            /* kLwpaErrWouldBlock */
+  "No data available",                /* kLwpaErrNoData */
+  "Malformed packet",                 /* kLwpaErrProtocol */
+  "Message too long",                 /* kLwpaErrMsgSize */
+  "Address already in use",           /* kLwpaErrAddrInUse */
+  "Cannot assign requested address",  /* kLwpaErrAddrNotAvail */
+  "Network down or unreachable",      /* kLwpaErrNetwork */
+  "Connection reset by peer",         /* kLwpaErrConnReset */
+  "Connection closed by peer",        /* kLwpaErrConnClosed */
+  "Already connected",                /* kLwpaErrIsConn */
+  "Not connected",                    /* kLwpaErrNotConn */
+  "Transport endpoint shut down",     /* kLwpaErrShutdown */
+  "Operation timed out",              /* kLwpaErrTimedOut */
+  "Software caused connection abort", /* kLwpaErrConnAborted */
+  "Connection refused",               /* kLwpaErrConnRefused */
+  "Operation already in progress",    /* kLwpaErrAlready */
+  "Operation now in progress",        /* kLwpaErrInProgress */
+  "Buffer not big enough",            /* kLwpaErrBufSize */
+  "Module not initialized",           /* kLwpaErrNotInit */
+  "No network interfaces",            /* kLwpaErrNoNetints */
+  "No sockets",                       /* kLwpaErrNoSockets */
+  "Not implemented",                  /* kLwpaErrNotImpl */
+  "Operation not permitted",          /* kLwpaErrPerm */
+  "System or library call failed",    /* kLwpaErrSys */
 };

@@ -55,7 +55,7 @@ class MutexGuard
 public:
   explicit MutexGuard(lwpa_mutex_t& mutex) : mutex_(mutex)
   {
-    if (!lwpa_mutex_take(&mutex_, LWPA_WAIT_FOREVER))
+    if (!lwpa_mutex_take(&mutex_))
       throw std::runtime_error("lwpa_mutex_take failed.");
   }
   ~MutexGuard() { lwpa_mutex_give(&mutex_); }

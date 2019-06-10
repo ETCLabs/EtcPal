@@ -105,3 +105,4 @@ The platform ports of lwpa have the following dependencies:
              equivalent method for your distribution)
   - Optional Features:
     * lwpa_netint (Network Interfaces): Linux 2.2, glibc 2.3.3
+    * lwpa_socket (Socket interface): Linux 2.6
