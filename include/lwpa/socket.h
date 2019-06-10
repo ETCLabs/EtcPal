@@ -87,13 +87,23 @@ typedef uint32_t lwpa_poll_events_t;
  *  Used in the option parameter to lwpa_setsockopt() and lwpa_getsockopt().
  *  Refer to the similarly-named option on your favorite man page for more details.
  *  @{ */
-#define LWPA_IP_TTL            11 /*!< Get/Set, value is int */
-#define LWPA_IP_MULTICAST_IF   12 /*!< Get/Set, value is LwpaIpAddr */
-#define LWPA_IP_MULTICAST_TTL  13 /*!< Get/Set, value is int */
-#define LWPA_IP_MULTICAST_LOOP 14 /*!< Get/Set, value is boolean int */
-#define LWPA_MCAST_JOIN_GROUP  15 /*!< Set only, value is LwpaMreq */
-#define LWPA_MCAST_LEAVE_GROUP 16 /*!< Set only, value is LwpaMreq */
-#define LWPA_IPV6_V6ONLY       17 /*!< Get/Set, value is boolean int */
+/*! Get/Set, value is int. Value indicates TTL for IPv4 or hop limit for IPv6. */
+#define LWPA_IP_TTL             11 
+/*! Get/Set, value is LwpaIpAddr indicating interface IP address for IPv4, or int representing
+ *  interface index for IPv6. */
+#define LWPA_IP_MULTICAST_IF    12
+/*! Get/Set, value is int. Value indicates TTL for IPv4 or hop limit for IPv6. */
+#define LWPA_IP_MULTICAST_TTL   13
+#define LWPA_IP_MULTICAST_LOOP  14 /*!< Get/Set, value is boolean int */
+/*! [Legacy IPv4-only option, use of #LWPA_MCAST_JOIN_GROUP is preferred] Set only, value is
+ *  LwpaMreq. */
+#define LWPA_IP_ADD_MEMBERSHIP  15 
+/*! [Legacy IPv4-only option, use of #LWPA_MCAST_LEAVE_GROUP is preferred] Set only, value is
+ *  LwpaMreq. */
+#define LWPA_IP_DROP_MEMBERSHIP 16
+#define LWPA_MCAST_JOIN_GROUP   17 /*!< Set only, value is LwpaGroupReq */
+#define LWPA_MCAST_LEAVE_GROUP  18 /*!< Set only, value is LwpaGroupReq */
+#define LWPA_IPV6_V6ONLY        19 /*!< Get/Set, value is boolean int */
 /*! @} */
 
 /* clang-format on */
@@ -107,7 +117,7 @@ typedef struct LwpaLinger
   int linger; /*!< Linger time in seconds */
 } LwpaLinger;
 
-/*! Option value for #LWPA_MCAST_JOIN_GROUP and #LWPA_MCAST_LEAVE_GROUP. */
+/*! Option value for #LWPA_IP_ADD_MEMBERSHIP and #LWPA_IP_DROP_MEMBERSHIP. */
 typedef struct LwpaMreq
 {
   /*! Address of network interface on which to join the multicast group. */
@@ -115,6 +125,16 @@ typedef struct LwpaMreq
   /*! Multicast group to join. */
   LwpaIpAddr group;
 } LwpaMreq;
+
+/*! Option value for #LWPA_MCAST_JOIN_GROUP and #LWPA_MCAST_LEAVE_GROUP. */
+typedef struct LwpaGroupReq
+{
+  /*! Index of newtork interface on which to join the multicast group. This index is provided in
+   *  LwpaNetintInfo structures. */
+  int interface;
+  /*! Multicast group to join. */
+  LwpaIpAddr group;
+} LwpaGroupReq;
 
 /*! \name 'how' values for lwpa_shutdown()
  *  @{ */

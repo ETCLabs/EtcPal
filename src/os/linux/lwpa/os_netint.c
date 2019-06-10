@@ -400,7 +400,7 @@ lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl
     {
       // inner loop: loop thru all the attributes of one route entry.
       struct rtattr* rt_attributes = (struct rtattr*)RTM_RTA(rt_message);
-      int rt_attr_size = (int)RTM_PAYLOAD(nl_header);
+      unsigned int rt_attr_size = (unsigned int)RTM_PAYLOAD(nl_header);
       for (; RTA_OK(rt_attributes, rt_attr_size); rt_attributes = RTA_NEXT(rt_attributes, rt_attr_size))
       {
         // We only care about the gateway and DST attribute
@@ -458,7 +458,7 @@ lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl
     // table)
     for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
     {
-      if (LWPA_IP_IS_INVALID(&entry->addr) && LWPA_IP_IS_INVALID(&entry->mask))
+      if (LWPA_IP_IS_INVALID(&entry->addr) && LWPA_IP_IS_INVALID(&entry->mask) && !LWPA_IP_IS_INVALID(&entry->gateway))
       {
         table->default_route = entry;
         break;
