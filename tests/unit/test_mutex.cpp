@@ -34,17 +34,21 @@ public:
   int shared_var{0};
 
   // For general usage
-  lwpa_mutex_t mutex;
+  lwpa_mutex_t mutex{};
 };
 
 TEST_F(MutexTest, create_destroy)
 {
   // Basic creation and taking ownership.
   ASSERT_TRUE(lwpa_mutex_create(&mutex));
-  ASSERT_TRUE(lwpa_mutex_take(&mutex, LWPA_WAIT_FOREVER));
+  ASSERT_TRUE(lwpa_mutex_take(&mutex));
 
   // On Windows, take succeeds when taking a mutex again from the same thread.
-  ASSERT_TRUE(lwpa_mutex_take(&mutex, LWPA_WAIT_FOREVER));
+#ifdef WIN32
+  ASSERT_TRUE(lwpa_mutex_take(&mutex));
+#else
+  ASSERT_FALSE(lwpa_mutex_try_take(&mutex));
+#endif
 
   lwpa_mutex_give(&mutex);
 
@@ -56,7 +60,7 @@ TEST_F(MutexTest, create_destroy)
 
   // Take should fail on a destroyed mutex.
   lwpa_mutex_destroy(&mutex);
-  ASSERT_FALSE(lwpa_mutex_take(&mutex, LWPA_WAIT_FOREVER));
+  ASSERT_FALSE(lwpa_mutex_take(&mutex));
 }
 
 static void mutex_test_thread(MutexTest* fixture)
@@ -65,7 +69,7 @@ static void mutex_test_thread(MutexTest* fixture)
   {
     for (int i = 0; i < MutexTest::kNumIterations; ++i)
     {
-      lwpa_mutex_take(&fixture->mutex, LWPA_WAIT_FOREVER);
+      lwpa_mutex_take(&fixture->mutex);
       ++fixture->shared_var;
       lwpa_mutex_give(&fixture->mutex);
       // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.

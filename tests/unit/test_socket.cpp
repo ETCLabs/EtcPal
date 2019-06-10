@@ -27,7 +27,7 @@ class SocketTest : public ::testing::Test
 public:
   static const size_t NUM_TEST_PACKETS = 1000;
   static const char* SEND_MSG;
-  static const size_t SEND_MSG_LEN = 12;
+  static const size_t SEND_MSG_LEN;
   static const uint32_t TEST_MCAST_ADDR = 0xec02054d;  // 236.2.5.77
   lwpa_socket_t send_sock = LWPA_SOCKET_INVALID;
   LwpaSockaddr send_addr_1;
@@ -36,12 +36,9 @@ protected:
   SocketTest()
   {
     lwpa_init(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS);
-    lwpa_netint_get_default_interface(&default_netint_);
+    lwpa_netint_get_default_interface(kLwpaIpTypeV4, &default_netint_);
   }
-  ~SocketTest()
-  {
-    lwpa_deinit(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS);
-  }
+  ~SocketTest() { lwpa_deinit(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS); }
 
   LwpaNetintInfo default_netint_;
 
@@ -70,6 +67,7 @@ protected:
 };
 
 const char* SocketTest::SEND_MSG = "testtesttest";
+const size_t SocketTest::SEND_MSG_LEN = 12;
 
 TEST_F(SocketTest, inet_xtox)
 {
@@ -138,7 +136,9 @@ TEST_F(SocketTest, unicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
   ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
 
-  int intval = 1;
+  int intval = 10;
+  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
+  intval = 1;
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
 
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock3));
@@ -165,24 +165,37 @@ TEST_F(SocketTest, unicast_udp)
   std::thread send_thr(send_thread, this);
   ASSERT_TRUE(send_thr.joinable());
 
+  size_t num_packets_received = 0;
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
   {
     LwpaSockaddr from_addr;
     uint8_t buf[SEND_MSG_LEN + 1];
 
-    ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(rcvsock1, buf, SEND_MSG_LEN, 0, &from_addr));
-    ASSERT_TRUE(lwpa_ip_equal(&send_addr_1.ip, &from_addr.ip));
-    ASSERT_NE(from_addr.port, 8888);
+    int res = lwpa_recvfrom(rcvsock1, buf, SEND_MSG_LEN, 0, &from_addr);
+    if (res == SEND_MSG_LEN)
+    {
+      ++num_packets_received;
+    }
+    else
+    {
+      EXPECT_EQ(res, kLwpaErrTimedOut);
+      break;
+    }
+
+    EXPECT_TRUE(lwpa_ip_equal(&send_addr_1.ip, &from_addr.ip));
+    EXPECT_NE(from_addr.port, 8888);
 
     buf[SEND_MSG_LEN] = '\0';
-    ASSERT_EQ(0, strcmp((char*)buf, SEND_MSG));
+    EXPECT_EQ(0, strcmp((char*)buf, SEND_MSG));
   }
+
+  EXPECT_GT(num_packets_received, 0u);
 
   // recvfrom should time out because this socket is bound to a different port and we set the
   // timeout option on this socket.
   LwpaSockaddr from_addr;
   uint8_t buf[SEND_MSG_LEN + 1];
-  ASSERT_GE(0, lwpa_recvfrom(rcvsock2, buf, SEND_MSG_LEN, 0, &from_addr));
+  EXPECT_GE(0, lwpa_recvfrom(rcvsock2, buf, SEND_MSG_LEN, 0, &from_addr));
 
   // Let the send thread end
   send_thr.join();
@@ -201,8 +214,10 @@ TEST_F(SocketTest, multicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
   ASSERT_NE(rcvsock1, LWPA_SOCKET_INVALID);
 
-  int intval = 1;
-  ASSERT_EQ(0, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
+  int intval = 10;
+  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
+  intval = 1;
+  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
 
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
   ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
@@ -225,13 +240,13 @@ TEST_F(SocketTest, multicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock2, &bind_addr));
 
   // Subscribe socket 1 to the multicast address.
-  LwpaMreq mreq;
-  mreq.netint = default_netint_.addr;
-  LWPA_IP_SET_V4_ADDRESS(&mreq.group, TEST_MCAST_ADDR);
-  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &mreq, sizeof mreq));
+  LwpaGroupReq greq;
+  greq.interface = default_netint_.ifindex;
+  LWPA_IP_SET_V4_ADDRESS(&greq.group, TEST_MCAST_ADDR);
+  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
   // Subscribe socket 2 to the multicast address
-  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock2, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &mreq, sizeof mreq));
+  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock2, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
   LWPA_IP_SET_V4_ADDRESS(&send_addr_1.ip, TEST_MCAST_ADDR);
   send_addr_1.port = 8888;
@@ -240,17 +255,30 @@ TEST_F(SocketTest, multicast_udp)
   std::thread send_thr(send_thread, this);
   ASSERT_TRUE(send_thr.joinable());
 
+  size_t num_packets_received = 0;
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
   {
     LwpaSockaddr from_addr;
     uint8_t buf[SEND_MSG_LEN + 1];
 
-    ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(rcvsock1, buf, SEND_MSG_LEN, 0, &from_addr));
-    ASSERT_NE(from_addr.port, 8888);
+    int res = lwpa_recvfrom(rcvsock1, buf, SEND_MSG_LEN, 0, &from_addr);
+    if (res == SEND_MSG_LEN)
+    {
+      ++num_packets_received;
+    }
+    else
+    {
+      EXPECT_EQ(res, kLwpaErrTimedOut);
+      break;
+    }
+
+    EXPECT_NE(from_addr.port, 8888);
 
     buf[SEND_MSG_LEN] = '\0';
-    ASSERT_EQ(0, strcmp((char*)buf, SEND_MSG));
+    EXPECT_EQ(0, strcmp((char*)buf, SEND_MSG));
   }
+  EXPECT_GT(num_packets_received, 0u);
+
   LwpaSockaddr from_addr;
   uint8_t buf[SEND_MSG_LEN + 1];
   // recvfrom should time out because this socket is bound to a different port and we set the

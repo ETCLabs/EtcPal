@@ -18,79 +18,75 @@
  ******************************************************************************/
 
 #include "os_error.h"
+#include <errno.h>
 
-lwpa_error_t errno_os_to_lwpa(int errno)
+lwpa_error_t errno_os_to_lwpa(int os_errno)
 {
-  switch (errno)
+  switch (os_errno)
   {
-    /*
-    case WSAEBADF:
-    case WSAENOTSOCK:
-    case WSATYPE_NOT_FOUND:
-    case WSAHOST_NOT_FOUND:
-    case WSAESTALE:
+    case EPERM:
+    case EACCES:
+      return kLwpaErrPerm;
+    case ENOENT:
+    case EBADF:
+    case ENOTSOCK:
       return kLwpaErrNotFound;
-    case WSA_INVALID_HANDLE:
-    case WSA_INVALID_PARAMETER:
-    case WSAEFAULT:
-    case WSAEINVAL:
-    case WSAEDESTADDRREQ:
-    case WSAENOPROTOOPT:
+    case EFAULT:
+    case EINVAL:
+    case EDESTADDRREQ:
+    case EPROTOTYPE:
+    case EOPNOTSUPP:
       return kLwpaErrInvalid;
-    case WSA_NOT_ENOUGH_MEMORY:
-    case WSAEMFILE:
-    case WSAETOOMANYREFS:
-    case WSAEPROCLIM:
-    case WSAEUSERS:
-      return kLwpaErrNoMem;
-    case WSA_IO_PENDING:
-    case WSAEINPROGRESS:
-      return kLwpaErrInProgress;
-    case WSA_IO_INCOMPLETE:
-    case WSAEALREADY:
-      return kLwpaErrAlready;
-    case WSAEWOULDBLOCK:
+      // case EAGAIN: // EWOULDBLOCK defined to EAGAIN
+    case EWOULDBLOCK:
       return kLwpaErrWouldBlock;
-    case WSAEMSGSIZE:
-      return kLwpaErrMsgSize;
-    case WSAEADDRINUSE:
-      return kLwpaErrAddrInUse;
-    case WSAEADDRNOTAVAIL:
-      return kLwpaErrAddrNotAvail;
-    case WSAENETDOWN:
-    case WSAENETUNREACH:
-    case WSAENETRESET:
-    case WSAEHOSTDOWN:
-    case WSAEHOSTUNREACH:
-      return kLwpaErrNetwork;
-    case WSAECONNRESET:
-    case WSAECONNABORTED:
-      return kLwpaErrConnReset;
-    case WSAEISCONN:
-      return kLwpaErrIsConn;
-    case WSAENOTCONN:
-      return kLwpaErrNotConn;
-    case WSAESHUTDOWN:
-      return kLwpaErrShutdown;
-    case WSAETIMEDOUT:
-      return kLwpaErrTimedOut;
-    case WSAECONNREFUSED:
-      return kLwpaErrConnRefused;
-    case WSAENOBUFS:
-      return kLwpaErrBufSize;
-    case WSANOTIMPLIALISED:
-    case WSASYSNOTREADY:
+    case EBUSY:
+      return kLwpaErrBusy;
+    case ENOMEM:
+    case ENOBUFS:
+      return kLwpaErrNoMem;
+    case EEXIST:
+      return kLwpaErrExists;
+    case ENOSYS:
       return kLwpaErrNotImpl;
-    case WSAEACCES:
-    case WSA_OPERATION_ABORTED:
-    case WSAEPROTOTYPE:
-    case WSAEPROTONOSUPPORT:
-    case WSAESOCKTNOSUPPORT:
-    case WSAEOPNOTSUPP:
-    case WSAEPFNOSUPPORT:
-    case WSAEAFNOSUPPORT:
-    case WSASYSCALLFAILURE:
-    */
+    case EPROTO:
+      return kLwpaErrProtocol;
+    case EMSGSIZE:
+      return kLwpaErrMsgSize;
+    case EADDRINUSE:
+      return kLwpaErrAddrInUse;
+    case EADDRNOTAVAIL:
+      return kLwpaErrAddrNotAvail;
+    case ENETDOWN:
+    case ENETUNREACH:
+    case ENETRESET:
+      return kLwpaErrNetwork;
+    case ECONNABORTED:
+      return kLwpaErrConnAborted;
+    case ECONNRESET:
+      return kLwpaErrConnReset;
+    case EISCONN:
+      return kLwpaErrIsConn;
+    case ENOTCONN:
+      return kLwpaErrNotConn;
+    case ESHUTDOWN:
+      return kLwpaErrShutdown;
+    case ETIMEDOUT:
+      return kLwpaErrTimedOut;
+    case ECONNREFUSED:
+      return kLwpaErrConnRefused;
+    case EALREADY:
+      return kLwpaErrAlready;
+    case EINPROGRESS:
+      return kLwpaErrInProgress;
+    case EINTR:
+    case ENFILE:
+    case EMFILE:
+    case ENOSPC:
+    case EPFNOSUPPORT:
+    case EAFNOSUPPORT:
+    case EPROTONOSUPPORT:
+    case ESOCKTNOSUPPORT:
     default:
       return kLwpaErrSys;
   }

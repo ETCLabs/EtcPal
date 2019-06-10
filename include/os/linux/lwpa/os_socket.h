@@ -23,6 +23,7 @@
 #include <netinet/in.h>
 #include <sys/select.h>
 #include "lwpa/inet.h"
+#include "lwpa/rbtree.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +37,9 @@ typedef int lwpa_socket_t;
 
 typedef struct LwpaPollContext
 {
+  bool valid;
   int epoll_fd;
+  LwpaRbTree sockets;
 } LwpaPollContext;
 
 #define IP_OS_TO_LWPA_V4(lwpaipptr, pfipptr) LWPA_IP_SET_V4_ADDRESS((lwpaipptr), ntohl((pfipptr)->s_addr))
