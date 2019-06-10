@@ -97,7 +97,7 @@ platform. This is currently the only option for MQX RTOS.
 
 The platform ports of lwpa have the following dependencies:
 + Microsoft Windows
-  - Windows XP or higher
+  - Windows XP SP1 or later
 + MQX RTOS
   - MQX 4.2.0
 + Linux

@@ -319,6 +319,7 @@ void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters)
           {
             info->is_default = false;
           }
+          info->ifindex = pcur->IfIndex;
           break;
         case AF_INET6:
           copy_ipv6_info(pip, info);
@@ -331,13 +332,13 @@ void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters)
           {
             info->is_default = false;
           }
+          info->ifindex = pcur->Ipv6IfIndex;
           break;
         default:
           pip = pip->Next;
           continue;
       }
 
-      info->ifindex = pcur->IfIndex;
       strncpy_s(info->name, LWPA_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
       if (pcur->PhysicalAddressLength == LWPA_NETINTINFO_MAC_LEN)
         memcpy(info->mac, pcur->PhysicalAddress, LWPA_NETINTINFO_MAC_LEN);
