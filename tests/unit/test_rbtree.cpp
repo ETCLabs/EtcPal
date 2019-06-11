@@ -114,7 +114,7 @@ TEST_F(RbTreeTest, insert_static)
   ASSERT_NE(0, lwpa_rbtree_test(&tree, tree.root));
 
   // Find a random number
-  int to_find = rand() / (RAND_MAX / kIntArraySize + 1);
+  int to_find = rand() / (int)(RAND_MAX / kIntArraySize + 1);
   int* found = (int*)lwpa_rbtree_find(&tree, &to_find);
   ASSERT_TRUE(found != NULL);
   ASSERT_EQ(*found, to_find);
@@ -144,7 +144,7 @@ TEST_F(RbTreeTest, insert_dynamic)
   ASSERT_NE(0, lwpa_rbtree_test(&tree, tree.root));
 
   // Find a random number
-  int to_find = rand() / (RAND_MAX / kIntArraySize + 1);
+  int to_find = rand() / (int)(RAND_MAX / kIntArraySize + 1);
   int* found = (int*)lwpa_rbtree_find(&tree, &to_find);
   ASSERT_TRUE(found != NULL);
   ASSERT_EQ(*found, to_find);
