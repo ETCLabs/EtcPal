@@ -112,11 +112,13 @@ static const int aiprotmap[LWPA_NUM_IPPROTO] =
 
 /*********************** Private function prototypes *************************/
 
+// Helpers for lwpa_setsockopt()
 static void ms_to_timeval(int ms, struct timeval* tv);
 static int setsockopt_socket(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len);
 static int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len);
 static int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len);
 
+// Helpers for lwpa_poll API
 static void events_lwpa_to_epoll(lwpa_poll_events_t events, struct epoll_event* epoll_evt);
 static void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const LwpaPollSocket* sock_desc,
                                  lwpa_poll_events_t* events);

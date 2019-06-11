@@ -82,7 +82,7 @@ class ReadGuard
 public:
   explicit ReadGuard(lwpa_rwlock_t& rwlock) : rwlock_(rwlock)
   {
-    if (!lwpa_rwlock_readlock(&rwlock_, LWPA_WAIT_FOREVER))
+    if (!lwpa_rwlock_readlock(&rwlock_))
       throw std::runtime_error("lwpa_rwlock_readlock failed.");
   }
   ~ReadGuard() { lwpa_rwlock_readunlock(&rwlock_); }
@@ -109,7 +109,7 @@ class WriteGuard
 public:
   explicit WriteGuard(lwpa_rwlock_t& rwlock) : rwlock_(rwlock)
   {
-    if (!lwpa_rwlock_writelock(&rwlock_, LWPA_WAIT_FOREVER))
+    if (!lwpa_rwlock_writelock(&rwlock_))
       throw std::runtime_error("lwpa_rwlock_writelock failed.");
   }
   ~WriteGuard() { lwpa_rwlock_writeunlock(&rwlock_); }

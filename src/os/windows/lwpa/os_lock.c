@@ -129,10 +129,24 @@ bool lwpa_rwlock_readlock(lwpa_rwlock_t* id)
   return false;
 }
 
+bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
+{
+  if (id && id->valid)
+  {
+    if (TryEnterCriticalSection(&id->cs))
+    {
+      InterlockedIncrement(&id->reader_count);
+      LeaveCriticalSection(&id->cs);
+      return true;
+    }
+  }
+  return false;
+}
+
 void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)
 {
   if (id && id->valid)
-    InterlockedDecrement(&(idptr)->reader_count);
+    InterlockedDecrement(&id->reader_count);
 }
 
 bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
@@ -147,6 +161,28 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
     }
     // Hold on to the lock until writeunlock() is called
     return true;
+  }
+  return false;
+}
+
+bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id)
+{
+  if (id && id->valid)
+  {
+    if (TryEnterCriticalSection(&id->cs))
+    {
+      // Just check once to see if there are still readers
+      if (id->reader_count > 0)
+      {
+        // Readers are present, give up the lock and return false below
+        LeaveCriticalSection(&id->cs);
+      }
+      else
+      {
+        // Return, holding the lock
+        return true;
+      }
+    }
   }
   return false;
 }

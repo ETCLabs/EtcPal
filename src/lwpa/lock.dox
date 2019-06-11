@@ -82,6 +82,15 @@ void lwpa_mutex_destroy(lwpa_mutex_t *id);
  *  Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
  *  call to lwpa_signal_wait() blocks until lwpa_signal_post() is called.
  *
+ *  lwpa_signal implementations use the following constructs under the hood on various platforms:
+ * 
+ *  | On:           | lwpa_mutex uses: |
+ *  |---------------|------------------|
+ *  | FreeRTOS/lwIP | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
+ *  | Linux         | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
+ *  | MQX           | Lightweight Events |
+ *  | Windows       | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
+ *
  *  @{
  */
 
@@ -177,12 +186,23 @@ bool lwpa_rwlock_create(lwpa_rwlock_t *id);
  *  modified, while inside a read lock.
  *
  *  \param[in] id Identifier for the read-write lock on which to acquire a read lock.
- *  \param[in] wait_ms How long to wait to acquire the read lock, in milliseconds (use
- *                     #LWPA_WAIT_FOREVER to wait indefinitely).
  *  \return true: The read lock was acquired.
- *  \return false: The read-write lock is invalid, or an error occurred.
+ *  \return false: The lock is invalid, or an error occurred.
  */
 bool lwpa_rwlock_readlock(lwpa_rwlock_t *id);
+
+/*! \brief Try to access a read-write lock for reading.
+ *
+ *  Returns immediately either failure or success; does not block. Fails if a write lock is held
+ *  from another context. Multiple contexts may have a read lock simultaneously. In typical usage,
+ *  the resource protected by this lock should only be read, not modified, while inside a read lock.
+ *
+ *  \param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ *  \return true: The read lock was acquired.
+ *  \return false: The lock was held for writing from another thread, the lock is invalid, or an
+ *          error occurred.
+ */
+bool lwpa_rwlock_try_readlock(lwpa_rwlock_t *id);
 
 /*! \brief Release a read lock on a read-write lock object.
  *  \param[in] id Identifier for the read-write lock on which to release the read lock.
@@ -195,12 +215,22 @@ void lwpa_rwlock_readunlock(lwpa_rwlock_t *id);
  *  this function is being blocked on.
  *
  *  \param[in] id Identifier for the read-write lock on which to acquire a write lock.
- *  \param[in] wait_ms How long to wait to acquire the write lock, in milliseconds (use
- *                     #LWPA_WAIT_FOREVER to wait indefinitely).
- *  \return true (the write lock was acquired) or false (timeout or failure while waiting to acquire
- *          the write lock).
+ *  \return true: The write lock was acquired.
+ *  \return false: The lock is invalid, or an error occurred.
  */
-bool lwpa_rwlock_writelock(lwpa_rwlock_t *id, int wait_ms);
+bool lwpa_rwlock_writelock(lwpa_rwlock_t *id);
+
+/*! \brief Try to access a read-write lock for writing.
+ *
+ *  Returns immediately either failure or success; does not block. Fails if a read or write lock is
+ *  held from another context. 
+ *
+ *  \param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ *  \return true: The write lock was acquired.
+ *  \return false: The lock was held for reading or writing from another thread, the lock was
+ *          invalid, or an error occurred.
+ */
+bool lwpa_rwlock_try_writelock(lwpa_rwlock_t *id);
 
 /*! \brief Release a write lock on a read-write lock object.
  *  \param[in] id Identifier for the read-write lock on which to release the write lock.
