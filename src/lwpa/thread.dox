@@ -61,18 +61,19 @@ typedef UNDEFINED lwpa_thread_t;
  *  \param[in] thread_fn Pointer to function that should be called from the new thread. This
  *                       function takes one void* argument and returns void.
  *  \param[in] thread_arg Argument to the function called from the new thread.
- *  \return true (the thread was created) or false (the thread was not created).
+ *  \return true: The thread was created.
+ *  \return false: The thread was not created.
  */
 bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
 
 /*! \brief Stop a thread.
  *
- *  On some platforms, wait_ms is ignored and you always wait forever for a thread to stop.
+ *  This is sometimes referred to as 'joining' a thread in native platform APIs. Blocks until the
+ *  thread has exited.
  *
  *  \param[in] id Identifier for the thread to stop.
- *  \param[in] wait_ms How long to wait for the thread to stop, in milliseconds (use
- *                     #LWPA_WAIT_FOREVER to wait indefinitely).
- *  \return true (the thread was stopped) or false (an error occurred).
+ *  \return true: The thread was stopped.
+ *  \return false: An error occurred.
  */
 bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms);
 

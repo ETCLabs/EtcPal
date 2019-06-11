@@ -21,18 +21,31 @@
 #define _LWPA_OS_THREAD_H_
 
 #include <pthread.h>
+#include "lwpa/bool.h"
 
-/* placeholders */
-#define LWPA_THREAD_DEFAULT_PRIORITY SCHED_OTHER
-#define LWPA_THREAD_DEFAULT_STACK 0
-#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#define LWPA_THREAD_NAME_MAX_LENGTH 32
+#define LWPA_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on Linux */
+#define LWPA_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
+#define LWPA_THREAD_DEFAULT_NAME NULL  /* Name ignored on Linux */
 
-typedef pthread_t lwpa_thread_t;
+#define LWPA_THREAD_NAME_MAX_LENGTH 0
 
-#define lwpa_thread_create(idptr, paramsptr, thread_fn, thread_arg) false
-#define lwpa_thread_stop(idptr, wait_ms) false
-#define lwpa_thread_sleep(sleep_ms)
+typedef struct
+{
+  void (*fn)(void*);
+  void* arg;
+  pthread_t handle;
+} lwpa_thread_t;
+
+bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
+bool lwpa_thread_stop(lwpa_thread_t* id);
+void lwpa_thread_sleep(int sleep_ms);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LWPA_OS_THREAD_H_ */

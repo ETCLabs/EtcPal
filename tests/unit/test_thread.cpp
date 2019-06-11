@@ -61,19 +61,23 @@ TEST_F(ThreadTest, create_destroy)
   waitthread_run = true;
   ASSERT_TRUE(lwpa_thread_create(&wait_thread, &params, wait_and_exit, this));
 
-  // Stop should time out if the thread is still looping.
-  auto start_time = std::chrono::high_resolution_clock::now();
+  //////////////////////////////////////////////////////////////////////////////
+  // Time-based functionality not implemented for now.
+  //////////////////////////////////////////////////////////////////////////////
 
-  ASSERT_FALSE(lwpa_thread_stop(&wait_thread, 100));
+  // Stop should time out if the thread is still looping.
+  // auto start_time = std::chrono::high_resolution_clock::now();
+
+  // ASSERT_FALSE(lwpa_thread_stop(&wait_thread, 100));
   // It should wait for at least the timeout specified, minus a fudge factor to account for
   // differing time resolutions on platforms.
-  auto time_taken =
-      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time);
-  ASSERT_GE(time_taken.count(), 80);
+  // auto time_taken =
+  //     std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time);
+  // ASSERT_GE(time_taken.count(), 80);
 
   // Stop should work if the thread has exited.
   waitthread_run = false;
-  ASSERT_TRUE(lwpa_thread_stop(&wait_thread, LWPA_WAIT_FOREVER));
+  ASSERT_TRUE(lwpa_thread_stop(&wait_thread));
 }
 
 void increment_and_spin(void* param)
@@ -121,9 +125,9 @@ TEST_F(ThreadTest, time_slice)
   std::this_thread::sleep_for(100ms);
   // Stop the tasks
   oneshot_task_run = false;
-  ASSERT_TRUE(lwpa_thread_stop(&oneshot_task, LWPA_WAIT_FOREVER));
+  ASSERT_TRUE(lwpa_thread_stop(&oneshot_task));
   spin_task_run = false;
-  ASSERT_TRUE(lwpa_thread_stop(&spin_task, LWPA_WAIT_FOREVER));
+  ASSERT_TRUE(lwpa_thread_stop(&spin_task));
   ASSERT_TRUE(spin_task_ran);
   ASSERT_TRUE(oneshot_task_ran);
 }

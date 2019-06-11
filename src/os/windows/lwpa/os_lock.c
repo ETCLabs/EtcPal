@@ -19,7 +19,12 @@
 
 #include "lwpa/lock.h"
 #include "lwpa/int.h"
-#include "mmsystem.h"
+
+/**************************** Private constants ******************************/
+
+#define MAX_READERS 20000
+
+/*************************** Function definitions ****************************/
 
 bool lwpa_mutex_create(lwpa_mutex_t* id)
 {
@@ -119,28 +124,36 @@ bool lwpa_rwlock_create(lwpa_rwlock_t* id)
 
 bool lwpa_rwlock_readlock(lwpa_rwlock_t* id)
 {
+  bool res = false;
   if (id && id->valid)
   {
     EnterCriticalSection(&id->cs);
-    InterlockedIncrement(&id->reader_count);  // Add one to the reader count
+    if (id->reader_count < MAX_READERS)
+    {
+      InterlockedIncrement(&id->reader_count);  // Add one to the reader count
+      res = true;
+    }
     LeaveCriticalSection(&id->cs);
-    return true;
   }
-  return false;
+  return res;
 }
 
 bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
 {
+  bool res = false;
   if (id && id->valid)
   {
     if (TryEnterCriticalSection(&id->cs))
     {
-      InterlockedIncrement(&id->reader_count);
+      if (id->reader_count < MAX_READERS)
+      {
+        InterlockedIncrement(&id->reader_count);
+        res = true;
+      }
       LeaveCriticalSection(&id->cs);
-      return true;
     }
   }
-  return false;
+  return res;
 }
 
 void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)

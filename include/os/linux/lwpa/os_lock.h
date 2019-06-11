@@ -52,16 +52,19 @@ void lwpa_signal_destroy(lwpa_signal_t* id);
 typedef struct
 {
   bool valid;
+  unsigned int reader_count;
+  pthread_mutex_t readcount_mutex;
   pthread_mutex_t mutex;
 } lwpa_rwlock_t;
 
-/* Temporary placeholders */
-#define lwpa_rwlock_create(idptr) false
-#define lwpa_rwlock_readlock(idptr, wait_ms) false
-#define lwpa_rwlock_readunlock(idptr)
-#define lwpa_rwlock_writelock(idptr, wait_ms) false
-#define lwpa_rwlock_writeunlock(idptr)
-#define lwpa_rwlock_destroy(idptr)
+bool lwpa_rwlock_create(lwpa_rwlock_t* id);
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id);
+void lwpa_rwlock_readunlock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id);
+void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id);
+void lwpa_rwlock_destroy(lwpa_rwlock_t* id);
 
 #ifdef __cplusplus
 }
