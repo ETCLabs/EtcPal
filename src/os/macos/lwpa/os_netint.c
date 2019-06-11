@@ -36,21 +36,18 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
+#include <errno.h>
 
 #ifdef LWPA_NETINT_DEBUG_OUTPUT
 #include <stdio.h>
 #endif
 
 #include <ifaddrs.h>
-#include <errno.h>
-#include <asm/types.h>
-#include <linux/netlink.h>
-#include <linux/rtnetlink.h>
 #include <net/if.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
+#include <net/route.h>
 #include <sys/types.h>
-#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/sysctl.h>
 
 #include "lwpa/socket.h"
 #include "lwpa/private/netint.h"
@@ -73,13 +70,6 @@ typedef struct RoutingTable
   RoutingTableEntry* default_route;
   size_t size;
 } RoutingTable;
-
-/* A composite struct representing an RT_NETLINK request sent over a netlink socket. */
-typedef struct RtNetlinkRequest
-{
-  struct nlmsghdr nl_header;
-  struct rtmsg rt_msg;
-} RtNetlinkRequest;
 
 /**************************** Private variables ******************************/
 
@@ -109,10 +99,9 @@ static lwpa_error_t build_routing_table(int family, RoutingTable* table);
 static void free_routing_tables();
 static void free_routing_table(RoutingTable* table);
 
-// Interacting with RTNETLINK
-static lwpa_error_t send_netlink_route_request(int socket, int family);
-static lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
-static lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table);
+// Interacting with the BSD routing stack
+static lwpa_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len);
+static lwpa_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, RoutingTable* table);
 
 // Manipulating routing table entries
 static void init_routing_table_entry(RoutingTableEntry* entry);
@@ -257,133 +246,90 @@ lwpa_error_t build_routing_tables()
 
 lwpa_error_t build_routing_table(int family, RoutingTable* table)
 {
-  // Create a netlink socket, send a netlink request to get the routing table, and receive the
-  // reply. If the buffer was not big enough, repeat (cannot reuse the same socket because we've
-  // often received partial messages that must be discarded)
+  uint8_t* buf = NULL;
+  size_t buf_len = 0;
 
-  lwpa_error_t result = kLwpaErrOk;
-  bool done = false;
-  size_t recv_buf_size = 2048;  // Tests show this is usually enough for small routing tables
-  while (result == kLwpaErrOk && !done)
+  lwpa_error_t res = get_routing_table_dump(family, &buf, &buf_len);
+  if (res == kLwpaErrOk)
   {
-    struct sockaddr_nl addr;
-    memset(&addr, 0, sizeof(struct sockaddr_nl));
-    addr.nl_family = AF_NETLINK;
-
-    int sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
-    if (sock == -1)
-      result = errno_os_to_lwpa(errno);
-
-    if (result == kLwpaErrOk)
-    {
-      if (0 != bind(sock, (struct sockaddr*)&addr, sizeof(addr)))
-        result = errno_os_to_lwpa(errno);
-    }
-
-    if (result == kLwpaErrOk)
-      result = send_netlink_route_request(sock, family);
-
-    if (result == kLwpaErrOk)
-    {
-      result = receive_netlink_route_reply(sock, family, recv_buf_size, table);
-      switch (result)
-      {
-        case kLwpaErrOk:
-          done = true;
-          break;
-        case kLwpaErrBufSize:
-          recv_buf_size *= 2;
-          result = kLwpaErrOk;
-          break;
-        default:
-          break;
-      }
-    }
-
-    close(sock);
+    res = parse_routing_table_dump(family, buf, buf_len, table);
   }
-  return result;
+
+  if (buf)
+    free(buf);
+  return res;
 }
 
-lwpa_error_t send_netlink_route_request(int socket, int family)
+// Get the routing table information from the system.
+lwpa_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len)
 {
-  // Build the request
-  RtNetlinkRequest req;
-  memset(&req, 0, sizeof(req));
-  req.nl_header.nlmsg_len = NLMSG_LENGTH(sizeof(RtNetlinkRequest));
-  req.nl_header.nlmsg_type = RTM_GETROUTE;
-  req.nl_header.nlmsg_flags = (__u16)(NLM_F_REQUEST | NLM_F_DUMP);
-  req.nl_header.nlmsg_pid = (__u32)getpid();
-  req.rt_msg.rtm_family = (unsigned char)family;
-  req.rt_msg.rtm_table = RT_TABLE_MAIN;
+  // The MIB is a heirarchical series of codes determining the systcl operation to perform.
+  int mib[6];
+  mib[0] = CTL_NET;      // Networking messages
+  mib[1] = PF_ROUTE;     // Routing messages
+  mib[2] = 0;            // Reserved for this command, always 0
+  mib[3] = family;       // Address family
+  mib[4] = NET_RT_DUMP;  // Dump routing table entries
+  mib[5] = 0;            // Reserved for this command, always 0
 
-  // Send it to the kernel
-  struct sockaddr_nl naddr;
-  memset(&naddr, 0, sizeof(naddr));
-  naddr.nl_family = AF_NETLINK;
-
-  if (sendto(socket, &req.nl_header, req.nl_header.nlmsg_len, 0, (struct sockaddr*)&naddr, sizeof(naddr)) >= 0)
-    return kLwpaErrOk;
-  else
+  // First pass just determines the size of buffer that is needed.
+  int sysctl_res = sysctl(mib, 6, NULL, buf_len, NULL, 0);
+  if ((sysctl_res != 0 && errno != ENOMEM) || *buf_len == 0)
     return errno_os_to_lwpa(errno);
-}
 
-lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
-{
-  // Allocate slightly larger than buf_size, so we can detect when more room is needed
-  size_t real_size = buf_size + 20;
-  char* buffer = (char*)malloc(real_size);
-  if (!buffer)
+  // Allocate the buffer
+  *buf = (uint8_t*)malloc(*buf_len);
+  if (!(*buf))
     return kLwpaErrNoMem;
-  memset(buffer, 0, real_size);
 
-  char* cur_ptr = buffer;
-  size_t nl_msg_size = 0;
-
-  // Read from the socket until the NLMSG_DONE is returned in the type of the RTNETLINK message
-  while (1)
+  // Second pass to actually get the info
+  sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
+  if (sysctl_res != 0 || *buf_len == 0)
   {
-    // While we are receiving with real_size, checking against buf_size will detect when we've
-    // passed the limit given by the app
-    if (buf_size <= nl_msg_size)
-    {
-      free(buffer);
-      return kLwpaErrBufSize;
-    }
-
-    ssize_t recv_res = recv(sock, cur_ptr, real_size - nl_msg_size, 0);
-    if (recv_res == -1)
-    {
-      free(buffer);
-      return errno_os_to_lwpa(errno);
-    }
-
-    struct nlmsghdr* nl_header = (struct nlmsghdr*)cur_ptr;
-
-    if (nl_header->nlmsg_type == NLMSG_DONE)
-      break;
-
-    // Adjust our position in the buffer and size received
-    cur_ptr += recv_res;
-    nl_msg_size += (size_t)recv_res;
+    free(*buf);
+    return errno_os_to_lwpa(errno);
   }
 
-  lwpa_error_t parse_res = parse_netlink_route_reply(family, buffer, nl_msg_size, table);
-
-  free(buffer);
-  return parse_res;
+  return kLwpaErrOk;
 }
 
-lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table)
+// A function and some macros stolen from "Unix Network Programming: The Sockets Networking API" v3
+// by Stevens, Fenner, Rudoff, for parsing through the routing table dump.
+
+// This macro rounds up 'a' to the next multiple of 'size', which must be a power of 2.
+#define ROUNDUP(a, size) (((a) & ((size)-1)) ? (1 + ((a) | ((size)-1))) : (a))
+
+// This macro steps to the next socket address structure. If sa_len is 0, assume sizeof(u_long).
+#define NEXT_SA(ap) \
+  ap = (struct sockaddr*)((caddr_t)ap + (ap->sa_len ? ROUNDUP(ap->sa_len, sizeof(u_long)) : sizeof(u_long)))
+
+void get_rtaddrs(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
+{
+  for (int i = 0; i < RTAX_MAX; ++i)
+  {
+    if (addrs & (1 << i))
+    {
+      rti_info[i] = sa;
+      NEXT_SA(sa);
+    }
+    else
+    {
+      rti_info[i] = NULL;
+    }
+  }
+}
+
+lwpa_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, RoutingTable* table)
 {
   table->size = 0;
   table->entries = NULL;
   table->default_route = NULL;
 
+  size_t buf_pos = 0;
+
   // Parse the result
-  // outer loop: loops thru all the NETLINK headers that also include the route entry header
-  struct nlmsghdr* nl_header = (struct nlmsghdr*)buffer;
-  for (; NLMSG_OK(nl_header, nl_msg_size); nl_header = NLMSG_NEXT(nl_header, nl_msg_size))
+  // Loop through all routing table entries returned in the buffer
+  while (buf_pos < buf_len)
   {
     RoutingTableEntry new_entry;
     init_routing_table_entry(&new_entry);
@@ -391,52 +337,48 @@ lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl
     bool new_entry_valid = true;
 
     // get route entry header
-    struct rtmsg* rt_message = (struct rtmsg*)NLMSG_DATA(nl_header);
+    struct rt_msghdr* rmsg = (struct rt_msghdr*)(&buf[buf_pos]);
 
-    // Filter out entries from the local routing table. Netlink seems to give us those even though
-    // we only asked for the main one.
-    if (rt_message->rtm_type != RTN_LOCAL && rt_message->rtm_type != RTN_BROADCAST &&
-        rt_message->rtm_type != RTN_ANYCAST)
+    // Filter out entries from the local routing table, broadcast and ARP routes.
+    if (!(rmsg->rtm_flags & (RTF_LLDATA | RTF_LOCAL | RTF_BROADCAST)))
     {
-      // inner loop: loop thru all the attributes of one route entry.
-      struct rtattr* rt_attributes = (struct rtattr*)RTM_RTA(rt_message);
-      unsigned int rt_attr_size = (unsigned int)RTM_PAYLOAD(nl_header);
-      for (; RTA_OK(rt_attributes, rt_attr_size); rt_attributes = RTA_NEXT(rt_attributes, rt_attr_size))
+      struct sockaddr* addr_start = (struct sockaddr*)(rmsg + 1);
+      struct sockaddr* rti_info[RTAX_MAX];
+      get_rtaddrs(rmsg->rtm_addrs, addr_start, rti_info);
+
+      // We only care about the gateway and DST attribute
+      if (rti_info[RTAX_DST] != NULL)
       {
-        // We only care about the gateway and DST attribute
-        if (rt_attributes->rta_type == RTA_DST)
-        {
-          if (family == AF_INET6)
-            LWPA_IP_SET_V6_ADDRESS(&new_entry.addr, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
-          else
-            LWPA_IP_SET_V4_ADDRESS(&new_entry.addr, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
-        }
-        else if (rt_attributes->rta_type == RTA_GATEWAY)
-        {
-          if (family == AF_INET6)
-            LWPA_IP_SET_V6_ADDRESS(&new_entry.gateway, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
-          else
-            LWPA_IP_SET_V4_ADDRESS(&new_entry.gateway, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
-        }
-        else if (rt_attributes->rta_type == RTA_OIF)
-        {
-          new_entry.interface_index = *((int*)RTA_DATA(rt_attributes));
-        }
-        else if (rt_attributes->rta_type == RTA_PRIORITY)
-        {
-          new_entry.metric = *((int*)RTA_DATA(rt_attributes));
-        }
+        if (family == AF_INET6)
+          LWPA_IP_SET_V6_ADDRESS(&new_entry.addr, ((struct sockaddr_in6*)rti_info[RTAX_DST])->sin6_addr.s6_addr);
+        else
+          LWPA_IP_SET_V4_ADDRESS(&new_entry.addr, ntohl(((struct sockaddr_in*)rti_info[RTAX_DST])->sin_addr.s_addr));
       }
+      //      else if (rti_info[RTAX_GATEWAY] != NULL)
+      //      {
+      //        if (family == AF_INET6)
+      //          LWPA_IP_SET_V6_ADDRESS(&new_entry.gateway, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
+      //        else
+      //          LWPA_IP_SET_V4_ADDRESS(&new_entry.gateway, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
+      //      }
+      //      else if (rt_attributes->rta_type == RTA_OIF)
+      //      {
+      //        new_entry.interface_index = *((int*)RTA_DATA(rt_attributes));
+      //      }
+      //      else if (rt_attributes->rta_type == RTA_PRIORITY)
+      //      {
+      //        new_entry.metric = *((int*)RTA_DATA(rt_attributes));
+      //      }
     }
     else
     {
       new_entry_valid = false;
     }
 
-    if (!LWPA_IP_IS_INVALID(&new_entry.addr))
-    {
-      new_entry.mask = lwpa_ip_mask_from_length(new_entry.addr.type, rt_message->rtm_dst_len);
-    }
+    //    if (!LWPA_IP_IS_INVALID(&new_entry.addr))
+    //    {
+    //      new_entry.mask = lwpa_ip_mask_from_length(new_entry.addr.type, rt_message->rtm_dst_len);
+    //    }
 
     // Insert the new entry into the list
     if (new_entry_valid)
@@ -448,6 +390,8 @@ lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl
         table->entries = (RoutingTableEntry*)malloc(sizeof(RoutingTableEntry));
       table->entries[table->size - 1] = new_entry;
     }
+
+    buf_pos += rmsg->rtm_msglen;
   }
 
   if (table->size > 0)
@@ -511,120 +455,121 @@ static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
 lwpa_error_t enumerate_netints()
 {
   lwpa_error_t res = build_routing_tables();
-  if (res != kLwpaErrOk)
-    return res;
-
-  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
-  if (ioctl_sock == -1)
-    return errno_os_to_lwpa(errno);
-
-  if (getifaddrs(&state.os_addrs) < 0)
-  {
-    close(ioctl_sock);
-    return errno_os_to_lwpa(errno);
-  }
-
-  // Pass 1: Total the number of addresses
-  state.num_netints = 0;
-  for (struct ifaddrs* ifaddr = state.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
-  {
-    if (should_skip_ifaddr(ifaddr))
-      continue;
-
-    ++state.num_netints;
-  }
-
-  if (state.num_netints == 0)
-  {
-    freeifaddrs(state.os_addrs);
-    close(ioctl_sock);
-    return kLwpaErrNoNetints;
-  }
-
-  // Allocate our interface array
-  state.lwpa_netints = (LwpaNetintInfo*)calloc(state.num_netints, sizeof(LwpaNetintInfo));
-  if (!state.lwpa_netints)
-  {
-    freeifaddrs(state.os_addrs);
-    close(ioctl_sock);
-    return kLwpaErrNoMem;
-  }
-
-  // Pass 2: Fill in all the info about each address
-  size_t current_lwpa_index = 0;
-  for (struct ifaddrs* ifaddr = state.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
-  {
-    if (should_skip_ifaddr(ifaddr))
-      continue;
-
-    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index];
-
-    // Interface name
-    strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
-    current_info->name[LWPA_NETINTINFO_NAME_LEN - 1] = '\0';
-
-    // Interface address
-    LwpaSockaddr temp_sockaddr;
-    sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_addr);
-    current_info->addr = temp_sockaddr.ip;
-
-    // Interface netmask
-    sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_netmask);
-    current_info->mask = temp_sockaddr.ip;
-
-    // Struct ifreq to use with ioctl() calls
-    struct ifreq if_req;
-    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
-
-    // Hardware address
-    int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
-    if (ioctl_res == 0)
-      memcpy(current_info->mac, if_req.ifr_hwaddr.sa_data, LWPA_NETINTINFO_MAC_LEN);
-    else
-      memset(current_info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
-
-    // Interface index
-    ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
-    if (ioctl_res == 0)
-      current_info->ifindex = if_req.ifr_ifindex;
-    else
-      current_info->ifindex = -1;
-
-    // Is Default
-    if (LWPA_IP_IS_V4(&current_info->addr) && state.routing_table_v4.default_route &&
-        current_info->ifindex == state.routing_table_v4.default_route->interface_index)
-    {
-      current_info->is_default = true;
-    }
-    else if (LWPA_IP_IS_V6(&current_info->addr) && state.routing_table_v6.default_route &&
-             current_info->ifindex == state.routing_table_v6.default_route->interface_index)
-    {
-      current_info->is_default = true;
-    }
-
-    current_lwpa_index++;
-  }
-
-  // Sort the interfaces by OS index
-  qsort(state.lwpa_netints, state.num_netints, sizeof(LwpaNetintInfo), compare_netints);
-
-  // Store the locations of the default netints for access by the API function
-  for (size_t i = 0; i < state.num_netints; ++i)
-  {
-    LwpaNetintInfo* netint = &state.lwpa_netints[i];
-    if (LWPA_IP_IS_V4(&netint->addr) && netint->is_default)
-    {
-      state.have_default_netint_index_v4 = true;
-      state.default_netint_index_v4 = i;
-    }
-    else if (LWPA_IP_IS_V6(&netint->addr) && netint->is_default)
-    {
-      state.have_default_netint_index_v6 = true;
-      state.default_netint_index_v6 = i;
-    }
-  }
-  close(ioctl_sock);
-  return kLwpaErrOk;
+  return res;
+  //  if (res != kLwpaErrOk)
+  //    return res;
+  //
+  //  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+  //  if (ioctl_sock == -1)
+  //    return errno_os_to_lwpa(errno);
+  //
+  //  if (getifaddrs(&state.os_addrs) < 0)
+  //  {
+  //    close(ioctl_sock);
+  //    return errno_os_to_lwpa(errno);
+  //  }
+  //
+  //  // Pass 1: Total the number of addresses
+  //  state.num_netints = 0;
+  //  for (struct ifaddrs* ifaddr = state.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  //  {
+  //    if (should_skip_ifaddr(ifaddr))
+  //      continue;
+  //
+  //    ++state.num_netints;
+  //  }
+  //
+  //  if (state.num_netints == 0)
+  //  {
+  //    freeifaddrs(state.os_addrs);
+  //    close(ioctl_sock);
+  //    return kLwpaErrNoNetints;
+  //  }
+  //
+  //  // Allocate our interface array
+  //  state.lwpa_netints = (LwpaNetintInfo*)calloc(state.num_netints, sizeof(LwpaNetintInfo));
+  //  if (!state.lwpa_netints)
+  //  {
+  //    freeifaddrs(state.os_addrs);
+  //    close(ioctl_sock);
+  //    return kLwpaErrNoMem;
+  //  }
+  //
+  //  // Pass 2: Fill in all the info about each address
+  //  size_t current_lwpa_index = 0;
+  //  for (struct ifaddrs* ifaddr = state.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  //  {
+  //    if (should_skip_ifaddr(ifaddr))
+  //      continue;
+  //
+  //    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index];
+  //
+  //    // Interface name
+  //    strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
+  //    current_info->name[LWPA_NETINTINFO_NAME_LEN - 1] = '\0';
+  //
+  //    // Interface address
+  //    LwpaSockaddr temp_sockaddr;
+  //    sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_addr);
+  //    current_info->addr = temp_sockaddr.ip;
+  //
+  //    // Interface netmask
+  //    sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_netmask);
+  //    current_info->mask = temp_sockaddr.ip;
+  //
+  //    // Struct ifreq to use with ioctl() calls
+  //    struct ifreq if_req;
+  //    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
+  //
+  //    // Hardware address
+  //    int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
+  //    if (ioctl_res == 0)
+  //      memcpy(current_info->mac, if_req.ifr_hwaddr.sa_data, LWPA_NETINTINFO_MAC_LEN);
+  //    else
+  //      memset(current_info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
+  //
+  //    // Interface index
+  //    ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
+  //    if (ioctl_res == 0)
+  //      current_info->ifindex = if_req.ifr_ifindex;
+  //    else
+  //      current_info->ifindex = -1;
+  //
+  //    // Is Default
+  //    if (LWPA_IP_IS_V4(&current_info->addr) && state.routing_table_v4.default_route &&
+  //        current_info->ifindex == state.routing_table_v4.default_route->interface_index)
+  //    {
+  //      current_info->is_default = true;
+  //    }
+  //    else if (LWPA_IP_IS_V6(&current_info->addr) && state.routing_table_v6.default_route &&
+  //             current_info->ifindex == state.routing_table_v6.default_route->interface_index)
+  //    {
+  //      current_info->is_default = true;
+  //    }
+  //
+  //    current_lwpa_index++;
+  //  }
+  //
+  //  // Sort the interfaces by OS index
+  //  qsort(state.lwpa_netints, state.num_netints, sizeof(LwpaNetintInfo), compare_netints);
+  //
+  //  // Store the locations of the default netints for access by the API function
+  //  for (size_t i = 0; i < state.num_netints; ++i)
+  //  {
+  //    LwpaNetintInfo* netint = &state.lwpa_netints[i];
+  //    if (LWPA_IP_IS_V4(&netint->addr) && netint->is_default)
+  //    {
+  //      state.have_default_netint_index_v4 = true;
+  //      state.default_netint_index_v4 = i;
+  //    }
+  //    else if (LWPA_IP_IS_V6(&netint->addr) && netint->is_default)
+  //    {
+  //      state.have_default_netint_index_v6 = true;
+  //      state.default_netint_index_v6 = i;
+  //    }
+  //  }
+  //  close(ioctl_sock);
+  // return kLwpaErrOk;
 }
 
 int compare_netints(const void* a, const void* b)

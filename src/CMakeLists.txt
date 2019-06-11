@@ -109,6 +109,11 @@ if(LWPA_TARGET_OS STREQUAL windows)
     ${LWPA_ROOT}/src/os/windows/lwpa/winsock_error.c
   )
   target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
+elseif(LWPA_TARGET_OS STREQUAL macos)
+  target_sources(lwpa PRIVATE
+    ${LWPA_ROOT}/src/os/macos/lwpa/os_error.h
+    ${LWPA_ROOT}/src/os/macos/lwpa/os_error.c
+  )
 elseif(LWPA_TARGET_OS STREQUAL linux)
   target_link_libraries(lwpa PUBLIC uuid)
   target_sources(lwpa PRIVATE
