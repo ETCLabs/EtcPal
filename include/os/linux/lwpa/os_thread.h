@@ -21,6 +21,7 @@
 #define _LWPA_OS_THREAD_H_
 
 #include <pthread.h>
+#include <unistd.h>
 #include "lwpa/bool.h"
 
 #ifdef __cplusplus
@@ -42,7 +43,7 @@ typedef struct
 
 bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
 bool lwpa_thread_stop(lwpa_thread_t* id);
-void lwpa_thread_sleep(int sleep_ms);
+#define lwpa_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
 
 #ifdef __cplusplus
 }

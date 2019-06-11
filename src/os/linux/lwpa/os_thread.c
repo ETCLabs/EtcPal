@@ -19,8 +19,6 @@
 
 #include "lwpa/thread.h"
 
-#include <unistd.h>
-
 /*********************** Private function prototypes *************************/
 
 static void* thread_func_internal(void* arg);
@@ -59,11 +57,6 @@ bool lwpa_thread_stop(lwpa_thread_t* id)
     return (0 == pthread_join(id->handle, NULL));
   }
   return false;
-}
-
-void lwpa_thread_sleep(int sleep_ms)
-{
-  usleep(((useconds_t)sleep_ms) * 1000);
 }
 
 void* thread_func_internal(void* arg)
