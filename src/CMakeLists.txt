@@ -7,16 +7,19 @@ endif()
 
 # The set of supported target OS
 set(VALID_LWPA_TARGETS
-  windows
   linux
+  macos
   mqx
+  windows
 )
 
 if(NOT DEFINED LWPA_TARGET_OS)
   message(STATUS "LWPA_TARGET_OS not supplied, assuming native compile by default...")
   if(WIN32)
     set(LWPA_TARGET_OS windows)
-  elseif(UNIX AND NOT APPLE)
+  elseif(APPLE)
+    set(LWPA_TARGET_OS macos)
+  elseif(UNIX)
     set(LWPA_TARGET_OS linux)
   else()
     # The error check below will catch this and print the fatal error.
