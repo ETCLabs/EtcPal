@@ -161,6 +161,9 @@ void lwpa_signal_destroy(lwpa_signal_t *id);
  *  These are implemented as "write-preferring" reader-writer locks; this means that new readers are
  *  blocked from acquiring a read lock if any context is currently waiting for a write lock.
  *
+ *  lwpa read-write locks are typically implemented using multiple OS synchronization constructs
+ *  under the hood.
+ *
  *  @{
  */
 
