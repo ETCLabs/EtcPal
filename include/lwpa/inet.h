@@ -52,17 +52,26 @@ typedef enum
 /*! The number of bytes in an IPv6 address. */
 #define LWPA_IPV6_BYTES 16
 
-/*! An IP address. Can hold either an IPv4 or IPv6 address. IPv4 addresses are in host byte
- *  order. */
+/*! \brief An IP address.
+ *
+ *  Can hold either an IPv4 or IPv6 address. IPv4 addresses are in host byte order. IPv6 addresses
+ *  also contain a scope ID, which is also sometimes referred to as a zone index (RFC 4007), to
+ *  help disambiguate link-local addresses, among other uses. In most cases, this field can be left
+ *  at its default value, which is set by the LWPA_IP_SET_V6_ADDRESS() macro.
+ */
 typedef struct LwpaIpAddr
 {
   /*! The IP address type (IPv4 or IPv6) */
   lwpa_iptype_t type;
-  /*! The address, use either v4 or v6 depending on the value of type */
+  /*! The address (use the macros to access), either v4 or v6 depending on the value of type. */
   union AddrUnion
   {
     uint32_t v4;
-    uint8_t v6[LWPA_IPV6_BYTES];
+    struct LwpaIpv6Addr
+    {
+      uint8_t addr_buf[LWPA_IPV6_BYTES];
+      unsigned long scope_id;
+    } v6;
   } addr;
 } LwpaIpAddr;
 
@@ -98,7 +107,7 @@ typedef struct LwpaIpAddr
  *  sure this LwpaIpAddr contains a valid IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return The IPv6 address (uint8_t[]). */
-#define LWPA_IP_V6_ADDRESS(lwpa_ip_ptr) ((lwpa_ip_ptr)->addr.v6)
+#define LWPA_IP_V6_ADDRESS(lwpa_ip_ptr) ((lwpa_ip_ptr)->addr.v6.addr_buf)
 
 /*! Set the IPv4 address in a LwpaIpAddr. Also sets the type field to indicate that this LwpaIpAddr
  *  contains an IPv4 address.
@@ -115,12 +124,23 @@ typedef struct LwpaIpAddr
  *  contains an IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \param val IPv6 address to set (uint8_t[]). Must be at least of length LWPA_IPV6_BYTES. Gets
- *             copied into the struct. */
-#define LWPA_IP_SET_V6_ADDRESS(lwpa_ip_ptr, val)          \
-  do                                                      \
-  {                                                       \
-    (lwpa_ip_ptr)->type = kLwpaIpTypeV6;                  \
-    memcpy((lwpa_ip_ptr)->addr.v6, val, LWPA_IPV6_BYTES); \
+ *             copied into the struct.
+ */
+#define LWPA_IP_SET_V6_ADDRESS(lwpa_ip_ptr, val) LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(lwpa_ip_ptr, val, 0)
+
+/*! Set an IPv6 address with an explicit scope ID in a LwpaIpAddr. Also sets the type field to
+ *  indicate that this LwpaIpAddr contains an IPv6 address.
+ *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
+ *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length LWPA_IPV6_BYTES.
+ *                  Gets copied into the struct.
+ *  \param scope_id IPv6 scope ID to set.
+ */
+#define LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(lwpa_ip_ptr, addr_val, scope_id) \
+  do                                                                          \
+  {                                                                           \
+    (lwpa_ip_ptr)->type = kLwpaIpTypeV6;                                      \
+    memcpy((lwpa_ip_ptr)->addr.v6.addr_buf, (addr_val), LWPA_IPV6_BYTES);     \
+    (lwpa_ip_ptr)->addr.v6.scope_id = (scope_id);                             \
   } while (0)
 
 /*! Set the type field in a LwpaIpAddr to indicate that it does not contain a valid address.
@@ -132,9 +152,8 @@ typedef struct LwpaIpAddr
 /*! An IP address with associated interface and port. Ports are in host byte order. */
 typedef struct LwpaSockaddr
 {
-  uint16_t port;     /*!< TCP or UDP port. */
-  LwpaIpAddr ip;     /*!< IP address. */
-  uint32_t scope_id; /*!< IPv6 scope ID. */
+  uint16_t port; /*!< TCP or UDP port. */
+  LwpaIpAddr ip; /*!< IP address. */
 } LwpaSockaddr;
 
 #define LWPA_NETINTINFO_MAC_LEN 6

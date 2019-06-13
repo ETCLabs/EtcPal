@@ -17,26 +17,27 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-/* The os_netint implementation for Linux.
+/* The os_netint implementation for macOS.
  *
- * Uses getifaddrs() to get an initial list of network interfaces. More info:
- * http://man7.org/linux/man-pages/man3/getifaddrs.3.html
+ * Uses getifaddrs() to get an initial list of network interfaces. More info: man 3 getifaddrs
  *
- * Then uses netlink sockets (specifically RTNETLINK) to fill out missing information about each
- * interface. More info:
+ * Then uses sysctl() and parses kernel-formatted routing table information to add supplementary
+ * information and determine default routes.
  *
- * Netlink sockets: http://man7.org/linux/man-pages/man7/netlink.7.html
- * Netlink macros, for decoding netlink messages: http://man7.org/linux/man-pages/man3/netlink.3.html
- * RtNetlink sockets: http://man7.org/linux/man-pages/man7/rtnetlink.7.html
- * Some sample RtNetlink code: https://www.linuxjournal.com/article/8498
+ * The method by which the routing information is obtained in BSD-derived kernels is an
+ * underdocumented mess. I have tried to comment the documentation sources for how to parse the
+ * system information as best I can; sometimes this info was obtained from (with no better source
+ * being apparently available) a StackOverflow answer, or a Wikipedia page, or a print book, or
+ * simply by empirical testing.
  */
 
 #include "lwpa/netint.h"
 
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
 #include <errno.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef LWPA_NETINT_DEBUG_OUTPUT
 #include <stdio.h>
@@ -44,22 +45,39 @@
 
 #include <ifaddrs.h>
 #include <net/if.h>
+#include <net/if_dl.h>
 #include <net/route.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
 
-#include "lwpa/socket.h"
 #include "lwpa/private/netint.h"
 #include "os_error.h"
 
 /***************************** Private types *********************************/
 
+typedef enum
+{
+  kGwAddress,
+  kGwIndex,
+  kGwInvalid
+} routing_gateway_t;
+
+typedef struct RoutingGateway
+{
+  routing_gateway_t type;
+  union
+  {
+    LwpaIpAddr addr;
+    int ifindex;
+  } u;
+} RoutingGateway;
+
 typedef struct RoutingTableEntry
 {
   LwpaIpAddr addr;
   LwpaIpAddr mask;
-  LwpaIpAddr gateway;
+  RoutingGateway gateway;
   int interface_index;
   int metric;
 } RoutingTableEntry;
@@ -293,29 +311,87 @@ lwpa_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len)
   return kLwpaErrOk;
 }
 
-// A function and some macros stolen from "Unix Network Programming: The Sockets Networking API" v3
-// by Stevens, Fenner, Rudoff, for parsing through the routing table dump.
+#define SOCKADDR_ALIGN 4  // not sizeof(long)
+#define SA_SIZE(sa) ((!(sa) || (sa)->sa_len == 0) ? SOCKADDR_ALIGN : (1 + (((sa)->sa_len - 1) | (SOCKADDR_ALIGN - 1))))
 
-// This macro rounds up 'a' to the next multiple of 'size', which must be a power of 2.
-#define ROUNDUP(a, size) (((a) & ((size)-1)) ? (1 + ((a) | ((size)-1))) : (a))
-
-// This macro steps to the next socket address structure. If sa_len is 0, assume sizeof(u_long).
-#define NEXT_SA(ap) \
-  ap = (struct sockaddr*)((caddr_t)ap + (ap->sa_len ? ROUNDUP(ap->sa_len, sizeof(u_long)) : sizeof(u_long)))
-
-void get_rtaddrs(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
+void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
 {
   for (int i = 0; i < RTAX_MAX; ++i)
   {
     if (addrs & (1 << i))
     {
       rti_info[i] = sa;
-      NEXT_SA(sa);
+      sa = (struct sockaddr*)((char*)sa + SA_SIZE(sa));
     }
     else
     {
       rti_info[i] = NULL;
     }
+  }
+}
+
+static void dest_from_route_entry(int family, const struct sockaddr* os_dst, LwpaIpAddr* lwpa_dst)
+{
+  if (family == AF_INET6)
+    LWPA_IP_SET_V6_ADDRESS(lwpa_dst, ((struct sockaddr_in6*)os_dst)->sin6_addr.s6_addr);
+  else
+    LWPA_IP_SET_V4_ADDRESS(lwpa_dst, ntohl(((struct sockaddr_in*)os_dst)->sin_addr.s_addr));
+}
+
+static void netmask_from_route_entry(int family, const struct sockaddr* os_netmask, LwpaIpAddr* lwpa_netmask)
+{
+  if (family == AF_INET)
+  {
+    size_t mask_offset = offsetof(struct sockaddr_in, sin_addr);
+    const char* mask_ptr = &((char*)os_netmask)[mask_offset];
+
+    if (os_netmask->sa_len > mask_offset)
+    {
+      uint32_t mask_val = 0;
+      mask_val |= ((uint32_t)mask_ptr[0]) << 24;
+      if (os_netmask->sa_len > (mask_offset + 1))
+        mask_val |= ((uint32_t)mask_ptr[1]) << 16;
+      if (os_netmask->sa_len > (mask_offset + 2))
+        mask_val |= ((uint32_t)mask_ptr[2]) << 8;
+      if (os_netmask->sa_len > (mask_offset + 3))
+        mask_val |= ((uint32_t)mask_ptr[3]);
+      LWPA_IP_SET_V4_ADDRESS(lwpa_netmask, mask_val);
+    }
+  }
+  else if (family == AF_INET6)
+  {
+    size_t mask_offset = offsetof(struct sockaddr_in6, sin6_addr);
+    const char* mask_ptr = &((char*)os_netmask)[mask_offset];
+
+    if (os_netmask->sa_len > mask_offset)
+    {
+      uint8_t ip_buf[LWPA_IPV6_BYTES];
+      memset(ip_buf, 0, LWPA_IPV6_BYTES);
+      for (size_t mask_pos = 0; mask_pos < os_netmask->sa_len - mask_offset; ++mask_pos)
+      {
+        ip_buf[mask_pos] = mask_ptr[mask_pos];
+      }
+      LWPA_IP_SET_V6_ADDRESS(lwpa_netmask, ip_buf);
+    }
+  }
+}
+
+static void gateway_from_route_entry(const struct sockaddr* os_gw, RoutingGateway* lwpa_gw)
+{
+  if (os_gw->sa_family == AF_INET6)
+  {
+    lwpa_gw->type = kGwAddress;
+    LWPA_IP_SET_V6_ADDRESS(&lwpa_gw->u.addr, ((struct sockaddr_in6*)os_gw)->sin6_addr.s6_addr);
+  }
+  else if (os_gw->sa_family == AF_INET)
+  {
+    lwpa_gw->type = kGwAddress;
+    LWPA_IP_SET_V4_ADDRESS(&lwpa_gw->u.addr, ntohl(((struct sockaddr_in*)os_gw)->sin_addr.s_addr));
+  }
+  else if (os_gw->sa_family == AF_LINK)
+  {
+    lwpa_gw->type = kGwIndex;
+    lwpa_gw->u.ifindex = ((struct sockaddr_dl*)os_gw)->sdl_index;
   }
 }
 
@@ -344,31 +420,29 @@ lwpa_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, 
     {
       struct sockaddr* addr_start = (struct sockaddr*)(rmsg + 1);
       struct sockaddr* rti_info[RTAX_MAX];
-      get_rtaddrs(rmsg->rtm_addrs, addr_start, rti_info);
+      get_addrs_from_route_entry(rmsg->rtm_addrs, addr_start, rti_info);
 
       // We only care about the gateway and DST attribute
       if (rti_info[RTAX_DST] != NULL)
       {
-        if (family == AF_INET6)
-          LWPA_IP_SET_V6_ADDRESS(&new_entry.addr, ((struct sockaddr_in6*)rti_info[RTAX_DST])->sin6_addr.s6_addr);
-        else
-          LWPA_IP_SET_V4_ADDRESS(&new_entry.addr, ntohl(((struct sockaddr_in*)rti_info[RTAX_DST])->sin_addr.s_addr));
+        dest_from_route_entry(family, rti_info[RTAX_DST], &new_entry.addr);
       }
-      //      else if (rti_info[RTAX_GATEWAY] != NULL)
-      //      {
-      //        if (family == AF_INET6)
-      //          LWPA_IP_SET_V6_ADDRESS(&new_entry.gateway, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
-      //        else
-      //          LWPA_IP_SET_V4_ADDRESS(&new_entry.gateway, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
-      //      }
-      //      else if (rt_attributes->rta_type == RTA_OIF)
-      //      {
-      //        new_entry.interface_index = *((int*)RTA_DATA(rt_attributes));
-      //      }
-      //      else if (rt_attributes->rta_type == RTA_PRIORITY)
-      //      {
-      //        new_entry.metric = *((int*)RTA_DATA(rt_attributes));
-      //      }
+      if (rti_info[RTAX_GATEWAY] != NULL)
+      {
+        gateway_from_route_entry(rti_info[RTAX_GATEWAY], &new_entry.gateway);
+      }
+      if (rti_info[RTAX_NETMASK] != NULL)
+      {
+        netmask_from_route_entry(family, rti_info[RTAX_NETMASK], &new_entry.mask);
+      }
+      // else if (rt_attributes->rta_type == RTA_OIF)
+      //{
+      //  new_entry.interface_index = *((int*)RTA_DATA(rt_attributes));
+      //}
+      // else if (rt_attributes->rta_type == RTA_PRIORITY)
+      //{
+      //  new_entry.metric = *((int*)RTA_DATA(rt_attributes));
+      //}
     }
     else
     {
@@ -420,7 +494,7 @@ void init_routing_table_entry(RoutingTableEntry* entry)
 {
   LWPA_IP_SET_INVALID(&entry->addr);
   LWPA_IP_SET_INVALID(&entry->mask);
-  LWPA_IP_SET_INVALID(&entry->gateway);
+  entry->gateway.type = kGwInvalid;
   entry->interface_index = -1;
   entry->metric = INT_MAX;
 }
@@ -632,10 +706,12 @@ void debug_print_routing_table(RoutingTable* table)
     else
       strcpy(mask_str, "0.0.0.0");
 
-    if (!LWPA_IP_IS_INVALID(&entry->gateway))
-      lwpa_inet_ntop(&entry->gateway, gw_str, LWPA_INET6_ADDRSTRLEN);
+    if (entry->gateway.type == kGwAddress && !LWPA_IP_IS_INVALID(&entry->gateway.u.addr))
+      lwpa_inet_ntop(&entry->gateway.u.addr, gw_str, LWPA_INET6_ADDRSTRLEN);
+    else if (entry->gateway.type == kGwIndex)
+      snprintf(gw_str, LWPA_INET6_ADDRSTRLEN, "link %d", entry->gateway.u.ifindex);
     else
-      strcpy(gw_str, "0.0.0.0");
+      strcpy(gw_str, "");
 
     printf("%-40s %-40s %-40s %-10d %d\n", addr_str, mask_str, gw_str, entry->metric, entry->interface_index);
   }
