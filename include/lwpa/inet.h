@@ -22,8 +22,10 @@
 #define _LWPA_INET_H_
 
 #include <string.h>
-#include "lwpa/int.h"
 #include "lwpa/bool.h"
+#include "lwpa/error.h"
+#include "lwpa/int.h"
+#include "lwpa/os_inet.h"
 
 /*! \defgroup lwpa_inet lwpa_inet
  *  \ingroup lwpa
@@ -33,6 +35,10 @@
  *
  *  @{
  */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*! Used to identify the type of IP address contained in a LwpaIpAddr. */
 typedef enum
@@ -72,39 +78,39 @@ typedef struct LwpaIpAddr
 /*! Determine whether a LwpaIpAddr contains an IPv4 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return true (contains an IPv4 address) or false (does not contain an IPv4 address). */
-#define lwpaip_is_v4(lwpa_ip_ptr) ((lwpa_ip_ptr)->type == kLwpaIpTypeV4)
+#define LWPA_IP_IS_V4(lwpa_ip_ptr) ((lwpa_ip_ptr)->type == kLwpaIpTypeV4)
 
 /*! Determine whether a LwpaIpAddr contains an IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return true (contains an IPv6 address) or false (does not contain an IPv6 address). */
-#define lwpaip_is_v6(lwpa_ip_ptr) ((lwpa_ip_ptr)->type == kLwpaIpTypeV6)
+#define LWPA_IP_IS_V6(lwpa_ip_ptr) ((lwpa_ip_ptr)->type == kLwpaIpTypeV6)
 
 /*! Determine whether a LwpaIpAddr contains an invalid address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return true (is invalid) or false (is not invalid). */
-#define lwpaip_is_invalid(lwpa_ip_ptr) ((lwpa_ip_ptr)->type == kLwpaIpTypeInvalid)
+#define LWPA_IP_IS_INVALID(lwpa_ip_ptr) ((lwpa_ip_ptr)->type == kLwpaIpTypeInvalid)
 
-/*! Get the IPv4 address from a LwpaIpAddr. It is recommended to first use lwpaip_is_v4() to make
+/*! Get the IPv4 address from a LwpaIpAddr. It is recommended to first use LWPA_IP_IS_V4() to make
  *  sure this LwpaIpAddr contains a valid IPv4 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return The IPv4 address (uint32_t). */
-#define lwpaip_v4_address(lwpa_ip_ptr) ((lwpa_ip_ptr)->addr.v4)
+#define LWPA_IP_V4_ADDRESS(lwpa_ip_ptr) ((lwpa_ip_ptr)->addr.v4)
 
-/*! Get the IPv6 address from a LwpaIpAddr. It is recommended to first use lwpaip_is_v6() to make
+/*! Get the IPv6 address from a LwpaIpAddr. It is recommended to first use LWPA_IP_IS_V6() to make
  *  sure this LwpaIpAddr contains a valid IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \return The IPv6 address (uint8_t[]). */
-#define lwpaip_v6_address(lwpa_ip_ptr) ((lwpa_ip_ptr)->addr.v6)
+#define LWPA_IP_V6_ADDRESS(lwpa_ip_ptr) ((lwpa_ip_ptr)->addr.v6)
 
 /*! Set the IPv4 address in a LwpaIpAddr. Also sets the type field to indicate that this LwpaIpAddr
  *  contains an IPv4 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \param val IPv4 address to set (uint32_t). */
-#define lwpaip_set_v4_address(lwpa_ip_ptr, val) \
-  do                                            \
-  {                                             \
-    (lwpa_ip_ptr)->type = kLwpaIpTypeV4;        \
-    (lwpa_ip_ptr)->addr.v4 = val;               \
+#define LWPA_IP_SET_V4_ADDRESS(lwpa_ip_ptr, val) \
+  do                                             \
+  {                                              \
+    (lwpa_ip_ptr)->type = kLwpaIpTypeV4;         \
+    (lwpa_ip_ptr)->addr.v4 = val;                \
   } while (0)
 
 /*! Set the IPv6 address in a LwpaIpAddr. Also sets the type field to indicate that this LwpaIpAddr
@@ -112,7 +118,7 @@ typedef struct LwpaIpAddr
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \param val IPv6 address to set (uint8_t[]). Must be at least of length LWPA_IPV6_BYTES. Gets
  *             copied into the struct. */
-#define lwpaip_set_v6_address(lwpa_ip_ptr, val)           \
+#define LWPA_IP_SET_V6_ADDRESS(lwpa_ip_ptr, val)          \
   do                                                      \
   {                                                       \
     (lwpa_ip_ptr)->type = kLwpaIpTypeV6;                  \
@@ -121,55 +127,7 @@ typedef struct LwpaIpAddr
 
 /*! Set the type field in a LwpaIpAddr to indicate that it does not contain a valid address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr. */
-#define lwpaip_set_invalid(lwpa_ip_ptr) ((lwpa_ip_ptr)->type = kLwpaIpTypeInvalid)
-
-/*! Determine whether a LwpaIpAddr contains a multicast address. Works for either an IPv4 or an
- *  IPv6 address.
- *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
- *  \return true (contains a multicast address) or false (does not contain a multicast address). */
-#define lwpaip_is_multicast(lwpa_ip_ptr)                                                  \
-  (((lwpa_ip_ptr)->type == kLwpaIpTypeV4)                                                 \
-       ? (((lwpa_ip_ptr)->addr.v4 > 0xe0000000) && ((lwpa_ip_ptr)->addr.v4 < 0xefffffff)) \
-       : ((lwpa_ip_ptr)->addr.v6[0] == 0xff))
-
-/*! Determine whether two instances of LwpaIpAddr contain identical addresses. The type (IPv4 or
- *  IPv6) must be the same, as well as the value of the relevant address.
- *  \param ipptr1 Pointer to the first LwpaIpAddr to compare.
- *  \param ipptr2 Pointer to the second LwpaIpAddr to compare.
- *  \return true (IPs are identical) or false (IPs are not identical). */
-#define lwpaip_equal(ipptr1, ipptr2)                                                                                \
-  (((ipptr1)->type == (ipptr2)->type)                                                                               \
-       ? (((ipptr1)->type == kLwpaIpTypeV4) ? ((ipptr1)->addr.v4 == (ipptr2)->addr.v4)                              \
-                                            : (0 == memcmp((ipptr1)->addr.v6, (ipptr2)->addr.v6, LWPA_IPV6_BYTES))) \
-       : false)
-
-/*! A comparison algorithm for lwpa_ip addresses. All IPv4 addresses are considered to be < all
- *  IPv6 addresses. For matching types, the numerical address value is compared.
- *  \param ipptr1 Pointer to the first LwpaIpAddr to compare.
- *  \param ipptr2 Pointer to the second LwpaIpAddr to compare.
- *  \return < 0 (ipptr1 < ipptr2), 0 (ipptr1 == ipptr2), > 0 (ipptr1 > ipptr2)
- */
-#define lwpaip_cmp(ipptr1, ipptr2)                                                              \
-  (((ipptr1)->type != (ipptr2)->type)                                                           \
-       ? ((ipptr1)->type - (ipptr2)->type)                                                      \
-       : (((ipptr1)->type == kLwpaIpTypeV4) ? ((int)(ipptr1)->addr.v4 - (int)(ipptr2)->addr.v4) \
-                                            : memcmp((ipptr1)->addr.v6, (ipptr2)->addr.v6, LWPA_IPV6_BYTES)))
-
-#define LWPA_INADDR_ANY 0
-
-/*! Set a LwpaIpAddr to the IPv4 wildcard address. Use this macro; do not use LWPA_INADDR_ANY
- *  directly.
- *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr. */
-#define lwpaip_make_any_v4(lwpa_ip_ptr) lwpaip_set_v4_address(lwpa_ip_ptr, LWPA_INADDR_ANY)
-
-/*! Set a LwpaIpAddr to the IPv6 wildcard address.
- *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr. */
-#define lwpaip_make_any_v6(lwpa_ip_ptr)                         \
-  do                                                            \
-  {                                                             \
-    (lwpa_ip_ptr)->type = kLwpaIpTypeV6;                        \
-    memset(lwpaip_v6_address(lwpa_ip_ptr), 0, LWPA_IPV6_BYTES); \
-  } while (0)
+#define LWPA_IP_SET_INVALID(lwpa_ip_ptr) ((lwpa_ip_ptr)->type = kLwpaIpTypeInvalid)
 
 /*! @} */
 
@@ -180,14 +138,6 @@ typedef struct LwpaSockaddr
   LwpaIpAddr ip;     /*!< IP address. */
   uint32_t scope_id; /*!< IPv6 scope ID. */
 } LwpaSockaddr;
-
-/*! Determine whether two instances of LwpaSockaddr contain identical IP addresses and ports.
- *  \param sockptr1 Pointer to first LwpaSockaddr to compare.
- *  \param sockptr2 Pointer to second LwpaSockaddr to compare.
- *  \return true (the IP address and port are identical) or false (the IP address and port are not
- *          identical). */
-#define lwpasock_ip_port_equal(sockptr1, sockptr2) \
-  (lwpaip_equal(&(sockptr1)->ip, &(sockptr2)->ip) && ((sockptr1)->port == (sockptr2)->port))
 
 #define LWPA_NETINTINFO_MAC_LEN 6
 #define LWPA_NETINTINFO_NAME_LEN 64
@@ -202,15 +152,46 @@ typedef struct LwpaNetintInfo
   LwpaIpAddr addr;
   /*! The subnet mask for this interface. */
   LwpaIpAddr mask;
-  /*! The address of the default gateway for this interface. */
-  LwpaIpAddr gate;
   /*! The adapter MAC address. */
   uint8_t mac[LWPA_NETINTINFO_MAC_LEN];
   /*! The adapter name as a string. */
   char name[LWPA_NETINTINFO_NAME_LEN];
-  /*! Whether this is the default network interface. */
+  /*! Whether this is the default network interface. The default network interface is defined as
+   *  the network interface chosen for the default IP route on a system. */
   bool is_default;
 } LwpaNetintInfo;
+
+/*! Maximum length of the string representation of an IPv4 address. */
+#define LWPA_INET_ADDRSTRLEN 16
+/*! Maximum length of the string representation of an IPv6 address. */
+#define LWPA_INET6_ADDRSTRLEN 46
+
+bool lwpa_ip_is_link_local(const LwpaIpAddr* ip);
+bool lwpa_ip_is_loopback(const LwpaIpAddr* ip);
+bool lwpa_ip_is_multicast(const LwpaIpAddr* ip);
+bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip);
+void lwpa_ip_set_wildcard(lwpa_iptype_t type, LwpaIpAddr* ip);
+
+bool lwpa_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);
+int lwpa_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);
+bool lwpa_ip_and_port_equal(const LwpaSockaddr* sock1, const LwpaSockaddr* sock2);
+
+unsigned int lwpa_ip_mask_length(const LwpaIpAddr* netmask);
+LwpaIpAddr lwpa_ip_mask_from_length(lwpa_iptype_t type, unsigned int mask_length);
+bool lwpa_ip_network_portions_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* netmask);
+
+bool ip_os_to_lwpa(const lwpa_os_ipaddr_t* os_ip, LwpaIpAddr* ip);
+size_t ip_lwpa_to_os(const LwpaIpAddr* ip, lwpa_os_ipaddr_t* os_ip);
+
+bool sockaddr_os_to_lwpa(const lwpa_os_sockaddr_t* os_sa, LwpaSockaddr* sa);
+size_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, lwpa_os_sockaddr_t* os_sa);
+
+lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size);
+lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* dest);
+
+#ifdef __cplusplus
+}
+#endif
 
 /*! @} */
 

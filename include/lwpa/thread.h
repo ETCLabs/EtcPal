@@ -24,9 +24,18 @@ typedef struct LwpaThreadParams
 {
   unsigned int thread_priority;
   unsigned int stack_size;
-  char* thread_name;
+  const char* thread_name;
   void* platform_data;
 } LwpaThreadParams;
+
+#define LWPA_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)                \
+  do                                                                   \
+  {                                                                    \
+    (threadparamsptr)->thread_priority = LWPA_THREAD_DEFAULT_PRIORITY; \
+    (threadparamsptr)->thread_stack = LWPA_THREAD_DEFAULT_STACK;       \
+    (threadparamsptr)->thread_name = LWPA_THREAD_DEFAULT_NAME;         \
+    (threadparamsptr)->platform_data = NULL;                           \
+  } while (0)
 
 #include "lwpa/os_thread.h"
 

@@ -24,16 +24,8 @@
 #include <chrono>
 #include <utility>
 
-static_assert(std::ratio_less_equal<std::chrono::high_resolution_clock::period, std::milli>::value,
-              "This platform does not have access to a millisecond-resolution clock. Some tests may fail.");
-
 class RwlockTest : public ::testing::Test
 {
-protected:
-  RwlockTest() : shared_var(0), read_thread_pass(false) { timeBeginPeriod(1); }
-
-  virtual ~RwlockTest() { timeEndPeriod(1); }
-
 public:
   // Constants
   static const int RWLOCK_TEST_NUM_WRITE_THREADS = 10;
@@ -43,8 +35,8 @@ public:
   lwpa_rwlock_t rwlock;
 
   // For thread test
-  int shared_var;
-  bool read_thread_pass;
+  int shared_var{0};
+  bool read_thread_pass{false};
 };
 
 TEST_F(RwlockTest, create_destroy)
@@ -52,39 +44,51 @@ TEST_F(RwlockTest, create_destroy)
   // Basic creation and taking ownership.
   ASSERT_TRUE(lwpa_rwlock_create(&rwlock));
   for (size_t i = 0; i < 100; ++i)
-    ASSERT_TRUE(lwpa_rwlock_readlock(&rwlock, LWPA_WAIT_FOREVER));
+    ASSERT_TRUE(lwpa_rwlock_readlock(&rwlock));
 
-  auto start_time = std::chrono::high_resolution_clock::now();
+  // Time-based functionality not implemented for now.
+  // auto start_time = std::chrono::high_resolution_clock::now();
+
   // Write lock should fail if there are readers
-  ASSERT_FALSE(lwpa_rwlock_writelock(&rwlock, 100));
+  ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
+
   // It should wait for at least the timeout specified, minus up to one ms
-  auto time_taken =
-      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time);
-  ASSERT_GE(time_taken.count(), 99);
+  //  auto time_taken =
+  //      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time);
+  //  ASSERT_GE(time_taken.count(), 99);
 
   // When there are no more readers, write lock should succeed
   for (size_t i = 0; i < 100; ++i)
     lwpa_rwlock_readunlock(&rwlock);
-  ASSERT_TRUE(lwpa_rwlock_writelock(&rwlock, LWPA_WAIT_FOREVER));
+  ASSERT_TRUE(lwpa_rwlock_writelock(&rwlock));
 
   // On Windows, take succeeds when taking a mutex again from the same thread.
-  ASSERT_TRUE(lwpa_rwlock_writelock(&rwlock, LWPA_WAIT_FOREVER));
+#ifdef WIN32
+  ASSERT_TRUE(lwpa_rwlock_writelock(&rwlock));
+#else
+  ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
+  ASSERT_FALSE(lwpa_rwlock_try_readlock(&rwlock));
+#endif
 
   lwpa_rwlock_writeunlock(&rwlock);
 
   // Test the guard classes
   {  // Read lock scope
     lwpa::ReadGuard read(rwlock);
-    // Just make sure it doesn't throw
+
+    ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
   }
   {  // Write lock scope
     lwpa::WriteGuard write(rwlock);
-    // Just make sure it doesn't throw
+
+#if !WIN32
+    ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
+#endif
   }
 
   // Take should fail on a destroyed rwlock.
   lwpa_rwlock_destroy(&rwlock);
-  ASSERT_FALSE(lwpa_rwlock_writelock(&rwlock, LWPA_WAIT_FOREVER));
+  ASSERT_FALSE(lwpa_rwlock_writelock(&rwlock));
 }
 
 static void write_test_thread(RwlockTest* fixture)
@@ -93,7 +97,7 @@ static void write_test_thread(RwlockTest* fixture)
   {
     for (size_t i = 0; i < RwlockTest::RWLOCK_TEST_NUM_ITERATIONS; ++i)
     {
-      lwpa_rwlock_writelock(&fixture->rwlock, LWPA_WAIT_FOREVER);
+      lwpa_rwlock_writelock(&fixture->rwlock);
       ++fixture->shared_var;
       lwpa_rwlock_writeunlock(&fixture->rwlock);
       // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
@@ -113,7 +117,7 @@ static void read_test_thread(RwlockTest* fixture)
     fixture->read_thread_pass = true;
     for (int i = 0; i < 10; ++i)
     {
-      lwpa_rwlock_readlock(&fixture->rwlock, LWPA_WAIT_FOREVER);
+      lwpa_rwlock_readlock(&fixture->rwlock);
       int val = fixture->shared_var;
 
       std::this_thread::sleep_for(5ms);
@@ -159,8 +163,8 @@ TEST_F(RwlockTest, threads)
   for (auto& thread : threads)
     thread.join();
 
-  ASSERT_TRUE(read_thread_pass);
-  ASSERT_EQ(shared_var, (RWLOCK_TEST_NUM_WRITE_THREADS * RWLOCK_TEST_NUM_ITERATIONS));
+  EXPECT_TRUE(read_thread_pass);
+  EXPECT_EQ(shared_var, (RWLOCK_TEST_NUM_WRITE_THREADS * RWLOCK_TEST_NUM_ITERATIONS));
 
   lwpa_rwlock_destroy(&rwlock);
 }

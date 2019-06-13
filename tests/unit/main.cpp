@@ -24,38 +24,34 @@
 #include "lwpa/socket.h"
 #include "lwpa/common.h"
 
-// Need to pass this from the command line to a test case; there doesn't seem to be a better way to
-// do this than using a global variable.
-LwpaIpAddr g_netint;
+//LwpaIpAddr g_netint;
 
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
-  ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURES_ALL));
-
   // Only check our custom argument if we haven't been given the "list_tests" flag
-  if (!testing::GTEST_FLAG(list_tests))
-  {
-    if (argc == 2)
-    {
-      if (0 >= lwpa_inet_pton(kLwpaIpTypeV4, argv[1], &g_netint))
-      {
-        printf(
-            "Usage: %s <interface_addr>\n"
-            "  interface_addr: IP address of network interface to use for test.\n",
-            argv[0]);
-
-        return 1;
-      }
-    }
-    else
-    {
-      LwpaNetintInfo default_netint;
-      lwpa_netint_get_default_interface(&default_netint);
-      g_netint = default_netint.addr;
-    }
-  }
+//  if (!testing::GTEST_FLAG(list_tests))
+//  {
+//    if (argc == 2)
+//    {
+//      if (0 >= lwpa_inet_pton(kLwpaIpTypeV4, argv[1], &g_netint))
+//      {
+//        printf(
+//            "Usage: %s <interface_addr>\n"
+//            "  interface_addr: IP address of network interface to use for test.\n",
+//            argv[0]);
+//
+//        return 1;
+//      }
+//    }
+//    else
+//    {
+//      LwpaNetintInfo default_netint;
+//      lwpa_netint_get_default_interface(&default_netint);
+//      g_netint = default_netint.addr;
+//    }
+//  }
 
   return RUN_ALL_TESTS();
 }

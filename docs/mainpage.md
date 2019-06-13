@@ -19,27 +19,30 @@ To jump right into the documentation, check out the
 the sources for lwpa are located in the heirarchy:
 ```
 src/
-  [platform_name]/
-    [platform-specific lwpa sources]
+  os/
+    [OS name]/
+      [platform-specific lwpa sources]
   [platform-neutral lwpa sources]
 ```
 
 The includes are in the heirarchy:
 ```
 include/
-  [platform_name]/
-    [platform-specific lwpa headers]
+  os/
+    [OS name]/
+      [platform-specific lwpa headers]
   [platform-neutral lwpa headers]
 ```
-Some lwpa headers are platform-specific and duplicated for each platform.
+Some lwpa headers are platform-specific and duplicated for each OS.
 Platform-specific headers for the same module will always conform to an
 identical interface, as documented in that module's documentation.
 
-## Platforms
+## Supported Platforms
 
-lwpa is currently ported for the following platforms:
+lwpa is currently ported for the following operating systems:
 
 + Microsoft Windows
++ Linux
 + MQX RTOS
 
 ### Building lwpa for Your Platform
@@ -94,8 +97,12 @@ platform. This is currently the only option for MQX RTOS.
 
 The platform ports of lwpa have the following dependencies:
 + Microsoft Windows
-  - Windows XP or higher
+  - Windows XP SP1 or later
 + MQX RTOS
   - MQX 4.2.0
 + Linux
-  - libuuid (`sudo apt-get install uuid-dev`)
+  - libuuid (if compiling lwpa, use `sudo apt-get install uuid-dev` or the
+             equivalent method for your distribution)
+  - Optional Features:
+    * lwpa_netint (Network Interfaces): Linux 2.2, glibc 2.3.3
+    * lwpa_socket (Socket interface): Linux 2.6

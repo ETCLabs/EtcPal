@@ -23,30 +23,51 @@
 #include <pthread.h>
 #include "lwpa/bool.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef pthread_mutex_t lwpa_mutex_t;
 
-/* Temporary placeholders */
-#define lwpa_mutex_create(idptr) false
-#define lwpa_mutex_take(idptr, wait_ms) false
-#define lwpa_mutex_give(idptr)
-#define lwpa_mutex_destroy(idptr)
+#define lwpa_mutex_create(idptr) ((pthread_mutex_init((idptr), NULL) == 0) ? true : false)
+#define lwpa_mutex_take(idptr) ((pthread_mutex_lock(idptr) == 0) ? true : false)
+#define lwpa_mutex_try_take(idptr) ((pthread_mutex_trylock(idptr) == 0) ? true : false)
+#define lwpa_mutex_give(idptr) ((void)pthread_mutex_unlock(idptr))
+#define lwpa_mutex_destroy(idptr) ((void)pthread_mutex_destroy(idptr))
 
-typedef pthread_cond_t lwpa_signal_t;
+typedef struct
+{
+  bool valid;
+  bool signaled;
+  pthread_cond_t cond;
+  pthread_mutex_t mutex;
+} lwpa_signal_t;
 
-/* Temporary placeholders */
-#define lwpa_signal_create(idptr) false
-#define lwpa_signal_wait(idptr, wait_ms) false
-#define lwpa_signal_post(idptr)
-#define lwpa_signal_destroy(idptr)
+bool lwpa_signal_create(lwpa_signal_t* id);
+bool lwpa_signal_wait(lwpa_signal_t* id);
+bool lwpa_signal_poll(lwpa_signal_t* id);
+void lwpa_signal_post(lwpa_signal_t* id);
+void lwpa_signal_destroy(lwpa_signal_t* id);
 
-typedef pthread_rwlock_t lwpa_rwlock_t;
+typedef struct
+{
+  bool valid;
+  unsigned int reader_count;
+  pthread_mutex_t readcount_mutex;
+  pthread_mutex_t mutex;
+} lwpa_rwlock_t;
 
-/* Temporary placeholders */
-#define lwpa_rwlock_create(idptr) false
-#define lwpa_rwlock_readlock(idptr, wait_ms) false
-#define lwpa_rwlock_readunlock(idptr)
-#define lwpa_rwlock_writelock(idptr, wait_ms) false
-#define lwpa_rwlock_writeunlock(idptr)
-#define lwpa_rwlock_destroy(idptr)
+bool lwpa_rwlock_create(lwpa_rwlock_t* id);
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id);
+void lwpa_rwlock_readunlock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id);
+void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id);
+void lwpa_rwlock_destroy(lwpa_rwlock_t* id);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LWPA_OS_LOCK_H_ */

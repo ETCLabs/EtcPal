@@ -20,22 +20,116 @@
 #include "lwpa/netint.h"
 
 #include <stdlib.h>
-#include <winsock2.h>
-#include <windows.h>
-#include <ws2tcpip.h>
+
+#include <WinSock2.h>
+#include <Windows.h>
+#include <Ws2tcpip.h>
 #include <iphlpapi.h>
+
 #include "lwpa/int.h"
+#include "lwpa/socket.h"
+#include "lwpa/private/netint.h"
 
-static bool mask_is_empty(const LwpaIpAddr* mask);
-static bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask);
+/*********************** Private function prototypes *************************/
 
-static IP_ADAPTER_ADDRESSES* get_windows_adapters()
+static IP_ADAPTER_ADDRESSES* get_windows_adapters();
+static void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
+static void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
+static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache);
+
+/*************************** Function definitions ****************************/
+
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
+{
+  struct sockaddr_storage os_addr;
+  if (ip_lwpa_to_os(dest, (lwpa_os_ipaddr_t*)&os_addr))
+  {
+    DWORD resolved_index;
+    DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
+    if (res == NO_ERROR)
+    {
+      *index = resolved_index;
+      return kLwpaErrOk;
+    }
+    else if (res == ERROR_INVALID_PARAMETER)
+    {
+      return kLwpaErrInvalid;
+    }
+    else
+    {
+      return kLwpaErrNotFound;
+    }
+  }
+  else
+  {
+    return kLwpaErrInvalid;
+  }
+}
+
+lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
+{
+  IP_ADAPTER_ADDRESSES *padapters, *pcur;
+
+  padapters = get_windows_adapters();
+  if (!padapters)
+    return kLwpaErrSys;
+  pcur = padapters;
+
+  cache->num_netints = 0;
+  while (pcur)
+  {
+    // If this is multihomed, there may be multiple addresses under the same adapter
+    IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
+    while (pip)
+    {
+      switch (pip->Address.lpSockaddr->sa_family)
+      {
+        case AF_INET:
+        case AF_INET6:
+          ++cache->num_netints;
+          break;
+        default:
+          break;
+      }
+      pip = pip->Next;
+    }
+    pcur = pcur->Next;
+  }
+
+  if (cache->num_netints == 0)
+  {
+    free(padapters);
+    return kLwpaErrNoNetints;
+  }
+
+  cache->netints = calloc(cache->num_netints, sizeof(LwpaNetintInfo));
+  if (!cache->netints)
+  {
+    free(padapters);
+    return kLwpaErrNoMem;
+  }
+
+  copy_all_netint_info(padapters, cache);
+  free(padapters);
+  return kLwpaErrOk;
+}
+
+void os_free_interfaces(CachedNetintInfo* cache)
+{
+  if (cache->netints)
+  {
+    free(cache->netints);
+    cache->netints = NULL;
+  }
+}
+
+IP_ADAPTER_ADDRESSES* get_windows_adapters()
 {
   ULONG buflen = 0;
-  ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER | GAA_FLAG_INCLUDE_GATEWAYS;
+  ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
 
-  /* Preallocating a buffer specifically this size is expressly recommended by the Microsoft usage
-   * page. */
+  // Preallocating a buffer specifically this size is expressly recommended by the Microsoft usage
+  // page.
   uint8_t* buffer = malloc(15000);
   if (!buffer)
     return NULL;
@@ -53,256 +147,96 @@ static IP_ADAPTER_ADDRESSES* get_windows_adapters()
   return NULL;
 }
 
-static void copy_ipv4_info(IP_ADAPTER_UNICAST_ADDRESS* pip, IP_ADAPTER_GATEWAY_ADDRESS* pgate, LwpaNetintInfo* info)
+void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
 {
-  struct sockaddr_in* sin = (struct sockaddr_in*)pip->Address.lpSockaddr;
-  struct sockaddr_in* gw_sin = pgate ? (struct sockaddr_in*)pgate->Address.lpSockaddr : NULL;
-  ULONG mask = 0;
+  const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
 
-  ConvertLengthToIpv4Mask(pip->OnLinkPrefixLength, &mask);
-  lwpaip_set_v4_address(&info->addr, ntohl(sin->sin_addr.s_addr));
-  lwpaip_set_v4_address(&info->mask, ntohl((uint32_t)mask));
-  if (pgate)
-    lwpaip_set_v4_address(&info->gate, ntohl(gw_sin->sin_addr.s_addr));
-  else
-    lwpaip_set_v4_address(&info->gate, 0u);
+  LWPA_IP_SET_V4_ADDRESS(&info->addr, ntohl(sin->sin_addr.s_addr));
+  info->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV4, pip->OnLinkPrefixLength);
 }
 
-size_t lwpa_netint_get_num_interfaces()
+void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
 {
-  IP_ADAPTER_ADDRESSES *padapters, *pcur;
-  size_t n_ifaces = 0;
+  const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;
 
-  padapters = get_windows_adapters();
-  if (!padapters)
-    return 0;
-  pcur = padapters;
+  LWPA_IP_SET_V6_ADDRESS(&info->addr, sin6->sin6_addr.s6_addr);
+  info->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, pip->OnLinkPrefixLength);
+}
+
+void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache)
+{
+  const IP_ADAPTER_ADDRESSES* pcur = adapters;
+
+  // Get the index of the default interface for IPv4
+  DWORD def_ifindex_v4;
+  bool have_def_index_v4 = false;
+  struct sockaddr_in v4_dest;
+  memset(&v4_dest, 0, sizeof v4_dest);
+  v4_dest.sin_family = AF_INET;
+  if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v4_dest, &def_ifindex_v4))
+    have_def_index_v4 = true;
+
+  // And the same for IPv6
+  DWORD def_ifindex_v6;
+  bool have_def_index_v6 = false;
+  struct sockaddr_in6 v6_dest;
+  memset(&v6_dest, 0, sizeof v6_dest);
+  v6_dest.sin6_family = AF_INET6;
+  if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v6_dest, &def_ifindex_v6))
+    have_def_index_v6 = true;
+
+  size_t netint_index = 0;
 
   while (pcur)
   {
-    /* If this is multihomed, there may be multiple addresses under the same adapter */
+    // If this is multihomed, there may be multiple addresses under the same adapter
     IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
     while (pip)
     {
+      LwpaNetintInfo* info = &cache->netints[netint_index];
       switch (pip->Address.lpSockaddr->sa_family)
       {
         case AF_INET:
-          ++n_ifaces;
+          copy_ipv4_info(pip, info);
+          if (have_def_index_v4 && pcur->IfIndex == def_ifindex_v4)
+          {
+            info->is_default = true;
+            have_def_index_v4 = false;
+          }
+          else
+          {
+            info->is_default = false;
+          }
+          info->ifindex = pcur->IfIndex;
           break;
         case AF_INET6:
-        default:
-          /* TODO IPv6 */
+          copy_ipv6_info(pip, info);
+          if (have_def_index_v6 && pcur->IfIndex == def_ifindex_v6)
+          {
+            info->is_default = true;
+            have_def_index_v6 = false;
+          }
+          else
+          {
+            info->is_default = false;
+          }
+          info->ifindex = pcur->Ipv6IfIndex;
           break;
-      }
-      pip = pip->Next;
-    }
-    pcur = pcur->Next;
-  }
-  free(padapters);
-  return n_ifaces;
-}
-
-size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
-{
-  size_t n_ifaces = 0;
-  IP_ADAPTER_ADDRESSES *padapters, *pcur;
-  DWORD def_ifindex;
-  bool have_def_index = false;
-
-  if (!netint_arr || netint_arr_size == 0)
-    return 0;
-
-  padapters = get_windows_adapters();
-  if (!padapters)
-    return 0;
-  pcur = padapters;
-
-  if (NO_ERROR == GetBestInterface(0, &def_ifindex))
-    have_def_index = true;
-
-  while (pcur)
-  {
-    /* If this is multihomed, there may be multiple addresses under the same adapter */
-    IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
-    IP_ADAPTER_GATEWAY_ADDRESS* pgate = pcur->FirstGatewayAddress;
-    while (pip)
-    {
-      LwpaNetintInfo* info = &netint_arr[n_ifaces];
-      switch (pip->Address.lpSockaddr->sa_family)
-      {
-        case AF_INET:
-          copy_ipv4_info(pip, pgate, info);
-          break;
-        case AF_INET6:
         default:
-          /* TODO IPv6 */
           pip = pip->Next;
-          if (pgate && pgate->Next)
-            pgate = pgate->Next;
           continue;
       }
 
-      info->ifindex = pcur->IfIndex;
-      if (have_def_index && pcur->IfIndex == def_ifindex)
-      {
-        info->is_default = true;
-        have_def_index = false;
-      }
-      else
-      {
-        info->is_default = false;
-      }
       strncpy_s(info->name, LWPA_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
       if (pcur->PhysicalAddressLength == LWPA_NETINTINFO_MAC_LEN)
         memcpy(info->mac, pcur->PhysicalAddress, LWPA_NETINTINFO_MAC_LEN);
       else
         memset(info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
 
-      if (++n_ifaces >= netint_arr_size)
-        break;
+      ++netint_index;
 
       pip = pip->Next;
-      /* Just in case there's only ever one gateway but more addrs (probably not possible) */
-      if (pgate && pgate->Next)
-        pgate = pgate->Next;
     }
-    if (n_ifaces >= netint_arr_size)
-      break;
     pcur = pcur->Next;
   }
-  free(padapters);
-  return n_ifaces;
 }
-
-bool lwpa_netint_get_default_interface(LwpaNetintInfo* netint)
-{
-  DWORD def_ifindex;
-  bool res = false;
-
-  if (NO_ERROR == GetBestInterface(0, &def_ifindex))
-  {
-    IP_ADAPTER_ADDRESSES* pcur;
-    IP_ADAPTER_ADDRESSES* padapters = get_windows_adapters();
-    if (!padapters)
-      return res;
-    pcur = padapters;
-
-    while (pcur)
-    {
-      /* If this is multihomed, there may be multiple addresses under the same adapter */
-      IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
-      IP_ADAPTER_GATEWAY_ADDRESS* pgate = pcur->FirstGatewayAddress;
-      while (pip)
-      {
-        if (pcur->IfIndex == def_ifindex && pip->Address.lpSockaddr->sa_family == AF_INET)
-        {
-          copy_ipv4_info(pip, pgate, netint);
-          netint->ifindex = def_ifindex;
-          netint->is_default = true;
-          strncpy_s(netint->name, LWPA_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
-          if (pcur->PhysicalAddressLength == LWPA_NETINTINFO_MAC_LEN)
-            memcpy(netint->mac, pcur->PhysicalAddress, LWPA_NETINTINFO_MAC_LEN);
-          else
-            memset(netint->mac, 0, LWPA_NETINTINFO_MAC_LEN);
-          res = true;
-          break;
-        }
-        pip = pip->Next;
-        /* Just in case there's only ever one gateway but more addrs (probably not possible) */
-        if (pgate && pgate->Next)
-          pgate = pgate->Next;
-      }
-      if (res == true)
-        break;
-      pcur = pcur->Next;
-    }
-    free(padapters);
-  }
-  return res;
-}
-
-bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask)
-{
-  if (lwpaip_is_v4(ip1) && lwpaip_is_v4(ip2) && lwpaip_is_v4(mask))
-  {
-    return ((lwpaip_v4_address(ip1) & lwpaip_v4_address(mask)) == (lwpaip_v4_address(ip2) & lwpaip_v4_address(mask)));
-  }
-  else if (lwpaip_is_v6(ip1) && lwpaip_is_v6(ip2) && lwpaip_is_v6(mask))
-  {
-    size_t i;
-    const uint32_t* p1 = (const uint32_t*)lwpaip_v6_address(ip1);
-    const uint32_t* p2 = (const uint32_t*)lwpaip_v6_address(ip2);
-    const uint32_t* pm = (const uint32_t*)lwpaip_v6_address(mask);
-
-    for (i = 0; i < LWPA_IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
-    {
-      if ((*p1 & *pm) != (*p2 & *pm))
-        return false;
-    }
-    return true;
-  }
-  return false;
-}
-
-bool mask_is_empty(const LwpaIpAddr* mask)
-{
-  uint32_t mask_part = 0;
-
-  if (lwpaip_is_v4(mask))
-  {
-    mask_part = lwpaip_v4_address(mask);
-  }
-  else if (lwpaip_is_v6(mask))
-  {
-    size_t i;
-    const uint32_t* p = (const uint32_t*)lwpaip_v6_address(mask);
-    for (i = 0; i < LWPA_IPV6_BYTES / 4; ++i, ++p)
-      mask_part |= *p;
-  }
-  return (mask_part == 0);
-}
-
-const LwpaNetintInfo* lwpa_netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
-                                                     size_t netint_arr_size)
-{
-  const LwpaNetintInfo* res = NULL;
-  const LwpaNetintInfo* def = NULL;
-  const LwpaNetintInfo* netint;
-
-  if (!dest || !netint_arr || netint_arr_size == 0)
-    return false;
-
-  for (netint = netint_arr; netint < netint_arr + netint_arr_size; ++netint)
-  {
-    if (netint->is_default)
-      def = netint;
-    if (!mask_is_empty(&netint->mask) && mask_compare(&netint->addr, dest, &netint->mask))
-    {
-      res = netint;
-      break;
-    }
-  }
-  if (!res)
-    res = def;
-  return res;
-}
-
-// static struct change_cb
-//{
-//  netint_change_notification fn;
-//  void *context;
-//  int handle;
-//  struct change_cb *next;
-//} *change_cb_head;
-// int next_handle;
-
-// int
-// netint_register_change_cb(netint_change_notification fn, void *context)
-//{
-//  return -1;
-//}
-
-// void netint_unregister_change_cb(int handle)
-//{
-
-//}

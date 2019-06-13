@@ -76,29 +76,33 @@ typedef enum
   kLwpaErrShutdown = -17,
   /*! A connection timed out. */
   kLwpaErrTimedOut = -18,
+  /*! A connection has been aborted. */
+  kLwpaErrConnAborted = -19,
   /*! A connection was refused. */
-  kLwpaErrConnRefused = -19,
+  kLwpaErrConnRefused = -20,
   /*! The operation requested is already in progress. */
-  kLwpaErrAlready = -20,
+  kLwpaErrAlready = -21,
   /*! The operation requested is now in progress and will complete later. */
-  kLwpaErrInProgress = -21,
+  kLwpaErrInProgress = -22,
   /*! A buffer provided to a function was not big enough to hold the data that needed to be packed
    *  into it. */
-  kLwpaErrBufSize = -22,
+  kLwpaErrBufSize = -23,
   /*! An API function was called from a module that was not previously initialized. */
-  kLwpaErrNotInit = -23,
+  kLwpaErrNotInit = -24,
   /*! No network interfaces were found on the system, or there are no network interfaces of a type
    *  that can satisfy the call being made. */
-  kLwpaErrNoNetints = -24,
+  kLwpaErrNoNetints = -25,
   /*! No sockets have been added to the context. */
-  kLwpaErrNoSockets = -25,
+  kLwpaErrNoSockets = -26,
   /*! A function or specific use of a function is not implemented yet. */
-  kLwpaErrNotImpl = -26,
+  kLwpaErrNotImpl = -27,
+  /*! The operation is not permitted. */
+  kLwpaErrPerm = -28,
   /*! A system call or C library call failed in a way not covered by other errors. */
-  kLwpaErrSys = -27,
+  kLwpaErrSys = -29,
 } lwpa_error_t;
 
-#define LWPA_NUM_ERROR_CODES 28
+#define LWPA_NUM_ERROR_CODES 30
 
 #ifdef __cplusplus
 extern "C" {

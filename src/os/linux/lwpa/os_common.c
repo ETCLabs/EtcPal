@@ -18,10 +18,11 @@
  ******************************************************************************/
 
 #include "lwpa/common.h"
+#include "lwpa/private/common.h"
 
 #include <unistd.h>
 
-lwpa_error_t lwpa_init(lwpa_features_t features)
+lwpa_error_t lwpa_os_init(lwpa_features_t features)
 {
   if (features & LWPA_FEATURE_TIMERS)
   {
@@ -31,7 +32,7 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
   return kLwpaErrOk;
 }
 
-void lwpa_deinit(lwpa_features_t features)
+void lwpa_os_deinit(lwpa_features_t features)
 {
   (void)features;
 }

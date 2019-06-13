@@ -38,7 +38,7 @@ lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc* desc)
       return res;
   }
 
-  if (lwpa_mutex_take(&mempool_lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&mempool_lock))
   {
     size_t i;
     for (i = 0; i < desc->pool_size - 1; ++i)
@@ -56,7 +56,7 @@ void* lwpa_mempool_alloc_priv(LwpaMempoolDesc* desc)
 {
   void* elem = NULL;
 
-  if (lwpa_mutex_take(&mempool_lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&mempool_lock))
   {
     char* c_pool = (char*)desc->pool;
     LwpaMempool* elem_desc = desc->freelist;
@@ -83,7 +83,7 @@ void lwpa_mempool_free_priv(LwpaMempoolDesc* desc, void* elem)
   ptrdiff_t offset = (char*)elem - c_pool;
   if (offset >= 0)
   {
-    if (((size_t)offset % desc->elem_size == 0) && lwpa_mutex_take(&mempool_lock, LWPA_WAIT_FOREVER))
+    if (((size_t)offset % desc->elem_size == 0) && lwpa_mutex_take(&mempool_lock))
     {
       size_t index = (size_t)offset / desc->elem_size;
       LwpaMempool* elem_desc = &desc->list[index];
@@ -98,7 +98,7 @@ void lwpa_mempool_free_priv(LwpaMempoolDesc* desc, void* elem)
 size_t lwpa_mempool_used_priv(LwpaMempoolDesc* desc)
 {
   size_t res = 0;
-  if (lwpa_mutex_take(&mempool_lock, LWPA_WAIT_FOREVER))
+  if (lwpa_mutex_take(&mempool_lock))
   {
     res = desc->current_used;
     lwpa_mutex_give(&mempool_lock);

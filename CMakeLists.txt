@@ -27,14 +27,21 @@ if(LWPA_BUILD_MOCK_LIB)
   add_subdirectory(external/fff)
 endif()
 
-# Main library
+################################# Main library ################################
 
 add_subdirectory(src)
 
-# Tests
+#################################### Tests ####################################
 
 option(LWPA_BUILD_TESTS "Build the lwpa unit tests" ${OPTION_DEFAULTS})
 if(LWPA_BUILD_TESTS)
   enable_testing()
   add_subdirectory(tests)
+endif()
+
+################################## Examples ###################################
+
+option(LWPA_BUILD_EXAMPLES "Build the lwpa example apps" ${OPTION_DEFAULTS})
+if(LWPA_BUILD_EXAMPLES)
+  add_subdirectory(examples)
 endif()

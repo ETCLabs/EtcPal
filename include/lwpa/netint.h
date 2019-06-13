@@ -23,6 +23,7 @@
 
 #include <stddef.h>
 #include "lwpa/bool.h"
+#include "lwpa/common.h"
 #include "lwpa/inet.h"
 
 /*! \defgroup lwpa_netint lwpa_netint
@@ -40,14 +41,8 @@ extern "C" {
 
 size_t lwpa_netint_get_num_interfaces();
 size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size);
-bool lwpa_netint_get_default_interface(LwpaNetintInfo* netint);
-const LwpaNetintInfo* lwpa_netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
-                                                     size_t netint_arr_size);
-
-// typedef void (*netint_change_notification)(void *context);
-
-// int    netint_register_change_cb(netint_change_notification fn, void
-// *context); void   netint_unregister_change_cb(int handle);
+bool lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint);
+lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNetintInfo* netint);
 
 #ifdef __cplusplus
 }

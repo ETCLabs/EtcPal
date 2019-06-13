@@ -43,10 +43,14 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint16_t.
  *  \return Unpacked uint16_t.
  */
-#define lwpa_upack_16b(ptr)                   \
-  ((uint16_t)(0u |                            \
-   (uint16_t)((((uint8_t *)(ptr))[0]) << 8) | \
-   (uint16_t) (((uint8_t *)(ptr))[1]))        \
+#define lwpa_upack_16b(ptr)                     \
+  (                                             \
+   (uint16_t)(0u |                              \
+    (uint16_t)(                                 \
+     (((uint16_t)((uint8_t *)(ptr))[0]) << 8) | \
+      ((uint16_t)((uint8_t *)(ptr))[1])         \
+    )                                           \
+   )                                            \
   )
 
 /*! \brief Pack a uint16_t to a known big-endian buffer.
@@ -64,10 +68,15 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint16_t.
  *  \return Unpacked uint16_t.
  */
-#define lwpa_upack_16l(ptr)                   \
-  (((uint16_t)0u) |                           \
-   (((uint16_t)((uint8_t *)(ptr))[1]) << 8) | \
-    ((uint16_t)((uint8_t *)(ptr))[0]))
+#define lwpa_upack_16l(ptr)                     \
+  (                                             \
+   (uint16_t)(0u |                              \
+    (uint16_t)(                                 \
+     (((uint16_t)((uint8_t *)(ptr))[1]) << 8) | \
+      ((uint16_t)((uint8_t *)(ptr))[0])         \
+    )                                           \
+   )                                            \
+  )
 
 /*! \brief Pack a uint16_t to a known little-endian buffer.
  *  \param ptr Pointer to the buffer into which to pack a uint16_t.
@@ -84,12 +93,17 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint32_t.
  *  \return Unpacked uint32_t.
  */
-#define lwpa_upack_32b(ptr)                    \
-  (((uint32_t)0u) |                            \
-   (((uint32_t)((uint8_t *)(ptr))[0]) << 24) | \
-   (((uint32_t)((uint8_t *)(ptr))[1]) << 16) | \
-   (((uint32_t)((uint8_t *)(ptr))[2]) << 8)  | \
-    ((uint32_t)((uint8_t *)(ptr))[3]))
+#define lwpa_upack_32b(ptr)                      \
+  (                                              \
+   (uint32_t)(0u |                               \
+    (uint32_t)(                                  \
+     (((uint32_t)((uint8_t *)(ptr))[0]) << 24) | \
+     (((uint32_t)((uint8_t *)(ptr))[1]) << 16) | \
+     (((uint32_t)((uint8_t *)(ptr))[2]) << 8)  | \
+      ((uint32_t)((uint8_t *)(ptr))[3])          \
+    )                                            \
+   )                                             \
+  )
 
 /*! \brief Pack a uint32_t to a known big-endian buffer.
  *  \param ptr Pointer to the buffer into which to pack a uint32_t.
@@ -108,12 +122,17 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint32_t.
  *  \return Unpacked uint32_t.
  */
-#define lwpa_upack_32l(ptr)                    \
-  (((uint32_t)0u) |                            \
-   (((uint32_t)((uint8_t *)(ptr))[3]) << 24) | \
-   (((uint32_t)((uint8_t *)(ptr))[2]) << 16) | \
-   (((uint32_t)((uint8_t *)(ptr))[1]) << 8)  | \
-    ((uint32_t)((uint8_t *)(ptr))[0]))
+#define lwpa_upack_32l(ptr)                      \
+  (                                              \
+   (uint32_t)(0u |                               \
+    (uint32_t)(                                  \
+     (((uint32_t)((uint8_t *)(ptr))[3]) << 24) | \
+     (((uint32_t)((uint8_t *)(ptr))[2]) << 16) | \
+     (((uint32_t)((uint8_t *)(ptr))[1]) << 8)  | \
+      ((uint32_t)((uint8_t *)(ptr))[0])          \
+    )                                            \
+   )                                             \
+  )
 
 /*! \brief Pack a uint32_t to a known little-endian buffer.
  *  \param ptr Pointer to the buffer into which to pack a uint32_t.
@@ -134,16 +153,21 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint64_t.
  *  \return Unpacked uint64_t.
  */
-#define lwpa_upack_64b(ptr)                    \
-  (((uint64_t)0u) |                            \
-   (((uint64_t)((uint8_t *)(ptr))[0]) << 56) | \
-   (((uint64_t)((uint8_t *)(ptr))[1]) << 48) | \
-   (((uint64_t)((uint8_t *)(ptr))[2]) << 40) | \
-   (((uint64_t)((uint8_t *)(ptr))[3]) << 32) | \
-   (((uint64_t)((uint8_t *)(ptr))[4]) << 24) | \
-   (((uint64_t)((uint8_t *)(ptr))[5]) << 16) | \
-   (((uint64_t)((uint8_t *)(ptr))[6]) << 8)  | \
-    ((uint64_t)((uint8_t *)(ptr))[7]))
+#define lwpa_upack_64b(ptr)                      \
+  (                                              \
+   (uint64_t)(0u |                               \
+    (uint64_t)(                                  \
+     (((uint64_t)((uint8_t *)(ptr))[0]) << 56) | \
+     (((uint64_t)((uint8_t *)(ptr))[1]) << 48) | \
+     (((uint64_t)((uint8_t *)(ptr))[2]) << 40) | \
+     (((uint64_t)((uint8_t *)(ptr))[3]) << 32) | \
+     (((uint64_t)((uint8_t *)(ptr))[4]) << 24) | \
+     (((uint64_t)((uint8_t *)(ptr))[5]) << 16) | \
+     (((uint64_t)((uint8_t *)(ptr))[6]) << 8)  | \
+      ((uint64_t)((uint8_t *)(ptr))[7])          \
+    )                                            \
+   )                                             \
+  )
 
 /*! \brief Pack a uint64_t to a known big-endian buffer.
  *  \param ptr Pointer to the buffer into which to pack a uint64_t.
@@ -166,16 +190,21 @@
  *  \param ptr Pointer to the buffer from which to unpack a uint64_t.
  *  \return Unpacked uint64_t.
  */
-#define lwpa_upack_64l(ptr)                    \
-  (((uint64_t)0u) |                            \
-   (((uint64_t)((uint8_t *)(ptr))[7]) << 56) | \
-   (((uint64_t)((uint8_t *)(ptr))[6]) << 48) | \
-   (((uint64_t)((uint8_t *)(ptr))[5]) << 40) | \
-   (((uint64_t)((uint8_t *)(ptr))[4]) << 32) | \
-   (((uint64_t)((uint8_t *)(ptr))[3]) << 24) | \
-   (((uint64_t)((uint8_t *)(ptr))[2]) << 16) | \
-   (((uint64_t)((uint8_t *)(ptr))[1]) << 8)  | \
-    ((uint64_t)((uint8_t *)(ptr))[0]))
+#define lwpa_upack_64l(ptr)                      \
+  (                                              \
+   (uint64_t)(0u |                               \
+    (uint64_t)(                                  \
+     (((uint64_t)((uint8_t *)(ptr))[7]) << 56) | \
+     (((uint64_t)((uint8_t *)(ptr))[6]) << 48) | \
+     (((uint64_t)((uint8_t *)(ptr))[5]) << 40) | \
+     (((uint64_t)((uint8_t *)(ptr))[4]) << 32) | \
+     (((uint64_t)((uint8_t *)(ptr))[3]) << 24) | \
+     (((uint64_t)((uint8_t *)(ptr))[2]) << 16) | \
+     (((uint64_t)((uint8_t *)(ptr))[1]) << 8)  | \
+      ((uint64_t)((uint8_t *)(ptr))[0])          \
+    )                                            \
+   )                                             \
+  )
 
 /*! \brief Pack a uint64_t to a known little-endian buffer.
  *  \param ptr Pointer to the buffer into which to pack a uint64_t.

@@ -25,11 +25,14 @@
 class NetintTest : public ::testing::Test
 {
 protected:
-  NetintTest() : num_netints(0) { num_netints = lwpa_netint_get_num_interfaces(); }
+  NetintTest()
+  {
+    lwpa_init(LWPA_FEATURE_NETINTS);
+    num_netints = lwpa_netint_get_num_interfaces();
+  }
+  ~NetintTest() { lwpa_deinit(LWPA_FEATURE_NETINTS); }
 
-  virtual ~NetintTest() {}
-
-  size_t num_netints;
+  size_t num_netints{0};
 };
 
 TEST_F(NetintTest, enumerate)
@@ -60,7 +63,7 @@ TEST_F(NetintTest, default)
   memset(netint_arr, 0, sizeof(struct LwpaNetintInfo) * num_netints);
 
   num_netints = lwpa_netint_get_interfaces(netint_arr, num_netints);
-  ASSERT_TRUE(lwpa_netint_get_default_interface(&def));
+  ASSERT_TRUE(lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def));
   ASSERT_TRUE(def.is_default);
   for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
@@ -73,7 +76,7 @@ TEST_F(NetintTest, default)
   delete[] netint_arr;
 }
 
-TEST_F(NetintTest, IPv4routing)
+TEST_F(NetintTest, ipv4_routing)
 {
   ASSERT_GT(num_netints, 0u);
 
@@ -84,19 +87,33 @@ TEST_F(NetintTest, IPv4routing)
 
   for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
-    uint32_t net = lwpaip_v4_address(&netint->addr) & lwpaip_v4_address(&netint->mask);
+    if (!LWPA_IP_IS_V4(&netint->addr) || lwpa_ip_is_loopback(&netint->addr) || lwpa_ip_is_link_local(&netint->addr))
+      continue;
+
+    uint32_t net = LWPA_IP_V4_ADDRESS(&netint->addr) & LWPA_IP_V4_ADDRESS(&netint->mask);
     LwpaIpAddr test_addr;
 
     if (nets_already_tried.find(net) != nets_already_tried.end())
       continue;
     nets_already_tried.insert(net);
-    lwpaip_set_v4_address(&test_addr, net + 1);
-    ASSERT_EQ(lwpa_netint_get_iface_for_dest(&test_addr, netint_arr, num_netints), netint);
+    LWPA_IP_SET_V4_ADDRESS(&test_addr, net + 1);
+
+    LwpaNetintInfo netint_res;
+    ASSERT_EQ(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&test_addr, &netint_res));
+
+    // Put addresses in print form to test meaningful information in case of test failure
+    char test_addr_str[LWPA_INET6_ADDRSTRLEN];
+    char result_str[LWPA_INET6_ADDRSTRLEN];
+    lwpa_inet_ntop(&test_addr, test_addr_str, LWPA_INET6_ADDRSTRLEN);
+    lwpa_inet_ntop(&netint_res.addr, result_str, LWPA_INET6_ADDRSTRLEN);
+
+    EXPECT_TRUE(lwpa_ip_equal(&netint_res.addr, &netint->addr))
+        << "Address tried: " << test_addr_str << ", interface returned: " << result_str;
   }
 
   LwpaIpAddr ext_addr;
-  lwpaip_set_v4_address(&ext_addr, 0xc8dc0302);  // 200.220.3.2
-  const LwpaNetintInfo* def = lwpa_netint_get_iface_for_dest(&ext_addr, netint_arr, num_netints);
-  ASSERT_TRUE(def != NULL);
-  ASSERT_TRUE(def->is_default);
+  LWPA_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
+  LwpaNetintInfo def;
+  ASSERT_EQ(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&ext_addr, &def));
+  ASSERT_TRUE(def.is_default);
 }

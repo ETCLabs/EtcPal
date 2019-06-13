@@ -21,7 +21,7 @@
 
 #include <uuid/uuid.h>
 
-// Use Linux APIs to generate UUIDs.
+// Use libuuid on Linux to generate UUIDs.
 // https://linux.die.net/man/3/uuid_generate
 
 lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)

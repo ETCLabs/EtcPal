@@ -46,45 +46,18 @@ typedef struct
 } lwpa_mutex_t;
 
 bool lwpa_mutex_create(lwpa_mutex_t* id);
-#define lwpa_mutex_take(idptr, wait_ms)                                                                          \
-  (((idptr) && (idptr)->valid)                                                                                   \
-       ? (((wait_ms) == 0) ? TryEnterCriticalSection(&(idptr)->cs) : (EnterCriticalSection(&(idptr)->cs), true)) \
-       : false)
-#define lwpa_mutex_give(idptr)            \
-  do                                      \
-  {                                       \
-    if ((idptr) && (idptr)->valid)        \
-      LeaveCriticalSection(&(idptr)->cs); \
-  } while (0)
-#define lwpa_mutex_destroy(idptr)          \
-  do                                       \
-  {                                        \
-    if ((idptr) && (idptr)->valid)         \
-    {                                      \
-      DeleteCriticalSection(&(idptr)->cs); \
-      (idptr)->valid = false;              \
-    }                                      \
-  } while (0)
+bool lwpa_mutex_take(lwpa_mutex_t* id);
+bool lwpa_mutex_try_take(lwpa_mutex_t* id);
+void lwpa_mutex_give(lwpa_mutex_t* id);
+void lwpa_mutex_destroy(lwpa_mutex_t* id);
 
 typedef HANDLE lwpa_signal_t;
 
 bool lwpa_signal_create(lwpa_signal_t* id);
-#define lwpa_signal_wait(idptr, wait_ms)                                                                   \
-  ((idptr) ? (WAIT_OBJECT_0 ==                                                                             \
-              WaitForSingleObject(*(idptr), ((wait_ms) == LWPA_WAIT_FOREVER ? INFINITE : (DWORD)wait_ms))) \
-           : false)
-#define lwpa_signal_post(idptr)     \
-  do                                \
-  {                                 \
-    if (idptr)                      \
-      SetEvent((HANDLE) * (idptr)); \
-  } while (0)
-#define lwpa_signal_destroy(idptr)     \
-  do                                   \
-  {                                    \
-    if (idptr)                         \
-      CloseHandle((HANDLE) * (idptr)); \
-  } while (0)
+bool lwpa_signal_wait(lwpa_signal_t* id);
+bool lwpa_signal_poll(lwpa_signal_t* id);
+void lwpa_signal_post(lwpa_signal_t* id);
+void lwpa_signal_destroy(lwpa_signal_t* id);
 
 typedef struct
 {
@@ -94,27 +67,13 @@ typedef struct
 } lwpa_rwlock_t;
 
 bool lwpa_rwlock_create(lwpa_rwlock_t* id);
-bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms);
-#define lwpa_rwlock_readunlock(idptr)               \
-  do                                                \
-  {                                                 \
-    if (idptr)                                      \
-      InterlockedDecrement(&(idptr)->reader_count); \
-  } while (0)
-bool lwpa_rwlock_writelock(lwpa_rwlock_t* id, int wait_ms);
-#define lwpa_rwlock_writeunlock(idptr)    \
-  do                                      \
-  {                                       \
-    if (idptr)                            \
-      LeaveCriticalSection(&(idptr)->cs); \
-  } while (0)
-#define lwpa_rwlock_destroy(idptr)         \
-  do                                       \
-  {                                        \
-    if ((idptr) && (idptr)->valid)         \
-      DeleteCriticalSection(&(idptr)->cs); \
-    (idptr)->valid = false;                \
-  } while (0)
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id);
+void lwpa_rwlock_readunlock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id);
+bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id);
+void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id);
+void lwpa_rwlock_destroy(lwpa_rwlock_t* id);
 
 #ifdef __cplusplus
 }

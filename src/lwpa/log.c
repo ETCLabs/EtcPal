@@ -25,11 +25,28 @@
 #include <string.h>
 #include <stdlib.h>
 #include "lwpa/bool.h"
+#include "lwpa/lock.h"
+#include "lwpa/mempool.h"
+#include "lwpa/private/log.h"
 
-/* Suppress strncpy() and gmtime() warnings on Windows/MSVC. */
 #ifdef _MSC_VER
+/* Suppress strncpy() warnings on Windows/MSVC. */
 #pragma warning(disable : 4996)
+
+/* Provide va_copy() in pre-VS2013 environments. */
+#if _MSC_VER < 1800
+#define va_copy(dest, src) (dest = src)
 #endif
+#endif
+
+/* This module uses some C99 features:
+ * - vsnprintf()
+ * - va_copy()
+ * These additional exceptions to the normal C89 rules are permissible here because there are
+ * workarounds for VS.
+ */
+
+/*************************** Private constants *******************************/
 
 #define SYSLOG_PROT_VERSION 1 /*RFC 5424, sec. 6.2.2 */
 #define NILVALUE_STR "-"
@@ -38,12 +55,47 @@
 /* LOG_LOCAL1 seems to be one that's lightly used */
 #define DEFAULT_FACILITY LWPA_LOG_LOCAL1
 
-/* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
-static void sanitize_str(char* str)
+/**************************** Private variables ******************************/
+
+static bool module_initialized;
+static lwpa_mutex_t buf_lock;
+
+/*********************** Private function prototypes *************************/
+
+static void sanitize_str(char* str);
+
+/*************************** Function definitions ****************************/
+
+/* Initialize the lwpa_log module. Creates the mutex which locks the static buffers that log
+ * messages are written into. */
+lwpa_error_t lwpa_log_init()
 {
-  /* C library functions like isprint()/isgraph() are not used here because their behavior is not
-   * well-defined in the presence of non-ASCII characters.
-   */
+  if (!module_initialized)
+  {
+    if (!lwpa_mutex_create(&buf_lock))
+    {
+      return kLwpaErrSys;
+    }
+    module_initialized = true;
+  }
+  return kLwpaErrOk;
+}
+
+/* Deinitialize the lwpa_log module. */
+void lwpa_log_deinit()
+{
+  if (module_initialized)
+  {
+    lwpa_mutex_destroy(&buf_lock);
+    module_initialized = false;
+  }
+}
+
+/* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
+void sanitize_str(char* str)
+{
+  // C library functions like isprint()/isgraph() are not used here because their behavior is not
+  // well-defined in the presence of non-ASCII characters.
   unsigned char* cp;
   for (cp = (unsigned char*)str; *cp != '\0'; ++cp)
   {
@@ -111,7 +163,7 @@ static void make_timestamp(const LwpaLogTimeParams* tparams, char* buf, bool hum
 
   if (tparams && validate_time(tparams))
   {
-    /* Print the basic timestamp */
+    // Print the basic timestamp
     int print_res = snprintf(
         buf, LWPA_LOG_TIMESTAMP_LEN,
         human_readable ? "%04d-%02d-%02d %02d:%02d:%02d.%03d" : "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tparams->year,
@@ -119,7 +171,7 @@ static void make_timestamp(const LwpaLogTimeParams* tparams, char* buf, bool hum
 
     if (print_res > 0 && print_res < LWPA_LOG_TIMESTAMP_LEN - 1)
     {
-      /* Add the UTC offset */
+      // Add the UTC offset
       if (tparams->utc_offset == 0)
       {
         buf[print_res] = 'Z';
@@ -154,7 +206,9 @@ static bool get_time(const LwpaLogParams* params, LwpaLogTimeParams* time_params
     return true;
   }
   else
+  {
     return false;
+  }
 }
 
 /* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
@@ -177,10 +231,8 @@ static char* lwpa_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTime
 
   if (syslog_header_size >= 0)
   {
-    /* Copy in the message */
-    /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
-     * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
-     * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
+    // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
+    // This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written.
     vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
     return &buf[syslog_header_size];
   }
@@ -233,10 +285,8 @@ static char* lwpa_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLogT
 
   if (human_header_size >= 0)
   {
-    /* Copy in the message */
-    /* Making an exception to the strict C89 rule here for safety. We have not found a toolchain that
-     * doesn't support vsnprintf. vsnprintf will write up to count - 1 bytes and always
-     * null-terminates. This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written. */
+    // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
+    // This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written.
     vsnprintf(&buf[human_header_size], buflen - (size_t)human_header_size, format, args);
     return &buf[human_header_size];
   }
@@ -297,37 +347,58 @@ void lwpa_log(const LwpaLogParams* params, int pri, const char* format, ...)
  */
 void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args)
 {
-  char syslogmsg[LWPA_SYSLOG_STR_MAX_LEN + 1];
-  char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];
-  char* syslog_msg_ptr = NULL;
-  char* humanlog_msg_ptr = NULL;
-  char* raw_msg_ptr = NULL;
-  LwpaLogTimeParams time_params;
-  bool have_time;
-
-  if (!params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
+  if (!module_initialized || !params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
     return;
 
-  have_time = get_time(params, &time_params);
+  LwpaLogTimeParams time_params;
+  bool have_time = get_time(params, &time_params);
 
-  if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateSyslog)
+  if (lwpa_mutex_take(&buf_lock))
   {
-    raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
-                                          &params->syslog_params, pri, format, args);
-    if (raw_msg_ptr)
-    {
-      syslog_msg_ptr = syslogmsg;
-    }
-  }
-  if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateHumanReadableLog)
-  {
-    raw_msg_ptr = lwpa_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
-                                             have_time ? &time_params : NULL, format, args);
-    if (raw_msg_ptr)
-    {
-      humanlog_msg_ptr = humanlogmsg;
-    }
-  }
+    static char syslogmsg[LWPA_SYSLOG_STR_MAX_LEN + 1];
+    static char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];
+    char* syslog_msg_ptr = NULL;
+    char* humanlog_msg_ptr = NULL;
+    char* raw_msg_ptr = NULL;
 
-  params->log_fn(params->context, syslog_msg_ptr, humanlog_msg_ptr, raw_msg_ptr);
+    // If we are calling both vcreate functions, we will need to copy the va_list.
+    // For more info on using a va_list multiple times, see:
+    // https://wiki.sei.cmu.edu/confluence/display/c/MSC39-C.+Do+not+call+va_arg%28%29+on+a+va_list+that+has+an+indeterminate+value
+    // https://stackoverflow.com/a/26919307
+    va_list args_copy;
+    bool args_copied = false;
+    if (params->action == kLwpaLogCreateBoth)
+    {
+      va_copy(args_copy, args);
+      args_copied = true;
+    }
+
+    if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateSyslog)
+    {
+      raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+                                            &params->syslog_params, pri, format, args_copied ? args_copy : args);
+      if (raw_msg_ptr)
+      {
+        syslog_msg_ptr = syslogmsg;
+      }
+      if (args_copied)
+      {
+        va_end(args_copy);
+      }
+    }
+
+    if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateHumanReadableLog)
+    {
+      raw_msg_ptr = lwpa_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
+                                               have_time ? &time_params : NULL, format, args);
+      if (raw_msg_ptr)
+      {
+        humanlog_msg_ptr = humanlogmsg;
+      }
+    }
+
+    params->log_fn(params->context, syslog_msg_ptr, humanlog_msg_ptr, raw_msg_ptr);
+
+    lwpa_mutex_give(&buf_lock);
+  }
 }

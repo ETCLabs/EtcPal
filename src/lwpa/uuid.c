@@ -107,7 +107,7 @@ bool lwpa_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
   return false;
 }
 
-/* This documentation appears here; the actual functions are in [platform]/lwpa_uuid_plat.c */
+/* This documentation appears here; the actual functions are in os/[os name]/lwpa/os_uuid.c */
 /*! \fn lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
  *  \brief Generate a Version 1 UUID.
  *
@@ -122,10 +122,10 @@ bool lwpa_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
  *  available (this is mostly a concern for RTOS-level embedded platforms).
  *
  *  \param[out] uuid UUID to fill in with the generation result.
- *  \return #kLwpaErrOk: UUID generated successfully.\n
- *          #kLwpaErrInvalid: Invalid argument provided.\n
- *          #kLwpaErrNotImpl: This UUID generation method is not available on this platform.\n
- *          #kLwpaErrSys: An internal library of system call error occurred.
+ *  \return #kLwpaErrOk: UUID generated successfully.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kLwpaErrNotImpl: This UUID generation method is not available on this platform.
+ *  \return #kLwpaErrSys: An internal library of system call error occurred.
  */
 
 /* Quick utility for generating a uuid out of a md5 hash buffer */
@@ -159,8 +159,8 @@ static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
  *  \param[in] macaddr The device's MAC address as an array of 6 bytes.
  *  \param[in] uuidnum Component number. By changing this number, multiple unique UUIDs can be
  *                     generated for the same device string-MAC address combination.
- *  \return #kLwpaErrOk: UUID generated successfully.\n
- *          #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kLwpaErrOk: UUID generated successfully.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
 lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
 {
@@ -192,7 +192,7 @@ lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uin
   return kLwpaErrOk;
 }
 
-/* This documentation appears here; the actual functions are in [platform]/lwpa_uuid_plat.c */
+/* This documentation appears here; the actual functions are in os/[os name]/lwpa/os_uuid.c */
 /*! \fn lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
  *  \brief Generate a Version 4 UUID.
  *
@@ -204,8 +204,8 @@ lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uin
  *  available (this is mostly a concern for RTOS-level embedded platforms).
  *
  *  \param[out] uuid UUID to fill in with the generation result.
- *  \return #kLwpaErrOk: UUID generated successfully.\n
- *          #kLwpaErrInvalid: Invalid argument provided.\n
- *          #kLwpaErrNotImpl: This UUID generation method is not available on this platform.\n
- *          #kLwpaErrSys: An internal library of system call error occurred.
+ *  \return #kLwpaErrOk: UUID generated successfully.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kLwpaErrNotImpl: This UUID generation method is not available on this platform.
+ *  \return #kLwpaErrSys: An internal library of system call error occurred.
  */

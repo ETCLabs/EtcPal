@@ -63,20 +63,25 @@ add_library(lwpa
   ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
   ${LWPA_ROOT}/include/lwpa/socket.h
   ${LWPA_ROOT}/include/lwpa/timer.h
+  ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_inet.h
   ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_lock.h
   ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_thread.h
   ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa/os_socket.h
   # lwpa sources
-  ${LWPA_ROOT}/src/lwpa/uuid.c
+  ${LWPA_ROOT}/src/lwpa/common.c
   ${LWPA_ROOT}/src/lwpa/error.c
+  ${LWPA_ROOT}/src/lwpa/inet.c
   ${LWPA_ROOT}/src/lwpa/log.c
+  ${LWPA_ROOT}/src/lwpa/md5.h
+  ${LWPA_ROOT}/src/lwpa/md5.c
   ${LWPA_ROOT}/src/lwpa/mempool.c
+  ${LWPA_ROOT}/src/lwpa/netint.c
   ${LWPA_ROOT}/src/lwpa/pdu.c
   ${LWPA_ROOT}/src/lwpa/rbtree.c
   ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
-  ${LWPA_ROOT}/src/lwpa/md5.h
-  ${LWPA_ROOT}/src/lwpa/md5.c
+  ${LWPA_ROOT}/src/lwpa/uuid.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_common.c
+  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_inet.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_uuid.c
@@ -91,13 +96,25 @@ target_include_directories(lwpa PUBLIC
   ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}
   ${LWPA_CONFIG_LOC}
 )
+target_include_directories(lwpa PRIVATE ${LWPA_ROOT}/src)
 target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
+if(LWPA_NETINT_DEBUG_OUTPUT)
+  target_compile_definitions(lwpa PRIVATE LWPA_NETINT_DEBUG_OUTPUT)
+endif()
 
 # Add include paths and library dependencies based on OS for which we are being compiled
 if(LWPA_TARGET_OS STREQUAL windows)
+  target_sources(lwpa PRIVATE
+    ${LWPA_ROOT}/src/os/windows/lwpa/winsock_error.h
+    ${LWPA_ROOT}/src/os/windows/lwpa/winsock_error.c
+  )
   target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
 elseif(LWPA_TARGET_OS STREQUAL linux)
   target_link_libraries(lwpa PUBLIC uuid)
+  target_sources(lwpa PRIVATE
+    ${LWPA_ROOT}/src/os/linux/lwpa/os_error.h
+    ${LWPA_ROOT}/src/os/linux/lwpa/os_error.c
+  )
 elseif(LWPA_TARGET_OS STREQUAL mqx)
   # Include the debug versions of the MQX libs if a Debug configuration is specified.
   # I think there's probably a better way of doing this and I'm missing something here.
@@ -175,6 +192,7 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/include
     ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}
   )
+  target_include_directories(lwpa_mock PRIVATE ${LWPA_ROOT}/src)
   target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
   target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)
   if(LWPA_TARGET_OS STREQUAL windows)
