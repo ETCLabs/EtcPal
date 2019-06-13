@@ -179,7 +179,7 @@ int lwpa_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
     }
     else if (ip1->type == kLwpaIpTypeV4)
     {
-      return ((int)LWPA_IP_V4_ADDRESS(ip1) - (int)LWPA_IP_V4_ADDRESS(ip2));
+      return (LWPA_IP_V4_ADDRESS(ip1) > LWPA_IP_V4_ADDRESS(ip2)) - (LWPA_IP_V4_ADDRESS(ip1) < LWPA_IP_V4_ADDRESS(ip2));
     }
     else if (ip1->type == kLwpaIpTypeV6)
     {
@@ -235,7 +235,7 @@ unsigned int lwpa_ip_mask_length(const LwpaIpAddr* netmask)
     {
       const uint8_t* addr_buf = LWPA_IP_V6_ADDRESS(netmask);
       size_t addr_index = 0;
-      while (addr_buf[addr_index] == 0xff && addr_index < LWPA_IPV6_BYTES)
+      while (addr_index < LWPA_IPV6_BYTES && addr_buf[addr_index] == 0xffu)
       {
         length += 8;
         addr_index++;
