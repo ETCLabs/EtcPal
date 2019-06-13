@@ -17,36 +17,12 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_OS_THREAD_H_
-#define _LWPA_OS_THREAD_H_
+#ifndef _LWPA_OS_INET_H_
+#define _LWPA_OS_INET_H_
 
-#include <pthread.h>
-#include <unistd.h>
-#include "lwpa/bool.h"
+#include <netinet/in.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef struct sockaddr lwpa_os_sockaddr_t;
+typedef struct sockaddr lwpa_os_ipaddr_t;
 
-#define LWPA_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on Linux */
-#define LWPA_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
-#define LWPA_THREAD_DEFAULT_NAME NULL  /* Name ignored on Linux */
-
-#define LWPA_THREAD_NAME_MAX_LENGTH 0
-
-typedef struct
-{
-  void (*fn)(void*);
-  void* arg;
-  pthread_t handle;
-} lwpa_thread_t;
-
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
-bool lwpa_thread_join(lwpa_thread_t* id);
-#define lwpa_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* _LWPA_OS_THREAD_H_ */
+#endif /* _LWPA_OS_INET_H_ */

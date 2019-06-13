@@ -20,9 +20,29 @@
 #ifndef _LWPA_PRIVATE_NETINT_H_
 #define _LWPA_PRIVATE_NETINT_H_
 
+#include "lwpa/netint.h"
 #include "lwpa/error.h"
+
+typedef struct DefaultNetint
+{
+  bool v4_valid;
+  size_t v4_index;
+
+  bool v6_valid;
+  size_t v6_index;
+} DefaultNetint;
+
+typedef struct CachedNetintInfo
+{
+  size_t num_netints;
+  LwpaNetintInfo* netints;
+} CachedNetintInfo;
 
 lwpa_error_t lwpa_netint_init();
 void lwpa_netint_deinit();
+
+lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
+void os_free_interfaces(CachedNetintInfo* cache);
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index);
 
 #endif /* _LWPA_PRIVATE_NETINT_H_ */

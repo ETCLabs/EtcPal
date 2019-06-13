@@ -27,130 +27,46 @@
 #include <iphlpapi.h>
 
 #include "lwpa/int.h"
+#include "lwpa/socket.h"
 #include "lwpa/private/netint.h"
-
-/**************************** Private variables ******************************/
-
-static struct LwpaNetintState
-{
-  bool initialized;
-
-  size_t num_netints;
-  LwpaNetintInfo* lwpa_netints;
-
-  bool have_default_netint_index_v4;
-  size_t default_netint_index_v4;
-
-  bool have_default_netint_index_v6;
-  size_t default_netint_index_v6;
-} state;
 
 /*********************** Private function prototypes *************************/
 
 static IP_ADAPTER_ADDRESSES* get_windows_adapters();
-static void copy_ipv4_info(IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
-static void copy_ipv6_info(IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
-static void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters);
-
-static lwpa_error_t enumerate_netints();
-static int compare_netints(const void* a, const void* b);
-static void free_netints();
+static void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
+static void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
+static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache);
 
 /*************************** Function definitions ****************************/
 
-lwpa_error_t lwpa_netint_init()
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
 {
-  lwpa_error_t res = kLwpaErrOk;
-  if (!state.initialized)
+  struct sockaddr_storage os_addr;
+  if (ip_lwpa_to_os(dest, (lwpa_os_ipaddr_t*)&os_addr))
   {
-    res = enumerate_netints();
-    if (res == kLwpaErrOk)
-      state.initialized = true;
-  }
-  return res;
-}
-
-void lwpa_netint_deinit()
-{
-  if (state.initialized)
-  {
-    free_netints();
-    memset(&state, 0, sizeof(state));
-  }
-}
-
-size_t lwpa_netint_get_num_interfaces()
-{
-  return (state.initialized ? state.num_netints : 0);
-}
-
-size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
-{
-  if (!state.initialized || !netint_arr || netint_arr_size == 0)
-    return 0;
-
-  size_t addrs_copied = (netint_arr_size < state.num_netints ? netint_arr_size : state.num_netints);
-  memcpy(netint_arr, state.lwpa_netints, addrs_copied * sizeof(LwpaNetintInfo));
-  return addrs_copied;
-}
-
-bool lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint)
-{
-  if (state.initialized && netint)
-  {
-    if (type == kLwpaIpTypeV4 && state.have_default_netint_index_v4)
+    DWORD resolved_index;
+    DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
+    if (res == NO_ERROR)
     {
-      *netint = state.lwpa_netints[state.default_netint_index_v4];
-      return true;
+      *index = resolved_index;
+      return kLwpaErrOk;
     }
-    else if (type == kLwpaIpTypeV6 && state.have_default_netint_index_v6)
+    else if (res == ERROR_INVALID_PARAMETER)
     {
-      *netint = state.lwpa_netints[state.default_netint_index_v6];
-      return true;
+      return kLwpaErrInvalid;
     }
-  }
-  return false;
-}
-
-lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNetintInfo* netint)
-{
-  if (!dest || !netint)
-    return kLwpaErrInvalid;
-  if (!state.initialized)
-    return kLwpaErrNotInit;
-  if (state.num_netints == 0)
-    return kLwpaErrNoNetints;
-
-  const LwpaNetintInfo* res = NULL;
-  const LwpaNetintInfo* def = NULL;
-
-  for (const LwpaNetintInfo* netint_entry = state.lwpa_netints; netint_entry < state.lwpa_netints + state.num_netints;
-       ++netint_entry)
-  {
-    if (netint_entry->is_default)
-      def = netint_entry;
-    if (!lwpa_ip_is_wildcard(&netint_entry->mask) &&
-        lwpa_ip_network_portions_equal(&netint_entry->addr, dest, &netint_entry->mask))
+    else
     {
-      res = netint_entry;
-      break;
+      return kLwpaErrNotFound;
     }
-  }
-  if (!res)
-    res = def;
-
-  if (res)
-  {
-    *netint = *res;
-    return kLwpaErrOk;
   }
   else
   {
-    return kLwpaErrNotFound;
+    return kLwpaErrInvalid;
   }
 }
 
-lwpa_error_t enumerate_netints()
+lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   IP_ADAPTER_ADDRESSES *padapters, *pcur;
 
@@ -159,7 +75,7 @@ lwpa_error_t enumerate_netints()
     return kLwpaErrSys;
   pcur = padapters;
 
-  state.num_netints = 0;
+  cache->num_netints = 0;
   while (pcur)
   {
     // If this is multihomed, there may be multiple addresses under the same adapter
@@ -170,7 +86,7 @@ lwpa_error_t enumerate_netints()
       {
         case AF_INET:
         case AF_INET6:
-          ++state.num_netints;
+          ++cache->num_netints;
           break;
         default:
           break;
@@ -180,58 +96,30 @@ lwpa_error_t enumerate_netints()
     pcur = pcur->Next;
   }
 
-  if (state.num_netints == 0)
+  if (cache->num_netints == 0)
   {
     free(padapters);
     return kLwpaErrNoNetints;
   }
 
-  state.lwpa_netints = calloc(state.num_netints, sizeof(LwpaNetintInfo));
-  if (!state.lwpa_netints)
+  cache->netints = calloc(cache->num_netints, sizeof(LwpaNetintInfo));
+  if (!cache->netints)
   {
     free(padapters);
     return kLwpaErrNoMem;
   }
 
-  copy_all_netint_info(padapters);
+  copy_all_netint_info(padapters, cache);
   free(padapters);
-
-  // Sort the interfaces by OS index
-  qsort(state.lwpa_netints, state.num_netints, sizeof(LwpaNetintInfo), compare_netints);
-
-  // Store the locations of the default netints for access by the API function
-  for (size_t i = 0; i < state.num_netints; ++i)
-  {
-    LwpaNetintInfo* netint = &state.lwpa_netints[i];
-    if (LWPA_IP_IS_V4(&netint->addr) && netint->is_default)
-    {
-      state.have_default_netint_index_v4 = true;
-      state.default_netint_index_v4 = i;
-    }
-    else if (LWPA_IP_IS_V6(&netint->addr) && netint->is_default)
-    {
-      state.have_default_netint_index_v6 = true;
-      state.default_netint_index_v6 = i;
-    }
-  }
-
   return kLwpaErrOk;
 }
 
-int compare_netints(const void* a, const void* b)
+void os_free_interfaces(CachedNetintInfo* cache)
 {
-  LwpaNetintInfo* netint1 = (LwpaNetintInfo*)a;
-  LwpaNetintInfo* netint2 = (LwpaNetintInfo*)b;
-
-  return (netint1->ifindex > netint2->ifindex) - (netint1->ifindex < netint2->ifindex);
-}
-
-void free_netints()
-{
-  if (state.lwpa_netints)
+  if (cache->netints)
   {
-    free(state.lwpa_netints);
-    state.lwpa_netints = NULL;
+    free(cache->netints);
+    cache->netints = NULL;
   }
 }
 
@@ -259,25 +147,25 @@ IP_ADAPTER_ADDRESSES* get_windows_adapters()
   return NULL;
 }
 
-void copy_ipv4_info(IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
+void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
 {
-  struct sockaddr_in* sin = (struct sockaddr_in*)pip->Address.lpSockaddr;
+  const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
 
   LWPA_IP_SET_V4_ADDRESS(&info->addr, ntohl(sin->sin_addr.s_addr));
   info->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV4, pip->OnLinkPrefixLength);
 }
 
-void copy_ipv6_info(IP_ADAPTER_UNICAST_ADDRESS *pip, LwpaNetintInfo *info)
+void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
 {
-  struct sockaddr_in6* sin6 = (struct sockaddr_in6*)pip->Address.lpSockaddr;
+  const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;
 
   LWPA_IP_SET_V6_ADDRESS(&info->addr, sin6->sin6_addr.s6_addr);
   info->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, pip->OnLinkPrefixLength);
 }
 
-void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters)
+void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache)
 {
-  IP_ADAPTER_ADDRESSES* pcur = adapters;
+  const IP_ADAPTER_ADDRESSES* pcur = adapters;
 
   // Get the index of the default interface for IPv4
   DWORD def_ifindex_v4;
@@ -285,7 +173,7 @@ void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters)
   struct sockaddr_in v4_dest;
   memset(&v4_dest, 0, sizeof v4_dest);
   v4_dest.sin_family = AF_INET;
-  if (NO_ERROR == GetBestInterfaceEx((struct sockaddr *)&v4_dest, &def_ifindex_v4))
+  if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v4_dest, &def_ifindex_v4))
     have_def_index_v4 = true;
 
   // And the same for IPv6
@@ -294,7 +182,7 @@ void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters)
   struct sockaddr_in6 v6_dest;
   memset(&v6_dest, 0, sizeof v6_dest);
   v6_dest.sin6_family = AF_INET6;
-  if (NO_ERROR == GetBestInterfaceEx((struct sockaddr *)&v6_dest, &def_ifindex_v6))
+  if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v6_dest, &def_ifindex_v6))
     have_def_index_v6 = true;
 
   size_t netint_index = 0;
@@ -305,7 +193,7 @@ void copy_all_netint_info(IP_ADAPTER_ADDRESSES* adapters)
     IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
     while (pip)
     {
-      LwpaNetintInfo* info = &state.lwpa_netints[netint_index];
+      LwpaNetintInfo* info = &cache->netints[netint_index];
       switch (pip->Address.lpSockaddr->sa_family)
       {
         case AF_INET:

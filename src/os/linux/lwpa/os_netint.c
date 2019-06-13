@@ -83,23 +83,8 @@ typedef struct RtNetlinkRequest
 
 /**************************** Private variables ******************************/
 
-static struct LwpaNetintState
-{
-  bool initialized;
-
-  RoutingTable routing_table_v4;
-  RoutingTable routing_table_v6;
-
-  struct ifaddrs* os_addrs;
-  size_t num_netints;
-  LwpaNetintInfo* lwpa_netints;
-
-  bool have_default_netint_index_v4;
-  size_t default_netint_index_v4;
-
-  bool have_default_netint_index_v6;
-  size_t default_netint_index_v6;
-} state;
+RoutingTable routing_table_v4;
+RoutingTable routing_table_v6;
 
 /*********************** Private function prototypes *************************/
 
@@ -118,85 +103,133 @@ static lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, si
 static void init_routing_table_entry(RoutingTableEntry* entry);
 static int compare_routing_table_entries(const void* a, const void* b);
 
-// Functions for enumerating the interfaces
-static lwpa_error_t enumerate_netints();
-static int compare_netints(const void* a, const void* b);
-static void free_netints();
-
 #if LWPA_NETINT_DEBUG_OUTPUT
 static void debug_print_routing_table(RoutingTable* table);
 #endif
 
 /*************************** Function definitions ****************************/
 
-lwpa_error_t lwpa_netint_init()
+/* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
+static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
 {
-  lwpa_error_t res = kLwpaErrOk;
-  if (!state.initialized)
+  // Skip an entry if it doesn't have an address, or if the address is not IPv4 or IPv6.
+  return (!ifaddr->ifa_addr || (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
+}
+
+lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
+{
+  lwpa_error_t res = build_routing_tables();
+  if (res != kLwpaErrOk)
+    return res;
+
+  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+  if (ioctl_sock == -1)
+    return errno_os_to_lwpa(errno);
+
+  struct ifaddrs* os_addrs;
+  if (getifaddrs(&os_addrs) < 0)
   {
-    res = enumerate_netints();
-    if (res == kLwpaErrOk)
-      state.initialized = true;
+    close(ioctl_sock);
+    return errno_os_to_lwpa(errno);
   }
-  return res;
-}
 
-void lwpa_netint_deinit()
-{
-  if (state.initialized)
+  // Pass 1: Total the number of addresses
+  cache->num_netints = 0;
+  for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
-    free_netints();
-    memset(&state, 0, sizeof(state));
+    if (should_skip_ifaddr(ifaddr))
+      continue;
+
+    ++cache->num_netints;
   }
-}
 
-/******************************************************************************
- * API Functions
- *****************************************************************************/
-
-size_t lwpa_netint_get_num_interfaces()
-{
-  return (state.initialized ? state.num_netints : 0);
-}
-
-size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
-{
-  if (!state.initialized || !netint_arr || netint_arr_size == 0)
-    return 0;
-
-  size_t addrs_copied = (netint_arr_size < state.num_netints ? netint_arr_size : state.num_netints);
-  memcpy(netint_arr, state.lwpa_netints, addrs_copied * sizeof(LwpaNetintInfo));
-  return addrs_copied;
-}
-
-bool lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint)
-{
-  if (state.initialized && netint)
+  if (cache->num_netints == 0)
   {
-    if (type == kLwpaIpTypeV4 && state.have_default_netint_index_v4)
-    {
-      *netint = state.lwpa_netints[state.default_netint_index_v4];
-      return true;
-    }
-    else if (type == kLwpaIpTypeV6 && state.have_default_netint_index_v6)
-    {
-      *netint = state.lwpa_netints[state.default_netint_index_v6];
-      return true;
-    }
-  }
-  return false;
-}
-
-lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNetintInfo* netint)
-{
-  if (!dest || !netint)
-    return kLwpaErrInvalid;
-  if (!state.initialized)
-    return kLwpaErrNotInit;
-  if (state.num_netints == 0)
+    freeifaddrs(os_addrs);
+    close(ioctl_sock);
     return kLwpaErrNoNetints;
+  }
 
-  RoutingTable* table_to_use = (LWPA_IP_IS_V6(dest) ? &state.routing_table_v6 : &state.routing_table_v4);
+  // Allocate our interface array
+  cache->netints = (LwpaNetintInfo*)calloc(cache->num_netints, sizeof(LwpaNetintInfo));
+  if (!cache->netints)
+  {
+    freeifaddrs(os_addrs);
+    close(ioctl_sock);
+    return kLwpaErrNoMem;
+  }
+
+  // Pass 2: Fill in all the info about each address
+  size_t current_lwpa_index = 0;
+  for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    if (should_skip_ifaddr(ifaddr))
+      continue;
+
+    LwpaNetintInfo* current_info = &cache->netints[current_lwpa_index];
+
+    // Interface name
+    strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
+    current_info->name[LWPA_NETINTINFO_NAME_LEN - 1] = '\0';
+
+    // Interface address
+    ip_os_to_lwpa(ifaddr->ifa_addr, &current_info->addr);
+
+    // Interface netmask
+    ip_os_to_lwpa(ifaddr->ifa_netmask, &current_info->mask);
+
+    // Struct ifreq to use with ioctl() calls
+    struct ifreq if_req;
+    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
+
+    // Hardware address
+    int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
+    if (ioctl_res == 0)
+      memcpy(current_info->mac, if_req.ifr_hwaddr.sa_data, LWPA_NETINTINFO_MAC_LEN);
+    else
+      memset(current_info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
+
+    // Interface index
+    ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
+    if (ioctl_res == 0)
+      current_info->ifindex = if_req.ifr_ifindex;
+    else
+      current_info->ifindex = -1;
+
+    // Is Default
+    if (LWPA_IP_IS_V4(&current_info->addr) && routing_table_v4.default_route &&
+        current_info->ifindex == routing_table_v4.default_route->interface_index)
+    {
+      current_info->is_default = true;
+    }
+    else if (LWPA_IP_IS_V6(&current_info->addr) && routing_table_v6.default_route &&
+             current_info->ifindex == routing_table_v6.default_route->interface_index)
+    {
+      current_info->is_default = true;
+    }
+
+    current_lwpa_index++;
+  }
+
+  freeifaddrs(os_addrs);
+  close(ioctl_sock);
+  return kLwpaErrOk;
+}
+
+void os_free_interfaces(CachedNetintInfo* cache)
+{
+  if (cache->netints)
+  {
+    free(cache->netints);
+    cache->netints = NULL;
+  }
+
+  free_routing_tables();
+}
+
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
+{
+  RoutingTable* table_to_use = (LWPA_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
   int index_found = -1;
   for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
@@ -216,40 +249,31 @@ lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNeti
   if (index_found < 0 && table_to_use->default_route)
     index_found = table_to_use->default_route->interface_index;
 
-  // Find the network interface with the correct index
   if (index_found >= 0)
   {
-    for (LwpaNetintInfo* netint_entry = state.lwpa_netints; netint_entry < state.lwpa_netints + state.num_netints;
-         ++netint_entry)
-    {
-      if (netint_entry->ifindex == index_found)
-      {
-        *netint = *netint_entry;
-        return kLwpaErrOk;
-      }
-    }
+    *index = index_found;
+    return kLwpaErrOk;
   }
-  return kLwpaErrNotFound;
+  else
+  {
+    return kLwpaErrNotFound;
+  }
 }
-
-/******************************************************************************
- * Internal Functions
- *****************************************************************************/
 
 lwpa_error_t build_routing_tables()
 {
-  lwpa_error_t res = build_routing_table(AF_INET, &state.routing_table_v4);
+  lwpa_error_t res = build_routing_table(AF_INET, &routing_table_v4);
   if (res == kLwpaErrOk)
   {
-    res = build_routing_table(AF_INET6, &state.routing_table_v6);
+    res = build_routing_table(AF_INET6, &routing_table_v6);
   }
 
   if (res != kLwpaErrOk)
     free_routing_tables();
 
 #if LWPA_NETINT_DEBUG_OUTPUT
-  debug_print_routing_table(&state.routing_table_v4);
-  debug_print_routing_table(&state.routing_table_v6);
+  debug_print_routing_table(&routing_table_v4);
+  debug_print_routing_table(&routing_table_v6);
 #endif
 
   return res;
@@ -501,144 +525,10 @@ int compare_routing_table_entries(const void* a, const void* b)
   }
 }
 
-/* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
-static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
-{
-  // Skip an entry if it doesn't have an address, or if the address is not IPv4 or IPv6.
-  return (!ifaddr->ifa_addr || (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
-}
-
-lwpa_error_t enumerate_netints()
-{
-  lwpa_error_t res = build_routing_tables();
-  if (res != kLwpaErrOk)
-    return res;
-
-  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
-  if (ioctl_sock == -1)
-    return errno_os_to_lwpa(errno);
-
-  if (getifaddrs(&state.os_addrs) < 0)
-  {
-    close(ioctl_sock);
-    return errno_os_to_lwpa(errno);
-  }
-
-  // Pass 1: Total the number of addresses
-  state.num_netints = 0;
-  for (struct ifaddrs* ifaddr = state.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
-  {
-    if (should_skip_ifaddr(ifaddr))
-      continue;
-
-    ++state.num_netints;
-  }
-
-  if (state.num_netints == 0)
-  {
-    freeifaddrs(state.os_addrs);
-    close(ioctl_sock);
-    return kLwpaErrNoNetints;
-  }
-
-  // Allocate our interface array
-  state.lwpa_netints = (LwpaNetintInfo*)calloc(state.num_netints, sizeof(LwpaNetintInfo));
-  if (!state.lwpa_netints)
-  {
-    freeifaddrs(state.os_addrs);
-    close(ioctl_sock);
-    return kLwpaErrNoMem;
-  }
-
-  // Pass 2: Fill in all the info about each address
-  size_t current_lwpa_index = 0;
-  for (struct ifaddrs* ifaddr = state.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
-  {
-    if (should_skip_ifaddr(ifaddr))
-      continue;
-
-    LwpaNetintInfo* current_info = &state.lwpa_netints[current_lwpa_index];
-
-    // Interface name
-    strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
-    current_info->name[LWPA_NETINTINFO_NAME_LEN - 1] = '\0';
-
-    // Interface address
-    LwpaSockaddr temp_sockaddr;
-    sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_addr);
-    current_info->addr = temp_sockaddr.ip;
-
-    // Interface netmask
-    sockaddr_os_to_lwpa(&temp_sockaddr, ifaddr->ifa_netmask);
-    current_info->mask = temp_sockaddr.ip;
-
-    // Struct ifreq to use with ioctl() calls
-    struct ifreq if_req;
-    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
-
-    // Hardware address
-    int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
-    if (ioctl_res == 0)
-      memcpy(current_info->mac, if_req.ifr_hwaddr.sa_data, LWPA_NETINTINFO_MAC_LEN);
-    else
-      memset(current_info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
-
-    // Interface index
-    ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
-    if (ioctl_res == 0)
-      current_info->ifindex = if_req.ifr_ifindex;
-    else
-      current_info->ifindex = -1;
-
-    // Is Default
-    if (LWPA_IP_IS_V4(&current_info->addr) && state.routing_table_v4.default_route &&
-        current_info->ifindex == state.routing_table_v4.default_route->interface_index)
-    {
-      current_info->is_default = true;
-    }
-    else if (LWPA_IP_IS_V6(&current_info->addr) && state.routing_table_v6.default_route &&
-             current_info->ifindex == state.routing_table_v6.default_route->interface_index)
-    {
-      current_info->is_default = true;
-    }
-
-    current_lwpa_index++;
-  }
-
-  // Sort the interfaces by OS index
-  qsort(state.lwpa_netints, state.num_netints, sizeof(LwpaNetintInfo), compare_netints);
-
-  // Store the locations of the default netints for access by the API function
-  for (size_t i = 0; i < state.num_netints; ++i)
-  {
-    LwpaNetintInfo* netint = &state.lwpa_netints[i];
-    if (LWPA_IP_IS_V4(&netint->addr) && netint->is_default)
-    {
-      state.have_default_netint_index_v4 = true;
-      state.default_netint_index_v4 = i;
-    }
-    else if (LWPA_IP_IS_V6(&netint->addr) && netint->is_default)
-    {
-      state.have_default_netint_index_v6 = true;
-      state.default_netint_index_v6 = i;
-    }
-  }
-  close(ioctl_sock);
-  return kLwpaErrOk;
-}
-
-int compare_netints(const void* a, const void* b)
-{
-  LwpaNetintInfo* netint1 = (LwpaNetintInfo*)a;
-  LwpaNetintInfo* netint2 = (LwpaNetintInfo*)b;
-
-  return (netint1->ifindex > netint2->ifindex) - (netint1->ifindex < netint2->ifindex);
-}
-
 void free_routing_tables()
 {
-  free_routing_table(&state.routing_table_v4);
-  free_routing_table(&state.routing_table_v6);
+  free_routing_table(&routing_table_v4);
+  free_routing_table(&routing_table_v6);
 }
 
 void free_routing_table(RoutingTable* table)
@@ -649,22 +539,6 @@ void free_routing_table(RoutingTable* table)
     table->entries = NULL;
   }
   table->size = 0;
-}
-
-void free_netints()
-{
-  if (state.os_addrs)
-  {
-    freeifaddrs(state.os_addrs);
-    state.os_addrs = NULL;
-  }
-  if (state.lwpa_netints)
-  {
-    free(state.lwpa_netints);
-    state.lwpa_netints = NULL;
-  }
-
-  free_routing_tables();
 }
 
 #if LWPA_NETINT_DEBUG_OUTPUT

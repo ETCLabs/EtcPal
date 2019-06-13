@@ -21,9 +21,6 @@
 #include <chrono>
 #include <thread>
 
-static_assert(std::ratio_less_equal<std::chrono::high_resolution_clock::period, std::milli>::value,
-              "This platform does not have access to a millisecond-resolution clock. This test cannot be run.");
-
 class ThreadTest : public ::testing::Test
 {
 public:
@@ -68,7 +65,7 @@ TEST_F(ThreadTest, create_destroy)
   // Stop should time out if the thread is still looping.
   // auto start_time = std::chrono::high_resolution_clock::now();
 
-  // ASSERT_FALSE(lwpa_thread_stop(&wait_thread, 100));
+  // ASSERT_FALSE(lwpa_thread_join(&wait_thread, 100));
   // It should wait for at least the timeout specified, minus a fudge factor to account for
   // differing time resolutions on platforms.
   // auto time_taken =
@@ -77,7 +74,7 @@ TEST_F(ThreadTest, create_destroy)
 
   // Stop should work if the thread has exited.
   waitthread_run = false;
-  ASSERT_TRUE(lwpa_thread_stop(&wait_thread));
+  ASSERT_TRUE(lwpa_thread_join(&wait_thread));
 }
 
 void increment_and_spin(void* param)
@@ -125,9 +122,9 @@ TEST_F(ThreadTest, time_slice)
   std::this_thread::sleep_for(100ms);
   // Stop the tasks
   oneshot_task_run = false;
-  ASSERT_TRUE(lwpa_thread_stop(&oneshot_task));
+  ASSERT_TRUE(lwpa_thread_join(&oneshot_task));
   spin_task_run = false;
-  ASSERT_TRUE(lwpa_thread_stop(&spin_task));
+  ASSERT_TRUE(lwpa_thread_join(&spin_task));
   ASSERT_TRUE(spin_task_ran);
   ASSERT_TRUE(oneshot_task_ran);
 }

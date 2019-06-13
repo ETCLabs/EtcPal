@@ -66,16 +66,15 @@ typedef UNDEFINED lwpa_thread_t;
  */
 bool lwpa_thread_create(lwpa_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
 
-/*! \brief Stop a thread.
+/*! \brief Wait for a thread to finish execution.
  *
- *  This is sometimes referred to as 'joining' a thread in native platform APIs. Blocks until the
- *  thread has exited.
+ *  Blocks until the thread has exited.
  *
  *  \param[in] id Identifier for the thread to stop.
  *  \return true: The thread was stopped.
  *  \return false: An error occurred.
  */
-bool lwpa_thread_stop(lwpa_thread_t *id, int wait_ms);
+bool lwpa_thread_join(lwpa_thread_t *id);
 
 /*! \brief Provides a platform-neutral sleep.
  *  \param[in] sleep_ms How long to sleep, in milliseconds.

@@ -165,6 +165,12 @@ TEST_F(InetTest, compare)
 
   EXPECT_LT(lwpa_ip_cmp(&v4_less, &v4), 0);
   EXPECT_LT(lwpa_ip_cmp(&v6_less, &v6), 0);
+
+  // Make sure there are no gotchas with 2's complement by setting high bits of addresses
+  LWPA_IP_SET_V4_ADDRESS(&v4, 0xffffffff);
+  LWPA_IP_SET_V4_ADDRESS(&v4_less, 0x0);
+
+  EXPECT_LT(lwpa_ip_cmp(&v4_less, &v4), 0);
 }
 
 // Test the lwpa_ip_mask_length() function

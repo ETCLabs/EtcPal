@@ -26,6 +26,33 @@ static const uint8_t v6_loopback[LWPA_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 
 
 /*************************** Function definitions ****************************/
 
+/*! \brief Determine whether a LwpaIpAddr contains a link-local address.
+ *
+ *  Works for both IPv4 and IPv6 addresses.
+ *
+ *  \param[in] ip Address to check.
+ *  \return true: ip contains a link-local address.
+ *  \return false: ip does not contain a link-local address.
+ */
+bool lwpa_ip_is_link_local(const LwpaIpAddr* ip)
+{
+  if (ip)
+  {
+    if (LWPA_IP_IS_V4(ip))
+    {
+      // An IPv4 address is link-local if the first two octets are 0xa9fe (169.254.0.0/16)
+      return ((LWPA_IP_V4_ADDRESS(ip) & 0xffff0000u) == 0xa9fe0000u);
+    }
+    else if (LWPA_IP_IS_V6(ip))
+    {
+      // An IPv6 address is link-local if the first 10 bits are 1111111010 (fe80::/10)
+      const uint8_t* addr_buf = LWPA_IP_V6_ADDRESS(ip);
+      return (addr_buf[0] == 0xfeu && ((addr_buf[1] & 0xc0u) == 0x80u));
+    }
+  }
+  return false;
+}
+
 /*! \brief Determine whether a LwpaIpAddr contains a loopback address.
  *
  *  Works for both IPv4 and IPv6 addresses.
@@ -40,10 +67,12 @@ bool lwpa_ip_is_loopback(const LwpaIpAddr* ip)
   {
     if (LWPA_IP_IS_V4(ip))
     {
+      // An IPv4 address is loopback if the first octet is 0x7f (127.0.0.0/8)
       return ((LWPA_IP_V4_ADDRESS(ip) & 0xff000000u) == 0x7f000000u);
     }
     else if (LWPA_IP_IS_V6(ip))
     {
+      // An IPv6 address is loopback if it is equal to the address ::1
       return (0 == memcmp(LWPA_IP_V6_ADDRESS(ip), v6_loopback, LWPA_IPV6_BYTES));
     }
   }
@@ -64,10 +93,13 @@ bool lwpa_ip_is_multicast(const LwpaIpAddr* ip)
   {
     if (LWPA_IP_IS_V4(ip))
     {
-      return (LWPA_IP_V4_ADDRESS(ip) >= 0xe0000000 && LWPA_IP_V4_ADDRESS(ip) <= 0xefffffff);
+      // An IPv4 address is multicast if it is in the range 224.0.0.0 to 239.255.255.255, inclusive
+      // (224.0.0.0/4)
+      return (LWPA_IP_V4_ADDRESS(ip) >= 0xe0000000u && LWPA_IP_V4_ADDRESS(ip) <= 0xefffffffu);
     }
     else if (LWPA_IP_IS_V6(ip))
     {
+      // An IPv6 address is multicast if the first octet is 0xff (ff00::/8)
       return (LWPA_IP_V6_ADDRESS(ip)[0] == 0xff);
     }
   }
@@ -89,6 +121,7 @@ bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip)
 {
   if (ip)
   {
+    // Wildcard addresses are all-zeroes
     if (LWPA_IP_IS_V4(ip))
     {
       return (LWPA_IP_V4_ADDRESS(ip) == 0);
@@ -179,7 +212,7 @@ int lwpa_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
     }
     else if (ip1->type == kLwpaIpTypeV4)
     {
-      return ((int)LWPA_IP_V4_ADDRESS(ip1) - (int)LWPA_IP_V4_ADDRESS(ip2));
+      return (LWPA_IP_V4_ADDRESS(ip1) > LWPA_IP_V4_ADDRESS(ip2)) - (LWPA_IP_V4_ADDRESS(ip1) < LWPA_IP_V4_ADDRESS(ip2));
     }
     else if (ip1->type == kLwpaIpTypeV6)
     {
@@ -235,7 +268,7 @@ unsigned int lwpa_ip_mask_length(const LwpaIpAddr* netmask)
     {
       const uint8_t* addr_buf = LWPA_IP_V6_ADDRESS(netmask);
       size_t addr_index = 0;
-      while (addr_buf[addr_index] == 0xff && addr_index < LWPA_IPV6_BYTES)
+      while (addr_index < LWPA_IPV6_BYTES && addr_buf[addr_index] == 0xffu)
       {
         length += 8;
         addr_index++;
