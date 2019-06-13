@@ -268,7 +268,7 @@ TEST_F(SocketTest, multicast_udp)
     }
     else
     {
-      EXPECT_EQ(res, kLwpaErrTimedOut);
+      EXPECT_EQ(res, kLwpaErrWouldBlock);
       break;
     }
 

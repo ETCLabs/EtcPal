@@ -20,18 +20,9 @@
 #ifndef _LWPA_OS_INET_H_
 #define _LWPA_OS_INET_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <netinet/in.h>
 
-bool ip_os_to_lwpa(const struct sockaddr* os_ip, LwpaIpAddr* ip);
-size_t ip_lwpa_to_os(const LwpaIpAddr* ip, struct sockaddr* os_ip);
-
-bool sockaddr_os_to_lwpa(const struct sockaddr* os_sa, LwpaSockaddr* sa);
-size_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, struct sockaddr* os_sa);
-
-#ifdef __cplusplus
-}
-#endif
+typedef struct sockaddr lwpa_os_sockaddr_t;
+typedef struct sockaddr lwpa_os_ipaddr_t;
 
 #endif /* _LWPA_OS_INET_H_ */
