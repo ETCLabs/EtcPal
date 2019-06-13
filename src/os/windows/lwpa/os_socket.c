@@ -122,50 +122,6 @@ static lwpa_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent
 
 /*************************** Function definitions ****************************/
 
-bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa)
-{
-  if (pfsa->sa_family == AF_INET)
-  {
-    struct sockaddr_in* sin = (struct sockaddr_in*)pfsa;
-    sa->port = ntohs(sin->sin_port);
-    LWPA_IP_SET_V4_ADDRESS(&sa->ip, ntohl(sin->sin_addr.s_addr));
-    return true;
-  }
-  else if (pfsa->sa_family == AF_INET6)
-  {
-    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)pfsa;
-    sa->port = ntohs(sin6->sin6_port);
-    LWPA_IP_SET_V6_ADDRESS(&sa->ip, sin6->sin6_addr.s6_addr);
-    return true;
-  }
-  return false;
-}
-
-size_t sockaddr_lwpa_to_os(struct sockaddr* pfsa, const LwpaSockaddr* sa)
-{
-  size_t ret = 0;
-  if (LWPA_IP_IS_V4(&sa->ip))
-  {
-    struct sockaddr_in* sin = (struct sockaddr_in*)pfsa;
-    memset(sin, 0, sizeof(struct sockaddr_in));
-    sin->sin_family = AF_INET;
-    sin->sin_port = htons(sa->port);
-    sin->sin_addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&sa->ip));
-    ret = sizeof(struct sockaddr_in);
-  }
-  else if (LWPA_IP_IS_V6(&sa->ip))
-  {
-    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)pfsa;
-    memset(sin6, 0, sizeof(struct sockaddr_in6));
-    sin6->sin6_family = AF_INET6;
-    sin6->sin6_port = htons(sa->port);
-    memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(&sa->ip), LWPA_IPV6_BYTES);
-    ret = sizeof(struct sockaddr_in6);
-    in6addr_any;
-  }
-  return ret;
-}
-
 #if !defined(LWPA_BUILDING_MOCK_LIB)
 
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t* conn_sock)
@@ -181,7 +137,7 @@ lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t*
 
   if (res != INVALID_SOCKET)
   {
-    if (address && !sockaddr_os_to_lwpa(address, (struct sockaddr*)&ss))
+    if (address && !sockaddr_os_to_lwpa((lwpa_os_sockaddr_t*)&ss, address))
     {
       closesocket(res);
       return kLwpaErrSys;
@@ -201,7 +157,7 @@ lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr* address)
   if (!address)
     return kLwpaErrInvalid;
 
-  sa_size = sockaddr_lwpa_to_os((struct sockaddr*)&ss, address);
+  sa_size = sockaddr_lwpa_to_os(address, (lwpa_os_sockaddr_t*)&ss);
   if (sa_size == 0)
     return kLwpaErrInvalid;
 
@@ -224,7 +180,7 @@ lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr* address)
   if (!address)
     return kLwpaErrInvalid;
 
-  sa_size = sockaddr_lwpa_to_os((struct sockaddr*)&ss, address);
+  sa_size = sockaddr_lwpa_to_os(address, (lwpa_os_sockaddr_t*)&ss);
   if (sa_size == 0)
     return kLwpaErrInvalid;
 
@@ -252,7 +208,7 @@ lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr* address)
   res = getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
-    if (!sockaddr_os_to_lwpa(address, (struct sockaddr*)&ss))
+    if (!sockaddr_os_to_lwpa((lwpa_os_sockaddr_t*)&ss, address))
       return kLwpaErrSys;
     return kLwpaErrOk;
   }
@@ -304,7 +260,7 @@ int lwpa_recvfrom(lwpa_socket_t id, void* buffer, size_t length, int flags, Lwpa
   {
     if (address && fromlen > 0)
     {
-      if (!sockaddr_os_to_lwpa(address, (struct sockaddr*)&fromaddr))
+      if (!sockaddr_os_to_lwpa((lwpa_os_sockaddr_t*)&fromaddr, address))
         return kLwpaErrSys;
     }
     return res;
@@ -334,7 +290,7 @@ int lwpa_sendto(lwpa_socket_t id, const void* message, size_t length, int flags,
   if (!dest_addr || !message)
     return (int)kLwpaErrInvalid;
 
-  if ((ss_size = sockaddr_lwpa_to_os((struct sockaddr*)&ss, dest_addr)) > 0)
+  if ((ss_size = sockaddr_lwpa_to_os(dest_addr, (lwpa_os_sockaddr_t*)&ss)) > 0)
     res = sendto(id, message, (int)length, 0, (struct sockaddr*)&ss, (int)ss_size);
 
   return (res >= 0 ? res : (int)err_winsock_to_lwpa(WSAGetLastError()));
@@ -996,7 +952,7 @@ bool lwpa_nextaddr(LwpaAddrinfo* ai)
   {
     struct addrinfo* pf_ai = (struct addrinfo*)ai->pd[1];
     ai->ai_flags = 0;
-    if (!sockaddr_os_to_lwpa(&ai->ai_addr, pf_ai->ai_addr))
+    if (!sockaddr_os_to_lwpa((lwpa_os_sockaddr_t*)pf_ai->ai_addr, &ai->ai_addr))
       return false;
 
     /* Can't use reverse maps, because we have no guarantee of the numeric values of the OS
@@ -1037,59 +993,3 @@ void lwpa_freeaddrinfo(LwpaAddrinfo* ai)
 }
 
 #endif /* !defined(LWPA_BUILDING_MOCK_LIB) */
-
-lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
-{
-  if (!src || !dest)
-    return kLwpaErrInvalid;
-
-  switch (src->type)
-  {
-    case kLwpaIpTypeV4:
-    {
-      struct in_addr addr;
-      addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(src));
-      if (NULL != inet_ntop(AF_INET, &addr, dest, size))
-        return kLwpaErrOk;
-      return kLwpaErrSys;
-    }
-    case kLwpaIpTypeV6:
-    {
-      struct in6_addr addr;
-      memcpy(addr.s6_addr, LWPA_IP_V6_ADDRESS(src), LWPA_IPV6_BYTES);
-      if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
-        return kLwpaErrOk;
-      return kLwpaErrSys;
-    }
-    default:
-      return kLwpaErrInvalid;
-  }
-}
-
-lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* dest)
-{
-  if (!src || !dest)
-    return kLwpaErrInvalid;
-
-  switch (type)
-  {
-    case kLwpaIpTypeV4:
-    {
-      struct in_addr addr;
-      if (1 != inet_pton(AF_INET, src, &addr))
-        return kLwpaErrSys;
-      LWPA_IP_SET_V4_ADDRESS(dest, ntohl(addr.s_addr));
-      return kLwpaErrOk;
-    }
-    case kLwpaIpTypeV6:
-    {
-      struct in6_addr addr;
-      if (1 != inet_pton(AF_INET6, src, &addr))
-        return kLwpaErrSys;
-      LWPA_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
-      return kLwpaErrOk;
-    }
-    default:
-      return kLwpaErrInvalid;
-  }
-}

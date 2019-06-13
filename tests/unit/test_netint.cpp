@@ -87,7 +87,7 @@ TEST_F(NetintTest, ipv4_routing)
 
   for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
-    if (!LWPA_IP_IS_V4(&netint->addr) || lwpa_ip_is_loopback(&netint->addr))
+    if (!LWPA_IP_IS_V4(&netint->addr) || lwpa_ip_is_loopback(&netint->addr) || lwpa_ip_is_link_local(&netint->addr))
       continue;
 
     uint32_t net = LWPA_IP_V4_ADDRESS(&netint->addr) & LWPA_IP_V4_ADDRESS(&netint->mask);
@@ -100,7 +100,15 @@ TEST_F(NetintTest, ipv4_routing)
 
     LwpaNetintInfo netint_res;
     ASSERT_EQ(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&test_addr, &netint_res));
-    EXPECT_TRUE(lwpa_ip_equal(&netint_res.addr, &netint->addr));
+
+    // Put addresses in print form to test meaningful information in case of test failure
+    char test_addr_str[LWPA_INET6_ADDRSTRLEN];
+    char result_str[LWPA_INET6_ADDRSTRLEN];
+    lwpa_inet_ntop(&test_addr, test_addr_str, LWPA_INET6_ADDRSTRLEN);
+    lwpa_inet_ntop(&netint_res.addr, result_str, LWPA_INET6_ADDRSTRLEN);
+
+    EXPECT_TRUE(lwpa_ip_equal(&netint_res.addr, &netint->addr))
+        << "Address tried: " << test_addr_str << ", interface returned: " << result_str;
   }
 
   LwpaIpAddr ext_addr;

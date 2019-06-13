@@ -251,16 +251,6 @@ bool lwpa_nextaddr(LwpaAddrinfo* ai);
 /* Call with any of the LwpaAddrinfos in the list to free the whole list */
 void lwpa_freeaddrinfo(LwpaAddrinfo* ai);
 
-/************************* Mimic inet_xtox() API *****************************/
-
-/*! Maximum length of the string representation of an IPv4 address. */
-#define LWPA_INET_ADDRSTRLEN 16
-/*! Maximum length of the string representation of an IPv6 address. */
-#define LWPA_INET6_ADDRSTRLEN 46
-
-lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size);
-lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* dest);
-
 #ifdef __cplusplus
 }
 #endif

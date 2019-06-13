@@ -17,32 +17,21 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_PRIVATE_NETINT_H_
-#define _LWPA_PRIVATE_NETINT_H_
+#ifndef _LWPA_OS_INET_H_
+#define _LWPA_OS_INET_H_
 
-#include "lwpa/netint.h"
-#include "lwpa/error.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-typedef struct DefaultNetint
-{
-  bool v4_valid;
-  size_t v4_index;
+bool ip_os_to_lwpa(const struct sockaddr* os_ip, LwpaIpAddr* ip);
+size_t ip_lwpa_to_os(const LwpaIpAddr* ip, struct sockaddr* os_ip);
 
-  bool v6_valid;
-  size_t v6_index;
-} DefaultNetint;
+bool sockaddr_os_to_lwpa(const struct sockaddr* os_sa, LwpaSockaddr* sa);
+size_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, struct sockaddr* os_sa);
 
-typedef struct CachedNetintInfo
-{
-  size_t num_netints;
-  LwpaNetintInfo* netints;
-} CachedNetintInfo;
+#ifdef __cplusplus
+}
+#endif
 
-lwpa_error_t lwpa_netint_init();
-void lwpa_netint_deinit();
-
-lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
-void os_free_interfaces(CachedNetintInfo* cache);
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index);
-
-#endif /* _LWPA_PRIVATE_NETINT_H_ */
+#endif /* _LWPA_OS_INET_H_ */

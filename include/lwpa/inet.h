@@ -22,8 +22,10 @@
 #define _LWPA_INET_H_
 
 #include <string.h>
-#include "lwpa/int.h"
 #include "lwpa/bool.h"
+#include "lwpa/error.h"
+#include "lwpa/int.h"
+#include "lwpa/os_inet.h"
 
 /*! \defgroup lwpa_inet lwpa_inet
  *  \ingroup lwpa
@@ -154,10 +156,17 @@ typedef struct LwpaNetintInfo
   uint8_t mac[LWPA_NETINTINFO_MAC_LEN];
   /*! The adapter name as a string. */
   char name[LWPA_NETINTINFO_NAME_LEN];
-  /*! Whether this is the default network interface. */
+  /*! Whether this is the default network interface. The default network interface is defined as
+   *  the network interface chosen for the default IP route on a system. */
   bool is_default;
 } LwpaNetintInfo;
 
+/*! Maximum length of the string representation of an IPv4 address. */
+#define LWPA_INET_ADDRSTRLEN 16
+/*! Maximum length of the string representation of an IPv6 address. */
+#define LWPA_INET6_ADDRSTRLEN 46
+
+bool lwpa_ip_is_link_local(const LwpaIpAddr* ip);
 bool lwpa_ip_is_loopback(const LwpaIpAddr* ip);
 bool lwpa_ip_is_multicast(const LwpaIpAddr* ip);
 bool lwpa_ip_is_wildcard(const LwpaIpAddr* ip);
@@ -170,6 +179,15 @@ bool lwpa_ip_and_port_equal(const LwpaSockaddr* sock1, const LwpaSockaddr* sock2
 unsigned int lwpa_ip_mask_length(const LwpaIpAddr* netmask);
 LwpaIpAddr lwpa_ip_mask_from_length(lwpa_iptype_t type, unsigned int mask_length);
 bool lwpa_ip_network_portions_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* netmask);
+
+bool ip_os_to_lwpa(const lwpa_os_ipaddr_t* os_ip, LwpaIpAddr* ip);
+size_t ip_lwpa_to_os(const LwpaIpAddr* ip, lwpa_os_ipaddr_t* os_ip);
+
+bool sockaddr_os_to_lwpa(const lwpa_os_sockaddr_t* os_sa, LwpaSockaddr* sa);
+size_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, lwpa_os_sockaddr_t* os_sa);
+
+lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size);
+lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* dest);
 
 #ifdef __cplusplus
 }

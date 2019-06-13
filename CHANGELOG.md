@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Naming: 'operating system' and 'platform' are used somewhat interchangably by
   this library, but operating system more correctly refers to what lwpa targets.
   Plus, 'os' makes for nicer names than 'plat'. A pass is made for consistency.
+- Moved the sockaddr and inet_xtox conversion functions into the lwpa_inet
+  module
+- lwpa_thread_stop() changed to lwpa_thread_join() to better describe behavior
+- LwpaNetintInfo: Removed 'gate' member, which has no consistent meaning across
+  platforms.
 
 ### Removed
 
