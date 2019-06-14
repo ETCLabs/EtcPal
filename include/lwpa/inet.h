@@ -125,24 +125,22 @@ typedef struct LwpaIpAddr
 /*! Set the IPv6 address in a LwpaIpAddr. Also sets the type field to indicate that this LwpaIpAddr
  *  contains an IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
- *  \param val IPv6 address to set (uint8_t[]). Must be at least of length LWPA_IPV6_BYTES. Gets
- *             copied into the struct.
- */
-#define LWPA_IP_SET_V6_ADDRESS(lwpa_ip_ptr, val) LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(lwpa_ip_ptr, val, 0)
+ *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #LWPA_IPV6_BYTES.
+ *                  Gets copied into the struct. */
+#define LWPA_IP_SET_V6_ADDRESS(lwpa_ip_ptr, addr_val) LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(lwpa_ip_ptr, addr_val, 0u)
 
 /*! Set an IPv6 address with an explicit scope ID in a LwpaIpAddr. Also sets the type field to
  *  indicate that this LwpaIpAddr contains an IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
  *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length LWPA_IPV6_BYTES.
  *                  Gets copied into the struct.
- *  \param scope_id IPv6 scope ID to set.
- */
-#define LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(lwpa_ip_ptr, addr_val, scope_id) \
-  do                                                                          \
-  {                                                                           \
-    (lwpa_ip_ptr)->type = kLwpaIpTypeV6;                                      \
-    memcpy((lwpa_ip_ptr)->addr.v6.addr_buf, (addr_val), LWPA_IPV6_BYTES);     \
-    (lwpa_ip_ptr)->addr.v6.scope_id = (scope_id);                             \
+ *  \param scope_id_val IPv6 scope ID to set. */
+#define LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(lwpa_ip_ptr, addr_val, scope_id_val) \
+  do                                                                              \
+  {                                                                               \
+    (lwpa_ip_ptr)->type = kLwpaIpTypeV6;                                          \
+    memcpy((lwpa_ip_ptr)->addr.v6.addr_buf, (addr_val), LWPA_IPV6_BYTES);         \
+    (lwpa_ip_ptr)->addr.v6.scope_id = (scope_id_val);                             \
   } while (0)
 
 /*! Set the type field in a LwpaIpAddr to indicate that it does not contain a valid address.
