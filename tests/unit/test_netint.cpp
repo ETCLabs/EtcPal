@@ -83,21 +83,15 @@ TEST_F(NetintTest, ipv4_routing)
   LwpaNetintInfo* netint_arr = new LwpaNetintInfo[num_netints];
   num_netints = lwpa_netint_get_interfaces(netint_arr, num_netints);
 
-  std::set<uint32_t> nets_already_tried;
-
+  // For each normally routable (non-loopback, non-link-local) network interface, check to make sure
+  // that lwpa_netint_get_interface_for_dest() resolves to that interface when asked for a route to
+  // the interface address itself.
   for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
   {
     if (!LWPA_IP_IS_V4(&netint->addr) || lwpa_ip_is_loopback(&netint->addr) || lwpa_ip_is_link_local(&netint->addr))
       continue;
 
-    uint32_t net = LWPA_IP_V4_ADDRESS(&netint->addr) & LWPA_IP_V4_ADDRESS(&netint->mask);
-    LwpaIpAddr test_addr;
-
-    if (nets_already_tried.find(net) != nets_already_tried.end())
-      continue;
-    nets_already_tried.insert(net);
-    LWPA_IP_SET_V4_ADDRESS(&test_addr, net + 1);
-
+    LwpaIpAddr test_addr = netint->addr;
     LwpaNetintInfo netint_res;
     ASSERT_EQ(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&test_addr, &netint_res));
 
