@@ -41,8 +41,6 @@ typedef struct
   pthread_t handle;
 } lwpa_thread_t;
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
-bool lwpa_thread_stop(lwpa_thread_t* id);
 #define lwpa_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
 
 #ifdef __cplusplus

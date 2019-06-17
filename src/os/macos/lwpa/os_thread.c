@@ -50,7 +50,7 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
   return res;
 }
 
-bool lwpa_thread_stop(lwpa_thread_t* id)
+bool lwpa_thread_join(lwpa_thread_t* id)
 {
   if (id)
   {

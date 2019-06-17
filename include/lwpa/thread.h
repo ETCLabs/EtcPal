@@ -20,6 +20,12 @@
 #ifndef _LWPA_THREAD_H_
 #define _LWPA_THREAD_H_
 
+#include "lwpa/os_thread.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct LwpaThreadParams
 {
   unsigned int thread_priority;
@@ -37,6 +43,15 @@ typedef struct LwpaThreadParams
     (threadparamsptr)->platform_data = NULL;                           \
   } while (0)
 
-#include "lwpa/os_thread.h"
+bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
+bool lwpa_thread_join(lwpa_thread_t* id);
+
+#ifndef lwpa_thread_sleep
+void lwpa_thread_sleep(int sleep_ms);
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LWPA_THREAD_H_ */
