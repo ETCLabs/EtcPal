@@ -26,7 +26,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
-// #include <sys/epoll.h>
+#include <sys/event.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -42,7 +42,6 @@ typedef struct LwpaPollSocket
   // shortcut
   lwpa_socket_t sock;
   lwpa_poll_events_t events;
-  void* user_data;
 } LwpaPollSocket;
 
 /**************************** Private variables ******************************/
@@ -114,13 +113,13 @@ static int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_v
 static int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len);
 
 // Helpers for lwpa_poll API
-// static void events_lwpa_to_epoll(lwpa_poll_events_t events, struct epoll_event* epoll_evt);
-// static void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const LwpaPollSocket* sock_desc,
-//                                 lwpa_poll_events_t* events);
+static void events_lwpa_to_kqueue(lwpa_poll_events_t events, struct epoll_event* epoll_evt);
+static void events_kqueue_to_lwpa(const struct kevent* kevent, const LwpaPollSocket* sock_desc,
+                                  lwpa_poll_events_t* events);
 
-// static int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
-// static LwpaRbNode* poll_socket_alloc();
-// static void poll_socket_free(LwpaRbNode* node);
+static int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
+static LwpaRbNode* poll_socket_alloc();
+static void poll_socket_free(LwpaRbNode* node);
 
 /*************************** Function definitions ****************************/
 
@@ -562,79 +561,77 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
 
 lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)
 {
-  //  if (!context)
-  //    return kLwpaErrInvalid;
-  //
-  //  context->epoll_fd = epoll_create(EPOLL_CREATE_SIZE);
-  //  if (context->epoll_fd >= 0)
-  //  {
-  //    lwpa_rbtree_init(&context->sockets, poll_socket_compare, poll_socket_alloc, poll_socket_free);
-  //    context->valid = true;
-  //    return kLwpaErrOk;
-  //  }
-  //  else
-  //  {
-  //    return errno_os_to_lwpa(errno);
-  //  }
-  return kLwpaErrNotImpl;
+  if (!context)
+    return kLwpaErrInvalid;
+
+  context->kq_fd = kqueue();
+  if (context->kq_fd >= 0)
+  {
+    // lwpa_rbtree_init(&context->sockets, poll_socket_compare, poll_socket_alloc, poll_socket_free);
+    context->valid = true;
+    return kLwpaErrOk;
+  }
+  else
+  {
+    return errno_os_to_lwpa(errno);
+  }
 }
 
 void lwpa_poll_context_deinit(LwpaPollContext* context)
 {
-  //  if (context && context->valid)
-  //  {
-  //    lwpa_rbtree_clear(&context->sockets);
-  //    close(context->epoll_fd);
-  //    context->valid = false;
-  //  }
+  if (context && context->valid)
+  {
+    // lwpa_rbtree_clear(&context->sockets);
+    close(context->kq_fd);
+    context->valid = false;
+  }
 }
 
 lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t events,
                                   void* user_data)
 {
-  //  if (context && context->valid && socket != LWPA_SOCKET_INVALID && (events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
-  //  {
-  //    LwpaPollSocket* sock_desc = (LwpaPollSocket*)malloc(sizeof(LwpaPollSocket));
-  //    if (sock_desc)
-  //    {
-  //      sock_desc->sock = socket;
-  //      sock_desc->events = events;
-  //      sock_desc->user_data = user_data;
-  //      int insert_res = lwpa_rbtree_insert(&context->sockets, sock_desc);
-  //      if (insert_res != 0)
-  //      {
-  //        struct epoll_event ep_evt;
-  //        events_lwpa_to_epoll(events, &ep_evt);
-  //        ep_evt.data.fd = socket;
-  //
-  //        int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_ADD, socket, &ep_evt);
-  //        if (res == 0)
-  //        {
-  //          return kLwpaErrOk;
-  //        }
-  //        else
-  //        {
-  //          // Our node dealloc function also deallocates sock_desc, so no need to free it here.
-  //          lwpa_rbtree_remove(&context->sockets, sock_desc);
-  //          return errno_os_to_lwpa(errno);
-  //        }
-  //      }
-  //      else
-  //      {
-  //        free(sock_desc);
-  //        return kLwpaErrNoMem;
-  //      }
-  //    }
-  //    else
-  //    {
-  //      return kLwpaErrNoMem;
-  //    }
-  //  }
-  //  else
-  //  {
-  //    return kLwpaErrInvalid;
-  //  }
-  return kLwpaErrNotImpl;
+  if (context && context->valid && socket != LWPA_SOCKET_INVALID && (events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
+  {
+    LwpaPollSocket* sock_desc = (LwpaPollSocket*)malloc(sizeof(LwpaPollSocket));
+    if (sock_desc)
+    {
+      sock_desc->sock = socket;
+      sock_desc->events = events;
+      sock_desc->user_data = user_data;
+      int insert_res = lwpa_rbtree_insert(&context->sockets, sock_desc);
+      if (insert_res != 0)
+      {
+        struct epoll_event ep_evt;
+        events_lwpa_to_kqueue(events, &ep_evt);
+        ep_evt.data.fd = socket;
+
+        int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_ADD, socket, &ep_evt);
+        if (res == 0)
+        {
+          return kLwpaErrOk;
+        }
+        else
+        {
+          // Our node dealloc function also deallocates sock_desc, so no need to free it here.
+          lwpa_rbtree_remove(&context->sockets, sock_desc);
+          return errno_os_to_lwpa(errno);
+        }
+      }
+      else
+      {
+        free(sock_desc);
+        return kLwpaErrNoMem;
+      }
+    }
+    else
+    {
+      return kLwpaErrNoMem;
+    }
+  }
+  else
+  {
+    return kLwpaErrInvalid;
+  }
 }
 
 lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
@@ -646,7 +643,7 @@ lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t soc
   //    if (sock_desc)
   //    {
   //      struct epoll_event ep_evt;
-  //      events_lwpa_to_epoll(new_events, &ep_evt);
+  //      events_lwpa_to_kqueue(new_events, &ep_evt);
   //      ep_evt.data.fd = socket;
   //
   //      int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_MOD, socket, &ep_evt);
@@ -745,57 +742,56 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
   return kLwpaErrNotImpl;
 }
 
-// void events_lwpa_to_epoll(lwpa_poll_events_t events, struct epoll_event* epoll_evt)
-//{
-//  epoll_evt->events = 0;
-//  if (events & LWPA_POLL_IN)
-//    epoll_evt->events |= EPOLLIN;
-//  if ((events & LWPA_POLL_OUT) || (events & LWPA_POLL_CONNECT))
-//    epoll_evt->events |= EPOLLOUT;
-//  if (events & LWPA_POLL_OOB)
-//    epoll_evt->events |= EPOLLPRI;
-//}
-//
-// void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const LwpaPollSocket* sock_desc,
-//                          lwpa_poll_events_t* events_out)
-//{
-//  *events_out = 0;
-//  if (epoll_evt->events & EPOLLIN)
-//    *events_out |= LWPA_POLL_IN;
-//  if (epoll_evt->events & EPOLLOUT)
-//  {
-//    if (sock_desc->events & LWPA_POLL_OUT)
-//      *events_out |= LWPA_POLL_OUT;
-//    if (sock_desc->events & LWPA_POLL_CONNECT)
-//      *events_out |= LWPA_POLL_CONNECT;
-//  }
-//  if (epoll_evt->events & EPOLLPRI)
-//    *events_out |= (LWPA_POLL_OOB);
-//  if (epoll_evt->events & EPOLLERR)
-//    *events_out |= (LWPA_POLL_ERR);
-//}
-//
-// int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b)
-//{
-//  LwpaPollSocket* a = (LwpaPollSocket*)node_a->value;
-//  LwpaPollSocket* b = (LwpaPollSocket*)node_b->value;
-//
-//  return (a->sock > b->sock) - (a->sock < b->sock);
-//}
-//
-// LwpaRbNode* poll_socket_alloc()
-//{
-//  return (LwpaRbNode*)malloc(sizeof(LwpaRbNode));
-//}
-//
-// void poll_socket_free(LwpaRbNode* node)
-//{
-//  if (node)
-//  {
-//    free(node->value);
-//    free(node);
-//  }
-//}
+void events_lwpa_to_kqueue(lwpa_poll_events_t events, struct epoll_event* epoll_evt)
+{
+  epoll_evt->events = 0;
+  if (events & LWPA_POLL_IN)
+    epoll_evt->events |= EPOLLIN;
+  if ((events & LWPA_POLL_OUT) || (events & LWPA_POLL_CONNECT))
+    epoll_evt->events |= EPOLLOUT;
+  if (events & LWPA_POLL_OOB)
+    epoll_evt->events |= EPOLLPRI;
+}
+
+void events_kqueue_to_lwpa(const struct kevent* kevent, const LwpaPollSocket* sock_desc, lwpa_poll_events_t* events_out)
+{
+  *events_out = 0;
+  if (epoll_evt->events & EPOLLIN)
+    *events_out |= LWPA_POLL_IN;
+  if (epoll_evt->events & EPOLLOUT)
+  {
+    if (sock_desc->events & LWPA_POLL_OUT)
+      *events_out |= LWPA_POLL_OUT;
+    if (sock_desc->events & LWPA_POLL_CONNECT)
+      *events_out |= LWPA_POLL_CONNECT;
+  }
+  if (epoll_evt->events & EPOLLPRI)
+    *events_out |= (LWPA_POLL_OOB);
+  if (epoll_evt->events & EPOLLERR)
+    *events_out |= (LWPA_POLL_ERR);
+}
+
+int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b)
+{
+  LwpaPollSocket* a = (LwpaPollSocket*)node_a->value;
+  LwpaPollSocket* b = (LwpaPollSocket*)node_b->value;
+
+  return (a->sock > b->sock) - (a->sock < b->sock);
+}
+
+LwpaRbNode* poll_socket_alloc()
+{
+  return (LwpaRbNode*)malloc(sizeof(LwpaRbNode));
+}
+
+void poll_socket_free(LwpaRbNode* node)
+{
+  if (node)
+  {
+    free(node->value);
+    free(node);
+  }
+}
 
 lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
                               LwpaAddrinfo* result)

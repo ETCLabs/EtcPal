@@ -38,7 +38,7 @@ typedef int lwpa_socket_t;
 typedef struct LwpaPollContext
 {
   bool valid;
-  int epoll_fd;
+  int kq_fd;
   LwpaRbTree sockets;
 } LwpaPollContext;
 
