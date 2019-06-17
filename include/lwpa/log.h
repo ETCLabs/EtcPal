@@ -218,9 +218,10 @@ typedef struct LwpaLogParams
   void* context;
 } LwpaLogParams;
 
-#define lwpa_setlogmask(logparamsptr, newlogmask) ((logparamsptr)->log_mask = newlogmask)
+#define LWPA_SET_LOG_MASK(logparamsptr, newlogmask) ((logparamsptr)->log_mask = newlogmask)
 
-#define lwpa_canlog(logparamsptr, pri) ((LWPA_LOG_MASK(pri) & (logparamsptr)->log_mask) != 0)
+#define LWPA_CAN_LOG(logparamsptr, pri) \
+  ((logparamsptr) ? ((LWPA_LOG_MASK(pri) & (logparamsptr)->log_mask) != 0) : false)
 
 #ifdef __cplusplus
 extern "C" {

@@ -84,6 +84,37 @@ void LogTest::FillDefaultTime(LwpaLogTimeParams& time_params)
   time_params.utc_offset = 0;  // Local offset from UTC in minutes
 }
 
+// Test the LWPA_SET_LOG_MASK() and LWPA_CAN_LOG() macros
+TEST_F(LogTest, log_mask)
+{
+  // LWPA_CAN_LOG() should always return false (and not crash) on a null pointer
+  LwpaLogParams* params_ptr = NULL;
+  EXPECT_FALSE(LWPA_CAN_LOG(params_ptr, LWPA_LOG_EMERG));
+
+  LwpaLogParams params;
+
+  // Test a zero mask
+  LWPA_SET_LOG_MASK(&params, 0);
+  EXPECT_FALSE(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
+  EXPECT_FALSE(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
+
+  // Test some LOG_UPTO() values
+  LWPA_SET_LOG_MASK(&params, LWPA_LOG_UPTO(LWPA_LOG_EMERG));
+  EXPECT_TRUE(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
+  EXPECT_FALSE(LWPA_CAN_LOG(&params, LWPA_LOG_ALERT));
+  EXPECT_FALSE(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
+
+  LWPA_SET_LOG_MASK(&params, LWPA_LOG_UPTO(LWPA_LOG_DEBUG));
+  EXPECT_TRUE(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
+  EXPECT_TRUE(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
+
+  // Test a weird mask with only one middle value
+  LWPA_SET_LOG_MASK(&params, LWPA_LOG_MASK(LWPA_LOG_ERR));
+  EXPECT_FALSE(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
+  EXPECT_FALSE(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
+  EXPECT_TRUE(LWPA_CAN_LOG(&params, LWPA_LOG_ERR));
+}
+
 // Test the lwpa_sanitize_syslog_params() function.
 TEST_F(LogTest, sanitize)
 {
@@ -181,7 +212,7 @@ TEST_F(LogTest, log_intval)
   ASSERT_STREQ(human_buf, expect_human_str.c_str());
 
   // Try logging with the log mask set to 0, should not work.
-  ASSERT_FALSE(lwpa_canlog(&lparams, LWPA_LOG_EMERG));
+  ASSERT_FALSE(LWPA_CAN_LOG(&lparams, LWPA_LOG_EMERG));
   lwpa_log(&lparams, LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS);
 
   // Try logging only syslog
@@ -275,7 +306,7 @@ TEST_F(LogTest, log_strval)
   ASSERT_STREQ(human_buf, expect_human_str.c_str());
 
   // Try logging with the log mask set to 0, should not work.
-  ASSERT_FALSE(lwpa_canlog(&lparams, LWPA_LOG_NOTICE));
+  ASSERT_FALSE(LWPA_CAN_LOG(&lparams, LWPA_LOG_NOTICE));
   lwpa_log(&lparams, LWPA_LOG_NOTICE, STRVAL_FORMAT_STR_AND_ARGS);
 
   // Now try the actual logging using lwpa_vlog().
@@ -370,7 +401,7 @@ TEST_F(LogTest, log_maxlength)
   ASSERT_STREQ(human_buf, expect_human_str.c_str());
 
   // Try logging with the log mask set to 0, should not work.
-  ASSERT_FALSE(lwpa_canlog(&lparams, LWPA_LOG_DEBUG));
+  ASSERT_FALSE(LWPA_CAN_LOG(&lparams, LWPA_LOG_DEBUG));
   lwpa_log(&lparams, LWPA_LOG_DEBUG, STRVAL_FORMAT_STR_AND_ARGS);
 
   // Now try the actual logging using lwpa_vlog().
