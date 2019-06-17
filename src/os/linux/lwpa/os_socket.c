@@ -129,6 +129,17 @@ static void poll_socket_free(LwpaRbNode* node);
 
 /*************************** Function definitions ****************************/
 
+lwpa_error_t lwpa_socket_init()
+{
+  // No initialization necessary on this platform
+  return kLwpaErrOk;
+}
+
+void lwpa_socket_deinit()
+{
+  // No deinitialization necessary on this platform
+}
+
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t* conn_sock)
 {
   if (!conn_sock)
