@@ -41,15 +41,32 @@
 /*! For lwpa_ functions that take a millisecond timeout, this means to wait indefinitely. */
 #define LWPA_WAIT_FOREVER -1
 
-#define LWPA_FEATURE_SOCKETS 0x00000001u
-#define LWPA_FEATURE_NETINTS 0x00000002u
-#define LWPA_FEATURE_TIMERS 0x00000004u
-#define LWPA_FEATURE_LOGGING 0x00000008u
-#define LWPA_FEATURES_ALL 0xffffffffu
-
-#define LWPA_FEATURES_ALL_BUT(mask) (((uint32_t)LWPA_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
-
 typedef uint32_t lwpa_features_t;
+
+#define LWPA_FEATURE_SOCKETS_OFFSET 0
+#define LWPA_FEATURE_NETINTS_OFFSET 1
+#define LWPA_FEATURE_TIMERS_OFFSET  2
+#define LWPA_FEATURE_LOGGING_OFFSET 3
+#define LWPA_NUM_FEATURES 4
+
+/*! \name lwpa feature masks
+ *  Pass one or more of these to lwpa_init() to initialize the relevant lwpa feature.
+ *  lwpa modules not represented here require no initialization and are enabled by default.
+ *  @{
+ */
+#define LWPA_FEATURE_SOCKETS ((lwpa_features_t)(1u << LWPA_FEATURE_SOCKETS_OFFSET)) /*!< Use the lwpa_socket module. */
+#define LWPA_FEATURE_NETINTS ((lwpa_features_t)(1u << LWPA_FEATURE_NETINTS_OFFSET)) /*!< Use the lwpa_netint module. */
+#define LWPA_FEATURE_TIMERS  ((lwpa_features_t)(1u << LWPA_FEATURE_TIMERS_OFFSET)) /*!< Use the lwpa_timer module. */
+#define LWPA_FEATURE_LOGGING ((lwpa_features_t)(1u << LWPA_FEATURE_LOGGING_OFFSET)) /*!< Use the lwpa_log module. */
+#define LWPA_FEATURES_ALL 0xffffffffu /*! Use every available module. */
+
+/*! \brief Use every available module except the ones passed in mask.
+ *  \param mask Mask of LWPA_FEATURE_* macros to not include in the feature mask.
+ *  \return Resulting lwpa feature mask to pass to lwpa_init().
+ */
+#define LWPA_FEATURES_ALL_BUT(mask) (((uint32_t)LWPA_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
+/*! @} */
+
 
 #ifdef __cplusplus
 extern "C" {

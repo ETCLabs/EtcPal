@@ -20,6 +20,7 @@
 #include "gtest/gtest.h"
 #include <cstring>
 #include <cstddef>
+#include <memory>
 #include <set>
 
 class NetintTest : public ::testing::Test
@@ -38,19 +39,19 @@ protected:
 TEST_F(NetintTest, enumerate)
 {
   ASSERT_GT(num_netints, 0u);
-  LwpaNetintInfo* netint_arr = new LwpaNetintInfo[num_netints];
-  size_t num_netints_returned = lwpa_netint_get_interfaces(netint_arr, num_netints);
+  auto netint_arr = std::make_unique<LwpaNetintInfo[]>(num_netints);
+  size_t num_netints_returned = lwpa_netint_get_interfaces(netint_arr.get(), num_netints);
   ASSERT_EQ(num_netints_returned, num_netints);
 
   size_t num_defaults = 0;
-  for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints_returned; ++netint)
+  for (LwpaNetintInfo* netint = netint_arr.get(); netint < netint_arr.get() + num_netints_returned; ++netint)
   {
     if (netint->is_default)
       ++num_defaults;
     ASSERT_GT(strlen(netint->name), 0u);
   }
-  ASSERT_EQ(num_defaults, 1u);
-  delete[] netint_arr;
+  // There can be a maximum of two default interfaces: one each for IPv4 and IPv6.
+  ASSERT_TRUE(num_defaults <= 2);
 }
 
 TEST_F(NetintTest, default)
@@ -58,14 +59,14 @@ TEST_F(NetintTest, default)
   ASSERT_GT(num_netints, 0u);
 
   LwpaNetintInfo def;
-  LwpaNetintInfo* netint_arr = new LwpaNetintInfo[num_netints];
+  auto netint_arr = std::make_unique<LwpaNetintInfo[]>(num_netints);
   memset(&def, 0, sizeof def);
-  memset(netint_arr, 0, sizeof(struct LwpaNetintInfo) * num_netints);
+  memset(netint_arr.get(), 0, sizeof(struct LwpaNetintInfo) * num_netints);
 
-  num_netints = lwpa_netint_get_interfaces(netint_arr, num_netints);
+  num_netints = lwpa_netint_get_interfaces(netint_arr.get(), num_netints);
   ASSERT_TRUE(lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def));
   ASSERT_TRUE(def.is_default);
-  for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
+  for (LwpaNetintInfo* netint = netint_arr.get(); netint < netint_arr.get() + num_netints; ++netint)
   {
     if (netint->is_default)
     {
@@ -73,19 +74,18 @@ TEST_F(NetintTest, default)
       break;
     }
   }
-  delete[] netint_arr;
 }
 
 TEST_F(NetintTest, ipv4_routing)
 {
   ASSERT_GT(num_netints, 0u);
 
-  LwpaNetintInfo* netint_arr = new LwpaNetintInfo[num_netints];
-  num_netints = lwpa_netint_get_interfaces(netint_arr, num_netints);
+  auto netint_arr = std::make_unique<LwpaNetintInfo[]>(num_netints);
+  num_netints = lwpa_netint_get_interfaces(netint_arr.get(), num_netints);
 
   std::set<uint32_t> nets_already_tried;
 
-  for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_netints; ++netint)
+  for (LwpaNetintInfo* netint = netint_arr.get(); netint < netint_arr.get() + num_netints; ++netint)
   {
     if (!LWPA_IP_IS_V4(&netint->addr) || lwpa_ip_is_loopback(&netint->addr) || lwpa_ip_is_link_local(&netint->addr))
       continue;

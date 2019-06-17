@@ -159,7 +159,7 @@ lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNeti
     for (LwpaNetintInfo* netint_entry = netint_cache.netints;
          netint_entry < netint_cache.netints + netint_cache.num_netints; ++netint_entry)
     {
-      if (netint_entry->ifindex == index)
+      if (netint_entry->addr.type == dest->type && netint_entry->ifindex == index)
       {
         *netint = *netint_entry;
         return kLwpaErrOk;

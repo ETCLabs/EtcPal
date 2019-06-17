@@ -20,55 +20,71 @@
 #include "lwpa/common.h"
 
 #include "lwpa/bool.h"
-#include "lwpa/private/common.h"
+
 #include "lwpa/private/log.h"
 #include "lwpa/private/netint.h"
+#include "lwpa/private/socket.h"
+#include "lwpa/private/timer.h"
+
+typedef struct LwpaModuleInit
+{
+  bool initted;
+  lwpa_error_t (*init_fn)();
+  void (*deinit_fn)();
+} LwpaModuleInit;
+
+#define LWPA_MODULE_INIT(module_name) { false, module_name##_init, module_name##_deinit }
+
+#define LWPA_MODULE_INIT_ARRAY \
+  { \
+    LWPA_MODULE_INIT(lwpa_socket), \
+    LWPA_MODULE_INIT(lwpa_netint), \
+    LWPA_MODULE_INIT(lwpa_timer), \
+    LWPA_MODULE_INIT(lwpa_log) \
+  }
 
 lwpa_error_t lwpa_init(lwpa_features_t features)
 {
-  bool os_initted = false;
-  bool logging_initted = false;
+  LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
 
-  // Step 1: OS-specific init
-  lwpa_error_t res = lwpa_os_init(features);
-  os_initted = (res == kLwpaErrOk);
-
-  // Step 2: OS-neutral init
-  if (res == kLwpaErrOk)
+  lwpa_error_t init_res = kLwpaErrOk;
+  lwpa_features_t feature_mask = 1u;
+  for (LwpaModuleInit *init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
   {
-    if (features & LWPA_FEATURE_LOGGING)
+    if (features & feature_mask)
     {
-      logging_initted = ((res = lwpa_log_init()) == kLwpaErrOk);
+      init_res = init_struct->init_fn();
+      if (init_res == kLwpaErrOk)
+        init_struct->initted = true;
+      else
+        break;
+    }
+    feature_mask <<= 1;
+  }
+
+  if (init_res != kLwpaErrOk)
+  {
+    for (LwpaModuleInit *init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+    {
+      if (init_struct->initted)
+        init_struct->deinit_fn();
     }
   }
 
-  if (features & LWPA_FEATURE_NETINTS)
-  {
-    res = lwpa_netint_init();
-  }
-
-  if (res != kLwpaErrOk)
-  {
-    // Clean up on failure
-    if (logging_initted)
-      lwpa_log_deinit();
-    if (os_initted)
-      lwpa_os_deinit(features);
-  }
-  return res;
+  return init_res;
 }
 
 void lwpa_deinit(lwpa_features_t features)
 {
-  // Step 1: OS-neutral deinit
-  if (features & LWPA_FEATURE_NETINTS)
-  {
-    lwpa_netint_deinit();
-  }
-  if (features & LWPA_FEATURE_LOGGING)
-  {
-    lwpa_log_deinit();
-  }
+  LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
 
-  lwpa_os_deinit(features);
+  lwpa_features_t feature_mask = 1u;
+  for (LwpaModuleInit *init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+  {
+    if (features & feature_mask)
+    {
+      init_struct->deinit_fn();
+    }
+    feature_mask <<= 1;
+  }
 }

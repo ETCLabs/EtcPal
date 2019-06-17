@@ -83,7 +83,6 @@ add_library(lwpa
   ${LWPA_ROOT}/src/lwpa/rbtree.c
   ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
   ${LWPA_ROOT}/src/lwpa/uuid.c
-  ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_common.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_inet.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_lock.c
   ${LWPA_ROOT}/src/os/${LWPA_TARGET_OS}/lwpa/os_netint.c

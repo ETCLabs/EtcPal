@@ -17,12 +17,12 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_PRIVATE_COMMON_H_
-#define _LWPA_PRIVATE_COMMON_H_
+#ifndef _LWPA_PRIVATE_SOCKET_H_
+#define _LWPA_PRIVATE_SOCKET_H_
 
-#include "lwpa/common.h"
+#include "lwpa/error.h"
 
-lwpa_error_t lwpa_os_init(lwpa_features_t features);
-void lwpa_os_deinit(lwpa_features_t features);
+lwpa_error_t lwpa_socket_init();
+void lwpa_socket_deinit();
 
-#endif /* _LWPA_PRIVATE_COMMON_H_ */
+#endif /* _LWPA_PRIVATE_SOCKET_H_ */
