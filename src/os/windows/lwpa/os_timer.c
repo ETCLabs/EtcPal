@@ -18,8 +18,24 @@
  ******************************************************************************/
 
 #include "lwpa/timer.h"
+#include "lwpa/private/timer.h"
 
 #include <windows.h>
+
+#define LWPA_WINDOWS_TIMER_RESOLUTION 1  // ms
+
+lwpa_error_t lwpa_timer_init()
+{
+  if (TIMERR_NOERROR == timeBeginPeriod(LWPA_WINDOWS_TIMER_RESOLUTION))
+    return kLwpaErrOk;
+  else
+    return kLwpaErrSys;
+}
+
+void lwpa_timer_deinit()
+{
+  timeEndPeriod(LWPA_WINDOWS_TIMER_RESOLUTION);
+}
 
 uint32_t lwpa_getms()
 {

@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "lwpa/socket.h"
+#include "lwpa/private/socket.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -123,6 +124,23 @@ static lwpa_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent
 /*************************** Function definitions ****************************/
 
 #if !defined(LWPA_BUILDING_MOCK_LIB)
+
+lwpa_error_t lwpa_socket_init()
+{
+  WSADATA wsdata;
+  WORD wsver = MAKEWORD(2, 2);
+  int startup_res = WSAStartup(wsver, &wsdata);
+  if (startup_res != 0)
+  {
+    return err_winsock_to_lwpa(startup_res);
+  }
+  return kLwpaErrOk;
+}
+
+void lwpa_socket_deinit()
+{
+  WSACleanup();
+}
 
 lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t* conn_sock)
 {
