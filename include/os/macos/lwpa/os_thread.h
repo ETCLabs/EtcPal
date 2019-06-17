@@ -28,9 +28,9 @@
 extern "C" {
 #endif
 
-#define LWPA_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on Linux */
+#define LWPA_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on macOS */
 #define LWPA_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
-#define LWPA_THREAD_DEFAULT_NAME NULL  /* Name ignored on Linux */
+#define LWPA_THREAD_DEFAULT_NAME NULL  /* Name ignored on macOS */
 
 #define LWPA_THREAD_NAME_MAX_LENGTH 0
 
