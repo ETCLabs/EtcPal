@@ -151,7 +151,7 @@ TEST_F(LogTest, validate)
   // Test some normal params
   lparams.action = kLwpaLogCreateSyslog;
   lparams.log_fn = log_cb;
-  lparams.syslog_params = {0, 0, 0, 0};
+  lparams.syslog_params = {0, {0}, {0}, {0}};
   memcpy(lparams.syslog_params.app_name, special_char_array, sizeof special_char_array);
   lparams.log_mask = 0;
   lparams.time_fn = time_cb;

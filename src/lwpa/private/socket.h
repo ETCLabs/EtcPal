@@ -17,22 +17,12 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/common.h"
-#include "lwpa/private/common.h"
+#ifndef _LWPA_PRIVATE_SOCKET_H_
+#define _LWPA_PRIVATE_SOCKET_H_
 
-#include <unistd.h>
+#include "lwpa/error.h"
 
-lwpa_error_t lwpa_os_init(lwpa_features_t features)
-{
-  if (features & LWPA_FEATURE_TIMERS)
-  {
-    if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
-      return kLwpaErrSys;
-  }
-  return kLwpaErrOk;
-}
+lwpa_error_t lwpa_socket_init();
+void lwpa_socket_deinit();
 
-void lwpa_os_deinit(lwpa_features_t features)
-{
-  (void)features;
-}
+#endif /* _LWPA_PRIVATE_SOCKET_H_ */

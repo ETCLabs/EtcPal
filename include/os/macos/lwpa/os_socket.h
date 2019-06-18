@@ -17,12 +17,33 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_PRIVATE_COMMON_H_
-#define _LWPA_PRIVATE_COMMON_H_
+#ifndef _LWPA_OS_SOCKET_H_
+#define _LWPA_OS_SOCKET_H_
 
-#include "lwpa/common.h"
+#include <netinet/in.h>
+#include <sys/select.h>
+#include "lwpa/inet.h"
+#include "lwpa/rbtree.h"
 
-lwpa_error_t lwpa_os_init(lwpa_features_t features);
-void lwpa_os_deinit(lwpa_features_t features);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#endif /* _LWPA_PRIVATE_COMMON_H_ */
+typedef int lwpa_socket_t;
+
+#define LWPA_SOCKET_INVALID -1
+
+#define LWPA_SOCKET_MAX_POLL_SIZE -1
+
+typedef struct LwpaPollContext
+{
+  bool valid;
+  int kq_fd;
+  LwpaRbTree sockets;
+} LwpaPollContext;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _LWPA_OS_SOCKET_H_ */

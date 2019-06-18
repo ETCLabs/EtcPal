@@ -31,6 +31,22 @@ jobs:
   - script: build\tests\%LWPA_BUILD_CONFIG%\test_lwpa.exe
     displayName: 'lwpa Windows test'
 
+- job: macos_build
+  displayName: 'macOS Build and Test'
+  pool:
+    vmImage: 'macos-10.14'
+  steps:
+  - script: |
+      mkdir build
+      cd build
+      cmake --version
+      cmake -DLWPA_BUILD_MOCK_LIB=ON ..
+      cmake --build .
+    displayName: 'lwpa macOS build'
+  - script: |
+      build/tests/test_lwpa --gtest_filter=-SocketTest.multicast_udp:SocketPollTest.udp_in
+    displayName: 'lwpa macOS test'
+
 - job: linux_build
   displayName: 'Linux Build and Test'
   pool:

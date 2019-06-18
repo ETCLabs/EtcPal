@@ -17,30 +17,11 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/timer.h"
-#include "lwpa/private/timer.h"
+#ifndef _LWPA_OS_ERROR_H_
+#define _LWPA_OS_ERROR_H_
 
-#include <time.h>
-#include <unistd.h>
+#include "lwpa/error.h"
 
-lwpa_error_t lwpa_timer_init()
-{
-  if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
-    return kLwpaErrSys;
-  return kLwpaErrOk;
-}
+lwpa_error_t errno_os_to_lwpa(int os_errno);
 
-void lwpa_timer_deinit()
-{
-  // No deinitialization necessary on this platform.
-}
-
-uint32_t lwpa_getms()
-{
-  struct timespec os_time;
-  if (0 == clock_gettime(CLOCK_MONOTONIC, &os_time))
-  {
-    return (uint32_t)(os_time.tv_sec * 1000 + (os_time.tv_nsec / 1000000));
-  }
-  return 0;
-}
+#endif /* _LWPA_OS_ERROR_H_ */

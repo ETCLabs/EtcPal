@@ -17,48 +17,34 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/common.h"
+#ifndef _LWPA_OS_THREAD_H_
+#define _LWPA_OS_THREAD_H_
 
-#include <windows.h>
+#include <pthread.h>
+#include <unistd.h>
 #include "lwpa/bool.h"
-#include "winsock_error.h"
 
-#define LWPA_WINDOWS_TIMER_RESOLUTION 1  // ms
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-lwpa_error_t lwpa_os_init(lwpa_features_t features)
+#define LWPA_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on macOS */
+#define LWPA_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
+#define LWPA_THREAD_DEFAULT_NAME NULL  /* Name ignored on macOS */
+
+#define LWPA_THREAD_NAME_MAX_LENGTH 0
+
+typedef struct
 {
-  bool timer_initted = false;
+  void (*fn)(void*);
+  void* arg;
+  pthread_t handle;
+} lwpa_thread_t;
 
-  if (features & LWPA_FEATURE_TIMERS)
-  {
-    if (TIMERR_NOERROR == timeBeginPeriod(LWPA_WINDOWS_TIMER_RESOLUTION))
-      timer_initted = true;
-    else
-      return kLwpaErrSys;
-  }
-  if (features & LWPA_FEATURE_SOCKETS)
-  {
-    WSADATA wsdata;
-    WORD wsver = MAKEWORD(2, 2);
-    int startup_res = WSAStartup(wsver, &wsdata);
-    if (startup_res != 0)
-    {
-      if (timer_initted)
-        timeEndPeriod(LWPA_WINDOWS_TIMER_RESOLUTION);
-      return err_winsock_to_lwpa(startup_res);
-    }
-  }
-  return kLwpaErrOk;
-}
+#define lwpa_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
 
-void lwpa_os_deinit(lwpa_features_t features)
-{
-  if (features & LWPA_FEATURE_TIMERS)
-  {
-    timeEndPeriod(LWPA_WINDOWS_TIMER_RESOLUTION);
-  }
-  if (features & LWPA_FEATURE_SOCKETS)
-  {
-    WSACleanup();
-  }
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* _LWPA_OS_THREAD_H_ */

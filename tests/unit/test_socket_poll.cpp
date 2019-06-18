@@ -130,6 +130,8 @@ TEST_F(SocketPollTest, user_data)
   ASSERT_EQ(kLwpaErrOk, lwpa_close(sock_2));
 }
 
+#define POLL_MODIFY_TEST_PORT_BASE 8000
+
 // Test the lwpa_poll_modify_socket() functionality, using UDP sockets for simplicity
 TEST_F(SocketPollTest, modify)
 {
@@ -138,10 +140,10 @@ TEST_F(SocketPollTest, modify)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &sock));
   ASSERT_NE(sock, LWPA_SOCKET_INVALID);
 
-  // Bind the socket to the wildcard address and port 8888.
+  // Bind the socket to the wildcard address and a specific port.
   LwpaSockaddr bind_addr;
   lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
-  bind_addr.port = 8888;
+  bind_addr.port = POLL_MODIFY_TEST_PORT_BASE;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(sock, &bind_addr));
 
   // Add it for output polling first
@@ -163,7 +165,7 @@ TEST_F(SocketPollTest, modify)
   // Send data to socket
   LwpaSockaddr send_addr;
   send_addr.ip = default_netint_.addr;
-  send_addr.port = 8888;
+  send_addr.port = POLL_MODIFY_TEST_PORT_BASE;
   lwpa_sendto(sock, SEND_MSG, SEND_MSG_LEN, 0, &send_addr);
 
   // Should get the poll in event
@@ -234,6 +236,8 @@ TEST_F(SocketPollTest, bulk_poll)
   }
 }
 
+#define POLL_UDP_IN_TEST_PORT_BASE 9000
+
 // Test the lwpa_poll_* API, polling for readability on UDP sockets.
 TEST_F(SocketPollTest, udp_in)
 {
@@ -250,14 +254,14 @@ TEST_F(SocketPollTest, udp_in)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
   ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
 
-  // Bind socket 1 to the wildcard address and port 8888.
+  // Bind socket 1 to the wildcard address and a specific port.
   LwpaSockaddr bind_addr;
   lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
-  bind_addr.port = 8888;
+  bind_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock1, &bind_addr));
 
-  // Bind socket 2 to the wildcard address and port 9999.
-  bind_addr.port = 9999;
+  // Bind socket 2 to the wildcard address and a different port.
+  bind_addr.port = POLL_UDP_IN_TEST_PORT_BASE + 1;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock2, &bind_addr));
 
   // Get the poll context set up
@@ -270,10 +274,10 @@ TEST_F(SocketPollTest, udp_in)
 
   LwpaSockaddr send_addr;
   send_addr.ip = default_netint_.addr;
-  send_addr.port = 8888;
+  send_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
 
   lwpa_sendto(send_sock, SEND_MSG, SEND_MSG_LEN, 0, &send_addr);
-  send_addr.port = 9999;
+  send_addr.port = POLL_UDP_IN_TEST_PORT_BASE + 1;
   lwpa_sendto(send_sock, SEND_MSG, SEND_MSG_LEN, 0, &send_addr);
 
   // Poll once, make sure we get one of the sockets.
@@ -287,8 +291,8 @@ TEST_F(SocketPollTest, udp_in)
   LwpaSockaddr from_addr;
   ASSERT_EQ(SEND_MSG_LEN, (size_t)lwpa_recvfrom(event.socket, recv_buf.data(), SEND_MSG_LEN, 0, &from_addr));
   ASSERT_TRUE(lwpa_ip_equal(&send_addr.ip, &from_addr.ip));
-  ASSERT_NE(from_addr.port, 8888);
-  ASSERT_NE(from_addr.port, 9999);
+  ASSERT_NE(from_addr.port, POLL_UDP_IN_TEST_PORT_BASE);
+  ASSERT_NE(from_addr.port, POLL_UDP_IN_TEST_PORT_BASE + 1);
   recv_buf[SEND_MSG_LEN] = '\0';
   ASSERT_EQ(0, strcmp((char*)recv_buf.data(), SEND_MSG));
 

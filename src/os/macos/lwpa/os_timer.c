@@ -20,13 +20,16 @@
 #include "lwpa/timer.h"
 #include "lwpa/private/timer.h"
 
-#include <time.h>
-#include <unistd.h>
+#include <mach/mach_time.h>
+
+double ticks_to_ms = 0;
 
 lwpa_error_t lwpa_timer_init()
 {
-  if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
-    return kLwpaErrSys;
+  mach_timebase_info_data_t timebase;
+  mach_timebase_info(&timebase);
+
+  ticks_to_ms = (((double)timebase.numer) / (((double)timebase.denom) * ((double)1000000)));
   return kLwpaErrOk;
 }
 
@@ -37,10 +40,6 @@ void lwpa_timer_deinit()
 
 uint32_t lwpa_getms()
 {
-  struct timespec os_time;
-  if (0 == clock_gettime(CLOCK_MONOTONIC, &os_time))
-  {
-    return (uint32_t)(os_time.tv_sec * 1000 + (os_time.tv_nsec / 1000000));
-  }
-  return 0;
+  uint64_t ticks = mach_absolute_time();
+  return ((uint32_t)(ticks * ticks_to_ms));
 }

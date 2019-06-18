@@ -121,6 +121,8 @@ static void send_thread(SocketTest* fixture)
   }
 }
 
+#define UNICAST_UDP_PORT_BASE 6000
+
 TEST_F(SocketTest, unicast_udp)
 {
   lwpa_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
@@ -136,7 +138,7 @@ TEST_F(SocketTest, unicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
   ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
 
-  int intval = 10;
+  int intval = 500;
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
   intval = 1;
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
@@ -150,17 +152,17 @@ TEST_F(SocketTest, unicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_close(rcvsock3));
 
   lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
-  bind_addr.port = 8888;
+  bind_addr.port = UNICAST_UDP_PORT_BASE;
   // Shouldn't be able to bind to a closed socket.
   ASSERT_NE(kLwpaErrOk, lwpa_bind(rcvsock3, &bind_addr));
-  // Bind socket 1 to the wildcard address and port 8888.
+  // Bind socket 1 to the wildcard address and a specific port.
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock1, &bind_addr));
-  // Bind socket 2 to the wildcard address and port 9999.
-  bind_addr.port = 9999;
+  // Bind socket 2 to the wildcard address and a different port.
+  bind_addr.port = UNICAST_UDP_PORT_BASE + 1;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock2, &bind_addr));
 
   LWPA_IP_SET_V4_ADDRESS(&send_addr_1.ip, 0x7f000001u);
-  send_addr_1.port = 8888;
+  send_addr_1.port = UNICAST_UDP_PORT_BASE;
 
   std::thread send_thr(send_thread, this);
   ASSERT_TRUE(send_thr.joinable());
@@ -183,7 +185,7 @@ TEST_F(SocketTest, unicast_udp)
     }
 
     EXPECT_TRUE(lwpa_ip_equal(&send_addr_1.ip, &from_addr.ip));
-    EXPECT_NE(from_addr.port, 8888);
+    EXPECT_NE(from_addr.port, UNICAST_UDP_PORT_BASE);
 
     buf[SEND_MSG_LEN] = '\0';
     EXPECT_EQ(0, strcmp((char*)buf, SEND_MSG));
@@ -205,6 +207,8 @@ TEST_F(SocketTest, unicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_close(send_sock));
 }
 
+#define MULTICAST_UDP_PORT_BASE 7000
+
 TEST_F(SocketTest, multicast_udp)
 {
   lwpa_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
@@ -214,7 +218,7 @@ TEST_F(SocketTest, multicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
   ASSERT_NE(rcvsock1, LWPA_SOCKET_INVALID);
 
-  int intval = 10;
+  int intval = 500;
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
   intval = 1;
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
@@ -229,14 +233,16 @@ TEST_F(SocketTest, multicast_udp)
   ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
 
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_IF, &default_netint_.addr,
+                                        sizeof default_netint_.addr));
 
-  // Bind socket 1 to the wildcard address and port 8888.
+  // Bind socket 1 to the wildcard address and a specific port.
   lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
-  bind_addr.port = 8888;
+  bind_addr.port = MULTICAST_UDP_PORT_BASE;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock1, &bind_addr));
 
-  // Bind socket 2 to the wildcard address and port 9999.
-  bind_addr.port = 9999;
+  // Bind socket 2 to the wildcard address and a different port.
+  bind_addr.port = MULTICAST_UDP_PORT_BASE + 1;
   ASSERT_EQ(kLwpaErrOk, lwpa_bind(rcvsock2, &bind_addr));
 
   // Subscribe socket 1 to the multicast address.
@@ -249,7 +255,7 @@ TEST_F(SocketTest, multicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock2, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
   LWPA_IP_SET_V4_ADDRESS(&send_addr_1.ip, TEST_MCAST_ADDR);
-  send_addr_1.port = 8888;
+  send_addr_1.port = MULTICAST_UDP_PORT_BASE;
 
   // Start the send thread.
   std::thread send_thr(send_thread, this);
@@ -272,7 +278,7 @@ TEST_F(SocketTest, multicast_udp)
       break;
     }
 
-    EXPECT_NE(from_addr.port, 8888);
+    EXPECT_NE(from_addr.port, MULTICAST_UDP_PORT_BASE);
 
     buf[SEND_MSG_LEN] = '\0';
     EXPECT_EQ(0, strcmp((char*)buf, SEND_MSG));

@@ -37,7 +37,8 @@
 extern "C" {
 #endif
 
-/* Windows has no additional platform data and thus platform_data in the struct above is ignored. */
+/* Windows has no additional platform data and thus platform_data in the LwpaThreadParams struct
+ * is ignored. */
 
 #define LWPA_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL
 #define LWPA_THREAD_DEFAULT_STACK 0
@@ -53,8 +54,6 @@ typedef struct
   char name[LWPA_THREAD_NAME_MAX_LENGTH];
 } lwpa_thread_t;
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
-bool lwpa_thread_join(lwpa_thread_t* id);
 #define lwpa_thread_sleep(sleep_ms) Sleep(sleep_ms)
 
 #ifdef __cplusplus

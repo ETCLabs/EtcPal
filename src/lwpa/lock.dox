@@ -24,6 +24,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *  |---------------|------------------|
  *  | FreeRTOS/lwIP | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
  *  | Linux         | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
+ *  | macOS         | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
  *  | MQX           | Lightweight Semaphores |
  *  | Windows       | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
  *
@@ -88,6 +89,7 @@ void lwpa_mutex_destroy(lwpa_mutex_t *id);
  *  |---------------|------------------|
  *  | FreeRTOS/lwIP | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
  *  | Linux         | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
+ *  | macOS         | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
  *  | MQX           | Lightweight Events |
  *  | Windows       | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
  *

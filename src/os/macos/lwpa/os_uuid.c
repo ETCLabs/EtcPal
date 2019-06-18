@@ -17,30 +17,42 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/timer.h"
-#include "lwpa/private/timer.h"
+#include "lwpa/uuid.h"
 
-#include <time.h>
-#include <unistd.h>
+#include <uuid/uuid.h>
 
-lwpa_error_t lwpa_timer_init()
+// Use the native UUID functionality in the macOS SDK to generate UUIDs.
+// https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/uuid.3.html
+
+lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
 {
-  if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
-    return kLwpaErrSys;
+  if (!uuid)
+    return kLwpaErrInvalid;
+
+  uuid_t os_uuid;
+  uuid_generate_time(os_uuid);
+  memcpy(uuid->data, os_uuid, LWPA_UUID_BYTES);
   return kLwpaErrOk;
 }
 
-void lwpa_timer_deinit()
+lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
 {
-  // No deinitialization necessary on this platform.
+  if (!uuid)
+    return kLwpaErrInvalid;
+
+  uuid_t os_uuid;
+  uuid_generate_random(os_uuid);
+  memcpy(uuid->data, os_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
 }
 
-uint32_t lwpa_getms()
+lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid)
 {
-  struct timespec os_time;
-  if (0 == clock_gettime(CLOCK_MONOTONIC, &os_time))
-  {
-    return (uint32_t)(os_time.tv_sec * 1000 + (os_time.tv_nsec / 1000000));
-  }
-  return 0;
+  if (!uuid)
+    return kLwpaErrInvalid;
+
+  uuid_t os_uuid;
+  uuid_generate(os_uuid);
+  memcpy(uuid->data, os_uuid, LWPA_UUID_BYTES);
+  return kLwpaErrOk;
 }

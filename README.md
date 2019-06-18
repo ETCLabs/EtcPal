@@ -16,6 +16,7 @@ The lwpa library serves two main purposes:
 
 lwpa is currently ported for the following platforms:
 + Linux
++ macOS
 + Microsoft Windows
 + MQX RTOS
 
