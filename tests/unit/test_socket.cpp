@@ -138,7 +138,7 @@ TEST_F(SocketTest, unicast_udp)
   ASSERT_EQ(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
   ASSERT_NE(rcvsock2, LWPA_SOCKET_INVALID);
 
-  int intval = 10;
+  int intval = 500;
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
   intval = 1;
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock2, LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
