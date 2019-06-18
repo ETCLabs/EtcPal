@@ -21,8 +21,8 @@
 
 #include <uuid/uuid.h>
 
-// Use libuuid on Linux to generate UUIDs.
-// https://linux.die.net/man/3/uuid_generate
+// Use the native UUID functionality in the macOS SDK to generate UUIDs.
+// https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/uuid.3.html
 
 lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
 {

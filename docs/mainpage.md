@@ -41,6 +41,7 @@ identical interface, as documented in that module's documentation.
 
 lwpa is currently ported for the following operating systems:
 
++ macOS
 + Microsoft Windows
 + Linux
 + MQX RTOS
@@ -96,6 +97,9 @@ platform. This is currently the only option for MQX RTOS.
 ### Platform Dependencies
 
 The platform ports of lwpa have the following dependencies:
++ macOS
+  - If compiling with macOS 10.7 or earlier, you might need to install a UUID
+    package like `ossp-uuid`.
 + Microsoft Windows
   - Windows XP SP1 or later
 + MQX RTOS
