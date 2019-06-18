@@ -13,7 +13,7 @@ lib/
 #######################
 
 # CMake
-build/
+build*/
 
 # MSVC2015 and Qt
 *.VC.db
