@@ -40,10 +40,11 @@ jobs:
       mkdir build
       cd build
       cmake --version
-      cmake -DLWPA_BUILD_MOCK_LIB=ON -DLWPA_NETINT_DEBUG_OUTPUT=ON ..
+      cmake -DLWPA_BUILD_MOCK_LIB=ON ..
       cmake --build .
     displayName: 'lwpa macOS build'
   - script: |
+      ifconfig
       build/examples/netint/netint_example
       build/tests/test_lwpa
     displayName: 'lwpa macOS test'
