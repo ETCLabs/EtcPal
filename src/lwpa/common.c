@@ -26,6 +26,8 @@
 #include "lwpa/private/socket.h"
 #include "lwpa/private/timer.h"
 
+/****************************** Private types ********************************/
+
 typedef struct LwpaModuleInit
 {
   bool initted;
@@ -33,23 +35,39 @@ typedef struct LwpaModuleInit
   void (*deinit_fn)();
 } LwpaModuleInit;
 
+/* clang-format off */
+
 #define LWPA_MODULE_INIT(module_name) { false, module_name##_init, module_name##_deinit }
 
-#define LWPA_MODULE_INIT_ARRAY \
-  { \
+#define LWPA_MODULE_INIT_ARRAY     \
+  {                                \
     LWPA_MODULE_INIT(lwpa_socket), \
     LWPA_MODULE_INIT(lwpa_netint), \
-    LWPA_MODULE_INIT(lwpa_timer), \
-    LWPA_MODULE_INIT(lwpa_log) \
+    LWPA_MODULE_INIT(lwpa_timer),  \
+    LWPA_MODULE_INIT(lwpa_log)     \
   }
+
+/* clang-format on */
+
+/*************************** Function definitions ****************************/
 
 lwpa_error_t lwpa_init(lwpa_features_t features)
 {
+  // In this function and the deinit() function below, we create an array of structs for each lwpa
+  // module that must be initialized, using the macros defined in lwpa/common.h and above in this
+  // file. The structs contain the init and deinit functions for each module that is enabled by the
+  // feature macros.
+  //
+  // If any init fails, each struct contains a flag indicating whether it has already been
+  // initialized, so it can be cleaned up.
+
   LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
 
   lwpa_error_t init_res = kLwpaErrOk;
   lwpa_features_t feature_mask = 1u;
-  for (LwpaModuleInit *init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+
+  // Initialize each module in turn.
+  for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
   {
     if (features & feature_mask)
     {
@@ -64,7 +82,8 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
 
   if (init_res != kLwpaErrOk)
   {
-    for (LwpaModuleInit *init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+    // Clean up on failure.
+    for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
     {
       if (init_struct->initted)
         init_struct->deinit_fn();
@@ -79,7 +98,9 @@ void lwpa_deinit(lwpa_features_t features)
   LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
 
   lwpa_features_t feature_mask = 1u;
-  for (LwpaModuleInit *init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+
+  // Deinitialize each module in turn.
+  for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
   {
     if (features & feature_mask)
     {

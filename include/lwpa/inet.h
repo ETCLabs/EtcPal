@@ -132,7 +132,7 @@ typedef struct LwpaIpAddr
 /*! Set an IPv6 address with an explicit scope ID in a LwpaIpAddr. Also sets the type field to
  *  indicate that this LwpaIpAddr contains an IPv6 address.
  *  \param lwpa_ip_ptr Pointer to a LwpaIpAddr.
- *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length LWPA_IPV6_BYTES.
+ *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #LWPA_IPV6_BYTES.
  *                  Gets copied into the struct.
  *  \param scope_id_val IPv6 scope ID to set. */
 #define LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(lwpa_ip_ptr, addr_val, scope_id_val) \
