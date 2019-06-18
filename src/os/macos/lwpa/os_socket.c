@@ -799,6 +799,9 @@ int events_lwpa_to_kqueue(lwpa_socket_t socket, lwpa_poll_events_t prev_events, 
     ++num_events;
   }
 
+  // EVFILT_EXCEPT is not available on older versions of macOS. It was added somewhere between
+  // 10.11 and 10.14.
+#ifdef EVFILT_EXCEPT
   // Process EVFILT_EXCEPT changes
   if (new_events & LWPA_POLL_OOB)
   {
@@ -811,6 +814,7 @@ int events_lwpa_to_kqueue(lwpa_socket_t socket, lwpa_poll_events_t prev_events, 
     EV_SET(&kevents[num_events], socket, EVFILT_EXCEPT, EV_DELETE, 0, 0, user_data);
     ++num_events;
   }
+#endif
 
   return num_events;
 }
@@ -823,6 +827,8 @@ lwpa_poll_events_t events_kqueue_to_lwpa(const struct kevent* kevent, const Lwpa
     events_out |= LWPA_POLL_IN;
     if (kevent->flags & EV_EOF)
       events_out |= LWPA_POLL_ERR;
+    if (kevent->flags & EV_OOBAND && (sock_desc->events & LWPA_POLL_OOB))
+      events_out |= LWPA_POLL_OOB;
   }
   if (kevent->filter == EVFILT_WRITE)
   {
@@ -833,12 +839,14 @@ lwpa_poll_events_t events_kqueue_to_lwpa(const struct kevent* kevent, const Lwpa
     if (kevent->flags & EV_EOF)
       events_out |= LWPA_POLL_ERR;
   }
+#ifdef EVFILT_EXCEPT
   if (kevent->filter == EVFILT_EXCEPT)
   {
     events_out |= LWPA_POLL_OOB;
     if (kevent->flags & EV_EOF)
       events_out |= LWPA_POLL_ERR;
   }
+#endif
 
   return events_out;
 }

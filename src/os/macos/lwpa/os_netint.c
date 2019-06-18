@@ -484,6 +484,12 @@ static void gateway_from_route_entry(const struct sockaddr* os_gw, LwpaIpAddr* l
   }
 }
 
+#ifdef RTF_LLDATA
+#define RTF_LINK_FLAG RTF_LLDATA
+#else
+#define RTF_LINK_FLAG RTF_LLINFO
+#endif
+
 /* Anyone debugging this code might benefit from this: a mapping of netstat -r flags to
  * rmsg->rtm_flags values.
  *
@@ -538,9 +544,9 @@ lwpa_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, 
     // Filter out entries:
     // - from the local routing table (RTF_LOCAL)
     // - Representing broadcast routes (RTF_BROADCAST)
-    // - Representing ARP routes (RTF_LLDATA)
+    // - Representing ARP routes (RTF_LLDATA or RTF_LLINFO on older versions)
     // - Cloned routes (RTF_WASCLONED)
-    if (!(rmsg->rtm_flags & (RTF_LLDATA | RTF_LOCAL | RTF_BROADCAST | RTF_WASCLONED)))
+    if (!(rmsg->rtm_flags & (RTF_LINK_FLAG | RTF_LOCAL | RTF_BROADCAST | RTF_WASCLONED)))
     {
       struct sockaddr* addr_start = (struct sockaddr*)(rmsg + 1);
       struct sockaddr* rti_info[RTAX_MAX];
