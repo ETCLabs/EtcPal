@@ -45,6 +45,7 @@ jobs:
     displayName: 'lwpa macOS build'
   - script: |
       ifconfig
+      netstat -rnlll
       build/examples/netint/netint_example
       build/tests/test_lwpa
     displayName: 'lwpa macOS test'
