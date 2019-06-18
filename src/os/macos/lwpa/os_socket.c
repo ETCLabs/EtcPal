@@ -120,8 +120,8 @@ static int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_v
 static int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len);
 
 // Helpers for lwpa_poll API
-static int events_lwpa_to_kqueue(lwpa_poll_events_t events, lwpa_socket_t socket, void* user_data, uint16_t flags,
-                                 struct kevent* kevents);
+static int events_lwpa_to_kqueue(lwpa_socket_t socket, lwpa_poll_events_t prev_events, lwpa_poll_events_t new_events,
+                                 void* user_data, struct kevent* events);
 static lwpa_poll_events_t events_kqueue_to_lwpa(const struct kevent* kevent, const LwpaPollSocket* sock_desc);
 
 static int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
@@ -617,7 +617,7 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
       if (insert_res != 0)
       {
         struct kevent os_events[LWPA_SOCKET_MAX_KEVENTS];
-        int num_events = events_lwpa_to_kqueue(events, socket, user_data, EV_ADD, os_events);
+        int num_events = events_lwpa_to_kqueue(socket, 0, events, user_data, os_events);
 
         int res = kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
         if (res == 0)
@@ -657,7 +657,7 @@ lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t soc
     if (sock_desc)
     {
       struct kevent os_events[LWPA_SOCKET_MAX_KEVENTS];
-      int num_events = events_lwpa_to_kqueue(new_events, socket, new_user_data, EV_ADD, os_events);
+      int num_events = events_lwpa_to_kqueue(socket, sock_desc->events, new_events, new_user_data, os_events);
 
       int res = kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
       if (res == 0)
@@ -689,7 +689,7 @@ void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket)
     if (sock_desc)
     {
       struct kevent os_events[LWPA_SOCKET_MAX_KEVENTS];
-      int num_events = events_lwpa_to_kqueue(sock_desc->events, socket, NULL, EV_DELETE, os_events);
+      int num_events = events_lwpa_to_kqueue(socket, sock_desc->events, 0, NULL, os_events);
 
       kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
       lwpa_rbtree_remove(&context->sockets, &sock_desc);
@@ -712,7 +712,7 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
       else
       {
         os_timeout.tv_sec = timeout_ms / 1000;
-        os_timeout.tv_nsec = timeout_ms * 1000000;
+        os_timeout.tv_nsec = (timeout_ms % 1000) * 1000000;
         os_timeout_ptr = &os_timeout;
       }
 
@@ -768,26 +768,50 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
   }
 }
 
-int events_lwpa_to_kqueue(lwpa_poll_events_t events, lwpa_socket_t socket, void* user_data, uint16_t flags,
-                          struct kevent* kevents)
+int events_lwpa_to_kqueue(lwpa_socket_t socket, lwpa_poll_events_t prev_events, lwpa_poll_events_t new_events,
+                          void* user_data, struct kevent* kevents)
 {
   int num_events = 0;
 
-  if (events & LWPA_POLL_IN)
+  // Process EVFILT_READ changes
+  if (new_events & LWPA_POLL_IN)
   {
-    EV_SET(&kevents[num_events], socket, EVFILT_READ, flags, 0, 0, user_data);
+    // Re-add the socket even if it was already added before - user data might be modified.
+    EV_SET(&kevents[num_events], socket, EVFILT_READ, EV_ADD, 0, 0, user_data);
     ++num_events;
   }
-  if ((events & LWPA_POLL_OUT) || (events & LWPA_POLL_CONNECT))
+  else if (prev_events & LWPA_POLL_IN)
   {
-    EV_SET(&kevents[num_events], socket, EVFILT_WRITE, flags, 0, 0, user_data);
+    EV_SET(&kevents[num_events], socket, EVFILT_READ, EV_DELETE, 0, 0, user_data);
     ++num_events;
   }
-  if (events & LWPA_POLL_OOB)
+
+  // Process EVFILT_WRITE changes
+  if (new_events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
   {
-    EV_SET(&kevents[num_events], socket, EVFILT_EXCEPT, flags, NOTE_OOB, 0, user_data);
+    // Re-add the socket even if it was already added before - user data might be modified.
+    EV_SET(&kevents[num_events], socket, EVFILT_WRITE, EV_ADD, 0, 0, user_data);
     ++num_events;
   }
+  else if (prev_events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
+  {
+    EV_SET(&kevents[num_events], socket, EVFILT_WRITE, EV_DELETE, 0, 0, user_data);
+    ++num_events;
+  }
+
+  // Process EVFILT_EXCEPT changes
+  if (new_events & LWPA_POLL_OOB)
+  {
+    // Re-add the socket even if it was already added before - user data might be modified.
+    EV_SET(&kevents[num_events], socket, EVFILT_EXCEPT, EV_ADD, NOTE_OOB, 0, user_data);
+    ++num_events;
+  }
+  else if (prev_events & LWPA_POLL_OOB)
+  {
+    EV_SET(&kevents[num_events], socket, EVFILT_EXCEPT, EV_DELETE, 0, 0, user_data);
+    ++num_events;
+  }
+
   return num_events;
 }
 
