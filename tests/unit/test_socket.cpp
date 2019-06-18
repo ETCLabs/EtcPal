@@ -233,6 +233,8 @@ TEST_F(SocketTest, multicast_udp)
   ASSERT_NE(send_sock, LWPA_SOCKET_INVALID);
 
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+  ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_IF, &default_netint_.addr,
+                                        sizeof default_netint_.addr));
 
   // Bind socket 1 to the wildcard address and a specific port.
   lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);

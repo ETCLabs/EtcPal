@@ -468,7 +468,7 @@ int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, s
         if (LWPA_IP_IS_V4(netint))
         {
           struct in_addr val;
-          val.s_addr = LWPA_IP_V4_ADDRESS(netint);
+          val.s_addr = htonl(LWPA_IP_V4_ADDRESS(netint));
           return setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, &val, sizeof val);
         }
       }
