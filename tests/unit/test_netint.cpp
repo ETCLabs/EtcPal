@@ -58,20 +58,32 @@ TEST_F(NetintTest, default)
 {
   ASSERT_GT(num_netints, 0u);
 
-  LwpaNetintInfo def;
+  LwpaNetintInfo def_v4;
+  LwpaNetintInfo def_v6;
+  memset(&def_v4, 0, sizeof def_v4);
+  memset(&def_v6, 0, sizeof def_v6);
+
   auto netint_arr = std::make_unique<LwpaNetintInfo[]>(num_netints);
-  memset(&def, 0, sizeof def);
   memset(netint_arr.get(), 0, sizeof(struct LwpaNetintInfo) * num_netints);
 
   num_netints = lwpa_netint_get_interfaces(netint_arr.get(), num_netints);
-  ASSERT_TRUE(lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def));
-  ASSERT_TRUE(def.is_default);
+
+  bool have_default_v4 = lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_v4);
+  bool have_default_v6 = lwpa_netint_get_default_interface(kLwpaIpTypeV6, &def_v6);
+
+  if (have_default_v4)
+    EXPECT_TRUE(def_v4.is_default);
+  if (have_default_v6)
+    EXPECT_TRUE(def_v6.is_default);
+
   for (LwpaNetintInfo* netint = netint_arr.get(); netint < netint_arr.get() + num_netints; ++netint)
   {
     if (netint->is_default)
     {
-      ASSERT_EQ(0, memcmp(netint, &def, sizeof def));
-      break;
+      if (netint->addr.type == kLwpaIpTypeV4)
+        EXPECT_EQ(0, memcmp(netint, &def_v4, sizeof def_v4));
+      else if (netint->addr.type == kLwpaIpTypeV6)
+        EXPECT_EQ(0, memcmp(netint, &def_v6, sizeof def_v6));
     }
   }
 }

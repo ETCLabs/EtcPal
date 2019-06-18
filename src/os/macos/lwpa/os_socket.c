@@ -24,14 +24,21 @@
 
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <net/if.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/event.h>
+#include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "os_error.h"
+
+/**************************** Private constants ******************************/
+
+/* The maximum number of kevents that can be added in one call to an lwpa_poll API function. */
+#define LWPA_SOCKET_MAX_KEVENTS 3
 
 /****************************** Private types ********************************/
 
@@ -113,9 +120,9 @@ static int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_v
 static int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len);
 
 // Helpers for lwpa_poll API
-static void events_lwpa_to_kqueue(lwpa_poll_events_t events, struct epoll_event* epoll_evt);
-static void events_kqueue_to_lwpa(const struct kevent* kevent, const LwpaPollSocket* sock_desc,
-                                  lwpa_poll_events_t* events);
+static int events_lwpa_to_kqueue(lwpa_poll_events_t events, lwpa_socket_t socket, void* user_data, uint16_t flags,
+                                 struct kevent* kevents);
+static lwpa_poll_events_t events_kqueue_to_lwpa(const struct kevent* kevent, const LwpaPollSocket* sock_desc);
 
 static int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
 static LwpaRbNode* poll_socket_alloc();
@@ -371,6 +378,29 @@ int setsockopt_socket(lwpa_socket_t id, int option_name, const void* option_valu
   return -1;
 }
 
+/* On Darwin, MCAST_JOIN_GROUP/MCAST_LEAVE_GROUP APIs do not seem to be supported. So we need to
+ * translate interface indexes to addresses for IPv4 MCAST_JOIN_GROUP sockopts. */
+static int ip4_ifindex_to_addr(unsigned int ifindex, struct in_addr* addr)
+{
+  struct ifreq req;
+  if (if_indextoname(ifindex, req.ifr_name) != NULL)
+  {
+    int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (ioctl_sock != -1)
+    {
+      int ioctl_res = ioctl(ioctl_sock, SIOCGIFADDR, &req);
+      if (ioctl_res != -1)
+      {
+        *addr = ((struct sockaddr_in*)&req.ifr_addr)->sin_addr;
+        close(ioctl_sock);
+        return 0;
+      }
+      close(ioctl_sock);
+    }
+  }
+  return -1;
+}
+
 int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
   switch (option_name)
@@ -409,14 +439,11 @@ int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, s
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
         if (LWPA_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
         {
-          struct group_req val;
-          val.gr_interface = (uint32_t)greq->ifindex;
-
-          memset(&val.gr_group, 0, sizeof val.gr_group);
-          struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
-          sin->sin_family = AF_INET;
-          sin->sin_addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&greq->group));
-          return setsockopt(id, IPPROTO_IP, MCAST_JOIN_GROUP, &val, sizeof val);
+          struct ip_mreq val;
+          val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&greq->group));
+          if (0 != ip4_ifindex_to_addr(greq->ifindex, &val.imr_interface))
+            return -1;
+          return setsockopt(id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &val, sizeof val);
         }
       }
       break;
@@ -426,14 +453,11 @@ int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, s
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
         if (LWPA_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
         {
-          struct group_req val;
-          val.gr_interface = (uint32_t)greq->ifindex;
-
-          memset(&val.gr_group, 0, sizeof val.gr_group);
-          struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
-          sin->sin_family = AF_INET;
-          sin->sin_addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&greq->group));
-          return setsockopt(id, IPPROTO_IP, MCAST_LEAVE_GROUP, &val, sizeof val);
+          struct ip_mreq val;
+          val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&greq->group));
+          if (0 != ip4_ifindex_to_addr(greq->ifindex, &val.imr_interface))
+            return -1;
+          return setsockopt(id, IPPROTO_IP, IP_DROP_MEMBERSHIP, &val, sizeof val);
         }
       }
       break;
@@ -471,14 +495,10 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
         if (LWPA_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
-          struct group_req val;
-          val.gr_interface = (uint32_t)greq->ifindex;
-
-          memset(&val.gr_group, 0, sizeof val.gr_group);
-          struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;
-          sin6->sin6_family = AF_INET6;
-          memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
-          return setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val, sizeof val);
+          struct ipv6_mreq val;
+          val.ipv6mr_interface = (uint32_t)greq->ifindex;
+          memcpy(val.ipv6mr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
+          return setsockopt(id, IPPROTO_IPV6, IPV6_JOIN_GROUP, &val, sizeof val);
         }
       }
       break;
@@ -488,18 +508,14 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
         if (LWPA_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
-          struct group_req val;
-          val.gr_interface = (uint32_t)greq->ifindex;
-
-          memset(&val.gr_group, 0, sizeof val.gr_group);
-          struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;
-          sin6->sin6_family = AF_INET6;
-          memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
-          return setsockopt(id, IPPROTO_IPV6, MCAST_LEAVE_GROUP, &val, sizeof val);
+          struct ipv6_mreq val;
+          val.ipv6mr_interface = (uint32_t)greq->ifindex;
+          memcpy(val.ipv6mr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
+          return setsockopt(id, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &val, sizeof val);
         }
       }
       break;
-    default: /* Other IPv6 options TODO on linux. */
+    default: /* Other IPv6 options TODO on macOS. */
       break;
   }
   // If we got here, something was invalid. Set errno accordingly
@@ -567,7 +583,7 @@ lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)
   context->kq_fd = kqueue();
   if (context->kq_fd >= 0)
   {
-    // lwpa_rbtree_init(&context->sockets, poll_socket_compare, poll_socket_alloc, poll_socket_free);
+    lwpa_rbtree_init(&context->sockets, poll_socket_compare, poll_socket_alloc, poll_socket_free);
     context->valid = true;
     return kLwpaErrOk;
   }
@@ -581,7 +597,7 @@ void lwpa_poll_context_deinit(LwpaPollContext* context)
 {
   if (context && context->valid)
   {
-    // lwpa_rbtree_clear(&context->sockets);
+    lwpa_rbtree_clear(&context->sockets);
     close(context->kq_fd);
     context->valid = false;
   }
@@ -597,15 +613,13 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
     {
       sock_desc->sock = socket;
       sock_desc->events = events;
-      sock_desc->user_data = user_data;
       int insert_res = lwpa_rbtree_insert(&context->sockets, sock_desc);
       if (insert_res != 0)
       {
-        struct epoll_event ep_evt;
-        events_lwpa_to_kqueue(events, &ep_evt);
-        ep_evt.data.fd = socket;
+        struct kevent os_events[LWPA_SOCKET_MAX_KEVENTS];
+        int num_events = events_lwpa_to_kqueue(events, socket, user_data, EV_ADD, os_events);
 
-        int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_ADD, socket, &ep_evt);
+        int res = kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
         if (res == 0)
         {
           return kLwpaErrOk;
@@ -637,138 +651,172 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
 lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
                                      void* new_user_data)
 {
-  //  if (context && context->valid && socket != LWPA_SOCKET_INVALID && (new_events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
-  //  {
-  //    LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbtree_find(&context->sockets, &socket);
-  //    if (sock_desc)
-  //    {
-  //      struct epoll_event ep_evt;
-  //      events_lwpa_to_kqueue(new_events, &ep_evt);
-  //      ep_evt.data.fd = socket;
-  //
-  //      int res = epoll_ctl(context->epoll_fd, EPOLL_CTL_MOD, socket, &ep_evt);
-  //      if (res == 0)
-  //      {
-  //        sock_desc->events = new_events;
-  //        sock_desc->user_data = new_user_data;
-  //        return kLwpaErrOk;
-  //      }
-  //      else
-  //      {
-  //        return errno_os_to_lwpa(errno);
-  //      }
-  //    }
-  //    else
-  //    {
-  //      return kLwpaErrNotFound;
-  //    }
-  //  }
-  //  else
-  //  {
-  //    return kLwpaErrInvalid;
-  //  }
-  return kLwpaErrNotImpl;
+  if (context && context->valid && socket != LWPA_SOCKET_INVALID && (new_events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
+  {
+    LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbtree_find(&context->sockets, &socket);
+    if (sock_desc)
+    {
+      struct kevent os_events[LWPA_SOCKET_MAX_KEVENTS];
+      int num_events = events_lwpa_to_kqueue(new_events, socket, new_user_data, EV_ADD, os_events);
+
+      int res = kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
+      if (res == 0)
+      {
+        sock_desc->events = new_events;
+        return kLwpaErrOk;
+      }
+      else
+      {
+        return errno_os_to_lwpa(errno);
+      }
+    }
+    else
+    {
+      return kLwpaErrNotFound;
+    }
+  }
+  else
+  {
+    return kLwpaErrInvalid;
+  }
 }
 
 void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket)
 {
-  //  if (context && context->valid)
-  //  {
-  //    // Need a dummy struct for portability - some versions require event to always be non-NULL
-  //    // even though it is ignored
-  //    struct epoll_event ep_evt;
-  //    epoll_ctl(context->epoll_fd, EPOLL_CTL_DEL, socket, &ep_evt);
-  //    lwpa_rbtree_remove(&context->sockets, &socket);
-  //  }
+  if (context && context->valid)
+  {
+    LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbtree_find(&context->sockets, &socket);
+    if (sock_desc)
+    {
+      struct kevent os_events[LWPA_SOCKET_MAX_KEVENTS];
+      int num_events = events_lwpa_to_kqueue(sock_desc->events, socket, NULL, EV_DELETE, os_events);
+
+      kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
+      lwpa_rbtree_remove(&context->sockets, &sock_desc);
+    }
+  }
 }
 
 lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms)
 {
-  //  if (context && context->valid && event)
-  //  {
-  //    if (lwpa_rbtree_size(&context->sockets) > 0)
-  //    {
-  //      int sys_timeout = (timeout_ms == LWPA_WAIT_FOREVER ? -1 : timeout_ms);
-  //
-  //      struct epoll_event epoll_evt;
-  //      int wait_res = epoll_wait(context->epoll_fd, &epoll_evt, 1, sys_timeout);
-  //      if (wait_res > 0)
-  //      {
-  //        LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbtree_find(&context->sockets, &epoll_evt.data.fd);
-  //        if (sock_desc)
-  //        {
-  //          event->socket = sock_desc->sock;
-  //          events_epoll_to_lwpa(&epoll_evt, sock_desc, &event->events);
-  //          event->err = kLwpaErrOk;
-  //          event->user_data = sock_desc->user_data;
-  //
-  //          // Check for errors
-  //          int error;
-  //          socklen_t error_size = sizeof error;
-  //          if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &error, &error_size) == 0)
-  //          {
-  //            if (error != 0)
-  //            {
-  //              event->events |= LWPA_POLL_ERR;
-  //              event->err = errno_os_to_lwpa(error);
-  //            }
-  //          }
-  //
-  //          return kLwpaErrOk;
-  //        }
-  //        else
-  //        {
-  //          return kLwpaErrSys;
-  //        }
-  //      }
-  //      else if (wait_res == 0)
-  //      {
-  //        return kLwpaErrTimedOut;
-  //      }
-  //      else
-  //      {
-  //        return errno_os_to_lwpa(errno);
-  //      }
-  //    }
-  //    else
-  //    {
-  //      return kLwpaErrNoSockets;
-  //    }
-  //  }
-  //  else
-  //  {
-  //    return kLwpaErrInvalid;
-  //  }
-  return kLwpaErrNotImpl;
+  if (context && context->valid && event)
+  {
+    if (lwpa_rbtree_size(&context->sockets) > 0)
+    {
+      struct timespec os_timeout;
+      struct timespec* os_timeout_ptr;
+      if (timeout_ms == LWPA_WAIT_FOREVER)
+      {
+        os_timeout_ptr = NULL;
+      }
+      else
+      {
+        os_timeout.tv_sec = timeout_ms / 1000;
+        os_timeout.tv_nsec = timeout_ms * 1000000;
+        os_timeout_ptr = &os_timeout;
+      }
+
+      struct kevent kevt;
+      int wait_res = kevent(context->kq_fd, NULL, 0, &kevt, 1, os_timeout_ptr);
+      if (wait_res > 0)
+      {
+        lwpa_socket_t sock = (lwpa_socket_t)kevt.ident;
+        LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbtree_find(&context->sockets, &sock);
+        if (sock_desc)
+        {
+          event->socket = sock_desc->sock;
+          event->events = events_kqueue_to_lwpa(&kevt, sock_desc);
+          event->err = kLwpaErrOk;
+          event->user_data = kevt.udata;
+
+          // Check for errors
+          int error;
+          socklen_t error_size = sizeof error;
+          if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &error, &error_size) == 0)
+          {
+            if (error != 0)
+            {
+              event->events |= LWPA_POLL_ERR;
+              event->err = errno_os_to_lwpa(error);
+            }
+          }
+
+          return kLwpaErrOk;
+        }
+        else
+        {
+          return kLwpaErrSys;
+        }
+      }
+      else if (wait_res == 0)
+      {
+        return kLwpaErrTimedOut;
+      }
+      else
+      {
+        return errno_os_to_lwpa(errno);
+      }
+    }
+    else
+    {
+      return kLwpaErrNoSockets;
+    }
+  }
+  else
+  {
+    return kLwpaErrInvalid;
+  }
 }
 
-void events_lwpa_to_kqueue(lwpa_poll_events_t events, struct epoll_event* epoll_evt)
+int events_lwpa_to_kqueue(lwpa_poll_events_t events, lwpa_socket_t socket, void* user_data, uint16_t flags,
+                          struct kevent* kevents)
 {
-  epoll_evt->events = 0;
+  int num_events = 0;
+
   if (events & LWPA_POLL_IN)
-    epoll_evt->events |= EPOLLIN;
+  {
+    EV_SET(&kevents[num_events], socket, EVFILT_READ, flags, 0, 0, user_data);
+    ++num_events;
+  }
   if ((events & LWPA_POLL_OUT) || (events & LWPA_POLL_CONNECT))
-    epoll_evt->events |= EPOLLOUT;
+  {
+    EV_SET(&kevents[num_events], socket, EVFILT_WRITE, flags, 0, 0, user_data);
+    ++num_events;
+  }
   if (events & LWPA_POLL_OOB)
-    epoll_evt->events |= EPOLLPRI;
+  {
+    EV_SET(&kevents[num_events], socket, EVFILT_EXCEPT, flags, NOTE_OOB, 0, user_data);
+    ++num_events;
+  }
+  return num_events;
 }
 
-void events_kqueue_to_lwpa(const struct kevent* kevent, const LwpaPollSocket* sock_desc, lwpa_poll_events_t* events_out)
+lwpa_poll_events_t events_kqueue_to_lwpa(const struct kevent* kevent, const LwpaPollSocket* sock_desc)
 {
-  *events_out = 0;
-  if (epoll_evt->events & EPOLLIN)
-    *events_out |= LWPA_POLL_IN;
-  if (epoll_evt->events & EPOLLOUT)
+  lwpa_poll_events_t events_out = 0;
+  if (kevent->filter == EVFILT_READ)
+  {
+    events_out |= LWPA_POLL_IN;
+    if (kevent->flags & EV_EOF)
+      events_out |= LWPA_POLL_ERR;
+  }
+  if (kevent->filter == EVFILT_WRITE)
   {
     if (sock_desc->events & LWPA_POLL_OUT)
-      *events_out |= LWPA_POLL_OUT;
+      events_out |= LWPA_POLL_OUT;
     if (sock_desc->events & LWPA_POLL_CONNECT)
-      *events_out |= LWPA_POLL_CONNECT;
+      events_out |= LWPA_POLL_CONNECT;
+    if (kevent->flags & EV_EOF)
+      events_out |= LWPA_POLL_ERR;
   }
-  if (epoll_evt->events & EPOLLPRI)
-    *events_out |= (LWPA_POLL_OOB);
-  if (epoll_evt->events & EPOLLERR)
-    *events_out |= (LWPA_POLL_ERR);
+  if (kevent->filter == EVFILT_EXCEPT)
+  {
+    events_out |= LWPA_POLL_OOB;
+    if (kevent->flags & EV_EOF)
+      events_out |= LWPA_POLL_ERR;
+  }
+
+  return events_out;
 }
 
 int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b)
