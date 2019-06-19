@@ -57,7 +57,7 @@
 
 /**************************** Private variables ******************************/
 
-static bool module_initialized;
+static unsigned int init_count;
 static lwpa_mutex_t buf_lock;
 
 /*********************** Private function prototypes *************************/
@@ -70,24 +70,23 @@ static void sanitize_str(char* str);
  * messages are written into. */
 lwpa_error_t lwpa_log_init()
 {
-  if (!module_initialized)
+  if (init_count == 0)
   {
     if (!lwpa_mutex_create(&buf_lock))
     {
       return kLwpaErrSys;
     }
-    module_initialized = true;
   }
+  ++init_count;
   return kLwpaErrOk;
 }
 
 /* Deinitialize the lwpa_log module. */
 void lwpa_log_deinit()
 {
-  if (module_initialized)
+  if (--init_count == 0)
   {
     lwpa_mutex_destroy(&buf_lock);
-    module_initialized = false;
   }
 }
 
@@ -347,7 +346,7 @@ void lwpa_log(const LwpaLogParams* params, int pri, const char* format, ...)
  */
 void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args)
 {
-  if (!module_initialized || !params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
+  if (!init_count || !params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
     return;
 
   LwpaLogTimeParams time_params;
@@ -361,29 +360,28 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
     char* humanlog_msg_ptr = NULL;
     char* raw_msg_ptr = NULL;
 
-    // If we are calling both vcreate functions, we will need to copy the va_list.
-    // For more info on using a va_list multiple times, see:
-    // https://wiki.sei.cmu.edu/confluence/display/c/MSC39-C.+Do+not+call+va_arg%28%29+on+a+va_list+that+has+an+indeterminate+value
-    // https://stackoverflow.com/a/26919307
-    va_list args_copy;
-    bool args_copied = false;
-    if (params->action == kLwpaLogCreateBoth)
-    {
-      va_copy(args_copy, args);
-      args_copied = true;
-    }
-
     if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateSyslog)
     {
-      raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
-                                            &params->syslog_params, pri, format, args_copied ? args_copy : args);
+      // If we are calling both vcreate functions, we will need to copy the va_list.
+      // For more info on using a va_list multiple times, see:
+      // https://wiki.sei.cmu.edu/confluence/display/c/MSC39-C.+Do+not+call+va_arg%28%29+on+a+va_list+that+has+an+indeterminate+value
+      // https://stackoverflow.com/a/26919307
+      if (params->action == kLwpaLogCreateBoth)
+      {
+        va_list args_copy;
+        va_copy(args_copy, args);
+        raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+                                              &params->syslog_params, pri, format, args_copy);
+        va_end(args_copy);
+      }
+      else
+      {
+        raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+                                              &params->syslog_params, pri, format, args);
+      }
       if (raw_msg_ptr)
       {
         syslog_msg_ptr = syslogmsg;
-      }
-      if (args_copied)
-      {
-        va_end(args_copy);
       }
     }
 

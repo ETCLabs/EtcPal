@@ -24,9 +24,9 @@
 
 /**************************** Private variables ******************************/
 
-bool module_initialized;
-CachedNetintInfo netint_cache;
-DefaultNetint default_netint;
+static unsigned int init_count;
+static CachedNetintInfo netint_cache;
+static DefaultNetint default_netint;
 
 /*********************** Private function prototypes *************************/
 
@@ -37,7 +37,7 @@ static int compare_netints(const void* a, const void* b);
 lwpa_error_t lwpa_netint_init()
 {
   lwpa_error_t res = kLwpaErrOk;
-  if (!module_initialized)
+  if (init_count == 0)
   {
     res = os_enumerate_interfaces(&netint_cache);
     if (res == kLwpaErrOk)
@@ -60,20 +60,21 @@ lwpa_error_t lwpa_netint_init()
           default_netint.v6_index = i;
         }
       }
-
-      module_initialized = true;
     }
   }
+
+  if (res == kLwpaErrOk)
+    ++init_count;
+
   return res;
 }
 
 void lwpa_netint_deinit()
 {
-  if (module_initialized)
+  if (--init_count == 0)
   {
     os_free_interfaces(&netint_cache);
     memset(&netint_cache, 0, sizeof(netint_cache));
-    module_initialized = false;
   }
 }
 
@@ -82,7 +83,7 @@ void lwpa_netint_deinit()
  */
 size_t lwpa_netint_get_num_interfaces()
 {
-  return (module_initialized ? netint_cache.num_netints : 0);
+  return (init_count ? netint_cache.num_netints : 0);
 }
 
 /*! \brief Enumerate the network interfaces on the system.
@@ -94,7 +95,7 @@ size_t lwpa_netint_get_num_interfaces()
  */
 size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
 {
-  if (!module_initialized || !netint_arr || netint_arr_size == 0)
+  if (!init_count || !netint_arr || netint_arr_size == 0)
     return 0;
 
   size_t addrs_copied = (netint_arr_size < netint_cache.num_netints ? netint_arr_size : netint_cache.num_netints);
@@ -115,7 +116,7 @@ size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_
  */
 bool lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint)
 {
-  if (module_initialized && netint)
+  if (init_count && netint)
   {
     if (type == kLwpaIpTypeV4 && default_netint.v4_valid)
     {
@@ -147,7 +148,7 @@ lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNeti
 {
   if (!dest || !netint)
     return kLwpaErrInvalid;
-  if (!module_initialized)
+  if (!init_count)
     return kLwpaErrNotInit;
   if (netint_cache.num_netints == 0)
     return kLwpaErrNoNetints;

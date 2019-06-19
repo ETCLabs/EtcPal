@@ -92,12 +92,14 @@ To configure and build lwpa on its own using CMake, follow these steps:
 
 Alternatively, if you don't want to use CMake, your project can simply build in
 the lwpa sources directly using the appropriate directories for your target
-platform. This is currently the only option for MQX RTOS.
+platform.
 
 ### Platform Dependencies
 
 The platform ports of lwpa have the following dependencies:
 + macOS
+  - The macOS port has been tested back to macOS 10.11. It is not guaranteed to
+    work on older versions.
   - If compiling with macOS 10.7 or earlier, you might need to install a UUID
     package like `ossp-uuid`.
 + Microsoft Windows

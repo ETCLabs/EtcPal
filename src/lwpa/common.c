@@ -51,6 +51,21 @@ typedef struct LwpaModuleInit
 
 /*************************** Function definitions ****************************/
 
+/*! \brief Initialize the lwpa library.
+ *
+ *  This function can be called multiple times from the same application. Each call to lwpa_init()
+ *  must be paired with a call to lwpa_deinit() with the same argument for features.
+ *
+ *  If you are using a library that depends on lwpa, and not using lwpa directly, that library will
+ *  call this function for you with the features it needs; you do not need to call it explicitly.
+ *
+ *  lwpa_init() and lwpa_deinit() are not thread-safe; you should make sure your init-time and
+ *  deinit-time code is serialized.
+ *
+ *  \param[in] features Mask of lwpa features required.
+ *  \return #kLwpaErrOk: lwpa library initialized successfully.
+ *  \return Various error codes possible from initialization of feature modules.
+ */
 lwpa_error_t lwpa_init(lwpa_features_t features)
 {
   // In this function and the deinit() function below, we create an array of structs for each lwpa
@@ -93,6 +108,13 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
   return init_res;
 }
 
+/*! \brief Deinitialize the lwpa library.
+ *
+ *  This must be called with the same argument as the corresponding call to lwpa_init() to clean up
+ *  resources held by the feature modules.
+ *
+ *  \param[in] features Feature mask that was previously passed to lwpa_init().
+ */
 void lwpa_deinit(lwpa_features_t features)
 {
   LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
