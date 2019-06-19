@@ -53,16 +53,17 @@ public:
   bool time_fn_called;
 };
 
-static void log_cb(void* context, const char* syslog_str, const char* human_str, const char* raw_str)
+extern "C" static void log_cb(void* context, const LwpaLogStrings* strings)
 {
   LogTest* lt = static_cast<LogTest*>(context);
   if (lt)
   {
-    lt->VerifyLogCallback(syslog_str ? syslog_str : "", human_str ? human_str : "", raw_str ? raw_str : "");
+    lt->VerifyLogCallback(strings->syslog ? strings->syslog : "",
+                          strings->human_readable ? strings->human_readable : "", strings->raw ? strings->raw : "");
   }
 }
 
-static void time_cb(void* context, LwpaLogTimeParams* time_params)
+extern "C" static void time_cb(void* context, LwpaLogTimeParams* time_params)
 {
   LogTest* lt = static_cast<LogTest*>(context);
   if (lt && time_params)

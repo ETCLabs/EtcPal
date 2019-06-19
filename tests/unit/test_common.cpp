@@ -60,11 +60,9 @@ TEST_F(CommonTest, netint_double_init)
 }
 
 // A shim from the lwpa_log module to GoogleMock.
-extern "C" void log_cb(void* context, const char* syslog_str, const char* human_str, const char* raw_str)
+extern "C" void log_cb(void* context, const LwpaLogStrings* strings)
 {
-  (void)syslog_str;
-  (void)human_str;
-  (void)raw_str;
+  (void)strings;
 
   CommonTest* test_fixture = static_cast<CommonTest*>(context);
   test_fixture->LogCallback();

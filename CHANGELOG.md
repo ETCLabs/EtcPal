@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lwpa_thread_stop() changed to lwpa_thread_join() to better describe behavior
 - LwpaNetintInfo: Removed 'gate' member, which has no consistent meaning across
   platforms.
+- lwpa_log_callback interface tweak - combine the various log message pointers
+  into a struct LwpaLogStrings.
 
 ### Removed
 

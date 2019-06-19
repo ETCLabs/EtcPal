@@ -356,9 +356,7 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
   {
     static char syslogmsg[LWPA_SYSLOG_STR_MAX_LEN + 1];
     static char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];
-    char* syslog_msg_ptr = NULL;
-    char* humanlog_msg_ptr = NULL;
-    char* raw_msg_ptr = NULL;
+    LwpaLogStrings strings = {NULL, NULL, NULL};
 
     if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateSyslog)
     {
@@ -370,32 +368,32 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
       {
         va_list args_copy;
         va_copy(args_copy, args);
-        raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+        strings.raw = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
                                               &params->syslog_params, pri, format, args_copy);
         va_end(args_copy);
       }
       else
       {
-        raw_msg_ptr = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+        strings.raw = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
                                               &params->syslog_params, pri, format, args);
       }
-      if (raw_msg_ptr)
+      if (strings.raw)
       {
-        syslog_msg_ptr = syslogmsg;
+        strings.syslog = syslogmsg;
       }
     }
 
     if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateHumanReadableLog)
     {
-      raw_msg_ptr = lwpa_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
+      strings.raw = lwpa_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
                                                have_time ? &time_params : NULL, format, args);
-      if (raw_msg_ptr)
+      if (strings.raw)
       {
-        humanlog_msg_ptr = humanlogmsg;
+        strings.human_readable = humanlogmsg;
       }
     }
 
-    params->log_fn(params->context, syslog_msg_ptr, humanlog_msg_ptr, raw_msg_ptr);
+    params->log_fn(params->context, &strings);
 
     lwpa_mutex_give(&buf_lock);
   }

@@ -149,19 +149,34 @@ typedef struct LwpaLogTimeParams
   int utc_offset;
 } LwpaLogTimeParams;
 
+/*! The set of log strings passed with a call to an lwpa_log_callback function. Any members not
+ *  requested in the corresponding LwpaLogParams struct will be NULL.
+ */
+typedef struct LwpaLogStrings
+{
+  /*! Log string formatted compliant to RFC 5424. */
+  const char* syslog;
+  /*! Log string formatted for readability per ETC convention. */
+  const char* human_readable;
+  /*! The original log string that was passed to lwpa_log() or lwpa_vlog(). Will overlap with one of
+   * syslog_str or human_str. */
+  const char* raw;
+} LwpaLogStrings;
+
 /*! \brief Log callback function.
  *
  *  The function that library modules use to log messages. The application developer defines the
  *  function and determines where the messages go.
  *
+ *  <b>Do not call lwpa_log() or lwpa_vlog() from this function; a deadlock will result.</b>
+ *
  *  \param[in] context Optional application-provided value that was previously passed to the library
  *                     module.
- *  \param[in] syslog_str Log string, formatted compliant to RFC 5424.
- *  \param[in] human_str Log string, formatted for readability per ETC convention.
- *  \param[in] raw_str The original log string that was passed to lwpa_log() or lwpa_vlog(). Will
- *                     overlap with one of syslog_str or human_str.
+ *  \param[in] strings Strings associated with the log message. Will contain valid strings
+ *                     corresponding to the log actions requested in the corresponding LwpaLogParams
+ *                     struct.
  */
-typedef void (*lwpa_log_callback)(void* context, const char* syslog_str, const char* human_str, const char* raw_str);
+typedef void (*lwpa_log_callback)(void* context, const LwpaLogStrings* strings);
 
 /*! \brief Time callback function.
  *
