@@ -31,22 +31,23 @@ extern "C" {
 
 typedef LWSEM_STRUCT lwpa_mutex_t;
 
-bool lwpa_mutex_create(lwpa_mutex_t* id);
-bool lwpa_mutex_take(lwpa_mutex_t* id);
-bool lwpa_mutex_try_take(lwpa_mutex_t* id);
-#define lwpa_mutex_give(idptr) ((void)_lwsem_post((LWSEM_STRUCT_PTR)(idptr)))
-#define lwpa_mutex_destroy(idptr) ((void)_lwsem_destroy((LWSEM_STRUCT_PTR)(idptr)))
+#define lwpa_mutex_create(idptr) (MQX_OK == _lwsem_create((idptr), 1))
+#define lwpa_mutex_take(idptr) (MQX_OK == _lwsem_wait(idptr))
+#define lwpa_mutex_try_take(idptr) (MQX_OK == _lwsem_wait_ticks((idptr), 1u))
+#define lwpa_mutex_give(idptr) ((void)_lwsem_post(idptr))
+#define lwpa_mutex_destroy(idptr) ((void)_lwsem_destroy(idptr))
 
 typedef LWEVENT_STRUCT lwpa_signal_t;
 
-bool lwpa_signal_create(lwpa_signal_t* id);
-bool lwpa_signal_wait(lwpa_signal_t* id);
-bool lwpa_signal_poll(lwpa_signal_t* id);
-#define lwpa_signal_post(idptr) ((void)_lwevent_set((LWEVENT_STRUCT_PTR)(idptr), 1u))
-#define lwpa_signal_destroy(idptr) ((void)_lwevent_destroy((LWEVENT_STRUCT_PTR)(idptr)))
+#define lwpa_signal_create(idptr) (MQX_OK == _lwevent_create((idptr), LWEVENT_AUTO_CLEAR))
+#define lwpa_signal_wait(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 0u))
+#define lwpa_signal_poll(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 1u))
+#define lwpa_signal_post(idptr) ((void)_lwevent_set((idptr), 1u))
+#define lwpa_signal_destroy(idptr) ((void)_lwevent_destroy(idptr))
 
 typedef struct
 {
+  bool valid;
   LWSEM_STRUCT sem;
   unsigned int reader_count;
 } lwpa_rwlock_t;
@@ -58,7 +59,7 @@ void lwpa_rwlock_readunlock(lwpa_rwlock_t* id);
 bool lwpa_rwlock_writelock(lwpa_rwlock_t* id);
 bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id);
 void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id);
-#define lwpa_rwlock_destroy(idptr) ((void)_lwsem_destroy(&((idptr)->sem)))
+void lwpa_rwlock_destroy(lwpa_rwlock_t* id);
 
 #ifdef __cplusplus
 }

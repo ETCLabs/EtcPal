@@ -239,6 +239,13 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
  */
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
 
+/*! \name lwpa_poll API
+ *
+ *  The lwpa_poll functions enable monitoring several sockets at once.
+ *
+ *  @{
+ */
+
 /*! \brief A structure that holds context information for poll operations on multiple sockets.
  *  
  *  See the documentation for lwpa_poll_context_init() and lwpa_poll_wait() for more information.
@@ -327,11 +334,18 @@ void lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
  *  milliseconds; use #LWPA_WAIT_FOREVER to wait indefinitely. If there are no sockets currently
  *  added to the context structure, returns the special error code #kLwpaErrNoSockets immediately.
  *
+ *  This function should not be assumed to be thread-safe with respect to the other lwpa_poll API
+ *  functions; for this reason, lwpa_poll_add_socket(), lwpa_poll_modify_socket(), and
+ *  lwpa_poll_remove_socket() should not be called while this function is blocking.
+ *
  *  Uses OS-specific APIs for monitoring multiple sockets under the hood. Details:
  *
- * | Platform:  | API used: | Notes:   |
- * |------------|-----------|----------|
- * | Windows    | select()  | #LWPA_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
+ * | Platform: | API used: | Notes: |
+ * |-----------|-----------|--------|
+ * | Linux     | epoll()   |        |
+ * | macOS     | kqueue()  |        |
+ * | MQX       | select()  | #LWPA_SOCKET_MAX_POLL_SIZE is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE. |
+ * | Windows   | select()  | #LWPA_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
  *
  *  \param[in] context Pointer to LwpaPollContext for which to wait for events.
  *  \param[out] event On success, contains information about the event that occurred.
@@ -345,6 +359,8 @@ void lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
  *  \return Other #lwpa_error_t values are possible from underlying socket calls.
  */
 lwpa_error_t lwpa_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
+
+/*! @} */
 
 /*! \brief Get address information for a named internet host and/or service.
  *

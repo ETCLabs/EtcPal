@@ -17,10 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_thread.h"
-
-static _mqx_uint msec_per_tick = 1;
-static bool msec_per_tick_initted = false;
+#include "lwpa/thread.h"
 
 static void thread_func_internal(uint32_t initial_data)
 {
@@ -34,17 +31,12 @@ static void thread_func_internal(uint32_t initial_data)
 
 bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
-  _task_id t_id;
-  TASK_TEMPLATE_STRUCT template;
-
-  if (!msec_per_tick_initted)
-    msec_per_tick = _time_get_resolution();
-
   if (!id || !params || !thread_fn || (MQX_OK != _lwsem_create(&id->sig, 0)))
     return false;
 
+  TASK_TEMPLATE_STRUCT template;
   template.TASK_ADDRESS = thread_func_internal;
-  template.TASK_NAME = (params->thread_name ? params->thread_name : "lwpa_thread");
+  template.TASK_NAME = (char*)(params->thread_name ? params->thread_name : "lwpa_thread");
   template.TASK_PRIORITY = params->thread_priority;
   template.TASK_STACKSIZE = params->stack_size;
   if (params->platform_data)
@@ -64,7 +56,7 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
    * It may need to be reexamined in the future. */
   template.CREATION_PARAMETER = (uint32_t)id;
 
-  t_id = _task_create(0, 0, (uint32_t) & template);
+  _task_id t_id = _task_create(0, 0, (uint32_t) & template);
   if (t_id != MQX_NULL_TASK_ID)
   {
     id->tid = t_id;
@@ -73,25 +65,12 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
   return false;
 }
 
-bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms)
+bool lwpa_thread_join(lwpa_thread_t* id)
 {
-  _mqx_uint ticks;
-  _mqx_uint res;
-
   if (!id)
     return false;
 
-  if (wait_ms == LWPA_WAIT_FOREVER)
-    ticks = 0; /* 0 means infinite wait in MQX land */
-  else
-  {
-    ticks = wait_ms / msec_per_tick;
-    /* Round up to the nearest tick */
-    if (wait_ms % msec_per_tick != 0 || wait_ms == 0)
-      ticks += 1;
-  }
-  res = _lwsem_wait_ticks((LWSEM_STRUCT_PTR)&id->sig, ticks);
-
+  _mqx_uint res = _lwsem_wait(&id->sig);
   if (res == MQX_OK)
   {
     _lwsem_destroy(&id->sig);

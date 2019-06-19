@@ -17,16 +17,16 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_netint.h"
+#include "lwpa/netint.h"
 
 #include <mqx.h>
 #include <bsp.h>
 #include <rtcs.h>
 
-#include "lwpa_int.h"
+#include "lwpa/int.h"
+#include "lwpa/private/netint.h"
 
-static bool mask_is_empty(const LwpaIpAddr* mask);
-static bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask);
+static LwpaNetintInfo netints[BSP_ENET_DEVICE_COUNT];
 
 static void copy_interface_info(size_t mqx_index, LwpaNetintInfo* netint)
 {
@@ -41,7 +41,6 @@ static void copy_interface_info(size_t mqx_index, LwpaNetintInfo* netint)
   ipcfg_get_ip(mqx_index, &ip_data);
   LWPA_IP_SET_V4_ADDRESS(&netint->addr, ip_data.ip);
   LWPA_IP_SET_V4_ADDRESS(&netint->mask, ip_data.mask);
-  LWPA_IP_SET_V4_ADDRESS(&netint->gate, ip_data.gateway);
 
   ipcfg_get_mac(mqx_index, netint->mac);
   sprintf(netint->name, "en%d", mqx_index);
@@ -51,97 +50,37 @@ static void copy_interface_info(size_t mqx_index, LwpaNetintInfo* netint)
     netint->is_default = false;
 }
 
-size_t netint_get_num_interfaces()
+lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
-  return BSP_ENET_DEVICE_COUNT;
+  for (size_t i = 0; i < BSP_ENET_DEVICE_COUNT; ++i)
+  {
+    copy_interface_info(i, &netints[i]);
+  }
+  cache->netints = netints;
+  cache->num_netints = BSP_ENET_DEVICE_COUNT;
+  return kLwpaErrOk;
 }
 
-size_t netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
+void os_free_interfaces(CachedNetintInfo* cache)
 {
-  size_t i;
-
-  if (!netint_arr || netint_arr_size == 0)
-    return 0;
-
-  for (i = 0; i < BSP_ENET_DEVICE_COUNT; ++i)
-  {
-    copy_interface_info(i, &netint_arr[i]);
-    if (i >= netint_arr_size)
-      break;
-  }
-  return i;
+  cache->netints = NULL;
 }
 
-bool netint_get_default_interface(LwpaNetintInfo* netint)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
 {
-  if (netint)
-  {
-    copy_interface_info(BSP_DEFAULT_ENET_DEVICE, netint);
-    return true;
-  }
-  return false;
-}
+  int index_found = -1;
 
-bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask)
-{
-  if (LWPA_IP_IS_V4(ip1) && LWPA_IP_IS_V4(ip2) && LWPA_IP_IS_V4(mask))
+  for (const LwpaNetintInfo* netint = netints; netint < netints + BSP_ENET_DEVICE_COUNT; ++netint)
   {
-    return ((LWPA_IP_V4_ADDRESS(ip1) & LWPA_IP_V4_ADDRESS(mask)) == (LWPA_IP_V4_ADDRESS(ip2) & LWPA_IP_V4_ADDRESS(mask)));
-  }
-  else if (LWPA_IP_IS_V6(ip1) && LWPA_IP_IS_V6(ip2) && LWPA_IP_IS_V6(mask))
-  {
-    size_t i;
-    const uint32_t* p1 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip1);
-    const uint32_t* p2 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip2);
-    const uint32_t* pm = (const uint32_t*)LWPA_IP_V6_ADDRESS(mask);
-
-    for (i = 0; i < IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
+    if (!lwpa_ip_is_wildcard(&netint->mask) && lwpa_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {
-      if ((*p1 & *pm) != (*p2 & *pm))
-        return false;
-    }
-    return true;
-  }
-  return false;
-}
-
-bool mask_is_empty(const LwpaIpAddr* mask)
-{
-  uint32_t mask_part = 0;
-
-  if (LWPA_IP_IS_V4(mask))
-    mask_part = LWPA_IP_V4_ADDRESS(mask);
-  else if (LWPA_IP_IS_V6(mask))
-  {
-    size_t i;
-    const uint32_t* p = (const uint32_t*)LWPA_IP_V6_ADDRESS(mask);
-    for (i = 0; i < IPV6_BYTES / 4; ++i, ++p)
-      mask_part |= *p;
-  }
-  return (mask_part == 0);
-}
-
-const LwpaNetintInfo* netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
-                                                size_t netint_arr_size)
-{
-  const LwpaNetintInfo* res = NULL;
-  const LwpaNetintInfo* def = NULL;
-  const LwpaNetintInfo* netint;
-
-  if (!dest || !netint_arr || netint_arr_size == 0)
-    return false;
-
-  for (netint = netint_arr; netint < netint_arr + netint_arr_size; ++netint)
-  {
-    if (netint->is_default)
-      def = netint;
-    if (!mask_is_empty(&netint->mask) && mask_compare(&netint->addr, dest, &netint->mask))
-    {
-      res = netint;
+      index_found = netint->ifindex;
       break;
     }
   }
-  if (!res)
-    res = def;
-  return res;
+  if (index_found == -1)
+    index_found = netints[BSP_DEFAULT_ENET_DEVICE].ifindex;
+
+  *index = index_found;
+  return kLwpaErrOk;
 }

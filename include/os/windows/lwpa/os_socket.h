@@ -70,7 +70,6 @@ typedef struct LwpaPollContext
   LwpaPollFdSet readfds;
   LwpaPollFdSet writefds;
   LwpaPollFdSet exceptfds;
-
 } LwpaPollContext;
 
 #ifdef __cplusplus

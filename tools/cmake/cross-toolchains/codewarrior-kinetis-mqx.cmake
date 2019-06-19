@@ -29,8 +29,8 @@ if(NOT DEFINED CODEWARRIOR_INSTALL_DIR)
 endif()
 
 set(TOOLS_DIR ${CODEWARRIOR_INSTALL_DIR}/Cross_Tools/arm-none-eabi-gcc-4_7_3)
-set(CMAKE_C_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-gcc.exe)
-set(CMAKE_CXX_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-g++.exe)
+set(CMAKE_C_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-gcc.exe CACHE FILEPATH "CodeWarrior/gcc C Compiler")
+set(CMAKE_CXX_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-g++.exe CACHE FILEPATH "CodeWarrior/gcc C++ Compiler")
 
 set(LWPA_TARGET_OS mqx)
 add_compile_options(
@@ -57,3 +57,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 # this line to bypass the compiler checks.
 # set(CMAKE_C_COMPILER_WORKS 1)
 # set(CMAKE_CXX_COMPILER_WORKS 1)
+
+# The unit tests and examples will not build properly from CMake on this platform.
+set(LWPA_BUILD_TESTS OFF CACHE BOOL "Build the lwpa unit tests" FORCE)
+set(LWPA_BUILD_EXAMPLES OFF CACHE BOOL "Build the lwpa examples" FORCE)

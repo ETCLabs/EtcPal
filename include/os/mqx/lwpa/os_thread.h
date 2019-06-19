@@ -28,14 +28,6 @@
 extern "C" {
 #endif
 
-typedef struct LwpaThreadParams
-{
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char* thread_name;
-  void* platform_data;
-} LwpaThreadParams;
-
 typedef struct LwpaThreadParamsMqx
 {
   _mqx_uint task_attributes;
@@ -56,8 +48,6 @@ typedef struct
   _task_id tid;
 } lwpa_thread_t;
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
-bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms);
 #define lwpa_thread_sleep(sleep_ms) _time_delay(sleep_ms)
 
 #ifdef __cplusplus

@@ -28,8 +28,8 @@ if(NOT DEFINED IAR_INSTALL_DIR)
   set(IAR_INSTALL_DIR "C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.5")
 endif()
 
-set(CMAKE_C_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe)
-set(CMAKE_CXX_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe)
+set(CMAKE_C_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe CACHE FILEPATH "IAR C Compiler")
+set(CMAKE_CXX_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe CACHE FILEPATH "IAR C++ Compiler")
 
 set(LWPA_TARGET_OS mqx)
 add_compile_options(
@@ -47,3 +47,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 # this line to bypass the compiler checks.
 # set(CMAKE_C_COMPILER_WORKS 1)
 # set(CMAKE_CXX_COMPILER_WORKS 1)
+
+# The unit tests and examples will not build properly from CMake on this platform.
+set(LWPA_BUILD_TESTS OFF CACHE BOOL "Build the lwpa unit tests" FORCE)
+set(LWPA_BUILD_EXAMPLES OFF CACHE BOOL "Build the lwpa examples" FORCE)

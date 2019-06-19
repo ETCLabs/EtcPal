@@ -23,6 +23,10 @@
 #include <rtcs.h>
 #include "lwpa/inet.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint32_t lwpa_socket_t;
 
 /*! An identifier for an invalid socket handle. The ONLY invalid socket descriptor is LWPA_SOCKET_INVALID. */
@@ -30,17 +34,29 @@ typedef uint32_t lwpa_socket_t;
 
 #define LWPA_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef struct LwpaPollCtxSocket
+{
+  lwpa_socket_t socket;
+  lwpa_poll_events_t events;
+  void* user_data;
+} LwpaPollCtxSocket;
 
-#define IP_OS_TO_LWPA_V4(lwpaipptr, pfipptr) LWPA_IP_SET_V4_ADDRESS((lwpaipptr), (pfipptr)->s_addr)
-#define IP_LWPA_TO_OS_V4(pfipptr, lwpaipptr) ((pfipptr)->s_addr = LWPA_IP_V4_ADDRESS(lwpaipptr))
-#define IP_OS_TO_LWPA_V6(lwpaipptr, pfipptr) LWPA_IP_SET_V6_ADDRESS((lwpaipptr), (pfipptr)->s6_addr)
-#define IP_LWPA_TO_OS_V6(pfipptr, lwpaipptr) memcpy((pfipptr)->s6_addr, LWPA_IP_V6_ADDRESS(lwpaipptr), IPV6_BYTES)
+typedef struct LwpaPollFdSet
+{
+  rtcs_fd_set set;
+  size_t count;
+} LwpaPollFdSet;
 
-bool sockaddr_os_to_lwpa(LwpaSockaddr* sa, const struct sockaddr* pfsa);
-size_t sockaddr_lwpa_to_os(struct sockaddr* pfsa, const LwpaSockaddr* sa);
+typedef struct LwpaPollContext
+{
+  bool valid;
+
+  LwpaPollCtxSocket sockets[LWPA_SOCKET_MAX_POLL_SIZE];
+  size_t num_valid_sockets;
+
+  LwpaPollFdSet readfds;
+  LwpaPollFdSet writefds;
+} LwpaPollContext;
 
 #ifdef __cplusplus
 }

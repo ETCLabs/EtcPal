@@ -32,6 +32,8 @@
 
 #define POLL_CONTEXT_ARR_CHUNK_SIZE 10
 
+/***************************** Private macros ********************************/
+
 #define LWPA_FD_ZERO(setptr) \
   FD_ZERO(&(setptr)->set);   \
   (setptr)->count = 0
