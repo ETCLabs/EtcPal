@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - OS port: Linux
 - OS port: macOS
+- lwpa_init() in lwpa/common.h. lwpa_init() must be called before using features
+  defined by feature macros defined in lwpa/common.h.
 
 ### Changed
 - Naming: 'operating system' and 'platform' are used somewhat interchangably by
