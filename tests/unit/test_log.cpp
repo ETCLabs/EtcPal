@@ -53,7 +53,8 @@ public:
   bool time_fn_called;
 };
 
-extern "C" static void log_cb(void* context, const LwpaLogStrings* strings)
+extern "C" {
+static void log_cb(void* context, const LwpaLogStrings* strings)
 {
   LogTest* lt = static_cast<LogTest*>(context);
   if (lt)
@@ -63,7 +64,7 @@ extern "C" static void log_cb(void* context, const LwpaLogStrings* strings)
   }
 }
 
-extern "C" static void time_cb(void* context, LwpaLogTimeParams* time_params)
+static void time_cb(void* context, LwpaLogTimeParams* time_params)
 {
   LogTest* lt = static_cast<LogTest*>(context);
   if (lt && time_params)
@@ -72,6 +73,7 @@ extern "C" static void time_cb(void* context, LwpaLogTimeParams* time_params)
     lt->time_fn_called = true;
   }
 }
+}  // extern "C"
 
 void LogTest::FillDefaultTime(LwpaLogTimeParams& time_params)
 {
