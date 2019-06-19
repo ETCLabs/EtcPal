@@ -166,7 +166,7 @@ bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLay
   else
   {
     pdu->pdata = cur_ptr;
-    pdu->datalen = (size_t)(pdu_len - (cur_ptr - buf));
+    pdu->datalen = (size_t)(pdu_len - (size_t)(cur_ptr - buf));
   }
   return true;
 }

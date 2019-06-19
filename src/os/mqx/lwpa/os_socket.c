@@ -55,7 +55,7 @@ static const int shutmap[LWPA_NUM_SHUT] =
 };
 
 #define LWPA_NUM_AF     3
-static const int sfmap[LWPA_NUM_AF] =
+static const uint32_t sfmap[LWPA_NUM_AF] =
 {
   AF_UNSPEC,
   PF_INET,
@@ -70,7 +70,7 @@ static const uint32_t stmap[LWPA_NUM_TYPE] =
 };
 
 #define LWPA_NUM_AIF    8
-static const int aiflagmap[LWPA_NUM_AIF] =
+static const uint32_t aiflagmap[LWPA_NUM_AIF] =
 {
   0,
   AI_PASSIVE,
@@ -82,7 +82,7 @@ static const int aiflagmap[LWPA_NUM_AIF] =
   AI_PASSIVE | AI_CANONNAME | AI_NUMERICHOST
 };
 
-static const int aifammap[LWPA_NUM_AF] =
+static const uint16_t aifammap[LWPA_NUM_AF] =
 {
   AF_UNSPEC,
   AF_INET,
@@ -90,7 +90,7 @@ static const int aifammap[LWPA_NUM_AF] =
 };
 
 #define LWPA_NUM_IPPROTO    6
-static const int aiprotmap[LWPA_NUM_IPPROTO] =
+static const uint16_t aiprotmap[LWPA_NUM_IPPROTO] =
 {
   0,
   0,
@@ -193,12 +193,12 @@ lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr* address)
   if (sa_size == 0)
     return kLwpaErrInvalid;
 
-  return err_os_to_lwpa(bind(id, &ss, sa_size));
+  return err_os_to_lwpa(bind(id, &ss, (uint16_t)sa_size));
 }
 
 lwpa_error_t lwpa_close(lwpa_socket_t id)
 {
-  return err_os_to_lwpa(closesocket(id));
+  return err_os_to_lwpa((uint32_t)closesocket(id));
 }
 
 lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr* address)
@@ -290,13 +290,13 @@ int lwpa_sendto(lwpa_socket_t id, const void* message, size_t length, int flags,
   if ((ss_size = sockaddr_lwpa_to_os(dest_addr, &ss)) == 0)
     return kLwpaErrInvalid;
 
-  res = sendto(id, (char*)message, (uint32_t)length, 0, &ss, ss_size);
+  res = sendto(id, (char*)message, (uint32_t)length, 0, &ss, (uint16_t)ss_size);
   return (res == RTCS_ERROR ? err_os_to_lwpa(RTCS_geterror(id)) : res);
 }
 
 lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void* option_value, size_t option_len)
 {
-  uint32_t res = RTCSERR_SOCK_INVALID_OPTION;
+  int32_t res = RTCSERR_SOCK_INVALID_OPTION;
 
   if (!option_value)
     return kLwpaErrInvalid;
@@ -325,7 +325,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
     case LWPA_SO_SNDBUF:
       if (level == LWPA_SOL_SOCKET && option_len >= sizeof(uint32_t))
       {
-        uint32_t val = *(int*)option_value;
+        uint32_t val = (uint32_t)(*(int*)option_value);
         res = setsockopt(id, SOL_TCP, OPT_TBSIZE, &val, sizeof val);
       }
       break;
@@ -364,7 +364,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
         else if (LWPA_IP_IS_V6(&greq->group) && level == LWPA_IPPROTO_IPV6)
         {
           struct ipv6_mreq val;
-          val.ipv6imr_interface = greq->ifindex;
+          val.ipv6imr_interface = (unsigned int)greq->ifindex;
           memcpy(&val.ipv6imr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
           res = setsockopt(id, SOL_IP6, RTCS_SO_IP6_JOIN_GROUP, &val, sizeof val);
         }
@@ -384,7 +384,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
         else if (LWPA_IP_IS_V6(&greq->group) && level == LWPA_IPPROTO_IPV6)
         {
           struct ipv6_mreq val;
-          val.ipv6imr_interface = greq->ifindex;
+          val.ipv6imr_interface = (unsigned int)greq->ifindex;
           memcpy(&val.ipv6imr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
           res = setsockopt(id, SOL_IP6, RTCS_SO_IP6_LEAVE_GROUP, &val, sizeof val);
         }
@@ -439,7 +439,7 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
       break;
   }
 
-  return err_os_to_lwpa(res);
+  return err_os_to_lwpa((uint32_t)res);
 }
 
 int32_t join_leave_mcast_group_ipv4(lwpa_socket_t id, const struct LwpaMreq* mreq, bool join)
@@ -464,7 +464,7 @@ lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how)
 {
   if (how >= 0 && how < LWPA_NUM_SHUT)
   {
-    return err_os_to_lwpa(shutdownsocket(id, (int32_t)shutmap[how]));
+    return err_os_to_lwpa((uint32_t)shutdownsocket(id, (int32_t)shutmap[how]));
   }
   return kLwpaErrInvalid;
 }
@@ -502,21 +502,21 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
   socklen_t uint32_size = sizeof(uint32_t);
   if (RTCS_OK == getsockopt(id, SOL_SOCKET, OPT_SOCKET_TYPE, &sock_type, &uint32_size))
   {
-    uint32_t res;
+    int32_t res;
     uint32_t opt_value = (blocking ? FALSE : TRUE);
     if (sock_type == SOCK_STREAM)
     {
       res = setsockopt(id, SOL_TCP, OPT_RECEIVE_NOWAIT, &opt_value, uint32_size);
       if (res == RTCS_OK)
         res = setsockopt(id, SOL_TCP, OPT_SEND_NOWAIT, &opt_value, uint32_size);
-      return err_os_to_lwpa(res);
+      return err_os_to_lwpa((uint32_t)res);
     }
     else if (sock_type == SOCK_DGRAM)
     {
       res = setsockopt(id, SOL_UDP, OPT_RECEIVE_NOWAIT, &opt_value, uint32_size);
       if (res == RTCS_OK)
         res = setsockopt(id, SOL_UDP, OPT_SEND_NOWAIT, &opt_value, uint32_size);
-      return err_os_to_lwpa(res);
+      return err_os_to_lwpa((uint32_t)res);
     }
     else
     {
@@ -626,7 +626,8 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
   else
     os_timeout = (uint32_t)timeout_ms;
 
-  int32_t nfds = (context->readfds.count > context->writefds.count) ? context->readfds.count : context->writefds.count;
+  int32_t nfds =
+      (int32_t)((context->readfds.count > context->writefds.count) ? context->readfds.count : context->writefds.count);
   int32_t sel_res = select(nfds, context->readfds.count ? &context->readfds.set : NULL,
                            context->writefds.count ? &context->writefds.set : NULL, NULL, os_timeout);
 
@@ -763,10 +764,10 @@ lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const L
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
-    pf_hints.ai_flags = (hints->ai_flags < LWPA_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0;
-    pf_hints.ai_family = (hints->ai_family < LWPA_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
-    pf_hints.ai_socktype = (hints->ai_socktype < LWPA_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
-    pf_hints.ai_protocol = (hints->ai_protocol < LWPA_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
+    pf_hints.ai_flags = (uint16_t)((hints->ai_flags < LWPA_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0);
+    pf_hints.ai_family = (uint16_t)((hints->ai_family < LWPA_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC);
+    pf_hints.ai_socktype = (uint32_t)((hints->ai_socktype < LWPA_NUM_TYPE) ? stmap[hints->ai_socktype] : 0);
+    pf_hints.ai_protocol = (uint16_t)((hints->ai_protocol < LWPA_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0);
   }
 
   res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
@@ -777,7 +778,7 @@ lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const L
     if (!lwpa_nextaddr(result))
       return kLwpaErrSys;
   }
-  return err_os_to_lwpa(res);
+  return err_os_to_lwpa((uint32_t)res);
 }
 
 bool lwpa_nextaddr(LwpaAddrinfo* ai)
