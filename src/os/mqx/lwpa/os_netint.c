@@ -28,15 +28,17 @@
 
 static LwpaNetintInfo netints[BSP_ENET_DEVICE_COUNT];
 
-static void copy_interface_info(size_t mqx_index, LwpaNetintInfo* netint)
+static void copy_interface_info(uint32_t mqx_index, LwpaNetintInfo* netint)
 {
   IPCFG_IP_ADDRESS_DATA ip_data;
 
-  /* This module is quick and dirty and needs some work.
-   * - We are ignoring IPv6.
-   * - We don't check for loopback interfaces or invalid data.
-   */
-  netint->ifindex = (int)RTCS_if_get_handle(mqx_index);
+  // This module is quick and dirty and needs some work.
+  // - We are ignoring IPv6.
+  // - We don't check for loopback interfaces or invalid data.
+
+  // In MQX, interfaces are kept in a linked list and retrieved using an index from 0.
+  // To provide an RFC-3493-compliant index, we'll just offset that index by 1.
+  netint->index = mqx_index + 1;
 
   ipcfg_get_ip(mqx_index, &ip_data);
   LWPA_IP_SET_V4_ADDRESS(&netint->addr, ip_data.ip);
@@ -52,7 +54,7 @@ static void copy_interface_info(size_t mqx_index, LwpaNetintInfo* netint)
 
 lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
-  for (size_t i = 0; i < BSP_ENET_DEVICE_COUNT; ++i)
+  for (uint32_t i = 0; i < BSP_ENET_DEVICE_COUNT; ++i)
   {
     copy_interface_info(i, &netints[i]);
   }
@@ -66,20 +68,20 @@ void os_free_interfaces(CachedNetintInfo* cache)
   cache->netints = NULL;
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
 {
-  int index_found = -1;
+  unsigned int index_found = 0;
 
   for (const LwpaNetintInfo* netint = netints; netint < netints + BSP_ENET_DEVICE_COUNT; ++netint)
   {
     if (!lwpa_ip_is_wildcard(&netint->mask) && lwpa_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {
-      index_found = netint->ifindex;
+      index_found = netint->index;
       break;
     }
   }
-  if (index_found == -1)
-    index_found = netints[BSP_DEFAULT_ENET_DEVICE].ifindex;
+  if (index_found == 0)
+    index_found = netints[BSP_DEFAULT_ENET_DEVICE].index;
 
   *index = index_found;
   return kLwpaErrOk;

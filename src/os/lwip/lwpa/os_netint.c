@@ -26,7 +26,7 @@ static bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const Lwp
 
 static void copy_interface_info(struct netif* lwip_netint, LwpaNetintInfo* netint)
 {
-  netint->ifindex = (int)lwip_netint->num;
+  netint->index = (int)lwip_netint->num;
   if (lwip_netint->hwaddr_len == NETINTINFO_MAC_LEN)
     memcpy(netint->mac, lwip_netint->hwaddr, NETINTINFO_MAC_LEN);
   else
@@ -130,7 +130,8 @@ bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr
 {
   if (LWPA_IP_IS_V4(ip1) && LWPA_IP_IS_V4(ip2) && LWPA_IP_IS_V4(mask))
   {
-    return ((LWPA_IP_V4_ADDRESS(ip1) & LWPA_IP_V4_ADDRESS(mask)) == (LWPA_IP_V4_ADDRESS(ip2) & LWPA_IP_V4_ADDRESS(mask)));
+    return ((LWPA_IP_V4_ADDRESS(ip1) & LWPA_IP_V4_ADDRESS(mask)) ==
+            (LWPA_IP_V4_ADDRESS(ip2) & LWPA_IP_V4_ADDRESS(mask)));
   }
   else if (LWPA_IP_IS_V6(ip1) && LWPA_IP_IS_V6(ip2) && LWPA_IP_IS_V6(mask))
   {

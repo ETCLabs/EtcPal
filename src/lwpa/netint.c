@@ -153,14 +153,14 @@ lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNeti
   if (netint_cache.num_netints == 0)
     return kLwpaErrNoNetints;
 
-  int index;
+  unsigned int index;
   lwpa_error_t res = os_resolve_route(dest, &index);
   if (res == kLwpaErrOk)
   {
     for (LwpaNetintInfo* netint_entry = netint_cache.netints;
          netint_entry < netint_cache.netints + netint_cache.num_netints; ++netint_entry)
     {
-      if (netint_entry->addr.type == dest->type && netint_entry->ifindex == index)
+      if (netint_entry->addr.type == dest->type && netint_entry->index == index)
       {
         *netint = *netint_entry;
         return kLwpaErrOk;
@@ -176,5 +176,5 @@ int compare_netints(const void* a, const void* b)
   LwpaNetintInfo* netint1 = (LwpaNetintInfo*)a;
   LwpaNetintInfo* netint2 = (LwpaNetintInfo*)b;
 
-  return (netint1->ifindex > netint2->ifindex) - (netint1->ifindex < netint2->ifindex);
+  return (netint1->index > netint2->index) - (netint1->index < netint2->index);
 }

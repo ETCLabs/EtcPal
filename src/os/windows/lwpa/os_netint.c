@@ -39,7 +39,7 @@ static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNet
 
 /*************************** Function definitions ****************************/
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
 {
   struct sockaddr_storage os_addr;
   if (ip_lwpa_to_os(dest, (lwpa_os_ipaddr_t*)&os_addr))
@@ -207,7 +207,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
           {
             info->is_default = false;
           }
-          info->ifindex = pcur->IfIndex;
+          info->index = pcur->IfIndex;
           break;
         case AF_INET6:
           copy_ipv6_info(pip, info);
@@ -220,7 +220,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
           {
             info->is_default = false;
           }
-          info->ifindex = pcur->Ipv6IfIndex;
+          info->index = pcur->Ipv6IfIndex;
           break;
         default:
           pip = pip->Next;

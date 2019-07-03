@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   platforms.
 - lwpa_log_callback interface tweak - combine the various log message pointers
   into a struct LwpaLogStrings.
+- LwpaNetintInfo: 'ifindex' renamed to 'index' and changed to type unsigned int
+  for better compliance with RFC 3493
 
 ### Removed
 
