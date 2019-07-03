@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   into a struct LwpaLogStrings.
 - LwpaNetintInfo: 'ifindex' renamed to 'index' and changed to type unsigned int
   for better compliance with RFC 3493
+- lwpa_netint_get_interface_for_dest(): Signature changed to return lwpa_error_t
 
 ### Removed
 

@@ -112,24 +112,40 @@ size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_
  *
  *  \param[out] netint Pointer to network interface description struct to fill with the information
  *                     about the default interface.
- *  \return true (netint was filled in) or false (error occurred).
+ *  \return #kLwpaErrOk: netint was filled in.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kLwpaErrNotFound: No default interface found for this type.
  */
-bool lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint)
+lwpa_error_t lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint)
 {
   if (init_count && netint)
   {
-    if (type == kLwpaIpTypeV4 && default_netint.v4_valid)
+    if (type == kLwpaIpTypeV4)
     {
-      *netint = netint_cache.netints[default_netint.v4_index];
-      return true;
+      if (default_netint.v4_valid)
+      {
+        *netint = netint_cache.netints[default_netint.v4_index];
+        return kLwpaErrOk;
+      }
+      else
+      {
+        return kLwpaErrNotFound;
+      }
     }
-    else if (type == kLwpaIpTypeV6 && default_netint.v6_valid)
+    else if (type == kLwpaIpTypeV6)
     {
-      *netint = netint_cache.netints[default_netint.v6_index];
-      return true;
+      if (default_netint.v6_valid)
+      {
+        *netint = netint_cache.netints[default_netint.v6_index];
+        return kLwpaErrOk;
+      }
+      else
+      {
+        return kLwpaErrNotFound;
+      }
     }
   }
-  return false;
+  return kLwpaErrInvalid;
 }
 
 /*! \brief Get the network interface that the system will choose when routing an IP packet to the

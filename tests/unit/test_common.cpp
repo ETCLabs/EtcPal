@@ -54,7 +54,7 @@ TEST_F(CommonTest, netint_double_init)
 
   // After 2 inits and one deinit, we should still be able to make valid calls to the module.
   LwpaNetintInfo def_netint;
-  EXPECT_TRUE(lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_netint));
+  EXPECT_EQ(kLwpaErrOk, lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_netint));
 
   lwpa_deinit(LWPA_FEATURE_NETINTS);
 }

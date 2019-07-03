@@ -68,8 +68,8 @@ TEST_F(NetintTest, default)
 
   num_netints = lwpa_netint_get_interfaces(netint_arr.get(), num_netints);
 
-  bool have_default_v4 = lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_v4);
-  bool have_default_v6 = lwpa_netint_get_default_interface(kLwpaIpTypeV6, &def_v6);
+  bool have_default_v4 = (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_v4));
+  bool have_default_v6 = (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &def_v6));
 
   if (have_default_v4)
   {

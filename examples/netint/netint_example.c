@@ -118,14 +118,14 @@ int main()
   }
 
   LwpaNetintInfo default_v4;
-  if (lwpa_netint_get_default_interface(kLwpaIpTypeV4, &default_v4))
+  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &default_v4))
   {
     char addr_str[LWPA_INET_ADDRSTRLEN] = {'\0'};
     lwpa_inet_ntop(&default_v4.addr, addr_str, LWPA_INET_ADDRSTRLEN);
     printf("Default IPv4 interface: %s (%s)\n", addr_str, default_v4.name);
   }
   LwpaNetintInfo default_v6;
-  if (lwpa_netint_get_default_interface(kLwpaIpTypeV6, &default_v6))
+  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &default_v6))
   {
     char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
     lwpa_inet_ntop(&default_v6.addr, addr_str, LWPA_INET6_ADDRSTRLEN);
