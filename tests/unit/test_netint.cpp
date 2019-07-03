@@ -72,18 +72,26 @@ TEST_F(NetintTest, default)
   bool have_default_v6 = lwpa_netint_get_default_interface(kLwpaIpTypeV6, &def_v6);
 
   if (have_default_v4)
+  {
     EXPECT_TRUE(def_v4.is_default);
+  }
   if (have_default_v6)
+  {
     EXPECT_TRUE(def_v6.is_default);
+  }
 
   for (LwpaNetintInfo* netint = netint_arr.get(); netint < netint_arr.get() + num_netints; ++netint)
   {
     if (netint->is_default)
     {
       if (netint->addr.type == kLwpaIpTypeV4)
+      {
         EXPECT_EQ(0, memcmp(netint, &def_v4, sizeof def_v4));
+      }
       else if (netint->addr.type == kLwpaIpTypeV6)
+      {
         EXPECT_EQ(0, memcmp(netint, &def_v6, sizeof def_v6));
+      }
     }
   }
 }

@@ -192,7 +192,7 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     // Interface index
     ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
     if (ioctl_res == 0)
-      current_info->index = if_req.ifr_ifindex;
+      current_info->index = (unsigned int)if_req.ifr_ifindex;
     else
       current_info->index = 0;
 
@@ -240,14 +240,14 @@ lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
     // Check each route to see if it matches the destination address explicitly
     if (lwpa_ip_network_portions_equal(&entry->addr, dest, &entry->mask))
     {
-      index_found = entry->interface_index;
+      index_found = (unsigned int)entry->interface_index;
       break;
     }
   }
 
   // Fall back to the default route
-  if (index_found < 0 && table_to_use->default_route)
-    index_found = table_to_use->default_route->interface_index;
+  if (index_found == 0 && table_to_use->default_route)
+    index_found = (unsigned int)table_to_use->default_route->interface_index;
 
   if (index_found > 0)
   {
