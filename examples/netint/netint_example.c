@@ -75,7 +75,7 @@ void create_format_strings(const LwpaNetintInfo* netint_arr, size_t num_interfac
 
   snprintf(header_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%s\n", longest_name, longest_addr,
            longest_netmask);
-  snprintf(line_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%8d\n", longest_name, longest_addr,
+  snprintf(line_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%8u\n", longest_name, longest_addr,
            longest_netmask);
 }
 
@@ -114,7 +114,7 @@ int main()
     snprintf(mac_str, 18, "%02x:%02x:%02x:%02x:%02x:%02x", netint->mac[0], netint->mac[1], netint->mac[2],
              netint->mac[3], netint->mac[4], netint->mac[5]);
 
-    printf(line_format, netint->name, addr_str, netmask_str, mac_str, netint->ifindex);
+    printf(line_format, netint->name, addr_str, netmask_str, mac_str, netint->index);
   }
 
   LwpaNetintInfo default_v4;

@@ -247,7 +247,7 @@ TEST_F(SocketTest, multicast_udp)
 
   // Subscribe socket 1 to the multicast address.
   LwpaGroupReq greq;
-  greq.ifindex = default_netint_.ifindex;
+  greq.ifindex = default_netint_.index;
   LWPA_IP_SET_V4_ADDRESS(&greq.group, TEST_MCAST_ADDR);
   ASSERT_EQ(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 

@@ -351,25 +351,6 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
       }
       break;
     case LWPA_MCAST_JOIN_GROUP:
-      if (option_len == sizeof(LwpaGroupReq))
-      {
-        LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
-        if (LWPA_IP_IS_V4(&greq->group) && level == LWPA_IPPROTO_IP)
-        {
-          struct LwpaMreq mreq;
-          mreq.group = greq->group;
-          LWPA_IP_SET_V4_ADDRESS(&mreq.netint, RTCS_if_get_addr((_rtcs_if_handle)greq->ifindex));
-          res = join_leave_mcast_group_ipv4(id, &mreq, true);
-        }
-        else if (LWPA_IP_IS_V6(&greq->group) && level == LWPA_IPPROTO_IPV6)
-        {
-          struct ipv6_mreq val;
-          val.ipv6imr_interface = (unsigned int)greq->ifindex;
-          memcpy(&val.ipv6imr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
-          res = setsockopt(id, SOL_IP6, RTCS_SO_IP6_JOIN_GROUP, &val, sizeof val);
-        }
-      }
-      break;
     case LWPA_MCAST_LEAVE_GROUP:
       if (option_len == sizeof(LwpaGroupReq))
       {
@@ -377,16 +358,52 @@ lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const
         if (LWPA_IP_IS_V4(&greq->group) && level == LWPA_IPPROTO_IP)
         {
           struct LwpaMreq mreq;
-          mreq.group = greq->group;
-          LWPA_IP_SET_V4_ADDRESS(&mreq.netint, RTCS_if_get_addr((_rtcs_if_handle)greq->ifindex));
-          res = join_leave_mcast_group_ipv4(id, &mreq, false);
+          bool keep_going = true;
+
+          if (greq->ifindex != 0)
+          {
+            IPCFG_IP_ADDRESS_DATA ip_data;
+            if (ipcfg_get_ip(greq->ifindex - 1, &ip_data))
+              LWPA_IP_SET_V4_ADDRESS(&mreq.netint, ip_data.ip);
+            else
+              keep_going = false;
+          }
+          else
+          {
+            lwpa_ip_set_wildcard(kLwpaIpTypeV4, &mreq.netint);
+          }
+
+          if (keep_going)
+          {
+            mreq.group = greq->group;
+            res = join_leave_mcast_group_ipv4(id, &mreq, option_name == LWPA_MCAST_JOIN_GROUP ? true : false);
+          }
         }
         else if (LWPA_IP_IS_V6(&greq->group) && level == LWPA_IPPROTO_IPV6)
         {
           struct ipv6_mreq val;
-          val.ipv6imr_interface = (unsigned int)greq->ifindex;
-          memcpy(&val.ipv6imr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
-          res = setsockopt(id, SOL_IP6, RTCS_SO_IP6_LEAVE_GROUP, &val, sizeof val);
+          bool keep_going = true;
+
+          if (greq->ifindex != 0)
+          {
+            uint32_t scope_id = ipcfg6_get_scope_id(greq->ifindex - 1);
+            if (scope_id != 0)
+              val.ipv6imr_interface = scope_id;
+            else
+              keep_going = false;
+          }
+          else
+          {
+            val.ipv6imr_interface = 0;
+          }
+
+          if (keep_going)
+          {
+            memcpy(&val.ipv6imr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
+            res = setsockopt(id, SOL_IP6,
+                             option_name == LWPA_MCAST_JOIN_GROUP ? RTCS_SO_IP6_JOIN_GROUP : RTCS_SO_IP6_LEAVE_GROUP,
+                             &val, sizeof val);
+          }
         }
       }
       break;

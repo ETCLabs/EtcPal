@@ -43,6 +43,6 @@ void lwpa_netint_deinit();
 
 lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
 void os_free_interfaces(CachedNetintInfo* cache);
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index);
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index);
 
 #endif /* _LWPA_PRIVATE_NETINT_H_ */

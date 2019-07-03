@@ -65,7 +65,7 @@ typedef struct RoutingTableEntry
   LwpaIpAddr addr;
   LwpaIpAddr mask;
   LwpaIpAddr gateway;
-  int interface_index;
+  unsigned int interface_index;
   /* Darwin seems to set this flag on default entries that are not chosen as *the* system-wide
    * default. I have not seen this behavior documented anywhere, but it's the only way I can tell
    * to determine which route is truly the default route. */
@@ -194,24 +194,24 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     // Make sure we match the corresponding link information
     if (link_name && link_addr && 0 == strcmp(ifaddr->ifa_name, link_name))
     {
-      current_info->ifindex = link_addr->sdl_index;
+      current_info->index = link_addr->sdl_index;
       memcpy(current_info->mac, link_addr->sdl_data + link_addr->sdl_nlen, LWPA_NETINTINFO_MAC_LEN);
     }
     else
     {
       // Backup - get the interface index using if_nametoindex
-      current_info->ifindex = if_nametoindex(ifaddr->ifa_name);
+      current_info->index = if_nametoindex(ifaddr->ifa_name);
       memset(current_info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
     }
 
     // Is Default
     if (LWPA_IP_IS_V4(&current_info->addr) && routing_table_v4.default_route &&
-        current_info->ifindex == routing_table_v4.default_route->interface_index)
+        current_info->index == routing_table_v4.default_route->interface_index)
     {
       current_info->is_default = true;
     }
     else if (LWPA_IP_IS_V6(&current_info->addr) && routing_table_v6.default_route &&
-             current_info->ifindex == routing_table_v6.default_route->interface_index)
+             current_info->index == routing_table_v6.default_route->interface_index)
     {
       current_info->is_default = true;
     }
@@ -234,14 +234,14 @@ void os_free_interfaces(CachedNetintInfo* cache)
   free_routing_tables();
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
 {
   RoutingTable* table_to_use = (LWPA_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
-  int index_found = -1;
+  unsigned int index_found = 0;
   for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
   {
-    if (entry->interface_index < 0 || LWPA_IP_IS_INVALID(&entry->mask))
+    if (entry->interface_index == 0 || LWPA_IP_IS_INVALID(&entry->mask))
       continue;
 
     // Check each route to see if it matches the destination address explicitly
@@ -253,10 +253,10 @@ lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
   }
 
   // Fall back to the default route
-  if (index_found < 0 && table_to_use->default_route)
+  if (index_found == 0 && table_to_use->default_route)
     index_found = table_to_use->default_route->interface_index;
 
-  if (index_found >= 0)
+  if (index_found > 0)
   {
     *index = index_found;
     return kLwpaErrOk;
@@ -629,7 +629,7 @@ void init_routing_table_entry(RoutingTableEntry* entry)
   LWPA_IP_SET_INVALID(&entry->addr);
   LWPA_IP_SET_INVALID(&entry->mask);
   LWPA_IP_SET_INVALID(&entry->gateway);
-  entry->interface_index = -1;
+  entry->interface_index = 0;
   entry->interface_scope = false;
 }
 
@@ -698,14 +698,14 @@ void debug_print_routing_table(RoutingTable* table)
 
     if_indextoname(entry->interface_index, ifname_str);
 
-    printf("%-40s %-40s %-40s %-5d %s\n", addr_str, mask_str, gw_str, entry->interface_index, ifname_str);
+    printf("%-40s %-40s %-40s %-5u %s\n", addr_str, mask_str, gw_str, entry->interface_index, ifname_str);
   }
 
   if (table->default_route)
   {
     char gw_str[LWPA_INET6_ADDRSTRLEN];
     lwpa_inet_ntop(&table->default_route->gateway, gw_str, LWPA_INET6_ADDRSTRLEN);
-    printf("Default route: %s (%d)\n", gw_str, table->default_route->interface_index);
+    printf("Default route: %s (%u)\n", gw_str, table->default_route->interface_index);
   }
   else
   {

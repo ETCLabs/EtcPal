@@ -192,18 +192,18 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     // Interface index
     ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
     if (ioctl_res == 0)
-      current_info->ifindex = if_req.ifr_ifindex;
+      current_info->index = (unsigned int)if_req.ifr_ifindex;
     else
-      current_info->ifindex = -1;
+      current_info->index = 0;
 
     // Is Default
     if (LWPA_IP_IS_V4(&current_info->addr) && routing_table_v4.default_route &&
-        current_info->ifindex == routing_table_v4.default_route->interface_index)
+        current_info->index == routing_table_v4.default_route->interface_index)
     {
       current_info->is_default = true;
     }
     else if (LWPA_IP_IS_V6(&current_info->addr) && routing_table_v6.default_route &&
-             current_info->ifindex == routing_table_v6.default_route->interface_index)
+             current_info->index == routing_table_v6.default_route->interface_index)
     {
       current_info->is_default = true;
     }
@@ -227,29 +227,29 @@ void os_free_interfaces(CachedNetintInfo* cache)
   free_routing_tables();
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
 {
   RoutingTable* table_to_use = (LWPA_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
-  int index_found = -1;
+  unsigned int index_found = 0;
   for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
   {
-    if (entry->interface_index < 0 || LWPA_IP_IS_INVALID(&entry->mask))
+    if (entry->interface_index <= 0 || LWPA_IP_IS_INVALID(&entry->mask))
       continue;
 
     // Check each route to see if it matches the destination address explicitly
     if (lwpa_ip_network_portions_equal(&entry->addr, dest, &entry->mask))
     {
-      index_found = entry->interface_index;
+      index_found = (unsigned int)entry->interface_index;
       break;
     }
   }
 
   // Fall back to the default route
-  if (index_found < 0 && table_to_use->default_route)
-    index_found = table_to_use->default_route->interface_index;
+  if (index_found == 0 && table_to_use->default_route)
+    index_found = (unsigned int)table_to_use->default_route->interface_index;
 
-  if (index_found >= 0)
+  if (index_found > 0)
   {
     *index = index_found;
     return kLwpaErrOk;
@@ -316,7 +316,7 @@ lwpa_error_t build_routing_table(int family, RoutingTable* table)
           done = true;
           break;
         case kLwpaErrBufSize:
-          recv_buf_size *= 2;
+          recv_buf_size *= 2;  // Double the buffer size and try again.
           result = kLwpaErrOk;
           break;
         default:
