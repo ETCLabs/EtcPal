@@ -162,8 +162,8 @@ typedef struct LwpaSockaddr
 /*! A description of a network interface. */
 typedef struct LwpaNetintInfo
 {
-  /*! The OS-specific network interface number. Used for IPv6 and IP-version-neutral APIs, as
-   *  specified in Section 4 of RFC 3493. */
+  /*! The OS-specific network interface number. Used for IPv6, multicast and IP-version-neutral
+   *  APIs. See \ref interface_indexes for more information. */
   unsigned int index;
   /*! The interface ip address. */
   LwpaIpAddr addr;

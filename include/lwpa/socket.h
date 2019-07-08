@@ -89,8 +89,7 @@ typedef uint32_t lwpa_poll_events_t;
  *  @{ */
 /*! Get/Set, value is int. Value indicates TTL for IPv4 or hop limit for IPv6. */
 #define LWPA_IP_TTL             11
-/*! Get/Set, value is LwpaIpAddr indicating interface IP address for IPv4, or int representing
- *  interface index for IPv6. */
+/*! Get/Set, value is unsigned int representing interface index (see \ref interface_indexes). */
 #define LWPA_IP_MULTICAST_IF    12
 /*! Get/Set, value is int. Value indicates TTL for IPv4 or hop limit for IPv6. */
 #define LWPA_IP_MULTICAST_TTL   13
@@ -129,8 +128,8 @@ typedef struct LwpaMreq
 /*! Option value for #LWPA_MCAST_JOIN_GROUP and #LWPA_MCAST_LEAVE_GROUP. */
 typedef struct LwpaGroupReq
 {
-  /*! Index of network interface on which to join the multicast group. This index is provided in
-   *  LwpaNetintInfo structures. */
+  /*! Index of network interface on which to join the multicast group (see
+   *  \ref interface_indexes). */
   unsigned int ifindex;
   /*! Multicast group to join. */
   LwpaIpAddr group;

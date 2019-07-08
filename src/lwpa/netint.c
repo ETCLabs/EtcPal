@@ -87,6 +87,11 @@ size_t lwpa_netint_get_num_interfaces()
 }
 
 /*! \brief Enumerate the network interfaces on the system.
+ *
+ *  For NICs with multiple IP addresses assigned, this module separates each address into its own
+ *  entry in the netint array. Because of this, multiple array entries could have the same value
+ *  for the index, mac and name parameters.
+ *
  *  \param[out] netint_arr Array of network interface description structs to fill in with interface
  *                         info.
  *  \param[in] netint_arr_size Size of the netint array.
@@ -110,6 +115,9 @@ size_t lwpa_netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_
  *  lwpa_netint_get_interfaces(), it is more efficient to inspect the is_default flag of each
  *  interface in that existing array.
  *
+ *  \param[in] type The IP protocol for which to get the default network interface, either
+ *                  #kLwpaIpTypeV4 or #kLwpaIpTypeV6. A separate default interface is maintained for
+ *                  each.
  *  \param[out] netint Pointer to network interface description struct to fill with the information
  *                     about the default interface.
  *  \return #kLwpaErrOk: netint was filled in.

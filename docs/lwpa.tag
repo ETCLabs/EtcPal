@@ -2,12 +2,21 @@
 <tagfile>
   <compound kind="file">
     <name>version.h</name>
-    <path>D:/git/ETCLabs/RDMnetWS/lwpa/include/lwpa/</path>
+    <path>D:/git/ETCLabs/lwpa/include/lwpa/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="union">
     <name>LwpaIpAddr::AddrUnion</name>
     <filename>union_lwpa_ip_addr_1_1_addr_union.html</filename>
+    <class kind="struct">LwpaIpAddr::AddrUnion::LwpaIpv6Addr</class>
+  </compound>
+  <compound kind="struct">
+    <name>CachedNetintInfo</name>
+    <filename>struct_cached_netint_info.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>DefaultNetint</name>
+    <filename>struct_default_netint.html</filename>
   </compound>
   <compound kind="struct">
     <name>LwpaAddrinfo</name>
@@ -63,6 +72,24 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>LwpaGroupReq</name>
+    <filename>struct_lwpa_group_req.html</filename>
+    <member kind="variable">
+      <type>unsigned int</type>
+      <name>ifindex</name>
+      <anchorfile>struct_lwpa_group_req.html</anchorfile>
+      <anchor>a452f46bf9904a02408a12d9e406b4de7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>LwpaIpAddr</type>
+      <name>group</name>
+      <anchorfile>struct_lwpa_group_req.html</anchorfile>
+      <anchor>a9d92abf5e7c4488e5d9dfc5ab9376e89</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>LwpaIpAddr</name>
     <filename>struct_lwpa_ip_addr.html</filename>
     <class kind="union">LwpaIpAddr::AddrUnion</class>
@@ -73,6 +100,10 @@
       <anchor>a43f11ca9456afc383d0d550f16e3c420</anchor>
       <arglist></arglist>
     </member>
+  </compound>
+  <compound kind="struct">
+    <name>LwpaIpAddr::AddrUnion::LwpaIpv6Addr</name>
+    <filename>struct_lwpa_ip_addr_1_1_addr_union_1_1_lwpa_ipv6_addr.html</filename>
   </compound>
   <compound kind="struct">
     <name>LwpaLinger</name>
@@ -135,6 +166,31 @@
       <name>context</name>
       <anchorfile>struct_lwpa_log_params.html</anchorfile>
       <anchor>ae376f130b17d169ee51be68077a89ed0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>LwpaLogStrings</name>
+    <filename>struct_lwpa_log_strings.html</filename>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>syslog</name>
+      <anchorfile>struct_lwpa_log_strings.html</anchorfile>
+      <anchor>a5911dbe6a47cb2b9cfbab87a8881b5b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>human_readable</name>
+      <anchorfile>struct_lwpa_log_strings.html</anchorfile>
+      <anchor>a4ac8b9667178849660fd3b1f99e93366</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>raw</name>
+      <anchorfile>struct_lwpa_log_strings.html</anchorfile>
+      <anchor>a8129637af8920bc9328bbce2a00bfeb4</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -249,6 +305,10 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>LwpaModuleInit</name>
+    <filename>struct_lwpa_module_init.html</filename>
+  </compound>
+  <compound kind="struct">
     <name>LwpaMreq</name>
     <filename>struct_lwpa_mreq.html</filename>
     <member kind="variable">
@@ -270,10 +330,10 @@
     <name>LwpaNetintInfo</name>
     <filename>struct_lwpa_netint_info.html</filename>
     <member kind="variable">
-      <type>int</type>
-      <name>ifindex</name>
+      <type>unsigned int</type>
+      <name>index</name>
       <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>a01e636f8746c84f1cf3d45c4afbfde35</anchor>
+      <anchor>a589d64202487f78e3cc30dd2e04c5201</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -288,13 +348,6 @@
       <name>mask</name>
       <anchorfile>struct_lwpa_netint_info.html</anchorfile>
       <anchor>abff5b2b0f50f02db2d130bb3c59cd5b0</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>LwpaIpAddr</type>
-      <name>gate</name>
-      <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>aab794a1d7268e4cf399af0600c73e0d8</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -532,13 +585,6 @@
       <anchor>aaafd70d57737ab374198d3d754411129</anchor>
       <arglist></arglist>
     </member>
-    <member kind="variable">
-      <type>uint32_t</type>
-      <name>scope_id</name>
-      <anchorfile>struct_lwpa_sockaddr.html</anchorfile>
-      <anchor>a1d93077fdccdb6e377b421b79e1ba15c</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="struct">
     <name>LwpaSyslogParams</name>
@@ -611,7 +657,7 @@
       <type>char *</type>
       <name>thread_name</name>
       <anchorfile>struct_lwpa_thread_params.html</anchorfile>
-      <anchor>aff53d286a69bd6b453eeb29ab3a75326</anchor>
+      <anchor>a9c15c6e0b10239673fa9d8be6ad08128</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -718,8 +764,15 @@
       <type>bool</type>
       <name>lwpa_mutex_take</name>
       <anchorfile>group__lwpa__mutex.html</anchorfile>
-      <anchor>ga7726931cda1cdbf1307283b3894c4af2</anchor>
-      <arglist>(lwpa_mutex_t *id, int wait_ms)</arglist>
+      <anchor>gaddfd883159e43fd194fbf3b355411263</anchor>
+      <arglist>(lwpa_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_mutex_try_take</name>
+      <anchorfile>group__lwpa__mutex.html</anchorfile>
+      <anchor>gadc322cce9079e4f7f7ab9e9e685633b0</anchor>
+      <arglist>(lwpa_mutex_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -758,8 +811,15 @@
       <type>bool</type>
       <name>lwpa_signal_wait</name>
       <anchorfile>group__lwpa__signal.html</anchorfile>
-      <anchor>ga64d1e2d7b517cdb5f2c3d33081ff6d7c</anchor>
-      <arglist>(lwpa_signal_t *id, int wait_ms)</arglist>
+      <anchor>gad1e8c49a266c700a182c907ef7aa29bf</anchor>
+      <arglist>(lwpa_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_signal_poll</name>
+      <anchorfile>group__lwpa__signal.html</anchorfile>
+      <anchor>ga704ec739497e224a990037524a9086ab</anchor>
+      <arglist>(lwpa_signal_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -798,8 +858,15 @@
       <type>bool</type>
       <name>lwpa_rwlock_readlock</name>
       <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>gab5db36f592b621b305c7808c1496a3ae</anchor>
-      <arglist>(lwpa_rwlock_t *id, int wait_ms)</arglist>
+      <anchor>gac4f4763199bad441330867f975316393</anchor>
+      <arglist>(lwpa_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_rwlock_try_readlock</name>
+      <anchorfile>group__lwpa__rwlock.html</anchorfile>
+      <anchor>ga9f6b8671a52e91200447ad2912c1a6a3</anchor>
+      <arglist>(lwpa_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -812,8 +879,15 @@
       <type>bool</type>
       <name>lwpa_rwlock_writelock</name>
       <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>ga33b3938c8392576c3d780f759c975ec5</anchor>
-      <arglist>(lwpa_rwlock_t *id, int wait_ms)</arglist>
+      <anchor>gaba4a0078be86e6fc1408cfbe602c0fba</anchor>
+      <arglist>(lwpa_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_rwlock_try_writelock</name>
+      <anchorfile>group__lwpa__rwlock.html</anchorfile>
+      <anchor>ga7f42819fdf2e713b03bf74325e2823f3</anchor>
+      <arglist>(lwpa_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -886,10 +960,10 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_thread_stop</name>
+      <name>lwpa_thread_join</name>
       <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>gac98ab5b271d1fdf59b2df4d04f38f7f3</anchor>
-      <arglist>(lwpa_thread_t *id, int wait_ms)</arglist>
+      <anchor>gac43cbc0cdfd62e365ad76e1110fe359c</anchor>
+      <arglist>(lwpa_thread_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -950,6 +1024,69 @@
       <anchorfile>group__lwpa.html</anchorfile>
       <anchor>ga1c2b0e972201228ff6c55879bab82861</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>uint32_t</type>
+      <name>lwpa_features_t</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>gad114d8d0d8fc2b500bbe5cd815f050c6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>lwpa_error_t</type>
+      <name>lwpa_init</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>gad3f4f0f94eeaede46d9f5f089129446b</anchor>
+      <arglist>(lwpa_features_t features)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>lwpa_deinit</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>gaa5af7daa1612ac3fc98f49a166a0c669</anchor>
+      <arglist>(lwpa_features_t features)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_FEATURE_SOCKETS</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>ga51e7968caa7cc29fad18ec872c739cbb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_FEATURE_NETINTS</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>ga4830c5a79855564b312b2c12e869702a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_FEATURE_TIMERS</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>ga14efb0458ae41274fe96f0797d35e1f1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_FEATURE_LOGGING</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>ga20bf4148474b69f45813f818e16ea0d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_FEATURES_ALL</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>ga1c807b4b9009a27514f7895791ecf49a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_FEATURES_ALL_BUT</name>
+      <anchorfile>group__lwpa.html</anchorfile>
+      <anchor>ga1effd03384104d4edff4ea16a1c26c9b</anchor>
+      <arglist>(mask)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -1085,6 +1222,12 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <name>kLwpaErrConnAborted</name>
+      <anchorfile>group__lwpa__error.html</anchorfile>
+      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa6d3e2a994acb0c378ce59660db281084</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
       <name>kLwpaErrConnRefused</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfae077aadad03eec8faad0c0898ee467ed</anchor>
@@ -1133,6 +1276,12 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <name>kLwpaErrPerm</name>
+      <anchorfile>group__lwpa__error.html</anchorfile>
+      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfab2b2faed88fad885e984309f9c6423b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
       <name>kLwpaErrSys</name>
       <anchorfile>group__lwpa__error.html</anchorfile>
       <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa43124f55ae7c2e0f869a49f1fc6e21c9</anchor>
@@ -1155,10 +1304,17 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpasock_ip_port_equal</name>
+      <name>LWPA_INET_ADDRSTRLEN</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gacdc07c9ddec218067a54d87f017b256c</anchor>
-      <arglist>(sockptr1, sockptr2)</arglist>
+      <anchor>gac9a7a8dbe7def9af922af1a99b4c6569</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_INET6_ADDRSTRLEN</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga078d3101f67934bce6f13f193a4832ea</anchor>
+      <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>struct LwpaIpAddr</type>
@@ -1206,95 +1362,144 @@
       <anchor>gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da</anchor>
       <arglist></arglist>
     </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_ip_is_link_local</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>gace949c44b216e2dd8d81de6b57aafb13</anchor>
+      <arglist>(const LwpaIpAddr *ip)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_ip_is_loopback</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga700cb0526cde413cca61f970231d4806</anchor>
+      <arglist>(const LwpaIpAddr *ip)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_ip_is_multicast</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga3b0cdd32380a0dd44d67fef6800ba95f</anchor>
+      <arglist>(const LwpaIpAddr *ip)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_ip_is_wildcard</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>gaaad2d470c8be885c55f8eaf4c89710eb</anchor>
+      <arglist>(const LwpaIpAddr *ip)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>lwpa_ip_set_wildcard</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga8f5ba7636a445882d3bd09e45f97c285</anchor>
+      <arglist>(lwpa_iptype_t type, LwpaIpAddr *ip)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_ip_equal</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>gac1805623603318386ea74815b694f021</anchor>
+      <arglist>(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>lwpa_ip_cmp</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga3aba9897afc056a10b81d4f2d6451d0f</anchor>
+      <arglist>(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_ip_and_port_equal</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>gad78b7fcae748568c74ecb2c08bfbace4</anchor>
+      <arglist>(const LwpaSockaddr *sock1, const LwpaSockaddr *sock2)</arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>lwpa_ip_mask_length</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga16facd74441deb055bfffaf7c8d7f7ee</anchor>
+      <arglist>(const LwpaIpAddr *netmask)</arglist>
+    </member>
+    <member kind="function">
+      <type>LwpaIpAddr</type>
+      <name>lwpa_ip_mask_from_length</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga9ef3d4b831b3c9e598f9e568fd17ffe3</anchor>
+      <arglist>(lwpa_iptype_t type, unsigned int mask_length)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_ip_network_portions_equal</name>
+      <anchorfile>group__lwpa__inet.html</anchorfile>
+      <anchor>ga5c416c166428a88fc03f4be742ed6e78</anchor>
+      <arglist>(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr *netmask)</arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_is_v4</name>
+      <name>LWPA_IP_IS_V4</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga99ca443ff7adfc20ef3dfff1f668a563</anchor>
+      <anchor>ga0b1e21bccece957bb0a4986c51fd7d3a</anchor>
       <arglist>(lwpa_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_is_v6</name>
+      <name>LWPA_IP_IS_V6</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga60fa1dee3547985e5419d7f3d4f8b233</anchor>
+      <anchor>ga6e008633fe046017e20ad036175400a4</anchor>
       <arglist>(lwpa_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_is_invalid</name>
+      <name>LWPA_IP_IS_INVALID</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga512afd056b57c62b511e44a93972f4d5</anchor>
+      <anchor>gae45f4d73820e647d45f4a6c1346fcb0f</anchor>
       <arglist>(lwpa_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_v4_address</name>
+      <name>LWPA_IP_V4_ADDRESS</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga731ba4e4b7760993fe3f4658066b9fcd</anchor>
+      <anchor>gab58ee5657f5ec2e0a33fe6108d15acfc</anchor>
       <arglist>(lwpa_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_v6_address</name>
+      <name>LWPA_IP_V6_ADDRESS</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga6f3e7c1f5539712019154ffeed900d07</anchor>
+      <anchor>ga505ee023d06f2a90976dd50b596ba963</anchor>
       <arglist>(lwpa_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_set_v4_address</name>
+      <name>LWPA_IP_SET_V4_ADDRESS</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga8cefecedef40877115c050848fd9a1d5</anchor>
+      <anchor>ga7a29e94ac67df250504e56ac9257a8c8</anchor>
       <arglist>(lwpa_ip_ptr, val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_set_v6_address</name>
+      <name>LWPA_IP_SET_V6_ADDRESS</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga82919752f2428a78edfb26f745481e5d</anchor>
-      <arglist>(lwpa_ip_ptr, val)</arglist>
+      <anchor>ga4217ea63c7520ea2fe349be430c8cfec</anchor>
+      <arglist>(lwpa_ip_ptr, addr_val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_set_invalid</name>
+      <name>LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga85259d4019be76ee5067cb744cb4cb76</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
+      <anchor>ga2d1a4c527a80069754dbc3f08b66723b</anchor>
+      <arglist>(lwpa_ip_ptr, addr_val, scope_id_val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpaip_is_multicast</name>
+      <name>LWPA_IP_SET_INVALID</name>
       <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga2a3be69f1ef99486ad72ab4b8eae966d</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpaip_equal</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga1961dd86bd985153be3afa3bf3bebefa</anchor>
-      <arglist>(ipptr1, ipptr2)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpaip_cmp</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga7bcd89c614dbfb588d5c6bb54ce67872</anchor>
-      <arglist>(ipptr1, ipptr2)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpaip_make_any_v4</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gafff526c280a904c4f27372a000e37859</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpaip_make_any_v6</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gaf0433f37c8aedbd049388bb7c08f5172</anchor>
+      <anchor>gaf8587cfa1476afaae1c34081f2b9e061</anchor>
       <arglist>(lwpa_ip_ptr)</arglist>
     </member>
   </compound>
@@ -1315,6 +1520,7 @@
     <title>lwpa_log</title>
     <filename>group__lwpa__log.html</filename>
     <class kind="struct">LwpaLogTimeParams</class>
+    <class kind="struct">LwpaLogStrings</class>
     <class kind="struct">LwpaSyslogParams</class>
     <class kind="struct">LwpaLogParams</class>
     <member kind="define">
@@ -1402,11 +1608,18 @@
       <arglist></arglist>
     </member>
     <member kind="typedef">
+      <type>struct LwpaLogStrings</type>
+      <name>LwpaLogStrings</name>
+      <anchorfile>group__lwpa__log.html</anchorfile>
+      <anchor>ga25c13b78ecd42cad3de3341f66199974</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
       <type>void(*</type>
       <name>lwpa_log_callback</name>
       <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gacd26df727c6a5f6d0d6fcfa4c2ac3755</anchor>
-      <arglist>)(void *context, const char *syslog_str, const char *human_str, const char *raw_str)</arglist>
+      <anchor>gab5ffbb4d8e2168a0c51b10e5b3099de8</anchor>
+      <arglist>)(void *context, const LwpaLogStrings *strings)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
@@ -1789,32 +2002,18 @@
       <arglist>(LwpaNetintInfo *netint_arr, size_t netint_arr_size)</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
+      <type>lwpa_error_t</type>
       <name>lwpa_netint_get_default_interface</name>
       <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>gaa829c4964206f21bf51f0171a9c81ff8</anchor>
-      <arglist>(LwpaNetintInfo *netint)</arglist>
+      <anchor>ga1ef8afff7ab8a6c8f36c4201139afa75</anchor>
+      <arglist>(lwpa_iptype_t type, LwpaNetintInfo *netint)</arglist>
     </member>
     <member kind="function">
-      <type>const LwpaNetintInfo *</type>
-      <name>lwpa_netint_get_iface_for_dest</name>
+      <type>lwpa_error_t</type>
+      <name>lwpa_netint_get_interface_for_dest</name>
       <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga20eaf09781921e196281ad94de07022a</anchor>
-      <arglist>(const LwpaIpAddr *dest, const LwpaNetintInfo *netint_arr, size_t netint_arr_size)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>lwpa_netint_register_change_cb</name>
-      <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga8a6fef891935e1c359d7e41beda2fb32</anchor>
-      <arglist>(netint_change_notification fn, void *context)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>lwpa_netint_unregister_change_cb</name>
-      <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>gae5eca4ae57153b10efee9fbce09ec684</anchor>
-      <arglist>(int handle)</arglist>
+      <anchor>ga00eec072ad464f8c19835154ee683cf6</anchor>
+      <arglist>(const LwpaIpAddr *dest, LwpaNetintInfo *netint)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -2300,6 +2499,7 @@
     <filename>group__lwpa__socket.html</filename>
     <class kind="struct">LwpaLinger</class>
     <class kind="struct">LwpaMreq</class>
+    <class kind="struct">LwpaGroupReq</class>
     <class kind="struct">LwpaPollEvent</class>
     <class kind="struct">LwpaAddrinfo</class>
     <member kind="define">
@@ -2316,32 +2516,11 @@
       <anchor>gab36e47297a2a48f28c080608c5643c25</anchor>
       <arglist></arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LWPA_INET_ADDRSTRLEN</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac9a7a8dbe7def9af922af1a99b4c6569</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LWPA_INET6_ADDRSTRLEN</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga078d3101f67934bce6f13f193a4832ea</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
       <name>lwpa_socket_t</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
       <anchor>ga0fea2946114e0a2617a086c2139fb9f6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>LwpaPollContext</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga78118eb52c46ee1c731ac66c443a4690</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -2363,6 +2542,13 @@
       <name>LwpaMreq</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
       <anchor>gaf4b1e36ceb83d78b0e4aa513d9fc7af1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct LwpaGroupReq</type>
+      <name>LwpaGroupReq</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>gaf497966f431d877d7219574b42e94f4c</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -2493,6 +2679,48 @@
     </member>
     <member kind="function">
       <type>lwpa_error_t</type>
+      <name>lwpa_getaddrinfo</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga7c1c76581b63ab7c5b383e25dc200990</anchor>
+      <arglist>(const char *hostname, const char *service, const LwpaAddrinfo *hints, LwpaAddrinfo *result)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>lwpa_nextaddr</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>gafe366acfdbaa9d98d9459660798c73fd</anchor>
+      <arglist>(LwpaAddrinfo *ai)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>lwpa_freeaddrinfo</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga85eeba64809a88e6a246e9471d5e2cd6</anchor>
+      <arglist>(LwpaAddrinfo *ai)</arglist>
+    </member>
+    <member kind="function">
+      <type>lwpa_error_t</type>
+      <name>lwpa_inet_ntop</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>gac6b5fcff898be3bbf7789a8c480082b1</anchor>
+      <arglist>(const LwpaIpAddr *src, char *dest, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>lwpa_error_t</type>
+      <name>lwpa_inet_pton</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga4110e753475f9505e87b88e0097befb4</anchor>
+      <arglist>(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>LwpaPollContext</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga78118eb52c46ee1c731ac66c443a4690</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>lwpa_error_t</type>
       <name>lwpa_poll_context_init</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
       <anchor>gac75213ffc31b40209d7190dc2237e37a</anchor>
@@ -2532,41 +2760,6 @@
       <anchorfile>group__lwpa__socket.html</anchorfile>
       <anchor>ga24182f58155e7894da11e4f621ad42c8</anchor>
       <arglist>(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms)</arglist>
-    </member>
-    <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_getaddrinfo</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga7c1c76581b63ab7c5b383e25dc200990</anchor>
-      <arglist>(const char *hostname, const char *service, const LwpaAddrinfo *hints, LwpaAddrinfo *result)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>lwpa_nextaddr</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gafe366acfdbaa9d98d9459660798c73fd</anchor>
-      <arglist>(LwpaAddrinfo *ai)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>lwpa_freeaddrinfo</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga85eeba64809a88e6a246e9471d5e2cd6</anchor>
-      <arglist>(LwpaAddrinfo *ai)</arglist>
-    </member>
-    <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_inet_ntop</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac6b5fcff898be3bbf7789a8c480082b1</anchor>
-      <arglist>(const LwpaIpAddr *src, char *dest, size_t size)</arglist>
-    </member>
-    <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_inet_pton</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga4110e753475f9505e87b88e0097befb4</anchor>
-      <arglist>(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -2713,6 +2906,20 @@
       <name>LWPA_IP_MULTICAST_LOOP</name>
       <anchorfile>group__lwpa__socket.html</anchorfile>
       <anchor>gad0175e8affc43157d2487763ef6660fc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_IP_ADD_MEMBERSHIP</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>ga5c54cc7bb91aa5d1d06491b74515fb45</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LWPA_IP_DROP_MEMBERSHIP</name>
+      <anchorfile>group__lwpa__socket.html</anchorfile>
+      <anchor>gaffd798a26996201a08ae7489f69adb57</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -2909,6 +3116,16 @@
       <anchor>gab75cca7a42a1cdc1bb901ed24fc095ee</anchor>
       <arglist></arglist>
     </member>
+  </compound>
+  <compound kind="page">
+    <name>additional_docs</name>
+    <title>Additional Documentation</title>
+    <filename>additional_docs</filename>
+  </compound>
+  <compound kind="page">
+    <name>interface_indexes</name>
+    <title>Network Interface Indexes</title>
+    <filename>interface_indexes</filename>
   </compound>
   <compound kind="page">
     <name>index</name>
