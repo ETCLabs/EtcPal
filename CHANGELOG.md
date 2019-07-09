@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OS port: macOS
 - lwpa_init() in lwpa/common.h. lwpa_init() must be called before using features
   defined by feature macros defined in lwpa/common.h.
+- Extra documentation page for network interface indexes.
 
 ### Changed
 - Naming: 'operating system' and 'platform' are used somewhat interchangably by
@@ -25,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - LwpaNetintInfo: 'ifindex' renamed to 'index' and changed to type unsigned int
   for better compliance with RFC 3493
 - lwpa_netint_get_interface_for_dest(): Signature changed to return lwpa_error_t
+- lwpa_socket: Multicast socket options now refer to network interfaces only by
+  interface index, for portability and compatibility with IPv6.
 
 ### Removed
 

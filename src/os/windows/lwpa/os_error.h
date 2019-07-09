@@ -20,9 +20,10 @@
 #ifndef _LWPA_OS_ERROR_H_
 #define _LWPA_OS_ERROR_H_
 
+#include <WinSock2.h>
+#include <Windows.h>
 #include "lwpa/error.h"
 
 lwpa_error_t err_winsock_to_lwpa(int wsaerror);
 
 #endif /* _LWPA_OS_ERROR_H_ */
-

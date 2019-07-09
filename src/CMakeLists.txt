@@ -107,8 +107,8 @@ endif()
 # Add include paths and library dependencies based on OS for which we are being compiled
 if(LWPA_TARGET_OS STREQUAL windows)
   target_sources(lwpa PRIVATE
-    ${LWPA_ROOT}/src/os/windows/lwpa/winsock_error.h
-    ${LWPA_ROOT}/src/os/windows/lwpa/winsock_error.c
+    ${LWPA_ROOT}/src/os/windows/lwpa/os_error.h
+    ${LWPA_ROOT}/src/os/windows/lwpa/os_error.c
   )
   target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
 elseif(LWPA_TARGET_OS STREQUAL macos)
@@ -144,6 +144,11 @@ elseif(LWPA_TARGET_OS STREQUAL mqx)
 endif()
 
 set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
+
+# Installation
+install(TARGETS lwpa LIBRARY DESTINATION lib)
+install(DIRECTORY ${LWPA_ROOT}/include/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
 
 ###############################################################################
 # Mock lwpa library

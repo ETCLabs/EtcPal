@@ -17,10 +17,12 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "winsock_error.h"
+#include "os_error.h"
 
 #include <WinSock2.h>
 #include <Windows.h>
+
+#include "lwpa/int.h"
 
 // Convert Windows sockets errors to lwpa_error_t values.
 lwpa_error_t err_winsock_to_lwpa(int wsaerror)
@@ -99,4 +101,3 @@ lwpa_error_t err_winsock_to_lwpa(int wsaerror)
       return kLwpaErrSys;
   }
 }
-

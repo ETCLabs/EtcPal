@@ -22,14 +22,22 @@
 
 #include <rtcs.h>
 #include "lwpa/inet.h"
+#include "lwpa/int.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+/* Definitions for the lwpa socket type */
+
 typedef uint32_t lwpa_socket_t;
 
-/*! An identifier for an invalid socket handle. The ONLY invalid socket descriptor is LWPA_SOCKET_INVALID. */
+#ifdef PRIu32
+#define PRIlwpasockt PRIu32
+#else
+#define PRIlwpasockt "u"
+#endif
+
 #define LWPA_SOCKET_INVALID RTCS_SOCKET_ERROR
 
 #define LWPA_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE

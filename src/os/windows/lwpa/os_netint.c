@@ -29,6 +29,7 @@
 #include "lwpa/int.h"
 #include "lwpa/socket.h"
 #include "lwpa/private/netint.h"
+#include "os_error.h"
 
 /*********************** Private function prototypes *************************/
 

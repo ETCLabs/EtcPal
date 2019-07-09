@@ -104,11 +104,18 @@ The platform ports of lwpa have the following dependencies:
     package like `ossp-uuid`.
 + Microsoft Windows
   - Windows XP SP1 or later
+  - Windows SDK library dependencies for optional features (if building using
+    CMake, these dependencies are handled automatically):
+    * lwpa_netint (network interfaces): Iphlpapi.lib
+    * lwpa_socket (socket interface): Iphlpapi.lib, Ws2_32.lib
+    * lwpa_uuid (UUID creation): Rpcrt4.lib
+    * lwpa_timer (system timers): Winmm.lib
 + MQX RTOS
   - MQX 4.2.0
 + Linux
-  - libuuid (if compiling lwpa, use `sudo apt-get install uuid-dev` or the
-             equivalent method for your distribution)
   - Optional Features:
-    * lwpa_netint (Network Interfaces): Linux 2.2, glibc 2.3.3
-    * lwpa_socket (Socket interface): Linux 2.6
+    * lwpa_netint (network interfaces): Linux 2.2, glibc 2.3.3
+    * lwpa_socket (socket interface): Linux 2.6
+    * lwpa_uuid (UUID creation): libuuid (if compiling lwpa, use
+      `sudo apt-get install uuid-dev` or the equivalent method for your
+      distribution)

@@ -37,13 +37,21 @@
 extern "C" {
 #endif
 
+/* Definitions for the lwpa socket type */
+
 typedef SOCKET lwpa_socket_t;
 
-/*! An identifier for an invalid socket handle. The ONLY invalid socket descriptor is
- *  LWPA_SOCKET_INVALID. */
+#if defined(_WIN64)
+#define PRIlwpasockt "I64u"
+#else
+#define PRIlwpasockt "u"
+#endif
+
 #define LWPA_SOCKET_INVALID INVALID_SOCKET
 
 #define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
+
+/* Definitions for the lwpa_poll API */
 
 typedef struct LwpaPollCtxSocket
 {

@@ -27,11 +27,17 @@
 extern "C" {
 #endif
 
+/* Definitions for the lwpa socket type */
+
 typedef int lwpa_socket_t;
+
+#define PRIlwpasockt "d"
 
 #define LWPA_SOCKET_INVALID -1
 
 #define LWPA_SOCKET_MAX_POLL_SIZE -1
+
+/* Definitions for lwpa_poll API */
 
 typedef struct LwpaPollContext
 {

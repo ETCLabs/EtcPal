@@ -26,8 +26,6 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 
-#include "winsock_error.h"
-
 /*************************** Private constants *******************************/
 
 #define POLL_CONTEXT_ARR_CHUNK_SIZE 10
@@ -477,14 +475,13 @@ int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, s
       }
       break;
     case LWPA_IP_MULTICAST_IF:
-      if (option_len == sizeof(LwpaIpAddr))
+      if (option_len == sizeof(unsigned int))
       {
-        LwpaIpAddr* netint = (LwpaIpAddr*)option_value;
-        if (LWPA_IP_IS_V4(netint))
-        {
-          DWORD val = htonl(LWPA_IP_V4_ADDRESS(netint));
-          return setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, (char*)&val, sizeof val);
-        }
+        unsigned int ifindex = *(unsigned int*)option_value;
+        // On Windows, this socket option takes either an IPv4 address or an interface index in
+        // network byte order. We use the latter option.
+        DWORD val = htonl(ifindex);
+        return setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, (char*)&val, sizeof val);
       }
       break;
     case LWPA_IP_MULTICAST_TTL:
@@ -545,6 +542,27 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
           memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, MCAST_LEAVE_GROUP, (char*)&val, sizeof val);
         }
+      }
+      break;
+    case LWPA_IP_MULTICAST_IF:
+      if (option_len == sizeof(unsigned int))
+      {
+        DWORD val = (DWORD) * (unsigned int*)option_value;
+        return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_IF, (char*)&val, sizeof val);
+      }
+      break;
+    case LWPA_IP_MULTICAST_TTL:
+      if (option_len == sizeof(int))
+      {
+        DWORD val = (DWORD) * (int*)option_value;
+        return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, (char*)&val, sizeof val);
+      }
+      break;
+    case LWPA_IP_MULTICAST_LOOP:
+      if (option_len == sizeof(int))
+      {
+        DWORD val = (DWORD) * (int*)option_value;
+        return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, (char*)&val, sizeof val);
       }
       break;
     case LWPA_IPV6_V6ONLY:
