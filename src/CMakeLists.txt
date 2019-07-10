@@ -148,7 +148,7 @@ endif()
 set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 
 # Installation
-install(TARGETS lwpa LIBRARY DESTINATION lib)
+install(TARGETS lwpa ARCHIVE DESTINATION lib)
 install(DIRECTORY ${LWPA_ROOT}/include/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY ${LWPA_ROOT}/include/os/${LWPA_TARGET_OS}/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
 
