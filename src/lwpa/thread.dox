@@ -81,4 +81,4 @@ bool lwpa_thread_join(lwpa_thread_t *id);
  */
 void lwpa_thread_sleep(int sleep_ms);
 
-/*!@}*/
+/*! @} */

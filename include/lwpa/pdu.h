@@ -42,26 +42,26 @@
 /*! Determine whether the L flag is set in a PDU flags field.
  *  \param flags_byte The first byte of the PDU.
  *  \return true (the L flag is set) or false (the L flags is not set). */
-#define lwpa_pdu_l_flag_set(flags_byte) ((bool)(flags_byte & 0x80u))
+#define LWPA_PDU_L_FLAG_SET(flags_byte) ((bool)(flags_byte & 0x80u))
 /*! Determine whether the V flag is set in a PDU flags field.
  *  \param flags_byte The first byte of the PDU.
  *  \return true (the V flag is set) or false (the V flag is not set). */
-#define lwpa_pdu_v_flag_set(flags_byte) ((bool)(flags_byte & 0x40u))
+#define LWPA_PDU_V_FLAG_SET(flags_byte) ((bool)(flags_byte & 0x40u))
 /*! Determine whether the H flag is set in a PDU flags field.
  *  \param flags_byte The first byte of the PDU.
  *  \return true (the H flag is set) or false (the H flag is not set). */
-#define lwpa_pdu_h_flag_set(flags_byte) ((bool)(flags_byte & 0x20u))
+#define LWPA_PDU_H_FLAG_SET(flags_byte) ((bool)(flags_byte & 0x20u))
 /*! Determine whether the D flag is set in a PDU flags field.
  *  \param flags_byte The first byte of the PDU.
  *  \return true (the D flag is set) or false (the D flag is not set). */
-#define lwpa_pdu_d_flag_set(flags_byte) ((bool)(flags_byte & 0x10u))
-/*!@}*/
+#define LWPA_PDU_D_FLAG_SET(flags_byte) ((bool)(flags_byte & 0x10u))
+/*! @} */
 
 /*! Get the length from the Length field of a PDU.
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \return The length of the PDU. */
-#define lwpa_pdu_length(pdu_buf)                                                                                  \
-  ((uint32_t)(lwpa_pdu_l_flag_set(pdu_buf[0])                                                                     \
+#define LWPA_PDU_LENGTH(pdu_buf)                                                                                  \
+  ((uint32_t)(LWPA_PDU_L_FLAG_SET(pdu_buf[0])                                                                     \
                   ? ((uint32_t)((pdu_buf[0] & 0x0fu) << 16) | (uint32_t)(pdu_buf[1] << 8) | (uint32_t)pdu_buf[2]) \
                   : ((uint32_t)((pdu_buf[0] & 0x0fu) << 8) | (uint32_t)pdu_buf[1])))
 
@@ -72,24 +72,24 @@
  */
 /*! Set the L flag in a PDU flags field.
  *  \param flags_byte The first byte of the PDU. */
-#define lwpa_pdu_set_l_flag(flags_byte) (flags_byte |= 0x80u)
+#define LWPA_PDU_SET_L_FLAG(flags_byte) (flags_byte |= 0x80u)
 /*! Set the V flag in a PDU flags field.
  *  \param flags_byte The first byte of the PDU. */
-#define lwpa_pdu_set_v_flag(flags_byte) (flags_byte |= 0x40u)
+#define LWPA_PDU_SET_V_FLAG(flags_byte) (flags_byte |= 0x40u)
 /*! Set the H flag in a PDU flags field.
  *  \param flags_byte The first byte of the PDU. */
-#define lwpa_pdu_set_h_flag(flags_byte) (flags_byte |= 0x20u)
+#define LWPA_PDU_SET_H_FLAG(flags_byte) (flags_byte |= 0x20u)
 /*! Set the D flag in a PDU flags field.
  *  \param flags_byte The first byte of the PDU. */
-#define lwpa_pdu_set_d_flag(flags_byte) (flags_byte |= 0x10u)
-/*!@}*/
+#define LWPA_PDU_SET_D_FLAG(flags_byte) (flags_byte |= 0x10u)
+/*! @} */
 
 /*! Fill in the Length field of a PDU which has a length less than 4096. The L flag of this PDU must
  *  be set to 0.
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \param length Length of this PDU.
  */
-#define lwpa_pdu_pack_normal_len(pdu_buf, length)                                \
+#define LWPA_PDU_PACK_NORMAL_LEN(pdu_buf, length)                                \
   do                                                                             \
   {                                                                              \
     (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] & 0xf0) | (((length) >> 8) & 0x0fu)); \
@@ -101,7 +101,7 @@
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \param length Length of this PDU.
  */
-#define lwpa_pdu_pack_ext_len(pdu_buf, length)                                    \
+#define LWPA_PDU_PACK_EXT_LEN(pdu_buf, length)                                    \
   do                                                                              \
   {                                                                               \
     (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] & 0xf0) | (((length) >> 16) & 0x0fu)); \
@@ -129,7 +129,7 @@ typedef struct LwpaPdu
 /*! An alternative to #LWPA_PDU_INIT which can be used on an existing LwpaPdu to re-initialize its
  *  values.
  *  \param pduptr Pointer to LwpaPdu to initialize. */
-#define lwpa_init_pdu(pduptr)  \
+#define LWPA_INIT_PDU(pduptr)  \
   do                           \
   {                            \
     (pduptr)->pvector = NULL;  \
@@ -156,6 +156,6 @@ bool lwpa_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints*
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_PDU_H_ */

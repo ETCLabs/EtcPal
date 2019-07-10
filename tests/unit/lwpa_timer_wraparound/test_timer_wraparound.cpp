@@ -16,42 +16,32 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include <cstdio>
-#include <cstdint>
+
+#include "lwpa/timer.h"
 #include "gtest/gtest.h"
-#include "lwpa/common.h"
-#include "lwpa/netint.h"
-#include "lwpa/socket.h"
-#include "lwpa/common.h"
+#include "fff.h"
 
-//LwpaIpAddr g_netint;
+DEFINE_FFF_GLOBALS;
 
-int main(int argc, char** argv)
+FAKE_VALUE_FUNC(uint32_t, lwpa_getms);
+
+class TimerWraparoundTest : public ::testing::Test
 {
-  testing::InitGoogleTest(&argc, argv);
+};
 
-  // Only check our custom argument if we haven't been given the "list_tests" flag
-//  if (!testing::GTEST_FLAG(list_tests))
-//  {
-//    if (argc == 2)
-//    {
-//      if (0 >= lwpa_inet_pton(kLwpaIpTypeV4, argv[1], &g_netint))
-//      {
-//        printf(
-//            "Usage: %s <interface_addr>\n"
-//            "  interface_addr: IP address of network interface to use for test.\n",
-//            argv[0]);
-//
-//        return 1;
-//      }
-//    }
-//    else
-//    {
-//      LwpaNetintInfo default_netint;
-//      lwpa_netint_get_default_interface(&default_netint);
-//      g_netint = default_netint.addr;
-//    }
-//  }
+TEST_F(TimerWraparoundTest, wraparound)
+{
+  LwpaTimer t1;
 
-  return RUN_ALL_TESTS();
+  // Test the wraparound case by forcing a wraparound value returned from lwpa_getms()
+  lwpa_getms_fake.return_val = 0xfffffff0u;
+  lwpa_timer_start(&t1, 0x20);
+
+  // We've wrapped around but have not exceeded the interval yet
+  lwpa_getms_fake.return_val = 0x0f;
+  ASSERT_FALSE(lwpa_timer_is_expired(&t1));
+  ASSERT_EQ(lwpa_timer_elapsed(&t1), 0x1fu);
+
+  lwpa_getms_fake.return_val = 0x11;
+  ASSERT_TRUE(lwpa_timer_is_expired(&t1));
 }

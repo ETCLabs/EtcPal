@@ -82,6 +82,6 @@ void lwpa_deinit(lwpa_features_t features);
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_COMMON_H_ */

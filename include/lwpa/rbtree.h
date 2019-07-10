@@ -109,7 +109,7 @@ typedef LwpaRbNode* (*lwpa_rbnode_alloc_f)();
  */
 typedef void (*lwpa_rbnode_dealloc_f)(LwpaRbNode* node);
 
-/*!@}*/
+/*! @} */
 
 /*! \brief A red-black tree node. */
 struct LwpaRbNode
@@ -179,6 +179,6 @@ void* lwpa_rbiter_prev(LwpaRbIter* self);
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_RBTREE_H_ */

@@ -18,10 +18,6 @@
  ******************************************************************************/
 
 #include "lwpa/common.h"
-// Do some C-style mocking
-#include "lwpa/int.h"
-extern "C" uint32_t lwpa_getms();
-#define lwpa_getms lwpa_fake_getms
 #include "lwpa/timer.h"
 
 #include "gtest/gtest.h"
@@ -32,24 +28,6 @@ class TimerTest : public ::testing::Test
   void SetUp() override { ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURE_TIMERS)); }
   void TearDown() override { lwpa_deinit(LWPA_FEATURE_TIMERS); }
 };
-
-static bool mocking_getms;
-static uint32_t getms_returnval;
-
-// The getms mock
-extern "C" uint32_t lwpa_fake_getms()
-{
-  if (mocking_getms)
-  {
-    return getms_returnval;
-  }
-  else
-  {
-#undef lwpa_getms
-    return lwpa_getms();
-#define lwpa_getms lwpa_fake_getms
-  }
-}
 
 using namespace std::chrono_literals;
 
@@ -73,42 +51,23 @@ TEST_F(TimerTest, timeouts)
   lwpa_timer_start(&t2, 100);
 
   // A timer with a timeout of 0 should start expired.
-  ASSERT_TRUE(lwpa_timer_isexpired(&t1));
+  ASSERT_TRUE(lwpa_timer_is_expired(&t1));
 
   // The nonzero timeout should not be expired yet.
-  ASSERT_FALSE(lwpa_timer_isexpired(&t2));
+  ASSERT_FALSE(lwpa_timer_is_expired(&t2));
 
   std::this_thread::sleep_for(110ms);
 
   // Now it should.
-  ASSERT_TRUE(lwpa_timer_isexpired(&t2));
+  ASSERT_TRUE(lwpa_timer_is_expired(&t2));
   ASSERT_GE(lwpa_timer_elapsed(&t2), 100u);
 
   // Test resetting the timer.
   lwpa_timer_reset(&t2);
-  ASSERT_FALSE(lwpa_timer_isexpired(&t2));
+  ASSERT_FALSE(lwpa_timer_is_expired(&t2));
 
   // And test the timeout one more time.
   std::this_thread::sleep_for(110ms);
-  ASSERT_TRUE(lwpa_timer_isexpired(&t2));
+  ASSERT_TRUE(lwpa_timer_is_expired(&t2));
   ASSERT_GE(lwpa_timer_elapsed(&t2), 100u);
-}
-
-TEST_F(TimerTest, wraparound)
-{
-  LwpaTimer t1;
-
-  // Test the wraparound case by forcing a wraparound value returned from lwpa_getms()
-  mocking_getms = true;
-  getms_returnval = 0xfffffff0u;
-
-  lwpa_timer_start(&t1, 0x20);
-
-  // We've wrapped around but have not exceeded the interval yet
-  getms_returnval = 0x0f;
-  ASSERT_FALSE(lwpa_timer_isexpired(&t1));
-  ASSERT_EQ(lwpa_timer_elapsed(&t1), 0x1fu);
-
-  getms_returnval = 0x11;
-  ASSERT_TRUE(lwpa_timer_isexpired(&t1));
 }

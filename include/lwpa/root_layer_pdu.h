@@ -60,7 +60,7 @@
 #define ACN_VECTOR_ROOT_BROKER ACN_PROTOCOL_BROKER
 #define ACN_VECTOR_ROOT_RPT ACN_PROTOCOL_RPT
 #define ACN_VECTOR_ROOT_EPT ACN_PROTOCOL_EPT
-/*!@}*/
+/*! @} */
 
 /*! Holds the information contained in an ACN TCP Preamble. */
 typedef struct LwpaTcpPreamble
@@ -112,6 +112,6 @@ size_t lwpa_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLay
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_ROOT_LAYER_PDU_H_ */

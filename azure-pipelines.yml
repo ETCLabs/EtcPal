@@ -28,7 +28,9 @@ jobs:
       cmake -G "Visual Studio 15 2017 Win64" -DLWPA_BUILD_MOCK_LIB=ON ..
       cmake --build . --config %LWPA_BUILD_CONFIG%
     displayName: 'lwpa Windows build'
-  - script: build\tests\%LWPA_BUILD_CONFIG%\test_lwpa.exe
+  - script: |
+      cd build
+      ctest --output-on-failure -C %LWPA_BUILD_CONFIG%
     displayName: 'lwpa Windows test'
 
 - job: macos_build
@@ -44,7 +46,8 @@ jobs:
       cmake --build .
     displayName: 'lwpa macOS build'
   - script: |
-      build/tests/test_lwpa --gtest_filter=-SocketTest.multicast_udp:SocketPollTest.udp_in
+      cd build
+      ctest --output-on-failure
     displayName: 'lwpa macOS test'
 
 - job: linux_build
@@ -61,7 +64,9 @@ jobs:
       cmake -G "Unix Makefiles" -DLWPA_BUILD_MOCK_LIB=ON ..
       cmake --build .
     displayName: 'lwpa Linux build'
-  - script: build/tests/test_lwpa
+  - script: |
+      cd build
+      ctest --output-on-failure
     displayName: 'lwpa Linux test'
 
 # Generate documentation with doxygen. Documentation is generated from the

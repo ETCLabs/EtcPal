@@ -31,12 +31,12 @@ public:
 TEST_F(UuidTest, null)
 {
   LwpaUuid uuid = {{0}};
-  ASSERT_TRUE(lwpa_uuid_is_null(&uuid));
+  ASSERT_TRUE(LWPA_UUID_IS_NULL(&uuid));
   uuid = kLwpaNullUuid;
-  ASSERT_TRUE(lwpa_uuid_is_null(&uuid));
+  ASSERT_TRUE(LWPA_UUID_IS_NULL(&uuid));
   for (size_t i = 0; i < LWPA_UUID_BYTES; ++i)
     uuid.data[i] = static_cast<uint8_t>(i);
-  ASSERT_FALSE(lwpa_uuid_is_null(&uuid));
+  ASSERT_FALSE(LWPA_UUID_IS_NULL(&uuid));
 }
 
 TEST_F(UuidTest, compare)
@@ -45,9 +45,9 @@ TEST_F(UuidTest, compare)
   LwpaUuid uuid1_dup = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
   LwpaUuid uuid2 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17}};
 
-  ASSERT_EQ(0, lwpa_uuid_cmp(&uuid1, &uuid1_dup));
-  ASSERT_LT(0, lwpa_uuid_cmp(&uuid2, &uuid1));
-  ASSERT_GT(0, lwpa_uuid_cmp(&uuid1, &uuid2));
+  ASSERT_EQ(0, LWPA_UUID_CMP(&uuid1, &uuid1_dup));
+  ASSERT_LT(0, LWPA_UUID_CMP(&uuid2, &uuid1));
+  ASSERT_GT(0, LWPA_UUID_CMP(&uuid1, &uuid2));
 
   // Test the C++ operators
   ASSERT_LT(uuid1, uuid2);
@@ -69,7 +69,7 @@ TEST_F(UuidTest, string)
   ASSERT_EQ(0, strcmp(str_buf, "00000000-0000-0000-0000-000000000000"));
   ASSERT_TRUE(lwpa_string_to_uuid(&uuid, good_str, strlen(good_str)));
   LwpaUuid uuid_cmp = {{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}};
-  ASSERT_EQ(0, lwpa_uuid_cmp(&uuid, &uuid_cmp));
+  ASSERT_EQ(0, LWPA_UUID_CMP(&uuid, &uuid_cmp));
   uuid = kLwpaNullUuid;
   ASSERT_FALSE(lwpa_string_to_uuid(&uuid, short_str, strlen(short_str)));
   ASSERT_FALSE(lwpa_string_to_uuid(&uuid, bad_str, strlen(bad_str)));
@@ -95,7 +95,7 @@ TEST_F(UuidTest, generate_v1)
     ASSERT_EQ((uuid.data[8] & 0xc0u), 0x80u) << failure_msg;
 
     // Should be unique from the last one generated.
-    ASSERT_NE(0, lwpa_uuid_cmp(&uuid, &last_uuid)) << failure_msg;
+    ASSERT_NE(0, LWPA_UUID_CMP(&uuid, &last_uuid)) << failure_msg;
 
     last_uuid = uuid;
   }
@@ -115,13 +115,13 @@ TEST_F(UuidTest, generate_v3)
   lwpa_generate_v3_uuid(&uuid4, "Test Device", mac2, 0);
   lwpa_generate_v3_uuid(&uuid1_dup, "Test Device", mac1, 0);
 
-  ASSERT_NE(0, lwpa_uuid_cmp(&uuid1, &uuid2));
-  ASSERT_NE(0, lwpa_uuid_cmp(&uuid1, &uuid3));
-  ASSERT_NE(0, lwpa_uuid_cmp(&uuid1, &uuid4));
-  ASSERT_NE(0, lwpa_uuid_cmp(&uuid2, &uuid3));
-  ASSERT_NE(0, lwpa_uuid_cmp(&uuid2, &uuid4));
-  ASSERT_NE(0, lwpa_uuid_cmp(&uuid3, &uuid4));
-  ASSERT_EQ(0, lwpa_uuid_cmp(&uuid1, &uuid1_dup));
+  ASSERT_NE(0, LWPA_UUID_CMP(&uuid1, &uuid2));
+  ASSERT_NE(0, LWPA_UUID_CMP(&uuid1, &uuid3));
+  ASSERT_NE(0, LWPA_UUID_CMP(&uuid1, &uuid4));
+  ASSERT_NE(0, LWPA_UUID_CMP(&uuid2, &uuid3));
+  ASSERT_NE(0, LWPA_UUID_CMP(&uuid2, &uuid4));
+  ASSERT_NE(0, LWPA_UUID_CMP(&uuid3, &uuid4));
+  ASSERT_EQ(0, LWPA_UUID_CMP(&uuid1, &uuid1_dup));
 
   // Make sure the Variant Version bits are correct.
   // We should always have Variant 1, Version 3.
@@ -152,7 +152,7 @@ TEST_F(UuidTest, generate_v4)
     ASSERT_EQ((uuid.data[8] & 0xc0u), 0x80u) << failure_msg;
 
     // Should be unique from the last one generated.
-    ASSERT_NE(0, lwpa_uuid_cmp(&uuid, &last_uuid)) << failure_msg;
+    ASSERT_NE(0, LWPA_UUID_CMP(&uuid, &last_uuid)) << failure_msg;
 
     last_uuid = uuid;
   }

@@ -58,7 +58,7 @@ typedef struct LwpaUuid
  *            0 (uuid1ptr is equal to uuid2ptr)\n
  *          > 0 (uuid1ptr is greater than uuid2ptr)
  */
-#define lwpa_uuid_cmp(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, LWPA_UUID_BYTES)
+#define LWPA_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, LWPA_UUID_BYTES)
 
 /*! A null (all 0's) UUID, used by uuid_isnull() for comparison. */
 extern const LwpaUuid kLwpaNullUuid;
@@ -70,7 +70,7 @@ extern const LwpaUuid kLwpaNullUuid;
  *  \param uuidptr Pointer to UUID to null-check.
  *  \return true (UUID is null) or false (UUID is not null).
  */
-#define lwpa_uuid_is_null(uuidptr) (memcmp((uuidptr)->data, kLwpaNullUuid.data, LWPA_UUID_BYTES) == 0)
+#define LWPA_UUID_IS_NULL(uuidptr) (memcmp((uuidptr)->data, kLwpaNullUuid.data, LWPA_UUID_BYTES) == 0)
 
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
 #define LWPA_UUID_STRING_BYTES 37
@@ -96,16 +96,16 @@ lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid);
 
 inline bool operator<(const LwpaUuid& a, const LwpaUuid& b)
 {
-  return (lwpa_uuid_cmp(&a, &b) < 0);
+  return (LWPA_UUID_CMP(&a, &b) < 0);
 }
 
 inline bool operator==(const LwpaUuid& a, const LwpaUuid& b)
 {
-  return (lwpa_uuid_cmp(&a, &b) == 0);
+  return (LWPA_UUID_CMP(&a, &b) == 0);
 }
 
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_UUID_H_ */

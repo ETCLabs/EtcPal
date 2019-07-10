@@ -78,6 +78,6 @@
 
 #endif /* __cplusplus */
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_INT_H_ */

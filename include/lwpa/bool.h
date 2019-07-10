@@ -70,6 +70,6 @@
 
 #endif /* __cplusplus || DOXYGEN */
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_BOOL_H_ */

@@ -62,10 +62,10 @@ bool lwpa_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints*
 
   /* Check the inheritance and the size of the length field */
   flags_byte = *this_pdu;
-  extlength = lwpa_pdu_l_flag_set(flags_byte);
-  inheritvect = !lwpa_pdu_v_flag_set(flags_byte);
-  inherithead = !lwpa_pdu_h_flag_set(flags_byte);
-  inheritdata = !lwpa_pdu_d_flag_set(flags_byte);
+  extlength = LWPA_PDU_L_FLAG_SET(flags_byte);
+  inheritvect = !LWPA_PDU_V_FLAG_SET(flags_byte);
+  inherithead = !LWPA_PDU_H_FLAG_SET(flags_byte);
+  inheritdata = !LWPA_PDU_D_FLAG_SET(flags_byte);
 
   cur_ptr = this_pdu;
   if (cur_ptr + (extlength ? 3 : 2) >= buf_end)
@@ -74,7 +74,7 @@ bool lwpa_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints*
     return false;
   }
 
-  pdu_len = lwpa_pdu_length(this_pdu);
+  pdu_len = LWPA_PDU_LENGTH(this_pdu);
   min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : constraints->vector_size) +
                            (inherithead ? 0 : constraints->header_size));
 

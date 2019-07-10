@@ -49,6 +49,6 @@ lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNeti
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_NETINT_H_ */

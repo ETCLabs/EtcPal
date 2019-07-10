@@ -72,7 +72,7 @@
 #define LWPA_LOG_LOCAL5 (21 << 3) /*!< Reserved for local use. */
 #define LWPA_LOG_LOCAL6 (22 << 3) /*!< Reserved for local use. */
 #define LWPA_LOG_LOCAL7 (23 << 3) /*!< Reserved for local use. */
-/*!@}*/
+/*! @} */
 
 #define LWPA_LOG_NFACILITIES 24 /*!< Current number of facilities. */
 #define LWPA_LOG_FACMASK 0x03f8 /* Mask to extract facility part of a prival. */
@@ -89,10 +89,10 @@
 #define LWPA_LOG_NOTICE 5  /*!< Normal but significant condition. */
 #define LWPA_LOG_INFO 6    /*!< Informational. */
 #define LWPA_LOG_DEBUG 7   /*!< Debug-level messages. */
-/*!@}*/
+/*! @} */
 
 #define LWPA_LOG_PRIMASK 0x07 /* mask to extract priority part (internal) */
-#define LWPA_LOG_PRI(p) ((p)&LWPA_LOG_PRIMASK) /* extract priority */
+#define LWPA_LOG_PRI(p) ((p) & LWPA_LOG_PRIMASK) /* extract priority */
 #define LWPA_LOG_MAKEPRI(fac, pri) (((fac) << 3) | (pri))
 
 #define LWPA_LOG_MASK(pri) (1 << (pri)) /* mask for one priority */
@@ -131,22 +131,14 @@
 /*! A set of parameters which represent the current local time with millisecond resolution. */
 typedef struct LwpaLogTimeParams
 {
-  /*! Absolute year. Valid range 0-9999. */
-  int year;
-  /*! Month of the year. Valid range 1-12 (starting with 1 for January). */
-  int month;
-  /*! Day of the month. Valid range 1-31.  */
-  int day;
-  /*! Hours since midnight. Valid range 0-23. */
-  int hour;
-  /*! Minutes past the current hour. Valid range 0-59. */
-  int minute;
-  /*! Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
-  int second;
-  /*! Milliseconds past the current second. Valid range 0-999. */
-  int msec;
-  /*! The local offset from UTC in minutes. */
-  int utc_offset;
+  int year;       /*!< Absolute year. Valid range 0-9999. */
+  int month;      /*!< Month of the year. Valid range 1-12 (starting with 1 for January). */
+  int day;        /*!< Day of the month. Valid range 1-31.  */
+  int hour;       /*!< Hours since midnight. Valid range 0-23. */
+  int minute;     /*!< Minutes past the current hour. Valid range 0-59. */
+  int second;     /*!< Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
+  int msec;       /*!< Milliseconds past the current second. Valid range 0-999. */
+  int utc_offset; /*!< The local offset from UTC in minutes. */
 } LwpaLogTimeParams;
 
 /*! The set of log strings passed with a call to an lwpa_log_callback function. Any members not
@@ -282,6 +274,6 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_LOG_H_ */

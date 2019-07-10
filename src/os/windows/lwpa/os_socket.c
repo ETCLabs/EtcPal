@@ -26,6 +26,8 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 
+#include "os_error.h"
+
 /*************************** Private constants *******************************/
 
 #define POLL_CONTEXT_ARR_CHUNK_SIZE 10

@@ -110,9 +110,9 @@ typedef struct LwpaMempoolDesc
 
 /*! \brief Initialize a memory pool.
  *
- *  This macro must be called on a pool before using lwpa_mempool_alloc() or lwpa_mempool_free() on
- *  it. There is no deinitialization function because there is no cleanup necessary; to reset a
- *  pool, simply call this function again.
+ *  Must be called on a pool before using lwpa_mempool_alloc() or lwpa_mempool_free() on it. There
+ *  is no deinitialization function because there is no cleanup necessary; to reset a pool, simply
+ *  call this function again.
  *
  *  \param name The name of the memory pool to initialize.
  *  \return #kLwpaErrOk: The memory pool was initialized successfully.\n
@@ -165,6 +165,6 @@ size_t lwpa_mempool_used_priv(LwpaMempoolDesc* desc);
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_MEMPOOL_H_ */

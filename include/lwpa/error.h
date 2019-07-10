@@ -121,6 +121,6 @@ extern const char* lwpa_error_strings[LWPA_NUM_ERROR_CODES];
 }
 #endif
 
-/*!@}*/
+/*! @} */
 
 #endif /* _LWPA_ERROR_H_ */
