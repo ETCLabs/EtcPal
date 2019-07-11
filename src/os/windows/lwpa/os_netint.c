@@ -229,6 +229,12 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
       }
 
       strncpy_s(info->name, LWPA_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
+
+      // The friendly name requires special handling because it must be converted to UTF-8
+      memset(info->friendly_name, 0, LWPA_NETINTINFO_FRIENDLY_NAME_LEN);
+      WideCharToMultiByte(CP_UTF8, 0, pcur->FriendlyName, -1, info->friendly_name,
+                          LWPA_NETINTINFO_FRIENDLY_NAME_LEN - 1, NULL, NULL);
+
       if (pcur->PhysicalAddressLength == LWPA_NETINTINFO_MAC_LEN)
         memcpy(info->mac, pcur->PhysicalAddress, LWPA_NETINTINFO_MAC_LEN);
       else

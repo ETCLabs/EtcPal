@@ -158,6 +158,7 @@ typedef struct LwpaSockaddr
 
 #define LWPA_NETINTINFO_MAC_LEN 6
 #define LWPA_NETINTINFO_NAME_LEN 64
+#define LWPA_NETINTINFO_FRIENDLY_NAME_LEN 64
 
 /*! A description of a network interface. */
 typedef struct LwpaNetintInfo
@@ -171,8 +172,14 @@ typedef struct LwpaNetintInfo
   LwpaIpAddr mask;
   /*! The adapter MAC address. */
   uint8_t mac[LWPA_NETINTINFO_MAC_LEN];
-  /*! The adapter name as a string. */
+  /*! The system name for the interface. This name will not change unless the adapter is removed or
+   *  reconfigured. */
   char name[LWPA_NETINTINFO_NAME_LEN];
+  /*! A user-friendly name for the interface. On some systems, this is the same as the name field.
+   *  Others allow users to create and change a friendly name for network interfaces that's
+   *  different than the system name. This field should be used when printing the adapter list in a
+   *  UI. */
+  char friendly_name[LWPA_NETINTINFO_FRIENDLY_NAME_LEN];
   /*! Whether this is the default network interface. The default network interface is defined as
    *  the network interface chosen for the default IP route on a system. */
   bool is_default;

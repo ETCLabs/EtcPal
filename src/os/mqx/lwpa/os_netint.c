@@ -46,6 +46,7 @@ static void copy_interface_info(uint32_t mqx_index, LwpaNetintInfo* netint)
 
   ipcfg_get_mac(mqx_index, netint->mac);
   sprintf(netint->name, "en%d", mqx_index);
+  sprintf(netint->friendly_name, "en%d", mqx_index);
   if (mqx_index == BSP_DEFAULT_ENET_DEVICE)
     netint->is_default = true;
   else

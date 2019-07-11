@@ -184,6 +184,8 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     // Interface name
     strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
     current_info->name[LWPA_NETINTINFO_NAME_LEN - 1] = '\0';
+    strncpy(current_info->friendly_name, ifaddr->ifa_name, LWPA_NETINTINFO_FRIENDLY_NAME_LEN);
+    current_info->friendly_name[LWPA_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
 
     // Interface address
     ip_os_to_lwpa(ifaddr->ifa_addr, &current_info->addr);
