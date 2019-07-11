@@ -19,6 +19,7 @@
 
 #include "lwpa/inet.h"
 #include <ws2tcpip.h>
+#include "os_error.h"
 
 bool ip_os_to_lwpa(const lwpa_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
 {
@@ -103,7 +104,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
       addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(src));
       if (NULL != inet_ntop(AF_INET, &addr, dest, size))
         return kLwpaErrOk;
-      return kLwpaErrSys;
+      return err_winsock_to_lwpa(WSAGetLastError());
     }
     case kLwpaIpTypeV6:
     {
@@ -111,7 +112,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
       memcpy(addr.s6_addr, LWPA_IP_V6_ADDRESS(src), LWPA_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
         return kLwpaErrOk;
-      return kLwpaErrSys;
+      return err_winsock_to_lwpa(WSAGetLastError());
     }
     default:
       return kLwpaErrInvalid;
@@ -128,16 +129,24 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* des
     case kLwpaIpTypeV4:
     {
       struct in_addr addr;
-      if (1 != inet_pton(AF_INET, src, &addr))
-        return kLwpaErrSys;
+      INT res = inet_pton(AF_INET, src, &addr);
+      if (res == 0)
+        return kLwpaErrInvalid;
+      else if (res < 0)
+        return err_winsock_to_lwpa(WSAGetLastError());
+
       LWPA_IP_SET_V4_ADDRESS(dest, ntohl(addr.s_addr));
       return kLwpaErrOk;
     }
     case kLwpaIpTypeV6:
     {
       struct in6_addr addr;
-      if (1 != inet_pton(AF_INET6, src, &addr))
-        return kLwpaErrSys;
+      INT res = inet_pton(AF_INET6, src, &addr);
+      if (res == 0)
+        return kLwpaErrInvalid;
+      else if (res < 0)
+        return err_winsock_to_lwpa(WSAGetLastError());
+
       LWPA_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kLwpaErrOk;
     }
