@@ -23,7 +23,6 @@
  */
 
 #include <assert.h>
-#include <stdlib.h>
 #include <stdio.h>
 #include "lwpa/netint.h"
 #include "lwpa/socket.h"
@@ -96,15 +95,14 @@ int main()
     return 1;
   }
 
-  LwpaNetintInfo* netint_arr = (LwpaNetintInfo*)calloc(num_interfaces, sizeof(LwpaNetintInfo));
+  const LwpaNetintInfo* netint_arr = lwpa_netint_get_interfaces();
   assert(netint_arr);
-  num_interfaces = lwpa_netint_get_interfaces(netint_arr, num_interfaces);
 
   create_format_strings(netint_arr, num_interfaces);
 
   printf("Network interfaces found:\n");
   printf(header_format, NAME_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER);
-  for (LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
+  for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
     char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
     char netmask_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
