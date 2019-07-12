@@ -30,8 +30,8 @@ uint16_t lwpa_upack_16b(const uint8_t* buf)
   uint16_t val = 0;
   if (buf)
   {
-    val |= ((uint16_t)buf[0] << 8);
-    val |= ((uint16_t)buf[1]);
+    val |= (uint16_t)((uint16_t)buf[0] << 8);
+    val |= (uint16_t)buf[1];
   }
   return val;
 }
@@ -58,8 +58,8 @@ uint16_t lwpa_upack_16l(const uint8_t* buf)
   uint16_t val = 0;
   if (buf)
   {
-    val |= ((uint16_t)buf[1] << 8);
-    val |= ((uint16_t)buf[0]);
+    val |= (uint16_t)((uint16_t)buf[1] << 8);
+    val |= (uint16_t)buf[0];
   }
   return val;
 }
@@ -72,7 +72,7 @@ void lwpa_pack_16l(uint8_t* buf, uint16_t val)
 {
   if (buf)
   {
-    buf[0] = (uint8_t) (val & 0xff);
+    buf[0] = (uint8_t)(val & 0xff);
     buf[1] = (uint8_t)((val & 0xff00) >> 8);
   }
 }
@@ -86,10 +86,10 @@ uint32_t lwpa_upack_32b(const uint8_t* buf)
   uint32_t val = 0;
   if (buf)
   {
-    val |= ((uint32_t)buf[0] << 24);
-    val |= ((uint32_t)buf[1] << 16);
-    val |= ((uint32_t)buf[2] << 8);
-    val |= ((uint32_t)buf[3]);
+    val |= (uint32_t)((uint32_t)buf[0] << 24);
+    val |= (uint32_t)((uint32_t)buf[1] << 16);
+    val |= (uint32_t)((uint32_t)buf[2] << 8);
+    val |= (uint32_t)buf[3];
   }
   return val;
 }
@@ -118,10 +118,10 @@ uint32_t lwpa_upack_32l(const uint8_t* buf)
   uint32_t val = 0;
   if (buf)
   {
-    val |= ((uint32_t)buf[3] << 24);
-    val |= ((uint32_t)buf[2] << 16);
-    val |= ((uint32_t)buf[1] << 8);
-    val |= ((uint32_t)buf[0]);
+    val |= (uint32_t)((uint32_t)buf[3] << 24);
+    val |= (uint32_t)((uint32_t)buf[2] << 16);
+    val |= (uint32_t)((uint32_t)buf[1] << 8);
+    val |= (uint32_t)buf[0];
   }
   return val;
 }
@@ -152,14 +152,14 @@ uint64_t lwpa_upack_64b(const uint8_t* buf)
   uint64_t val = 0;
   if (buf)
   {
-    val |= ((uint64_t)buf[0] << 56);
-    val |= ((uint64_t)buf[1] << 48);
-    val |= ((uint64_t)buf[2] << 40);
-    val |= ((uint64_t)buf[3] << 32);
-    val |= ((uint64_t)buf[4] << 24);
-    val |= ((uint64_t)buf[5] << 16);
-    val |= ((uint64_t)buf[6] << 8);
-    val |= ((uint64_t)buf[7]);
+    val |= (uint64_t)((uint64_t)buf[0] << 56);
+    val |= (uint64_t)((uint64_t)buf[1] << 48);
+    val |= (uint64_t)((uint64_t)buf[2] << 40);
+    val |= (uint64_t)((uint64_t)buf[3] << 32);
+    val |= (uint64_t)((uint64_t)buf[4] << 24);
+    val |= (uint64_t)((uint64_t)buf[5] << 16);
+    val |= (uint64_t)((uint64_t)buf[6] << 8);
+    val |= (uint64_t)buf[7];
   }
   return val;
 }

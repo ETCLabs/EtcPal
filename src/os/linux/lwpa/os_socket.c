@@ -23,9 +23,11 @@
 
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <net/if.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
+#include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -377,6 +379,27 @@ int setsockopt_socket(lwpa_socket_t id, int option_name, const void* option_valu
   return -1;
 }
 
+static int ip4_ifindex_to_addr(unsigned int ifindex, struct in_addr* addr)
+{
+  struct ifreq req;
+  if (if_indextoname(ifindex, req.ifr_name) != NULL)
+  {
+    int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (ioctl_sock != -1)
+    {
+      int ioctl_res = ioctl(ioctl_sock, SIOCGIFADDR, &req);
+      if (ioctl_res != -1)
+      {
+        *addr = ((struct sockaddr_in*)&req.ifr_addr)->sin_addr;
+        close(ioctl_sock);
+        return 0;
+      }
+      close(ioctl_sock);
+    }
+  }
+  return -1;
+}
+
 int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
   switch (option_name)
@@ -444,15 +467,12 @@ int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_value, s
       }
       break;
     case LWPA_IP_MULTICAST_IF:
-      if (option_len == sizeof(LwpaIpAddr))
+      if (option_len == sizeof(unsigned int))
       {
-        LwpaIpAddr* netint = (LwpaIpAddr*)option_value;
-        if (LWPA_IP_IS_V4(netint))
-        {
-          struct in_addr val;
-          val.s_addr = htonl(LWPA_IP_V4_ADDRESS(netint));
-          return setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, &val, sizeof val);
-        }
+        struct in_addr val;
+        if (0 != ip4_ifindex_to_addr(*(unsigned int*)option_value, &val))
+          return -1;
+        return setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, &val, sizeof val);
       }
       break;
     case LWPA_IP_MULTICAST_TTL:
@@ -505,6 +525,10 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
         }
       }
       break;
+    case LWPA_IP_MULTICAST_TTL:
+      return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, option_value, (socklen_t)option_len);
+    case LWPA_IP_MULTICAST_LOOP:
+      return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, option_value, (socklen_t)option_len);
     default: /* Other IPv6 options TODO on linux. */
       break;
   }
