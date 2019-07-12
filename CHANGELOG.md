@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lwpa_init() in lwpa/common.h. lwpa_init() must be called before using features
   defined by feature macros defined in lwpa/common.h.
 - Extra documentation page for network interface indexes.
+- New function lwpa_netint_copy_interfaces() to perform the old behavior of
+  lwpa_netint_get_interfaces() (see Changed below)
 
 ### Changed
 - Naming: 'operating system' and 'platform' are used somewhat interchangably by
@@ -28,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lwpa_netint_get_interface_for_dest(): Signature changed to return lwpa_error_t
 - lwpa_socket: Multicast socket options now refer to network interfaces only by
   interface index, for portability and compatibility with IPv6.
+- lwpa_netint_get_interfaces() simply provides const access to the cached array
+  of network interfaces built at init time.
 
 ### Removed
 
