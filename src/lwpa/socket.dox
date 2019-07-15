@@ -294,6 +294,7 @@ void lwpa_poll_context_deinit(LwpaPollContext *context);
  *  \param[in] events Events to monitor for on this socket.
  *  \param[in] user_data Opaque data pointer that is passed back with events on this socket.
  *  \return #kLwpaErrOk: Socket added successfully.
+ *  \return #kLwpaErrExists: The socket has already been added to this context.
  *  \return #kLwpaErrInvalid: Invalid argument.
  *  \return #kLwpaErrNoMem: #LWPA_SOCKET_MAX_POLL_SIZE is exceeded in this context.
  *  \return #kLwpaErrSys: System call failed.

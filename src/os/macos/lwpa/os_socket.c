@@ -618,8 +618,8 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
     {
       sock_desc->sock = socket;
       sock_desc->events = events;
-      int insert_res = lwpa_rbtree_insert(&context->sockets, sock_desc);
-      if (insert_res != 0)
+      lwpa_error_t insert_res = lwpa_rbtree_insert(&context->sockets, sock_desc);
+      if (insert_res == kLwpaErrOk)
       {
         struct kevent os_events[LWPA_SOCKET_MAX_KEVENTS];
         int num_events = events_lwpa_to_kqueue(socket, 0, events, user_data, os_events);
@@ -639,7 +639,7 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
       else
       {
         free(sock_desc);
-        return kLwpaErrNoMem;
+        return insert_res;
       }
     }
     else

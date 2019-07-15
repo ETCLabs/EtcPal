@@ -628,8 +628,8 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
       sock_desc->sock = socket;
       sock_desc->events = events;
       sock_desc->user_data = user_data;
-      int insert_res = lwpa_rbtree_insert(&context->sockets, sock_desc);
-      if (insert_res != 0)
+      lwpa_error_t insert_res = lwpa_rbtree_insert(&context->sockets, sock_desc);
+      if (insert_res == kLwpaErrOk)
       {
         struct epoll_event ep_evt;
         events_lwpa_to_epoll(events, &ep_evt);
@@ -650,7 +650,7 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
       else
       {
         free(sock_desc);
-        return kLwpaErrNoMem;
+        return insert_res;
       }
     }
     else
