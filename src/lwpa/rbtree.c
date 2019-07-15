@@ -34,7 +34,10 @@
  *
  * For more information, please refer to <http://unlicense.org/>
  */
+
 #include "lwpa/rbtree.h"
+
+#include "lwpa/bool.h"
 
 /* lwpa_rbnode */
 
@@ -47,9 +50,9 @@ static LwpaRbNode* lwpa_rbnode_alloc(LwpaRbTree* tree)
 
 /*! \brief Initialize a red-black tree node.
  *
- *  This function must be called on a new node before inserting it manually
- *  using lwpa_rbtree_insert_node(). When using lwpa_rbtree_insert(), this function is
- *  called on the new node automatically.
+ *  This function must be called on a new node before inserting it manually using
+ *  lwpa_rbtree_insert_node(). When using lwpa_rbtree_insert(), this function is called on the new
+ *  node automatically.
  *
  *  \param[in] self The node to be initialized.
  *  \param[in] value Pointer to the value to assign to the node.
@@ -204,12 +207,18 @@ void* lwpa_rbtree_find(LwpaRbTree* self, void* value)
  *
  *  \param[in] self Tree in which to insert the value.
  *  \param[in] value Value to insert.
- *  \return 1 (the value was inserted or the value already existed in the tree) or 0 (an error
- *          occurred).
+ *  \return #kLwpaErrOk: the value was inserted.
+ *  \return #kLwpaErrExists: the value already existed in the tree.
+ *  \return #kLwpaErrNoMem: Couldn't allocate new node.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-int lwpa_rbtree_insert(LwpaRbTree* self, void* value)
+lwpa_error_t lwpa_rbtree_insert(LwpaRbTree* self, void* value)
 {
-  return lwpa_rbtree_insert_node(self, rb_node_create(self, value));
+  LwpaRbNode* new_node = rb_node_create(self, value);
+  if (new_node)
+    return lwpa_rbtree_insert_node(self, new_node);
+  else
+    return kLwpaErrNoMem;
 }
 
 /*! \brief Insert a node containing a new value into a red-black tree.
@@ -221,18 +230,19 @@ int lwpa_rbtree_insert(LwpaRbTree* self, void* value)
  *  \param[in] self Tree in which to insert the value.
  *  \param[in] node Node containing value to insert. Must have been previously initialized using
  *                  lwpa_rbnode_init().
- *  \return 1 (the value was inserted or the value already existed in the tree) or 0 (an error
- *          occurred).
+ *  \return #kLwpaErrOk: The value was inserted.
+ *  \return #kLwpaErrExists: The value already existed in the tree.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-int lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
+lwpa_error_t lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
 {
-  int result = 0;
+  lwpa_error_t result = kLwpaErrInvalid;
   if (self && node)
   {
     if (self->root == NULL)
     {
       self->root = node;
-      result = 1;
+      result = kLwpaErrOk;
     }
     else
     {
@@ -249,10 +259,13 @@ int lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
       /* Search down the tree for a place to insert */
       while (1)
       {
+        bool inserted = false;
+
         if (q == NULL)
         {
           /* Insert node at the first null link. */
           p->link[dir] = q = node;
+          inserted = true;
         }
         else if (rb_node_is_red(q->link[0]) && rb_node_is_red(q->link[1]))
         {
@@ -275,7 +288,7 @@ int lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
         /* Stop working if we inserted a node. This check also disallows duplicates in the tree */
         if (self->cmp(self, q, node) == 0)
         {
-          result = 1;
+          result = inserted ? kLwpaErrOk : kLwpaErrExists;
           break;
         }
 
@@ -310,12 +323,13 @@ int lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
  *
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
- *  \return 1 (the value was removed) or 0 (the value did not exist in the tree or an error
- *          occurred).
+ *  \return #kLwpaErrOk: The value was removed.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kLwpaErrNotFound: The value did not exist in the tree.
  */
-int lwpa_rbtree_remove(LwpaRbTree* self, void* value)
+lwpa_error_t lwpa_rbtree_remove(LwpaRbTree* self, void* value)
 {
-  int result = 0;
+  lwpa_error_t result = kLwpaErrInvalid;
   if (self)
     result = lwpa_rbtree_remove_with_cb(self, value, lwpa_rbtree_node_dealloc_cb);
   return result;
@@ -331,10 +345,11 @@ int lwpa_rbtree_remove(LwpaRbTree* self, void* value)
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
  *  \param[in] node_cb Callback function to call with the node and value being removed.
- *  \return 1 (the value was removed) or 0 (the value did not exist in the tree or an error
- *          occurred).
+ *  \return #kLwpaErrOk: The value was removed.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kLwpaErrNotFound: The value did not exist in the tree.
  */
-int lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb)
+lwpa_error_t lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb)
 {
   LwpaRbNode head = {0}; /* False tree root */
   LwpaRbNode node;       /* Value wrapper node */
@@ -342,13 +357,15 @@ int lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f
   LwpaRbNode* f = NULL;  /* Found item */
   int dir = 1;
 
-  if (!self || self->root == NULL)
-    return 0;
+  if (!self)
+    return kLwpaErrInvalid;
+  if (self->root == NULL)
+    return kLwpaErrNotFound;
 
   /* SMK added this check, because the removal code seems to fail badly in the case where the node
    * being removed didn't previously exist in the tree. */
   if (NULL == lwpa_rbtree_find(self, value))
-    return 0;
+    return kLwpaErrNotFound;
 
   /* Set up our helpers */
   node.value = value;
@@ -429,7 +446,7 @@ int lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f
     self->root->red = 0;
 
   --self->size;
-  return 1;
+  return kLwpaErrOk;
 }
 
 /*! \brief Clear all values from a red-black tree.
@@ -438,11 +455,12 @@ int lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f
  *  the user is responsible for deallocating the value memory.
  *
  *  \param[in] self Tree to clear.
- *  \return 1 (the tree was cleared) or 0 (an error occurred).
+ *  \return #kLwpaErrOk: The tree was cleared.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-int lwpa_rbtree_clear(LwpaRbTree* self)
+lwpa_error_t lwpa_rbtree_clear(LwpaRbTree* self)
 {
-  int result = 0;
+  lwpa_error_t result = kLwpaErrInvalid;
   if (self)
     result = lwpa_rbtree_clear_with_cb(self, lwpa_rbtree_node_dealloc_cb);
   return result;
@@ -456,11 +474,12 @@ int lwpa_rbtree_clear(LwpaRbTree* self)
  *
  *  \param[in] self Tree to clear.
  *  \param[in] node_cb Callback function to call with each node and value being removed.
- *  \return 1 (the tree was cleared) or 0 (an error occurred).
+ *  \return #kLwpaErrOk: The tree was cleared.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-int lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb)
+lwpa_error_t lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb)
 {
-  int result = 0;
+  lwpa_error_t result = kLwpaErrInvalid;
   if (self && node_cb)
   {
     LwpaRbNode* node = self->root;
@@ -487,7 +506,7 @@ int lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb)
     }
     self->root = NULL;
     self->size = 0;
-    result = 1;
+    result = kLwpaErrOk;
   }
   return result;
 }
@@ -511,7 +530,10 @@ size_t lwpa_rbtree_size(LwpaRbTree* self)
  *
  *  \param[in] self Tree to test.
  *  \param[in] root Node at which to start the test. All nodes beneath this node will be tested.
- *  \return 1 (no violations were found) or 0 (a violation was found).
+ *  \return The "black height" of the tree; the number of black nodes present in the traversal
+ *          from the root to each leaf. A valid red-black tree requires this number to be the same
+ *          for every possible traversal.
+ *  \return 0: Invalid tree.
  */
 int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
 {

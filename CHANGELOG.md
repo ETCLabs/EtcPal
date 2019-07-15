@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   interface index, for portability and compatibility with IPv6.
 - lwpa_netint_get_interfaces() simply provides const access to the cached array
   of network interfaces built at init time.
+- lwpa_rbtree: Change some function signatures to give more meaningful return
+  information.
 
 ### Removed
 

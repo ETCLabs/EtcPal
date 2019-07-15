@@ -4,10 +4,10 @@
  * 2018-02-28.
  *
  ******************************************************************************
- * Based on Julienne Walker's <http://eternallyconfuzzled.com/> lwpa_rbtree
+ * Based on Julienne Walker's <http://eternallyconfuzzled.com/> rb_tree
  * implementation.
  *
- * Modified by Mirek Rusin <http://github.com/mirek/lwpa_rbtree>.
+ * Modified by Mirek Rusin <http://github.com/mirek/rb_tree>.
  *
  * This is free and unencumbered software released into the public domain.
  *
@@ -38,6 +38,7 @@
 #define _LWPA_RBTREE_H_
 
 #include <stddef.h>
+#include "lwpa/error.h"
 
 /*! \defgroup lwpa_rbtree lwpa_rbtree
  *  \ingroup lwpa
@@ -158,14 +159,14 @@ LwpaRbNode* lwpa_rbnode_init(LwpaRbNode* self, void* value);
 LwpaRbTree* lwpa_rbtree_init(LwpaRbTree* self, lwpa_rbtree_node_cmp_f cmp, lwpa_rbnode_alloc_f alloc_f,
                              lwpa_rbnode_dealloc_f dealloc_f);
 void* lwpa_rbtree_find(LwpaRbTree* self, void* value);
-int lwpa_rbtree_insert(LwpaRbTree* self, void* value);
-int lwpa_rbtree_remove(LwpaRbTree* self, void* value);
-int lwpa_rbtree_clear(LwpaRbTree* self);
+lwpa_error_t lwpa_rbtree_insert(LwpaRbTree* self, void* value);
+lwpa_error_t lwpa_rbtree_remove(LwpaRbTree* self, void* value);
+lwpa_error_t lwpa_rbtree_clear(LwpaRbTree* self);
 size_t lwpa_rbtree_size(LwpaRbTree* self);
 
-int lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node);
-int lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb);
-int lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb);
+lwpa_error_t lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node);
+lwpa_error_t lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb);
+lwpa_error_t lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb);
 
 int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root);
 
