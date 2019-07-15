@@ -32,6 +32,7 @@
 
 #include "lwpa/inet.h"
 #include "lwpa/lock.h"
+#include "lwpa/rbtree.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,13 +54,6 @@ typedef SOCKET lwpa_socket_t;
 
 /* Definitions for the lwpa_poll API */
 
-typedef struct LwpaPollCtxSocket
-{
-  lwpa_socket_t socket;
-  lwpa_poll_events_t events;
-  void* user_data;
-} LwpaPollCtxSocket;
-
 typedef struct LwpaPollFdSet
 {
   fd_set set;
@@ -71,9 +65,7 @@ typedef struct LwpaPollContext
   bool valid;
   lwpa_mutex_t lock;
 
-  LwpaPollCtxSocket* sockets;
-  size_t socket_arr_size;
-  size_t num_valid_sockets;
+  LwpaRbTree sockets;
 
   LwpaPollFdSet readfds;
   LwpaPollFdSet writefds;

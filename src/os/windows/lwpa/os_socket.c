@@ -32,6 +32,18 @@
 
 #define POLL_CONTEXT_ARR_CHUNK_SIZE 10
 
+/****************************** Private types ********************************/
+
+/* A struct to track sockets being polled by the lwpa_poll() API */
+typedef struct LwpaPollSocket
+{
+  // 'sock' must always remain as the first member in the struct to facilitate an LwpaRbTree lookup
+  // shortcut
+  lwpa_socket_t sock;
+  lwpa_poll_events_t events;
+  void* user_data;
+} LwpaPollSocket;
+
 /***************************** Private macros ********************************/
 
 #define LWPA_FD_ZERO(setptr) \
@@ -115,13 +127,14 @@ static int setsockopt_ip(lwpa_socket_t id, int option_name, const void* option_v
 static int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, size_t option_len);
 
 // Helper functions for the lwpa_poll API
-static void init_socket_chunk(LwpaPollCtxSocket* chunk);
-static LwpaPollCtxSocket* find_socket(LwpaPollContext* context, lwpa_socket_t socket);
-static LwpaPollCtxSocket* find_hole(LwpaPollContext* context);
-static void set_in_fd_sets(LwpaPollContext* context, const LwpaPollCtxSocket* sock);
-static void clear_in_fd_sets(LwpaPollContext* context, const LwpaPollCtxSocket* sock);
+static void set_in_fd_sets(LwpaPollContext* context, const LwpaPollSocket* sock);
+static void clear_in_fd_sets(LwpaPollContext* context, const LwpaPollSocket* sock);
 static lwpa_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* event, const LwpaPollFdSet* readfds,
                                          const LwpaPollFdSet* writefds, const LwpaPollFdSet* exceptfds);
+
+static int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
+static LwpaRbNode* poll_socket_alloc();
+static void poll_socket_free(LwpaRbNode* node);
 
 /*************************** Function definitions ****************************/
 
@@ -633,12 +646,10 @@ lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)
   if (!lwpa_mutex_create(&context->lock))
     return kLwpaErrSys;
 
+  lwpa_rbtree_init(&context->sockets, poll_socket_compare, poll_socket_alloc, poll_socket_free);
   LWPA_FD_ZERO(&context->readfds);
   LWPA_FD_ZERO(&context->writefds);
   LWPA_FD_ZERO(&context->exceptfds);
-  context->sockets = NULL;
-  context->socket_arr_size = 0;
-  context->num_valid_sockets = 0;
   context->valid = true;
   return kLwpaErrOk;
 }
@@ -648,105 +659,40 @@ void lwpa_poll_context_deinit(LwpaPollContext* context)
   if (!context || !context->valid)
     return;
 
-  if (context->sockets)
-  {
-    free(context->sockets);
-  }
+  lwpa_rbtree_clear(&context->sockets);
   lwpa_mutex_destroy(&context->lock);
   context->valid = false;
 }
 
-LwpaPollCtxSocket* find_socket(LwpaPollContext* context, lwpa_socket_t socket)
+void set_in_fd_sets(LwpaPollContext* context, const LwpaPollSocket* sock_desc)
 {
-  for (LwpaPollCtxSocket* cur = context->sockets; cur < context->sockets + context->socket_arr_size; ++cur)
+  if (sock_desc->events & LWPA_POLL_IN)
   {
-    if (cur->socket == socket)
-      return cur;
+    LWPA_FD_SET(sock_desc->sock, &context->readfds);
   }
-  return NULL;
-}
-
-void init_socket_chunk(LwpaPollCtxSocket* chunk)
-{
-  for (LwpaPollCtxSocket* cur = chunk; cur < chunk + POLL_CONTEXT_ARR_CHUNK_SIZE; ++cur)
+  if (sock_desc->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
   {
-    cur->socket = LWPA_SOCKET_INVALID;
+    LWPA_FD_SET(sock_desc->sock, &context->writefds);
   }
-}
-
-LwpaPollCtxSocket* find_hole(LwpaPollContext* context)
-{
-  LwpaPollCtxSocket* hole = NULL;
-
-  if (!context->sockets)
+  if (sock_desc->events & (LWPA_POLL_OOB | LWPA_POLL_CONNECT))
   {
-    // No sockets have been added yet. Create the first chunk.
-    context->sockets = (LwpaPollCtxSocket*)calloc(POLL_CONTEXT_ARR_CHUNK_SIZE, sizeof(LwpaPollCtxSocket));
-    if (context->sockets)
-    {
-      init_socket_chunk(context->sockets);
-      context->socket_arr_size = POLL_CONTEXT_ARR_CHUNK_SIZE;
-      hole = &context->sockets[0];
-    }
-  }
-  else
-  {
-    // Find an invalid socket in the list
-    for (LwpaPollCtxSocket* cur = context->sockets; cur < context->sockets + context->socket_arr_size; ++cur)
-    {
-      if (cur->socket == LWPA_SOCKET_INVALID)
-      {
-        hole = cur;
-        break;
-      }
-    }
-    // No hole found; need to do a realloc
-    if (!hole)
-    {
-      // Expand the socket array by another chunk.
-      size_t new_size = context->socket_arr_size + POLL_CONTEXT_ARR_CHUNK_SIZE;
-      context->sockets = (LwpaPollCtxSocket*)realloc(context->sockets, new_size * sizeof(LwpaPollCtxSocket));
-      if (context->sockets)
-      {
-        init_socket_chunk(&context->sockets[context->socket_arr_size]);
-        hole = &context->sockets[context->socket_arr_size];
-        context->socket_arr_size += POLL_CONTEXT_ARR_CHUNK_SIZE;
-      }
-    }
-  }
-
-  return hole;
-}
-
-void set_in_fd_sets(LwpaPollContext* context, const LwpaPollCtxSocket* sock)
-{
-  if (sock->events & LWPA_POLL_IN)
-  {
-    LWPA_FD_SET(sock->socket, &context->readfds);
-  }
-  if (sock->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
-  {
-    LWPA_FD_SET(sock->socket, &context->writefds);
-  }
-  if (sock->events & (LWPA_POLL_OOB | LWPA_POLL_CONNECT))
-  {
-    LWPA_FD_SET(sock->socket, &context->exceptfds);
+    LWPA_FD_SET(sock_desc->sock, &context->exceptfds);
   }
 }
 
-void clear_in_fd_sets(LwpaPollContext* context, const LwpaPollCtxSocket* sock)
+void clear_in_fd_sets(LwpaPollContext* context, const LwpaPollSocket* sock_desc)
 {
-  if (sock->events & LWPA_POLL_IN)
+  if (sock_desc->events & LWPA_POLL_IN)
   {
-    LWPA_FD_CLEAR(sock->socket, &context->readfds);
+    LWPA_FD_CLEAR(sock_desc->sock, &context->readfds);
   }
-  if (sock->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
+  if (sock_desc->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
   {
-    LWPA_FD_CLEAR(sock->socket, &context->writefds);
+    LWPA_FD_CLEAR(sock_desc->sock, &context->writefds);
   }
-  if (sock->events & (LWPA_POLL_OOB | LWPA_POLL_CONNECT))
+  if (sock_desc->events & (LWPA_POLL_OOB | LWPA_POLL_CONNECT))
   {
-    LWPA_FD_CLEAR(sock->socket, &context->exceptfds);
+    LWPA_FD_CLEAR(sock_desc->sock, &context->exceptfds);
   }
 }
 
@@ -759,21 +705,27 @@ lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket
   lwpa_error_t res = kLwpaErrSys;
   if (lwpa_mutex_take(&context->lock))
   {
-    if (context->num_valid_sockets >= LWPA_SOCKET_MAX_POLL_SIZE)
+    if (lwpa_rbtree_size(&context->sockets) >= LWPA_SOCKET_MAX_POLL_SIZE)
     {
       res = kLwpaErrNoMem;
     }
     else
     {
-      LwpaPollCtxSocket* new_sock = find_hole(context);
+      LwpaPollSocket* new_sock = (LwpaPollSocket*)malloc(sizeof(LwpaPollSocket));
       if (new_sock)
       {
-        new_sock->socket = socket;
+        new_sock->sock = socket;
         new_sock->events = events;
         new_sock->user_data = user_data;
-        set_in_fd_sets(context, new_sock);
-        context->num_valid_sockets++;
-        res = kLwpaErrOk;
+        res = lwpa_rbtree_insert(&context->sockets, new_sock);
+        if (res == kLwpaErrOk)
+        {
+          set_in_fd_sets(context, new_sock);
+        }
+        else
+        {
+          free(new_sock);
+        }
       }
       else
       {
@@ -794,7 +746,7 @@ lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t soc
   lwpa_error_t res = kLwpaErrSys;
   if (lwpa_mutex_take(&context->lock))
   {
-    LwpaPollCtxSocket* sock_desc = find_socket(context, socket);
+    LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbtree_find(&context->sockets, &socket);
     if (sock_desc)
     {
       clear_in_fd_sets(context, sock_desc);
@@ -819,12 +771,11 @@ void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket)
 
   if (lwpa_mutex_take(&context->lock))
   {
-    LwpaPollCtxSocket* sock_desc = find_socket(context, socket);
+    LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbtree_find(&context->sockets, &socket);
     if (sock_desc)
     {
       clear_in_fd_sets(context, sock_desc);
-      sock_desc->socket = LWPA_SOCKET_INVALID;
-      context->num_valid_sockets--;
+      lwpa_rbtree_remove(&context->sockets, sock_desc);
     }
     lwpa_mutex_give(&context->lock);
   }
@@ -842,7 +793,7 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
   LWPA_FD_ZERO(&exceptfds);
   if (lwpa_mutex_take(&context->lock))
   {
-    if (context->num_valid_sockets != 0)
+    if (lwpa_rbtree_size(&context->sockets) > 0)
     {
       readfds = context->readfds;
       writefds = context->writefds;
@@ -902,23 +853,25 @@ lwpa_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* event
   // gone wrong.
   lwpa_error_t res = kLwpaErrSys;
 
-  for (LwpaPollCtxSocket* sock_desc = context->sockets; sock_desc < context->sockets + context->socket_arr_size;
-       ++sock_desc)
+  LwpaRbIter iter;
+  lwpa_rbiter_init(&iter);
+  for (LwpaPollSocket* sock_desc = (LwpaPollSocket*)lwpa_rbiter_first(&iter, &context->sockets); sock_desc;
+       sock_desc = (LwpaPollSocket*)lwpa_rbiter_next(&iter))
   {
-    if (sock_desc->socket == LWPA_SOCKET_INVALID)
+    if (sock_desc->sock == LWPA_SOCKET_INVALID)
       continue;
 
-    if (LWPA_FD_ISSET(sock_desc->socket, readfds) || LWPA_FD_ISSET(sock_desc->socket, writefds) ||
-        LWPA_FD_ISSET(sock_desc->socket, exceptfds))
+    if (LWPA_FD_ISSET(sock_desc->sock, readfds) || LWPA_FD_ISSET(sock_desc->sock, writefds) ||
+        LWPA_FD_ISSET(sock_desc->sock, exceptfds))
     {
       res = kLwpaErrOk;
-      event->socket = sock_desc->socket;
+      event->socket = sock_desc->sock;
       event->user_data = sock_desc->user_data;
 
       /* Check for errors */
       int error;
       int error_size = sizeof(error);
-      if (getsockopt(sock_desc->socket, SOL_SOCKET, SO_ERROR, (char*)&error, &error_size) == 0)
+      if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, (char*)&error, &error_size) == 0)
       {
         if (error != 0)
         {
@@ -931,19 +884,19 @@ lwpa_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* event
         res = err_winsock_to_lwpa(WSAGetLastError());
         break;
       }
-      if (LWPA_FD_ISSET(sock_desc->socket, readfds))
+      if (LWPA_FD_ISSET(sock_desc->sock, readfds))
       {
         if (sock_desc->events & LWPA_POLL_IN)
           event->events |= LWPA_POLL_IN;
       }
-      if (LWPA_FD_ISSET(sock_desc->socket, writefds))
+      if (LWPA_FD_ISSET(sock_desc->sock, writefds))
       {
         if (sock_desc->events & LWPA_POLL_CONNECT)
           event->events |= LWPA_POLL_CONNECT;
         else if (sock_desc->events & LWPA_POLL_OUT)
           event->events |= LWPA_POLL_OUT;
       }
-      if (LWPA_FD_ISSET(sock_desc->socket, exceptfds))
+      if (LWPA_FD_ISSET(sock_desc->sock, exceptfds))
       {
         if (sock_desc->events & LWPA_POLL_CONNECT)
           event->events |= LWPA_POLL_CONNECT;  // Async connect errors are handled above
@@ -954,6 +907,30 @@ lwpa_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* event
     }
   }
   return res;
+}
+
+int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b)
+{
+  (void)tree;
+
+  LwpaPollSocket* a = (LwpaPollSocket*)node_a->value;
+  LwpaPollSocket* b = (LwpaPollSocket*)node_b->value;
+
+  return (a->sock > b->sock) - (a->sock < b->sock);
+}
+
+LwpaRbNode* poll_socket_alloc()
+{
+  return (LwpaRbNode*)malloc(sizeof(LwpaRbNode));
+}
+
+void poll_socket_free(LwpaRbNode* node)
+{
+  if (node)
+  {
+    free(node->value);
+    free(node);
+  }
 }
 
 lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
