@@ -525,10 +525,14 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
         }
       }
       break;
+    case LWPA_IP_MULTICAST_IF:
+      return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_IF, option_value, (socklen_t)option_len);
     case LWPA_IP_MULTICAST_TTL:
       return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_HOPS, option_value, (socklen_t)option_len);
     case LWPA_IP_MULTICAST_LOOP:
       return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, option_value, (socklen_t)option_len);
+    case LWPA_IPV6_V6ONLY:
+      return setsockopt(id, IPPROTO_IPV6, IPV6_V6ONLY, option_value, (socklen_t)option_len);
     default: /* Other IPv6 options TODO on linux. */
       break;
   }
