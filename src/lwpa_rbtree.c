@@ -35,6 +35,8 @@
  * For more information, please refer to <http://unlicense.org/>
  */
 #include "lwpa_rbtree.h"
+#include "lwpa_bool.h"
+#include "lwpa_error.h"
 
 /* rb_node */
 
@@ -195,44 +197,18 @@ void *rb_tree_find(LwpaRbTree *self, void *value)
   return result;
 }
 
-/*! \brief Insert a new value into a red-black tree.
- *
- *  If the value did not already exist in the tree, a new node is allocated
- *  using the #rb_node_alloc_f provided in rb_tree_init(). Uses the
- *  #rb_tree_node_cmp_f provided in rb_tree_init() to compare values. Insertion
- *  guaranteed in log(n) time.
- *
- *  \param[in] self Tree in which to insert the value.
- *  \param[in] value Value to insert.
- *  \return 1 (the value was inserted or the value already existed in the tree)
- *          or 0 (an error occurred).
+/* Internal function to do the actual insert. Returns LWPA_OK on success,
+ * LWPA_EXIST if the value already existed in the tree, LWPA_INVALID otherwise.
  */
-int rb_tree_insert(LwpaRbTree *self, void *value)
+lwpa_error_t rb_tree_insert_internal(LwpaRbTree *self, LwpaRbNode *node)
 {
-  return rb_tree_insert_node(self, rb_node_create(self, value));
-}
-
-/*! \brief Insert a node containing a new value into a red-black tree.
- *
- *  The node is supplied by the caller and its memory must remain valid as long
- *  as it remains in the tree. Uses the #rb_tree_node_cmp_f provided in
- *  rb_tree_init() to compare values. Insertion guaranteed in log(n) time.
- *
- *  \param[in] self Tree in which to insert the value.
- *  \param[in] node Node containing value to insert. Must have been previously
- *                  initialized using rb_node_init().
- *  \return 1 (the value was inserted or the value already existed in the tree)
- *          or 0 (an error occurred).
- */
-int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
-{
-  int result = 0;
+  lwpa_error_t result = LWPA_INVALID;
   if (self && node)
   {
     if (self->root == NULL)
     {
       self->root = node;
-      result = 1;
+      result = LWPA_OK;
     }
     else
     {
@@ -249,10 +225,13 @@ int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
       /* Search down the tree for a place to insert */
       while (1)
       {
+        bool inserted = false;
+
         if (q == NULL)
         {
           /* Insert node at the first null link. */
           p->link[dir] = q = node;
+          inserted = true;
         }
         else if (rb_node_is_red(q->link[0]) && rb_node_is_red(q->link[1]))
         {
@@ -276,7 +255,7 @@ int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
          * duplicates in the tree */
         if (self->cmp(self, q, node) == 0)
         {
-          result = 1;
+          result = (inserted ? LWPA_OK : LWPA_EXIST);
           break;
         }
 
@@ -301,6 +280,58 @@ int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
   }
 
   return result;
+}
+
+/*! \brief Insert a new value into a red-black tree.
+ *
+ *  If the value did not already exist in the tree, a new node is allocated
+ *  using the #rb_node_alloc_f provided in rb_tree_init(). Uses the
+ *  #rb_tree_node_cmp_f provided in rb_tree_init() to compare values. Insertion
+ *  guaranteed in log(n) time.
+ *
+ *  \param[in] self Tree in which to insert the value.
+ *  \param[in] value Value to insert.
+ *  \return 1 (the value was inserted or the value already existed in the tree)
+ *          or 0 (an error occurred).
+ */
+int rb_tree_insert(LwpaRbTree *self, void *value)
+{
+  LwpaRbNode *new_node = rb_node_create(self, value);
+  if (new_node)
+  {
+    // Patch to match existing functionality while not leaking memory
+    // If the node already existed, indicate success but make sure to deallocate
+    // the new node
+    lwpa_error_t insert_res = rb_tree_insert_internal(self, new_node);
+    if (insert_res == LWPA_OK)
+    {
+      return 1;
+    }
+    else
+    {
+      rb_node_dealloc(new_node, self);
+      return (insert_res == LWPA_EXIST ? 1 : 0);
+    }
+  }
+  return 0;
+}
+
+/*! \brief Insert a node containing a new value into a red-black tree.
+ *
+ *  The node is supplied by the caller and its memory must remain valid as long
+ *  as it remains in the tree. Uses the #rb_tree_node_cmp_f provided in
+ *  rb_tree_init() to compare values. Insertion guaranteed in log(n) time.
+ *
+ *  \param[in] self Tree in which to insert the value.
+ *  \param[in] node Node containing value to insert. Must have been previously
+ *                  initialized using rb_node_init().
+ *  \return 1 (the value was inserted or the value already existed in the tree)
+ *          or 0 (an error occurred).
+ */
+int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)
+{
+  lwpa_error_t insert_res = rb_tree_insert_internal(self, node);
+  return ((insert_res == LWPA_OK || insert_res == LWPA_EXIST) ? 1 : 0);
 }
 
 /*! \brief Remove a value from a red-black tree.
