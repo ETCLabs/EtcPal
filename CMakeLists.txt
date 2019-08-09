@@ -37,6 +37,7 @@ add_subdirectory(src)
 #################################### Tests ####################################
 
 if(LWPA_BUILD_TESTS)
+  add_subdirectory(external/unity)
   enable_testing()
   add_subdirectory(tests)
 endif()
