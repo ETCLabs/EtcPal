@@ -17,14 +17,26 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/common.h"
-#include "unity.h"
+#include "unity_fixture.h"
 #include "fff.h"
 
 #include "lwpa/netint.h"
 #include "lwpa/log.h"
 
+DEFINE_FFF_GLOBALS;
+
+TEST_GROUP(lwpa_common);
+
+TEST_SETUP(lwpa_common)
+{
+}
+
+TEST_TEAR_DOWN(lwpa_common)
+{
+}
+
 // Test the LWPA_FEATURES_ALL_BUT() macro
-void test_lwpa_features_all_but_macro(void)
+TEST(lwpa_common, features_all_but_macro_works)
 {
   lwpa_features_t mask = LWPA_FEATURES_ALL_BUT(LWPA_FEATURE_SOCKETS);
   TEST_ASSERT(mask & LWPA_FEATURE_NETINTS);
@@ -40,7 +52,7 @@ void test_lwpa_features_all_but_macro(void)
 }
 
 // Test multiple calls of lwpa_init() for the netint module.
-void test_double_init_should_work_netint(void)
+TEST(lwpa_common, netint_double_init_works)
 {
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_NETINTS));
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_NETINTS));
@@ -54,11 +66,11 @@ void test_double_init_should_work_netint(void)
   lwpa_deinit(LWPA_FEATURE_NETINTS);
 }
 
-// A shim from the lwpa_log module to GoogleMock.
+// A shim from the lwpa_log module to fff.
 FAKE_VOID_FUNC(log_callback, void*, const LwpaLogStrings*);
 
 // Test multiple calls of lwpa_init() for the log module.
-void test_double_init_should_work_log(void)
+TEST(lwpa_common, log_double_init_works)
 {
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_LOGGING));
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_LOGGING));
@@ -83,15 +95,16 @@ void test_double_init_should_work_log(void)
   TEST_ASSERT_EQUAL(log_callback_fake.call_count, 2);
 
   lwpa_deinit(LWPA_FEATURE_LOGGING);
-
-  TEST_FAIL();
 }
 
-int run_common_tests(void)
+TEST_GROUP_RUNNER(lwpa_common)
 {
-  UNITY_BEGIN();
-  RUN_TEST(test_lwpa_features_all_but_macro);
-  RUN_TEST(test_double_init_should_work_netint);
-  RUN_TEST(test_double_init_should_work_log);
-  return UNITY_END();
+  RUN_TEST_CASE(lwpa_common, features_all_but_macro_works);
+  RUN_TEST_CASE(lwpa_common, netint_double_init_works);
+  RUN_TEST_CASE(lwpa_common, log_double_init_works);
+}
+
+void run_all_tests(void)
+{
+  RUN_TEST_GROUP(lwpa_common);
 }

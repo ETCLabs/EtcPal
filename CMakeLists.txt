@@ -16,6 +16,9 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     endif()
   endif()
 
+  # Allow folder grouping in generated IDE projects
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
   list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tools/cmake)
   set(OPTION_DEFAULTS ON)
 else()

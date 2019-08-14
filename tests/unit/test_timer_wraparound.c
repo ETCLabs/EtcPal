@@ -17,28 +17,47 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "unity.h"
+#include "lwpa/timer.h"
+#include "unity_fixture.h"
 #include "fff.h"
-#include "test_common.h"
 
 DEFINE_FFF_GLOBALS;
 
-void setUp(void)
+TEST_GROUP(lwpa_timer_wraparound);
+
+TEST_SETUP(lwpa_timer_wraparound)
 {
 }
 
-void tearDown(void)
+TEST_TEAR_DOWN(lwpa_timer_wraparound)
 {
 }
 
-int run_tests(void)
+FAKE_VALUE_FUNC(uint32_t, lwpa_getms);
+
+TEST(lwpa_timer_wraparound, wraparound_works_as_expected)
 {
-  int test_res;
+  LwpaTimer t1;
 
-#define CHECK_TEST(test_func) \
-  test_res = test_func();     \
-  if (test_res != 0)          \
-    return test_res;
+  // Test the wraparound case by forcing a wraparound value returned from lwpa_getms()
+  lwpa_getms_fake.return_val = 0xfffffff0u;
+  lwpa_timer_start(&t1, 0x20);
 
-  CHECK_TEST(run_common_tests);
+  // We've wrapped around but have not exceeded the interval yet
+  lwpa_getms_fake.return_val = 0x0f;
+  TEST_ASSERT_FALSE(lwpa_timer_is_expired(&t1));
+  TEST_ASSERT_EQUAL_UINT32(lwpa_timer_elapsed(&t1), 0x1fu);
+
+  lwpa_getms_fake.return_val = 0x11;
+  TEST_ASSERT_TRUE(lwpa_timer_is_expired(&t1));
+}
+
+TEST_GROUP_RUNNER(lwpa_timer_wraparound)
+{
+  RUN_TEST_CASE(lwpa_timer_wraparound, wraparound_works_as_expected);
+}
+
+void run_all_tests(void)
+{
+  RUN_TEST_GROUP(lwpa_timer_wraparound);
 }

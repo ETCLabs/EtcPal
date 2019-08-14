@@ -4,3 +4,4 @@ add_executable(netint_example
   netint_example.c
 )
 target_link_libraries(netint_example PRIVATE lwpa)
+set_target_properties(netint_example PROPERTIES FOLDER examples)

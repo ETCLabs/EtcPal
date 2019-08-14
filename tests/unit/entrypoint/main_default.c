@@ -17,9 +17,11 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "test_main.h"
+#include "unity_fixture.h"
+
+extern void run_all_tests(void);
 
 int main(int argc, char* argv[])
 {
-  return run_tests();
+  return UnityMain(argc, argv, run_all_tests);
 }
