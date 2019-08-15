@@ -20,9 +20,11 @@
 #include "unity_fixture.h"
 #include "fff.h"
 
-#include <stddef.h>
-#include <string.h>
 #include <stdarg.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 // Disable strcpy() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -30,11 +32,6 @@
 #endif
 
 DEFINE_FFF_GLOBALS;
-
-// Static function prototypes
-static void fill_default_time(LwpaLogTimeParams* tparams);
-static void test_lwpa_vlog_helper(const char* expect_syslog_str, const char* expect_human_str,
-                                  const char* expect_raw_str, LwpaLogParams* lparams, int pri, const char* format, ...);
 
 FAKE_VOID_FUNC(log_callback, void*, const LwpaLogStrings*);
 FAKE_VOID_FUNC(time_callback, void*, LwpaLogTimeParams*);
@@ -44,17 +41,19 @@ LwpaLogStrings last_log_strings_received;
 
 static void fill_time_params(void* context, LwpaLogTimeParams* time_params)
 {
+  (void)context;
   TEST_ASSERT(time_params);
   *time_params = cur_time;
 }
 
 static void save_log_strings(void* context, const LwpaLogStrings* strings)
 {
+  (void)context;
   TEST_ASSERT(strings);
   last_log_strings_received = *strings;
 }
 
-void fill_default_time(LwpaLogTimeParams* time_params)
+static void fill_default_time(LwpaLogTimeParams* time_params)
 {
   time_params->year = 1970;     // absolute year
   time_params->month = 1;       // month of the year - [1, 12]
@@ -229,6 +228,28 @@ TEST(lwpa_log, log_action_is_honored)
   TEST_ASSERT_EQUAL_STRING(last_log_strings_received.raw, expect_raw_str);
 }
 
+TEST(lwpa_log, context_pointer_is_passed_unmodified)
+{
+  LwpaLogParams lparams;
+  lparams.action = kLwpaLogCreateHumanReadableLog;
+  lparams.log_fn = log_callback;
+  memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
+  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  lparams.time_fn = NULL;
+
+  // Test a null pointer
+  lparams.context = NULL;
+  lwpa_log(&lparams, LWPA_LOG_INFO, "Test message");
+  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
+  TEST_ASSERT_EQUAL_PTR(log_callback_fake.arg0_val, NULL);
+
+  // Test a random value
+  lparams.context = (void*)0x01020304;
+  lwpa_log(&lparams, LWPA_LOG_INFO, "Test message");
+  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 2);
+  TEST_ASSERT_EQUAL_PTR(log_callback_fake.arg0_val, 0x01020304);
+}
+
 // Test valid, weird, and missing values in the syslog header
 TEST(lwpa_log, syslog_header_is_well_formed)
 {
@@ -240,13 +261,14 @@ TEST(lwpa_log, syslog_header_is_well_formed)
   const char weird_hostname[] = {0x68, 0x6f, 0x73, 0x74, 0xc8, 0x6e, 0x61, 0x6d, 0x65, 0x00};
   // A string with some non-printing and non-ASCII characters: "\x012\x034\xff"
   const char weird_procid[] = {0x01, 0x32, 0x03, 0x34, 0xff, 0x00};
-
-  memcpy(lparams.syslog_params.hostname, weird_hostname, sizeof weird_hostname);
-  memcpy(lparams.syslog_params.procid, weird_procid, sizeof weird_procid);
+  // A string with a non-printing character: "My\x001App"
+  const char weird_appname[] = {0x4d, 0x79, 0x01, 0x41, 0x70, 0x70, 0x00};
 
   lparams.action = kLwpaLogCreateSyslog;
   lparams.log_fn = log_callback;
-  strcpy(lparams.syslog_params.app_name, "My_App");
+  memcpy(lparams.syslog_params.hostname, weird_hostname, sizeof weird_hostname);
+  memcpy(lparams.syslog_params.procid, weird_procid, sizeof weird_procid);
+  memcpy(lparams.syslog_params.app_name, weird_appname, sizeof weird_appname);
   lparams.syslog_params.facility = LWPA_LOG_KERN;
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
   lparams.time_fn = time_callback;
@@ -254,21 +276,75 @@ TEST(lwpa_log, syslog_header_is_well_formed)
 
 #define SYSLOG_HEADER_TEST_MESSAGE "Test Message"
 
-  const char* expect_syslog_str =
-      "<0>1 1970-01-01T00:00:00.000Z host?name My_App _2_4? - - " SYSLOG_HEADER_TEST_MESSAGE;
+  // For each set of parameters, test both the lwpa_log() and lwpa_create_syslog_str() functions.
+#define SYSLOG_HEADER_TEST_AND_ASSERT(time_params)                                                                 \
+  lwpa_log(&lparams, LWPA_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                                                  \
+  lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, time_params, &lparams.syslog_params, LWPA_LOG_EMERG, \
+                         SYSLOG_HEADER_TEST_MESSAGE);                                                              \
+  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);                                                         \
+  TEST_ASSERT_EQUAL_STRING(last_log_strings_received.syslog, expect_syslog_str);                                   \
+  TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);                                                         \
+  RESET_FAKE(log_callback)
 
+  // Validate (and also sanitize) the log params
   TEST_ASSERT(lwpa_validate_log_params(&lparams));
 
-  lwpa_log(&lparams, LWPA_LOG_EMERG, LOG_ACTION_TEST_MESSAGE);
-  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
-  TEST_ASSERT_EQUAL_STRING(last_log_strings_received.syslog, expect_syslog_str);
+  const char* expect_syslog_str =
+      "<0>1 1970-01-01T00:00:00.000Z host?name My_App _2_4? - - " SYSLOG_HEADER_TEST_MESSAGE;
+  SYSLOG_HEADER_TEST_AND_ASSERT(&cur_time);
 
-  // TODO expand...
+  // Remove items from the header and make sure it still works
+  lparams.time_fn = NULL;
+  expect_syslog_str = "<0>1 - host?name My_App _2_4? - - " SYSLOG_HEADER_TEST_MESSAGE;
+  SYSLOG_HEADER_TEST_AND_ASSERT(NULL);
+
+  lparams.time_fn = time_callback;
+  lparams.syslog_params.hostname[0] = '\0';
+  expect_syslog_str = "<0>1 1970-01-01T00:00:00.000Z - My_App _2_4? - - " SYSLOG_HEADER_TEST_MESSAGE;
+  SYSLOG_HEADER_TEST_AND_ASSERT(&cur_time);
+
+  strcpy(lparams.syslog_params.hostname, "10.101.17.38");
+  lparams.syslog_params.app_name[0] = '\0';
+  expect_syslog_str = "<0>1 1970-01-01T00:00:00.000Z 10.101.17.38 - _2_4? - - " SYSLOG_HEADER_TEST_MESSAGE;
+  SYSLOG_HEADER_TEST_AND_ASSERT(&cur_time);
+
+  strcpy(lparams.syslog_params.app_name, "My_App");
+  lparams.syslog_params.procid[0] = '\0';
+  expect_syslog_str = "<0>1 1970-01-01T00:00:00.000Z 10.101.17.38 My_App - - - " SYSLOG_HEADER_TEST_MESSAGE;
+  SYSLOG_HEADER_TEST_AND_ASSERT(&cur_time);
+
+  // Test no values in the header
+  lparams.time_fn = NULL;
+  lparams.syslog_params.hostname[0] = '\0';
+  lparams.syslog_params.app_name[0] = '\0';
+  lparams.syslog_params.procid[0] = '\0';
+  expect_syslog_str = "<0>1 - - - - - - " SYSLOG_HEADER_TEST_MESSAGE;
+  SYSLOG_HEADER_TEST_AND_ASSERT(NULL);
 }
 
 TEST(lwpa_log, syslog_prival_is_correct)
 {
-  // TODO
+  char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
+  LwpaSyslogParams syslog_params;
+  memset(&syslog_params, 0, sizeof(LwpaSyslogParams));
+
+#define SYSLOG_PRIVAL_TEST_MESSAGE "Test Message"
+
+  for (int facility = 0; facility < LWPA_LOG_NFACILITIES; ++facility)
+  {
+    syslog_params.facility = facility << 3;
+    for (int priority = 0; priority < 8; ++priority)
+    {
+      const char error_format[] = "Testing facility %d, priority %d";
+      char error_msg[sizeof error_format + 20];
+      sprintf(error_msg, error_format, facility, priority);
+
+      TEST_ASSERT(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, NULL, &syslog_params, priority,
+                                         SYSLOG_PRIVAL_TEST_MESSAGE));
+      TEST_ASSERT_EQUAL(syslog_buf[0], '<');
+      TEST_ASSERT_EQUAL_MESSAGE(atoi(&syslog_buf[1]), ((facility << 3) + priority), error_msg);
+    }
+  }
 }
 
 // Make sure the log mask member in the LwpaLogParams struct is honored properly.
@@ -284,20 +360,57 @@ TEST(lwpa_log, log_mask_is_honored)
   lparams.context = NULL;
 
 #define LOG_MASK_TEST_MESSAGE "Test Message"
+
   // Try logging with the log mask set to 0, should not work.
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&lparams, LWPA_LOG_EMERG));
-  lwpa_log(&lparams, LWPA_LOG_EMERG, LOG_MASK_TEST_MESSAGE);
+  for (int pri = 0; pri < 8; ++pri)
+  {
+    TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&lparams, pri));
+    lwpa_log(&lparams, pri, LOG_MASK_TEST_MESSAGE);
+  }
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 0);
 
-  // Try logging with the log mask including LWPA_LOG_EMERG, should work.
-  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_EMERG);
-  lwpa_log(&lparams, LWPA_LOG_EMERG, LOG_MASK_TEST_MESSAGE);
-  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
+  // Use the LWPA_LOG_UPTO macro to test logging below and above a given priority
+  for (int mask_pri = 0; mask_pri < 8; ++mask_pri)
+  {
+    lparams.log_mask = LWPA_LOG_UPTO(mask_pri);
+    for (int test_pri = 0; test_pri < 8; ++test_pri)
+    {
+      if (test_pri <= mask_pri)
+      {
+        TEST_ASSERT(LWPA_CAN_LOG(&lparams, test_pri));
+      }
+      else
+      {
+        TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&lparams, test_pri));
+      }
+      lwpa_log(&lparams, test_pri, LOG_MASK_TEST_MESSAGE);
+    }
+    TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, mask_pri + 1);
+    RESET_FAKE(log_callback);
+  }
+
+  // Test some other, random log masks
+  lparams.log_mask = LWPA_LOG_MASK(LWPA_LOG_ALERT) | LWPA_LOG_MASK(LWPA_LOG_WARNING);
+  for (int test_pri = 0; test_pri < 8; ++test_pri)
+  {
+    if (test_pri == LWPA_LOG_ALERT || test_pri == LWPA_LOG_WARNING)
+    {
+      TEST_ASSERT(LWPA_CAN_LOG(&lparams, test_pri));
+    }
+    else
+    {
+      TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&lparams, test_pri));
+    }
+    lwpa_log(&lparams, test_pri, LOG_MASK_TEST_MESSAGE);
+  }
+  // The callback should only have been called for our two masked priorities.
+  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 2);
 }
 
 // Make sure the time header is properly present (or absent) as necessary
 TEST(lwpa_log, time_header_is_well_formed)
 {
+  // TODO
 }
 
 /*
@@ -510,6 +623,7 @@ TEST_GROUP_RUNNER(lwpa_log)
   RUN_TEST_CASE(lwpa_log, sanitize_syslog_params_works);
   RUN_TEST_CASE(lwpa_log, validate_log_params_works);
   RUN_TEST_CASE(lwpa_log, log_action_is_honored);
+  RUN_TEST_CASE(lwpa_log, context_pointer_is_passed_unmodified);
   RUN_TEST_CASE(lwpa_log, syslog_header_is_well_formed);
   RUN_TEST_CASE(lwpa_log, syslog_prival_is_correct);
   RUN_TEST_CASE(lwpa_log, log_mask_is_honored);
