@@ -17,51 +17,16 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/lock.h"
-#include "gtest/gtest.h"
-#include <cstddef>
-#include <vector>
-#include <thread>
-#include <utility>
+#include "unity_fixture.h"
 
-class MutexTest : public ::testing::Test
-{
-public:
-  // Constants
-  static constexpr int kNumThreads = 10;
-  static constexpr int kNumIterations = 10000;
+#include "lwpa/thread.h"
 
-  // For thread test
-  int shared_var{0};
+// Constants
+#define NUM_THREADS 10
+#define NUM_ITERATIONS 10000
 
-  // For general usage
-  lwpa_mutex_t mutex{};
-};
-
-TEST_F(MutexTest, create_destroy)
-{
-  // Basic creation and taking ownership.
-  ASSERT_TRUE(lwpa_mutex_create(&mutex));
-  ASSERT_TRUE(lwpa_mutex_take(&mutex));
-
-  // On Windows, take succeeds when taking a mutex again from the same thread.
-#ifdef WIN32
-  ASSERT_TRUE(lwpa_mutex_take(&mutex));
-#else
-  ASSERT_FALSE(lwpa_mutex_try_take(&mutex));
-#endif
-
-  lwpa_mutex_give(&mutex);
-
-  // Test the guard class
-  {  // Mutex lock scope
-    lwpa::MutexGuard lock(mutex);
-    // Just make sure it doesn't throw
-  }
-
-  // Take should fail on a destroyed mutex.
-  lwpa_mutex_destroy(&mutex);
-  ASSERT_FALSE(lwpa_mutex_take(&mutex));
-}
+// The shared variable
+int shared_var{0};
 
 static void mutex_test_thread(MutexTest* fixture)
 {

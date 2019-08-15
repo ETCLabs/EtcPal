@@ -17,79 +17,16 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/lock.h"
-#include "gtest/gtest.h"
-#include <cstddef>
-#include <vector>
-#include <thread>
-#include <chrono>
-#include <utility>
+#include "unity_fixture.h"
 
-class RwlockTest : public ::testing::Test
-{
-public:
-  // Constants
-  static const int RWLOCK_TEST_NUM_WRITE_THREADS = 10;
-  static const int RWLOCK_TEST_NUM_ITERATIONS = 10000;
+#include "lwpa/thread.h"
 
-  // For general usage
-  lwpa_rwlock_t rwlock;
+#define NUM_WRITE_THREADS 10
+#define NUM_ITERATIONS 10000
 
-  // For thread test
-  int shared_var{0};
-  bool read_thread_pass{false};
-};
-
-TEST_F(RwlockTest, create_destroy)
-{
-  // Basic creation and taking ownership.
-  ASSERT_TRUE(lwpa_rwlock_create(&rwlock));
-  for (size_t i = 0; i < 100; ++i)
-    ASSERT_TRUE(lwpa_rwlock_readlock(&rwlock));
-
-  // Time-based functionality not implemented for now.
-  // auto start_time = std::chrono::high_resolution_clock::now();
-
-  // Write lock should fail if there are readers
-  ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
-
-  // It should wait for at least the timeout specified, minus up to one ms
-  //  auto time_taken =
-  //      std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time);
-  //  ASSERT_GE(time_taken.count(), 99);
-
-  // When there are no more readers, write lock should succeed
-  for (size_t i = 0; i < 100; ++i)
-    lwpa_rwlock_readunlock(&rwlock);
-  ASSERT_TRUE(lwpa_rwlock_writelock(&rwlock));
-
-  // On Windows, take succeeds when taking a mutex again from the same thread.
-#ifdef WIN32
-  ASSERT_TRUE(lwpa_rwlock_writelock(&rwlock));
-#else
-  ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
-  ASSERT_FALSE(lwpa_rwlock_try_readlock(&rwlock));
-#endif
-
-  lwpa_rwlock_writeunlock(&rwlock);
-
-  // Test the guard classes
-  {  // Read lock scope
-    lwpa::ReadGuard read(rwlock);
-
-    ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
-  }
-  {  // Write lock scope
-    lwpa::WriteGuard write(rwlock);
-
-#if !WIN32
-    ASSERT_FALSE(lwpa_rwlock_try_writelock(&rwlock));
-#endif
-  }
-
-  // Take should fail on a destroyed rwlock.
-  lwpa_rwlock_destroy(&rwlock);
-  ASSERT_FALSE(lwpa_rwlock_writelock(&rwlock));
-}
+lwpa_rwlock_t rwlock;
+int shared_var;
+bool read_thread_pass;
 
 static void write_test_thread(RwlockTest* fixture)
 {

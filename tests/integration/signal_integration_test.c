@@ -17,48 +17,45 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/lock.h"
-#include "gtest/gtest.h"
-#include <cstddef>
-#include <vector>
-#include <thread>
-#include <chrono>
-#include <utility>
+#include "unity_fixture.h"
+#include "test_main.h"
+#include "lwpa/thread.h"
 
-static void signal_test_thread(SignalTest* fixture)
+// For general usage
+lwpa_signal_t signal;
+
+static void signal_test_thread(void* arg)
 {
-  if (fixture)
-  {
-    for (size_t i = 0; i < 3; ++i)
-      lwpa_signal_wait(&fixture->signal);
-  }
-}
+  (void)arg;
 
-using namespace std::chrono_literals;
+  for (size_t i = 0; i < 3; ++i)
+    lwpa_signal_wait(&signal);
+}
 
 // Two threads are created. They wait on the same signal 3 times. Each post of the signal should
 // wake up only one of the threads, so 6 posts should end both threads.
-TEST_F(SignalTest, threads)
+TEST(lwpa_integration, signal_thread_test)
 {
-  ASSERT_TRUE(lwpa_signal_create(&signal));
+  TEST_ASSERT_TRUE(lwpa_signal_create(&signal));
 
-  std::vector<std::thread> threads;
-  threads.reserve(2);
+  lwpa_thread_t threads[2];
+
+  LwpaThreadParams params;
+  LWPA_THREAD_SET_DEFAULT_PARAMS(&params);
 
   for (size_t i = 0; i < 2; ++i)
   {
-    std::thread thread(signal_test_thread, this);
-    ASSERT_TRUE(thread.joinable());
-    threads.push_back(std::move(thread));
+    TEST_ASSERT_TRUE(lwpa_thread_create(&threads[i], &params, signal_test_thread, NULL));
   }
 
   for (size_t i = 0; i < 6; ++i)
   {
-    std::this_thread::sleep_for(10ms);
+    lwpa_thread_sleep(10);
     lwpa_signal_post(&signal);
   }
 
-  for (auto& thread : threads)
-    thread.join();
+  for (size_t i = 0; i < 2; ++i)
+    TEST_ASSERT_TRUE(lwpa_thread_join(&threads[i]));
 
   lwpa_signal_destroy(&signal);
 }
