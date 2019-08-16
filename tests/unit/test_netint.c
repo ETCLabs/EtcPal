@@ -17,44 +17,46 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/netint.h"
-#include "gtest/gtest.h"
-#include <cstring>
-#include <cstddef>
-#include <memory>
-#include <set>
+#include "unity_fixture.h"
 
-class NetintTest : public ::testing::Test
+#include <string.h>
+#include <stddef.h>
+
+static size_t num_netints;
+
+TEST_GROUP(lwpa_netint);
+
+TEST_SETUP(lwpa_netint)
 {
-protected:
-  NetintTest()
-  {
-    lwpa_init(LWPA_FEATURE_NETINTS);
-    num_netints = lwpa_netint_get_num_interfaces();
-  }
-  ~NetintTest() { lwpa_deinit(LWPA_FEATURE_NETINTS); }
+  lwpa_init(LWPA_FEATURE_NETINTS);
+  num_netints = lwpa_netint_get_num_interfaces();
+}
 
-  size_t num_netints{0};
-};
-
-TEST_F(NetintTest, enumerate)
+TEST_TEAR_DOWN(lwpa_netint)
 {
-  ASSERT_GT(num_netints, 0u);
+  lwpa_deinit(LWPA_FEATURE_NETINTS); 
+}
+
+TEST(lwpa_netint, netint_enumeration_works)
+{
+  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
   size_t num_defaults = 0;
   const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
-  ASSERT_NE(netint_list, nullptr);
-  for (auto netint = netint_list; netint < netint_list + num_netints; ++netint)
+  TEST_ASSERT_NOT_NULL(netint_list);
+  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     if (netint->is_default)
       ++num_defaults;
-    EXPECT_GT(strlen(netint->name), 0u);
-    EXPECT_GT(strlen(netint->friendly_name), 0u);
+    TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->name));
+    TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->friendly_name));
   }
   // There can be a maximum of two default interfaces: one each for IPv4 and IPv6.
-  EXPECT_LE(num_defaults, 2u);
+  TEST_ASSERT_LESS_OR_EQUAL_UINT(2u, num_defaults);
 }
 
-TEST_F(NetintTest, copy)
+/*
+TEST(lwpa_netint, copy_interfaces_works)
 {
   // Test copying the full array
   auto netint_arr = std::make_unique<LwpaNetintInfo[]>(num_netints);
@@ -138,4 +140,15 @@ TEST_F(NetintTest, ipv4_routing)
   LwpaNetintInfo def;
   EXPECT_EQ(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&ext_addr, &def));
   EXPECT_TRUE(def.is_default);
+}
+*/
+
+TEST_GROUP_RUNNER(lwpa_netint)
+{
+  RUN_TEST_CASE(lwpa_netint, netint_enumeration_works);
+}
+
+void run_all_tests(void)
+{
+  RUN_TEST_GROUP(lwpa_netint);
 }
