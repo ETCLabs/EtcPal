@@ -22,21 +22,21 @@
 #include "lwpa/thread.h"
 
 // For general usage
-static lwpa_signal_t signal;
+static lwpa_signal_t sig;
 
 static void signal_test_thread(void* arg)
 {
   (void)arg;
 
   for (size_t i = 0; i < 3; ++i)
-    lwpa_signal_wait(&signal);
+    lwpa_signal_wait(&sig);
 }
 
 // Two threads are created. They wait on the same signal 3 times. Each post of the signal should
 // wake up only one of the threads, so 6 posts should end both threads.
 TEST(lwpa_integration, signal_thread_test)
 {
-  TEST_ASSERT_TRUE(lwpa_signal_create(&signal));
+  TEST_ASSERT_TRUE(lwpa_signal_create(&sig));
 
   lwpa_thread_t threads[2];
 
@@ -51,11 +51,11 @@ TEST(lwpa_integration, signal_thread_test)
   for (size_t i = 0; i < 6; ++i)
   {
     lwpa_thread_sleep(10);
-    lwpa_signal_post(&signal);
+    lwpa_signal_post(&sig);
   }
 
   for (size_t i = 0; i < 2; ++i)
     TEST_ASSERT_TRUE(lwpa_thread_join(&threads[i]));
 
-  lwpa_signal_destroy(&signal);
+  lwpa_signal_destroy(&sig);
 }

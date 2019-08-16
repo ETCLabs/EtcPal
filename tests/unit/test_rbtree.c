@@ -17,12 +17,17 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/rbtree.h"
-#include "gtest/gtest.h"
-#include <cstddef>
-#include <cmath>
-#include <random>
-#include <algorithm>
-#include <array>
+#include "unity_fixture.h"
+#include "fff.h"
+
+#include <stddef.h>
+#include <math.h>
+
+#define INT_ARRAY_SIZE 100
+
+static int incrementing_int_array[INT_ARRAY_SIZE];
+static int random_int_array[INT_ARRAY_SIZE];
+LwpaRbNode node_pool[INT_ARRAY_SIZE];
 
 class RbTreeTest : public ::testing::Test
 {

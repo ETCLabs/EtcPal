@@ -317,6 +317,24 @@ bool lwpa_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams
   return res;
 }
 
+/*! \brief Determine whether a priority level can be logged given the mask present in the log
+ *         params.
+ *
+ *  This is useful to use as a guard around doing any conversions that are only for logging, e.g.
+ *  converting addresses to strings -- if the priority of the message can't be logged, then those
+ *  conversions are just wasted work.
+ *
+ *  \param[in] params The log parameters to be checked.
+ *  \param[in] pri Priority to check.
+ *  \return Whether this priority will be logged with the current mask setting.
+ */
+bool lwpa_can_log(const LwpaLogParams* params, int pri)
+{
+  if (params)
+    return ((LWPA_LOG_MASK(pri) & params->log_mask) != 0);
+  return false;
+}
+
 /*! \brief Log a message from a library module.
  *
  *  Takes a printf-style format string which is formatted and passed to the application callback.

@@ -84,37 +84,6 @@ TEST_TEAR_DOWN(lwpa_log)
   lwpa_deinit(LWPA_FEATURE_LOGGING);
 }
 
-// Test the LWPA_SET_LOG_MASK() and LWPA_CAN_LOG() macros
-TEST(lwpa_log, log_mask_macros_work)
-{
-  // LWPA_CAN_LOG() should always return false (and not crash) on a null pointer
-  LwpaLogParams* params_ptr = NULL;
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(params_ptr, LWPA_LOG_EMERG));
-
-  LwpaLogParams params;
-
-  // Test a zero mask
-  LWPA_SET_LOG_MASK(&params, 0);
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
-
-  // Test some LOG_UPTO() values
-  LWPA_SET_LOG_MASK(&params, LWPA_LOG_UPTO(LWPA_LOG_EMERG));
-  TEST_ASSERT(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&params, LWPA_LOG_ALERT));
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
-
-  LWPA_SET_LOG_MASK(&params, LWPA_LOG_UPTO(LWPA_LOG_DEBUG));
-  TEST_ASSERT(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
-  TEST_ASSERT(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
-
-  // Test a weird mask with some middle values
-  LWPA_SET_LOG_MASK(&params, LWPA_LOG_MASK(LWPA_LOG_ERR));
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&params, LWPA_LOG_EMERG));
-  TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&params, LWPA_LOG_DEBUG));
-  TEST_ASSERT(LWPA_CAN_LOG(&params, LWPA_LOG_ERR));
-}
-
 // Test the lwpa_sanitize_syslog_params() function.
 TEST(lwpa_log, sanitize_syslog_params_works)
 {
@@ -364,7 +333,7 @@ TEST(lwpa_log, log_mask_is_honored)
   // Try logging with the log mask set to 0, should not work.
   for (int pri = 0; pri < 8; ++pri)
   {
-    TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&lparams, pri));
+    TEST_ASSERT_UNLESS(lwpa_can_log(&lparams, pri));
     lwpa_log(&lparams, pri, LOG_MASK_TEST_MESSAGE);
   }
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 0);
@@ -377,11 +346,11 @@ TEST(lwpa_log, log_mask_is_honored)
     {
       if (test_pri <= mask_pri)
       {
-        TEST_ASSERT(LWPA_CAN_LOG(&lparams, test_pri));
+        TEST_ASSERT(lwpa_can_log(&lparams, test_pri));
       }
       else
       {
-        TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&lparams, test_pri));
+        TEST_ASSERT_UNLESS(lwpa_can_log(&lparams, test_pri));
       }
       lwpa_log(&lparams, test_pri, LOG_MASK_TEST_MESSAGE);
     }
@@ -395,11 +364,11 @@ TEST(lwpa_log, log_mask_is_honored)
   {
     if (test_pri == LWPA_LOG_ALERT || test_pri == LWPA_LOG_WARNING)
     {
-      TEST_ASSERT(LWPA_CAN_LOG(&lparams, test_pri));
+      TEST_ASSERT(lwpa_can_log(&lparams, test_pri));
     }
     else
     {
-      TEST_ASSERT_UNLESS(LWPA_CAN_LOG(&lparams, test_pri));
+      TEST_ASSERT_UNLESS(lwpa_can_log(&lparams, test_pri));
     }
     lwpa_log(&lparams, test_pri, LOG_MASK_TEST_MESSAGE);
   }
@@ -642,7 +611,6 @@ TEST(lwpa_log, logging_maximum_length_string_works)
 
 TEST_GROUP_RUNNER(lwpa_log)
 {
-  RUN_TEST_CASE(lwpa_log, log_mask_macros_work);
   RUN_TEST_CASE(lwpa_log, sanitize_syslog_params_works);
   RUN_TEST_CASE(lwpa_log, validate_log_params_works);
   RUN_TEST_CASE(lwpa_log, log_action_is_honored);
