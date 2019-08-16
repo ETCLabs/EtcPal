@@ -22,7 +22,7 @@
 #include "lwpa/thread.h"
 
 // For general usage
-lwpa_signal_t signal;
+static lwpa_signal_t signal;
 
 static void signal_test_thread(void* arg)
 {

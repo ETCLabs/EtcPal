@@ -34,6 +34,7 @@ lwpa_add_live_test(test_lock test_lock.c)
 lwpa_add_live_test(test_log test_log.c)
 lwpa_add_live_test(test_mempool test_mempool.c)
 lwpa_add_live_test(test_netint test_netint.c)
+lwpa_add_live_test(test_pack test_pack.c)
 
 lwpa_add_custom_test(test_timer_wraparound
   test_timer_wraparound.c
