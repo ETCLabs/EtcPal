@@ -117,7 +117,7 @@ TEST_F(RbTreeTest, insert_static)
   EXPECT_GT(lwpa_rbtree_test(&tree, tree.root), 0);
 
   // Find a random number
-  std::uniform_int_distribution<size_t> dist(0, kIntArraySize - 1);
+  std::uniform_int_distribution<> dist(0, kIntArraySize - 1);
   int to_find = dist(rand_);
   int* found = (int*)lwpa_rbtree_find(&tree, &to_find);
   ASSERT_TRUE(found != nullptr);

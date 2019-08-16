@@ -119,7 +119,7 @@ elseif(LWPA_TARGET_OS STREQUAL macos)
     ${LWPA_ROOT}/src/os/macos/lwpa/os_error.c
   )
 elseif(LWPA_TARGET_OS STREQUAL linux)
-  target_link_libraries(lwpa PUBLIC uuid)
+  target_link_libraries(lwpa PUBLIC uuid pthread)
   target_sources(lwpa PRIVATE
     ${LWPA_ROOT}/src/os/linux/lwpa/os_error.h
     ${LWPA_ROOT}/src/os/linux/lwpa/os_error.c
