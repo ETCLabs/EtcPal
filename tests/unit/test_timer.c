@@ -20,6 +20,7 @@
 #include "unity_fixture.h"
 
 // Interdependency is unavoidable here, we need a platform-neutral sleep
+#include "lwpa/common.h"
 #include "lwpa/thread.h"
 
 TEST_GROUP(lwpa_timer);
