@@ -23,6 +23,8 @@
 #include "lwpa/netint.h"
 #include "lwpa/thread.h"
 
+#include <stdio.h>
+
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
@@ -71,6 +73,9 @@ static void select_network_interface_v4()
         if (LWPA_IP_IS_V4(&netint->addr) && !lwpa_ip_is_link_local(&netint->addr) &&
             !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
+          char addr_str[LWPA_INET6_ADDRSTRLEN];
+          lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
+          printf("IPv4 selecting netint %s, addr %s, index %u\n", netint->friendly_name, addr_str, netint->index);
           v4_netint = *netint;
           return;
         }
@@ -81,6 +86,10 @@ static void select_network_interface_v4()
           "test...\n");
       run_ipv4_mcast_test = false;
     }
+  }
+  else
+  {
+    printf("IPv4 selecting default interface index %u\n", v4_netint.index);
   }
 }
 
@@ -98,6 +107,9 @@ static void select_network_interface_v6()
       {
         if (LWPA_IP_IS_V6(&netint->addr) && !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
+          char addr_str[LWPA_INET6_ADDRSTRLEN];
+          lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
+          printf("IPv6 selecting netint %s, addr %s, index %u\n", netint->friendly_name, addr_str, netint->index);
           v6_netint = *netint;
           return;
         }
@@ -106,6 +118,10 @@ static void select_network_interface_v6()
       UnityPrint("WARNING: No IPv6 non-loopback network interfaces found. Disabling multicast IPv6 test...\n");
       run_ipv6_mcast_test = false;
     }
+  }
+  else
+  {
+    printf("IPv6 selecting default interface index %u\n", v6_netint.index);
   }
 }
 #endif
