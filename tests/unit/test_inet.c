@@ -308,6 +308,57 @@ TEST(lwpa_inet, ip_mask_from_length_works)
   TEST_ASSERT_EQUAL_UINT8_ARRAY(LWPA_IP_V6_ADDRESS(&mask_out), v6_compare_val, LWPA_IPV6_BYTES);
 }
 
+// For inet_xtox
+char str[LWPA_INET6_ADDRSTRLEN];
+const char* test_ip4_1 = "0.0.0.0";
+const char* test_ip4_2 = "255.255.255.255";
+const char* test_ip4_fail = "256.256.256.256";
+const char* test_ip6_1 = "::";
+const uint8_t test_ip6_1_bin[LWPA_IPV6_BYTES] = {0};
+const char* test_ip6_2 = "::1";
+const uint8_t test_ip6_2_bin[LWPA_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+const char* test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
+const uint8_t test_ip6_3_bin[LWPA_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                                 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+const char* test_ip6_fail = "abcd::ef01::2345";
+
+TEST(lwpa_inet, inet_string_functions_work)
+{
+  LwpaIpAddr addr;
+
+  // Test lwpa_inet_pton()
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_pton(kLwpaIpTypeV4, test_ip4_1, &addr));
+  TEST_ASSERT_EQUAL(LWPA_IP_V4_ADDRESS(&addr), 0u);
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_pton(kLwpaIpTypeV4, test_ip4_2, &addr));
+  TEST_ASSERT_EQUAL(LWPA_IP_V4_ADDRESS(&addr), 0xffffffffu);
+  TEST_ASSERT_NOT_EQUAL(kLwpaErrOk, lwpa_inet_pton(kLwpaIpTypeV4, test_ip4_fail, &addr));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_1, &addr));
+  TEST_ASSERT_EQUAL(0, memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_1_bin, LWPA_IPV6_BYTES));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_2, &addr));
+  TEST_ASSERT_EQUAL(0, memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_2_bin, LWPA_IPV6_BYTES));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_3, &addr));
+  TEST_ASSERT_EQUAL(0, memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_3_bin, LWPA_IPV6_BYTES));
+  TEST_ASSERT_NOT_EQUAL(kLwpaErrOk, lwpa_inet_pton(kLwpaIpTypeV6, test_ip6_fail, &addr));
+
+  // Test lwpa_inet_ntop()
+  LWPA_IP_SET_V4_ADDRESS(&addr, 0);
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip4_1));
+  LWPA_IP_SET_V4_ADDRESS(&addr, 0xffffffff);
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip4_2));
+  LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_1_bin);
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip6_1));
+  LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_2_bin);
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip6_2));
+  LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_3_bin);
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+  TEST_ASSERT((0 == strcmp(str, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")) ||
+              (0 == strcmp(str, "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF")));
+}
+
 TEST_GROUP_RUNNER(lwpa_inet)
 {
   RUN_TEST_CASE(lwpa_inet, ipaddr_macros_work);
@@ -317,6 +368,7 @@ TEST_GROUP_RUNNER(lwpa_inet)
   RUN_TEST_CASE(lwpa_inet, ip_compare_functions_work);
   RUN_TEST_CASE(lwpa_inet, ip_mask_length_works);
   RUN_TEST_CASE(lwpa_inet, ip_mask_from_length_works);
+  RUN_TEST_CASE(lwpa_inet, inet_string_functions_work);
 }
 
 void run_all_tests(void)

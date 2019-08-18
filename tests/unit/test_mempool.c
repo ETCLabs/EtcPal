@@ -45,6 +45,7 @@ static void create_shuffled_index_array(size_t* array, size_t size)
 
   for (size_t i = 0; i < size - 1; ++i)
   {
+    // srand() is taken care of at the entry point.
     size_t j = i + rand() / (RAND_MAX / (size - i) + 1);
     size_t swap_val = array[j];
     array[j] = array[i];
@@ -56,10 +57,6 @@ TEST_GROUP(lwpa_mempool);
 
 TEST_SETUP(lwpa_mempool)
 {
-  // We don't srand() for now since an entropy source is not available on all platforms.
-  // This results in the shuffled arrays being deterministic every test run, but that's not really
-  // that big of a deal.
-
   memset(test_arr, 0, sizeof test_arr);
   memset(index_arr, 0, sizeof index_arr);
 }

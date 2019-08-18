@@ -18,7 +18,7 @@
  ******************************************************************************/
 #include "lwpa/lock.h"
 #include "unity_fixture.h"
-#include "test_main.h"
+
 #include "lwpa/thread.h"
 
 // For general usage
@@ -32,12 +32,22 @@ static void signal_test_thread(void* arg)
     lwpa_signal_wait(&sig);
 }
 
+TEST_GROUP(signal_integration);
+
+TEST_SETUP(signal_integration)
+{
+  TEST_ASSERT(lwpa_signal_create(&sig));
+}
+
+TEST_TEAR_DOWN(signal_integration)
+{
+  lwpa_signal_destroy(&sig);
+}
+
 // Two threads are created. They wait on the same signal 3 times. Each post of the signal should
 // wake up only one of the threads, so 6 posts should end both threads.
-TEST(lwpa_integration, signal_thread_test)
+TEST(signal_integration, signal_thread_test)
 {
-  TEST_ASSERT_TRUE(lwpa_signal_create(&sig));
-
   lwpa_thread_t threads[2];
 
   LwpaThreadParams params;
@@ -56,6 +66,9 @@ TEST(lwpa_integration, signal_thread_test)
 
   for (size_t i = 0; i < 2; ++i)
     TEST_ASSERT_TRUE(lwpa_thread_join(&threads[i]));
+}
 
-  lwpa_signal_destroy(&sig);
+TEST_GROUP_RUNNER(signal_integration)
+{
+  RUN_TEST_CASE(signal_integration, signal_thread_test);
 }

@@ -17,11 +17,14 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
+#include <stdlib.h>
+#include <time.h>
 #include "unity_fixture.h"
 
 extern void run_all_tests(void);
 
 int main(int argc, char* argv[])
 {
+  srand((unsigned int)time(NULL));
   return UnityMain(argc, argv, run_all_tests);
 }

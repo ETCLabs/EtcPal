@@ -25,24 +25,36 @@
 #define NUM_THREADS 10
 #define NUM_ITERATIONS 10000
 
-// The shared variable
-int shared_var{0};
+static int shared_var;
+static lwpa_mutex_t mutex;
 
-static void mutex_test_thread(MutexTest* fixture)
+static void mutex_test_thread(void* arg)
 {
-  if (fixture)
+  (void)arg;
+
+  for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    for (int i = 0; i < MutexTest::kNumIterations; ++i)
-    {
-      lwpa_mutex_take(&fixture->mutex);
-      ++fixture->shared_var;
-      lwpa_mutex_give(&fixture->mutex);
-      // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
-      // This ensures that each thread runs for long enough to get time-sliced multiple times.
-      for (volatile size_t j = 0; j < 100; ++j)
-        ;
-    }
+    lwpa_mutex_take(&mutex);
+    ++shared_var;
+    lwpa_mutex_give(&mutex);
+    // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
+    // This ensures that each thread runs for long enough to get time-sliced multiple times.
+    for (volatile size_t j = 0; j < 100; ++j)
+      ;
   }
+}
+
+TEST_GROUP(mutex_integration);
+
+TEST_SETUP(mutex_integration)
+{
+  shared_var = 0;
+  TEST_ASSERT(lwpa_mutex_create(&mutex));
+}
+
+TEST_TEAR_DOWN(mutex_integration)
+{
+  lwpa_mutex_destroy(&mutex);
 }
 
 // Test the actual mutex functionality. Start a number of threads and have them all increment the
@@ -51,24 +63,25 @@ static void mutex_test_thread(MutexTest* fixture)
 
 // Yes, this test isn't guaranteed to fail if the mutexes don't work. But it's still a good test to
 // run. Tests on several platforms where the mutex lines were commented showed failure very reliably.
-TEST_F(MutexTest, threads)
+TEST(mutex_integration, mutex_thread_test)
 {
-  ASSERT_TRUE(lwpa_mutex_create(&mutex));
+  lwpa_thread_t threads[NUM_THREADS];
 
-  std::vector<std::thread> threads;
-  threads.reserve(kNumThreads);
+  LwpaThreadParams params;
+  LWPA_THREAD_SET_DEFAULT_PARAMS(&params);
 
-  for (size_t i = 0; i < kNumThreads; ++i)
+  for (size_t i = 0; i < NUM_THREADS; ++i)
   {
-    std::thread thread(mutex_test_thread, this);
-    ASSERT_TRUE(thread.joinable());
-    threads.push_back(std::move(thread));
+    TEST_ASSERT_TRUE(lwpa_thread_create(&threads[i], &params, mutex_test_thread, NULL));
   }
 
-  for (auto& thread : threads)
-    thread.join();
+  for (size_t i = 0; i < NUM_THREADS; ++i)
+    TEST_ASSERT_TRUE(lwpa_thread_join(&threads[i]));
 
-  ASSERT_EQ(shared_var, (kNumThreads * kNumIterations));
+  TEST_ASSERT_EQUAL(shared_var, (NUM_THREADS * NUM_ITERATIONS));
+}
 
-  lwpa_mutex_destroy(&mutex);
+TEST_GROUP_RUNNER(mutex_integration)
+{
+  RUN_TEST_CASE(mutex_integration, mutex_thread_test);
 }

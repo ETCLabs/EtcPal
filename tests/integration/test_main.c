@@ -18,24 +18,10 @@
  ******************************************************************************/
 #include "unity_fixture.h"
 
-// HACK to get the Unity Fixture add-on to work in multiple files
-const char* TEST_GROUP_lwpa_integration = "lwpa_integration";
-// TEST_GROUP(lwpa_integration);
-
-TEST_SETUP(lwpa_integration)
-{
-}
-
-TEST_TEAR_DOWN(lwpa_integration)
-{
-}
-
-TEST_GROUP_RUNNER(lwpa_integration)
-{
-  RUN_TEST_CASE(lwpa_integration, signal_thread_test);
-}
-
 void run_all_tests(void)
 {
-  RUN_TEST_GROUP(lwpa_integration);
+  RUN_TEST_GROUP(mutex_integration);
+  RUN_TEST_GROUP(rwlock_integration);
+  RUN_TEST_GROUP(signal_integration);
+  RUN_TEST_GROUP(socket_integration);
 }
