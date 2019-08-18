@@ -23,5 +23,5 @@ extern void run_all_tests(void);
 
 int main(int argc, char* argv[])
 {
-  return UnityMain(argc, argv, run_all_tests);
+  return UnityMain(argc, (const char**)argv, run_all_tests);
 }

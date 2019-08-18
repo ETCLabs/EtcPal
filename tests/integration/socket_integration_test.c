@@ -60,7 +60,7 @@ static LwpaSockaddr send_addr;
 static void select_network_interface_v4()
 {
   run_ipv4_mcast_test = true;
-  if (kLwpaErrOk != lwpa_netint_get_default_interface(kLwpaIpTypeV6, &v4_netint))
+  if (kLwpaErrOk != lwpa_netint_get_default_interface(kLwpaIpTypeV4, &v4_netint))
   {
     const LwpaNetintInfo* arr = lwpa_netint_get_interfaces();
     if (arr)

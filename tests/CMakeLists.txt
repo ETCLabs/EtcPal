@@ -13,7 +13,6 @@ if(WIN32 OR APPLE OR UNIX)
   endfunction()
 endif()
 
-
 if(WIN32)
   set(LWPA_TEST_COMPILE_OPTIONS /wd4210)
 elseif(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -22,8 +21,13 @@ else()
   set(LWPA_TEST_COMPILE_OPTIONS "")
 endif()
 
+# Set the platform-dependent compile definitions for the tests 
 if(LWPA_TEST_IPV6)
-  set(LWPA_TEST_COMPILE_DEFINITIONS LWPA_TEST_IPV6)
+  list(APPEND LWPA_TEST_COMPILE_DEFINITIONS LWPA_TEST_IPV6)
+endif()
+
+if(APPLE)
+  list(APPEND LWPA_TEST_COMPILE_DEFINITIONS LWPA_BULK_POLL_TEST_NUM_SOCKETS=200)
 endif()
 
 add_subdirectory(unit)
