@@ -62,8 +62,13 @@ static LwpaSockaddr send_addr;
 // if not.
 static void select_network_interface_v4()
 {
-  run_ipv4_mcast_test = true;
-  if (kLwpaErrOk != lwpa_netint_get_default_interface(kLwpaIpTypeV4, &v4_netint))
+  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &v4_netint) &&
+      NULL == strstr(v4_netint.name, "utun"))
+  {
+    run_ipv4_mcast_test = true;
+    printf("IPv4 selecting default interface index %u\n", v4_netint.index);
+  }
+  else
   {
     const LwpaNetintInfo* arr = lwpa_netint_get_interfaces();
     if (arr)
@@ -77,6 +82,7 @@ static void select_network_interface_v4()
           lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
           printf("IPv4 selecting netint %s, addr %s, index %u\n", netint->friendly_name, addr_str, netint->index);
           v4_netint = *netint;
+          run_ipv4_mcast_test = true;
           return;
         }
       }
@@ -87,18 +93,19 @@ static void select_network_interface_v4()
       run_ipv4_mcast_test = false;
     }
   }
-  else
-  {
-    printf("IPv4 selecting default interface index %u\n", v4_netint.index);
-  }
 }
 
 #if LWPA_TEST_IPV6
 // Select the default interface if available, the very first non-loopback interface if not.
 static void select_network_interface_v6()
 {
-  run_ipv6_mcast_test = true;
-  if (kLwpaErrOk != lwpa_netint_get_default_interface(kLwpaIpTypeV6, &v6_netint))
+  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &v6_netint) &&
+      NULL == strstr(v6_netint.name, "utun"))
+  {
+    run_ipv6_mcast_test = true;
+    printf("IPv6 selecting default interface index %u\n", v6_netint.index);
+  }
+  else
   {
     const LwpaNetintInfo* arr = lwpa_netint_get_interfaces();
     if (arr)
@@ -111,6 +118,7 @@ static void select_network_interface_v6()
           lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
           printf("IPv6 selecting netint %s, addr %s, index %u\n", netint->friendly_name, addr_str, netint->index);
           v6_netint = *netint;
+          run_ipv6_mcast_test = true;
           return;
         }
       }
@@ -118,10 +126,6 @@ static void select_network_interface_v6()
       UnityPrint("WARNING: No IPv6 non-loopback network interfaces found. Disabling multicast IPv6 test...\n");
       run_ipv6_mcast_test = false;
     }
-  }
-  else
-  {
-    printf("IPv6 selecting default interface index %u\n", v6_netint.index);
   }
 }
 #endif
