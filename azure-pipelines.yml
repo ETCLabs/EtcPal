@@ -26,7 +26,7 @@ jobs:
   steps:
   - task: CMake@1
     inputs: 
-      cmakeArgs: -G "Visual Studio 15 2017 Win64" $(cmake_definitions)
+      cmakeArgs: -G "Visual Studio 15 2017 Win64" $(cmake_definitions) ..
     displayName: 'lwpa Windows build'
   - script: |
       cd build
