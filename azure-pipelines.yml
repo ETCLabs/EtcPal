@@ -24,12 +24,9 @@ jobs:
       Release:
         LWPA_BUILD_CONFIG: 'Release'
   steps:
-  - script: |
-      mkdir build
-      cd build
-      cmake --version
-      cmake -G "Visual Studio 15 2017 Win64" $(cmake_definitions) ..
-      cmake --build . --config %LWPA_BUILD_CONFIG%
+  - task: CMake@1
+    inputs: 
+      cmakeArgs: -G "Visual Studio 15 2017 Win64" $(cmake_definitions)
     displayName: 'lwpa Windows build'
   - script: |
       cd build
