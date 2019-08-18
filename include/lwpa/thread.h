@@ -38,7 +38,7 @@ typedef struct LwpaThreadParams
   do                                                                   \
   {                                                                    \
     (threadparamsptr)->thread_priority = LWPA_THREAD_DEFAULT_PRIORITY; \
-    (threadparamsptr)->thread_stack = LWPA_THREAD_DEFAULT_STACK;       \
+    (threadparamsptr)->stack_size = LWPA_THREAD_DEFAULT_STACK;         \
     (threadparamsptr)->thread_name = LWPA_THREAD_DEFAULT_NAME;         \
     (threadparamsptr)->platform_data = NULL;                           \
   } while (0)

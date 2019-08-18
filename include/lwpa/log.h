@@ -210,7 +210,7 @@ typedef struct LwpaSyslogParams
 /*! A set of parameters used for the lwpa_*log() functions. */
 typedef struct LwpaLogParams
 {
-  /*! What should be done when lwpa_*log() is called. */
+  /*! What should be done when lwpa_log() or lwpa_vlog() is called. */
   lwpa_log_action_t action;
   /*! A callback function for the finished log string(s). */
   lwpa_log_callback log_fn;
@@ -218,17 +218,12 @@ typedef struct LwpaLogParams
   LwpaSyslogParams syslog_params;
   /*! A mask value that determines which priority messages can be logged. */
   int log_mask;
-  /*! A callback function for lwpa_*log() functions to obtain the time from the application. If
-   *  NULL, no timestamp will be added to log messages. */
+  /*! A callback function for the lwpa_log() and lwpa_vlog() functions to obtain the time from the
+   *  application. If NULL, no timestamp will be added to log messages. */
   lwpa_log_time_fn time_fn;
   /*! Application context that will be passed back with the log callback function. */
   void* context;
 } LwpaLogParams;
-
-#define LWPA_SET_LOG_MASK(logparamsptr, newlogmask) ((logparamsptr)->log_mask = newlogmask)
-
-#define LWPA_CAN_LOG(logparamsptr, pri) \
-  ((logparamsptr) ? ((LWPA_LOG_MASK(pri) & (logparamsptr)->log_mask) != 0) : false)
 
 #ifdef __cplusplus
 extern "C" {
@@ -258,6 +253,8 @@ bool lwpa_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams
 
 void lwpa_sanitize_syslog_params(LwpaSyslogParams* params);
 bool lwpa_validate_log_params(LwpaLogParams* params);
+
+bool lwpa_can_log(const LwpaLogParams* params, int pri);
 
 #ifdef __ICCARM__
 #pragma __printf_args

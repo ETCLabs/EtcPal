@@ -17,35 +17,32 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/thread.h"
-#include "gtest/gtest.h"
-#include <chrono>
-#include <thread>
+#include "unity_fixture.h"
 
-class ThreadTest : public ::testing::Test
+#include "lwpa/bool.h"
+
+TEST_GROUP(lwpa_thread);
+
+TEST_SETUP(lwpa_thread)
 {
-public:
-  // For create_destroy
-  volatile bool waitthread_run{false};
+}
 
-  // for time_slice
-  volatile bool spin_task_run{false};
-  volatile bool spin_task_ran{false};
-  volatile bool oneshot_task_run{false};
-  volatile bool oneshot_task_ran{false};
-};
+TEST_TEAR_DOWN(lwpa_thread)
+{
+}
+
+volatile bool waitthread_run;
 
 void wait_and_exit(void* param)
 {
-  ThreadTest* tt = static_cast<ThreadTest*>(param);
-  if (tt)
-  {
-    while (tt->waitthread_run)
-      lwpa_thread_sleep(5);
-  }
+  (void)param;
+
+  while (waitthread_run)
+    lwpa_thread_sleep(5);
 }
 
 // Basic test of the three thread functions.
-TEST_F(ThreadTest, create_destroy)
+TEST(lwpa_thread, create_and_destroy_functions_work)
 {
   LwpaThreadParams params = {
       LWPA_THREAD_DEFAULT_PRIORITY,  // thread_priority
@@ -56,53 +53,39 @@ TEST_F(ThreadTest, create_destroy)
   lwpa_thread_t wait_thread;
 
   waitthread_run = true;
-  ASSERT_TRUE(lwpa_thread_create(&wait_thread, &params, wait_and_exit, this));
-
-  //////////////////////////////////////////////////////////////////////////////
-  // Time-based functionality not implemented for now.
-  //////////////////////////////////////////////////////////////////////////////
-
-  // Stop should time out if the thread is still looping.
-  // auto start_time = std::chrono::high_resolution_clock::now();
-
-  // ASSERT_FALSE(lwpa_thread_join(&wait_thread, 100));
-  // It should wait for at least the timeout specified, minus a fudge factor to account for
-  // differing time resolutions on platforms.
-  // auto time_taken =
-  //     std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time);
-  // ASSERT_GE(time_taken.count(), 80);
+  TEST_ASSERT(lwpa_thread_create(&wait_thread, &params, wait_and_exit, NULL));
 
   // Stop should work if the thread has exited.
   waitthread_run = false;
-  ASSERT_TRUE(lwpa_thread_join(&wait_thread));
+  TEST_ASSERT(lwpa_thread_join(&wait_thread));
 }
+
+volatile bool spin_task_run;
+volatile bool spin_task_ran;
 
 void increment_and_spin(void* param)
 {
-  ThreadTest* tt = static_cast<ThreadTest*>(param);
-  if (tt)
-  {
-    tt->spin_task_ran = true;
-    while (tt->spin_task_run)
-      ;
-  }
+  (void)param;
+
+  spin_task_ran = true;
+  while (spin_task_run)
+    ;
 }
+
+volatile bool oneshot_task_run;
+volatile bool oneshot_task_ran;
 
 void oneshot(void* param)
 {
-  ThreadTest* tt = static_cast<ThreadTest*>(param);
-  if (tt)
-  {
-    if (tt->oneshot_task_run)
-      tt->oneshot_task_ran = true;
-  }
-}
+  (void)param;
 
-using namespace std::chrono_literals;
+  if (oneshot_task_run)
+    oneshot_task_ran = true;
+}
 
 // Test time slicing. One thread spins constantly; if time slicing works, the second thread should
 // get a chance to set its flag. Failure mode could be the flag not being set or a full test timeout.
-TEST_F(ThreadTest, time_slice)
+TEST(lwpa_thread, threads_are_time_sliced)
 {
   LwpaThreadParams params = {
       LWPA_THREAD_DEFAULT_PRIORITY,  // thread_priority
@@ -115,16 +98,27 @@ TEST_F(ThreadTest, time_slice)
   oneshot_task_run = true;
 
   // Create the spin task.
-  ASSERT_TRUE(lwpa_thread_create(&spin_task, &params, increment_and_spin, this));
+  TEST_ASSERT_TRUE(lwpa_thread_create(&spin_task, &params, increment_and_spin, NULL));
   // Create the oneshot task.
-  ASSERT_TRUE(lwpa_thread_create(&oneshot_task, &params, oneshot, this));
+  TEST_ASSERT_TRUE(lwpa_thread_create(&oneshot_task, &params, oneshot, NULL));
   // Give both tasks time to run.
-  std::this_thread::sleep_for(100ms);
+  lwpa_thread_sleep(100);
   // Stop the tasks
   oneshot_task_run = false;
-  ASSERT_TRUE(lwpa_thread_join(&oneshot_task));
+  TEST_ASSERT_TRUE(lwpa_thread_join(&oneshot_task));
   spin_task_run = false;
-  ASSERT_TRUE(lwpa_thread_join(&spin_task));
-  ASSERT_TRUE(spin_task_ran);
-  ASSERT_TRUE(oneshot_task_ran);
+  TEST_ASSERT_TRUE(lwpa_thread_join(&spin_task));
+  TEST_ASSERT_TRUE(spin_task_ran);
+  TEST_ASSERT_TRUE(oneshot_task_ran);
+}
+
+TEST_GROUP_RUNNER(lwpa_thread)
+{
+  RUN_TEST_CASE(lwpa_thread, create_and_destroy_functions_work);
+  RUN_TEST_CASE(lwpa_thread, threads_are_time_sliced);
+}
+
+void run_all_tests(void)
+{
+  RUN_TEST_GROUP(lwpa_thread);
 }

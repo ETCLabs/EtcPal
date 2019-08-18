@@ -4,7 +4,17 @@ cmake_minimum_required(VERSION 3.3)
 
 project(lwpa VERSION 0.3.0)
 
-if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+# Sometimes the seems to be some weirdness with drive letter capitalization on Windows, so do a
+# case-insensitive comparision
+if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
+  string(TOLOWER ${PROJECT_SOURCE_DIR} PROJECT_SOURCE_DIR_LC)
+  string(TOLOWER ${CMAKE_SOURCE_DIR} CMAKE_SOURCE_DIR_LC)
+else()
+  set(PROJECT_SOURCE_DIR_LC ${PROJECT_SOURCE_DIR})
+  set(CMAKE_SOURCE_DIR_LC ${CMAKE_SOURCE_DIR})
+endif()
+
+if(PROJECT_SOURCE_DIR_LC STREQUAL CMAKE_SOURCE_DIR_LC)
   if (MSVC)
     add_compile_options(/W4)
   elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -15,6 +25,9 @@ if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
       add_compile_options(-Wno-sign-compare)
     endif()
   endif()
+
+  # Allow folder grouping in generated IDE projects
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
   list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tools/cmake)
   set(OPTION_DEFAULTS ON)
@@ -37,6 +50,7 @@ add_subdirectory(src)
 #################################### Tests ####################################
 
 if(LWPA_BUILD_TESTS)
+  add_subdirectory(external/unity)
   enable_testing()
   add_subdirectory(tests)
 endif()

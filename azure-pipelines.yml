@@ -8,6 +8,9 @@ trigger:
 pr:
 - develop
 
+variables:
+  cmake_definitions: -DLWPA_BUILD_MOCK_LIB=ON -DLWPA_BUILDING_FOR_AZURE_PIPELINES_CI=1
+
 jobs:
 # Build and test lwpa on Windows using CMake and Visual Studio 2017.
 - job: windows_build
@@ -25,12 +28,12 @@ jobs:
       mkdir build
       cd build
       cmake --version
-      cmake -G "Visual Studio 15 2017 Win64" -DLWPA_BUILD_MOCK_LIB=ON ..
+      cmake -G "Visual Studio 15 2017 Win64" $(cmake_definitions) ..
       cmake --build . --config %LWPA_BUILD_CONFIG%
     displayName: 'lwpa Windows build'
   - script: |
       cd build
-      ctest --output-on-failure -C %LWPA_BUILD_CONFIG%
+      ctest --verbose -C %LWPA_BUILD_CONFIG%
     displayName: 'lwpa Windows test'
 
 - job: macos_build
@@ -42,12 +45,12 @@ jobs:
       mkdir build
       cd build
       cmake --version
-      cmake -DLWPA_BUILD_MOCK_LIB=ON ..
+      cmake $(cmake_definitions) ..
       cmake --build .
     displayName: 'lwpa macOS build'
   - script: |
       cd build
-      ctest --output-on-failure
+      ctest --verbose
     displayName: 'lwpa macOS test'
 
 - job: linux_build
@@ -61,12 +64,12 @@ jobs:
       mkdir build
       cd build
       cmake --version
-      cmake -G "Unix Makefiles" -DLWPA_BUILD_MOCK_LIB=ON ..
+      cmake -G "Unix Makefiles" $(cmake_definitions) ..
       cmake --build .
     displayName: 'lwpa Linux build'
   - script: |
       cd build
-      ctest --output-on-failure
+      ctest --verbose
     displayName: 'lwpa Linux test'
 
 # Generate documentation with doxygen. Documentation is generated from the

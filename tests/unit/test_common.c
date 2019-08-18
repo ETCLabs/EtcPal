@@ -17,81 +17,94 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/common.h"
-#include "gmock/gmock.h"
+#include "unity_fixture.h"
+#include "fff.h"
 
 #include "lwpa/netint.h"
 #include "lwpa/log.h"
 
-class CommonTest : public ::testing::Test
+DEFINE_FFF_GLOBALS;
+
+TEST_GROUP(lwpa_common);
+
+TEST_SETUP(lwpa_common)
 {
-public:
-  MOCK_METHOD0(LogCallback, void());
-};
+}
+
+TEST_TEAR_DOWN(lwpa_common)
+{
+}
 
 // Test the LWPA_FEATURES_ALL_BUT() macro
-TEST_F(CommonTest, features_all_but)
+TEST(lwpa_common, features_all_but_macro_works)
 {
   lwpa_features_t mask = LWPA_FEATURES_ALL_BUT(LWPA_FEATURE_SOCKETS);
-  EXPECT_TRUE(mask & LWPA_FEATURE_NETINTS);
-  EXPECT_TRUE(mask & LWPA_FEATURE_TIMERS);
-  EXPECT_TRUE(mask & LWPA_FEATURE_LOGGING);
-  EXPECT_FALSE(mask & LWPA_FEATURE_SOCKETS);
+  TEST_ASSERT(mask & LWPA_FEATURE_NETINTS);
+  TEST_ASSERT(mask & LWPA_FEATURE_TIMERS);
+  TEST_ASSERT(mask & LWPA_FEATURE_LOGGING);
+  TEST_ASSERT_UNLESS(mask & LWPA_FEATURE_SOCKETS);
 
   mask = LWPA_FEATURES_ALL_BUT(LWPA_FEATURE_LOGGING);
-  EXPECT_TRUE(mask & LWPA_FEATURE_SOCKETS);
-  EXPECT_TRUE(mask & LWPA_FEATURE_NETINTS);
-  EXPECT_TRUE(mask & LWPA_FEATURE_TIMERS);
-  EXPECT_FALSE(mask & LWPA_FEATURE_LOGGING);
+  TEST_ASSERT(mask & LWPA_FEATURE_SOCKETS);
+  TEST_ASSERT(mask & LWPA_FEATURE_NETINTS);
+  TEST_ASSERT(mask & LWPA_FEATURE_TIMERS);
+  TEST_ASSERT_UNLESS(mask & LWPA_FEATURE_LOGGING);
 }
 
 // Test multiple calls of lwpa_init() for the netint module.
-TEST_F(CommonTest, netint_double_init)
+TEST(lwpa_common, netint_double_init_works)
 {
-  ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURE_NETINTS));
-  ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURE_NETINTS));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_NETINTS));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_NETINTS));
 
   lwpa_deinit(LWPA_FEATURE_NETINTS);
 
   // After 2 inits and one deinit, we should still be able to make valid calls to the module.
   LwpaNetintInfo def_netint;
-  EXPECT_EQ(kLwpaErrOk, lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_netint));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_netint));
 
   lwpa_deinit(LWPA_FEATURE_NETINTS);
 }
 
-// A shim from the lwpa_log module to GoogleMock.
-extern "C" void log_cb(void* context, const LwpaLogStrings* strings)
-{
-  (void)strings;
-
-  CommonTest* test_fixture = static_cast<CommonTest*>(context);
-  test_fixture->LogCallback();
-}
+// A shim from the lwpa_log module to fff.
+FAKE_VOID_FUNC(log_callback, void*, const LwpaLogStrings*);
 
 // Test multiple calls of lwpa_init() for the log module.
-TEST_F(CommonTest, log_double_init)
+TEST(lwpa_common, log_double_init_works)
 {
-  ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURE_LOGGING));
-  ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURE_LOGGING));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_LOGGING));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_LOGGING));
 
   LwpaLogParams params;
   params.action = kLwpaLogCreateHumanReadableLog;
-  params.log_fn = log_cb;
+  params.log_fn = log_callback;
   params.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
-  params.time_fn = nullptr;
-  params.context = this;
+  params.time_fn = NULL;
+  params.context = NULL;
 
-  ASSERT_TRUE(lwpa_validate_log_params(&params));
+  TEST_ASSERT_TRUE(lwpa_validate_log_params(&params));
 
-  EXPECT_CALL(*this, LogCallback);
   lwpa_log(&params, LWPA_LOG_INFO, "Log message");
+  TEST_ASSERT_EQUAL(log_callback_fake.call_count, 1);
 
   lwpa_deinit(LWPA_FEATURE_LOGGING);
 
   // After 2 inits and one deinit, we should still be able to use the lwpa_log() function and get
   // callbacks.
-  EXPECT_CALL(*this, LogCallback);
   lwpa_log(&params, LWPA_LOG_INFO, "Log message");
+  TEST_ASSERT_EQUAL(log_callback_fake.call_count, 2);
 
   lwpa_deinit(LWPA_FEATURE_LOGGING);
+}
+
+TEST_GROUP_RUNNER(lwpa_common)
+{
+  RUN_TEST_CASE(lwpa_common, features_all_but_macro_works);
+  RUN_TEST_CASE(lwpa_common, netint_double_init_works);
+  RUN_TEST_CASE(lwpa_common, log_double_init_works);
+}
+
+void run_all_tests(void)
+{
+  RUN_TEST_GROUP(lwpa_common);
 }
