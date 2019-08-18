@@ -16,3 +16,9 @@ target_compile_options(lwpa_integration_tests PRIVATE ${LWPA_TEST_COMPILE_OPTION
 target_compile_definitions(lwpa_integration_tests PRIVATE ${LWPA_TEST_COMPILE_DEFINITIONS})
 target_link_libraries(lwpa_integration_tests PRIVATE lwpa ThrowTheSwitch::Unity)
 lwpa_add_to_ctest(lwpa_integration_tests)
+
+# The macOS hosted agents have some unknown restriction on multicast traffic which causes the
+# multicast tests to fail.
+if(APPLE AND LWPA_BUILDING_FOR_AZURE_PIPELINES_CI)
+  target_compile_definitions(lwpa_integration_tests PRIVATE LWPA_TEST_DISABLE_MCAST_INTEGRATION_TESTS)
+endif()

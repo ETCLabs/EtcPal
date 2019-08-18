@@ -23,8 +23,6 @@
 #include "lwpa/netint.h"
 #include "lwpa/thread.h"
 
-#include <stdio.h>
-
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
@@ -66,7 +64,6 @@ static void select_network_interface_v4()
       NULL == strstr(v4_netint.name, "utun"))
   {
     run_ipv4_mcast_test = true;
-    printf("IPv4 selecting default interface index %u\n", v4_netint.index);
   }
   else
   {
@@ -78,9 +75,6 @@ static void select_network_interface_v4()
         if (LWPA_IP_IS_V4(&netint->addr) && !lwpa_ip_is_link_local(&netint->addr) &&
             !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
-          char addr_str[LWPA_INET6_ADDRSTRLEN];
-          lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-          printf("IPv4 selecting netint %s, addr %s, index %u\n", netint->friendly_name, addr_str, netint->index);
           v4_netint = *netint;
           run_ipv4_mcast_test = true;
           return;
@@ -114,9 +108,6 @@ static void select_network_interface_v6()
       {
         if (LWPA_IP_IS_V6(&netint->addr) && !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
-          char addr_str[LWPA_INET6_ADDRSTRLEN];
-          lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-          printf("IPv6 selecting netint %s, addr %s, index %u\n", netint->friendly_name, addr_str, netint->index);
           v6_netint = *netint;
           run_ipv6_mcast_test = true;
           return;
@@ -486,9 +477,11 @@ TEST_GROUP_RUNNER(socket_integration)
 {
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS));
 
+#if !LWPA_TEST_DISABLE_MCAST_INTEGRATION_TESTS
   select_network_interface_v4();
 #if LWPA_TEST_IPV6
   select_network_interface_v6();
+#endif
 #endif
 
   RUN_TEST_CASE(socket_integration, unicast_udp_ipv4);
