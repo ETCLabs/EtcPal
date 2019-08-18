@@ -22,6 +22,20 @@
 #include "lwpa/netint.h"
 #include "lwpa/thread.h"
 
+// Disable sprintf() warning on Windows/MSVC
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
+
+#ifndef LWPA_BULK_POLL_TEST_NUM_SOCKETS
+#if LWPA_SOCKET_MAX_POLL_SIZE <= 0 || LWPA_SOCKET_MAX_POLL_SIZE > 1024
+// Limit the bulk socket test to a reasonable number
+#define LWPA_BULK_POLL_TEST_NUM_SOCKETS 512
+#else
+#define LWPA_BULK_POLL_TEST_NUM_SOCKETS LWPA_SOCKET_MAX_POLL_SIZE
+#endif
+#endif
+
 #define NUM_TEST_PACKETS 1000
 
 static LwpaNetintInfo v4_netint;
@@ -386,6 +400,67 @@ TEST(socket_integration, multicast_udp_ipv6)
 }
 #endif
 
+// Test to make sure lwpa_poll_* functions work properly with a large number of sockets.
+// (Tests the maximum number defined by LWPA_SOCKET_MAX_POLL_SIZE if that number is well-defined and
+// reasonable).
+TEST(socket_integration, bulk_poll)
+{
+  LwpaPollContext context;
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_poll_context_init(&context));
+
+  static lwpa_socket_t socket_arr[LWPA_BULK_POLL_TEST_NUM_SOCKETS];
+  static uint16_t bind_ports[LWPA_BULK_POLL_TEST_NUM_SOCKETS];
+  for (size_t i = 0; i < LWPA_BULK_POLL_TEST_NUM_SOCKETS; ++i)
+  {
+    char error_msg[50];
+    sprintf(error_msg, "Failed on iteration %zu", i);
+
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &socket_arr[i]), error_msg);
+    TEST_ASSERT_NOT_EQUAL_MESSAGE(socket_arr[i], LWPA_SOCKET_INVALID, error_msg);
+
+    LwpaSockaddr bind_addr;
+    lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
+    bind_addr.port = 0;
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_bind(socket_arr[i], &bind_addr), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_getsockname(socket_arr[i], &bind_addr), error_msg);
+    bind_ports[i] = bind_addr.port;
+
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_poll_add_socket(&context, socket_arr[i], LWPA_POLL_IN, NULL), error_msg);
+  }
+
+  lwpa_socket_t poll_send_sock;
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &poll_send_sock));
+
+  LwpaSockaddr poll_send_addr;
+  LWPA_IP_SET_V4_ADDRESS(&poll_send_addr.ip, 0x7f000001);
+  for (size_t i = 0; i < LWPA_BULK_POLL_TEST_NUM_SOCKETS; ++i)
+  {
+    char error_msg[50];
+    sprintf(error_msg, "Failed on iteration %zu", i);
+
+    // Send to each socket in turn and make sure poll works for it
+    poll_send_addr.port = bind_ports[i];
+    lwpa_sendto(poll_send_sock, kSocketTestMessage, SOCKET_TEST_MESSAGE_LENGTH, 0, &poll_send_addr);
+
+    LwpaPollEvent event;
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_poll_wait(&context, &event, 100), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(event.socket, socket_arr[i], error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(event.events, LWPA_POLL_IN, error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(event.err, kLwpaErrOk, error_msg);
+
+    uint8_t recv_buf[SOCKET_TEST_MESSAGE_LENGTH];
+    TEST_ASSERT_GREATER_THAN(0, lwpa_recvfrom(socket_arr[i], recv_buf, SOCKET_TEST_MESSAGE_LENGTH, 0, NULL));
+  }
+
+  for (size_t i = 0; i < LWPA_BULK_POLL_TEST_NUM_SOCKETS; ++i)
+  {
+    char error_msg[50];
+    sprintf(error_msg, "Failed on iteration %zu", i);
+
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_close(socket_arr[i]), error_msg);
+  }
+}
+
 TEST_GROUP_RUNNER(socket_integration)
 {
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS));
@@ -403,6 +478,8 @@ TEST_GROUP_RUNNER(socket_integration)
   if (run_ipv6_mcast_test)
     RUN_TEST_CASE(socket_integration, multicast_udp_ipv6);
 #endif
+
+  RUN_TEST_CASE(socket_integration, bulk_poll);
 
   lwpa_deinit(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS);
 }

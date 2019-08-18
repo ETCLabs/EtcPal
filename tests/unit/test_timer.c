@@ -16,34 +16,37 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-
-#include "lwpa/common.h"
 #include "lwpa/timer.h"
+#include "unity_fixture.h"
 
-#include "gtest/gtest.h"
-#include <thread>
+// Interdependency is unavoidable here, we need a platform-neutral sleep
+#include "lwpa/thread.h"
 
-class TimerTest : public ::testing::Test
+TEST_GROUP(lwpa_timer);
+
+TEST_SETUP(lwpa_timer)
 {
-  void SetUp() override { ASSERT_EQ(kLwpaErrOk, lwpa_init(LWPA_FEATURE_TIMERS)); }
-  void TearDown() override { lwpa_deinit(LWPA_FEATURE_TIMERS); }
-};
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_TIMERS));
+}
 
-using namespace std::chrono_literals;
+TEST_TEAR_DOWN(lwpa_timer)
+{
+  lwpa_deinit(LWPA_FEATURE_TIMERS);
+}
 
-TEST_F(TimerTest, getms)
+TEST(lwpa_timer, getms_gets_increasing_values)
 {
   uint32_t t1, t2;
   t1 = lwpa_getms();
-  std::this_thread::sleep_for(10ms);
+  lwpa_thread_sleep(10);
   t2 = lwpa_getms();
 
-  ASSERT_NE(t1, 0u);
-  ASSERT_NE(t2, 0u);
-  ASSERT_GE((int32_t)t2 - (int32_t)t1, 0);
+  TEST_ASSERT_NOT_EQUAL(t1, 0u);
+  TEST_ASSERT_NOT_EQUAL(t2, 0u);
+  TEST_ASSERT_GREATER_OR_EQUAL_INT32(0, (int32_t)t2 - (int32_t)t1);
 }
 
-TEST_F(TimerTest, timeouts)
+TEST(lwpa_timer, timers_report_expired_properly)
 {
   LwpaTimer t1, t2;
 
@@ -51,23 +54,34 @@ TEST_F(TimerTest, timeouts)
   lwpa_timer_start(&t2, 100);
 
   // A timer with a timeout of 0 should start expired.
-  ASSERT_TRUE(lwpa_timer_is_expired(&t1));
+  TEST_ASSERT(lwpa_timer_is_expired(&t1));
 
   // The nonzero timeout should not be expired yet.
-  ASSERT_FALSE(lwpa_timer_is_expired(&t2));
+  TEST_ASSERT_UNLESS(lwpa_timer_is_expired(&t2));
 
-  std::this_thread::sleep_for(110ms);
+  lwpa_thread_sleep(110);
 
   // Now it should.
-  ASSERT_TRUE(lwpa_timer_is_expired(&t2));
-  ASSERT_GE(lwpa_timer_elapsed(&t2), 100u);
+  TEST_ASSERT(lwpa_timer_is_expired(&t2));
+  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(100u, lwpa_timer_elapsed(&t2));
 
   // Test resetting the timer.
   lwpa_timer_reset(&t2);
-  ASSERT_FALSE(lwpa_timer_is_expired(&t2));
+  TEST_ASSERT_UNLESS(lwpa_timer_is_expired(&t2));
 
   // And test the timeout one more time.
-  std::this_thread::sleep_for(110ms);
-  ASSERT_TRUE(lwpa_timer_is_expired(&t2));
-  ASSERT_GE(lwpa_timer_elapsed(&t2), 100u);
+  lwpa_thread_sleep(110);
+  TEST_ASSERT(lwpa_timer_is_expired(&t2));
+  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(100u, lwpa_timer_elapsed(&t2));
+}
+
+TEST_GROUP_RUNNER(lwpa_timer)
+{
+  RUN_TEST_CASE(lwpa_timer, getms_gets_increasing_values);
+  RUN_TEST_CASE(lwpa_timer, timers_report_expired_properly);
+}
+
+void run_all_tests(void)
+{
+  RUN_TEST_GROUP(lwpa_timer);
 }
