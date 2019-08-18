@@ -476,7 +476,7 @@ TEST_GROUP_RUNNER(socket_integration)
   // DEBUG REMOVEME
   char addr_str[LWPA_INET6_ADDRSTRLEN];
   lwpa_inet_ntop(&v6_netint.addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-  printf("IPv6 netint address %d, index %u\n", addr_str, v6_netint.index);
+  printf("IPv6 netint address %s, index %u\n", addr_str, v6_netint.index);
   // END DEBUG
 #endif
 
