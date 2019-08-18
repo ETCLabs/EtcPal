@@ -19,12 +19,9 @@
 #include "lwpa/socket.h"
 #include "unity_fixture.h"
 
+#include <string.h>
 #include "lwpa/netint.h"
 #include "lwpa/thread.h"
-
-// DEBUG REMOVEME
-#include <stdio.h>
-// END DEBUG
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -72,7 +69,7 @@ static void select_network_interface_v4()
       for (const LwpaNetintInfo* netint = arr; netint < arr + lwpa_netint_get_num_interfaces(); ++netint)
       {
         if (LWPA_IP_IS_V4(&netint->addr) && !lwpa_ip_is_link_local(&netint->addr) &&
-            !lwpa_ip_is_loopback(&netint->addr))
+            !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
           v4_netint = *netint;
           return;
@@ -99,7 +96,7 @@ static void select_network_interface_v6()
     {
       for (const LwpaNetintInfo* netint = arr; netint < arr + lwpa_netint_get_num_interfaces(); ++netint)
       {
-        if (LWPA_IP_IS_V6(&netint->addr) && !lwpa_ip_is_loopback(&netint->addr))
+        if (LWPA_IP_IS_V6(&netint->addr) && !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
           v6_netint = *netint;
           return;
@@ -472,12 +469,6 @@ TEST_GROUP_RUNNER(socket_integration)
   select_network_interface_v4();
 #if LWPA_TEST_IPV6
   select_network_interface_v6();
-
-  // DEBUG REMOVEME
-  char addr_str[LWPA_INET6_ADDRSTRLEN];
-  lwpa_inet_ntop(&v6_netint.addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-  printf("IPv6 netint address %s, index %u\n", addr_str, v6_netint.index);
-  // END DEBUG
 #endif
 
   RUN_TEST_CASE(socket_integration, unicast_udp_ipv4);

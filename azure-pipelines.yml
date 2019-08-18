@@ -30,7 +30,7 @@ jobs:
     displayName: 'lwpa Windows build'
   - script: |
       cd build
-      ctest --output-on-failure -C %LWPA_BUILD_CONFIG%
+      ctest --verbose -C %LWPA_BUILD_CONFIG%
     displayName: 'lwpa Windows test'
 
 - job: macos_build
@@ -46,10 +46,8 @@ jobs:
       cmake --build .
     displayName: 'lwpa macOS build'
   - script: |
-      ifconfig
-      netstat -rn
       cd build
-      ctest --output-on-failure
+      ctest --verbose
     displayName: 'lwpa macOS test'
 
 - job: linux_build
@@ -68,7 +66,7 @@ jobs:
     displayName: 'lwpa Linux build'
   - script: |
       cd build
-      ctest --output-on-failure
+      ctest --verbose
     displayName: 'lwpa Linux test'
 
 # Generate documentation with doxygen. Documentation is generated from the
