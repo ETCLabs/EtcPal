@@ -17,24 +17,13 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/timer.h"
-#include "lwpa/private/timer.h"
+#ifndef _LWPA_OS_INET_H_
+#define _LWPA_OS_INET_H_
 
-#include <FreeRTOS.h>
-#include <task.h>
+#include <lwip/sockets.h>
 
-lwpa_error_t lwpa_timer_init()
-{
-  // No initialization necessary on this platform
-  return kLwpaErrOk;
-}
+typedef struct sockaddr lwpa_os_sockaddr_t;
+typedef struct sockaddr lwpa_os_ipaddr_t;
 
-void lwpa_timer_deinit()
-{
-  // No deinitialization necessary on this platform
-}
+#endif /* _LWPA_OS_INET_H_ */
 
-uint32_t lwpa_getms()
-{
-  return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
-}

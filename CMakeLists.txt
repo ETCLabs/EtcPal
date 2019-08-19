@@ -29,7 +29,6 @@ if(PROJECT_SOURCE_DIR_LC STREQUAL CMAKE_SOURCE_DIR_LC)
   # Allow folder grouping in generated IDE projects
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/tools/cmake)
   set(OPTION_DEFAULTS ON)
 else()
   set(OPTION_DEFAULTS OFF)
@@ -38,6 +37,9 @@ endif()
 option(LWPA_BUILD_MOCK_LIB "Build the lwpa_mock library" OFF)
 option(LWPA_BUILD_TESTS "Build the lwpa unit tests" ${OPTION_DEFAULTS})
 option(LWPA_BUILD_EXAMPLES "Build the lwpa example apps" ${OPTION_DEFAULTS})
+
+# Platform support
+include(${PROJECT_SOURCE_DIR}/tools/cmake/lwpa-os.cmake)
 
 if(LWPA_BUILD_MOCK_LIB OR LWPA_BUILD_TESTS)
   add_subdirectory(external/fff)

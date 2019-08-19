@@ -17,36 +17,49 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_lock.h"
-#include "lwpa_int.h"
-#include "task.h"
+#include "lwpa/lock.h"
+#include <task.h>
 
-#define convert_ms_to_ticks(ms) ((ms == LWPA_WAIT_FOREVER) ? portMAX_DELAY : pdMS_TO_TICKS(ms))
+
+/*********************** Private function prototypes *************************/
+
+static void reader_atomic_increment(lwpa_rwlock_t* id);
+static void reader_atomic_decrement(lwpa_rwlock_t* id);
+
+/*************************** Function definitions ****************************/
 
 bool lwpa_mutex_create(lwpa_mutex_t* id)
 {
-  return id ? ((*id = (lwpa_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
+  id ? ((*id = (lwpa_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
 }
 
-bool lwpa_mutex_take(lwpa_mutex_t* id, int wait_ms)
+bool lwpa_mutex_take(lwpa_mutex_t* id)
 {
   if (id)
   {
-    SemaphoreHandle_t sem = *id;
-    return sem ? (pdTRUE == xSemaphoreTake(sem, convert_ms_to_ticks(wait_ms))) : false;
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY));
+  }
+  return false;
+}
+
+bool lwpa_mutex_try_take(lwpa_mutex_t* id)
+{
+  if (id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0));
   }
   return false;
 }
 
 void lwpa_mutex_give(lwpa_mutex_t* id)
 {
-  if (id && *id)
+  if (id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
 void lwpa_mutex_destroy(lwpa_mutex_t* id)
 {
-  if (id && *id)
+  if (id)
   {
     vSemaphoreDelete((SemaphoreHandle_t)*id);
     *id = (lwpa_mutex_t)NULL;
@@ -58,14 +71,19 @@ bool lwpa_signal_create(lwpa_signal_t* id)
   return id ? ((*id = (lwpa_signal_t)xSemaphoreCreateBinary()) != NULL) : false;
 }
 
-bool lwpa_signal_wait(lwpa_signal_t* id, int wait_ms)
+bool lwpa_signal_wait(lwpa_signal_t* id)
 {
-  return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, convert_ms_to_ticks(wait_ms))) : false;
+  return id ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY)) : false;
+}
+
+bool lwpa_signal_poll(lwpa_signal_t* id)
+{
+  return id ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0)) : false;
 }
 
 void lwpa_signal_post(lwpa_signal_t* id)
 {
-  if (id && *id)
+  if (id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
@@ -76,20 +94,6 @@ void lwpa_signal_destroy(lwpa_signal_t* id)
     vSemaphoreDelete((SemaphoreHandle_t)*id);
     *id = (lwpa_signal_t)NULL;
   }
-}
-
-static void atomic_inc(unsigned int* count)
-{
-  portENTER_CRITICAL();
-  (*count)++;
-  portEXIT_CRITICAL();
-}
-
-static void atomic_dec(unsigned int* count)
-{
-  portENTER_CRITICAL();
-  (*count)--;
-  portEXIT_CRITICAL();
 }
 
 bool lwpa_rwlock_create(lwpa_rwlock_t* id)
@@ -175,4 +179,18 @@ void lwpa_rwlock_destroy(lwpa_rwlock_t* id)
     vSemaphoreDelete(id->sem);
     id->sem = NULL;
   }
+}
+
+void reader_atomic_increment(lwpa_rwlock_t* id)
+{
+  portENTER_CRITICAL();
+  ++id->reader_count;
+  portEXIT_CRITICAL();
+}
+
+void reader_atomic_decrement(lwpa_rwlock_t* id)
+{
+  portENTER_CRITICAL();
+  --id->reader_count;
+  portEXIT_CRITICAL();
 }

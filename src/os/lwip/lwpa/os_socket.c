@@ -17,10 +17,10 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_socket.h"
+#include "lwpa/socket.h"
 #include <string.h>
-#include "lwip/sockets.h"
-#include "lwip/netdb.h"
+#include <lwip/sockets.h>
+#include <lwip/netdb.h>
 
 /* clang-format off */
 
@@ -460,71 +460,229 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t* 
   return kLwpaErrInvalid;
 }
 
-int lwpa_poll(LwpaPollfd* fds, size_t nfds, int timeout_ms)
+lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)
 {
-  fd_set readfds;
-  fd_set writefds;
-  LwpaPollfd* fd;
-  int nosfds;
-  int sel_res;
-  int nreadfds = 0, nwritefds = 0;
-  struct timeval os_timeout;
+  if (!context)
+    return kLwpaErrInvalid;
 
-  if (fds && nfds > 0)
+  init_context_socket_array(context);
+  LWPA_FD_ZERO(&context->readfds);
+  LWPA_FD_ZERO(&context->writefds);
+  context->valid = true;
+  return kLwpaErrOk;
+}
+
+void lwpa_poll_context_deinit(LwpaPollContext* context)
+{
+  if (!context || !context->valid)
+    return;
+
+  context->valid = false;
+}
+
+lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t events,
+                                  void* user_data)
+{
+  if (!context || !context->valid || socket == LWPA_SOCKET_INVALID || !(events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
+    return kLwpaErrInvalid;
+
+  if (context->num_valid_sockets >= LWPA_SOCKET_MAX_POLL_SIZE)
   {
-    FD_ZERO(&readfds);
-    FD_ZERO(&writefds);
-
-    for (fd = fds; fd < fds + nfds; ++fd)
+    return kLwpaErrNoMem;
+  }
+  else
+  {
+    LwpaPollCtxSocket* new_sock = find_hole(context);
+    if (new_sock)
     {
-      if (fd->events & LWPA_POLLIN)
+      new_sock->socket = socket;
+      new_sock->events = events;
+      new_sock->user_data = user_data;
+      set_in_fd_sets(context, new_sock);
+      context->num_valid_sockets++;
+      return kLwpaErrOk;
+    }
+    return kLwpaErrNoMem;
+  }
+}
+
+lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
+                                     void* new_user_data)
+{
+  if (!context || !context->valid || socket == LWPA_SOCKET_INVALID || !(new_events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
+    return kLwpaErrInvalid;
+
+  LwpaPollCtxSocket* sock_desc = find_socket(context, socket);
+  if (sock_desc)
+  {
+    clear_in_fd_sets(context, sock_desc);
+    sock_desc->events = new_events;
+    sock_desc->user_data = new_user_data;
+    set_in_fd_sets(context, sock_desc);
+    return kLwpaErrOk;
+  }
+  else
+  {
+    return kLwpaErrNotFound;
+  }
+}
+
+void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket)
+{
+  if (!context || !context->valid || socket == LWPA_SOCKET_INVALID)
+    return;
+
+  LwpaPollCtxSocket* sock_desc = find_socket(context, socket);
+  if (sock_desc)
+  {
+    clear_in_fd_sets(context, sock_desc);
+    sock_desc->socket = LWPA_SOCKET_INVALID;
+    context->num_valid_sockets--;
+  }
+}
+
+lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms)
+{
+  if (!context || !context->valid || !event)
+    return kLwpaErrInvalid;
+
+  if (context->readfds.count == 0 && context->writefds.count == 0)
+  {
+    // No valid sockets are currently added to the context.
+    return kLwpaErrNoSockets;
+  }
+
+  uint32_t os_timeout;
+  if (timeout_ms == LWPA_WAIT_FOREVER)
+    os_timeout = 0;
+  else if (timeout_ms == 0)
+    os_timeout = 0xffffffff;
+  else
+    os_timeout = (uint32_t)timeout_ms;
+
+  int32_t nfds =
+      (int32_t)((context->readfds.count > context->writefds.count) ? context->readfds.count : context->writefds.count);
+  int32_t sel_res = select(nfds, context->readfds.count ? &context->readfds.set : NULL,
+                           context->writefds.count ? &context->writefds.set : NULL, NULL, os_timeout);
+
+  if (sel_res == RTCS_ERROR)
+  {
+    // RTCS handles some socket errors by returning them from select().
+    uint32_t rtcs_err = RTCS_get_errno();
+    if (rtcs_err == RTCSERR_SOCK_ESHUTDOWN)
+      return handle_select_result(context, event, kLwpaErrConnClosed);
+    else if (rtcs_err == RTCSERR_SOCK_CLOSED)
+      return handle_select_result(context, event, kLwpaErrNotFound);
+    else
+      return err_os_to_lwpa(rtcs_err);
+  }
+  else if (sel_res == 0)
+  {
+    return kLwpaErrTimedOut;
+  }
+  else
+  {
+    return handle_select_result(context, event, kLwpaErrOk);
+  }
+}
+
+lwpa_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* event, lwpa_error_t socket_error)
+{
+  // Init the event data.
+  event->socket = LWPA_SOCKET_INVALID;
+  event->events = 0;
+  event->err = kLwpaErrOk;
+
+  // The default return; if we don't find any sockets set that we passed to select(), something has
+  // gone wrong.
+  lwpa_error_t res = kLwpaErrSys;
+
+  for (LwpaPollCtxSocket* sock_desc = context->sockets; sock_desc < context->sockets + LWPA_SOCKET_MAX_POLL_SIZE;
+       ++sock_desc)
+  {
+    if (sock_desc->socket == LWPA_SOCKET_INVALID)
+      continue;
+
+    if (LWPA_FD_ISSET(sock_desc->socket, &context->readfds) || LWPA_FD_ISSET(sock_desc->socket, &context->writefds))
+    {
+      res = kLwpaErrOk;
+      event->socket = sock_desc->socket;
+      event->user_data = sock_desc->user_data;
+
+      /* Check for errors */
+      if (socket_error != kLwpaErrOk)
       {
-        FD_SET((int)fd->fd, &readfds);
-        nreadfds++;
+        event->events |= LWPA_POLL_ERR;
+        event->err = socket_error;
       }
-      if (fd->events & LWPA_POLLOUT)
+
+      if (LWPA_FD_ISSET(sock_desc->socket, &context->readfds))
       {
-        FD_SET((int)fd->fd, &writefds);
-        nwritefds++;
+        if (sock_desc->events & LWPA_POLL_IN)
+          event->events |= LWPA_POLL_IN;
       }
-      /* LWPA_POLLPRI/exceptfds is not handled properly on this os */
+      if (LWPA_FD_ISSET(sock_desc->socket, &context->writefds))
+      {
+        if (sock_desc->events & LWPA_POLL_CONNECT)
+          event->events |= LWPA_POLL_CONNECT;
+        else if (sock_desc->events & LWPA_POLL_OUT)
+          event->events |= LWPA_POLL_OUT;
+      }
+      // LWPA_POLL_OOB/exceptfds is not handled properly on this OS
+
+      break;  // We handle one event at a time.
     }
   }
+  return res;
+}
 
-  if (timeout_ms == 0)
+void init_context_socket_array(LwpaPollContext* context)
+{
+  context->num_valid_sockets = 0;
+  for (LwpaPollCtxSocket* ctx_socket = context->sockets; ctx_socket < context->sockets + LWPA_SOCKET_MAX_POLL_SIZE;
+       ++ctx_socket)
   {
-    os_timeout.tv_sec = 0;
-    os_timeout.tv_usec = 0;
+    ctx_socket->socket = LWPA_SOCKET_INVALID;
   }
-  else if (timeout_ms != LWPA_WAIT_FOREVER)
-  {
-    os_timeout.tv_sec = timeout_ms / 1000;
-    os_timeout.tv_usec = (timeout_ms % 1000) * 1000;
-  }
-  nosfds = (nreadfds > nwritefds) ? nreadfds : nwritefds;
-  sel_res = select(nosfds, nreadfds ? &readfds : NULL, nwritefds ? &writefds : NULL, NULL,
-                   timeout_ms == LWPA_WAIT_FOREVER ? NULL : &os_timeout);
+}
 
-  if (sel_res < 0)
-    return -1;
-  else if (sel_res > 0 && fds && nfds > 0)
+LwpaPollCtxSocket* find_socket(LwpaPollContext* context, lwpa_socket_t socket)
+{
+  for (LwpaPollCtxSocket* cur = context->sockets; cur < context->sockets + LWPA_SOCKET_MAX_POLL_SIZE; ++cur)
   {
-    for (fd = fds; fd < fds + nfds; ++fd)
-    {
-      fd->revents = 0;
-      if (nreadfds && (fd->events & LWPA_POLLIN) && FD_ISSET((int)fd->fd, &readfds))
-      {
-        fd->revents |= LWPA_POLLIN;
-      }
-      if (nwritefds && (fd->events & LWPA_POLLOUT) && FD_ISSET((int)fd->fd, &writefds))
-      {
-        fd->revents |= LWPA_POLLOUT;
-      }
-      /* LWPA_POLLPRI/exceptfds is not handled properly on this
-       * os */
-    }
+    if (cur->socket == socket)
+      return cur;
   }
-  return sel_res;
+  return NULL;
+}
+
+LwpaPollCtxSocket* find_hole(LwpaPollContext* context)
+{
+  return find_socket(context, LWPA_SOCKET_INVALID);
+}
+
+void set_in_fd_sets(LwpaPollContext* context, const LwpaPollCtxSocket* sock)
+{
+  if (sock->events & LWPA_POLL_IN)
+  {
+    LWPA_FD_SET(sock->socket, &context->readfds);
+  }
+  if (sock->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
+  {
+    LWPA_FD_SET(sock->socket, &context->writefds);
+  }
+}
+
+void clear_in_fd_sets(LwpaPollContext* context, const LwpaPollCtxSocket* sock)
+{
+  if (sock->events & LWPA_POLL_IN)
+  {
+    LWPA_FD_CLEAR(sock->socket, &context->readfds);
+  }
+  if (sock->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
+  {
+    LWPA_FD_CLEAR(sock->socket, &context->writefds);
+  }
 }
 
 int lwpa_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints, LwpaAddrinfo* result)

@@ -17,24 +17,37 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/timer.h"
-#include "lwpa/private/timer.h"
+#ifndef _LWPA_OS_SOCKET_H_
+#define _LWPA_OS_SOCKET_H_
 
-#include <FreeRTOS.h>
-#include <task.h>
+#include <lwip/sockets.h>
 
-lwpa_error_t lwpa_timer_init()
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Definitions for the lwpa socket type */
+
+typedef int lwpa_socket_t;
+
+#define PRIlwpasockt "d"
+
+#define LWPA_SOCKET_INVALID -1
+
+#define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
+
+/* Definitions for lwpa_poll API */
+
+typedef struct LwpaPollContext
 {
-  // No initialization necessary on this platform
-  return kLwpaErrOk;
-}
+  bool valid;
+  int epoll_fd;
+  LwpaRbTree sockets;
+} LwpaPollContext;
 
-void lwpa_timer_deinit()
-{
-  // No deinitialization necessary on this platform
+#ifdef __cplusplus
 }
+#endif
 
-uint32_t lwpa_getms()
-{
-  return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
-}
+#endif /* _LWPA_OS_SOCKET_H_ */
+

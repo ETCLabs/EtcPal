@@ -17,9 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_thread.h"
-
-#define convert_ms_to_ticks(ms) ((ms == LWPA_WAIT_FOREVER) ? portMAX_DELAY : pdMS_TO_TICKS(ms))
+#include "lwpa/thread.h"
 
 static void thread_func_internal(void* pvParameters)
 {
@@ -51,14 +49,14 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
   return false;
 }
 
-bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms)
+bool lwpa_thread_join(lwpa_thread_t* id)
 {
   bool res;
 
   if (!id)
     return false;
 
-  res = (pdTRUE == xSemaphoreTake(id->sig, convert_ms_to_ticks(wait_ms)));
+  res = (pdTRUE == xSemaphoreTake(id->sig, portMAX_DELAY));
   if (res)
   {
     vSemaphoreDelete(id->sig);

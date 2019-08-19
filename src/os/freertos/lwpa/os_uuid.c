@@ -17,24 +17,15 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/timer.h"
-#include "lwpa/private/timer.h"
+#include "lwpa/uuid.h"
 
-#include <FreeRTOS.h>
-#include <task.h>
-
-lwpa_error_t lwpa_timer_init()
+/* We don't have the capability to generate V1 or V4 UUIDs on FreeRTOS. */
+lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
 {
-  // No initialization necessary on this platform
-  return kLwpaErrOk;
+  return kLwpaErrNotImpl;
 }
 
-void lwpa_timer_deinit()
+lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
 {
-  // No deinitialization necessary on this platform
-}
-
-uint32_t lwpa_getms()
-{
-  return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
+  return kLwpaErrNotImpl;
 }
