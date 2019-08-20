@@ -15,7 +15,7 @@ set(VALID_LWPA_NETWORK_TARGETS
   windows
 )
 
-set(LWPA_OS_TARGET "" CACHE STRING "OS provider for lwpa. See /CMakeLists.txt for valid values.")
+set(LWPA_OS_TARGET "" CACHE STRING "OS provider for lwpa. See tools/cmake/lwpa-os.cmake for valid values.")
 set(LWPA_NETWORK_TARGET "" CACHE STRING "Network stack provider for lwpa. Often (but not always) the same as LWPA_OS_TARGET. See src/CMakeLists.txt for valid values.")
 
 if(NOT LWPA_OS_TARGET)

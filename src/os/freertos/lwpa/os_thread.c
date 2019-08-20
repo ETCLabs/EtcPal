@@ -42,7 +42,7 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
   id->fn = thread_fn;
   id->arg = thread_arg;
   if (pdPASS == xTaskCreate(thread_func_internal, params->thread_name ? params->thread_name : "lwpa_thread",
-                            params->stack_size, id, params->thread_priority, &id->tid))
+                            (uint16_t)params->stack_size, id, params->thread_priority, &id->tid))
   {
     return true;
   }

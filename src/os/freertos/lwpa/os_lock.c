@@ -30,7 +30,7 @@ static void reader_atomic_decrement(lwpa_rwlock_t* id);
 
 bool lwpa_mutex_create(lwpa_mutex_t* id)
 {
-  id ? ((*id = (lwpa_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
+  return id ? ((*id = (lwpa_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
 }
 
 bool lwpa_mutex_take(lwpa_mutex_t* id)
@@ -101,21 +101,39 @@ bool lwpa_rwlock_create(lwpa_rwlock_t* id)
   if (id && (NULL != (id->sem = xSemaphoreCreateMutex())))
   {
     id->reader_count = 0;
+    id->valid = true;
     return true;
   }
   return false;
 }
 
-bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms)
+bool lwpa_rwlock_readlock(lwpa_rwlock_t* id)
 {
-  if (!id || !id->sem)
+  if (!id || !id->valid)
     return false;
 
-  if (pdTRUE == xSemaphoreTake(id->sem, convert_ms_to_ticks(wait_ms)))
+  if (pdTRUE == xSemaphoreTake(id->sem, portMAX_DELAY))
   {
-    /* Add one to the reader count. */
-    atomic_inc(&id->reader_count);
-    /* Allow other readers to access. */
+    // Add one to the reader count.
+    reader_atomic_increment(id);
+    // Allow other readers to access.
+    xSemaphoreGive(id->sem);
+    return true;
+  }
+  return false;
+}
+
+bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
+{
+  if (!id || !id->valid)
+    return false;
+
+  // Poll the semaphore
+  if (pdTRUE == xSemaphoreTake(id->sem, 0))
+  {
+    // Add one to the reader count
+    reader_atomic_increment(id);
+    // Allow other readers to access
     xSemaphoreGive(id->sem);
     return true;
   }
@@ -124,60 +142,63 @@ bool lwpa_rwlock_readlock(lwpa_rwlock_t* id, int wait_ms)
 
 void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)
 {
-  if (id && id->sem)
-    atomic_dec(&id->reader_count);
+  if (id && id->valid)
+    reader_atomic_decrement(id);
 }
 
-bool lwpa_rwlock_writelock(lwpa_rwlock_t* id, int wait_ms)
+bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
 {
-  TickType_t initial_time;
-
-  if (!id || !id->sem)
+  if (!id || !id->valid)
     return false;
 
-  /* Start our timer here */
-  initial_time = xTaskGetTickCount();
-
-  if (pdTRUE == xSemaphoreTake(id->sem, convert_ms_to_ticks(wait_ms)))
+  if (pdTRUE == xSemaphoreTake(id->sem, portMAX_DELAY))
   {
-    /* Wait until there are no readers, keeping the lock so that no new readers
-     * can get in. */
+    // Wait until there are no readers, keeping the lock so that no new readers can get in.
     while (id->reader_count > 0)
     {
-      vTaskDelay(pdMS_TO_TICKS(1));
-      if (wait_ms != LWPA_WAIT_FOREVER)
-      {
-        TickType_t current_time = xTaskGetTickCount();
-        if (current_time - initial_time > convert_ms_to_ticks(wait_ms))
-        {
-          break;
-        }
-      }
+      vTaskDelay(1); // Wait one tick at a time
     }
+    // Hold on to the lock until writeunlock() is called
+    return true;
+  }
+  return false;
+}
+
+bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id)
+{
+  if (!id || !id->valid)
+    return false;
+
+  if (pdTRUE == xSemaphoreTake(id->sem, 0))
+  {
+    // Just check once if there are still readers
     if (id->reader_count > 0)
     {
-      /* Timed out waiting for readers to leave. Bail. */
+      // Readers are present, give up the lock and return false below.
       xSemaphoreGive(id->sem);
-      return false;
     }
-    /* Hold on to the lock until writeunlock() is called */
-    return true;
+    else
+    {
+      // Return, holding the lock
+      return true;
+    }
   }
   return false;
 }
 
 void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id)
 {
-  if (id && id->sem)
+  if (id && id->valid)
     xSemaphoreGive(id->sem);
 }
 
 void lwpa_rwlock_destroy(lwpa_rwlock_t* id)
 {
-  if (id && id->sem)
+  if (id && id->valid)
   {
     vSemaphoreDelete(id->sem);
     id->sem = NULL;
+    id->valid = false;
   }
 }
 

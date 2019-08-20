@@ -20,23 +20,15 @@
 #ifndef _LWPA_OS_THREAD_H_
 #define _LWPA_OS_THREAD_H_
 
-#include "FreeRTOS.h"
-#include "task.h"
-#include "semphr.h"
+#include <FreeRTOS.h>
+#include <task.h>
+#include <semphr.h>
 #include "lwpa/common.h"
 #include "lwpa/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-typedef struct LwpaThreadParams
-{
-  unsigned int thread_priority;
-  unsigned int stack_size;
-  char* thread_name;
-  void* platform_data;
-} LwpaThreadParams;
 
 #define LWPA_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
 #define LWPA_THREAD_DEFAULT_STACK 2000
@@ -50,8 +42,6 @@ typedef struct
   TaskHandle_t tid;
 } lwpa_thread_t;
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
-bool lwpa_thread_stop(lwpa_thread_t* id, int wait_ms);
 #define lwpa_thread_sleep(sleep_ms) vTaskDelay(pdMS_TO_TICKS(sleep_ms))
 
 #ifdef __cplusplus

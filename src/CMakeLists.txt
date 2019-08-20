@@ -72,6 +72,7 @@ target_include_directories(lwpa PUBLIC
   ${LWPA_ROOT}/include/os/${LWPA_NETWORK_TARGET}
   ${LWPA_OS_ADDITIONAL_INCLUDE_DIRS}
   ${LWPA_NETWORK_ADDITIONAL_INCLUDE_DIRS}
+  ${LWPA_TOOLCHAIN_ADDITIONAL_INCLUDE_DIRS}
   # ${LWPA_CONFIG_LOC}
 )
 target_include_directories(lwpa PRIVATE ${LWPA_ROOT}/src)

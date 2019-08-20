@@ -17,9 +17,9 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_netint.h"
+#include "lwpa/netint.h"
 #include <string.h>
-#include "lwip/netif.h"
+#include <lwip/netif.h>
 
 static bool mask_is_empty(const LwpaIpAddr* mask);
 static bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask);
