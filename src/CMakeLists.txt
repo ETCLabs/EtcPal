@@ -1,8 +1,8 @@
 
-# if(DEFINED LWPA_CONFIG)
-#   get_filename_component(LWPA_CONFIG_LOC LWPA_CONFIG DIRECTORY)
-#   set(${LWPA_HAVE_CONFIG_H} LWPA_HAVE_CONFIG_H)
-# endif()
+set(LWPA_CONFIG_FILE_LOC "" CACHE STRING "The directory path of the lwpa_config.h file, if provided")
+if(LWPA_CONFIG_FILE_LOC)
+  set(${LWPA_HAVE_CONFIG_H} LWPA_HAVE_CONFIG_H)
+endif()
 
 ###############################################################################
 # Core lwpa library
@@ -73,10 +73,10 @@ target_include_directories(lwpa PUBLIC
   ${LWPA_OS_ADDITIONAL_INCLUDE_DIRS}
   ${LWPA_NETWORK_ADDITIONAL_INCLUDE_DIRS}
   ${LWPA_TOOLCHAIN_ADDITIONAL_INCLUDE_DIRS}
-  # ${LWPA_CONFIG_LOC}
+  ${LWPA_CONFIG_FILE_LOC}
 )
 target_include_directories(lwpa PRIVATE ${LWPA_ROOT}/src)
-target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
+target_compile_definitions(lwpa PRIVATE ${LWPA_HAVE_CONFIG_H})
 if(LWPA_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(lwpa PRIVATE LWPA_NETINT_DEBUG_OUTPUT)
 endif()
