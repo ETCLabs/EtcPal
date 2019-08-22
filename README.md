@@ -1,11 +1,14 @@
-# LightWeight Platform Abstraction
+# EtcPal: ETC Platform Abstraction Layer
 
-[![Build Status](https://dev.azure.com/ETCLabs/lwpa/_apis/build/status/ETCLabs.lwpa?branchName=develop)](https://dev.azure.com/ETCLabs/lwpa/_build/latest?definitionId=1&branchName=develop)
+[![Build Status](https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop)](https://dev.azure.com/ETCLabs/EtcPal/_build/latest?definitionId=1&branchName=develop)
 
-This repository contains the LightWeight Platform Abstraction (lwpa) library,
-which supports other open-source libraries by [ETC](http://www.etcconnect.com).
+This repository contains ETC's Platform Abstraction Layer (PAL), which supports
+other open-source libraries by [ETC](http://www.etcconnect.com).
 
-The lwpa library serves two main purposes:
+ETC develops many software products which target a range of platforms from full
+desktop OS down to 32-bit microcontrollers. Because of this, there is a need
+for ETC's software libraries to be highly portable. The EtcPal library serves
+this purpose in two main ways:
 
 * Provides a platform-neutral interface for common system calls, in order to
   simplify the writing of platform-neutral software libraries.
@@ -14,7 +17,7 @@ The lwpa library serves two main purposes:
 
 ## Platform Ports
 
-lwpa is currently ported for the following platforms:
+EtcPal is currently ported for the following platforms:
 + Linux
 + macOS
 + Microsoft Windows
@@ -22,16 +25,16 @@ lwpa is currently ported for the following platforms:
 
 ## Building
 
-lwpa is typically included as a dependency by other software libraries.
-However, if you would like to build lwpa on its own as a static lib, there are
-instructions in the [documentation](https://etclabs.github.io/lwpa).
+EtcPal is typically included as a dependency by other software libraries.
+However, if you would like to build EtcPal on its own, there are instructions
+in the [documentation](https://etclabs.github.io/EtcPal).
 
 ## About this ETCLabs Project
 
-lwpa is official, open-source software developed by ETC employees and is
+EtcPal is official, open-source software developed by ETC employees and is
 designed to interact with ETC products. For challenges using, integrating,
 compiling, or modifying this software, we encourage posting on the
-[issues page](https://github.com/ETCLabs/lwpa/issues) of this project.
+[issues page](https://github.com/ETCLabs/EtcPal/issues) of this project.
 
 Before posting an issue or opening a pull request, please read the
 [contribution guidelines](./CONTRIBUTING.md).

@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- OS port: Linux
-- OS port: macOS
+- New port: Linux
+- New port: macOS
 - lwpa_init() in lwpa/common.h. lwpa_init() must be called before using features
   defined by feature macros defined in lwpa/common.h.
 - Extra documentation page for network interface indexes.
@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   lwpa_netint_get_interfaces() (see Changed below)
 
 ### Changed
+- Naming: Library name changed from lwpa to EtcPal. All API names updated
+  accordingly.
 - Naming: 'operating system' and 'platform' are used somewhat interchangably by
   this library, but operating system more correctly refers to what lwpa targets.
   Plus, 'os' makes for nicer names than 'plat'. A pass is made for consistency.
