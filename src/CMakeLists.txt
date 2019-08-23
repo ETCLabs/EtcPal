@@ -8,8 +8,6 @@ endif()
 # Core lwpa library
 ###############################################################################
 
-set(LWPA_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
-
 add_library(lwpa
   # lwpa headers
   ${LWPA_ROOT}/include/lwpa/acn_prot.h
@@ -22,7 +20,6 @@ add_library(lwpa
   ${LWPA_ROOT}/include/lwpa/log.h
   ${LWPA_ROOT}/include/lwpa/mempool.h
   ${LWPA_ROOT}/include/lwpa/netint.h
-  ${LWPA_ROOT}/include/lwpa/opts.h
   ${LWPA_ROOT}/include/lwpa/pack.h
   ${LWPA_ROOT}/include/lwpa/pdu.h
   ${LWPA_ROOT}/include/lwpa/rbtree.h
@@ -33,8 +30,8 @@ add_library(lwpa
   ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}/lwpa/os_lock.h
   ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}/lwpa/os_thread.h
 
-  ${LWPA_ROOT}/include/os/${LWPA_NETWORK_TARGET}/lwpa/os_socket.h
-  ${LWPA_ROOT}/include/os/${LWPA_NETWORK_TARGET}/lwpa/os_inet.h
+  ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}/lwpa/os_socket.h
+  ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}/lwpa/os_inet.h
 
   # lwpa sources
   ${LWPA_ROOT}/src/lwpa/common.c
@@ -57,21 +54,21 @@ add_library(lwpa
   ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_thread.c
   ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_timer.c
 
-  ${LWPA_ROOT}/src/os/${LWPA_NETWORK_TARGET}/lwpa/os_inet.c
-  ${LWPA_ROOT}/src/os/${LWPA_NETWORK_TARGET}/lwpa/os_netint.c
-  ${LWPA_ROOT}/src/os/${LWPA_NETWORK_TARGET}/lwpa/os_socket.c
+  ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_inet.c
+  ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_netint.c
+  ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_socket.c
   
   ${LWPA_OS_ADDITIONAL_SOURCES}
-  ${LWPA_NETWORK_ADDITIONAL_SOURCES}
+  ${LWPA_NET_ADDITIONAL_SOURCES}
 )
 
 # lwpa public include directories and library dependencies
 target_include_directories(lwpa PUBLIC
   ${LWPA_ROOT}/include
   ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}
-  ${LWPA_ROOT}/include/os/${LWPA_NETWORK_TARGET}
+  ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}
   ${LWPA_OS_ADDITIONAL_INCLUDE_DIRS}
-  ${LWPA_NETWORK_ADDITIONAL_INCLUDE_DIRS}
+  ${LWPA_NET_ADDITIONAL_INCLUDE_DIRS}
   ${LWPA_TOOLCHAIN_ADDITIONAL_INCLUDE_DIRS}
   ${LWPA_CONFIG_FILE_LOC}
 )
@@ -80,7 +77,7 @@ target_compile_definitions(lwpa PRIVATE ${LWPA_HAVE_CONFIG_H})
 if(LWPA_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(lwpa PRIVATE LWPA_NETINT_DEBUG_OUTPUT)
 endif()
-target_link_libraries(lwpa PUBLIC ${LWPA_OS_ADDITIONAL_LIBS} ${LWPA_NETWORK_ADDITIONAL_LIBS})
+target_link_libraries(lwpa PUBLIC ${LWPA_OS_ADDITIONAL_LIBS} ${LWPA_NET_ADDITIONAL_LIBS})
 
 set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 

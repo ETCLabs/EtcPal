@@ -41,6 +41,14 @@
  *  @{
  */
 
+/*! \brief Whether to build the lwpa/pack64.h functions.
+ *
+ *  This can be defined to 0 if you are on a platform that does not provide a int64_t/uint64_t type.
+ */
+#ifndef LWPA_INCLUDE_PACK_64
+#define LWPA_INCLUDE_PACK_64 1
+#endif
+
 /*! \brief Whether a malloc() implementation is available.
  *
  *  Currently this only affects network interface enumeration using lwIP.

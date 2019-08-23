@@ -21,6 +21,7 @@
 #include <string.h>
 #include <lwip/netif.h>
 #include "lwpa/private/opts.h"
+#include "lwpa/private/netint.h"
 
 #if LWPA_EMBOS_USE_MALLOC
 #include <stdlib.h>
@@ -38,7 +39,7 @@ static void copy_common_interface_info(const struct netif* lwip_netif, LwpaNetin
   memcpy(netint->mac, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
 
   char lwip_name[NETIF_NAMESIZE];
-  if (NULL != netif_index_to_name(netint->index, lwip_name))
+  if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
   {
     strncpy(netint->name, lwip_name, LWPA_NETINTINFO_NAME_LEN);
     strncpy(netint->friendly_name, lwip_name, LWPA_NETINTINFO_FRIENDLY_NAME_LEN);
@@ -49,10 +50,10 @@ static void copy_interface_info_v4(const struct netif* lwip_netif, LwpaNetintInf
 {
   copy_common_interface_info(lwip_netif, netint);
 
-  if (!ip_addr_isany(netif_ip_addr4(lwip_netint)))
+  if (!ip_addr_isany(netif_ip_addr4(lwip_netif)))
   {
-    LWPA_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netint)->addr));
-    LWPA_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netint)->addr));
+    LWPA_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netif)->addr));
+    LWPA_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netif)->addr));
   }
 
   if (lwip_netif == netif_default)
@@ -65,34 +66,27 @@ static void copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
 {
   copy_common_interface_info(lwip_netif, netint);
 
-  /* TODO port this IPv6 code copied from AsyncSocket */
-  /* Add all of the IPv6 addresses that are valid, each gets its own
-   * netintinfo */
+  /* Finish filling in a netintinfo for a single IPv6 address. */
 
-  /* NOTE: We are not currently supporting IPv6 in any lwIP products, and
-   * this implementation will probably need to be revisited before we do,
-   * especially the default interface code. */
+  /* NOTE: We are not currently supporting IPv6 in any lwIP products, and this implementation will
+   * probably need to be revisited before we do, especially the default interface code. */
   for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
   {
-    if (ip6_addr_isvalid(iface->ip6_addr_mca_state[i]))
+    if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[i]))
     {
 #if LWIP_IPV6_SCOPES
-      LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(lwip_netif->ip6_addr[i])->addr),
-                                           ip_2_ip6(lwip_netif->ip6_addr[i])->zone);
+      LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[i])->addr),
+                                           ip_2_ip6(&lwip_netif->ip6_addr[i])->zone);
 #else
-      LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(lwip_netif->ip6_addr[i])->addr));
+      LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[i])->addr));
       // TODO revisit
       netint->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, 128);
 #endif
-      /*
-IAsyncSocketServ::netintinfo v6info = info;
-v6info.addr.SetV6Address(reinterpret_cast<uint8_t*>(
-ip_2_ip6(&iface->ip6_addr[i])->addr));
-v6info.id = m_ifaces.size();
 
-if (iface == netif_default)
-m_defaultiface = v6info.id;
-*/
+      if (lwip_netif == netif_default && i == 0)
+        netint->is_default = true;
+      else
+        netint->is_default = false;
     }
   }
 }

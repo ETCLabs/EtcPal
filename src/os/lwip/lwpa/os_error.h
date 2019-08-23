@@ -17,15 +17,16 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_OPTS_H_
-#define _LWPA_OPTS_H_
+#ifndef _LWPA_OS_ERROR_H_
+#define _LWPA_OS_ERROR_H_
 
-#if HAVE_LWPA_CONFIG_H
-#include "lwpa_config.h"
-#endif /* HAVE_LWPA_CONFIG_H */
+#include "lwpa/error.h"
+#include <lwip/errno.h>
 
-#ifndef LWPA_64BIT_SUPPORT
-#define LWPA_64BIT_SUPPORT 1
+#if !LWIP_PROVIDE_ERRNO && !LWIP_ERRNO_STDINCLUDE && !defined(LWIP_ERRNO_INCLUDE)
+#include <errno.h>
 #endif
 
-#endif /* _LWPA_OPTS_H_ */
+lwpa_error_t errno_lwip_to_lwpa(int lwip_errno);
+
+#endif /* _LWPA_OS_ERROR_H_ */

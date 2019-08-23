@@ -14,6 +14,9 @@ else()
   set(CMAKE_SOURCE_DIR_LC ${CMAKE_SOURCE_DIR})
 endif()
 
+# Set options based on whether this project is being built on its own, or added as a dependency to
+# another project via add_subdirectory(). In the latter case, we don't override any global compile
+# options, or build tests or examples by default.
 if(PROJECT_SOURCE_DIR_LC STREQUAL CMAKE_SOURCE_DIR_LC)
   if (MSVC)
     add_compile_options(/W4)
@@ -33,6 +36,8 @@ if(PROJECT_SOURCE_DIR_LC STREQUAL CMAKE_SOURCE_DIR_LC)
 else()
   set(OPTION_DEFAULTS OFF)
 endif()
+
+set(LWPA_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 option(LWPA_BUILD_MOCK_LIB "Build the lwpa_mock library" OFF)
 option(LWPA_BUILD_TESTS "Build the lwpa unit tests" ${OPTION_DEFAULTS})
