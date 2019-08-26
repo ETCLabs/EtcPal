@@ -38,11 +38,30 @@ typedef int lwpa_socket_t;
 
 /* Definitions for lwpa_poll API */
 
+typedef struct LwpaPollSocket
+{
+  lwpa_socket_t sock;
+  lwpa_poll_events_t events;
+  void* user_data;
+} LwpaPollSocket;
+
+typedef struct LwpaPollFdSet
+{
+  fd_set set;
+  int count;
+} LwpaPollFdSet;
+
 typedef struct LwpaPollContext
 {
   bool valid;
-  int epoll_fd;
-  LwpaRbTree sockets;
+
+  LwpaPollSocket sockets[LWPA_SOCKET_MAX_POLL_SIZE];
+  size_t num_valid_sockets;
+  int max_fd;
+
+  LwpaPollFdSet readfds;
+  LwpaPollFdSet writefds;
+  LwpaPollFdSet exceptfds;
 } LwpaPollContext;
 
 #ifdef __cplusplus
@@ -50,4 +69,3 @@ typedef struct LwpaPollContext
 #endif
 
 #endif /* _LWPA_OS_SOCKET_H_ */
-

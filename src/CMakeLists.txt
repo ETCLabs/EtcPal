@@ -85,6 +85,7 @@ set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 install(TARGETS lwpa ARCHIVE DESTINATION lib)
 install(DIRECTORY ${LWPA_ROOT}/include/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
 
 ###############################################################################
 # Mock lwpa library

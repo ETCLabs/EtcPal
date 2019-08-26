@@ -18,7 +18,6 @@
  ******************************************************************************/
 
 #include "os_error.h"
-#include <errno.h>
 
 lwpa_error_t errno_lwip_to_lwpa(int lwip_errno)
 {

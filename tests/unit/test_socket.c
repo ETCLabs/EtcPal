@@ -66,6 +66,27 @@ TEST(lwpa_socket, sockopts)
   // TODO, need getsockopt() implemented for this
 }
 
+TEST(lwpa_socket, blocking_state_is_consistent)
+{
+  lwpa_socket_t sock;
+
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_STREAM, &sock);
+  TEST_ASSERT_NOT_EQUAL(sock, LWPA_SOCKET_INVALID);
+
+  // Set the socket to non-blocking, make sure it reads as non-blocking
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_setblocking(sock, false));
+  bool is_blocking;
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_getblocking(sock, &is_blocking));
+  TEST_ASSERT_FALSE(is_blocking);
+
+  // Set the socket back to blocking, make sure it reads as blocking
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_setblocking(sock, true));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_getblocking(sock, &is_blocking));
+  TEST_ASSERT_TRUE(is_blocking);
+
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_close(sock));
+}
+
 // Test to make sure various invalid calls to lwpa_poll_* functions fail properly.
 TEST(lwpa_socket, poll_invalid_calls_fail)
 {
@@ -105,6 +126,8 @@ TEST(lwpa_socket, poll_invalid_calls_fail)
   // Deinit and make sure we cannot modify
   lwpa_poll_context_deinit(&context);
   TEST_ASSERT_NOT_EQUAL(kLwpaErrOk, lwpa_poll_modify_socket(&context, sock, LWPA_POLL_OUT, NULL));
+
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_close(sock));
 }
 
 TEST(lwpa_socket, poll_user_data_works)

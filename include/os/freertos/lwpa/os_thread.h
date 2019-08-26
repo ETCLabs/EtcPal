@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 #define LWPA_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
-#define LWPA_THREAD_DEFAULT_STACK 2000
+#define LWPA_THREAD_DEFAULT_STACK 500
 #define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
 
 typedef struct
