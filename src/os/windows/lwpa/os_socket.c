@@ -638,6 +638,12 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
   return (res == 0 ? kLwpaErrOk : err_winsock_to_lwpa(WSAGetLastError()));
 }
 
+lwpa_error_t lwpa_getblocking(lwpa_socket_t id, bool* blocking)
+{
+  *blocking = false;
+  return kLwpaErrOk;
+}
+
 lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)
 {
   if (!context)

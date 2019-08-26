@@ -525,8 +525,8 @@ int setsockopt_ip6(lwpa_socket_t id, int option_name, const void* option_value, 
 
 void ms_to_timeval(int ms, struct timeval* tv)
 {
-  tv->tv_usec = ms / 1000;
-  tv->tv_sec = (ms % 1000) * 1000;
+  tv->tv_sec = ms / 1000;
+  tv->tv_usec = (ms % 1000) * 1000;
 }
 
 lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how)

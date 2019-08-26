@@ -100,11 +100,16 @@ TEST(rwlock_integration, rwlock_thread_test)
 
   for (size_t i = 0; i < NUM_WRITE_THREADS; ++i)
   {
-    TEST_ASSERT_TRUE(lwpa_thread_create(&write_threads[i], &params, write_test_thread, NULL));
+    char error_msg[50];
+    sprintf(error_msg, "Failed on iteration %zu", i);
+    TEST_ASSERT_TRUE_MESSAGE(lwpa_thread_create(&write_threads[i], &params, write_test_thread, NULL), error_msg);
   }
 
   for (size_t i = 0; i < NUM_WRITE_THREADS; ++i)
+  {
     TEST_ASSERT_TRUE(lwpa_thread_join(&write_threads[i]));
+  }
+
   TEST_ASSERT_TRUE(lwpa_thread_join(&read_thread));
 
   TEST_ASSERT(read_thread_pass);

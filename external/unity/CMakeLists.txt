@@ -12,5 +12,8 @@ if(NOT TARGET ThrowTheSwitch::Unity)
     ${CMAKE_CURRENT_LIST_DIR}/src
     ${CMAKE_CURRENT_LIST_DIR}/extras/fixture/src
   )
+  install(TARGETS unity ARCHIVE DESTINATION lib)
+  install(DIRECTORY src/ DESTINATION include/unity FILES_MATCHING PATTERN "*.h")
+  install(DIRECTORY extras/fixture/src/ DESTINATION include/unity FILES_MATCHING PATTERN "*.h")
   add_library(ThrowTheSwitch::Unity ALIAS unity)
 endif()

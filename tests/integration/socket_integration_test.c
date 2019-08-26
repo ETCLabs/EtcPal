@@ -81,9 +81,7 @@ static void select_network_interface_v4()
         }
       }
       // We haven't found a network interface...
-      UnityPrint(
-          "WARNING: No IPv4 non-loopback, non-link-local network interfaces found. Disabling multicast IPv4 "
-          "test...\n");
+      TEST_MESSAGE("No IPv4 non-loopback, non-link-local network interfaces found. Disabling multicast IPv4 test...");
       run_ipv4_mcast_test = false;
     }
   }
@@ -114,7 +112,7 @@ static void select_network_interface_v6()
         }
       }
       // We haven't found a network interface...
-      UnityPrint("WARNING: No IPv6 non-loopback network interfaces found. Disabling multicast IPv6 test...\n");
+      TEST_MESSAGE("WARNING: No IPv6 non-loopback network interfaces found. Disabling multicast IPv6 test...");
       run_ipv6_mcast_test = false;
     }
   }
@@ -181,7 +179,7 @@ void unicast_udp_test(lwpa_iptype_t ip_type, lwpa_socket_t rcvsock1, lwpa_socket
     }
     else
     {
-      TEST_ASSERT_EQUAL(res, kLwpaErrTimedOut);
+      TEST_ASSERT(res == kLwpaErrTimedOut || res == kLwpaErrWouldBlock);
       break;
     }
 
@@ -281,7 +279,7 @@ void multicast_udp_test(lwpa_socket_t rcvsock1, lwpa_socket_t rcvsock2)
     }
     else
     {
-      TEST_ASSERT_EQUAL(res, kLwpaErrWouldBlock);
+      TEST_ASSERT(res == kLwpaErrTimedOut || res == kLwpaErrWouldBlock);
       break;
     }
 

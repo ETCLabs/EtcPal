@@ -4,6 +4,7 @@ set(LWPA_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/../include)
 set(LWPA_SRC ${CMAKE_CURRENT_LIST_DIR}/../src)
 
 option(LWPA_TEST_IPV6 "Test IPv6 socket functions in the lwpa unit and integration tests" ON)
+option(LWPA_TEST_BUILD_AS_LIBRARIES "Build the lwpa unit and integration tests as libraries rather than executables" OFF)
 
 if(WIN32 OR APPLE OR UNIX)
   set(LWPA_TEST_ENTRYPOINT main_default.c)
@@ -30,5 +31,5 @@ if(APPLE)
   list(APPEND LWPA_TEST_COMPILE_DEFINITIONS LWPA_BULK_POLL_TEST_NUM_SOCKETS=200)
 endif()
 
-add_subdirectory(unit)
+# add_subdirectory(unit)
 add_subdirectory(integration)

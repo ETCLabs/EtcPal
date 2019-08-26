@@ -70,7 +70,7 @@ TEST(lwpa_socket, blocking_state_is_consistent)
 {
   lwpa_socket_t sock;
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_STREAM, &sock);
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_STREAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, LWPA_SOCKET_INVALID);
 
   // Set the socket to non-blocking, make sure it reads as non-blocking
@@ -360,6 +360,7 @@ TEST_GROUP_RUNNER(lwpa_socket)
 {
   RUN_TEST_CASE(lwpa_socket, bind_works_as_expected);
   RUN_TEST_CASE(lwpa_socket, sockopts);
+  RUN_TEST_CASE(lwpa_socket, blocking_state_is_consistent);
   RUN_TEST_CASE(lwpa_socket, poll_invalid_calls_fail);
   RUN_TEST_CASE(lwpa_socket, poll_user_data_works);
   RUN_TEST_CASE(lwpa_socket, poll_modify_socket_works);
