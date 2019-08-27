@@ -1,6 +1,6 @@
 
-set(LWPA_CONFIG_FILE_LOC "" CACHE STRING "The directory path of the lwpa_config.h file, if provided")
-if(LWPA_CONFIG_FILE_LOC)
+set(LWPA_CONFIG_FILE_DIR "" CACHE STRING "The directory path of the lwpa_config.h file, if provided")
+if(LWPA_CONFIG_FILE_DIR)
   set(${LWPA_HAVE_CONFIG_H} LWPA_HAVE_CONFIG_H)
 endif()
 
@@ -69,8 +69,7 @@ target_include_directories(lwpa PUBLIC
   ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}
   ${LWPA_OS_ADDITIONAL_INCLUDE_DIRS}
   ${LWPA_NET_ADDITIONAL_INCLUDE_DIRS}
-  ${LWPA_TOOLCHAIN_ADDITIONAL_INCLUDE_DIRS}
-  ${LWPA_CONFIG_FILE_LOC}
+  ${LWPA_CONFIG_FILE_DIR}
 )
 target_include_directories(lwpa PRIVATE ${LWPA_ROOT}/src)
 target_compile_definitions(lwpa PRIVATE ${LWPA_HAVE_CONFIG_H})

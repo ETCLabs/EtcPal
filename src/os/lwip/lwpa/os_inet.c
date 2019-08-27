@@ -26,54 +26,90 @@
 #error "LWIP_SOCKET is necessary in lwipopts.h to use the lwpa_inet module."
 #endif
 
+bool ip_os_to_lwpa(const lwpa_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
+{
+#if LWIP_IPV4
+  if (os_ip->sa_family == AF_INET)
+  {
+    struct sockaddr_in* sin = (struct sockaddr_in*)os_ip;
+    LWPA_IP_SET_V4_ADDRESS(ip, ntohl(sin->sin_addr.s_addr));
+    return true;
+  }
+#endif
+#if LWIP_IPV6
+  if (os_ip->sa_family == AF_INET6)
+  {
+    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)os_ip;
+    LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(ip, sin6->sin6_addr.s6_addr, sin6->sin6_scope_id);
+    return true;
+  }
+#endif
+  return false;
+}
+
+size_t ip_lwpa_to_os(const LwpaIpAddr* ip, lwpa_os_ipaddr_t* os_ip)
+{
+  size_t ret = 0;
+#if LWIP_IPV4
+  if (LWPA_IP_IS_V4(ip))
+  {
+    struct sockaddr_in* sin = (struct sockaddr_in*)os_ip;
+    memset(sin, 0, sizeof(struct sockaddr_in));
+    sin->sin_len = sizeof(struct sockaddr_in6);
+    sin->sin_family = AF_INET;
+    sin->sin_addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(ip));
+    ret = sizeof(struct sockaddr_in);
+  }
+#endif
+#if LWIP_IPV6
+  if (LWPA_IP_IS_V6(ip))
+  {
+    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)os_ip;
+    memset(sin6, 0, sizeof(struct sockaddr_in6));
+    sin6->sin6_len = sizeof(struct sockaddr_in6);
+    sin6->sin6_family = AF_INET6;
+    sin6->sin6_scope_id = ip->addr.v6.scope_id;
+    memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(ip), LWPA_IPV6_BYTES);
+    ret = sizeof(struct sockaddr_in6);
+  }
+#endif
+  return ret;
+}
+
 bool sockaddr_os_to_lwpa(const lwpa_os_sockaddr_t* os_sa, LwpaSockaddr* sa)
 {
-  if (os_sa->sa_family == AF_INET)
+  if (ip_os_to_lwpa(os_sa, &sa->ip))
   {
 #if LWIP_IPV4
-    struct sockaddr_in* sin = (struct sockaddr_in*)os_sa;
-    sa->port = ntohs(sin->sin_port);
-    LWPA_IP_SET_V4_ADDRESS(&sa->ip, ntohl(sin->sin_addr.s_addr));
-    return true;
-#else
-    return false;
+    if (os_sa->sa_family == AF_INET)
+    {
+      sa->port = ntohs(((const struct sockaddr_in*)os_sa)->sin_port);
+      return true;
+    }
 #endif
-  }
-  else if (os_sa->sa_family == AF_INET6)
-  {
 #if LWIP_IPV6
-    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)os_sa;
-    sa->port = ntohs(sin6->sin6_port);
-    LWPA_IP_SET_V6_ADDRESS(&sa->ip, sin6->sin6_addr.s6_addr);
-    return true;
-#else
-    return false;
+    if (os_sa->sa_family == AF_INET6)
+    {
+      sa->port = ntohs(((const struct sockaddr_in6*)os_sa)->sin6_port);
+      return true;
+    }
 #endif
   }
   return false;
 }
 
-socklen_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, lwpa_os_sockaddr_t* os_sa)
+size_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, lwpa_os_sockaddr_t* os_sa)
 {
-  socklen_t ret = 0;
-  if (LWPA_IP_IS_V4(&sa->ip))
+  size_t ret = ip_lwpa_to_os(&sa->ip, os_sa);
+  if (ret != 0)
   {
 #if LWIP_IPV4
-    struct sockaddr_in* sin = (struct sockaddr_in*)os_sa;
-    sin->sin_family = AF_INET;
-    sin->sin_port = htons(sa->port);
-    sin->sin_addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&sa->ip));
-    ret = sizeof(struct sockaddr_in);
+    if (LWPA_IP_IS_V4(&sa->ip))
+      ((struct sockaddr_in*)os_sa)->sin_port = htons(sa->port);
 #endif
-  }
-  else if (LWPA_IP_IS_V6(&sa->ip))
-  {
 #if LWIP_IPV6
-    struct sockaddr_in6* sin6 = (struct sockaddr_in6*)os_sa;
-    sin6->sin6_family = AF_INET6;
-    sin6->sin6_port = htons(sa->port);
-    memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(&sa->ip), LWPA_IPV6_BYTES);
-    ret = sizeof(struct sockaddr_in6);
+    if (LWPA_IP_IS_V6(&sa->ip))
+      ((struct sockaddr_in6*)os_sa)->sin6_port = htons(sa->port);
 #endif
   }
   return ret;
