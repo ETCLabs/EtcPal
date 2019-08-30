@@ -76,7 +76,17 @@ TEST(lwpa_socket, blocking_state_is_consistent)
   // Set the socket to non-blocking, make sure it reads as non-blocking
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_setblocking(sock, false));
   bool is_blocking;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_getblocking(sock, &is_blocking));
+  lwpa_error_t gb_result = lwpa_getblocking(sock, &is_blocking);
+
+  // Special case - this function isn't implemented on all platforms, so we abort this test
+  // prematurely if that's the case.
+  if (gb_result == kLwpaErrNotImpl)
+  {
+    lwpa_close(sock);
+    TEST_PASS_MESSAGE("lwpa_getblocking() not implemented on this platform. Skipping the remainder of the test.");
+  }
+
+  TEST_ASSERT_EQUAL(kLwpaErrOk, gb_result);
   TEST_ASSERT_FALSE(is_blocking);
 
   // Set the socket back to blocking, make sure it reads as blocking
@@ -367,9 +377,4 @@ TEST_GROUP_RUNNER(lwpa_socket)
   RUN_TEST_CASE(lwpa_socket, poll_for_readability_on_udp_sockets_works);
   RUN_TEST_CASE(lwpa_socket, poll_for_writability_on_udp_sockets_works);
   RUN_TEST_CASE(lwpa_socket, getaddrinfo_works_as_expected);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_socket);
 }

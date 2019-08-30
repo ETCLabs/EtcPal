@@ -23,8 +23,6 @@
 #include "lwpa/netint.h"
 #include "lwpa/log.h"
 
-DEFINE_FFF_GLOBALS;
-
 TEST_GROUP(lwpa_common);
 
 TEST_SETUP(lwpa_common)
@@ -67,7 +65,7 @@ TEST(lwpa_common, netint_double_init_works)
 }
 
 // A shim from the lwpa_log module to fff.
-FAKE_VOID_FUNC(log_callback, void*, const LwpaLogStrings*);
+FAKE_VOID_FUNC(common_test_log_callback, void*, const LwpaLogStrings*);
 
 // Test multiple calls of lwpa_init() for the log module.
 TEST(lwpa_common, log_double_init_works)
@@ -77,7 +75,7 @@ TEST(lwpa_common, log_double_init_works)
 
   LwpaLogParams params;
   params.action = kLwpaLogCreateHumanReadableLog;
-  params.log_fn = log_callback;
+  params.log_fn = common_test_log_callback;
   params.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
   params.time_fn = NULL;
   params.context = NULL;
@@ -85,14 +83,14 @@ TEST(lwpa_common, log_double_init_works)
   TEST_ASSERT_TRUE(lwpa_validate_log_params(&params));
 
   lwpa_log(&params, LWPA_LOG_INFO, "Log message");
-  TEST_ASSERT_EQUAL(log_callback_fake.call_count, 1);
+  TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 1);
 
   lwpa_deinit(LWPA_FEATURE_LOGGING);
 
   // After 2 inits and one deinit, we should still be able to use the lwpa_log() function and get
   // callbacks.
   lwpa_log(&params, LWPA_LOG_INFO, "Log message");
-  TEST_ASSERT_EQUAL(log_callback_fake.call_count, 2);
+  TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 2);
 
   lwpa_deinit(LWPA_FEATURE_LOGGING);
 }
@@ -102,9 +100,4 @@ TEST_GROUP_RUNNER(lwpa_common)
   RUN_TEST_CASE(lwpa_common, features_all_but_macro_works);
   RUN_TEST_CASE(lwpa_common, netint_double_init_works);
   RUN_TEST_CASE(lwpa_common, log_double_init_works);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_common);
 }

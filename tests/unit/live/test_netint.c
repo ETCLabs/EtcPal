@@ -35,7 +35,7 @@ TEST_SETUP(lwpa_netint)
 
 TEST_TEAR_DOWN(lwpa_netint)
 {
-  lwpa_deinit(LWPA_FEATURE_NETINTS); 
+  lwpa_deinit(LWPA_FEATURE_NETINTS);
 }
 
 TEST(lwpa_netint, netint_enumeration_works)
@@ -150,9 +150,4 @@ TEST_GROUP_RUNNER(lwpa_netint)
   RUN_TEST_CASE(lwpa_netint, netint_enumeration_works);
   RUN_TEST_CASE(lwpa_netint, default_netint_is_consistent);
   RUN_TEST_CASE(lwpa_netint, get_interface_for_dest_works_ipv4);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_netint);
 }

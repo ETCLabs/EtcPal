@@ -20,15 +20,14 @@
 #include "unity_fixture.h"
 #include "fff.h"
 
-#include <stddef.h>
 #include <math.h>
+#include <stddef.h>
+#include <stdio.h>
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
 #endif
-
-DEFINE_FFF_GLOBALS;
 
 #define INT_ARRAY_SIZE 100
 #define RANDOM_INT_IN_ARRAY() (int)(rand() / ((RAND_MAX + 1.0) / INT_ARRAY_SIZE))
@@ -279,9 +278,4 @@ TEST_GROUP_RUNNER(lwpa_rbtree)
   RUN_TEST_CASE(lwpa_rbtree, insert_should_fail_if_element_already_exists);
   RUN_TEST_CASE(lwpa_rbtree, iterators_work_as_expected);
   RUN_TEST_CASE(lwpa_rbtree, max_height_is_within_bounds);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_rbtree);
 }

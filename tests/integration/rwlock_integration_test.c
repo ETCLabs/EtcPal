@@ -19,6 +19,7 @@
 #include "lwpa/lock.h"
 #include "unity_fixture.h"
 
+#include <stdio.h>
 #include "lwpa/thread.h"
 
 #define NUM_WRITE_THREADS 10

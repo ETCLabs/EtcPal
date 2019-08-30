@@ -20,7 +20,6 @@
 #include "lwpa/lock.h"
 #include <task.h>
 
-
 /*********************** Private function prototypes *************************/
 
 static void reader_atomic_increment(lwpa_rwlock_t* id);
@@ -35,7 +34,7 @@ bool lwpa_mutex_create(lwpa_mutex_t* id)
 
 bool lwpa_mutex_take(lwpa_mutex_t* id)
 {
-  if (id)
+  if (id && *id)
   {
     return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY));
   }
@@ -44,7 +43,7 @@ bool lwpa_mutex_take(lwpa_mutex_t* id)
 
 bool lwpa_mutex_try_take(lwpa_mutex_t* id)
 {
-  if (id)
+  if (id && *id)
   {
     return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0));
   }
@@ -53,13 +52,13 @@ bool lwpa_mutex_try_take(lwpa_mutex_t* id)
 
 void lwpa_mutex_give(lwpa_mutex_t* id)
 {
-  if (id)
+  if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
 void lwpa_mutex_destroy(lwpa_mutex_t* id)
 {
-  if (id)
+  if (id && *id)
   {
     vSemaphoreDelete((SemaphoreHandle_t)*id);
     *id = (lwpa_mutex_t)NULL;
@@ -73,17 +72,17 @@ bool lwpa_signal_create(lwpa_signal_t* id)
 
 bool lwpa_signal_wait(lwpa_signal_t* id)
 {
-  return id ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY)) : false;
+  return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY)) : false;
 }
 
 bool lwpa_signal_poll(lwpa_signal_t* id)
 {
-  return id ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0)) : false;
+  return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0)) : false;
 }
 
 void lwpa_signal_post(lwpa_signal_t* id)
 {
-  if (id)
+  if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
@@ -156,7 +155,7 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
     // Wait until there are no readers, keeping the lock so that no new readers can get in.
     while (id->reader_count > 0)
     {
-      vTaskDelay(1); // Wait one tick at a time
+      vTaskDelay(1);  // Wait one tick at a time
     }
     // Hold on to the lock until writeunlock() is called
     return true;

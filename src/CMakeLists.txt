@@ -80,6 +80,10 @@ target_link_libraries(lwpa PUBLIC ${LWPA_OS_ADDITIONAL_LIBS} ${LWPA_NET_ADDITION
 
 set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 
+if(NOT MSVC)
+  set_target_properties(lwpa PROPERTIES C_STANDARD 99)
+endif()
+
 # Installation
 install(TARGETS lwpa ARCHIVE DESTINATION lib)
 install(DIRECTORY ${LWPA_ROOT}/include/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")

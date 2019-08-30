@@ -370,8 +370,3 @@ TEST_GROUP_RUNNER(lwpa_inet)
   RUN_TEST_CASE(lwpa_inet, ip_mask_from_length_works);
   RUN_TEST_CASE(lwpa_inet, inet_string_functions_work);
 }
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_inet);
-}

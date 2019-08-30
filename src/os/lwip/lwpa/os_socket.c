@@ -583,7 +583,7 @@ lwpa_error_t lwpa_getblocking(lwpa_socket_t id, bool* blocking)
     int val = fcntl(id, F_GETFL, 0);
     if (val >= 0)
     {
-      *blocking = (val & O_NONBLOCK) != 0;
+      *blocking = ((val & O_NONBLOCK) == 0);
       return kLwpaErrOk;
     }
     return errno_lwip_to_lwpa(errno);

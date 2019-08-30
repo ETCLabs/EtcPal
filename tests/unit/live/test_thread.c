@@ -117,8 +117,3 @@ TEST_GROUP_RUNNER(lwpa_thread)
   RUN_TEST_CASE(lwpa_thread, create_and_destroy_functions_work);
   RUN_TEST_CASE(lwpa_thread, threads_are_time_sliced);
 }
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_thread);
-}

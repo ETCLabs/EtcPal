@@ -16,8 +16,8 @@ endif()
 
 if(WIN32)
   set(LWPA_TEST_COMPILE_OPTIONS /wd4210)
-elseif(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  set(LWPA_TEST_COMPILE_OPTIONS -Wno-format-security)
+elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
+  set(LWPA_TEST_COMPILE_OPTIONS -Wno-format-security -Wno-conversion)
 else()
   set(LWPA_TEST_COMPILE_OPTIONS "")
 endif()
@@ -28,8 +28,41 @@ if(LWPA_TEST_IPV6)
 endif()
 
 if(APPLE)
+  # Darwin has a low default setting for the maximum number of socket descriptors a process can
+  # have open.
   list(APPEND LWPA_TEST_COMPILE_DEFINITIONS LWPA_BULK_POLL_TEST_NUM_SOCKETS=200)
 endif()
 
-# add_subdirectory(unit)
+# Add a "live" test, which links the entire lwpa library, unmodified
+function(lwpa_add_live_test target_name)
+  if(LWPA_TEST_BUILD_AS_LIBRARIES)
+    add_library(${target_name} ${ARGN})
+    install(TARGETS ${target_name} ARCHIVE DESTINATION lib)
+  else()
+    add_executable(${target_name} ${ARGN} ${CMAKE_CURRENT_LIST_DIR}/entrypoint/${LWPA_TEST_ENTRYPOINT})
+    lwpa_add_to_ctest(${target_name})
+  endif()
+  set_target_properties(${target_name} PROPERTIES FOLDER tests)
+  target_compile_options(${target_name} PRIVATE ${LWPA_TEST_COMPILE_OPTIONS})
+  target_compile_definitions(${target_name} PRIVATE ${LWPA_TEST_COMPILE_DEFINITIONS})
+  target_link_libraries(${target_name} PUBLIC lwpa ThrowTheSwitch::Unity meekrosoft::fff)
+endfunction()
+
+# Add a "custom" test, which doesn't link the lwpa library - lwpa sources must then be selectively
+# added to the target.
+function(lwpa_add_custom_test target_name)
+  if(LWPA_TEST_BUILD_AS_LIBRARIES)
+    add_library(${target_name} ${ARGN})
+    install(TARGETS ${target_name} ARCHIVE DESTINATION lib)
+  else()
+    add_executable(${target_name} ${ARGN} ${CMAKE_CURRENT_LIST_DIR}/entrypoint/${LWPA_TEST_ENTRYPOINT})
+    lwpa_add_to_ctest(${target_name})
+  endif()
+  set_target_properties(${target_name} PROPERTIES FOLDER tests)
+  target_compile_options(${target_name} PRIVATE ${LWPA_TEST_COMPILE_OPTIONS})
+  target_compile_definitions(${target_name} PRIVATE ${LWPA_TEST_COMPILE_DEFINITIONS})
+  target_link_libraries(${target_name} PUBLIC ThrowTheSwitch::Unity meekrosoft::fff)
+endfunction()
+
+add_subdirectory(unit)
 add_subdirectory(integration)
