@@ -22,6 +22,11 @@
 #include <stdio.h>
 #include "lwpa/thread.h"
 
+// Disable sprintf() warning on Windows/MSVC
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
+
 // For general usage
 static lwpa_signal_t sig;
 

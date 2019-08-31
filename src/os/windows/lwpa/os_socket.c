@@ -640,8 +640,9 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
 
 lwpa_error_t lwpa_getblocking(lwpa_socket_t id, bool* blocking)
 {
-  *blocking = false;
-  return kLwpaErrOk;
+  (void)id;
+  (void)blocking;
+  return kLwpaErrNotImpl;
 }
 
 lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)
