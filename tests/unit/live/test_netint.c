@@ -42,18 +42,28 @@ TEST(lwpa_netint, netint_enumeration_works)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  size_t num_defaults = 0;
   const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
   TEST_ASSERT_NOT_NULL(netint_list);
+
   for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
-    if (netint->is_default)
-      ++num_defaults;
+    TEST_ASSERT_GREATER_THAN_UINT(0u, netint->index);
     TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->name));
     TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->friendly_name));
   }
-  // There can be a maximum of two default interfaces: one each for IPv4 and IPv6.
-  TEST_ASSERT_LESS_OR_EQUAL_UINT(2u, num_defaults);
+}
+
+TEST(lwpa_netint, netints_are_in_index_order)
+{
+  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
+
+  const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
+  unsigned int last_index = netint_list->index;
+  for (const LwpaNetintInfo* netint = netint_list + 1; netint < netint_list + num_netints; ++netint)
+  {
+    TEST_ASSERT_GREATER_OR_EQUAL(last_index, netint->index);
+    last_index = netint->index;
+  }
 }
 
 /* TODO Figure out how we're gonna handle mallocing
@@ -69,25 +79,56 @@ TEST(lwpa_netint, copy_interfaces_works)
 }
 */
 
+TEST(lwpa_netint, get_netints_by_index_works)
+{
+  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
+
+  const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
+  unsigned int current_index = 0;
+  // There are other tests covering that the netint list should be in order by index and that the
+  // indexes must all be greater than 0, which simplifies this code.
+  const LwpaNetintInfo* current_arr_by_index = NULL;
+  size_t current_index_arr_size = 0;
+  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  {
+    if (netint->index > current_index)
+    {
+      // The previous get-by-index array should be exhausted
+      TEST_ASSERT_EQUAL_UINT(current_index_arr_size, 0u);
+
+      // Get the new one
+      current_index = netint->index;
+      TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interfaces_by_index(netint->index, &current_arr_by_index,
+                                                                        &current_index_arr_size));
+      TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
+    }
+
+    // Now check that we're still in the get-by-index array and it gives the correct slice of the
+    // total netint array.
+    TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
+    TEST_ASSERT_EQUAL_PTR(current_arr_by_index, netint);
+    ++current_arr_by_index;
+    --current_index_arr_size;
+  }
+}
+
 TEST(lwpa_netint, default_netint_is_consistent)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  LwpaNetintInfo def_v4;
-  LwpaNetintInfo def_v6;
-  memset(&def_v4, 0, sizeof def_v4);
-  memset(&def_v6, 0, sizeof def_v6);
+  unsigned int def_v4 = 0;
+  unsigned int def_v6 = 0;
 
   bool have_default_v4 = (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_v4));
   bool have_default_v6 = (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &def_v6));
 
   if (have_default_v4)
   {
-    TEST_ASSERT(def_v4.is_default);
+    TEST_ASSERT_NOT_EQUAL(def_v4, 0u);
   }
   if (have_default_v6)
   {
-    TEST_ASSERT(def_v6.is_default);
+    TEST_ASSERT_NOT_EQUAL(def_v6, 0u);
   }
 
   const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
@@ -98,11 +139,11 @@ TEST(lwpa_netint, default_netint_is_consistent)
     {
       if (netint->addr.type == kLwpaIpTypeV4)
       {
-        TEST_ASSERT_EQUAL_MEMORY(netint, &def_v4, sizeof def_v4);
+        TEST_ASSERT_EQUAL_UINT(netint->index, def_v4);
       }
       else if (netint->addr.type == kLwpaIpTypeV6)
       {
-        TEST_ASSERT_EQUAL_MEMORY(netint, &def_v6, sizeof def_v6);
+        TEST_ASSERT_EQUAL_UINT(netint->index, def_v6);
       }
     }
   }
@@ -124,30 +165,33 @@ TEST(lwpa_netint, get_interface_for_dest_works_ipv4)
       continue;
 
     LwpaIpAddr test_addr = netint->addr;
-    LwpaNetintInfo netint_res;
-    TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&test_addr, &netint_res));
+    unsigned int netint_index_res;
+    TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
     // Put addresses in print form to test meaningful information in case of test failure
     char test_addr_str[LWPA_INET6_ADDRSTRLEN];
-    char result_str[LWPA_INET6_ADDRSTRLEN];
     lwpa_inet_ntop(&test_addr, test_addr_str, LWPA_INET6_ADDRSTRLEN);
-    lwpa_inet_ntop(&netint_res.addr, result_str, LWPA_INET6_ADDRSTRLEN);
     char test_msg[150];
-    snprintf(test_msg, 150, "Address tried: %s, interface returned: %s", test_addr_str, result_str);
+    snprintf(test_msg, 150, "Address tried: %s (interface %u), interface returned: %u", test_addr_str, netint->index,
+             netint_index_res);
 
-    TEST_ASSERT_TRUE_MESSAGE(lwpa_ip_equal(&netint_res.addr, &netint->addr), test_msg);
+    TEST_ASSERT_EQUAL_UINT_MESSAGE(netint_index_res, netint->index, test_msg);
   }
 
   LwpaIpAddr ext_addr;
   LWPA_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
-  LwpaNetintInfo def;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&ext_addr, &def));
-  TEST_ASSERT(def.is_default);
+  unsigned int netint_index_res;
+  unsigned int netint_index_default;
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_default_interface(kLwpaIpTypeV4, &netint_index_default));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&ext_addr, &netint_index_res));
+  TEST_ASSERT_EQUAL_UINT(netint_index_res, netint_index_default);
 }
 
 TEST_GROUP_RUNNER(lwpa_netint)
 {
   RUN_TEST_CASE(lwpa_netint, netint_enumeration_works);
+  RUN_TEST_CASE(lwpa_netint, netints_are_in_index_order);
+  RUN_TEST_CASE(lwpa_netint, get_netints_by_index_works);
   RUN_TEST_CASE(lwpa_netint, default_netint_is_consistent);
   RUN_TEST_CASE(lwpa_netint, get_interface_for_dest_works_ipv4);
 }

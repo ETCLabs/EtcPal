@@ -40,10 +40,10 @@
 
 #define NUM_TEST_PACKETS 1000
 
-static LwpaNetintInfo v4_netint;
+static unsigned int v4_netint;
 bool run_ipv4_mcast_test;
 #if LWPA_TEST_IPV6
-static LwpaNetintInfo v6_netint;
+static unsigned int v6_netint;
 bool run_ipv6_mcast_test;
 #endif
 
@@ -61,10 +61,15 @@ static LwpaSockaddr send_addr;
 // if not.
 static void select_network_interface_v4()
 {
-  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &v4_netint) &&
-      NULL == strstr(v4_netint.name, "utun"))
+  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &v4_netint))
   {
-    run_ipv4_mcast_test = true;
+    const LwpaNetintInfo* netint_arr;
+    size_t netint_arr_size;
+    if (kLwpaErrOk == lwpa_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
+        NULL == strstr(netint_arr->name, "utun"))
+    {
+      run_ipv4_mcast_test = true;
+    }
   }
   else
   {
@@ -76,7 +81,7 @@ static void select_network_interface_v4()
         if (LWPA_IP_IS_V4(&netint->addr) && !lwpa_ip_is_link_local(&netint->addr) &&
             !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
-          v4_netint = *netint;
+          v4_netint = netint->index;
           run_ipv4_mcast_test = true;
           return;
         }
@@ -92,10 +97,15 @@ static void select_network_interface_v4()
 // Select the default interface if available, the very first non-loopback interface if not.
 static void select_network_interface_v6()
 {
-  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &v6_netint) &&
-      NULL == strstr(v6_netint.name, "utun"))
+  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &v6_netint))
   {
-    run_ipv6_mcast_test = true;
+    const LwpaNetintInfo* netint_arr;
+    size_t netint_arr_size;
+    if (kLwpaErrOk == lwpa_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
+        NULL == strstr(netint_arr->name, "utun"))
+    {
+      run_ipv6_mcast_test = true;
+    }
   }
   else
   {
@@ -106,7 +116,7 @@ static void select_network_interface_v6()
       {
         if (LWPA_IP_IS_V6(&netint->addr) && !lwpa_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
         {
-          v6_netint = *netint;
+          v6_netint = netint->index;
           run_ipv6_mcast_test = true;
           return;
         }
@@ -324,8 +334,8 @@ TEST(socket_integration, multicast_udp_ipv4)
 
   TEST_ASSERT_EQUAL(kLwpaErrOk,
                     lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int)));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_IF, &v4_netint.index,
-                                                sizeof v4_netint.index));
+  TEST_ASSERT_EQUAL(kLwpaErrOk,
+                    lwpa_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_IF, &v4_netint, sizeof v4_netint));
 
   // Bind socket 1 to the wildcard address and a specific port.
   lwpa_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
@@ -338,7 +348,7 @@ TEST(socket_integration, multicast_udp_ipv4)
 
   // Subscribe socket 1 to the multicast address.
   LwpaGroupReq greq;
-  greq.ifindex = v4_netint.index;
+  greq.ifindex = v4_netint;
   LWPA_IP_SET_V4_ADDRESS(&greq.group, kTestMcastAddrIPv4);
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
@@ -379,7 +389,7 @@ TEST(socket_integration, multicast_udp_ipv6)
   // TEST_ASSERT_EQUAL(kLwpaErrOk,
   lwpa_setsockopt(send_sock, LWPA_IPPROTO_IPV6, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int));  //);
   // TEST_ASSERT_EQUAL(kLwpaErrOk,
-  lwpa_setsockopt(send_sock, LWPA_IPPROTO_IPV6, LWPA_IP_MULTICAST_IF, &v6_netint.index, sizeof v6_netint.index);  //);
+  lwpa_setsockopt(send_sock, LWPA_IPPROTO_IPV6, LWPA_IP_MULTICAST_IF, &v6_netint, sizeof v6_netint);  //);
 
   // Bind socket 1 to the wildcard address and a specific port.
   lwpa_ip_set_wildcard(kLwpaIpTypeV6, &bind_addr.ip);
@@ -392,7 +402,7 @@ TEST(socket_integration, multicast_udp_ipv6)
 
   // Subscribe socket 1 to the multicast address.
   LwpaGroupReq greq;
-  greq.ifindex = v6_netint.index;
+  greq.ifindex = v6_netint;
   LWPA_IP_SET_V6_ADDRESS(&greq.group, kTestMcastAddrIPv6);
   TEST_ASSERT_EQUAL(kLwpaErrOk,
                     lwpa_setsockopt(rcvsock1, LWPA_IPPROTO_IPV6, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
@@ -401,7 +411,7 @@ TEST(socket_integration, multicast_udp_ipv6)
   TEST_ASSERT_EQUAL(kLwpaErrOk,
                     lwpa_setsockopt(rcvsock2, LWPA_IPPROTO_IPV6, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
-  LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&send_addr.ip, kTestMcastAddrIPv6, v6_netint.index);
+  LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&send_addr.ip, kTestMcastAddrIPv6, v6_netint);
   send_addr.port = MULTICAST_UDP_PORT_BASE;
 
   multicast_udp_test(rcvsock1, rcvsock2);

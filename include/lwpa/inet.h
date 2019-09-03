@@ -160,10 +160,13 @@ typedef struct LwpaSockaddr
 #define LWPA_NETINTINFO_NAME_LEN 64
 #define LWPA_NETINTINFO_FRIENDLY_NAME_LEN 64
 
-/*! A description of a network interface. */
+/*! A description of a single address assigned to a network interface. */
 typedef struct LwpaNetintInfo
 {
-  /*! The OS-specific network interface number. Used for IPv6, multicast and IP-version-neutral
+  /*! The OS-specific network interface number. Since interfaces can have multiple IPv4 and IPv6
+   *  addresses assigned simultaneously, there can be a one-to-many relationship between physical
+   *  network interfaces and LwpaNetintInfo descriptions on the same system, all of which will have
+   *  the same value for this field. It is also used for IPv6, multicast and IP-version-neutral
    *  APIs. See \ref interface_indexes for more information. */
   unsigned int index;
   /*! The interface ip address. */

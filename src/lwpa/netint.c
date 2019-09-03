@@ -26,7 +26,6 @@
 
 static unsigned int init_count;
 static CachedNetintInfo netint_cache;
-static DefaultNetint default_netint;
 
 /*********************** Private function prototypes *************************/
 
@@ -44,22 +43,6 @@ lwpa_error_t lwpa_netint_init()
     {
       // Sort the interfaces by OS index
       qsort(netint_cache.netints, netint_cache.num_netints, sizeof(LwpaNetintInfo), compare_netints);
-
-      // Store the locations of the default netints for access by the API function
-      for (size_t i = 0; i < netint_cache.num_netints; ++i)
-      {
-        LwpaNetintInfo* netint = &netint_cache.netints[i];
-        if (LWPA_IP_IS_V4(&netint->addr) && netint->is_default)
-        {
-          default_netint.v4_valid = true;
-          default_netint.v4_index = i;
-        }
-        else if (LWPA_IP_IS_V6(&netint->addr) && netint->is_default)
-        {
-          default_netint.v6_valid = true;
-          default_netint.v6_index = i;
-        }
-      }
     }
   }
 
@@ -122,31 +105,80 @@ size_t lwpa_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr
   return addrs_copied;
 }
 
+/*! \brief Get a set of network interface addresses that have the index specified.
+ *
+ *  See \ref interface_indexes for more information.
+ *
+ *  \param[in] index Index for which to get interfaces.
+ *  \param[out] netint_arr Filled in on success with the array of matching interfaces.
+ *  \param[out] netint_arr_size Filled in on success with the size of the matching interface array.
+ *  \return #kLwpaErrOk: netint_arr and netint_arr_size were filled in.
+ *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kLwpaErrNotFound: No interfaces found for this index.
+ */
+lwpa_error_t lwpa_netint_get_interfaces_by_index(unsigned int index, const LwpaNetintInfo** netint_arr,
+                                                 size_t* netint_arr_size)
+{
+  if (index == 0 || !netint_arr || !netint_arr_size)
+    return kLwpaErrInvalid;
+
+  size_t arr_size = 0;
+  for (const LwpaNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
+       ++netint)
+  {
+    if (netint->index == index)
+    {
+      if (arr_size == 0)
+      {
+        // Found the beginning of the array slice.
+        *netint_arr = netint;
+      }
+      ++arr_size;
+    }
+    else if (netint->index > index)
+    {
+      // Done.
+      break;
+    }
+    // Else we haven't gotten there yet, continue
+  }
+
+  if (arr_size != 0)
+  {
+    *netint_arr_size = arr_size;
+    return kLwpaErrOk;
+  }
+  else
+  {
+    return kLwpaErrNotFound;
+  }
+}
+
 /*! \brief Get information about the default network interface.
  *
  *  For our purposes, the 'default' network interface is defined as the interface that is chosen
- *  for the default IP route. Note: If the network interfaces have already been enumerated with
- *  lwpa_netint_get_interfaces(), it is more efficient to inspect the is_default flag of each
- *  interface in that existing array.
+ *  for the default IP route. The default interface is given as an OS network interface index - see
+ *  \ref interface_indexes for more information. Note that since network interfaces can have
+ *  multiple IP addresses assigned, this index may be shared by many entries returned by
+ *  lwpa_netint_get_interfaces().
  *
  *  \param[in] type The IP protocol for which to get the default network interface, either
  *                  #kLwpaIpTypeV4 or #kLwpaIpTypeV6. A separate default interface is maintained for
  *                  each.
- *  \param[out] netint Pointer to network interface description struct to fill with the information
- *                     about the default interface.
+ *  \param[out] netint_index Pointer to value to fill with the index of the default interface.
  *  \return #kLwpaErrOk: netint was filled in.
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  *  \return #kLwpaErrNotFound: No default interface found for this type.
  */
-lwpa_error_t lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInfo* netint)
+lwpa_error_t lwpa_netint_get_default_interface(lwpa_iptype_t type, unsigned int* netint_index)
 {
-  if (init_count && netint)
+  if (init_count && netint_index)
   {
     if (type == kLwpaIpTypeV4)
     {
-      if (default_netint.v4_valid)
+      if (netint_cache.def.v4_valid)
       {
-        *netint = netint_cache.netints[default_netint.v4_index];
+        *netint_index = netint_cache.def.v4_index;
         return kLwpaErrOk;
       }
       else
@@ -156,9 +188,9 @@ lwpa_error_t lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInf
     }
     else if (type == kLwpaIpTypeV6)
     {
-      if (default_netint.v6_valid)
+      if (netint_cache.def.v6_valid)
       {
-        *netint = netint_cache.netints[default_netint.v6_index];
+        *netint_index = netint_cache.def.v6_index;
         return kLwpaErrOk;
       }
       else
@@ -182,31 +214,16 @@ lwpa_error_t lwpa_netint_get_default_interface(lwpa_iptype_t type, LwpaNetintInf
  *  \return #kLwpaErrNoNetints: No network interfaces found on system.
  *  \return #kLwpaErrNotFound: No route was able to be resolved to the destination.
  */
-lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, LwpaNetintInfo* netint)
+lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsigned int* netint_index)
 {
-  if (!dest || !netint)
+  if (!dest || !netint_index)
     return kLwpaErrInvalid;
   if (!init_count)
     return kLwpaErrNotInit;
   if (netint_cache.num_netints == 0)
     return kLwpaErrNoNetints;
 
-  unsigned int index;
-  lwpa_error_t res = os_resolve_route(dest, &index);
-  if (res == kLwpaErrOk)
-  {
-    for (LwpaNetintInfo* netint_entry = netint_cache.netints;
-         netint_entry < netint_cache.netints + netint_cache.num_netints; ++netint_entry)
-    {
-      if (netint_entry->addr.type == dest->type && netint_entry->index == index)
-      {
-        *netint = *netint_entry;
-        return kLwpaErrOk;
-      }
-    }
-    return kLwpaErrNotFound;
-  }
-  return res;
+  return os_resolve_route(dest, &netint_cache, netint_index);
 }
 
 int compare_netints(const void* a, const void* b)

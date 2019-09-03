@@ -59,8 +59,13 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   {
     copy_interface_info(i, &netints[i]);
   }
+
   cache->netints = netints;
   cache->num_netints = BSP_ENET_DEVICE_COUNT;
+
+  cache->def.v4_valid = true;
+  cache->def.v4_index = BSP_DEFAULT_ENET_DEVICE + 1;
+
   return kLwpaErrOk;
 }
 
@@ -69,8 +74,10 @@ void os_free_interfaces(CachedNetintInfo* cache)
   cache->netints = NULL;
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
+  (void)cache;  // unused
+
   unsigned int index_found = 0;
 
   for (const LwpaNetintInfo* netint = netints; netint < netints + BSP_ENET_DEVICE_COUNT; ++netint)

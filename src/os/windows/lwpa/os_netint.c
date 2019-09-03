@@ -40,8 +40,10 @@ static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNet
 
 /*************************** Function definitions ****************************/
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
+  (void)cache;  // unused
+
   struct sockaddr_storage os_addr;
   if (ip_lwpa_to_os(dest, (lwpa_os_ipaddr_t*)&os_addr))
   {
@@ -170,21 +172,25 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
 
   // Get the index of the default interface for IPv4
   DWORD def_ifindex_v4;
-  bool have_def_index_v4 = false;
   struct sockaddr_in v4_dest;
   memset(&v4_dest, 0, sizeof v4_dest);
   v4_dest.sin_family = AF_INET;
   if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v4_dest, &def_ifindex_v4))
-    have_def_index_v4 = true;
+  {
+    cache->def.v4_valid = true;
+    cache->def.v4_index = def_ifindex_v4;
+  }
 
   // And the same for IPv6
   DWORD def_ifindex_v6;
-  bool have_def_index_v6 = false;
   struct sockaddr_in6 v6_dest;
   memset(&v6_dest, 0, sizeof v6_dest);
   v6_dest.sin6_family = AF_INET6;
   if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v6_dest, &def_ifindex_v6))
-    have_def_index_v6 = true;
+  {
+    cache->def.v6_valid = true;
+    cache->def.v6_index = def_ifindex_v6;
+  }
 
   size_t netint_index = 0;
 
@@ -199,10 +205,9 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
       {
         case AF_INET:
           copy_ipv4_info(pip, info);
-          if (have_def_index_v4 && pcur->IfIndex == def_ifindex_v4)
+          if (cache->def.v4_valid && pcur->IfIndex == def_ifindex_v4)
           {
             info->is_default = true;
-            have_def_index_v4 = false;
           }
           else
           {
@@ -212,10 +217,9 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
           break;
         case AF_INET6:
           copy_ipv6_info(pip, info);
-          if (have_def_index_v6 && pcur->IfIndex == def_ifindex_v6)
+          if (cache->def.v6_valid && pcur->IfIndex == def_ifindex_v6)
           {
             info->is_default = true;
-            have_def_index_v6 = false;
           }
           else
           {

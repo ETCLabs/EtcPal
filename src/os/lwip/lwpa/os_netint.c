@@ -62,33 +62,31 @@ static void copy_interface_info_v4(const struct netif* lwip_netif, LwpaNetintInf
     netint->is_default = false;
 }
 
-static void copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, LwpaNetintInfo* netint)
+static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, LwpaNetintInfo* netint)
 {
   copy_common_interface_info(lwip_netif, netint);
 
   /* Finish filling in a netintinfo for a single IPv6 address. */
 
-  /* NOTE: We are not currently supporting IPv6 in any lwIP products, and this implementation will
-   * probably need to be revisited before we do, especially the default interface code. */
-  for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
+  if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[v6_addr_index]))
   {
-    if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[i]))
-    {
 #if LWIP_IPV6_SCOPES
-      LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[i])->addr),
-                                           ip_2_ip6(&lwip_netif->ip6_addr[i])->zone);
+    LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
+                                         ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
 #else
-      LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[i])->addr));
-      // TODO revisit
-      netint->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, 128);
+    LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
+    // TODO revisit
+    netint->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, 128);
 #endif
 
-      if (lwip_netif == netif_default && i == 0)
-        netint->is_default = true;
-      else
-        netint->is_default = false;
-    }
+    if (lwip_netif == netif_default)
+      netint->is_default = true;
+    else
+      netint->is_default = false;
+
+    return true;
   }
+  return false;
 }
 
 lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
@@ -119,18 +117,29 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   // Make sure the default netint is included
 #if LWIP_IPV4
-  copy_interface_info_v4(netif_default, &static_netints[num_static_netints++]);
-#endif
-#if LWIP_IPV6
-  for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
+  if (netif_default)
   {
-#if !LWPA_EMBOS_USE_MALLOC
-    if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
-      break;
-#endif
-    copy_interface_info_v6(netif_default, i, &static_netints[num_static_netints++]);
+    cache->def.v4_valid = true;
+    cache->def.v4_index = netif_get_index(netif_default);
+    copy_interface_info_v4(netif_default, &static_netints[num_static_netints++]);
   }
 #endif
+#if LWIP_IPV6
+  if (netif_default)
+  {
+    cache->def.v6_valid = true;
+    cache->def.v6_index = netif_get_index(netif_default);
+    for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
+    {
+#if !LWPA_EMBOS_USE_MALLOC
+      if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
+        break;
+#endif
+      if (copy_interface_info_v6(netif_default, i, &static_netints[num_static_netints]))
+        ++num_static_netints;
+    }
+#endif
+  }
 
   NETIF_FOREACH(lwip_netif)
   {
@@ -152,7 +161,8 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
       if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
         break;
 #endif
-      copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints++]);
+      if (copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints]))
+        ++num_static_netints;
     }
 #endif
   }
@@ -173,7 +183,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
 #endif
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   unsigned int index_found = 0;
 
@@ -185,9 +195,22 @@ lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
       break;
     }
   }
-  if (index_found == 0)
-    index_found = static_netints[default_index].index;
 
-  *index = index_found;
-  return kLwpaErrOk;
+  if (index_found == 0)
+  {
+    if (LWPA_IP_IS_V4(dest) && cache->def.v4_valid)
+      index_found = cache->def.v4_index;
+    else if (LWPA_IP_IS_V6(dest) && cache->def.v6_valid)
+      index_found = cache->def.v6_index;
+  }
+
+  if (index_found == 0)
+  {
+    return kLwpaErrNotFound;
+  }
+  else
+  {
+    *index = index_found;
+    return kLwpaErrOk;
+  }
 }
