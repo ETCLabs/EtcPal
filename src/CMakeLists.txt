@@ -138,7 +138,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_.hread.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_timer.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_uuid.c
 
