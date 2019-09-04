@@ -1,5 +1,4 @@
-
-# MQX compilation support for lwpa
+# MQX compilation support for EtcPal
 set(MQX_BOARD_DIR "" CACHE STRING "Location of the MQX compiled libraries, e.g. \"MQX/v4.2.0/lib/[your board name]\"")
 if(NOT MQX_BOARD_DIR)
   message(FATAL_ERROR "You must provide the option MQX_BOARD_DIR to indicate the location of your MQX libraries.")
@@ -14,7 +13,7 @@ else()
 endif()
 
 # Depend on the MQX libs.
-set(LWPA_OS_ADDITIONAL_INCLUDE_DIRS
+set(ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Generated_Code
@@ -22,7 +21,7 @@ set(LWPA_OS_ADDITIONAL_INCLUDE_DIRS
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/psp
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/rtcs
 )
-set(LWPA_OS_ADDITIONAL_LIBS
+set(ETCPAL_OS_ADDITIONAL_LIBS
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/bsp.a
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/psp/psp.a
   ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/rtcs/rtcs.a

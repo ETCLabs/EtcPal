@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 
 ########################## Global Project Attributes ##########################
 
-project(lwpa VERSION 0.3.0)
+project(EtcPal VERSION 0.3.0)
 
 # Sometimes the seems to be some weirdness with drive letter capitalization on Windows, so do a
 # case-insensitive comparision
@@ -37,16 +37,16 @@ else()
   set(OPTION_DEFAULTS OFF)
 endif()
 
-set(LWPA_ROOT ${CMAKE_CURRENT_LIST_DIR})
+set(ETCPAL_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
-option(LWPA_BUILD_MOCK_LIB "Build the lwpa_mock library" OFF)
-option(LWPA_BUILD_TESTS "Build the lwpa unit tests" ${OPTION_DEFAULTS})
-option(LWPA_BUILD_EXAMPLES "Build the lwpa example apps" ${OPTION_DEFAULTS})
+option(ETCPAL_BUILD_MOCK_LIB "Build the EtcPalMock library" OFF)
+option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" ${OPTION_DEFAULTS})
+option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps" ${OPTION_DEFAULTS})
 
 # Platform support
-include(${PROJECT_SOURCE_DIR}/tools/cmake/lwpa-os.cmake)
+include(${PROJECT_SOURCE_DIR}/tools/cmake/etcpal-os.cmake)
 
-if(LWPA_BUILD_MOCK_LIB OR LWPA_BUILD_TESTS)
+if(ETCPAL_BUILD_MOCK_LIB OR ETCPAL_BUILD_TESTS)
   add_subdirectory(external/fff)
 endif()
 
@@ -56,7 +56,7 @@ add_subdirectory(src)
 
 #################################### Tests ####################################
 
-if(LWPA_BUILD_TESTS)
+if(ETCPAL_BUILD_TESTS)
   add_subdirectory(external/unity)
   enable_testing()
   add_subdirectory(tests)
@@ -64,6 +64,6 @@ endif()
 
 ################################## Examples ###################################
 
-if(LWPA_BUILD_EXAMPLES)
+if(ETCPAL_BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()

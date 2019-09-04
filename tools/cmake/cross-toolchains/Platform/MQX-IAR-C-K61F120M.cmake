@@ -1,9 +1,9 @@
-# This file contains specific settings for compiling lwpa for a specific target, using a specific
+# This file contains specific settings for compiling EtcPal for a specific target, using a specific
 # SDK and compiler. This is a convenient place to set up some global compile settings needed by
 # everything compiled for this target with this SDK and toolchain.
 
 # This example uses MQX compiled for the K61 and a specific board.
-# Some of the options set below are required by the lwpa CMake target config.
+# Some of the options set below are required by the EtcPal CMake target config.
 
 # The MQX board directory usually takes the form [MQX_DIR]/lib/[board_name].iar
 set(MQX_BOARD_DIR path/to/mqx/board/dir)

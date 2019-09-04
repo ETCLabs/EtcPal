@@ -1,6 +1,6 @@
-# The "live" lwpa tests, all built as one executable or library for now.
+# The "live" EtcPal tests, all built as one executable or library for now.
 
-lwpa_add_live_test(lwpa_live_unit_tests
+etcpal_add_live_test(etcpal_live_unit_tests
   test_common.c
   test_inet.c
   test_lock.c
