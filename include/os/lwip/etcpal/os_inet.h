@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************
- * This file is a part of lwpa. For more information, go to:
- * https://github.com/ETCLabs/lwpa
+ * This file is a part of EtcPal. For more information, go to:
+ * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
 #ifndef _LWPA_OS_INET_H_
@@ -26,4 +26,3 @@ typedef struct sockaddr lwpa_os_sockaddr_t;
 typedef struct sockaddr lwpa_os_ipaddr_t;
 
 #endif /* _LWPA_OS_INET_H_ */
-

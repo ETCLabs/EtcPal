@@ -1,6 +1,6 @@
 Third-Party Software
 
-lwpa incorporates components of the following third-party software, under the
+EtcPal incorporates components of the following third-party software, under the
 respective terms of the license of each third-party software component.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,6 +25,6 @@ The following sources in this repository are based on sources obtained from
 mirek/rb_tree:
 
 include/etcpal/rbtree.h
-src/lwpa_rbtree.c
+src/etcpal/rbtree.c
 
 See the license information at the top of those source files for more details.

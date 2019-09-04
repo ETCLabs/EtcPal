@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************
- * This file is a part of lwpa. For more information, go to:
- * https://github.com/ETCLabs/lwpa
+ * This file is a part of EtcPal. For more information, go to:
+ * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
 /* etcpal/mempool.h: Fixed-size memory pools. */

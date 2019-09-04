@@ -71,6 +71,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial library modules, tests and documentation.
 
-[Unreleased]: https://github.com/ETCLabs/lwpa/compare/master...develop
-[0.2.0]: https://github.com/ETCLabs/lwpa/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/ETCLabs/lwpa/releases/tag/v0.1.0
+[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/master...develop
+[0.2.0]: https://github.com/ETCLabs/EtcPal/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/ETCLabs/EtcPal/releases/tag/v0.1.0
