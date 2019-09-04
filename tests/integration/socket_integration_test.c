@@ -29,12 +29,12 @@
 #pragma warning(disable : 4996)
 #endif
 
-#ifndef LWPA_BULK_POLL_TEST_NUM_SOCKETS
+#ifndef ETCPAL_BULK_POLL_TEST_NUM_SOCKETS
 #if LWPA_SOCKET_MAX_POLL_SIZE <= 0 || LWPA_SOCKET_MAX_POLL_SIZE > 1024
 // Limit the bulk socket test to a reasonable number
-#define LWPA_BULK_POLL_TEST_NUM_SOCKETS 512
+#define ETCPAL_BULK_POLL_TEST_NUM_SOCKETS 512
 #else
-#define LWPA_BULK_POLL_TEST_NUM_SOCKETS (LWPA_SOCKET_MAX_POLL_SIZE - 1)
+#define ETCPAL_BULK_POLL_TEST_NUM_SOCKETS (LWPA_SOCKET_MAX_POLL_SIZE - 1)
 #endif
 #endif
 
@@ -42,7 +42,7 @@
 
 static unsigned int v4_netint;
 bool run_ipv4_mcast_test;
-#if LWPA_TEST_IPV6
+#if ETCPAL_TEST_IPV6
 static unsigned int v6_netint;
 bool run_ipv6_mcast_test;
 #endif
@@ -51,12 +51,14 @@ static const char kSocketTestMessage[] = "testtesttest";
 #define SOCKET_TEST_MESSAGE_LENGTH (sizeof(kSocketTestMessage))
 static const uint32_t kTestMcastAddrIPv4 = 0xec02054d;  // 236.2.5.77
 // ff02::7465:7374:7465:7374
+#if ETCPAL_TEST_IPV6
 static const uint8_t kTestMcastAddrIPv6[LWPA_IPV6_BYTES] = {0xff, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                                             0x74, 0x65, 0x73, 0x74, 0x74, 0x65, 0x73, 0x74};
+#endif
 
 static lwpa_socket_t send_sock;
 static LwpaSockaddr send_addr;
-static lwpa_socket_t recv_socks[LWPA_BULK_POLL_TEST_NUM_SOCKETS];
+static lwpa_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
 
 // Select the default interface if available, the very first non-loopback, non-link-local interface
 // if not.
@@ -94,7 +96,7 @@ static void select_network_interface_v4()
   }
 }
 
-#if LWPA_TEST_IPV6
+#if ETCPAL_TEST_IPV6
 // Select the default interface if available, the very first non-loopback interface if not.
 static void select_network_interface_v6()
 {
@@ -135,14 +137,14 @@ TEST_GROUP(socket_integration_udp);
 TEST_SETUP(socket_integration_udp)
 {
   send_sock = LWPA_SOCKET_INVALID;
-  for (size_t i = 0; i < LWPA_BULK_POLL_TEST_NUM_SOCKETS; ++i)
+  for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)
     recv_socks[i] = LWPA_SOCKET_INVALID;
 }
 
 TEST_TEAR_DOWN(socket_integration_udp)
 {
   lwpa_close(send_sock);
-  for (size_t i = 0; i < LWPA_BULK_POLL_TEST_NUM_SOCKETS; ++i)
+  for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)
     lwpa_close(recv_socks[i]);
 }
 
@@ -237,7 +239,7 @@ TEST(socket_integration_udp, unicast_udp_ipv4)
   unicast_udp_test(kLwpaIpTypeV4);
 }
 
-#if LWPA_TEST_IPV6
+#if ETCPAL_TEST_IPV6
 TEST(socket_integration_udp, unicast_udp_ipv6)
 {
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[0]));
@@ -256,7 +258,7 @@ TEST(socket_integration_udp, unicast_udp_ipv6)
 
   unicast_udp_test(kLwpaIpTypeV6);
 }
-#endif  // LWPA_TEST_IPV6
+#endif  // ETCPAL_TEST_IPV6
 
 #define MULTICAST_UDP_PORT_BASE 7000
 
@@ -359,7 +361,7 @@ TEST(socket_integration_udp, multicast_udp_ipv4)
   multicast_udp_test();
 }
 
-#if LWPA_TEST_IPV6
+#if ETCPAL_TEST_IPV6
 TEST(socket_integration_udp, multicast_udp_ipv6)
 {
   LwpaSockaddr bind_addr;
@@ -409,7 +411,7 @@ TEST(socket_integration_udp, multicast_udp_ipv6)
 
   multicast_udp_test();
 }
-#endif  // LWPA_TEST_IPV6
+#endif  // ETCPAL_TEST_IPV6
 
 // Test to make sure lwpa_poll_* functions work properly with a large number of sockets.
 // (Tests the maximum number defined by LWPA_SOCKET_MAX_POLL_SIZE if that number is well-defined and
@@ -419,8 +421,8 @@ TEST(socket_integration_udp, bulk_poll)
   LwpaPollContext context;
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_poll_context_init(&context));
 
-  static uint16_t bind_ports[LWPA_BULK_POLL_TEST_NUM_SOCKETS];
-  for (size_t i = 0; i < LWPA_BULK_POLL_TEST_NUM_SOCKETS; ++i)
+  static uint16_t bind_ports[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
+  for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
@@ -441,7 +443,7 @@ TEST(socket_integration_udp, bulk_poll)
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
 
   LWPA_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
-  for (size_t i = 0; i < LWPA_BULK_POLL_TEST_NUM_SOCKETS; ++i)
+  for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
@@ -465,9 +467,9 @@ TEST_GROUP_RUNNER(socket_integration_udp)
 {
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS));
 
-#if !LWPA_TEST_DISABLE_MCAST_INTEGRATION_TESTS
+#if !ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS
   select_network_interface_v4();
-#if LWPA_TEST_IPV6
+#if ETCPAL_TEST_IPV6
   select_network_interface_v6();
 #endif
 #endif
@@ -475,7 +477,7 @@ TEST_GROUP_RUNNER(socket_integration_udp)
   RUN_TEST_CASE(socket_integration_udp, unicast_udp_ipv4);
   if (run_ipv4_mcast_test)
     RUN_TEST_CASE(socket_integration_udp, multicast_udp_ipv4);
-#if LWPA_TEST_IPV6
+#if ETCPAL_TEST_IPV6
   RUN_TEST_CASE(socket_integration_udp, unicast_udp_ipv6);
   if (run_ipv6_mcast_test)
     RUN_TEST_CASE(socket_integration_udp, multicast_udp_ipv6);

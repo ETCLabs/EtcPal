@@ -13,5 +13,5 @@ etcpal_add_live_test(etcpal_integration_tests
 # The macOS hosted agents have some unknown restriction on multicast traffic which causes the
 # multicast tests to fail.
 if(APPLE AND ETCPAL_BUILDING_FOR_AZURE_PIPELINES_CI)
-  target_compile_definitions(etcpal_integration_tests PRIVATE LWPA_TEST_DISABLE_MCAST_INTEGRATION_TESTS)
+  target_compile_definitions(etcpal_integration_tests PRIVATE ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS)
 endif()
