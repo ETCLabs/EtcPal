@@ -1,6 +1,6 @@
 # Network Interface Indexes                                {#interface_indexes}
 
-Some lwpa APIs make use of an index value to identify network interfaces.
+Some EtcPal APIs make use of an index value to identify network interfaces.
 Almost all underlying network stacks have the notion of a network interface
 index, which is standardized for IPv6 by
 [RFC 3493](https://tools.ietf.org/html/rfc3493).
@@ -14,16 +14,16 @@ guarantee.
 
 In our protocols, we use the interface index mostly for multicasting purposes.
 When used this way, it is used to specify an interface on which to send or
-receive multicast traffic for a given socket. The @ref lwpa_socket API uses
-them to specify network interfaces for the @ref LWPA_MCAST_JOIN_GROUP,
-@ref LWPA_MCAST_LEAVE_GROUP, and @ref LWPA_IP_MULTICAST_IF socket options.
+receive multicast traffic for a given socket. The @ref etcpal_socket API uses
+them to specify network interfaces for the @ref ETCPAL_MCAST_JOIN_GROUP,
+@ref ETCPAL_MCAST_LEAVE_GROUP, and @ref ETCPAL_IP_MULTICAST_IF socket options.
 
 The interface index is of type `unsigned int`; 0 is an invalid value for
 specifying a specific interface, but can be used as a wildcard (signaling the
 kernel to pick the "best" or most appropriate interface). Interface indexes for
-each connected interface can be obtained from the @ref lwpa_netint API (in the
-@ref LwpaNetintInfo structure returned from lwpa_netint calls), or from the
-relevant OS APIs on OSes that support them (many conform to the standard
+each connected interface can be obtained from the @ref etcpal_netint API (in
+the @ref EtcPalNetintInfo structure returned from etcpal_netint calls), or from
+the relevant OS APIs on OSes that support them (many conform to the standard
 interface specified by RFC 3493).
 
 Some embedded stacks have limited or nonstandard ways to obtain a network

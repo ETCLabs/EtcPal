@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************
- * This file is a part of lwpa. For more information, go to:
- * https://github.com/ETCLabs/lwpa
+ * This file is a part of EtcPal. For more information, go to:
+ * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
-#include "lwpa/netint.h"
+#include "etcpal/netint.h"
 #include "unity_fixture.h"
 
 #include <string.h>
@@ -25,27 +25,27 @@
 
 static size_t num_netints;
 
-TEST_GROUP(lwpa_netint);
+TEST_GROUP(etcpal_netint);
 
-TEST_SETUP(lwpa_netint)
+TEST_SETUP(etcpal_netint)
 {
-  lwpa_init(LWPA_FEATURE_NETINTS);
-  num_netints = lwpa_netint_get_num_interfaces();
+  etcpal_init(ETCPAL_FEATURE_NETINTS);
+  num_netints = etcpal_netint_get_num_interfaces();
 }
 
-TEST_TEAR_DOWN(lwpa_netint)
+TEST_TEAR_DOWN(etcpal_netint)
 {
-  lwpa_deinit(LWPA_FEATURE_NETINTS);
+  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 }
 
-TEST(lwpa_netint, netint_enumeration_works)
+TEST(etcpal_netint, netint_enumeration_works)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   TEST_ASSERT_NOT_NULL(netint_list);
 
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     TEST_ASSERT_GREATER_THAN_UINT(0u, netint->index);
     TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->name));
@@ -53,13 +53,13 @@ TEST(lwpa_netint, netint_enumeration_works)
   }
 }
 
-TEST(lwpa_netint, netints_are_in_index_order)
+TEST(etcpal_netint, netints_are_in_index_order)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   unsigned int last_index = netint_list->index;
-  for (const LwpaNetintInfo* netint = netint_list + 1; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list + 1; netint < netint_list + num_netints; ++netint)
   {
     TEST_ASSERT_GREATER_OR_EQUAL(last_index, netint->index);
     last_index = netint->index;
@@ -67,29 +67,29 @@ TEST(lwpa_netint, netints_are_in_index_order)
 }
 
 /* TODO Figure out how we're gonna handle mallocing
-TEST(lwpa_netint, copy_interfaces_works)
+TEST(etcpal_netint, copy_interfaces_works)
 {
   // Test copying the full array
-  auto netint_arr = std::make_unique<LwpaNetintInfo[]>(num_netints);
-  size_t num_netints_returned = lwpa_netint_copy_interfaces(netint_arr.get(), num_netints);
+  auto netint_arr = std::make_unique<EtcPalNetintInfo[]>(num_netints);
+  size_t num_netints_returned = etcpal_netint_copy_interfaces(netint_arr.get(), num_netints);
   ASSERT_EQ(num_netints_returned, num_netints);
 
-  // Make sure the array is equal to the list obtained from lwpa_netint_get_interfaces()
-  EXPECT_EQ(0, memcmp(netint_arr.get(), lwpa_netint_get_interfaces(), num_netints));
+  // Make sure the array is equal to the list obtained from etcpal_netint_get_interfaces()
+  EXPECT_EQ(0, memcmp(netint_arr.get(), etcpal_netint_get_interfaces(), num_netints));
 }
 */
 
-TEST(lwpa_netint, get_netints_by_index_works)
+TEST(etcpal_netint, get_netints_by_index_works)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   unsigned int current_index = 0;
   // There are other tests covering that the netint list should be in order by index and that the
   // indexes must all be greater than 0, which simplifies this code.
-  const LwpaNetintInfo* current_arr_by_index = NULL;
+  const EtcPalNetintInfo* current_arr_by_index = NULL;
   size_t current_index_arr_size = 0;
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     if (netint->index > current_index)
     {
@@ -98,7 +98,7 @@ TEST(lwpa_netint, get_netints_by_index_works)
 
       // Get the new one
       current_index = netint->index;
-      TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interfaces_by_index(netint->index, &current_arr_by_index,
+      TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces_by_index(netint->index, &current_arr_by_index,
                                                                         &current_index_arr_size));
       TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
     }
@@ -112,15 +112,15 @@ TEST(lwpa_netint, get_netints_by_index_works)
   }
 }
 
-TEST(lwpa_netint, default_netint_is_consistent)
+TEST(etcpal_netint, default_netint_is_consistent)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
   unsigned int def_v4 = 0;
   unsigned int def_v6 = 0;
 
-  bool have_default_v4 = (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &def_v4));
-  bool have_default_v6 = (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &def_v6));
+  bool have_default_v4 = (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_v4));
+  bool have_default_v6 = (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &def_v6));
 
   if (have_default_v4)
   {
@@ -131,17 +131,17 @@ TEST(lwpa_netint, default_netint_is_consistent)
     TEST_ASSERT_NOT_EQUAL(def_v6, 0u);
   }
 
-  const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   TEST_ASSERT_NOT_NULL(netint_list);
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     if (netint->is_default)
     {
-      if (netint->addr.type == kLwpaIpTypeV4)
+      if (netint->addr.type == kEtcPalIpTypeV4)
       {
         TEST_ASSERT_EQUAL_UINT(netint->index, def_v4);
       }
-      else if (netint->addr.type == kLwpaIpTypeV6)
+      else if (netint->addr.type == kEtcPalIpTypeV6)
       {
         TEST_ASSERT_EQUAL_UINT(netint->index, def_v6);
       }
@@ -149,28 +149,28 @@ TEST(lwpa_netint, default_netint_is_consistent)
   }
 }
 
-TEST(lwpa_netint, get_interface_for_dest_works_ipv4)
+TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = lwpa_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   TEST_ASSERT_NOT_NULL(netint_list);
 
   // For each normally routable (non-loopback, non-link-local) network interface, check to make sure
-  // that lwpa_netint_get_interface_for_dest() resolves to that interface when asked for a route to
+  // that etcpal_netint_get_interface_for_dest() resolves to that interface when asked for a route to
   // the interface address itself.
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
-    if (!LWPA_IP_IS_V4(&netint->addr) || lwpa_ip_is_loopback(&netint->addr) || lwpa_ip_is_link_local(&netint->addr))
+    if (!ETCPAL_IP_IS_V4(&netint->addr) || etcpal_ip_is_loopback(&netint->addr) || etcpal_ip_is_link_local(&netint->addr))
       continue;
 
-    LwpaIpAddr test_addr = netint->addr;
+    EtcPalIpAddr test_addr = netint->addr;
     unsigned int netint_index_res;
-    TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&test_addr, &netint_index_res));
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
     // Put addresses in print form to test meaningful information in case of test failure
-    char test_addr_str[LWPA_INET6_ADDRSTRLEN];
-    lwpa_inet_ntop(&test_addr, test_addr_str, LWPA_INET6_ADDRSTRLEN);
+    char test_addr_str[ETCPAL_INET6_ADDRSTRLEN];
+    etcpal_inet_ntop(&test_addr, test_addr_str, ETCPAL_INET6_ADDRSTRLEN);
     char test_msg[150];
     snprintf(test_msg, 150, "Address tried: %s (interface %u), interface returned: %u", test_addr_str, netint->index,
              netint_index_res);
@@ -178,20 +178,20 @@ TEST(lwpa_netint, get_interface_for_dest_works_ipv4)
     TEST_ASSERT_EQUAL_UINT_MESSAGE(netint_index_res, netint->index, test_msg);
   }
 
-  LwpaIpAddr ext_addr;
-  LWPA_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
+  EtcPalIpAddr ext_addr;
+  ETCPAL_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
   unsigned int netint_index_res;
   unsigned int netint_index_default;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_default_interface(kLwpaIpTypeV4, &netint_index_default));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_netint_get_interface_for_dest(&ext_addr, &netint_index_res));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &netint_index_default));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&ext_addr, &netint_index_res));
   TEST_ASSERT_EQUAL_UINT(netint_index_res, netint_index_default);
 }
 
-TEST_GROUP_RUNNER(lwpa_netint)
+TEST_GROUP_RUNNER(etcpal_netint)
 {
-  RUN_TEST_CASE(lwpa_netint, netint_enumeration_works);
-  RUN_TEST_CASE(lwpa_netint, netints_are_in_index_order);
-  RUN_TEST_CASE(lwpa_netint, get_netints_by_index_works);
-  RUN_TEST_CASE(lwpa_netint, default_netint_is_consistent);
-  RUN_TEST_CASE(lwpa_netint, get_interface_for_dest_works_ipv4);
+  RUN_TEST_CASE(etcpal_netint, netint_enumeration_works);
+  RUN_TEST_CASE(etcpal_netint, netints_are_in_index_order);
+  RUN_TEST_CASE(etcpal_netint, get_netints_by_index_works);
+  RUN_TEST_CASE(etcpal_netint, default_netint_is_consistent);
+  RUN_TEST_CASE(etcpal_netint, get_interface_for_dest_works_ipv4);
 }

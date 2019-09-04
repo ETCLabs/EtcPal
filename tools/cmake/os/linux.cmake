@@ -1,6 +1,6 @@
-
-set(LWPA_OS_ADDITIONAL_SOURCES
-  ${LWPA_ROOT}/src/os/linux/lwpa/os_error.h
-  ${LWPA_ROOT}/src/os/linux/lwpa/os_error.c
+# Linux compilation support for EtcPal
+set(ETCPAL_OS_ADDITIONAL_SOURCES
+  ${ETCPAL_ROOT}/src/os/linux/etcpal/os_error.h
+  ${ETCPAL_ROOT}/src/os/linux/etcpal/os_error.c
 )
-set(LWPA_OS_ADDITIONAL_LIBS uuid pthread)
+set(ETCPAL_OS_ADDITIONAL_LIBS uuid pthread)

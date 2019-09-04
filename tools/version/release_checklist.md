@@ -1,4 +1,4 @@
-## Making a release of lwpa
+## Making a release of EtcPal
 
 - [ ] Make sure there is a clean/working build on the `develop` branch.
 - [ ] Review and update `CHANGELOG.md`
@@ -11,7 +11,7 @@
   * Add the version number to `versions.txt` on the `gh-pages` branch and mark it as latest
   * `PROJECT_NUMBER` in the Doxyfile should be correct but might need to be updated for patch
     versions
-  * Commit the updated `lwpa.tag` file on the current branch (`develop` or `release/v*`)
+  * Commit the updated `etcpal.tag` file on the current branch (`develop` or `release/v*`)
 - [ ] Merge changes to `master`
   * `git checkout master`
   * `git merge --no-ff [develop|release/v*]`

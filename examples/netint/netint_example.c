@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************
- * This file is a part of lwpa. For more information, go to:
- * https://github.com/ETCLabs/lwpa
+ * This file is a part of EtcPal. For more information, go to:
+ * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* An example application showing usage of the lwpa_netint functions.
+/* An example application showing usage of the etcpal_netint functions.
  * This example will print information about each network interface on your machine. It is
  * platform-neutral.
  */
 
 #include <assert.h>
 #include <stdio.h>
-#include "lwpa/netint.h"
-#include "lwpa/socket.h"
+#include "etcpal/netint.h"
+#include "etcpal/socket.h"
 
 #define FORMAT_BUF_SIZE 50
 
@@ -39,19 +39,19 @@ static char line_format[FORMAT_BUF_SIZE];
 #define INDEX_COL_HEADER "OS Index"
 
 // Create a format string for printf based on the column width of the longest entry in each column
-void create_format_strings(const LwpaNetintInfo* netint_arr, size_t num_interfaces)
+void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interfaces)
 {
   size_t longest_name = 0;
   size_t longest_addr = 0;
   size_t longest_netmask = 0;
 
-  for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
-    char netmask_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
+    char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
+    char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
 
-    lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-    lwpa_inet_ntop(&netint->mask, netmask_str, LWPA_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
 
     size_t name_len = strlen(netint->name);
     size_t addr_len = strlen(addr_str);
@@ -80,22 +80,22 @@ void create_format_strings(const LwpaNetintInfo* netint_arr, size_t num_interfac
 
 int main()
 {
-  lwpa_error_t init_res = lwpa_init(LWPA_FEATURE_NETINTS);
-  if (init_res != kLwpaErrOk)
+  etcpal_error_t init_res = etcpal_init(ETCPAL_FEATURE_NETINTS);
+  if (init_res != kEtcPalErrOk)
   {
-    printf("lwpa_init() failed with error: '%s'\n", lwpa_strerror(init_res));
+    printf("etcpal_init() failed with error: '%s'\n", etcpal_strerror(init_res));
     return 1;
   }
 
-  size_t num_interfaces = lwpa_netint_get_num_interfaces();
+  size_t num_interfaces = etcpal_netint_get_num_interfaces();
   if (num_interfaces == 0)
   {
     printf("Error: No network interfaces found on system.\n");
-    lwpa_deinit(LWPA_FEATURE_NETINTS);
+    etcpal_deinit(ETCPAL_FEATURE_NETINTS);
     return 1;
   }
 
-  const LwpaNetintInfo* netint_arr = lwpa_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_arr = etcpal_netint_get_interfaces();
   assert(netint_arr);
 
   create_format_strings(netint_arr, num_interfaces);
@@ -103,13 +103,13 @@ int main()
   printf("Network interfaces found:\n");
   printf(header_format, NAME_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER);
 
-  for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
-    char netmask_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
+    char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
+    char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
     char mac_str[18];
-    lwpa_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-    lwpa_inet_ntop(&netint->mask, netmask_str, LWPA_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
     snprintf(mac_str, 18, "%02x:%02x:%02x:%02x:%02x:%02x", netint->mac[0], netint->mac[1], netint->mac[2],
              netint->mac[3], netint->mac[4], netint->mac[5]);
 
@@ -117,28 +117,28 @@ int main()
   }
 
   unsigned int default_v4;
-  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &default_v4))
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &default_v4))
   {
-    const LwpaNetintInfo* addr_arr;
+    const EtcPalNetintInfo* addr_arr;
     size_t addr_arr_size;
-    if (kLwpaErrOk == lwpa_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv4 interface: %s (%u)\n", addr_arr->friendly_name, default_v4);
     }
   }
 
   unsigned int default_v6;
-  if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &default_v6))
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &default_v6))
   {
-    const LwpaNetintInfo* addr_arr;
+    const EtcPalNetintInfo* addr_arr;
     size_t addr_arr_size;
-    if (kLwpaErrOk == lwpa_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv6 interface: %s (%u)\n", addr_arr->friendly_name, default_v6);
     }
   }
 
-  lwpa_deinit(LWPA_FEATURE_NETINTS);
+  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 
   return 0;
 }

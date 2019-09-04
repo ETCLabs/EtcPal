@@ -1,8 +1,8 @@
-# lwpa integration tests
-# These are "live" tests which use multiple parts of the lwpa library. Most of what is tested here
-# are the locking, threading and synchronization functions.
+# EtcPal integration tests
+# These are "live" tests which use multiple parts of the EtcPal library. Most of what is tested
+# here are the locking, threading and synchronization functions.
 
-lwpa_add_live_test(lwpa_integration_tests
+etcpal_add_live_test(etcpal_integration_tests
   mutex_integration_test.c
   rwlock_integration_test.c
   signal_integration_test.c
@@ -12,6 +12,6 @@ lwpa_add_live_test(lwpa_integration_tests
 
 # The macOS hosted agents have some unknown restriction on multicast traffic which causes the
 # multicast tests to fail.
-if(APPLE AND LWPA_BUILDING_FOR_AZURE_PIPELINES_CI)
-  target_compile_definitions(lwpa_integration_tests PRIVATE LWPA_TEST_DISABLE_MCAST_INTEGRATION_TESTS)
+if(APPLE AND ETCPAL_BUILDING_FOR_AZURE_PIPELINES_CI)
+  target_compile_definitions(etcpal_integration_tests PRIVATE ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS)
 endif()

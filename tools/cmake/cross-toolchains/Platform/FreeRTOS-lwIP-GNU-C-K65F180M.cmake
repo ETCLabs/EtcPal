@@ -1,17 +1,17 @@
-# This file contains specific settings for compiling lwpa for a specific target, using a specific
+# This file contains specific settings for compiling EtcPal for a specific target, using a specific
 # SDK and compiler. This is a convenient place to set up some global compile settings needed by
 # everything compiled for this target with this SDK and toolchain.
 
 # This example uses an MCUXpresso SDK (mcuxpresso.nxp.com) built for the K65.
-# Some of the options set below are required by the lwpa CMake target config.
+# Some of the options set below are required by the EtcPal CMake target config.
 
 set(MCUX_SDK_DIR path/to/k65/sdk)
 
-set(LWPA_FREERTOS_INCLUDE_DIRS "${MCUX_SDK_DIR}/amazon-freertos/include;${MCUX_SDK_DIR}/amazon-freertos/freertos/portable" CACHE STRING "Override from toolchain file" FORCE)
-set(LWPA_FREERTOSCONFIG_DIR path/to/freertosconfig/dot/h CACHE STRING "Override from toolchain file" FORCE)
+set(ETCPAL_FREERTOS_INCLUDE_DIRS "${MCUX_SDK_DIR}/amazon-freertos/include;${MCUX_SDK_DIR}/amazon-freertos/freertos/portable" CACHE STRING "Override from toolchain file" FORCE)
+set(ETCPAL_FREERTOSCONFIG_DIR path/to/freertosconfig/dot/h CACHE STRING "Override from toolchain file" FORCE)
 
-set(LWPA_LWIP_INCLUDE_DIRS "${MCUX_SDK_DIR}/lwip/src/include;${MCUX_SDK_DIR}/lwip/port" CACHE STRING "Override from toolchain file" FORCE)
-set(LWPA_LWIPOPTS_DIR path/to/lwipopts/dot/h CACHE STRING "Override from toolchain file" FORCE)
+set(ETCPAL_LWIP_INCLUDE_DIRS "${MCUX_SDK_DIR}/lwip/src/include;${MCUX_SDK_DIR}/lwip/port" CACHE STRING "Override from toolchain file" FORCE)
+set(ETCPAL_LWIPOPTS_DIR path/to/lwipopts/dot/h CACHE STRING "Override from toolchain file" FORCE)
 
 # Set up a global include of the SDK directories we are going to need.
 include_directories(

@@ -1,11 +1,11 @@
-# Contributing to lwpa
+# Contributing to EtcPal
 
-Thank you for your interest in contributing to the lwpa project!
+Thank you for your interest in contributing to the EtcPal project!
 
 ## Pull requests
 
-The lwpa library is currently in very early development. In order to keep
-things as stable as possible, we are not accepting pull requests at this time.
+The EtcPal library is currently in early development. In order to keep things
+as stable as possible, we are not accepting pull requests at this time.
 
 ## Reporting issues
 
@@ -25,6 +25,6 @@ A good bug report includes the following:
 * Which library code module(s) you were using and the library's version
 * A set of steps to reproduce the issue, in order
 * What you expected to see, and what happened instead
-* If the bug has occured in code you wrote that uses the lwpa library, please
+* If the bug has occured in code you wrote that uses the EtcPal library, please
   provide code snippets and try to reduce to a minimal reproducible example.
 * Any logging output that was produced when the issue occurred

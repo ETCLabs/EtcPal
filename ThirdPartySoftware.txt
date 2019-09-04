@@ -1,6 +1,6 @@
 Third-Party Software
 
-lwpa incorporates components of the following third-party software, under the
+EtcPal incorporates components of the following third-party software, under the
 respective terms of the license of each third-party software component.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,7 +24,7 @@ Public domain, under the Unlicense (http://unlicense.org)
 The following sources in this repository are based on sources obtained from
 mirek/rb_tree:
 
-include/lwpa/rbtree.h
-src/lwpa_rbtree.c
+include/etcpal/rbtree.h
+src/etcpal/rbtree.c
 
 See the license information at the top of those source files for more details.

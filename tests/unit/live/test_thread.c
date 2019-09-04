@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************
- * This file is a part of lwpa. For more information, go to:
- * https://github.com/ETCLabs/lwpa
+ * This file is a part of EtcPal. For more information, go to:
+ * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
-#include "lwpa/thread.h"
+#include "etcpal/thread.h"
 #include "unity_fixture.h"
 
-#include "lwpa/bool.h"
+#include "etcpal/bool.h"
 
-TEST_GROUP(lwpa_thread);
+TEST_GROUP(etcpal_thread);
 
-TEST_SETUP(lwpa_thread)
+TEST_SETUP(etcpal_thread)
 {
 }
 
-TEST_TEAR_DOWN(lwpa_thread)
+TEST_TEAR_DOWN(etcpal_thread)
 {
 }
 
@@ -38,26 +38,26 @@ void wait_and_exit(void* param)
   (void)param;
 
   while (waitthread_run)
-    lwpa_thread_sleep(5);
+    etcpal_thread_sleep(5);
 }
 
 // Basic test of the three thread functions.
-TEST(lwpa_thread, create_and_destroy_functions_work)
+TEST(etcpal_thread, create_and_destroy_functions_work)
 {
-  LwpaThreadParams params = {
-      LWPA_THREAD_DEFAULT_PRIORITY,  // thread_priority
-      LWPA_THREAD_DEFAULT_STACK,     // thread_stack
+  EtcPalThreadParams params = {
+      ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
+      ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
       "cd_thread",                   // thread_name
       NULL                           // platform_data
   };
-  lwpa_thread_t wait_thread;
+  etcpal_thread_t wait_thread;
 
   waitthread_run = true;
-  TEST_ASSERT(lwpa_thread_create(&wait_thread, &params, wait_and_exit, NULL));
+  TEST_ASSERT(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL));
 
   // Stop should work if the thread has exited.
   waitthread_run = false;
-  TEST_ASSERT(lwpa_thread_join(&wait_thread));
+  TEST_ASSERT(etcpal_thread_join(&wait_thread));
 }
 
 volatile bool spin_task_run;
@@ -85,35 +85,35 @@ void oneshot(void* param)
 
 // Test time slicing. One thread spins constantly; if time slicing works, the second thread should
 // get a chance to set its flag. Failure mode could be the flag not being set or a full test timeout.
-TEST(lwpa_thread, threads_are_time_sliced)
+TEST(etcpal_thread, threads_are_time_sliced)
 {
-  LwpaThreadParams params = {
-      LWPA_THREAD_DEFAULT_PRIORITY,  // thread_priority
-      LWPA_THREAD_DEFAULT_STACK,     // thread_stack
+  EtcPalThreadParams params = {
+      ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
+      ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
       "ts_thread",                   // thread_name
       NULL                           // platform_data
   };
-  lwpa_thread_t spin_task, oneshot_task;
+  etcpal_thread_t spin_task, oneshot_task;
   spin_task_run = true;
   oneshot_task_run = true;
 
   // Create the spin task.
-  TEST_ASSERT_TRUE(lwpa_thread_create(&spin_task, &params, increment_and_spin, NULL));
+  TEST_ASSERT_TRUE(etcpal_thread_create(&spin_task, &params, increment_and_spin, NULL));
   // Create the oneshot task.
-  TEST_ASSERT_TRUE(lwpa_thread_create(&oneshot_task, &params, oneshot, NULL));
+  TEST_ASSERT_TRUE(etcpal_thread_create(&oneshot_task, &params, oneshot, NULL));
   // Give both tasks time to run.
-  lwpa_thread_sleep(100);
+  etcpal_thread_sleep(100);
   // Stop the tasks
   oneshot_task_run = false;
-  TEST_ASSERT_TRUE(lwpa_thread_join(&oneshot_task));
+  TEST_ASSERT_TRUE(etcpal_thread_join(&oneshot_task));
   spin_task_run = false;
-  TEST_ASSERT_TRUE(lwpa_thread_join(&spin_task));
+  TEST_ASSERT_TRUE(etcpal_thread_join(&spin_task));
   TEST_ASSERT_TRUE(spin_task_ran);
   TEST_ASSERT_TRUE(oneshot_task_ran);
 }
 
-TEST_GROUP_RUNNER(lwpa_thread)
+TEST_GROUP_RUNNER(etcpal_thread)
 {
-  RUN_TEST_CASE(lwpa_thread, create_and_destroy_functions_work);
-  RUN_TEST_CASE(lwpa_thread, threads_are_time_sliced);
+  RUN_TEST_CASE(etcpal_thread, create_and_destroy_functions_work);
+  RUN_TEST_CASE(etcpal_thread, threads_are_time_sliced);
 }
