@@ -50,9 +50,9 @@ add_library(lwpa
   ${LWPA_ROOT}/src/lwpa/uuid.c
 
   ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_lock.c
-  ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_uuid.c
   ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_thread.c
   ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_timer.c
+  ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_uuid.c
 
   ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_inet.c
   ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_netint.c
@@ -77,7 +77,6 @@ if(LWPA_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(lwpa PRIVATE LWPA_NETINT_DEBUG_OUTPUT)
 endif()
 target_link_libraries(lwpa PUBLIC ${LWPA_OS_ADDITIONAL_LIBS} ${LWPA_NET_ADDITIONAL_LIBS})
-
 set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 
 if(NOT MSVC)
@@ -107,48 +106,60 @@ if(LWPA_BUILD_MOCK_LIB)
     ${LWPA_ROOT}/include/lwpa/log.h
     ${LWPA_ROOT}/include/lwpa/mempool.h
     ${LWPA_ROOT}/include/lwpa/netint.h
-    ${LWPA_ROOT}/include/lwpa/opts.h
     ${LWPA_ROOT}/include/lwpa/pack.h
     ${LWPA_ROOT}/include/lwpa/pdu.h
     ${LWPA_ROOT}/include/lwpa/rbtree.h
     ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
     ${LWPA_ROOT}/include/lwpa/socket.h
     ${LWPA_ROOT}/include/lwpa/timer.h
+
     ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}/lwpa/os_lock.h
-    ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}/lwpa/os_socket.h
     ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}/lwpa/os_thread.h
+
+    ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}/lwpa/os_socket.h
+    ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}/lwpa/os_inet.h
 
     ${LWPA_ROOT}/include/lwpa_mock/socket.h
 
     # lwpa sources
     # We will gradually substitute these with mocks as needed
-    ${LWPA_ROOT}/src/lwpa/uuid.c
+    ${LWPA_ROOT}/src/lwpa/common.c
     ${LWPA_ROOT}/src/lwpa/error.c
+    ${LWPA_ROOT}/src/lwpa/inet.c
     ${LWPA_ROOT}/src/lwpa/log.c
+    ${LWPA_ROOT}/src/lwpa/md5.h
+    ${LWPA_ROOT}/src/lwpa/md5.c
     ${LWPA_ROOT}/src/lwpa/mempool.c
+    ${LWPA_ROOT}/src/lwpa/netint.c
+    ${LWPA_ROOT}/src/lwpa/pack.c
     ${LWPA_ROOT}/src/lwpa/pdu.c
     ${LWPA_ROOT}/src/lwpa/rbtree.c
     ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
-    ${LWPA_ROOT}/src/lwpa/md5.h
-    ${LWPA_ROOT}/src/lwpa/md5.c
+    ${LWPA_ROOT}/src/lwpa/timer.c
+    ${LWPA_ROOT}/src/lwpa/uuid.c
+
     ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_lock.c
-    ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_netint.c
-    ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_uuid.c
-    ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_socket.c
     ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_thread.c
     ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_timer.c
+    ${LWPA_ROOT}/src/os/${LWPA_OS_TARGET}/lwpa/os_uuid.c
+
+    ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_inet.c
+    ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_netint.c
+    ${LWPA_ROOT}/src/os/${LWPA_NET_TARGET}/lwpa/os_socket.c
 
     ${LWPA_ROOT}/src/lwpa_mock/socket.c
   )
   target_include_directories(lwpa_mock PUBLIC
     ${LWPA_ROOT}/include
     ${LWPA_ROOT}/include/os/${LWPA_OS_TARGET}
+    ${LWPA_ROOT}/include/os/${LWPA_NET_TARGET}
   )
   target_include_directories(lwpa_mock PRIVATE ${LWPA_ROOT}/src)
   target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
   target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)
-  if(LWPA_OS_TARGET STREQUAL windows)
-    target_link_libraries(lwpa_mock PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
-  endif()
+  target_link_libraries(lwpa_mock PUBLIC ${LWPA_OS_ADDITIONAL_LIBS} ${LWPA_NET_ADDITIONAL_LIBS})
   set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
+  if(NOT MSVC)
+    set_target_properties(lwpa PROPERTIES C_STANDARD 99)
+  endif()
 endif()
