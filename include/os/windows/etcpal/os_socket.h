@@ -54,23 +54,23 @@ typedef SOCKET etcpal_socket_t;
 
 /* Definitions for the etcpal_poll API */
 
-typedef struct LwpaPollFdSet
+typedef struct EtcPalPollFdSet
 {
   fd_set set;
   size_t count;
-} LwpaPollFdSet;
+} EtcPalPollFdSet;
 
-typedef struct LwpaPollContext
+typedef struct EtcPalPollContext
 {
   bool valid;
   etcpal_mutex_t lock;
 
-  LwpaRbTree sockets;
+  EtcPalRbTree sockets;
 
-  LwpaPollFdSet readfds;
-  LwpaPollFdSet writefds;
-  LwpaPollFdSet exceptfds;
-} LwpaPollContext;
+  EtcPalPollFdSet readfds;
+  EtcPalPollFdSet writefds;
+  EtcPalPollFdSet exceptfds;
+} EtcPalPollContext;
 
 #ifdef __cplusplus
 }

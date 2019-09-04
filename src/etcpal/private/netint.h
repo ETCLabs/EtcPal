@@ -35,7 +35,7 @@ typedef struct DefaultNetint
 typedef struct CachedNetintInfo
 {
   size_t num_netints;
-  LwpaNetintInfo* netints;
+  EtcPalNetintInfo* netints;
   DefaultNetint def;
 } CachedNetintInfo;
 
@@ -44,6 +44,6 @@ void etcpal_netint_deinit();
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
 void os_free_interfaces(CachedNetintInfo* cache);
-etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index);
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index);
 
 #endif /* _ETCPAL_PRIVATE_NETINT_H_ */

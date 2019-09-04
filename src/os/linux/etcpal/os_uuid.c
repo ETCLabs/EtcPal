@@ -24,7 +24,7 @@
 // Use libuuid on Linux to generate UUIDs.
 // https://linux.die.net/man/3/uuid_generate
 
-etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
 {
   if (!uuid)
     return kEtcPalErrInvalid;
@@ -35,7 +35,7 @@ etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
   return kEtcPalErrOk;
 }
 
-etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
 {
   if (!uuid)
     return kEtcPalErrInvalid;
@@ -46,7 +46,7 @@ etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
   return kEtcPalErrOk;
 }
 
-etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
 {
   if (!uuid)
     return kEtcPalErrInvalid;

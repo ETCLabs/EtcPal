@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-/* Windows has no additional platform data and thus platform_data in the LwpaThreadParams struct
+/* Windows has no additional platform data and thus platform_data in the EtcPalThreadParams struct
  * is ignored. */
 
 #define ETCPAL_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL

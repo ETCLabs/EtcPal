@@ -26,9 +26,9 @@
 #include "etcpal/int.h"
 #include "etcpal/private/netint.h"
 
-static LwpaNetintInfo netints[BSP_ENET_DEVICE_COUNT];
+static EtcPalNetintInfo netints[BSP_ENET_DEVICE_COUNT];
 
-static void copy_interface_info(uint32_t mqx_index, LwpaNetintInfo* netint)
+static void copy_interface_info(uint32_t mqx_index, EtcPalNetintInfo* netint)
 {
   IPCFG_IP_ADDRESS_DATA ip_data;
 
@@ -74,13 +74,13 @@ void os_free_interfaces(CachedNetintInfo* cache)
   cache->netints = NULL;
 }
 
-etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   (void)cache;  // unused
 
   unsigned int index_found = 0;
 
-  for (const LwpaNetintInfo* netint = netints; netint < netints + BSP_ENET_DEVICE_COUNT; ++netint)
+  for (const EtcPalNetintInfo* netint = netints; netint < netints + BSP_ENET_DEVICE_COUNT; ++netint)
   {
     if (!etcpal_ip_is_wildcard(&netint->mask) && etcpal_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {

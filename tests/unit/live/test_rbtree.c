@@ -35,27 +35,27 @@
 static int incrementing_int_array[INT_ARRAY_SIZE];
 static int random_int_array[INT_ARRAY_SIZE];
 
-LwpaRbNode node_pool[INT_ARRAY_SIZE];
+EtcPalRbNode node_pool[INT_ARRAY_SIZE];
 size_t next_node_index;
 
 // Private function prototypes
 
-static LwpaRbNode* get_node();
-static int int_compare(const LwpaRbTree* self, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
+static EtcPalRbNode* get_node();
+static int int_compare(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
 static void populate_int_arrays();
 
-FAKE_VALUE_FUNC(LwpaRbNode*, node_alloc);
-FAKE_VOID_FUNC(node_dealloc, LwpaRbNode*);
-FAKE_VOID_FUNC(clear_func, const LwpaRbTree*, LwpaRbNode*);
+FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
+FAKE_VOID_FUNC(node_dealloc, EtcPalRbNode*);
+FAKE_VOID_FUNC(clear_func, const EtcPalRbTree*, EtcPalRbNode*);
 
 // Very very dumb "allocation" of nodes but all we need for these tests - each call returns the
 // next one from the array, freeing does nothing.
-LwpaRbNode* get_node(void)
+EtcPalRbNode* get_node(void)
 {
   return &node_pool[next_node_index++];
 }
 
-int int_compare(const LwpaRbTree* self, const LwpaRbNode* node_a, const LwpaRbNode* node_b)
+int int_compare(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
 {
   (void)self;
   int a = *(int*)node_a->value;
@@ -105,13 +105,13 @@ TEST_TEAR_DOWN(etcpal_rbtree)
 
 TEST(etcpal_rbtree, insert_node_functions_work)
 {
-  LwpaRbTree tree;
+  EtcPalRbTree tree;
   TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(&tree, int_compare, NULL, NULL));
 
   // Point each node at its respective value and insert it into the tree
   for (int i = 0; i < INT_ARRAY_SIZE; ++i)
   {
-    LwpaRbNode* node = &node_pool[i];
+    EtcPalRbNode* node = &node_pool[i];
     TEST_ASSERT_NOT_NULL(etcpal_rbnode_init(node, &random_int_array[i]));
     TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert_node(&tree, node));
   }
@@ -141,7 +141,7 @@ TEST(etcpal_rbtree, insert_node_functions_work)
 
 TEST(etcpal_rbtree, insert_functions_work)
 {
-  LwpaRbTree tree;
+  EtcPalRbTree tree;
   TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(&tree, int_compare, node_alloc, node_dealloc));
 
   // Insert each value into the tree; dynamic alloc functions should be called.
@@ -174,7 +174,7 @@ TEST(etcpal_rbtree, insert_functions_work)
 
 TEST(etcpal_rbtree, insert_should_fail_if_element_already_exists)
 {
-  LwpaRbTree tree;
+  EtcPalRbTree tree;
   TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(&tree, int_compare, node_alloc, node_dealloc));
 
   // Insert a few values into the tree. Enough so we have some branches to traverse
@@ -193,7 +193,7 @@ TEST(etcpal_rbtree, insert_should_fail_if_element_already_exists)
 
 TEST(etcpal_rbtree, insert_failure_should_not_leak_memory)
 {
-  LwpaRbTree tree;
+  EtcPalRbTree tree;
   TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(&tree, int_compare, node_alloc, node_dealloc));
 
   // Insert a value, then try to insert it again
@@ -210,7 +210,7 @@ TEST(etcpal_rbtree, insert_failure_should_not_leak_memory)
 
 TEST(etcpal_rbtree, iterators_work_as_expected)
 {
-  LwpaRbTree tree;
+  EtcPalRbTree tree;
   TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(&tree, int_compare, node_alloc, node_dealloc));
 
   // Insert each value into the tree; dynamic alloc functions should be called.
@@ -219,7 +219,7 @@ TEST(etcpal_rbtree, iterators_work_as_expected)
   TEST_ASSERT_EQUAL_UINT(INT_ARRAY_SIZE, etcpal_rbtree_size(&tree));
 
   // Initialize an iterator
-  LwpaRbIter iter;
+  EtcPalRbIter iter;
   TEST_ASSERT_EQUAL_PTR(&iter, etcpal_rbiter_init(&iter));
 
   // Get the first value.
@@ -261,7 +261,7 @@ TEST(etcpal_rbtree, iterators_work_as_expected)
 
 TEST(etcpal_rbtree, max_height_is_within_bounds)
 {
-  LwpaRbTree tree;
+  EtcPalRbTree tree;
   TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(&tree, int_compare, node_alloc, node_dealloc));
 
   // Insert monotonically incrementing values into the tree. In a traditional binary tree, this
@@ -272,7 +272,7 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
   TEST_ASSERT_EQUAL_UINT(INT_ARRAY_SIZE, etcpal_rbtree_size(&tree));
 
   // Get the height of the tree and compare it against the theoretical maximum.
-  LwpaRbIter iter;
+  EtcPalRbIter iter;
   size_t max_height = 0;
   size_t theoretical_max_height;
   TEST_ASSERT_NOT_NULL(etcpal_rbiter_init(&iter));

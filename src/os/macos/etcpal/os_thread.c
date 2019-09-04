@@ -25,7 +25,7 @@ static void* thread_func_internal(void* arg);
 
 /*************************** Function definitions ****************************/
 
-bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;

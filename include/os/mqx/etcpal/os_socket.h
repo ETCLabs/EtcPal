@@ -42,29 +42,29 @@ typedef uint32_t etcpal_socket_t;
 
 #define ETCPAL_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE
 
-typedef struct LwpaPollCtxSocket
+typedef struct EtcPalPollCtxSocket
 {
   etcpal_socket_t socket;
   etcpal_poll_events_t events;
   void* user_data;
-} LwpaPollCtxSocket;
+} EtcPalPollCtxSocket;
 
-typedef struct LwpaPollFdSet
+typedef struct EtcPalPollFdSet
 {
   rtcs_fd_set set;
   size_t count;
-} LwpaPollFdSet;
+} EtcPalPollFdSet;
 
-typedef struct LwpaPollContext
+typedef struct EtcPalPollContext
 {
   bool valid;
 
-  LwpaPollCtxSocket sockets[ETCPAL_SOCKET_MAX_POLL_SIZE];
+  EtcPalPollCtxSocket sockets[ETCPAL_SOCKET_MAX_POLL_SIZE];
   size_t num_valid_sockets;
 
-  LwpaPollFdSet readfds;
-  LwpaPollFdSet writefds;
-} LwpaPollContext;
+  EtcPalPollFdSet readfds;
+  EtcPalPollFdSet writefds;
+} EtcPalPollContext;
 
 #ifdef __cplusplus
 }

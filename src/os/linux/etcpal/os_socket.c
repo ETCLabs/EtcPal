@@ -43,14 +43,14 @@
 /****************************** Private types ********************************/
 
 /* A struct to track sockets being polled by the etcpal_poll() API */
-typedef struct LwpaPollSocket
+typedef struct EtcPalPollSocket
 {
-  // 'sock' must always remain as the first member in the struct to facilitate an LwpaRbTree lookup
+  // 'sock' must always remain as the first member in the struct to facilitate an EtcPalRbTree lookup
   // shortcut
   etcpal_socket_t sock;
   etcpal_poll_events_t events;
   void* user_data;
-} LwpaPollSocket;
+} EtcPalPollSocket;
 
 /**************************** Private variables ******************************/
 
@@ -122,12 +122,12 @@ static int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* optio
 
 // Helpers for etcpal_poll API
 static void events_etcpal_to_epoll(etcpal_poll_events_t events, struct epoll_event* epoll_evt);
-static void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const LwpaPollSocket* sock_desc,
+static void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const EtcPalPollSocket* sock_desc,
                                  etcpal_poll_events_t* events);
 
-static int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
-static LwpaRbNode* poll_socket_alloc();
-static void poll_socket_free(LwpaRbNode* node);
+static int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
+static EtcPalRbNode* poll_socket_alloc();
+static void poll_socket_free(EtcPalRbNode* node);
 
 /*************************** Function definitions ****************************/
 
@@ -142,7 +142,7 @@ void etcpal_socket_deinit()
   // No deinitialization necessary on this platform
 }
 
-etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr* address, etcpal_socket_t* conn_sock)
+etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal_socket_t* conn_sock)
 {
   if (!conn_sock)
     return kEtcPalErrInvalid;
@@ -164,7 +164,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr* address, etcpal_s
   return errno_os_to_lwpa(errno);
 }
 
-etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr* address)
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
 {
   if (!address)
     return kEtcPalErrInvalid;
@@ -184,7 +184,7 @@ etcpal_error_t etcpal_close(etcpal_socket_t id)
   return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
 }
 
-etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr* address)
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
 {
   if (!address)
     return kEtcPalErrInvalid;
@@ -198,7 +198,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr* address)
   return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
 }
 
-etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr* address)
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address)
 {
   /* TODO */
   (void)id;
@@ -206,7 +206,7 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr* address)
   return kEtcPalErrNotImpl;
 }
 
-etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr* address)
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address)
 {
   if (!address)
     return kEtcPalErrInvalid;
@@ -250,7 +250,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
   return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
 }
 
-int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address)
+int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address)
 {
   if (!buffer)
     return (int)kEtcPalErrInvalid;
@@ -283,7 +283,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
   return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
 }
 
-int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr)
+int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr)
 {
   (void)flags;
 
@@ -360,9 +360,9 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
     case ETCPAL_SO_KEEPALIVE:
       return setsockopt(id, SOL_SOCKET, SO_KEEPALIVE, option_value, (socklen_t)option_len);
     case ETCPAL_SO_LINGER:
-      if (option_len == sizeof(LwpaLinger))
+      if (option_len == sizeof(EtcPalLinger))
       {
-        LwpaLinger* ll = (LwpaLinger*)option_value;
+        EtcPalLinger* ll = (EtcPalLinger*)option_value;
         struct linger val;
         val.l_onoff = (u_short)ll->onoff;
         val.l_linger = (u_short)ll->linger;
@@ -407,9 +407,9 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
     case ETCPAL_IP_TTL:
       return setsockopt(id, IPPROTO_IP, IP_TTL, option_value, (socklen_t)option_len);
     case ETCPAL_IP_ADD_MEMBERSHIP:
-      if (option_len == sizeof(LwpaMreq))
+      if (option_len == sizeof(EtcPalMreq))
       {
-        LwpaMreq* amreq = (LwpaMreq*)option_value;
+        EtcPalMreq* amreq = (EtcPalMreq*)option_value;
         if (ETCPAL_IP_IS_V4(&amreq->group))
         {
           struct ip_mreq val;
@@ -420,9 +420,9 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       }
       break;
     case ETCPAL_IP_DROP_MEMBERSHIP:
-      if (option_len == sizeof(LwpaMreq))
+      if (option_len == sizeof(EtcPalMreq))
       {
-        LwpaMreq* amreq = (LwpaMreq*)option_value;
+        EtcPalMreq* amreq = (EtcPalMreq*)option_value;
         if (ETCPAL_IP_IS_V4(&amreq->group))
         {
           struct ip_mreq val;
@@ -433,9 +433,9 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       }
       break;
     case ETCPAL_MCAST_JOIN_GROUP:
-      if (option_len == sizeof(LwpaGroupReq))
+      if (option_len == sizeof(EtcPalGroupReq))
       {
-        LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
+        EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
         if (ETCPAL_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
@@ -450,9 +450,9 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       }
       break;
     case ETCPAL_MCAST_LEAVE_GROUP:
-      if (option_len == sizeof(LwpaGroupReq))
+      if (option_len == sizeof(EtcPalGroupReq))
       {
-        LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
+        EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
         if (ETCPAL_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
@@ -492,9 +492,9 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
   switch (option_name)
   {
     case ETCPAL_MCAST_JOIN_GROUP:
-      if (option_len == sizeof(LwpaGroupReq))
+      if (option_len == sizeof(EtcPalGroupReq))
       {
-        LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
+        EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
         if (ETCPAL_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
@@ -509,9 +509,9 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
       }
       break;
     case ETCPAL_MCAST_LEAVE_GROUP:
-      if (option_len == sizeof(LwpaGroupReq))
+      if (option_len == sizeof(EtcPalGroupReq))
       {
-        LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
+        EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
         if (ETCPAL_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
           struct group_req val;
@@ -608,7 +608,7 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
   return kEtcPalErrInvalid;
 }
 
-etcpal_error_t etcpal_poll_context_init(LwpaPollContext* context)
+etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
 {
   if (!context)
     return kEtcPalErrInvalid;
@@ -626,7 +626,7 @@ etcpal_error_t etcpal_poll_context_init(LwpaPollContext* context)
   }
 }
 
-void etcpal_poll_context_deinit(LwpaPollContext* context)
+void etcpal_poll_context_deinit(EtcPalPollContext* context)
 {
   if (context && context->valid)
   {
@@ -636,12 +636,12 @@ void etcpal_poll_context_deinit(LwpaPollContext* context)
   }
 }
 
-etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
+etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
                                   void* user_data)
 {
   if (context && context->valid && socket != ETCPAL_SOCKET_INVALID && (events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
   {
-    LwpaPollSocket* sock_desc = (LwpaPollSocket*)malloc(sizeof(LwpaPollSocket));
+    EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)malloc(sizeof(EtcPalPollSocket));
     if (sock_desc)
     {
       sock_desc->sock = socket;
@@ -683,12 +683,12 @@ etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t 
   }
 }
 
-etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
+etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
                                      void* new_user_data)
 {
   if (context && context->valid && socket != ETCPAL_SOCKET_INVALID && (new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
   {
-    LwpaPollSocket* sock_desc = (LwpaPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
+    EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
     if (sock_desc)
     {
       struct epoll_event ep_evt;
@@ -718,7 +718,7 @@ etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket
   }
 }
 
-void etcpal_poll_remove_socket(LwpaPollContext* context, etcpal_socket_t socket)
+void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socket)
 {
   if (context && context->valid)
   {
@@ -730,7 +730,7 @@ void etcpal_poll_remove_socket(LwpaPollContext* context, etcpal_socket_t socket)
   }
 }
 
-etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms)
+etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* event, int timeout_ms)
 {
   if (context && context->valid && event)
   {
@@ -742,7 +742,7 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, 
       int wait_res = epoll_wait(context->epoll_fd, &epoll_evt, 1, sys_timeout);
       if (wait_res > 0)
       {
-        LwpaPollSocket* sock_desc = (LwpaPollSocket*)etcpal_rbtree_find(&context->sockets, &epoll_evt.data.fd);
+        EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &epoll_evt.data.fd);
         if (sock_desc)
         {
           event->socket = sock_desc->sock;
@@ -800,7 +800,7 @@ void events_etcpal_to_epoll(etcpal_poll_events_t events, struct epoll_event* epo
     epoll_evt->events |= EPOLLPRI;
 }
 
-void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const LwpaPollSocket* sock_desc,
+void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const EtcPalPollSocket* sock_desc,
                           etcpal_poll_events_t* events_out)
 {
   *events_out = 0;
@@ -819,20 +819,20 @@ void events_epoll_to_lwpa(const struct epoll_event* epoll_evt, const LwpaPollSoc
     *events_out |= (ETCPAL_POLL_ERR);
 }
 
-int poll_socket_compare(const LwpaRbTree* tree, const LwpaRbNode* node_a, const LwpaRbNode* node_b)
+int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
 {
-  LwpaPollSocket* a = (LwpaPollSocket*)node_a->value;
-  LwpaPollSocket* b = (LwpaPollSocket*)node_b->value;
+  EtcPalPollSocket* a = (EtcPalPollSocket*)node_a->value;
+  EtcPalPollSocket* b = (EtcPalPollSocket*)node_b->value;
 
   return (a->sock > b->sock) - (a->sock < b->sock);
 }
 
-LwpaRbNode* poll_socket_alloc()
+EtcPalRbNode* poll_socket_alloc()
 {
-  return (LwpaRbNode*)malloc(sizeof(LwpaRbNode));
+  return (EtcPalRbNode*)malloc(sizeof(EtcPalRbNode));
 }
 
-void poll_socket_free(LwpaRbNode* node)
+void poll_socket_free(EtcPalRbNode* node)
 {
   if (node)
   {
@@ -841,8 +841,8 @@ void poll_socket_free(LwpaRbNode* node)
   }
 }
 
-etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
-                              LwpaAddrinfo* result)
+etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const EtcPalAddrinfo* hints,
+                              EtcPalAddrinfo* result)
 {
   int res;
   struct addrinfo* pf_res;
@@ -871,7 +871,7 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
   return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(res));
 }
 
-bool etcpal_nextaddr(LwpaAddrinfo* ai)
+bool etcpal_nextaddr(EtcPalAddrinfo* ai)
 {
   if (ai && ai->pd[1])
   {
@@ -908,7 +908,7 @@ bool etcpal_nextaddr(LwpaAddrinfo* ai)
   return false;
 }
 
-void etcpal_freeaddrinfo(LwpaAddrinfo* ai)
+void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
 {
   if (ai)
     freeaddrinfo((struct addrinfo*)ai->pd[0]);

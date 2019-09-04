@@ -63,50 +63,50 @@
 /*! @} */
 
 /*! Holds the information contained in an ACN TCP Preamble. */
-typedef struct LwpaTcpPreamble
+typedef struct EtcPalTcpPreamble
 {
   /*! Pointer to the beginning of the Root Layer PDU block */
   const uint8_t* rlp_block;
   /*! Length of the Root Layer PDU block */
   size_t rlp_block_len;
-} LwpaTcpPreamble;
+} EtcPalTcpPreamble;
 
 /*! Holds the information contained in an ACN UDP Preamble. */
-typedef struct LwpaUdpPreamble
+typedef struct EtcPalUdpPreamble
 {
   /*! Pointer to the beginning of the Root Layer PDU block */
   const uint8_t* rlp_block;
   /*! Length of the Root Layer PDU block */
   size_t rlp_block_len;
-} LwpaUdpPreamble;
+} EtcPalUdpPreamble;
 
 /*! Holds the information contained in an ACN Root Layer PDU. */
-typedef struct LwpaRootLayerPdu
+typedef struct EtcPalRootLayerPdu
 {
   /*! The CID of the component that sent this Root Layer PDU. */
-  LwpaUuid sender_cid;
+  EtcPalUuid sender_cid;
   /*! The Vector indicates the type of data contained in the Data segment. */
   uint32_t vector;
   /*! A pointer to the Data segment of this PDU. */
   const uint8_t* pdata;
   /*! The length of the Data segment of this PDU. */
   size_t datalen;
-} LwpaRootLayerPdu;
+} EtcPalRootLayerPdu;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble* preamble);
-bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble* preamble);
-bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaRootLayerPdu* last_pdu);
-bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaPdu* last_pdu);
+bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPreamble* preamble);
+bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPreamble* preamble);
+bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalRootLayerPdu* last_pdu);
+bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalPdu* last_pdu);
 
 size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len);
 size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen);
-size_t etcpal_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
-size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu);
-size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
+size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t num_pdus);
+size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu);
+size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu_block, size_t num_pdus);
 
 #ifdef __cplusplus
 }

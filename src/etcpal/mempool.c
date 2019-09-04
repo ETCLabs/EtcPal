@@ -26,7 +26,7 @@
 static bool mempool_lock_initted = false;
 static etcpal_mutex_t mempool_lock;
 
-etcpal_error_t etcpal_mempool_init_priv(LwpaMempoolDesc* desc)
+etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
 {
   etcpal_error_t res = kEtcPalErrSys;
 
@@ -52,14 +52,14 @@ etcpal_error_t etcpal_mempool_init_priv(LwpaMempoolDesc* desc)
   return res;
 }
 
-void* etcpal_mempool_alloc_priv(LwpaMempoolDesc* desc)
+void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
 {
   void* elem = NULL;
 
   if (etcpal_mutex_take(&mempool_lock))
   {
     char* c_pool = (char*)desc->pool;
-    LwpaMempool* elem_desc = desc->freelist;
+    EtcPalMempool* elem_desc = desc->freelist;
     if (elem_desc)
     {
       ptrdiff_t index = elem_desc - desc->list;
@@ -76,7 +76,7 @@ void* etcpal_mempool_alloc_priv(LwpaMempoolDesc* desc)
   return elem;
 }
 
-void etcpal_mempool_free_priv(LwpaMempoolDesc* desc, void* elem)
+void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
 {
   char* c_pool = (char*)desc->pool;
 
@@ -86,7 +86,7 @@ void etcpal_mempool_free_priv(LwpaMempoolDesc* desc, void* elem)
     if (((size_t)offset % desc->elem_size == 0) && etcpal_mutex_take(&mempool_lock))
     {
       size_t index = (size_t)offset / desc->elem_size;
-      LwpaMempool* elem_desc = &desc->list[index];
+      EtcPalMempool* elem_desc = &desc->list[index];
       elem_desc->next = desc->freelist;
       desc->freelist = elem_desc;
       --desc->current_used;
@@ -95,7 +95,7 @@ void etcpal_mempool_free_priv(LwpaMempoolDesc* desc, void* elem)
   }
 }
 
-size_t etcpal_mempool_used_priv(LwpaMempoolDesc* desc)
+size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc)
 {
   size_t res = 0;
   if (etcpal_mutex_take(&mempool_lock))

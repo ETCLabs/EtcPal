@@ -129,7 +129,7 @@
 #define ETCPAL_HUMAN_LOG_STR_MAX_LEN ((ETCPAL_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + ETCPAL_LOG_MSG_MAX_LEN)
 
 /*! A set of parameters which represent the current local time with millisecond resolution. */
-typedef struct LwpaLogTimeParams
+typedef struct EtcPalLogTimeParams
 {
   int year;       /*!< Absolute year. Valid range 0-9999. */
   int month;      /*!< Month of the year. Valid range 1-12 (starting with 1 for January). */
@@ -139,12 +139,12 @@ typedef struct LwpaLogTimeParams
   int second;     /*!< Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
   int msec;       /*!< Milliseconds past the current second. Valid range 0-999. */
   int utc_offset; /*!< The local offset from UTC in minutes. */
-} LwpaLogTimeParams;
+} EtcPalLogTimeParams;
 
 /*! The set of log strings passed with a call to an etcpal_log_callback function. Any members not
- *  requested in the corresponding LwpaLogParams struct will be NULL.
+ *  requested in the corresponding EtcPalLogParams struct will be NULL.
  */
-typedef struct LwpaLogStrings
+typedef struct EtcPalLogStrings
 {
   /*! Log string formatted compliant to RFC 5424. */
   const char* syslog;
@@ -153,7 +153,7 @@ typedef struct LwpaLogStrings
   /*! The original log string that was passed to etcpal_log() or etcpal_vlog(). Will overlap with one of
    * syslog_str or human_str. */
   const char* raw;
-} LwpaLogStrings;
+} EtcPalLogStrings;
 
 /*! \brief Log callback function.
  *
@@ -165,10 +165,10 @@ typedef struct LwpaLogStrings
  *  \param[in] context Optional application-provided value that was previously passed to the library
  *                     module.
  *  \param[in] strings Strings associated with the log message. Will contain valid strings
- *                     corresponding to the log actions requested in the corresponding LwpaLogParams
+ *                     corresponding to the log actions requested in the corresponding EtcPalLogParams
  *                     struct.
  */
-typedef void (*etcpal_log_callback)(void* context, const LwpaLogStrings* strings);
+typedef void (*etcpal_log_callback)(void* context, const EtcPalLogStrings* strings);
 
 /*! \brief Time callback function.
  *
@@ -178,7 +178,7 @@ typedef void (*etcpal_log_callback)(void* context, const LwpaLogStrings* strings
  *                     module.
  *  \param[out] time_params Fill this in with the current local time.
  */
-typedef void (*etcpal_log_time_fn)(void* context, LwpaLogTimeParams* time_params);
+typedef void (*etcpal_log_time_fn)(void* context, EtcPalLogTimeParams* time_params);
 
 /*! Which types of log message(s) the etcpal_log() and etcpal_vlog() functions create. */
 typedef enum
@@ -195,7 +195,7 @@ typedef enum
 } etcpal_log_action_t;
 
 /*! A set of parameters for the syslog header. */
-typedef struct LwpaSyslogParams
+typedef struct EtcPalSyslogParams
 {
   /*! Syslog Facility; see RFC 5424 &sect; 6.2.1. */
   int facility;
@@ -205,17 +205,17 @@ typedef struct LwpaSyslogParams
   char app_name[ETCPAL_LOG_APP_NAME_MAX_LEN];
   /*! Syslog PROCID; see RFC 5424 &sect; 6.2.6. */
   char procid[ETCPAL_LOG_PROCID_MAX_LEN];
-} LwpaSyslogParams;
+} EtcPalSyslogParams;
 
 /*! A set of parameters used for the etcpal_*log() functions. */
-typedef struct LwpaLogParams
+typedef struct EtcPalLogParams
 {
   /*! What should be done when etcpal_log() or etcpal_vlog() is called. */
   etcpal_log_action_t action;
   /*! A callback function for the finished log string(s). */
   etcpal_log_callback log_fn;
   /*! The syslog header parameters. */
-  LwpaSyslogParams syslog_params;
+  EtcPalSyslogParams syslog_params;
   /*! A mask value that determines which priority messages can be logged. */
   int log_mask;
   /*! A callback function for the etcpal_log() and etcpal_vlog() functions to obtain the time from the
@@ -223,7 +223,7 @@ typedef struct LwpaLogParams
   etcpal_log_time_fn time_fn;
   /*! Application context that will be passed back with the log callback function. */
   void* context;
-} LwpaLogParams;
+} EtcPalLogParams;
 
 #ifdef __cplusplus
 extern "C" {
@@ -235,8 +235,8 @@ extern "C" {
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool etcpal_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* time,
-                            const LwpaSyslogParams* syslog_params, int pri, const char* format, ...)
+bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time,
+                            const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 6, 7)))
 #endif
@@ -245,27 +245,27 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams*
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool etcpal_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format, ...)
+bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 4, 5)))
 #endif
     ;
 
-void etcpal_sanitize_syslog_params(LwpaSyslogParams* params);
-bool etcpal_validate_log_params(LwpaLogParams* params);
+void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params);
+bool etcpal_validate_log_params(EtcPalLogParams* params);
 
-bool etcpal_can_log(const LwpaLogParams* params, int pri);
+bool etcpal_can_log(const EtcPalLogParams* params, int pri);
 
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-void etcpal_log(const LwpaLogParams* params, int pri, const char* format, ...)
+void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 3, 4)))
 #endif
     ;
 
-void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args);
+void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_list args);
 
 #ifdef __cplusplus
 }

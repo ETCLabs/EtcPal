@@ -41,7 +41,7 @@
 
 /* etcpal_rbnode */
 
-static LwpaRbNode* etcpal_rbnode_alloc(LwpaRbTree* tree)
+static EtcPalRbNode* etcpal_rbnode_alloc(EtcPalRbTree* tree)
 {
   if (tree && tree->alloc_f)
     return tree->alloc_f();
@@ -58,7 +58,7 @@ static LwpaRbNode* etcpal_rbnode_alloc(LwpaRbTree* tree)
  *  \param[in] value Pointer to the value to assign to the node.
  *  \return Pointer to the node that was initialized.
  */
-LwpaRbNode* etcpal_rbnode_init(LwpaRbNode* self, void* value)
+EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value)
 {
   if (self)
   {
@@ -69,12 +69,12 @@ LwpaRbNode* etcpal_rbnode_init(LwpaRbNode* self, void* value)
   return self;
 }
 
-static LwpaRbNode* rb_node_create(LwpaRbTree* tree, void* value)
+static EtcPalRbNode* rb_node_create(EtcPalRbTree* tree, void* value)
 {
   return etcpal_rbnode_init(etcpal_rbnode_alloc(tree), value);
 }
 
-static void rb_node_dealloc(LwpaRbNode* self, const LwpaRbTree* tree)
+static void rb_node_dealloc(EtcPalRbNode* self, const EtcPalRbTree* tree)
 {
   if (self && tree && tree->dealloc_f)
   {
@@ -82,14 +82,14 @@ static void rb_node_dealloc(LwpaRbNode* self, const LwpaRbTree* tree)
   }
 }
 
-static int rb_node_is_red(const LwpaRbNode* self)
+static int rb_node_is_red(const EtcPalRbNode* self)
 {
   return self ? self->red : 0;
 }
 
-static LwpaRbNode* rb_node_rotate(LwpaRbNode* self, int dir)
+static EtcPalRbNode* rb_node_rotate(EtcPalRbNode* self, int dir)
 {
-  LwpaRbNode* result = NULL;
+  EtcPalRbNode* result = NULL;
   if (self)
   {
     result = self->link[!dir];
@@ -101,9 +101,9 @@ static LwpaRbNode* rb_node_rotate(LwpaRbNode* self, int dir)
   return result;
 }
 
-static LwpaRbNode* rb_node_rotate2(LwpaRbNode* self, int dir)
+static EtcPalRbNode* rb_node_rotate2(EtcPalRbNode* self, int dir)
 {
-  LwpaRbNode* result = NULL;
+  EtcPalRbNode* result = NULL;
   if (self)
   {
     self->link[!dir] = rb_node_rotate(self->link[!dir], !dir);
@@ -119,7 +119,7 @@ static LwpaRbNode* rb_node_rotate2(LwpaRbNode* self, int dir)
  *  This function can be supplied as an argument to any function that takes a
  *  #etcpal_rbtree_node_cmp_f. Simply compares the pointer addresses of the two node values.
  */
-int etcpal_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b)
+int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const EtcPalRbNode* a, const EtcPalRbNode* b)
 {
   (void)self;
   return (a->value > b->value) - (a->value < b->value);
@@ -130,7 +130,7 @@ int etcpal_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, c
  *  This function can be supplied as an argument to any function that takes a #etcpal_rbtree_node_f.
  *  Simply deallocates the node using the tree's dealloc_f.
  */
-void etcpal_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node)
+void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node)
 {
   rb_node_dealloc(node, self);
 }
@@ -148,7 +148,7 @@ void etcpal_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node)
  *  \param[in] dealloc_f A function to use for deallocating node structures.
  *  \return Pointer to the tree that was initialized.
  */
-LwpaRbTree* etcpal_rbtree_init(LwpaRbTree* self, etcpal_rbtree_node_cmp_f node_cmp_cb, etcpal_rbnode_alloc_f alloc_f,
+EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, etcpal_rbtree_node_cmp_f node_cmp_cb, etcpal_rbnode_alloc_f alloc_f,
                              etcpal_rbnode_dealloc_f dealloc_f)
 {
   if (self)
@@ -171,13 +171,13 @@ LwpaRbTree* etcpal_rbtree_init(LwpaRbTree* self, etcpal_rbtree_node_cmp_f node_c
  *  \param[in] value Value to find.
  *  \return Pointer to the value (value found) or NULL (value not found).
  */
-void* etcpal_rbtree_find(LwpaRbTree* self, void* value)
+void* etcpal_rbtree_find(EtcPalRbTree* self, void* value)
 {
   void* result = NULL;
   if (self)
   {
-    LwpaRbNode node;
-    LwpaRbNode* it = self->root;
+    EtcPalRbNode node;
+    EtcPalRbNode* it = self->root;
     int cmp = 0;
 
     node.value = value;
@@ -212,9 +212,9 @@ void* etcpal_rbtree_find(LwpaRbTree* self, void* value)
  *  \return #kEtcPalErrNoMem: Couldn't allocate new node.
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value)
+etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
 {
-  LwpaRbNode* new_node = rb_node_create(self, value);
+  EtcPalRbNode* new_node = rb_node_create(self, value);
   if (new_node)
   {
     etcpal_error_t insert_res = etcpal_rbtree_insert_node(self, new_node);
@@ -247,7 +247,7 @@ etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value)
  *  \return #kEtcPalErrExists: The value already existed in the tree.
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
+etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
 {
   etcpal_error_t result = kEtcPalErrInvalid;
   if (self && node)
@@ -259,9 +259,9 @@ etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
     }
     else
     {
-      LwpaRbNode head = {0}; /* False tree root */
-      LwpaRbNode *g, *t;     /* Grandparent & parent */
-      LwpaRbNode *p, *q;     /* Iterator & parent */
+      EtcPalRbNode head = {0}; /* False tree root */
+      EtcPalRbNode *g, *t;     /* Grandparent & parent */
+      EtcPalRbNode *p, *q;     /* Iterator & parent */
       int dir = 0, last = 0;
 
       /* Set up our helpers */
@@ -340,7 +340,7 @@ etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  *  \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
-etcpal_error_t etcpal_rbtree_remove(LwpaRbTree* self, void* value)
+etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value)
 {
   etcpal_error_t result = kEtcPalErrInvalid;
   if (self)
@@ -362,12 +362,12 @@ etcpal_error_t etcpal_rbtree_remove(LwpaRbTree* self, void* value)
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  *  \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
-etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpal_rbtree_node_f node_cb)
+etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, etcpal_rbtree_node_f node_cb)
 {
-  LwpaRbNode head = {0}; /* False tree root */
-  LwpaRbNode node;       /* Value wrapper node */
-  LwpaRbNode *q, *p, *g; /* Helpers */
-  LwpaRbNode* f = NULL;  /* Found item */
+  EtcPalRbNode head = {0}; /* False tree root */
+  EtcPalRbNode node;       /* Value wrapper node */
+  EtcPalRbNode *q, *p, *g; /* Helpers */
+  EtcPalRbNode* f = NULL;  /* Found item */
   int dir = 1;
 
   if (!self)
@@ -409,7 +409,7 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpa
       }
       else if (!rb_node_is_red(q->link[!dir]))
       {
-        LwpaRbNode* s = p->link[!last];
+        EtcPalRbNode* s = p->link[!last];
         if (s)
         {
           if (!rb_node_is_red(s->link[!last]) && !rb_node_is_red(s->link[last]))
@@ -471,7 +471,7 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpa
  *  \return #kEtcPalErrOk: The tree was cleared.
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_rbtree_clear(LwpaRbTree* self)
+etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree* self)
 {
   etcpal_error_t result = kEtcPalErrInvalid;
   if (self)
@@ -490,13 +490,13 @@ etcpal_error_t etcpal_rbtree_clear(LwpaRbTree* self)
  *  \return #kEtcPalErrOk: The tree was cleared.
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_rbtree_clear_with_cb(LwpaRbTree* self, etcpal_rbtree_node_f node_cb)
+etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, etcpal_rbtree_node_f node_cb)
 {
   etcpal_error_t result = kEtcPalErrInvalid;
   if (self && node_cb)
   {
-    LwpaRbNode* node = self->root;
-    LwpaRbNode* save = NULL;
+    EtcPalRbNode* node = self->root;
+    EtcPalRbNode* save = NULL;
 
     /* Rotate away the left links so that we can treat this like the destruction of a linked list */
     while (node)
@@ -528,7 +528,7 @@ etcpal_error_t etcpal_rbtree_clear_with_cb(LwpaRbTree* self, etcpal_rbtree_node_
  *  \param[in] self The tree of which to get the size.
  *  \return The number of values currently in the tree.
  */
-size_t etcpal_rbtree_size(LwpaRbTree* self)
+size_t etcpal_rbtree_size(EtcPalRbTree* self)
 {
   size_t result = 0;
   if (self)
@@ -548,7 +548,7 @@ size_t etcpal_rbtree_size(LwpaRbTree* self)
  *          for every possible traversal.
  *  \return 0: Invalid tree.
  */
-int etcpal_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
+int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
 {
   int lh, rh;
 
@@ -558,8 +558,8 @@ int etcpal_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
   }
   else
   {
-    LwpaRbNode* ln = root->link[0];
-    LwpaRbNode* rn = root->link[1];
+    EtcPalRbNode* ln = root->link[0];
+    EtcPalRbNode* rn = root->link[1];
 
     /* Consecutive red links */
     if (rb_node_is_red(root))
@@ -603,7 +603,7 @@ int etcpal_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
  *  \param[in] self The iterator to be initialized.
  *  \return Pointer to the iterator that was initialized.
  */
-LwpaRbIter* etcpal_rbiter_init(LwpaRbIter* self)
+EtcPalRbIter* etcpal_rbiter_init(EtcPalRbIter* self)
 {
   if (self)
   {
@@ -616,7 +616,7 @@ LwpaRbIter* etcpal_rbiter_init(LwpaRbIter* self)
 
 /* Internal function, init traversal object, dir determines whether to begin traversal at the
  * smallest or largest valued node. */
-static void* rb_iter_start(LwpaRbIter* self, LwpaRbTree* tree, int dir)
+static void* rb_iter_start(EtcPalRbIter* self, EtcPalRbTree* tree, int dir)
 {
   void* result = NULL;
   if (self)
@@ -641,7 +641,7 @@ static void* rb_iter_start(LwpaRbIter* self, LwpaRbTree* tree, int dir)
 }
 
 /* Traverse a red black tree in the user-specified direction (0 asc, 1 desc) */
-static void* rb_iter_move(LwpaRbIter* self, int dir)
+static void* rb_iter_move(EtcPalRbIter* self, int dir)
 {
   if (self->node->link[dir] != NULL)
   {
@@ -657,7 +657,7 @@ static void* rb_iter_move(LwpaRbIter* self, int dir)
   else
   {
     /* Move to the next branch */
-    LwpaRbNode* last = NULL;
+    EtcPalRbNode* last = NULL;
     do
     {
       if (self->top == 0)
@@ -681,7 +681,7 @@ static void* rb_iter_move(LwpaRbIter* self, int dir)
  *  \param[in] tree Tree of which to get the first value.
  *  \return Pointer to the first value or NULL (the tree was empty or invalid).
  */
-void* etcpal_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree)
+void* etcpal_rbiter_first(EtcPalRbIter* self, EtcPalRbTree* tree)
 {
   return rb_iter_start(self, tree, 0);
 }
@@ -695,7 +695,7 @@ void* etcpal_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree)
  *  \param[in] tree Tree of which to get the last value.
  *  \return Pointer to the last value or NULL (the tree was empty or invalid).
  */
-void* etcpal_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree)
+void* etcpal_rbiter_last(EtcPalRbIter* self, EtcPalRbTree* tree)
 {
   return rb_iter_start(self, tree, 1);
 }
@@ -708,7 +708,7 @@ void* etcpal_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree)
  *  \param[in] self Iterator to advance.
  *  \return Pointer to next higher value, or NULL (the end of the tree has been reached).
  */
-void* etcpal_rbiter_next(LwpaRbIter* self)
+void* etcpal_rbiter_next(EtcPalRbIter* self)
 {
   return rb_iter_move(self, 1);
 }
@@ -721,7 +721,7 @@ void* etcpal_rbiter_next(LwpaRbIter* self)
  *  \param[in] self Iterator to reverse-advance.
  *  \return Pointer to next lower value, or NULL (the beginning of the tree has been reached).
  */
-void* etcpal_rbiter_prev(LwpaRbIter* self)
+void* etcpal_rbiter_prev(EtcPalRbIter* self)
 {
   return rb_iter_move(self, 0);
 }

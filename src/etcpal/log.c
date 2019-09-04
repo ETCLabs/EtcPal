@@ -114,7 +114,7 @@ void sanitize_str(char* str)
  *
  *  \param[in,out] params Syslog params to sanitize.
  */
-void etcpal_sanitize_syslog_params(LwpaSyslogParams* params)
+void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
 {
   if (ETCPAL_LOG_FAC(params->facility) >= ETCPAL_LOG_NFACILITIES)
     params->facility = DEFAULT_FACILITY;
@@ -132,7 +132,7 @@ void etcpal_sanitize_syslog_params(LwpaSyslogParams* params)
  *  \param[in,out] params etcpal_log_params to validate.
  *  \return true (params are valid) or false (params are invalid).
  */
-bool etcpal_validate_log_params(LwpaLogParams* params)
+bool etcpal_validate_log_params(EtcPalLogParams* params)
 {
   if (!params || !params->log_fn)
   {
@@ -146,8 +146,8 @@ bool etcpal_validate_log_params(LwpaLogParams* params)
   return true;
 }
 
-/* Enforce the range rules defined in the LwpaLogTimeParams struct definition. */
-static bool validate_time(const LwpaLogTimeParams* tparams)
+/* Enforce the range rules defined in the EtcPalLogTimeParams struct definition. */
+static bool validate_time(const EtcPalLogTimeParams* tparams)
 {
   return (tparams->year >= 0 && tparams->year <= 9999 && tparams->month >= 1 && tparams->month <= 12 &&
           tparams->day >= 1 && tparams->day <= 31 && tparams->hour >= 0 && tparams->hour <= 23 &&
@@ -156,7 +156,7 @@ static bool validate_time(const LwpaLogTimeParams* tparams)
 }
 
 /* Build the current timestamp. Buffer must be of length ETCPAL_LOG_TIMESTAMP_LEN. */
-static void make_timestamp(const LwpaLogTimeParams* tparams, char* buf, bool human_readable)
+static void make_timestamp(const EtcPalLogTimeParams* tparams, char* buf, bool human_readable)
 {
   bool timestamp_created = false;
 
@@ -196,11 +196,11 @@ static void make_timestamp(const LwpaLogTimeParams* tparams, char* buf, bool hum
 }
 
 /* Get the current time via either the standard C library or a time callback. */
-static bool get_time(const LwpaLogParams* params, LwpaLogTimeParams* time_params)
+static bool get_time(const EtcPalLogParams* params, EtcPalLogTimeParams* time_params)
 {
   if (params->time_fn)
   {
-    memset(time_params, 0, sizeof(LwpaLogTimeParams));
+    memset(time_params, 0, sizeof(EtcPalLogTimeParams));
     params->time_fn(params->context, time_params);
     return true;
   }
@@ -212,8 +212,8 @@ static bool get_time(const LwpaLogParams* params, LwpaLogTimeParams* time_params
 
 /* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
  * original message within the syslog message, or NULL on failure. */
-static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* tparams,
-                                     const LwpaSyslogParams* syslog_params, int pri, const char* format, va_list args)
+static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParams* tparams,
+                                     const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args)
 {
   if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
     return NULL;
@@ -254,8 +254,8 @@ static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTi
  *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                    as appropriate for format specifiers.
  */
-bool etcpal_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* time,
-                            const LwpaSyslogParams* syslog_params, int pri, const char* format, ...)
+bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time,
+                            const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
 {
   va_list args;
   bool res;
@@ -267,7 +267,7 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams*
 
 /* Create a log message with a human-readable header given the appropriate va_list. Returns a
  * pointer to the original message within the log message, or NULL on failure. */
-static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format,
+static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format,
                                         va_list args)
 {
   if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || !format)
@@ -307,7 +307,7 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLo
  *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                    as appropriate for format specifiers.
  */
-bool etcpal_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format, ...)
+bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format, ...)
 {
   va_list args;
   bool res;
@@ -328,7 +328,7 @@ bool etcpal_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimePara
  *  \param[in] pri Priority to check.
  *  \return Whether this priority will be logged with the current mask setting.
  */
-bool etcpal_can_log(const LwpaLogParams* params, int pri)
+bool etcpal_can_log(const EtcPalLogParams* params, int pri)
 {
   if (params)
     return ((ETCPAL_LOG_MASK(pri) & params->log_mask) != 0);
@@ -344,7 +344,7 @@ bool etcpal_can_log(const LwpaLogParams* params, int pri)
  *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                    as appropriate for format specifiers.
  */
-void etcpal_log(const LwpaLogParams* params, int pri, const char* format, ...)
+void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
 {
   va_list args;
   va_start(args, format);
@@ -362,19 +362,19 @@ void etcpal_log(const LwpaLogParams* params, int pri, const char* format, ...)
  *  \param[in] format Log message with printf-style format specifiers.
  *  \param[in] args Argument list for the format specifiers in format.
  */
-void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args)
+void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_list args)
 {
   if (!init_count || !params || !params->log_fn || !format || !(ETCPAL_LOG_MASK(pri) & params->log_mask))
     return;
 
-  LwpaLogTimeParams time_params;
+  EtcPalLogTimeParams time_params;
   bool have_time = get_time(params, &time_params);
 
   if (etcpal_mutex_take(&buf_lock))
   {
     static char syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
     static char humanlogmsg[ETCPAL_HUMAN_LOG_STR_MAX_LEN + 1];
-    LwpaLogStrings strings = {NULL, NULL, NULL};
+    EtcPalLogStrings strings = {NULL, NULL, NULL};
 
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateSyslog)
     {

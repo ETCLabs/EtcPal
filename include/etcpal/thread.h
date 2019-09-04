@@ -26,13 +26,13 @@
 extern "C" {
 #endif
 
-typedef struct LwpaThreadParams
+typedef struct EtcPalThreadParams
 {
   unsigned int thread_priority;
   unsigned int stack_size;
   const char* thread_name;
   void* platform_data;
-} LwpaThreadParams;
+} EtcPalThreadParams;
 
 #define ETCPAL_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)                \
   do                                                                   \
@@ -43,7 +43,7 @@ typedef struct LwpaThreadParams
     (threadparamsptr)->platform_data = NULL;                           \
   } while (0)
 
-bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
 bool etcpal_thread_join(etcpal_thread_t* id);
 
 #ifndef etcpal_thread_sleep

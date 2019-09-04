@@ -110,25 +110,25 @@
   } while (0)
 
 /*! Holds state data used when parsing multiple PDUs in a PDU block. */
-typedef struct LwpaPdu
+typedef struct EtcPalPdu
 {
   const uint8_t* pvector;
   const uint8_t* pheader;
   const uint8_t* pdata;
   size_t datalen;
   const uint8_t* pnextpdu;
-} LwpaPdu;
+} EtcPalPdu;
 
-/*! Default LwpaPdu initializer values; must be used to intialize an LwpaPdu when parsing the first
+/*! Default EtcPalPdu initializer values; must be used to intialize an EtcPalPdu when parsing the first
  *  PDU in a block. */
 #define ETCPAL_PDU_INIT         \
   {                           \
     NULL, NULL, NULL, 0, NULL \
   }
 
-/*! An alternative to #ETCPAL_PDU_INIT which can be used on an existing LwpaPdu to re-initialize its
+/*! An alternative to #ETCPAL_PDU_INIT which can be used on an existing EtcPalPdu to re-initialize its
  *  values.
- *  \param pduptr Pointer to LwpaPdu to initialize. */
+ *  \param pduptr Pointer to EtcPalPdu to initialize. */
 #define ETCPAL_INIT_PDU(pduptr)  \
   do                           \
   {                            \
@@ -140,17 +140,17 @@ typedef struct LwpaPdu
   } while (0)
 
 /*! Contains specific PDU info used by the generic helper parse_pdu(). */
-typedef struct LwpaPduConstraints
+typedef struct EtcPalPduConstraints
 {
   size_t vector_size; /*!< The size of the Vector segment of this PDU. */
   size_t header_size; /*!< The size of the Header segment of this PDU. */
-} LwpaPduConstraints;
+} EtcPalPduConstraints;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints* constraints, LwpaPdu* pdu);
+bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstraints* constraints, EtcPalPdu* pdu);
 
 #ifdef __cplusplus
 }

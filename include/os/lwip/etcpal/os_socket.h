@@ -38,31 +38,31 @@ typedef int etcpal_socket_t;
 
 /* Definitions for etcpal_poll API */
 
-typedef struct LwpaPollSocket
+typedef struct EtcPalPollSocket
 {
   etcpal_socket_t sock;
   etcpal_poll_events_t events;
   void* user_data;
-} LwpaPollSocket;
+} EtcPalPollSocket;
 
-typedef struct LwpaPollFdSet
+typedef struct EtcPalPollFdSet
 {
   fd_set set;
   int count;
-} LwpaPollFdSet;
+} EtcPalPollFdSet;
 
-typedef struct LwpaPollContext
+typedef struct EtcPalPollContext
 {
   bool valid;
 
-  LwpaPollSocket sockets[ETCPAL_SOCKET_MAX_POLL_SIZE];
+  EtcPalPollSocket sockets[ETCPAL_SOCKET_MAX_POLL_SIZE];
   size_t num_valid_sockets;
   int max_fd;
 
-  LwpaPollFdSet readfds;
-  LwpaPollFdSet writefds;
-  LwpaPollFdSet exceptfds;
-} LwpaPollContext;
+  EtcPalPollFdSet readfds;
+  EtcPalPollFdSet writefds;
+  EtcPalPollFdSet exceptfds;
+} EtcPalPollContext;
 
 #ifdef __cplusplus
 }

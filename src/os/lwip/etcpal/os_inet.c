@@ -26,7 +26,7 @@
 #error "LWIP_SOCKET is necessary in lwipopts.h to use the etcpal_inet module."
 #endif
 
-bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
+bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
 {
 #if LWIP_IPV4
   if (os_ip->sa_family == AF_INET)
@@ -47,7 +47,7 @@ bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
   return false;
 }
 
-size_t ip_etcpal_to_os(const LwpaIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
+size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
 {
   size_t ret = 0;
 #if LWIP_IPV4
@@ -76,7 +76,7 @@ size_t ip_etcpal_to_os(const LwpaIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
   return ret;
 }
 
-bool sockaddr_os_to_lwpa(const etcpal_os_sockaddr_t* os_sa, LwpaSockaddr* sa)
+bool sockaddr_os_to_lwpa(const etcpal_os_sockaddr_t* os_sa, EtcPalSockaddr* sa)
 {
   if (ip_os_to_lwpa(os_sa, &sa->ip))
   {
@@ -98,7 +98,7 @@ bool sockaddr_os_to_lwpa(const etcpal_os_sockaddr_t* os_sa, LwpaSockaddr* sa)
   return false;
 }
 
-size_t sockaddr_etcpal_to_os(const LwpaSockaddr* sa, etcpal_os_sockaddr_t* os_sa)
+size_t sockaddr_etcpal_to_os(const EtcPalSockaddr* sa, etcpal_os_sockaddr_t* os_sa)
 {
   size_t ret = ip_etcpal_to_os(&sa->ip, os_sa);
   if (ret != 0)
@@ -115,7 +115,7 @@ size_t sockaddr_etcpal_to_os(const LwpaSockaddr* sa, etcpal_os_sockaddr_t* os_sa
   return ret;
 }
 
-etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
+etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size)
 {
   if (!src || !dest)
     return kEtcPalErrInvalid;
@@ -143,7 +143,7 @@ etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
   }
 }
 
-etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, LwpaIpAddr* dest)
+etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
 {
   if (!src || !dest)
     return kEtcPalErrInvalid;

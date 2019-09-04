@@ -56,7 +56,7 @@ TEST(signal_integration, signal_thread_test)
 {
   etcpal_thread_t threads[2];
 
-  LwpaThreadParams params;
+  EtcPalThreadParams params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);
 
   for (size_t i = 0; i < 2; ++i)

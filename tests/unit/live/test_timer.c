@@ -49,7 +49,7 @@ TEST(etcpal_timer, getms_gets_increasing_values)
 
 TEST(etcpal_timer, timers_report_expired_properly)
 {
-  LwpaTimer t1, t2;
+  EtcPalTimer t1, t2;
 
   etcpal_timer_start(&t1, 0);
   etcpal_timer_start(&t2, 100);

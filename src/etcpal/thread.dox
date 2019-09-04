@@ -13,7 +13,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 
 /*! \brief A set of parameters for an etcpal_thread.
  */
-typedef struct LwpaThreadParams
+typedef struct EtcPalThreadParams
 {
   /*! The priority of the thread. Note that thread priority is not valid on all platforms. */
   unsigned int thread_priority;
@@ -23,7 +23,7 @@ typedef struct LwpaThreadParams
   char *thread_name;
   /*! Pointer to a platform-specific parameter structure. */
   void *platform_data;
-} LwpaThreadParams;
+} EtcPalThreadParams;
 
 /*! \brief The platform-specific default priority for an etcpal_thread.
  *
@@ -64,7 +64,7 @@ typedef UNDEFINED etcpal_thread_t;
  *  \return true: The thread was created.
  *  \return false: The thread was not created.
  */
-bool etcpal_thread_create(etcpal_thread_t *id, const LwpaThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
+bool etcpal_thread_create(etcpal_thread_t *id, const EtcPalThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
 
 /*! \brief Wait for a thread to finish execution.
  *

@@ -29,7 +29,7 @@ static void thread_func_internal(uint32_t initial_data)
   }
 }
 
-bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn || (MQX_OK != _lwsem_create(&id->sig, 0)))
     return false;
@@ -41,7 +41,7 @@ bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, v
   template.TASK_STACKSIZE = params->stack_size;
   if (params->platform_data)
   {
-    LwpaThreadParamsMqx* platform_params = (LwpaThreadParamsMqx*)params->platform_data;
+    EtcPalThreadParamsMqx* platform_params = (EtcPalThreadParamsMqx*)params->platform_data;
     template.TASK_ATTRIBUTES = platform_params->task_attributes;
     template.DEFAULT_TIME_SLICE = platform_params->time_slice;
   }

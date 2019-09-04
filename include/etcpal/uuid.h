@@ -46,14 +46,14 @@ extern "C" {
 #define ETCPAL_UUID_BYTES 16u
 
 /*! The UUID type. */
-typedef struct LwpaUuid
+typedef struct EtcPalUuid
 {
   uint8_t data[ETCPAL_UUID_BYTES];
-} LwpaUuid;
+} EtcPalUuid;
 
 /*! \brief Compare two UUIDs.
- *  \param uuid1ptr Pointer to first LwpaUuid to compare.
- *  \param uuid2ptr Pointer to second LwpaUuid to compare.
+ *  \param uuid1ptr Pointer to first EtcPalUuid to compare.
+ *  \param uuid2ptr Pointer to second EtcPalUuid to compare.
  *  \return < 0 (uuid1ptr is less than uuid2ptr)\n
  *            0 (uuid1ptr is equal to uuid2ptr)\n
  *          > 0 (uuid1ptr is greater than uuid2ptr)
@@ -61,7 +61,7 @@ typedef struct LwpaUuid
 #define ETCPAL_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, ETCPAL_UUID_BYTES)
 
 /*! A null (all 0's) UUID, used by uuid_isnull() for comparison. */
-extern const LwpaUuid kEtcPalNullUuid;
+extern const EtcPalUuid kEtcPalNullUuid;
 
 /*! \brief Determine if a UUID is null.
  *
@@ -75,15 +75,15 @@ extern const LwpaUuid kEtcPalNullUuid;
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
 #define ETCPAL_UUID_STRING_BYTES 37
 
-void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid);
-bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen);
+void etcpal_uuid_to_string(char* buf, const EtcPalUuid* uuid);
+bool etcpal_string_to_uuid(EtcPalUuid* uuid, const char* buf, size_t buflen);
 
 /************************ UUID Generation Functions **************************/
 
-etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid);
-etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum);
-etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid);
-etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid);
+etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid);
+etcpal_error_t etcpal_generate_v3_uuid(EtcPalUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum);
+etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid);
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid);
 
 #ifdef __cplusplus
 }
@@ -94,12 +94,12 @@ etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid);
 
 /* Comparison operators for UUIDs */
 
-inline bool operator<(const LwpaUuid& a, const LwpaUuid& b)
+inline bool operator<(const EtcPalUuid& a, const EtcPalUuid& b)
 {
   return (ETCPAL_UUID_CMP(&a, &b) < 0);
 }
 
-inline bool operator==(const LwpaUuid& a, const LwpaUuid& b)
+inline bool operator==(const EtcPalUuid& a, const EtcPalUuid& b)
 {
   return (ETCPAL_UUID_CMP(&a, &b) == 0);
 }

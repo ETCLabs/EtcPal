@@ -60,9 +60,9 @@
 
 typedef struct RoutingTableEntry
 {
-  LwpaIpAddr addr;
-  LwpaIpAddr mask;
-  LwpaIpAddr gateway;
+  EtcPalIpAddr addr;
+  EtcPalIpAddr mask;
+  EtcPalIpAddr gateway;
   int interface_index;
   int metric;
 } RoutingTableEntry;
@@ -164,7 +164,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
 
   // Allocate our interface array
-  cache->netints = (LwpaNetintInfo*)calloc(cache->num_netints, sizeof(LwpaNetintInfo));
+  cache->netints = (EtcPalNetintInfo*)calloc(cache->num_netints, sizeof(EtcPalNetintInfo));
   if (!cache->netints)
   {
     freeifaddrs(os_addrs);
@@ -179,7 +179,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     if (should_skip_ifaddr(ifaddr))
       continue;
 
-    LwpaNetintInfo* current_info = &cache->netints[current_etcpal_index];
+    EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
     strncpy(current_info->name, ifaddr->ifa_name, ETCPAL_NETINTINFO_NAME_LEN);
@@ -242,7 +242,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
   free_routing_tables();
 }
 
-etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   (void)cache;  // unused
 

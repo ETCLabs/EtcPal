@@ -62,9 +62,9 @@
 
 typedef struct RoutingTableEntry
 {
-  LwpaIpAddr addr;
-  LwpaIpAddr mask;
-  LwpaIpAddr gateway;
+  EtcPalIpAddr addr;
+  EtcPalIpAddr mask;
+  EtcPalIpAddr gateway;
   unsigned int interface_index;
   /* Darwin seems to set this flag on default entries that are not chosen as *the* system-wide
    * default. I have not seen this behavior documented anywhere, but it's the only way I can tell
@@ -156,7 +156,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
 
   // Allocate our interface array
-  cache->netints = (LwpaNetintInfo*)calloc(cache->num_netints, sizeof(LwpaNetintInfo));
+  cache->netints = (EtcPalNetintInfo*)calloc(cache->num_netints, sizeof(EtcPalNetintInfo));
   if (!cache->netints)
   {
     freeifaddrs(os_addrs);
@@ -191,7 +191,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
       continue;
     }
 
-    LwpaNetintInfo* current_info = &cache->netints[current_etcpal_index];
+    EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
     strncpy(current_info->name, ifaddr->ifa_name, ETCPAL_NETINTINFO_NAME_LEN);
@@ -248,7 +248,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
   free_routing_tables();
 }
 
-etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   (void)cache;  // unused
 
@@ -383,7 +383,7 @@ static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct so
 /* Get the route destination from a normal socket address structure packed as part of a route
  * entry.
  */
-static void dest_from_route_entry(int family, const struct sockaddr* os_dst, LwpaIpAddr* etcpal_dst)
+static void dest_from_route_entry(int family, const struct sockaddr* os_dst, EtcPalIpAddr* etcpal_dst)
 {
   if (family == AF_INET6)
     ETCPAL_IP_SET_V6_ADDRESS(etcpal_dst, ((struct sockaddr_in6*)os_dst)->sin6_addr.s6_addr);
@@ -446,7 +446,7 @@ static void dest_from_route_entry(int family, const struct sockaddr* os_dst, Lwp
  * | inferred to be zero.               |
  * +------------------------------------+
  */
-static void netmask_from_route_entry(int family, const struct sockaddr* os_netmask, LwpaIpAddr* etcpal_netmask)
+static void netmask_from_route_entry(int family, const struct sockaddr* os_netmask, EtcPalIpAddr* etcpal_netmask)
 {
   if (family == AF_INET)
   {
@@ -488,7 +488,7 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
  * can either be a network socket address (indicating an actual gateway route) or a datalink
  * sockaddr, indicating that this route is "on-link" (on a local subnet only).
  */
-static void gateway_from_route_entry(const struct sockaddr* os_gw, LwpaIpAddr* etcpal_gw)
+static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr* etcpal_gw)
 {
   if (os_gw->sa_family == AF_INET6)
   {

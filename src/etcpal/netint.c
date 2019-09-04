@@ -42,7 +42,7 @@ etcpal_error_t etcpal_netint_init()
     if (res == kEtcPalErrOk)
     {
       // Sort the interfaces by OS index
-      qsort(netint_cache.netints, netint_cache.num_netints, sizeof(LwpaNetintInfo), compare_netints);
+      qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
     }
   }
 
@@ -78,7 +78,7 @@ size_t etcpal_netint_get_num_interfaces()
  *  \return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
  *          or NULL if there are no interfaces present or the module is not initialized.
  */
-const LwpaNetintInfo* etcpal_netint_get_interfaces()
+const EtcPalNetintInfo* etcpal_netint_get_interfaces()
 {
   return (init_count ? netint_cache.netints : NULL);
 }
@@ -95,13 +95,13 @@ const LwpaNetintInfo* etcpal_netint_get_interfaces()
  *  \return Number of network interfaces that were copied, up to a maximum of netint_arr_size,
  *          or 0 if there are no interfaces present or the module is not initialized.
  */
-size_t etcpal_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
+size_t etcpal_netint_copy_interfaces(EtcPalNetintInfo* netint_arr, size_t netint_arr_size)
 {
   if (!init_count || !netint_arr || netint_arr_size == 0)
     return 0;
 
   size_t addrs_copied = (netint_arr_size < netint_cache.num_netints ? netint_arr_size : netint_cache.num_netints);
-  memcpy(netint_arr, netint_cache.netints, addrs_copied * sizeof(LwpaNetintInfo));
+  memcpy(netint_arr, netint_cache.netints, addrs_copied * sizeof(EtcPalNetintInfo));
   return addrs_copied;
 }
 
@@ -116,14 +116,14 @@ size_t etcpal_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_a
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  *  \return #kEtcPalErrNotFound: No interfaces found for this index.
  */
-etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const LwpaNetintInfo** netint_arr,
+etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const EtcPalNetintInfo** netint_arr,
                                                  size_t* netint_arr_size)
 {
   if (index == 0 || !netint_arr || !netint_arr_size)
     return kEtcPalErrInvalid;
 
   size_t arr_size = 0;
-  for (const LwpaNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
+  for (const EtcPalNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
        ++netint)
   {
     if (netint->index == index)
@@ -214,7 +214,7 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
  *  \return #kEtcPalErrNoNetints: No network interfaces found on system.
  *  \return #kEtcPalErrNotFound: No route was able to be resolved to the destination.
  */
-etcpal_error_t etcpal_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsigned int* netint_index)
+etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index)
 {
   if (!dest || !netint_index)
     return kEtcPalErrInvalid;
@@ -228,8 +228,8 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsi
 
 int compare_netints(const void* a, const void* b)
 {
-  LwpaNetintInfo* netint1 = (LwpaNetintInfo*)a;
-  LwpaNetintInfo* netint2 = (LwpaNetintInfo*)b;
+  EtcPalNetintInfo* netint1 = (EtcPalNetintInfo*)a;
+  EtcPalNetintInfo* netint2 = (EtcPalNetintInfo*)b;
 
   return (netint1->index > netint2->index) - (netint1->index < netint2->index);
 }

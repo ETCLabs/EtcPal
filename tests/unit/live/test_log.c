@@ -31,31 +31,31 @@
 #pragma warning(disable : 4996)
 #endif
 
-FAKE_VOID_FUNC(log_callback, void*, const LwpaLogStrings*);
-FAKE_VOID_FUNC(time_callback, void*, LwpaLogTimeParams*);
+FAKE_VOID_FUNC(log_callback, void*, const EtcPalLogStrings*);
+FAKE_VOID_FUNC(time_callback, void*, EtcPalLogTimeParams*);
 
-LwpaLogTimeParams cur_time;
-LwpaLogStrings last_log_strings_received;
+EtcPalLogTimeParams cur_time;
+EtcPalLogStrings last_log_strings_received;
 
 // Buffers for tests of the create_*_str functions
 static char syslog_buf[ETCPAL_SYSLOG_STR_MAX_LEN];
 static char human_buf[ETCPAL_HUMAN_LOG_STR_MAX_LEN];
 
-static void fill_time_params(void* context, LwpaLogTimeParams* time_params)
+static void fill_time_params(void* context, EtcPalLogTimeParams* time_params)
 {
   (void)context;
   TEST_ASSERT(time_params);
   *time_params = cur_time;
 }
 
-static void save_log_strings(void* context, const LwpaLogStrings* strings)
+static void save_log_strings(void* context, const EtcPalLogStrings* strings)
 {
   (void)context;
   TEST_ASSERT(strings);
   last_log_strings_received = *strings;
 }
 
-static void fill_default_time(LwpaLogTimeParams* time_params)
+static void fill_default_time(EtcPalLogTimeParams* time_params)
 {
   time_params->year = 1970;     // absolute year
   time_params->month = 1;       // month of the year - [1, 12]
@@ -89,7 +89,7 @@ TEST_TEAR_DOWN(etcpal_log)
 // Test the etcpal_sanitize_syslog_params() function.
 TEST(etcpal_log, sanitize_syslog_params_works)
 {
-  LwpaSyslogParams syslog_params;
+  EtcPalSyslogParams syslog_params;
   const unsigned char special_char_array[] = {
       0x01, 0x10, 0x7f,  // Some non-printing chars
       0x41, 0x42, 0x43,  // "ABC"
@@ -111,7 +111,7 @@ TEST(etcpal_log, sanitize_syslog_params_works)
 // Test the etcpal_validate_log_params() function.
 TEST(etcpal_log, validate_log_params_works)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
   const unsigned char special_char_array[] = {
       0x01, 0x10, 0x7f,  // Some non-printing chars
       0x41, 0x42, 0x43,  // "ABC"
@@ -122,7 +122,7 @@ TEST(etcpal_log, validate_log_params_works)
   // Test some normal params
   lparams.action = kEtcPalLogCreateSyslog;
   lparams.log_fn = log_callback;
-  memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
+  memset(&lparams.syslog_params, 0, sizeof(EtcPalSyslogParams));
   memcpy(lparams.syslog_params.app_name, special_char_array, sizeof special_char_array);
   lparams.log_mask = 0;
   lparams.time_fn = time_callback;
@@ -142,10 +142,10 @@ TEST(etcpal_log, validate_log_params_works)
   TEST_ASSERT(etcpal_validate_log_params(&lparams));
 }
 
-// Make sure the "action" member in the LwpaLogParams struct works as expected.
+// Make sure the "action" member in the EtcPalLogParams struct works as expected.
 TEST(etcpal_log, log_action_is_honored)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
   lparams.action = kEtcPalLogCreateSyslog;
 
   lparams.log_fn = log_callback;
@@ -201,10 +201,10 @@ TEST(etcpal_log, log_action_is_honored)
 
 TEST(etcpal_log, context_pointer_is_passed_unmodified)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
   lparams.action = kEtcPalLogCreateHumanReadableLog;
   lparams.log_fn = log_callback;
-  memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
+  memset(&lparams.syslog_params, 0, sizeof(EtcPalSyslogParams));
   lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = NULL;
 
@@ -224,7 +224,7 @@ TEST(etcpal_log, context_pointer_is_passed_unmodified)
 // Test valid, weird, and missing values in the syslog header
 TEST(etcpal_log, syslog_header_is_well_formed)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
 
   // A string with a non-ASCII character: "host\xC8name"
   // Should be sanitized to "host?name"
@@ -294,8 +294,8 @@ TEST(etcpal_log, syslog_header_is_well_formed)
 
 TEST(etcpal_log, syslog_prival_is_correct)
 {
-  LwpaSyslogParams syslog_params;
-  memset(&syslog_params, 0, sizeof(LwpaSyslogParams));
+  EtcPalSyslogParams syslog_params;
+  memset(&syslog_params, 0, sizeof(EtcPalSyslogParams));
 
 #define SYSLOG_PRIVAL_TEST_MESSAGE "Test Message"
 
@@ -316,14 +316,14 @@ TEST(etcpal_log, syslog_prival_is_correct)
   }
 }
 
-// Make sure the log mask member in the LwpaLogParams struct is honored properly.
+// Make sure the log mask member in the EtcPalLogParams struct is honored properly.
 TEST(etcpal_log, log_mask_is_honored)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
 
   lparams.action = kEtcPalLogCreateSyslog;
   lparams.log_fn = log_callback;
-  memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
+  memset(&lparams.syslog_params, 0, sizeof(EtcPalSyslogParams));
   lparams.log_mask = 0;
   lparams.time_fn = NULL;
   lparams.context = NULL;
@@ -379,7 +379,7 @@ TEST(etcpal_log, log_mask_is_honored)
 // Make sure the time header is properly present (or absent) as necessary
 TEST(etcpal_log, time_header_is_well_formed)
 {
-  LwpaSyslogParams syslog_params;
+  EtcPalSyslogParams syslog_params;
 
   memset(&syslog_params, 0, sizeof syslog_params);
   TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, ETCPAL_LOG_EMERG,
@@ -413,11 +413,11 @@ TEST(etcpal_log, time_header_is_well_formed)
 // Test logging of int values in the format string.
 TEST(etcpal_log, formatting_int_values_works)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
 
   lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
-  memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
+  memset(&lparams.syslog_params, 0, sizeof(EtcPalSyslogParams));
   lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = NULL;
   lparams.context = NULL;
@@ -452,11 +452,11 @@ TEST(etcpal_log, formatting_int_values_works)
 // Test logging of string values in the format string.
 TEST(etcpal_log, formatting_string_values_works)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
 
   lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
-  memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
+  memset(&lparams.syslog_params, 0, sizeof(EtcPalSyslogParams));
   lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = NULL;
   lparams.context = NULL;
@@ -504,7 +504,7 @@ static unsigned char get_sanitized_char(size_t i)
 // Test logging a maximum length string.
 TEST(etcpal_log, logging_maximum_length_string_works)
 {
-  LwpaLogParams lparams;
+  EtcPalLogParams lparams;
 
   lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;

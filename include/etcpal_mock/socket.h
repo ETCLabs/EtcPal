@@ -34,35 +34,35 @@
 extern "C" {
 #endif
 
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_accept, etcpal_socket_t, LwpaSockaddr*, etcpal_socket_t*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_bind, etcpal_socket_t, const LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_accept, etcpal_socket_t, EtcPalSockaddr*, etcpal_socket_t*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_bind, etcpal_socket_t, const EtcPalSockaddr*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_close, etcpal_socket_t);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_connect, etcpal_socket_t, const LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getpeername, etcpal_socket_t, LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockname, etcpal_socket_t, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_connect, etcpal_socket_t, const EtcPalSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getpeername, etcpal_socket_t, EtcPalSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockname, etcpal_socket_t, EtcPalSockaddr*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockopt, etcpal_socket_t, int, int, void*, size_t*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_listen, etcpal_socket_t, int);
 DECLARE_FAKE_VALUE_FUNC(int, etcpal_recv, etcpal_socket_t, void*, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, etcpal_recvfrom, etcpal_socket_t, void*, size_t, int, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_recvfrom, etcpal_socket_t, void*, size_t, int, EtcPalSockaddr*);
 DECLARE_FAKE_VALUE_FUNC(int, etcpal_send, etcpal_socket_t, const void*, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, etcpal_sendto, etcpal_socket_t, const void*, size_t, int, const LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_sendto, etcpal_socket_t, const void*, size_t, int, const EtcPalSockaddr*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setsockopt, etcpal_socket_t, int, int, const void*, size_t);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_shutdown, etcpal_socket_t, int);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_socket, unsigned int, unsigned int, etcpal_socket_t*);
 
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setblocking, etcpal_socket_t, bool);
 
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_context_init, LwpaPollContext*);
-DECLARE_FAKE_VOID_FUNC(etcpal_poll_context_deinit, LwpaPollContext*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_add_socket, LwpaPollContext*, etcpal_socket_t, etcpal_poll_events_t, void*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_modify_socket, LwpaPollContext*, etcpal_socket_t, etcpal_poll_events_t,
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_context_init, EtcPalPollContext*);
+DECLARE_FAKE_VOID_FUNC(etcpal_poll_context_deinit, EtcPalPollContext*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_add_socket, EtcPalPollContext*, etcpal_socket_t, etcpal_poll_events_t, void*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_modify_socket, EtcPalPollContext*, etcpal_socket_t, etcpal_poll_events_t,
                         void*);
-DECLARE_FAKE_VOID_FUNC(etcpal_poll_remove_socket, LwpaPollContext*, etcpal_socket_t);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_wait, LwpaPollContext*, LwpaPollEvent*, int);
+DECLARE_FAKE_VOID_FUNC(etcpal_poll_remove_socket, EtcPalPollContext*, etcpal_socket_t);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_wait, EtcPalPollContext*, EtcPalPollEvent*, int);
 
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getaddrinfo, const char*, const char*, const LwpaAddrinfo*, LwpaAddrinfo*);
-DECLARE_FAKE_VALUE_FUNC(bool, etcpal_nextaddr, LwpaAddrinfo*);
-DECLARE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, LwpaAddrinfo*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getaddrinfo, const char*, const char*, const EtcPalAddrinfo*, EtcPalAddrinfo*);
+DECLARE_FAKE_VALUE_FUNC(bool, etcpal_nextaddr, EtcPalAddrinfo*);
+DECLARE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, EtcPalAddrinfo*);
 
 #define ETCPAL_SOCKET_DO_FOR_ALL_FAKES(operation) \
   operation(etcpal_accept);                       \

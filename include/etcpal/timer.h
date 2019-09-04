@@ -39,11 +39,11 @@
  *  monotonically-increasing, wraparound is handled by doing comparisons of the form
  *  \code timeA - timeB > 0 \endcode rather than \code timeA > timeB \endcode.
  */
-typedef struct LwpaTimer
+typedef struct EtcPalTimer
 {
   uint32_t reset_time; /*!< The time at which this timer was reset. */
   uint32_t interval;   /*!< This timer's timeout interval. */
-} LwpaTimer;
+} EtcPalTimer;
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,11 +58,11 @@ uint32_t etcpal_getms();
 
 /* Functions with platform-neutral definitions */
 
-void etcpal_timer_start(LwpaTimer* timer, uint32_t interval);
-void etcpal_timer_reset(LwpaTimer* timer);
-uint32_t etcpal_timer_elapsed(const LwpaTimer* timer);
-bool etcpal_timer_is_expired(const LwpaTimer* timer);
-uint32_t etcpal_timer_remaining(const LwpaTimer* timer);
+void etcpal_timer_start(EtcPalTimer* timer, uint32_t interval);
+void etcpal_timer_reset(EtcPalTimer* timer);
+uint32_t etcpal_timer_elapsed(const EtcPalTimer* timer);
+bool etcpal_timer_is_expired(const EtcPalTimer* timer);
+uint32_t etcpal_timer_remaining(const EtcPalTimer* timer);
 
 #ifdef __cplusplus
 }

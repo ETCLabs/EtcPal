@@ -32,10 +32,10 @@ TEST_TEAR_DOWN(etcpal_inet)
 {
 }
 
-// Test the LwpaIpAddr struct and macros
+// Test the EtcPalIpAddr struct and macros
 TEST(etcpal_inet, ipaddr_macros_work)
 {
-  LwpaIpAddr test_addr;
+  EtcPalIpAddr test_addr;
 
   ETCPAL_IP_SET_V4_ADDRESS(&test_addr, 0x01020304);
   TEST_ASSERT(ETCPAL_IP_IS_V4(&test_addr));
@@ -53,7 +53,7 @@ TEST(etcpal_inet, ipaddr_macros_work)
 // Test the etcpal_ip_is_loopback() function
 TEST(etcpal_inet, ip_is_loopback_works)
 {
-  LwpaIpAddr test_addr;
+  EtcPalIpAddr test_addr;
 
   // An invalid IP is not loopback
   ETCPAL_IP_SET_INVALID(&test_addr);
@@ -85,7 +85,7 @@ TEST(etcpal_inet, ip_is_loopback_works)
 // Test the etcpal_ip_is_multicast() function
 TEST(etcpal_inet, ip_is_multicast_works)
 {
-  LwpaIpAddr test_addr;
+  EtcPalIpAddr test_addr;
 
   // An invalid IP is not multicast
   ETCPAL_IP_SET_INVALID(&test_addr);
@@ -128,7 +128,7 @@ TEST(etcpal_inet, ip_is_multicast_works)
 // any specific value.
 TEST(etcpal_inet, ip_is_wildcard_works)
 {
-  LwpaIpAddr test_addr;
+  EtcPalIpAddr test_addr;
 
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &test_addr);
   TEST_ASSERT(etcpal_ip_is_wildcard(&test_addr));
@@ -140,20 +140,20 @@ TEST(etcpal_inet, ip_is_wildcard_works)
 // Test the etcpal_ip_equal() and etcpal_ip_cmp() functions
 TEST(etcpal_inet, ip_compare_functions_work)
 {
-  LwpaIpAddr v4;
+  EtcPalIpAddr v4;
   ETCPAL_IP_SET_V4_ADDRESS(&v4, 0x01020304);
 
   // Copied address should compare equal
-  LwpaIpAddr v4_copy = v4;
+  EtcPalIpAddr v4_copy = v4;
   TEST_ASSERT(etcpal_ip_equal(&v4_copy, &v4));
   TEST_ASSERT_EQUAL_INT(0, etcpal_ip_cmp(&v4_copy, &v4));
 
-  LwpaIpAddr v6;
+  EtcPalIpAddr v6;
   uint8_t v6_data[ETCPAL_IPV6_BYTES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   ETCPAL_IP_SET_V6_ADDRESS(&v6, v6_data);
 
   // Copied address should compare equal
-  LwpaIpAddr v6_copy = v6;
+  EtcPalIpAddr v6_copy = v6;
   TEST_ASSERT(etcpal_ip_equal(&v6_copy, &v6));
   TEST_ASSERT_EQUAL_INT(0, etcpal_ip_cmp(&v6_copy, &v6));
 
@@ -163,10 +163,10 @@ TEST(etcpal_inet, ip_compare_functions_work)
   TEST_ASSERT_LESS_THAN_INT(0, etcpal_ip_cmp(&v4, &v6));
 
   // Further test the etcpal_ip_cmp() function, with like address types
-  LwpaIpAddr v4_less;
+  EtcPalIpAddr v4_less;
   ETCPAL_IP_SET_V4_ADDRESS(&v4_less, 0x01020303);
 
-  LwpaIpAddr v6_less;
+  EtcPalIpAddr v6_less;
   uint8_t v6_data_less[ETCPAL_IPV6_BYTES];
   memcpy(v6_data_less, v6_data, ETCPAL_IPV6_BYTES);
   v6_data_less[15] = 14;
@@ -185,7 +185,7 @@ TEST(etcpal_inet, ip_compare_functions_work)
 // Test the etcpal_ip_mask_length() function
 TEST(etcpal_inet, ip_mask_length_works)
 {
-  LwpaIpAddr test_mask;
+  EtcPalIpAddr test_mask;
 
   // Test mask: Invalid or null IP
   TEST_ASSERT_EQUAL_UINT(0u, etcpal_ip_mask_length(NULL));
@@ -248,7 +248,7 @@ TEST(etcpal_inet, ip_mask_length_works)
 TEST(etcpal_inet, ip_mask_from_length_works)
 {
   // Test mask: /0, V4
-  LwpaIpAddr mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 0);
+  EtcPalIpAddr mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 0);
   TEST_ASSERT(ETCPAL_IP_IS_V4(&mask_out));
   TEST_ASSERT_EQUAL_UINT32(ETCPAL_IP_V4_ADDRESS(&mask_out), 0u);
 
@@ -324,7 +324,7 @@ const char* test_ip6_fail = "abcd::ef01::2345";
 
 TEST(etcpal_inet, inet_string_functions_work)
 {
-  LwpaIpAddr addr;
+  EtcPalIpAddr addr;
 
   // Test etcpal_inet_pton()
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV4, test_ip4_1, &addr));

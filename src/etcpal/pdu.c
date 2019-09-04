@@ -22,7 +22,7 @@
 /*! \brief Parse a generic ACN PDU.
  *
  *  A function to parse a generic ACN PDU. The specific PDU info needed for parsing is contained in
- *  a struct pdu_constraints. Uses LwpaPdu to maintain state across multiple PDUs in a block.
+ *  a struct pdu_constraints. Uses EtcPalPdu to maintain state across multiple PDUs in a block.
  *
  *  \param[in] buf Byte buffer containing a PDU.
  *  \param[in] buflen Size in bytes of buf.
@@ -31,7 +31,7 @@
  *                     with data from this PDU.
  *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints* constraints, LwpaPdu* pdu)
+bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstraints* constraints, EtcPalPdu* pdu)
 {
   const uint8_t *this_pdu, *buf_end, *prev_vect, *prev_head, *prev_data, *cur_ptr;
   uint8_t flags_byte;

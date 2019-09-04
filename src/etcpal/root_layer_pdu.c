@@ -48,7 +48,7 @@
  *  \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
  *          contain a valid TCP preamble).
  */
-bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble* preamble)
+bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPreamble* preamble)
 {
   if (!preamble || !buf || (buflen < ACN_TCP_PREAMBLE_SIZE))
     return false;
@@ -73,7 +73,7 @@ bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreambl
  *  \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
  *          contain a valid UDP preamble).
  */
-bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble* preamble)
+bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPreamble* preamble)
 {
   const uint8_t* pcur;
   uint16_t preamble_len, postamble_len;
@@ -107,7 +107,7 @@ bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreambl
  *                      first PDU in the block.
  *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaRootLayerPdu* last_pdu)
+bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalRootLayerPdu* last_pdu)
 {
   uint32_t min_pdu_len, pdu_len;
   bool extlength, inheritvect, inherithead, inheritdata;
@@ -173,8 +173,8 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootL
 
 /*! \brief Parse an ACN Root Layer PDU.
  *
- *  Parse a Root Layer PDU from a Root Layer PDU block. Fills in the LwpaRootLayerPdu structure with
- *  the parsed PDU information, and stores state data in a LwpaPdu structure for parsing the next
+ *  Parse a Root Layer PDU from a Root Layer PDU block. Fills in the EtcPalRootLayerPdu structure with
+ *  the parsed PDU information, and stores state data in a EtcPalPdu structure for parsing the next
  *  PDU in the block, if there is one.
  *
  *  Example usage:
@@ -184,11 +184,11 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootL
  *  length parsed from the preamble...
  *
  *  \code
- *  LwpaPdu pdu = ETCPAL_PDU_INIT; // Must initialize this!!
+ *  EtcPalPdu pdu = ETCPAL_PDU_INIT; // Must initialize this!!
  *  bool res = false;
  *  do
  *  {
- *      LwpaRootLayerPdu cur;
+ *      EtcPalRootLayerPdu cur;
  *      res = etcpal_parse_root_layer_pdu(buf, buflen, &cur, &pdu);
  *      if (res)
  *      {
@@ -205,9 +205,9 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootL
  *  \param[in,out] last_pdu State data for future calls.
  *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaPdu* last_pdu)
+bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalPdu* last_pdu)
 {
-  LwpaPduConstraints rlp_constraints = {/* vector_size */ 4,
+  EtcPalPduConstraints rlp_constraints = {/* vector_size */ 4,
                                         /* header_size */ 16};
 
   if (!buf || !pdu || !last_pdu)
@@ -279,15 +279,15 @@ size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_le
 /*! \brief Get the buffer size to allocate for a Root Layer PDU block.
  *
  *  Calculate the buffer size to allocate for a future call to etcpal_pack_root_layer_block(), given
- *  an array of LwpaRootLayerPdu.
+ *  an array of EtcPalRootLayerPdu.
  *
  *  \param[in] pdu_block Array of structs representing a Root Layer PDU block.
  *  \param[in] num_pdus Size of the pdu_block array.
  *  \return Buffer size to allocate.
  */
-size_t etcpal_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pdus)
+size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t num_pdus)
 {
-  const LwpaRootLayerPdu* pdu;
+  const EtcPalRootLayerPdu* pdu;
   size_t block_size = 0;
 
   for (pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
@@ -311,7 +311,7 @@ size_t etcpal_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_
  * \param[in] pdu PDU for which to pack the header into a buffer.
  * \return Number of bytes packed (success) or 0 (failure).
  */
-size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu)
+size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu)
 {
   uint8_t* cur_ptr = buf;
 
@@ -343,17 +343,17 @@ size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRoot
  *
  *  \param[out] buf Buffer into which to pack the Root Layer PDU block.
  *  \param[in] buflen Size in bytes of buf.
- *  \param[in] pdu_block Array of LwpaRootLayerPdu representing the PDU block to pack.
- *  \param[in] num_pdus Number of LwpaRootLayerPdu that make up the pdu_block array.
+ *  \param[in] pdu_block Array of EtcPalRootLayerPdu representing the PDU block to pack.
+ *  \param[in] num_pdus Number of EtcPalRootLayerPdu that make up the pdu_block array.
  *  \return Number of bytes packed (success) or 0 (failure). Note that this might be less than the
  *          value returned by etcpal_root_layer_buf_size(); this is because this function performs
  *          more optimizations related to PDU inheritance.
  */
-size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu_block, size_t num_pdus)
+size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu_block, size_t num_pdus)
 {
   uint8_t* cur_ptr = buf;
-  const LwpaRootLayerPdu* pdu;
-  LwpaRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
+  const EtcPalRootLayerPdu* pdu;
+  EtcPalRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
 
   if (!buf || !pdu_block || (etcpal_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
   {

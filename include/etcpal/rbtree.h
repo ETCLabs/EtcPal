@@ -57,8 +57,8 @@
 #define ETCPAL_RB_ITER_MAX_HEIGHT 64
 #endif
 
-typedef struct LwpaRbNode LwpaRbNode;
-typedef struct LwpaRbTree LwpaRbTree;
+typedef struct EtcPalRbNode EtcPalRbNode;
+typedef struct EtcPalRbTree EtcPalRbTree;
 
 /*! \name Callback Functions
  *  @{
@@ -76,7 +76,7 @@ typedef struct LwpaRbTree LwpaRbTree;
  *            0 (node_a's value is equal to node_b's value)\n
  *          > 0 (node_a's value is greater than node_b's value)
  */
-typedef int (*etcpal_rbtree_node_cmp_f)(const LwpaRbTree* self, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
+typedef int (*etcpal_rbtree_node_cmp_f)(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
 
 /*! \brief A function type to be called for each node in a tree.
  *
@@ -88,7 +88,7 @@ typedef int (*etcpal_rbtree_node_cmp_f)(const LwpaRbTree* self, const LwpaRbNode
  *  \param[in] self The tree in which the node resides.
  *  \param[in] node The node for which an action should be performed.
  */
-typedef void (*etcpal_rbtree_node_f)(const LwpaRbTree* self, LwpaRbNode* node);
+typedef void (*etcpal_rbtree_node_f)(const EtcPalRbTree* self, EtcPalRbNode* node);
 
 /*! \brief A function type to allocate a new node.
  *
@@ -98,7 +98,7 @@ typedef void (*etcpal_rbtree_node_f)(const LwpaRbTree* self, LwpaRbNode* node);
  *
  *  \return Pointer to the newly allocated node.
  */
-typedef LwpaRbNode* (*etcpal_rbnode_alloc_f)();
+typedef EtcPalRbNode* (*etcpal_rbnode_alloc_f)();
 
 /*! \brief A function type to deallocate a node.
  *
@@ -108,15 +108,15 @@ typedef LwpaRbNode* (*etcpal_rbnode_alloc_f)();
  *
  *  \param[in] node Pointer to node to deallocate.
  */
-typedef void (*etcpal_rbnode_dealloc_f)(LwpaRbNode* node);
+typedef void (*etcpal_rbnode_dealloc_f)(EtcPalRbNode* node);
 
 /*! @} */
 
 /*! \brief A red-black tree node. */
-struct LwpaRbNode
+struct EtcPalRbNode
 {
   int red;             /*!< The node color: red (1), black (0) */
-  LwpaRbNode* link[2]; /*!< Child node links: left [0], right [1] */
+  EtcPalRbNode* link[2]; /*!< Child node links: left [0], right [1] */
   void* value;         /*!< The value object represented by this node. */
 };
 
@@ -124,9 +124,9 @@ struct LwpaRbNode
  *
  *  Initialize using etcpal_rbtree_init() before carrying out any other operation on the tree.
  */
-struct LwpaRbTree
+struct EtcPalRbTree
 {
-  LwpaRbNode* root;                /*!< The root node of the tree. */
+  EtcPalRbNode* root;                /*!< The root node of the tree. */
   etcpal_rbtree_node_cmp_f cmp;      /*!< A function to use for comparing two nodes. */
   size_t size;                     /*!< The current count of nodes in the tree. */
   etcpal_rbnode_alloc_f alloc_f;     /*!< A function to use for allocating a new node.*/
@@ -138,43 +138,43 @@ struct LwpaRbTree
  *
  *  Initialize using etcpal_rbiter_init() before carrying out any other operation on the iterator.
  */
-typedef struct LwpaRbIter
+typedef struct EtcPalRbIter
 {
-  LwpaRbTree* tree;                          /*!< The tree being iterated over. */
-  LwpaRbNode* node;                          /*!< The current node. */
-  LwpaRbNode* path[ETCPAL_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
+  EtcPalRbTree* tree;                          /*!< The tree being iterated over. */
+  EtcPalRbNode* node;                          /*!< The current node. */
+  EtcPalRbNode* path[ETCPAL_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
   size_t top;                                /*!< Top of the traversal stack. */
   void* info;                                /*!< User provided, not used by etcpal_rbiter. */
-} LwpaRbIter;
+} EtcPalRbIter;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int etcpal_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b);
-void etcpal_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node);
+int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const EtcPalRbNode* a, const EtcPalRbNode* b);
+void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node);
 
-LwpaRbNode* etcpal_rbnode_init(LwpaRbNode* self, void* value);
+EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value);
 
-LwpaRbTree* etcpal_rbtree_init(LwpaRbTree* self, etcpal_rbtree_node_cmp_f cmp, etcpal_rbnode_alloc_f alloc_f,
+EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, etcpal_rbtree_node_cmp_f cmp, etcpal_rbnode_alloc_f alloc_f,
                              etcpal_rbnode_dealloc_f dealloc_f);
-void* etcpal_rbtree_find(LwpaRbTree* self, void* value);
-etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value);
-etcpal_error_t etcpal_rbtree_remove(LwpaRbTree* self, void* value);
-etcpal_error_t etcpal_rbtree_clear(LwpaRbTree* self);
-size_t etcpal_rbtree_size(LwpaRbTree* self);
+void* etcpal_rbtree_find(EtcPalRbTree* self, void* value);
+etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value);
+etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value);
+etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree* self);
+size_t etcpal_rbtree_size(EtcPalRbTree* self);
 
-etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node);
-etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpal_rbtree_node_f node_cb);
-etcpal_error_t etcpal_rbtree_clear_with_cb(LwpaRbTree* self, etcpal_rbtree_node_f node_cb);
+etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node);
+etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, etcpal_rbtree_node_f node_cb);
+etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, etcpal_rbtree_node_f node_cb);
 
-int etcpal_rbtree_test(LwpaRbTree* self, LwpaRbNode* root);
+int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root);
 
-LwpaRbIter* etcpal_rbiter_init(LwpaRbIter* self);
-void* etcpal_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree);
-void* etcpal_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree);
-void* etcpal_rbiter_next(LwpaRbIter* self);
-void* etcpal_rbiter_prev(LwpaRbIter* self);
+EtcPalRbIter* etcpal_rbiter_init(EtcPalRbIter* self);
+void* etcpal_rbiter_first(EtcPalRbIter* self, EtcPalRbTree* tree);
+void* etcpal_rbiter_last(EtcPalRbIter* self, EtcPalRbTree* tree);
+void* etcpal_rbiter_next(EtcPalRbIter* self);
+void* etcpal_rbiter_prev(EtcPalRbIter* self);
 
 #ifdef __cplusplus
 }

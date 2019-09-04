@@ -28,11 +28,11 @@
 extern "C" {
 #endif
 
-typedef struct LwpaThreadParamsMqx
+typedef struct EtcPalThreadParamsMqx
 {
   _mqx_uint task_attributes;
   _mqx_uint time_slice;
-} LwpaThreadParamsMqx;
+} EtcPalThreadParamsMqx;
 
 #define ETCPAL_THREAD_DEFAULT_PRIORITY 11
 #define ETCPAL_THREAD_DEFAULT_STACK 8000

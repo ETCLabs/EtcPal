@@ -26,7 +26,7 @@ static const uint8_t v6_loopback[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0
 
 /*************************** Function definitions ****************************/
 
-/*! \brief Determine whether a LwpaIpAddr contains a link-local address.
+/*! \brief Determine whether a EtcPalIpAddr contains a link-local address.
  *
  *  Works for both IPv4 and IPv6 addresses.
  *
@@ -34,7 +34,7 @@ static const uint8_t v6_loopback[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0
  *  \return true: ip contains a link-local address.
  *  \return false: ip does not contain a link-local address.
  */
-bool etcpal_ip_is_link_local(const LwpaIpAddr* ip)
+bool etcpal_ip_is_link_local(const EtcPalIpAddr* ip)
 {
   if (ip)
   {
@@ -53,7 +53,7 @@ bool etcpal_ip_is_link_local(const LwpaIpAddr* ip)
   return false;
 }
 
-/*! \brief Determine whether a LwpaIpAddr contains a loopback address.
+/*! \brief Determine whether a EtcPalIpAddr contains a loopback address.
  *
  *  Works for both IPv4 and IPv6 addresses.
  *
@@ -61,7 +61,7 @@ bool etcpal_ip_is_link_local(const LwpaIpAddr* ip)
  *  \return true: ip contains a loopback address.
  *  \return false: ip does not contain a loopback address.
  */
-bool etcpal_ip_is_loopback(const LwpaIpAddr* ip)
+bool etcpal_ip_is_loopback(const EtcPalIpAddr* ip)
 {
   if (ip)
   {
@@ -79,7 +79,7 @@ bool etcpal_ip_is_loopback(const LwpaIpAddr* ip)
   return false;
 }
 
-/*! \brief Determine whether a LwpaIpAddr contains a multicast address.
+/*! \brief Determine whether a EtcPalIpAddr contains a multicast address.
  *
  *  Works for both IPv4 and IPv6 addresses.
  *
@@ -87,7 +87,7 @@ bool etcpal_ip_is_loopback(const LwpaIpAddr* ip)
  *  \return true: ip contains a multicast address.
  *  \return false: ip does not contain a multicast address.
  */
-bool etcpal_ip_is_multicast(const LwpaIpAddr* ip)
+bool etcpal_ip_is_multicast(const EtcPalIpAddr* ip)
 {
   if (ip)
   {
@@ -106,7 +106,7 @@ bool etcpal_ip_is_multicast(const LwpaIpAddr* ip)
   return false;
 }
 
-/*! \brief Determine whether a LwpaIpAddr contains a wildcard address.
+/*! \brief Determine whether a EtcPalIpAddr contains a wildcard address.
  *
  *  Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
  *  etcpal_bind() to indicate that a socket should be bound to all available network interfaces. It
@@ -117,7 +117,7 @@ bool etcpal_ip_is_multicast(const LwpaIpAddr* ip)
  *  \return true: ip contains a wildcard address.
  *  \return false: ip does not contain a wildcard address.
  */
-bool etcpal_ip_is_wildcard(const LwpaIpAddr* ip)
+bool etcpal_ip_is_wildcard(const EtcPalIpAddr* ip)
 {
   if (ip)
   {
@@ -134,7 +134,7 @@ bool etcpal_ip_is_wildcard(const LwpaIpAddr* ip)
   return false;
 }
 
-/*! \brief Initialize a LwpaIpAddr with a wildcard address.
+/*! \brief Initialize a EtcPalIpAddr with a wildcard address.
  *
  *  Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
  *  etcpal_bind() to indicate that a socket should be bound to all available network interfaces. It
@@ -144,7 +144,7 @@ bool etcpal_ip_is_wildcard(const LwpaIpAddr* ip)
  *  \param[in] type Type of wildcard to create, either IPv4 or IPv6.
  *  \param[out] ip Address in which to store the wildcard value.
  */
-void etcpal_ip_set_wildcard(etcpal_iptype_t type, LwpaIpAddr* ip)
+void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip)
 {
   if (ip)
   {
@@ -163,16 +163,16 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, LwpaIpAddr* ip)
   }
 }
 
-/*! \brief Determine whether two instances of LwpaIpAddr contain identical addresses.
+/*! \brief Determine whether two instances of EtcPalIpAddr contain identical addresses.
  *
  *  The type (IPv4 or IPv6) must be the same, as well as the value of the relevant address.
  *
- *  \param[in] ip1 First LwpaIpAddr to compare.
- *  \param[in] ip2 Second LwpaIpAddr to compare.
+ *  \param[in] ip1 First EtcPalIpAddr to compare.
+ *  \param[in] ip2 Second EtcPalIpAddr to compare.
  *  \return true: IPs are identical.
  *  \return false: IPs are not identical.
  */
-bool etcpal_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
+bool etcpal_ip_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2)
 {
   if (ip1 && ip2 && ip1->type == ip2->type)
   {
@@ -188,7 +188,7 @@ bool etcpal_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
   return false;
 }
 
-/*! Compare two LwpaIpAddrs.
+/*! Compare two EtcPalIpAddrs.
  *
  *  Rules for comparison:
  *  * All Invalid addresses are considered to be equal to each other and < all IPv4 and IPv6
@@ -196,13 +196,13 @@ bool etcpal_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
  *  * All IPv4 addresses are considered to be < all IPv6 addresses
  *  * For two IPv4 or IPv6 addresses, the numerical address value is compared
  *
- *  \param[in] ip1 First LwpaIpAddr to compare.
- *  \param[in] ip2 Second LwpaIpAddr to compare.
+ *  \param[in] ip1 First EtcPalIpAddr to compare.
+ *  \param[in] ip2 Second EtcPalIpAddr to compare.
  *  \return < 0: ip1 < ip2
  *  \return 0: ip1 == ip2
  *  \return > 0: ip1 > ip2
  */
-int etcpal_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
+int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2)
 {
   if (ip1 && ip2)
   {
@@ -222,13 +222,13 @@ int etcpal_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
   return 0;
 }
 
-/*! \brief Determine whether two instances of LwpaSockaddr contain identical IP addresses and ports.
- *  \param[in] sock1 First LwpaSockaddr to compare.
- *  \param[in] sock2 Second LwpaSockaddr to compare.
+/*! \brief Determine whether two instances of EtcPalSockaddr contain identical IP addresses and ports.
+ *  \param[in] sock1 First EtcPalSockaddr to compare.
+ *  \param[in] sock2 Second EtcPalSockaddr to compare.
  *  \return true: the IP address and port are identical.
  *  \return false: the IP address and port are not identical.
  */
-bool etcpal_ip_and_port_equal(const LwpaSockaddr* sock1, const LwpaSockaddr* sock2)
+bool etcpal_ip_and_port_equal(const EtcPalSockaddr* sock1, const EtcPalSockaddr* sock2)
 {
   if (sock1 && sock2)
     return (etcpal_ip_equal(&sock1->ip, &sock2->ip) && sock1->port == sock2->port);
@@ -248,7 +248,7 @@ bool etcpal_ip_and_port_equal(const LwpaSockaddr* sock1, const LwpaSockaddr* soc
  *  \param[in] netmask Netmask to count.
  *  \return Number of set bits in the netmask.
  */
-unsigned int etcpal_ip_mask_length(const LwpaIpAddr* netmask)
+unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask)
 {
   unsigned int length = 0;
 
@@ -300,11 +300,11 @@ unsigned int etcpal_ip_mask_length(const LwpaIpAddr* netmask)
  *
  *  \param[in] type Type of netmask to create, either IPv4 or IPv6.
  *  \param[in] mask_length Length in bits of the mask, counting from the MSB.
- *  \return LwpaIpAddr containing the netmask.
+ *  \return EtcPalIpAddr containing the netmask.
  */
-LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length)
+EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length)
 {
-  LwpaIpAddr result;
+  EtcPalIpAddr result;
 
   if (type == kEtcPalIpTypeV4)
   {
@@ -361,15 +361,15 @@ LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_le
  *  ip1 = 2001:db8::1; ip2 = 2001:db8::2; netmask = ffff:ffff:ffff:ffff:: (/64); result = true
  *  ip1 = 2001:db8:1::1; ip2 = 2001:db8:2::1; netmask = ffff:ffff:ffff:ffff:: (/64); result = false
  *
- *  \param[in] ip1 First LwpaIpAddr to compare.
- *  \param[in] ip2 Second LwpaIpAddr to compare.
+ *  \param[in] ip1 First EtcPalIpAddr to compare.
+ *  \param[in] ip2 Second EtcPalIpAddr to compare.
  *  \param[in] netmask The netmask to use for the comparison. This mask is used to determine the
  *                     network portion of each address. The etcpal_ip_mask_from_length() function can
  *                     be used to turn a mask or prefix bit length into a mask.
  *  \return true: The network portions of the IP addresses are equal.
  *  \return false: The network portions are not equal.
  */
-bool etcpal_ip_network_portions_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* netmask)
+bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2, const EtcPalIpAddr* netmask)
 {
   if (ETCPAL_IP_IS_V4(ip1) && ETCPAL_IP_IS_V4(ip2) && ETCPAL_IP_IS_V4(netmask))
   {

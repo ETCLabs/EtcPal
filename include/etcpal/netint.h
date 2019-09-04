@@ -40,13 +40,13 @@ extern "C" {
 #endif
 
 size_t etcpal_netint_get_num_interfaces();
-const LwpaNetintInfo* etcpal_netint_get_interfaces();
-size_t etcpal_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size);
-etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const LwpaNetintInfo** netint_arr,
+const EtcPalNetintInfo* etcpal_netint_get_interfaces();
+size_t etcpal_netint_copy_interfaces(EtcPalNetintInfo* netint_arr, size_t netint_arr_size);
+etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const EtcPalNetintInfo** netint_arr,
                                                  size_t* netint_arr_size);
 
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index);
-etcpal_error_t etcpal_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsigned int* netint_index);
+etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index);
 
 #ifdef __cplusplus
 }

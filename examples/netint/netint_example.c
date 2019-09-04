@@ -39,13 +39,13 @@ static char line_format[FORMAT_BUF_SIZE];
 #define INDEX_COL_HEADER "OS Index"
 
 // Create a format string for printf based on the column width of the longest entry in each column
-void create_format_strings(const LwpaNetintInfo* netint_arr, size_t num_interfaces)
+void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interfaces)
 {
   size_t longest_name = 0;
   size_t longest_addr = 0;
   size_t longest_netmask = 0;
 
-  for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
     char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
     char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
@@ -95,7 +95,7 @@ int main()
     return 1;
   }
 
-  const LwpaNetintInfo* netint_arr = etcpal_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_arr = etcpal_netint_get_interfaces();
   assert(netint_arr);
 
   create_format_strings(netint_arr, num_interfaces);
@@ -103,7 +103,7 @@ int main()
   printf("Network interfaces found:\n");
   printf(header_format, NAME_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER);
 
-  for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
     char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
     char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
@@ -119,7 +119,7 @@ int main()
   unsigned int default_v4;
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &default_v4))
   {
-    const LwpaNetintInfo* addr_arr;
+    const EtcPalNetintInfo* addr_arr;
     size_t addr_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
@@ -130,7 +130,7 @@ int main()
   unsigned int default_v6;
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &default_v6))
   {
-    const LwpaNetintInfo* addr_arr;
+    const EtcPalNetintInfo* addr_arr;
     size_t addr_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {

@@ -73,7 +73,7 @@ typedef uint32_t etcpal_poll_events_t;
 #define ETCPAL_SO_BROADCAST 0  /*!< Get/Set, value is boolean int */
 #define ETCPAL_SO_ERROR     1  /*!< Get only, value is int representing platform error value */
 #define ETCPAL_SO_KEEPALIVE 2  /*!< Get/Set, value is boolean int */
-#define ETCPAL_SO_LINGER    3  /*!< Get/Set, value is LwpaLinger */
+#define ETCPAL_SO_LINGER    3  /*!< Get/Set, value is EtcPalLinger */
 #define ETCPAL_SO_RCVBUF    4  /*!< Get/Set, value is int representing byte size */
 #define ETCPAL_SO_SNDBUF    5  /*!< Get/Set, value is int representing byte size */
 #define ETCPAL_SO_RCVTIMEO  6  /*!< Get/Set, value is int representing ms */
@@ -95,13 +95,13 @@ typedef uint32_t etcpal_poll_events_t;
 #define ETCPAL_IP_MULTICAST_TTL   13
 #define ETCPAL_IP_MULTICAST_LOOP  14 /*!< Get/Set, value is boolean int */
 /*! [Legacy IPv4-only option, use of #ETCPAL_MCAST_JOIN_GROUP is preferred] Set only, value is
- *  LwpaMreq. */
+ *  EtcPalMreq. */
 #define ETCPAL_IP_ADD_MEMBERSHIP  15
 /*! [Legacy IPv4-only option, use of #ETCPAL_MCAST_LEAVE_GROUP is preferred] Set only, value is
- *  LwpaMreq. */
+ *  EtcPalMreq. */
 #define ETCPAL_IP_DROP_MEMBERSHIP 16
-#define ETCPAL_MCAST_JOIN_GROUP   17 /*!< Set only, value is LwpaGroupReq */
-#define ETCPAL_MCAST_LEAVE_GROUP  18 /*!< Set only, value is LwpaGroupReq */
+#define ETCPAL_MCAST_JOIN_GROUP   17 /*!< Set only, value is EtcPalGroupReq */
+#define ETCPAL_MCAST_LEAVE_GROUP  18 /*!< Set only, value is EtcPalGroupReq */
 #define ETCPAL_IPV6_V6ONLY        19 /*!< Get/Set, value is boolean int */
 /*! @} */
 
@@ -110,30 +110,30 @@ typedef uint32_t etcpal_poll_events_t;
 /* ETCPAL_IPPROTO_TCP: TODO */
 
 /*! Option value for #ETCPAL_SO_LINGER. */
-typedef struct LwpaLinger
+typedef struct EtcPalLinger
 {
   int onoff;  /*!< 0 = off, nonzero = on */
   int linger; /*!< Linger time in seconds */
-} LwpaLinger;
+} EtcPalLinger;
 
 /*! Option value for #ETCPAL_IP_ADD_MEMBERSHIP and #ETCPAL_IP_DROP_MEMBERSHIP. */
-typedef struct LwpaMreq
+typedef struct EtcPalMreq
 {
   /*! Address of network interface on which to join the multicast group. */
-  LwpaIpAddr netint;
+  EtcPalIpAddr netint;
   /*! Multicast group to join. */
-  LwpaIpAddr group;
-} LwpaMreq;
+  EtcPalIpAddr group;
+} EtcPalMreq;
 
 /*! Option value for #ETCPAL_MCAST_JOIN_GROUP and #ETCPAL_MCAST_LEAVE_GROUP. */
-typedef struct LwpaGroupReq
+typedef struct EtcPalGroupReq
 {
   /*! Index of network interface on which to join the multicast group (see
    *  \ref interface_indexes). */
   unsigned int ifindex;
   /*! Multicast group to join. */
-  LwpaIpAddr group;
-} LwpaGroupReq;
+  EtcPalIpAddr group;
+} EtcPalGroupReq;
 
 /*! \name 'how' values for etcpal_shutdown()
  *  @{ */
@@ -142,7 +142,7 @@ typedef struct LwpaGroupReq
 #define ETCPAL_SHUT_RDWR 2
 /*! @} */
 
-/*! \name 'family' values for etcpal_socket() and LwpaAddrinfo
+/*! \name 'family' values for etcpal_socket() and EtcPalAddrinfo
  *  @{ */
 #define ETCPAL_AF_UNSPEC 0
 #define ETCPAL_AF_INET 1
@@ -161,20 +161,20 @@ typedef struct LwpaGroupReq
 extern "C" {
 #endif
 
-etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr* address, etcpal_socket_t* conn_sock);
-etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr* address);
+etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal_socket_t* conn_sock);
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address);
 etcpal_error_t etcpal_close(etcpal_socket_t id);
-etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr* address);
-etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr* address);
-etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr* address);
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address);
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address);
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address);
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len);
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog);
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags);
-int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address);
+int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address);
 /* recvmsg - not implemented */
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags);
 /* sendmsg - not implemented */
-int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr);
+int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr);
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value, size_t option_len);
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
 etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t* id);
@@ -201,26 +201,26 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
 #define ETCPAL_POLL_VALID_INPUT_EVENT_MASK 0x0fu
 
 /*! A description of an event that occurred on a socket, for usage with etcpal_poll_wait(). */
-typedef struct LwpaPollEvent
+typedef struct EtcPalPollEvent
 {
   etcpal_socket_t socket;      /*!< Socket which had activity. */
   etcpal_poll_events_t events; /*!< Event(s) that occurred on the socket. */
   etcpal_error_t err;          /*!< More information about an error that occurred on the socket. */
   void* user_data;           /*!< The user data that was given when this socket was added. */
-} LwpaPollEvent;
+} EtcPalPollEvent;
 
-etcpal_error_t etcpal_poll_context_init(LwpaPollContext* context);
-void etcpal_poll_context_deinit(LwpaPollContext* context);
-etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
+etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context);
+void etcpal_poll_context_deinit(EtcPalPollContext* context);
+etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
                                   void* user_data);
-etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
+etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
                                      void* new_user_data);
-void etcpal_poll_remove_socket(LwpaPollContext* context, etcpal_socket_t socket);
-etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms);
+void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socket);
+etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* event, int timeout_ms);
 
 /************************ Mimic getaddrinfo() API ****************************/
 
-/*! \name 'flags' values for LwpaAddrinfo
+/*! \name 'flags' values for EtcPalAddrinfo
  *
  *  Refer to the similarly-named flags in your favorite getaddrinfo() man page for more details.
  *  @{ */
@@ -231,24 +231,24 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, 
 
 /*! A structure containing name and address information about an internet host. Returned by
  *  etcpal_getaddrinfo(). */
-typedef struct LwpaAddrinfo
+typedef struct EtcPalAddrinfo
 {
   int ai_flags;         /*!< i.e. ETCPAL_AI_xxx */
   int ai_family;        /*!< i.e. ETCPAL_AF_xxx */
   int ai_socktype;      /*!< i.e. ETCPAL_STREAM or ETCPAL_DGRAM */
   int ai_protocol;      /*!< i.e. ETCPAL_IPPROTO_xxx */
   char* ai_canonname;   /*!< Canonical name for host */
-  LwpaSockaddr ai_addr; /*!< Address of host */
+  EtcPalSockaddr ai_addr; /*!< Address of host */
   void* pd[2];          /*!< Used by internal platform logic; don't touch */
-} LwpaAddrinfo;
+} EtcPalAddrinfo;
 
-etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
-                              LwpaAddrinfo* result);
+etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const EtcPalAddrinfo* hints,
+                              EtcPalAddrinfo* result);
 
-bool etcpal_nextaddr(LwpaAddrinfo* ai);
+bool etcpal_nextaddr(EtcPalAddrinfo* ai);
 
-/* Call with any of the LwpaAddrinfos in the list to free the whole list */
-void etcpal_freeaddrinfo(LwpaAddrinfo* ai);
+/* Call with any of the EtcPalAddrinfos in the list to free the whole list */
+void etcpal_freeaddrinfo(EtcPalAddrinfo* ai);
 
 #ifdef __cplusplus
 }

@@ -44,7 +44,7 @@ void wait_and_exit(void* param)
 // Basic test of the three thread functions.
 TEST(etcpal_thread, create_and_destroy_functions_work)
 {
-  LwpaThreadParams params = {
+  EtcPalThreadParams params = {
       ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
       ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
       "cd_thread",                   // thread_name
@@ -87,7 +87,7 @@ void oneshot(void* param)
 // get a chance to set its flag. Failure mode could be the flag not being set or a full test timeout.
 TEST(etcpal_thread, threads_are_time_sliced)
 {
-  LwpaThreadParams params = {
+  EtcPalThreadParams params = {
       ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
       ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
       "ts_thread",                   // thread_name

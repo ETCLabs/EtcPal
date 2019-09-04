@@ -70,7 +70,7 @@ unsigned __stdcall thread_func_internal(void* pthread)
   return 1;
 }
 
-bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;

@@ -26,7 +26,7 @@
 // Use Windows APIs to generate UUIDs.
 // https://docs.microsoft.com/en-us/windows/desktop/api/rpcdce/nf-rpcdce-uuidcreate
 
-etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
 {
   if (!uuid)
     return kEtcPalErrInvalid;
@@ -46,7 +46,7 @@ etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
   }
 }
 
-etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
 {
   if (!uuid)
     return kEtcPalErrInvalid;
@@ -66,7 +66,7 @@ etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
   }
 }
 
-etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
 {
   return etcpal_generate_v4_uuid(uuid);
 }

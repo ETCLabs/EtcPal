@@ -25,14 +25,14 @@
 
 #if ETCPAL_EMBOS_USE_MALLOC
 #include <stdlib.h>
-static LwpaNetintInfo* static_netints;
+static EtcPalNetintInfo* static_netints;
 #else
-static LwpaNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS];
+static EtcPalNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS];
 #endif
 size_t num_static_netints;
 size_t default_index;
 
-static void copy_common_interface_info(const struct netif* lwip_netif, LwpaNetintInfo* netint)
+static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
 {
   netint->index = netif_get_index(lwip_netif);
   memset(netint->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
@@ -46,7 +46,7 @@ static void copy_common_interface_info(const struct netif* lwip_netif, LwpaNetin
   }
 }
 
-static void copy_interface_info_v4(const struct netif* lwip_netif, LwpaNetintInfo* netint)
+static void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
 {
   copy_common_interface_info(lwip_netif, netint);
 
@@ -62,7 +62,7 @@ static void copy_interface_info_v4(const struct netif* lwip_netif, LwpaNetintInf
     netint->is_default = false;
 }
 
-static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, LwpaNetintInfo* netint)
+static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
 {
   copy_common_interface_info(lwip_netif, netint);
 
@@ -108,7 +108,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     }
 #endif
   }
-  cache->netints = (LwpaNetintInfo*)calloc(sizeof(LwpaNetintInfo), num_lwip_netints);
+  cache->netints = (EtcPalNetintInfo*)calloc(sizeof(EtcPalNetintInfo), num_lwip_netints);
   if (!cache->netints)
     return kEtcPalErrNoMem;
 #endif
@@ -183,11 +183,11 @@ void os_free_interfaces(CachedNetintInfo* cache)
 #endif
 }
 
-etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   unsigned int index_found = 0;
 
-  for (const LwpaNetintInfo* netint = static_netints; netint < static_netints + num_static_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = static_netints; netint < static_netints + num_static_netints; ++netint)
   {
     if (!etcpal_ip_is_wildcard(&netint->mask) && etcpal_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {

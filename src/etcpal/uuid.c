@@ -29,7 +29,7 @@
 #define ETCPAL_SPRINTF sprintf
 #endif
 
-const LwpaUuid kEtcPalNullUuid = {{0}};
+const EtcPalUuid kEtcPalNullUuid = {{0}};
 
 /*! \brief Create a string representation of a UUID.
  *
@@ -40,7 +40,7 @@ const LwpaUuid kEtcPalNullUuid = {{0}};
  *                  behavior, this buffer should be at least of size #ETCPAL_UUID_STRING_BYTES.
  *  \param[in] uuid UUID to convert to a string.
  */
-void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid)
+void etcpal_uuid_to_string(char* buf, const EtcPalUuid* uuid)
 {
   const uint8_t* c = uuid->data;
 
@@ -52,7 +52,7 @@ void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid)
 
 /*! \brief Create a UUID from a string representation.
  *
- *  Parses a string-represented UUID and fills in a LwpaUuid structure with the result. The input
+ *  Parses a string-represented UUID and fills in a EtcPalUuid structure with the result. The input
  *  should be of the form: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (hexadecimal letters can be upper-
  *  or lowercase).
  *
@@ -61,7 +61,7 @@ void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid)
  *  \param[in] buflen Size in bytes of buf.
  *  \return true (parse successful) or false (parse failure).
  */
-bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
+bool etcpal_string_to_uuid(EtcPalUuid* uuid, const char* buf, size_t buflen)
 {
   const char* from_ptr = buf;
   uint8_t to_buf[ETCPAL_UUID_BYTES];
@@ -108,7 +108,7 @@ bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
-/*! \fn etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid *uuid)
+/*! \fn etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid *uuid)
  *  \brief Generate a Version 1 UUID.
  *
  *  This function uses the underlying OS API to create a UUID that is based on a combination of a
@@ -129,7 +129,7 @@ bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
  */
 
 /* Quick utility for generating a uuid out of a md5 hash buffer */
-static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
+static void generate_from_hash(EtcPalUuid* uuid_out, MD5_CTX* pmd5)
 {
   uint8_t buffer[ETCPAL_UUID_BYTES];
   MD5Final(buffer, pmd5);
@@ -162,7 +162,7 @@ static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
  *  \return #kEtcPalErrOk: UUID generated successfully.
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
+etcpal_error_t etcpal_generate_v3_uuid(EtcPalUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
 {
   MD5_CTX md5;
   uint8_t num[4];
@@ -193,7 +193,7 @@ etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
-/*! \fn etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid *uuid)
+/*! \fn etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid *uuid)
  *  \brief Generate a Version 4 UUID.
  *
  *  This function uses the underlying OS API to create a UUID that is based on random data. The

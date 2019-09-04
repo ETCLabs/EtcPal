@@ -40,14 +40,14 @@
 extern "C" {
 #endif
 
-/*! Used to identify the type of IP address contained in a LwpaIpAddr. */
+/*! Used to identify the type of IP address contained in a EtcPalIpAddr. */
 typedef enum
 {
-  /*! This LwpaIpAddr is not valid. */
+  /*! This EtcPalIpAddr is not valid. */
   kEtcPalIpTypeInvalid,
-  /*! This LwpaIpAddr contains an IPv4 address. */
+  /*! This EtcPalIpAddr contains an IPv4 address. */
   kEtcPalIpTypeV4,
-  /*! This LwpaIpAddr contains an IPv6 address. */
+  /*! This EtcPalIpAddr contains an IPv6 address. */
   kEtcPalIpTypeV6
 } etcpal_iptype_t;
 
@@ -61,7 +61,7 @@ typedef enum
  *  help disambiguate link-local addresses, among other uses. In most cases, this field can be left
  *  at its default value, which is set by the ETCPAL_IP_SET_V6_ADDRESS() macro.
  */
-typedef struct LwpaIpAddr
+typedef struct EtcPalIpAddr
 {
   /*! The IP address type (IPv4 or IPv6) */
   etcpal_iptype_t type;
@@ -69,51 +69,51 @@ typedef struct LwpaIpAddr
   union AddrUnion
   {
     uint32_t v4;
-    struct LwpaIpv6Addr
+    struct EtcPalIpv6Addr
     {
       uint8_t addr_buf[ETCPAL_IPV6_BYTES];
       unsigned long scope_id;
     } v6;
   } addr;
-} LwpaIpAddr;
+} EtcPalIpAddr;
 
-/*! \name LwpaIpAddr macros
- *  A set of macros for interacting with a LwpaIpAddr. It is recommended to use these macros where
+/*! \name EtcPalIpAddr macros
+ *  A set of macros for interacting with a EtcPalIpAddr. It is recommended to use these macros where
  *  possible rather than accessing the structure members directly; otherwise, it's easy to forget
  *  to fill in a field.
  *  @{
  */
 
-/*! Determine whether a LwpaIpAddr contains an IPv4 address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+/*! Determine whether a EtcPalIpAddr contains an IPv4 address.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \return true (contains an IPv4 address) or false (does not contain an IPv4 address). */
 #define ETCPAL_IP_IS_V4(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeV4)
 
-/*! Determine whether a LwpaIpAddr contains an IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+/*! Determine whether a EtcPalIpAddr contains an IPv6 address.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \return true (contains an IPv6 address) or false (does not contain an IPv6 address). */
 #define ETCPAL_IP_IS_V6(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeV6)
 
-/*! Determine whether a LwpaIpAddr contains an invalid address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+/*! Determine whether a EtcPalIpAddr contains an invalid address.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \return true (is invalid) or false (is not invalid). */
 #define ETCPAL_IP_IS_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeInvalid)
 
-/*! Get the IPv4 address from a LwpaIpAddr. It is recommended to first use ETCPAL_IP_IS_V4() to make
- *  sure this LwpaIpAddr contains a valid IPv4 address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+/*! Get the IPv4 address from a EtcPalIpAddr. It is recommended to first use ETCPAL_IP_IS_V4() to make
+ *  sure this EtcPalIpAddr contains a valid IPv4 address.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \return The IPv4 address (uint32_t). */
 #define ETCPAL_IP_V4_ADDRESS(etcpal_ip_ptr) ((etcpal_ip_ptr)->addr.v4)
 
-/*! Get the IPv6 address from a LwpaIpAddr. It is recommended to first use ETCPAL_IP_IS_V6() to make
- *  sure this LwpaIpAddr contains a valid IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+/*! Get the IPv6 address from a EtcPalIpAddr. It is recommended to first use ETCPAL_IP_IS_V6() to make
+ *  sure this EtcPalIpAddr contains a valid IPv6 address.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \return The IPv6 address (uint8_t[]). */
 #define ETCPAL_IP_V6_ADDRESS(etcpal_ip_ptr) ((etcpal_ip_ptr)->addr.v6.addr_buf)
 
-/*! Set the IPv4 address in a LwpaIpAddr. Also sets the type field to indicate that this LwpaIpAddr
+/*! Set the IPv4 address in a EtcPalIpAddr. Also sets the type field to indicate that this EtcPalIpAddr
  *  contains an IPv4 address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \param val IPv4 address to set (uint32_t). */
 #define ETCPAL_IP_SET_V4_ADDRESS(etcpal_ip_ptr, val) \
   do                                             \
@@ -122,16 +122,16 @@ typedef struct LwpaIpAddr
     (etcpal_ip_ptr)->addr.v4 = val;                \
   } while (0)
 
-/*! Set the IPv6 address in a LwpaIpAddr. Also sets the type field to indicate that this LwpaIpAddr
+/*! Set the IPv6 address in a EtcPalIpAddr. Also sets the type field to indicate that this EtcPalIpAddr
  *  contains an IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #ETCPAL_IPV6_BYTES.
  *                  Gets copied into the struct. */
 #define ETCPAL_IP_SET_V6_ADDRESS(etcpal_ip_ptr, addr_val) ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(etcpal_ip_ptr, addr_val, 0u)
 
-/*! Set an IPv6 address with an explicit scope ID in a LwpaIpAddr. Also sets the type field to
- *  indicate that this LwpaIpAddr contains an IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
+/*! Set an IPv6 address with an explicit scope ID in a EtcPalIpAddr. Also sets the type field to
+ *  indicate that this EtcPalIpAddr contains an IPv6 address.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #ETCPAL_IPV6_BYTES.
  *                  Gets copied into the struct.
  *  \param scope_id_val IPv6 scope ID to set. */
@@ -143,36 +143,36 @@ typedef struct LwpaIpAddr
     (etcpal_ip_ptr)->addr.v6.scope_id = (scope_id_val);                             \
   } while (0)
 
-/*! Set the type field in a LwpaIpAddr to indicate that it does not contain a valid address.
- *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr. */
+/*! Set the type field in a EtcPalIpAddr to indicate that it does not contain a valid address.
+ *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr. */
 #define ETCPAL_IP_SET_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type = kEtcPalIpTypeInvalid)
 
 /*! @} */
 
 /*! An IP address with associated interface and port. Ports are in host byte order. */
-typedef struct LwpaSockaddr
+typedef struct EtcPalSockaddr
 {
   uint16_t port; /*!< TCP or UDP port. */
-  LwpaIpAddr ip; /*!< IP address. */
-} LwpaSockaddr;
+  EtcPalIpAddr ip; /*!< IP address. */
+} EtcPalSockaddr;
 
 #define ETCPAL_NETINTINFO_MAC_LEN 6
 #define ETCPAL_NETINTINFO_NAME_LEN 64
 #define ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN 64
 
 /*! A description of a single address assigned to a network interface. */
-typedef struct LwpaNetintInfo
+typedef struct EtcPalNetintInfo
 {
   /*! The OS-specific network interface number. Since interfaces can have multiple IPv4 and IPv6
    *  addresses assigned simultaneously, there can be a one-to-many relationship between physical
-   *  network interfaces and LwpaNetintInfo descriptions on the same system, all of which will have
+   *  network interfaces and EtcPalNetintInfo descriptions on the same system, all of which will have
    *  the same value for this field. It is also used for IPv6, multicast and IP-version-neutral
    *  APIs. See \ref interface_indexes for more information. */
   unsigned int index;
   /*! The interface ip address. */
-  LwpaIpAddr addr;
+  EtcPalIpAddr addr;
   /*! The subnet mask for this interface. */
-  LwpaIpAddr mask;
+  EtcPalIpAddr mask;
   /*! The adapter MAC address. */
   uint8_t mac[ETCPAL_NETINTINFO_MAC_LEN];
   /*! The system name for the interface. This name will not change unless the adapter is removed or
@@ -186,35 +186,35 @@ typedef struct LwpaNetintInfo
   /*! Whether this is the default network interface. The default network interface is defined as
    *  the network interface chosen for the default IP route on a system. */
   bool is_default;
-} LwpaNetintInfo;
+} EtcPalNetintInfo;
 
 /*! Maximum length of the string representation of an IPv4 address. */
 #define ETCPAL_INET_ADDRSTRLEN 16
 /*! Maximum length of the string representation of an IPv6 address. */
 #define ETCPAL_INET6_ADDRSTRLEN 46
 
-bool etcpal_ip_is_link_local(const LwpaIpAddr* ip);
-bool etcpal_ip_is_loopback(const LwpaIpAddr* ip);
-bool etcpal_ip_is_multicast(const LwpaIpAddr* ip);
-bool etcpal_ip_is_wildcard(const LwpaIpAddr* ip);
-void etcpal_ip_set_wildcard(etcpal_iptype_t type, LwpaIpAddr* ip);
+bool etcpal_ip_is_link_local(const EtcPalIpAddr* ip);
+bool etcpal_ip_is_loopback(const EtcPalIpAddr* ip);
+bool etcpal_ip_is_multicast(const EtcPalIpAddr* ip);
+bool etcpal_ip_is_wildcard(const EtcPalIpAddr* ip);
+void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip);
 
-bool etcpal_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);
-int etcpal_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2);
-bool etcpal_ip_and_port_equal(const LwpaSockaddr* sock1, const LwpaSockaddr* sock2);
+bool etcpal_ip_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
+int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
+bool etcpal_ip_and_port_equal(const EtcPalSockaddr* sock1, const EtcPalSockaddr* sock2);
 
-unsigned int etcpal_ip_mask_length(const LwpaIpAddr* netmask);
-LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length);
-bool etcpal_ip_network_portions_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* netmask);
+unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask);
+EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length);
+bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2, const EtcPalIpAddr* netmask);
 
-bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, LwpaIpAddr* ip);
-size_t ip_etcpal_to_os(const LwpaIpAddr* ip, etcpal_os_ipaddr_t* os_ip);
+bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip);
+size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip);
 
-bool sockaddr_os_to_lwpa(const etcpal_os_sockaddr_t* os_sa, LwpaSockaddr* sa);
-size_t sockaddr_etcpal_to_os(const LwpaSockaddr* sa, etcpal_os_sockaddr_t* os_sa);
+bool sockaddr_os_to_lwpa(const etcpal_os_sockaddr_t* os_sa, EtcPalSockaddr* sa);
+size_t sockaddr_etcpal_to_os(const EtcPalSockaddr* sa, etcpal_os_sockaddr_t* os_sa);
 
-etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size);
-etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, LwpaIpAddr* dest);
+etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size);
+etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest);
 
 #ifdef __cplusplus
 }

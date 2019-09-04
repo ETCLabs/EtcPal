@@ -34,13 +34,13 @@
 /*********************** Private function prototypes *************************/
 
 static IP_ADAPTER_ADDRESSES* get_windows_adapters();
-static void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
-static void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info);
+static void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
+static void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
 static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache);
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   (void)cache;  // unused
 
@@ -105,7 +105,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     return kEtcPalErrNoNetints;
   }
 
-  cache->netints = calloc(cache->num_netints, sizeof(LwpaNetintInfo));
+  cache->netints = calloc(cache->num_netints, sizeof(EtcPalNetintInfo));
   if (!cache->netints)
   {
     free(padapters);
@@ -150,7 +150,7 @@ IP_ADAPTER_ADDRESSES* get_windows_adapters()
   return NULL;
 }
 
-void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
+void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info)
 {
   const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
 
@@ -158,7 +158,7 @@ void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
   info->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, pip->OnLinkPrefixLength);
 }
 
-void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
+void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info)
 {
   const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;
 
@@ -200,7 +200,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
     IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
     while (pip)
     {
-      LwpaNetintInfo* info = &cache->netints[netint_index];
+      EtcPalNetintInfo* info = &cache->netints[netint_index];
       switch (pip->Address.lpSockaddr->sa_family)
       {
         case AF_INET:

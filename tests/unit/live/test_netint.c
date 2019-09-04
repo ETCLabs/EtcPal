@@ -42,10 +42,10 @@ TEST(etcpal_netint, netint_enumeration_works)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = etcpal_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   TEST_ASSERT_NOT_NULL(netint_list);
 
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     TEST_ASSERT_GREATER_THAN_UINT(0u, netint->index);
     TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->name));
@@ -57,9 +57,9 @@ TEST(etcpal_netint, netints_are_in_index_order)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = etcpal_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   unsigned int last_index = netint_list->index;
-  for (const LwpaNetintInfo* netint = netint_list + 1; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list + 1; netint < netint_list + num_netints; ++netint)
   {
     TEST_ASSERT_GREATER_OR_EQUAL(last_index, netint->index);
     last_index = netint->index;
@@ -70,7 +70,7 @@ TEST(etcpal_netint, netints_are_in_index_order)
 TEST(etcpal_netint, copy_interfaces_works)
 {
   // Test copying the full array
-  auto netint_arr = std::make_unique<LwpaNetintInfo[]>(num_netints);
+  auto netint_arr = std::make_unique<EtcPalNetintInfo[]>(num_netints);
   size_t num_netints_returned = etcpal_netint_copy_interfaces(netint_arr.get(), num_netints);
   ASSERT_EQ(num_netints_returned, num_netints);
 
@@ -83,13 +83,13 @@ TEST(etcpal_netint, get_netints_by_index_works)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = etcpal_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   unsigned int current_index = 0;
   // There are other tests covering that the netint list should be in order by index and that the
   // indexes must all be greater than 0, which simplifies this code.
-  const LwpaNetintInfo* current_arr_by_index = NULL;
+  const EtcPalNetintInfo* current_arr_by_index = NULL;
   size_t current_index_arr_size = 0;
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     if (netint->index > current_index)
     {
@@ -131,9 +131,9 @@ TEST(etcpal_netint, default_netint_is_consistent)
     TEST_ASSERT_NOT_EQUAL(def_v6, 0u);
   }
 
-  const LwpaNetintInfo* netint_list = etcpal_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   TEST_ASSERT_NOT_NULL(netint_list);
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     if (netint->is_default)
     {
@@ -153,18 +153,18 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const LwpaNetintInfo* netint_list = etcpal_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
   TEST_ASSERT_NOT_NULL(netint_list);
 
   // For each normally routable (non-loopback, non-link-local) network interface, check to make sure
   // that etcpal_netint_get_interface_for_dest() resolves to that interface when asked for a route to
   // the interface address itself.
-  for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     if (!ETCPAL_IP_IS_V4(&netint->addr) || etcpal_ip_is_loopback(&netint->addr) || etcpal_ip_is_link_local(&netint->addr))
       continue;
 
-    LwpaIpAddr test_addr = netint->addr;
+    EtcPalIpAddr test_addr = netint->addr;
     unsigned int netint_index_res;
     TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
@@ -178,7 +178,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
     TEST_ASSERT_EQUAL_UINT_MESSAGE(netint_index_res, netint->index, test_msg);
   }
 
-  LwpaIpAddr ext_addr;
+  EtcPalIpAddr ext_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
   unsigned int netint_index_res;
   unsigned int netint_index_default;

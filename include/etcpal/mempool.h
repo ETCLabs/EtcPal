@@ -40,24 +40,24 @@
  */
 
 /*! (Not for direct usage) A tiny structure simply used to maintain the freelist for each pool. */
-typedef struct LwpaMempool LwpaMempool;
-struct LwpaMempool
+typedef struct EtcPalMempool EtcPalMempool;
+struct EtcPalMempool
 {
-  LwpaMempool* next;
+  EtcPalMempool* next;
 };
 
 /*! (Not for direct usage) A memory pool description structure. Do not declare or use this structure
  *  directly; instead, use ETCPAL_MEMPOOL_DECLARE(), ETCPAL_MEMPOOL_DEFINE(),
  *  ETCPAL_MEMPOOL_DEFINE_ARRAY(), and the etcpal_mempool_* macros to interact with it. */
-typedef struct LwpaMempoolDesc
+typedef struct EtcPalMempoolDesc
 {
   const size_t elem_size;  /*!< The size of each element. */
   const size_t pool_size;  /*!< The number of elements in the pool. */
-  LwpaMempool* freelist;   /*!< The current freelist. */
-  LwpaMempool* const list; /*!< The array of mempool list structs. */
+  EtcPalMempool* freelist;   /*!< The current freelist. */
+  EtcPalMempool* const list; /*!< The array of mempool list structs. */
   size_t current_used;     /*!< The number of pool elements that have currently been allocated. */
   void* const pool;        /*!< The actual pool memory. */
-} LwpaMempoolDesc;
+} EtcPalMempoolDesc;
 
 /*! \brief Declare a pool as an external variable.
  *
@@ -66,7 +66,7 @@ typedef struct LwpaMempoolDesc
  *
  *  \param name The name of the memory pool.
  */
-#define ETCPAL_MEMPOOL_DECLARE(name) extern LwpaMempoolDesc name##_pool_desc;
+#define ETCPAL_MEMPOOL_DECLARE(name) extern EtcPalMempoolDesc name##_pool_desc;
 
 /*! \brief Define a new memory pool.
  *
@@ -80,8 +80,8 @@ typedef struct LwpaMempoolDesc
  */
 #define ETCPAL_MEMPOOL_DEFINE(name, type, size)                                     \
   type name##_pool[size];                                                         \
-  struct LwpaMempool name##_pool_list[size];                                      \
-  struct LwpaMempoolDesc name##_pool_desc = {sizeof(type),     /* elem_size */    \
+  struct EtcPalMempool name##_pool_list[size];                                      \
+  struct EtcPalMempoolDesc name##_pool_desc = {sizeof(type),     /* elem_size */    \
                                              size,             /* pool_size */    \
                                              NULL,             /* freelist */     \
                                              name##_pool_list, /* list */         \
@@ -100,8 +100,8 @@ typedef struct LwpaMempoolDesc
  */
 #define ETCPAL_MEMPOOL_DEFINE_ARRAY(name, type, array_size, pool_size)                      \
   type name##_pool[array_size][pool_size];                                                \
-  struct LwpaMempool name##_pool_list[pool_size];                                         \
-  struct LwpaMempoolDesc name##_pool_desc = {sizeof(type[array_size]), /* elem_size */    \
+  struct EtcPalMempool name##_pool_list[pool_size];                                         \
+  struct EtcPalMempoolDesc name##_pool_desc = {sizeof(type[array_size]), /* elem_size */    \
                                              pool_size,                /* pool_size */    \
                                              NULL,                     /* freelist */     \
                                              name##_pool_list,         /* list */         \
@@ -156,10 +156,10 @@ typedef struct LwpaMempoolDesc
 extern "C" {
 #endif
 
-etcpal_error_t etcpal_mempool_init_priv(LwpaMempoolDesc* desc);
-void* etcpal_mempool_alloc_priv(LwpaMempoolDesc* desc);
-void etcpal_mempool_free_priv(LwpaMempoolDesc* desc, void* elem);
-size_t etcpal_mempool_used_priv(LwpaMempoolDesc* desc);
+etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc);
+void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc);
+void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem);
+size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc);
 
 #ifdef __cplusplus
 }

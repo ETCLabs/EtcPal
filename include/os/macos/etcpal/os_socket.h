@@ -41,12 +41,12 @@ typedef int etcpal_socket_t;
 
 /* Definitions for etcpal_poll API */
 
-typedef struct LwpaPollContext
+typedef struct EtcPalPollContext
 {
   bool valid;
   int kq_fd;
-  LwpaRbTree sockets;
-} LwpaPollContext;
+  EtcPalRbTree sockets;
+} EtcPalPollContext;
 
 #ifdef __cplusplus
 }

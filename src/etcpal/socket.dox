@@ -24,7 +24,7 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
  *
  *  Refer to your favorite accept() man page for more information.
  *
- *  Differences from POSIX: addrlen parameter is omitted because there is only one LwpaSockaddr 
+ *  Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockaddr 
  *  type. Connected socket is returned in an output parameter rather than the return value.
  *
  *  \param[in] id Listening socket on which to accept a new connection.
@@ -32,20 +32,20 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
  *  \param[out] conn_sock Filled in on success with handle to connected socket.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (failure).
  */
-etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr *address, etcpal_socket_t *conn_sock);
+etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr *address, etcpal_socket_t *conn_sock);
 
 /*! \brief Bind a name to a socket.
  *
  *  Refer to your favorite bind() man page for more information.
  *
- *  Differences from POSIX: addrlen parameter is omitted because there is only one LwpaSockaddr
+ *  Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockaddr
  *  type.
  *
  *  \param[in] id Socket to which to bind an address (traditionally called a 'name').
  *  \param[in] address Address to assign to the socket.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr *address);
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr *address);
 
 /*! \brief Close a socket.
  *
@@ -71,7 +71,7 @@ etcpal_error_t etcpal_close(etcpal_socket_t id);
  *  \param[in] address Address to which to connect.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr *address);
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr *address);
 
 /*! \brief Get the name of the connected peer socket.
  *
@@ -84,7 +84,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr *address);
  *  \param[in] address Filled in with peer address on success.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr *address);
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr *address);
 
 /*! \brief Get socket name.
  *
@@ -97,7 +97,7 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr *address);
  *  \param[in] address Filled in with bound address on success.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr *address);
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr *address);
 
 /*! \brief Get an option value for a socket.
  *
@@ -154,7 +154,7 @@ int etcpal_recv(etcpal_socket_t id, void *buffer, size_t length, int flags);
  *                      received.
  *  \return Number of bytes received (success) or #etcpal_error_t code from system (error occurred).
  */
-int etcpal_recvfrom(etcpal_socket_t id, void *buffer, size_t length, int flags, LwpaSockaddr *address);
+int etcpal_recvfrom(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockaddr *address);
 
 /*! \brief Send data on a connected socket.
  *
@@ -184,7 +184,7 @@ int etcpal_send(etcpal_socket_t id, const void *message, size_t length, int flag
  *  \param[in] dest_addr Address to which to send the message.
  *  \return Number of bytes sent (success) or #etcpal_error_t code from system (error occurred).
  */
-int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int flags, const LwpaSockaddr *dest_addr);
+int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockaddr *dest_addr);
 
 /*! \brief Set an option value on a socket.
  *
@@ -261,34 +261,34 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
  *  
  *  See the documentation for etcpal_poll_context_init() and etcpal_poll_wait() for more information.
  */
-typedef PLATFORM_DEFINED LwpaPollContext;
+typedef PLATFORM_DEFINED EtcPalPollContext;
 
 /*! \brief Create a new context for waiting on events on multiple sockets.
  *
- *  LwpaPollContext structures contain information about an application's interest in events on a
+ *  EtcPalPollContext structures contain information about an application's interest in events on a
  *  set of sockets. The etcpal_poll_wait() function can then be used to block the calling thread until 
  *  one such event takes place.
  *
- *  This function must be called on an LwpaPollContext structure before using it with any other
+ *  This function must be called on an EtcPalPollContext structure before using it with any other
  *  etcpal_poll_* function.
  * 
- *  \param[in,out] context Pointer to LwpaPollContext to initialize.
+ *  \param[in,out] context Pointer to EtcPalPollContext to initialize.
  *  \return #kEtcPalErrOk: Init successful.
  *  \return #kEtcPalErrInvalid: Invalid argument.
  *  \return #kEtcPalErrSys: System call failed.
  */
-etcpal_error_t etcpal_poll_context_init(LwpaPollContext *context);
+etcpal_error_t etcpal_poll_context_init(EtcPalPollContext *context);
 
-/*! \brief Invalidate a previously-initialized LwpaPollContext structure.
+/*! \brief Invalidate a previously-initialized EtcPalPollContext structure.
  * 
- *  This must be called at shutdown or when the LwpaPollContext is no longer needed to free any
+ *  This must be called at shutdown or when the EtcPalPollContext is no longer needed to free any
  *  resources being used to track polling context.
  *
- *  \param[in] context Pointer to LwpaPollContext to deinitialize.
+ *  \param[in] context Pointer to EtcPalPollContext to deinitialize.
  */
-void etcpal_poll_context_deinit(LwpaPollContext *context);
+void etcpal_poll_context_deinit(EtcPalPollContext *context);
 
-/*! \brief Add a new socket to an LwpaPollContext.
+/*! \brief Add a new socket to an EtcPalPollContext.
  *
  *  This socket will be monitored on future calls to etcpal_poll_wait() for the events specified in
  *  the 'events' parameter. See the definitions of the ETCPAL_POLL_* flag values for more information.
@@ -300,7 +300,7 @@ void etcpal_poll_context_deinit(LwpaPollContext *context);
  *  in a single call. If there is a limit, it is defined as the positive value
  *  #ETCPAL_SOCKET_MAX_POLL_SIZE. Otherwise, that constant is set to -1.
  *
- *  \param[in,out] context Pointer to LwpaPollContext to which to add new socket.
+ *  \param[in,out] context Pointer to EtcPalPollContext to which to add new socket.
  *  \param[in] socket Socket to start monitoring.
  *  \param[in] events Events to monitor for on this socket.
  *  \param[in] user_data Opaque data pointer that is passed back with events on this socket.
@@ -310,13 +310,13 @@ void etcpal_poll_context_deinit(LwpaPollContext *context);
  *  \return #kEtcPalErrNoMem: #ETCPAL_SOCKET_MAX_POLL_SIZE is exceeded in this context.
  *  \return #kEtcPalErrSys: System call failed.
  */
-etcpal_error_t etcpal_poll_add_socket(LwpaPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data);
+etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data);
 
 /*! \brief Change the set of events or user data associated with a monitored socket.
  *
  *  The new events and/or user data will be used on the next call to etcpal_poll_wait().
  *
- * \param[in,out] context Pointer to LwpaPollContext on which to modify socket parameters.
+ * \param[in,out] context Pointer to EtcPalPollContext on which to modify socket parameters.
  * \param[in] socket Socket to modify.
  * \param[in] new_events New set of events to monitor for on this socket. Passing the same events as
  *                       before is also valid if only the user data is being changed.
@@ -328,18 +328,18 @@ etcpal_error_t etcpal_poll_add_socket(LwpaPollContext *context, etcpal_socket_t 
  * \return #kEtcPalErrNotFound: Socket was not previously added to this context.
  * \return #kEtcPalErrSys: System call failed.
  */
-etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t new_events, void *new_user_data);
+etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t new_events, void *new_user_data);
 
-/*! \brief Remove a monitored socket from an LwpaPollContext.
+/*! \brief Remove a monitored socket from an EtcPalPollContext.
  *
  *  This socket will no longer be monitored on future calls to etcpal_poll_wait().
  *
- *  \param[in,out] context Pointer to LwpaPollContext from which to remove socket.
+ *  \param[in,out] context Pointer to EtcPalPollContext from which to remove socket.
  *  \param[in] socket Socket to remove.
  */
-void etcpal_poll_remove_socket(LwpaPollContext *context, etcpal_socket_t socket);
+void etcpal_poll_remove_socket(EtcPalPollContext *context, etcpal_socket_t socket);
 
-/*! \brief Wait for an event on a set of sockets defined by an LwpaPollContext.
+/*! \brief Wait for an event on a set of sockets defined by an EtcPalPollContext.
  *
  *  Waits for events defined by previous calls to etcpal_poll_add_socket() on this context structure.
  *  Reports one event at a time in the output 'event' parameter. Waits up to timeout_ms
@@ -360,7 +360,7 @@ void etcpal_poll_remove_socket(LwpaPollContext *context, etcpal_socket_t socket)
  * | MQX (RTCS)        | select()  | #ETCPAL_SOCKET_MAX_POLL_SIZE is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE. |
  * | Microsoft Windows | select()  | #ETCPAL_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
  *
- *  \param[in] context Pointer to LwpaPollContext for which to wait for events.
+ *  \param[in] context Pointer to EtcPalPollContext for which to wait for events.
  *  \param[out] event On success, contains information about the event that occurred.
  *  \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #ETCPAL_WAIT_FOREVER to
  *                        wait indefinitely.
@@ -371,7 +371,7 @@ void etcpal_poll_remove_socket(LwpaPollContext *context, etcpal_socket_t socket)
  *  \return #kEtcPalErrSys: System or socket call failed.
  *  \return Other #etcpal_error_t values are possible from underlying socket calls.
  */
-etcpal_error_t etcpal_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
+etcpal_error_t etcpal_poll_wait(EtcPalPollContext *context, EtcPalPollEvent *event, int timeout_ms);
 
 /*! @} */
 
@@ -383,7 +383,7 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, 
  *  example:
  *
  *  \code
- *  LwpaAddrinfo info;
+ *  EtcPalAddrinfo info;
  *  if (0 == etcpal_getaddrinfo("www.google.com", "http", NULL, &info))
  *  {
  *    do
@@ -419,40 +419,40 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, 
  *  \param[out] result On success, filled in with the first address result.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (an error occurred).
  */
-etcpal_error_t etcpal_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints,
-                              LwpaAddrinfo *result);
+etcpal_error_t etcpal_getaddrinfo(const char *hostname, const char *service, const EtcPalAddrinfo *hints,
+                              EtcPalAddrinfo *result);
 
 /*! \brief Get the next address from the list returned by etcpal_getaddrinfo().
  *
  *  Most platforms allocate and return a linked list of address info structs in their getaddrinfo()
  *  implementation. To avoid further memory allocation in the abstraction layer, this non-POSIX-like
- *  way to iterate through the LwpaAddrinfo structs is provided. To get all of the addresses
+ *  way to iterate through the EtcPalAddrinfo structs is provided. To get all of the addresses
  *  returned from a etcpal_getaddrinfo() call, keep calling this on the result struct until it returns
  *  false.
  *
- *  \param[in,out] ai Pointer to last LwpaAddrinfo struct, filled in with values of the next
+ *  \param[in,out] ai Pointer to last EtcPalAddrinfo struct, filled in with values of the next
  *                    address.
  *  \return true (next address was filled in) or false (no more addresses or error).
  */
-bool etcpal_nextaddr(LwpaAddrinfo *ai);
+bool etcpal_nextaddr(EtcPalAddrinfo *ai);
 
 /*! \brief Free an addrinfo list returned by etcpal_getaddrinfo().
  *
  *  Most platforms allocate memory when getaddrinfo() is called. This must always be called after
  *  any call to etcpal_getaddrinfo() to free that memory. It can be called with any of the
- *  LwpaAddrinfo instances in the list, and the whole list will be freed. See the example usage in
+ *  EtcPalAddrinfo instances in the list, and the whole list will be freed. See the example usage in
  *  the description of etcpal_getaddrinfo().
  *
- *  \param[in] ai Pointer to LwpaAddrinfo struct for which to free the platform memory.
+ *  \param[in] ai Pointer to EtcPalAddrinfo struct for which to free the platform memory.
  */
-void etcpal_freeaddrinfo(LwpaAddrinfo *ai);
+void etcpal_freeaddrinfo(EtcPalAddrinfo *ai);
 
 /*! \brief Convert IPv4 and IPv6 addresses from binary to text form.
  *
  *  Refer to your favorite inet_ntop() man page for more information.
  *
  *  Differences from POSIX: af parameter is omitted because that information is contained in the
- *  LwpaIpAddr.
+ *  EtcPalIpAddr.
  *
  *  \param[in] src Address to convert to string form.
  *  \param[out] dest Filled in on success with the string-represented address.
@@ -461,7 +461,7 @@ void etcpal_freeaddrinfo(LwpaAddrinfo *ai);
  *  \return #kEtcPalErrInvalid: Invalid parameter.
  *  \return #kEtcPalErrSys: System call failed.
  */
-etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
+etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr *src, char *dest, size_t size);
 
 /*! \brief Convert IPv4 and IPv6 addresses from text to binary form.
  *
@@ -477,6 +477,6 @@ etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
  *  \return #kEtcPalErrInvalid: Invalid parameter.
  *  \return #kEtcPalErrSys: System call failed.
  */
-etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char *src, LwpaIpAddr *dest);
+etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char *src, EtcPalIpAddr *dest);
 
 /*! @} */

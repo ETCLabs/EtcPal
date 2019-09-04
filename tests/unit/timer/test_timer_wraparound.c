@@ -37,7 +37,7 @@ FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
 
 TEST(etcpal_timer_wraparound, wraparound_works_as_expected)
 {
-  LwpaTimer t1;
+  EtcPalTimer t1;
 
   // Test the wraparound case by forcing a wraparound value returned from etcpal_getms()
   etcpal_getms_fake.return_val = 0xfffffff0u;

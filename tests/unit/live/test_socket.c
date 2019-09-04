@@ -53,7 +53,7 @@ TEST(etcpal_socket, bind_works_as_expected)
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Make sure we can bind to the wildcard address and port
-  LwpaSockaddr bind_addr;
+  EtcPalSockaddr bind_addr;
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
   bind_addr.port = 0;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(sock, &bind_addr));
@@ -102,11 +102,11 @@ TEST(etcpal_socket, blocking_state_is_consistent)
 // Test to make sure various invalid calls to etcpal_poll_* functions fail properly.
 TEST(etcpal_socket, poll_invalid_calls_fail)
 {
-  LwpaPollContext context;
+  EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   // Wait should fail with a meaningful error code when no sockets have been added
-  LwpaPollEvent event;
+  EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrNoSockets, etcpal_poll_wait(&context, &event, 100));
 
   etcpal_socket_t sock;
@@ -148,7 +148,7 @@ TEST(etcpal_socket, poll_user_data_works)
   void* user_data_1 = (void*)1;
   void* user_data_2 = (void*)2;
 
-  LwpaPollContext context;
+  EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   // Create two UDP sockets and poll for writability, make sure our user data gets passed back to us
@@ -159,7 +159,7 @@ TEST(etcpal_socket, poll_user_data_works)
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_1, ETCPAL_POLL_OUT, user_data_1));
 
-  LwpaPollEvent event;
+  EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_1);
   TEST_ASSERT_EQUAL(event.user_data, user_data_1);
@@ -189,14 +189,14 @@ TEST(etcpal_socket, poll_modify_socket_works)
 {
   etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
 
-  LwpaPollContext context;
+  EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Bind the socket to the wildcard address and a specific port.
-  LwpaSockaddr bind_addr;
+  EtcPalSockaddr bind_addr;
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
   bind_addr.port = POLL_MODIFY_TEST_PORT_BASE;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(sock, &bind_addr));
@@ -205,7 +205,7 @@ TEST(etcpal_socket, poll_modify_socket_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_OUT, NULL));
 
   // Socket should be ready right away
-  LwpaPollEvent event;
+  EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock);
   TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_OUT);
@@ -218,7 +218,7 @@ TEST(etcpal_socket, poll_modify_socket_works)
   TEST_ASSERT_EQUAL(kEtcPalErrTimedOut, etcpal_poll_wait(&context, &event, 100));
 
   // Send data to socket
-  LwpaSockaddr send_addr;
+  EtcPalSockaddr send_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   send_addr.port = POLL_MODIFY_TEST_PORT_BASE;
   etcpal_sendto(sock, (const uint8_t*)"test message", sizeof("test message"), 0, &send_addr);
@@ -242,7 +242,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   etcpal_socket_t rcvsock1 = ETCPAL_SOCKET_INVALID;
   etcpal_socket_t rcvsock2 = ETCPAL_SOCKET_INVALID;
 
-  LwpaPollContext context;
+  EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &rcvsock1));
@@ -255,7 +255,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   // Bind socket 1 to the wildcard address and a specific port.
-  LwpaSockaddr bind_addr;
+  EtcPalSockaddr bind_addr;
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
   bind_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(rcvsock1, &bind_addr));
@@ -269,10 +269,10 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, rcvsock2, ETCPAL_POLL_IN, NULL));
 
   // Test poll with nothing sending - should time out.
-  LwpaPollEvent event;
+  EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrTimedOut, etcpal_poll_wait(&context, &event, 100));
 
-  LwpaSockaddr send_addr;
+  EtcPalSockaddr send_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   send_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
 
@@ -291,7 +291,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
 
   // Receive data on the socket.
   uint8_t recv_buf[POLL_UDP_IN_TEST_MESSAGE_LENGTH];
-  LwpaSockaddr from_addr;
+  EtcPalSockaddr from_addr;
   TEST_ASSERT_EQUAL(POLL_UDP_IN_TEST_MESSAGE_LENGTH,
                     (size_t)etcpal_recvfrom(event.socket, recv_buf, POLL_UDP_IN_TEST_MESSAGE_LENGTH, 0, &from_addr));
   TEST_ASSERT(etcpal_ip_equal(&send_addr.ip, &from_addr.ip));
@@ -321,7 +321,7 @@ TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
 {
   etcpal_socket_t sock_1, sock_2;
 
-  LwpaPollContext context;
+  EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock_1));
@@ -331,7 +331,7 @@ TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
   // here.
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_1, ETCPAL_POLL_OUT, NULL));
 
-  LwpaPollEvent event;
+  EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_1);
   TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_OUT);
@@ -352,8 +352,8 @@ TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
 
 TEST(etcpal_socket, getaddrinfo_works_as_expected)
 {
-  LwpaAddrinfo ai_hints;
-  LwpaAddrinfo ai;
+  EtcPalAddrinfo ai_hints;
+  EtcPalAddrinfo ai;
 
   memset(&ai_hints, 0, sizeof ai_hints);
 

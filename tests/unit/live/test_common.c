@@ -65,7 +65,7 @@ TEST(etcpal_common, netint_double_init_works)
 }
 
 // A shim from the etcpal_log module to fff.
-FAKE_VOID_FUNC(common_test_log_callback, void*, const LwpaLogStrings*);
+FAKE_VOID_FUNC(common_test_log_callback, void*, const EtcPalLogStrings*);
 
 // Test multiple calls of etcpal_init() for the log module.
 TEST(etcpal_common, log_double_init_works)
@@ -73,7 +73,7 @@ TEST(etcpal_common, log_double_init_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_LOGGING));
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_LOGGING));
 
-  LwpaLogParams params;
+  EtcPalLogParams params;
   params.action = kEtcPalLogCreateHumanReadableLog;
   params.log_fn = common_test_log_callback;
   params.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
