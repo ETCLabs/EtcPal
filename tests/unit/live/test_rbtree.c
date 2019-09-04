@@ -191,6 +191,23 @@ TEST(lwpa_rbtree, insert_should_fail_if_element_already_exists)
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_rbtree_insert(&tree, &duplicate));
 }
 
+TEST(lwpa_rbtree, insert_failure_should_not_leak_memory)
+{
+  LwpaRbTree tree;
+  TEST_ASSERT_NOT_NULL(lwpa_rbtree_init(&tree, int_compare, node_alloc, node_dealloc));
+
+  // Insert a value, then try to insert it again
+  int val = 0;
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_rbtree_insert(&tree, &val));
+  TEST_ASSERT_EQUAL(kLwpaErrExists, lwpa_rbtree_insert(&tree, &val));
+
+  // Now clear the tree
+  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_rbtree_clear(&tree));
+
+  // The alloc and dealloc count should be equal - no memory should be leaked
+  TEST_ASSERT_EQUAL(node_alloc_fake.call_count, node_dealloc_fake.call_count);
+}
+
 TEST(lwpa_rbtree, iterators_work_as_expected)
 {
   LwpaRbTree tree;
@@ -276,6 +293,7 @@ TEST_GROUP_RUNNER(lwpa_rbtree)
   RUN_TEST_CASE(lwpa_rbtree, insert_node_functions_work);
   RUN_TEST_CASE(lwpa_rbtree, insert_functions_work);
   RUN_TEST_CASE(lwpa_rbtree, insert_should_fail_if_element_already_exists);
+  RUN_TEST_CASE(lwpa_rbtree, insert_failure_should_not_leak_memory);
   RUN_TEST_CASE(lwpa_rbtree, iterators_work_as_expected);
   RUN_TEST_CASE(lwpa_rbtree, max_height_is_within_bounds);
 }

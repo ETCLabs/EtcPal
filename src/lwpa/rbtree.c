@@ -216,9 +216,22 @@ lwpa_error_t lwpa_rbtree_insert(LwpaRbTree* self, void* value)
 {
   LwpaRbNode* new_node = rb_node_create(self, value);
   if (new_node)
-    return lwpa_rbtree_insert_node(self, new_node);
+  {
+    lwpa_error_t insert_res = lwpa_rbtree_insert_node(self, new_node);
+    if (insert_res == kLwpaErrOk)
+    {
+      return kLwpaErrOk;
+    }
+    else
+    {
+      rb_node_dealloc(new_node, self);
+      return insert_res;
+    }
+  }
   else
+  {
     return kLwpaErrNoMem;
+  }
 }
 
 /*! \brief Insert a node containing a new value into a red-black tree.
