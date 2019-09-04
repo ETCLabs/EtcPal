@@ -1,43 +1,34 @@
 # A CMake toolchain file for cross-compiling for NXP Kinetis (ARM Cortex-M4) with MQX RTOS and the
 # IAR Embedded Workbench toolchain.
 #
-# On Windows, you need to use a non-Visual-Studio generator. This requires you to have some kind of
-# non-VS build system installed. Some options are:
+# You need to pick the type of build files that CMake generates (the Generator). If you have a
+# build system already that uses GNU Make, or are building on a macOS or Unix-based host,
+# "Unix Makefiles" will cover most cases. On Windows, you need to use a non-Visual-Studio generator.
+# This requires you to have some kind of non-VS build system installed. Some options are:
 # - MinGW64 (must be available on PATH)
 # - Strawberry Perl (use 'Unix Makefiles' generator)
 # - NMake (comes with VS, but must be in a developer command prompt)
 #
-# Usage: cmake -G "Unix Makefiles" \
-#              -DCMAKE_TOOLCHAIN_FILE=../tools/cmake/cross-toolchains/iar-kinetis-mqx.cmake \
-#              -DMQX_BOARD_DIR=path/to/mqx/board/dir ..
-#
-# MQX_BOARD_DIR can also be set in this file so that it does not have to be provided at the command
-# line, like so:
-# set(MQX_BOARD_DIR ${CMAKE_CURRENT_LIST_DIR}/path/to/mqx/board/dir)
+# Usage: cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=path/to/this/file ..
 
-set(CMAKE_SYSTEM_NAME Generic) # This is CMake's name for 'bare-metal' or RTOS environments
-set(CMAKE_SYSTEM_PROCESSOR ARM)
+# Setting these names causes CMake to look in the Platform subdirectory for files called:
+# Platform/MQX.cmake
+# Platform/MQX-IAR-C-K61F120M.cmake
+set(CMAKE_SYSTEM_NAME MQX)
+set(CMAKE_SYSTEM_PROCESSOR K61F120M)
+
+# Set this to the location of the Platform subdirectory containing the platform files.
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
 if(NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
   message(FATAL_ERROR "IAR is Windows-only.")
 endif()
 
-if(NOT DEFINED IAR_INSTALL_DIR)
-  # The default install location on Windows.
-  # You may need to tweak the IAR version.
-  set(IAR_INSTALL_DIR "C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.5")
-endif()
+# The IAR installation directory, highly likely to require customization
+set(IAR_INSTALL_DIR "C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.5" CACHE STRING "The IAR install directory")
 
 set(CMAKE_C_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe CACHE FILEPATH "IAR C Compiler")
 set(CMAKE_CXX_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe CACHE FILEPATH "IAR C++ Compiler")
-
-set(LWPA_TARGET_OS mqx)
-add_compile_options(
-  --endian=little
-  --cpu=Cortex-M4
-  --fpu=VFPv4_sp
-  --dlib_config normal
-)
 
 # This tells CMake to use a static library program to do its minimal compiler
 # test instead of an executable - this translates well to embedded toolchains.
@@ -47,7 +38,3 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 # this line to bypass the compiler checks.
 # set(CMAKE_C_COMPILER_WORKS 1)
 # set(CMAKE_CXX_COMPILER_WORKS 1)
-
-# The unit tests and examples will not build properly from CMake on this platform.
-set(LWPA_BUILD_TESTS OFF CACHE BOOL "Build the lwpa unit tests" FORCE)
-set(LWPA_BUILD_EXAMPLES OFF CACHE BOOL "Build the lwpa examples" FORCE)

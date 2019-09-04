@@ -17,9 +17,22 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_timer.h"
-#include "FreeRTOS.h"
-#include "task.h"
+#include "lwpa/timer.h"
+#include "lwpa/private/timer.h"
+
+#include <FreeRTOS.h>
+#include <task.h>
+
+lwpa_error_t lwpa_timer_init()
+{
+  // No initialization necessary on this platform
+  return kLwpaErrOk;
+}
+
+void lwpa_timer_deinit()
+{
+  // No deinitialization necessary on this platform
+}
 
 uint32_t lwpa_getms()
 {

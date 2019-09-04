@@ -18,10 +18,12 @@ this purpose in two main ways:
 ## Platform Ports
 
 EtcPal is currently ported for the following platforms:
++ FreeRTOS (OS abstraction only)
 + Linux
++ lwIP (Network abstraction only)
 + macOS
 + Microsoft Windows
-+ MQX RTOS
++ MQX
 
 ## Building
 

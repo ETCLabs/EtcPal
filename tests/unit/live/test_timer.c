@@ -81,8 +81,3 @@ TEST_GROUP_RUNNER(lwpa_timer)
   RUN_TEST_CASE(lwpa_timer, getms_gets_increasing_values);
   RUN_TEST_CASE(lwpa_timer, timers_report_expired_properly);
 }
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_timer);
-}

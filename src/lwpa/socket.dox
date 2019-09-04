@@ -239,6 +239,17 @@ lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t *
  */
 lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
 
+/*! \brief Get the current blocking behavior of a socket.
+ *
+ *  This is similar to checking the state of the O_NONBLOCK flag through the fcntl() function on a
+ *  BSD socket.
+ *
+ *  \param[in] id Socket for which to read the blocking behavior.
+ *  \param[out] blocking Filled in with whether the socket is currently blocking or not.
+ *  \return #kLwpaErrOk (success) or #lwpa_error_t code from system (error occurred).
+ */
+lwpa_error_t lwpa_getblocking(lwpa_socket_t id, bool* blocking);
+
 /*! \name lwpa_poll API
  *
  *  The lwpa_poll functions enable monitoring several sockets at once.
@@ -341,12 +352,13 @@ void lwpa_poll_remove_socket(LwpaPollContext *context, lwpa_socket_t socket);
  *
  *  Uses OS-specific APIs for monitoring multiple sockets under the hood. Details:
  *
- * | Platform: | API used: | Notes: |
- * |-----------|-----------|--------|
- * | Linux     | epoll()   |        |
- * | macOS     | kqueue()  |        |
- * | MQX       | select()  | #LWPA_SOCKET_MAX_POLL_SIZE is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE. |
- * | Windows   | select()  | #LWPA_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
+ * | Platform:         | API used: | Notes: |
+ * |-------------------|-----------|--------|
+ * | Linux             | epoll()   |        |
+ * | lwIP              | select()  | #LWPA_SOCKET_MAX_POLL_SIZE is controlled by FD_SETSIZE which is in turn controlled by MEMP_NUM_NETCONN in lwipopts.h. |
+ * | macOS             | kqueue()  |        |
+ * | MQX (RTCS)        | select()  | #LWPA_SOCKET_MAX_POLL_SIZE is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE. |
+ * | Microsoft Windows | select()  | #LWPA_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
  *
  *  \param[in] context Pointer to LwpaPollContext for which to wait for events.
  *  \param[out] event On success, contains information about the event that occurred.

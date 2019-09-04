@@ -102,6 +102,7 @@ int main()
 
   printf("Network interfaces found:\n");
   printf(header_format, NAME_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER);
+
   for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
     char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
@@ -115,19 +116,26 @@ int main()
     printf(line_format, netint->name, addr_str, netmask_str, mac_str, netint->index);
   }
 
-  LwpaNetintInfo default_v4;
+  unsigned int default_v4;
   if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV4, &default_v4))
   {
-    char addr_str[LWPA_INET_ADDRSTRLEN] = {'\0'};
-    lwpa_inet_ntop(&default_v4.addr, addr_str, LWPA_INET_ADDRSTRLEN);
-    printf("Default IPv4 interface: %s (%s)\n", addr_str, default_v4.name);
+    const LwpaNetintInfo* addr_arr;
+    size_t addr_arr_size;
+    if (kLwpaErrOk == lwpa_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    {
+      printf("Default IPv4 interface: %s (%u)\n", addr_arr->friendly_name, default_v4);
+    }
   }
-  LwpaNetintInfo default_v6;
+
+  unsigned int default_v6;
   if (kLwpaErrOk == lwpa_netint_get_default_interface(kLwpaIpTypeV6, &default_v6))
   {
-    char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
-    lwpa_inet_ntop(&default_v6.addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-    printf("Default IPv6 interface: %s (%s)\n", addr_str, default_v6.name);
+    const LwpaNetintInfo* addr_arr;
+    size_t addr_arr_size;
+    if (kLwpaErrOk == lwpa_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    {
+      printf("Default IPv6 interface: %s (%u)\n", addr_arr->friendly_name, default_v6);
+    }
   }
 
   lwpa_deinit(LWPA_FEATURE_NETINTS);

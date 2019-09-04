@@ -22,13 +22,15 @@
 #define _LWPA_PACK_H_
 
 #include "lwpa/int.h"
-#include "lwpa/opts.h"
 
 /*! \defgroup lwpa_pack lwpa_pack
  *  \ingroup lwpa
  *  \brief Platform- and endianness-independent buffer packing and unpacking.
  *
+ *  For 16- and 32-bit integer packing and unpacking:
  *  \#include "lwpa/pack.h"
+ *  For 64-bit integer packing and unpacking:
+ *  \#include "lwpa/pack64.h"
  *
  *  This module defines macros for packing and unpacking integer types to/from a byte buffer. They
  *  are architected in such a way that the endianness of the integer in the buffer is always known,
@@ -49,13 +51,6 @@ uint32_t lwpa_upack_32b(const uint8_t* buf);
 void lwpa_pack_32b(uint8_t* buf, uint32_t val);
 uint32_t lwpa_upack_32l(const uint8_t* buf);
 void lwpa_pack_32l(uint8_t* buf, uint32_t val);
-
-#if LWPA_64BIT_SUPPORT
-uint64_t lwpa_upack_64b(const uint8_t* buf);
-void lwpa_pack_64b(uint8_t* buf, uint64_t val);
-uint64_t lwpa_upack_64l(const uint8_t* buf);
-void lwpa_pack_64l(uint8_t* buf, uint64_t val);
-#endif
 
 #ifdef __cplusplus
 }

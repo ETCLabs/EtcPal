@@ -35,4 +35,5 @@ or derived in each stack is listed below.
 | macOS    | Standard / RFC 3493, can also be inferred from data in `ifconfig` and `netstat -rn` |
 | Microsoft Windows | Indicated in [IP_ADAPTER_ADDRESSES](https://docs.microsoft.com/en-us/windows/win32/api/iptypes/ns-iptypes-_ip_adapter_addresses_lh) structure, also visible via `route print` at command line |
 | Linux    | Standard / RFC 3493, visible via `ip link` on newer/systemd systems, or can be inferred from data in `ifconfig` |
+| lwIP     | Standard / RFC 3493 as of lwIP 2.1.0. Also available using the lwIP API function netif_get_index(). |
 | MQX RTOS | The index is derived from the RTCS _device identifier_ (an index starting from 0 into a linked list of network interfaces) plus 1. This is translated internally for relevant socket calls. |

@@ -82,7 +82,7 @@ bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
 
 void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)
 {
-  if (id)
+  if (id && id->valid)
     reader_atomic_decrement(id);
 }
 
@@ -90,7 +90,7 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    if (_lwsem_wait(&id->sem))
+    if (MQX_OK == _lwsem_wait(&id->sem))
     {
       // Wait until there are no readers, keeping the lock so that no new readers can get in.
       while (id->reader_count > 0)
@@ -108,7 +108,7 @@ bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    if (_lwsem_wait(&id->sem))
+    if (MQX_OK == _lwsem_wait_ticks(&id->sem, 1u))
     {
       // Just check once to see if there are still readers
       if (id->reader_count > 0)

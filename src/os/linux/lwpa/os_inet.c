@@ -103,7 +103,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
       addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(src));
       if (NULL != inet_ntop(AF_INET, &addr, dest, (socklen_t)size))
         return kLwpaErrOk;
-      return kLwpaErrSys;
+      return kLwpaErrInvalid;
     }
     case kLwpaIpTypeV6:
     {
@@ -111,7 +111,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
       memcpy(addr.s6_addr, LWPA_IP_V6_ADDRESS(src), LWPA_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, (socklen_t)size))
         return kLwpaErrOk;
-      return kLwpaErrSys;
+      return kLwpaErrInvalid;
     }
     default:
       return kLwpaErrInvalid;
@@ -129,7 +129,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* des
     {
       struct in_addr addr;
       if (1 != inet_pton(AF_INET, src, &addr))
-        return kLwpaErrSys;
+        return kLwpaErrInvalid;
       LWPA_IP_SET_V4_ADDRESS(dest, ntohl(addr.s_addr));
       return kLwpaErrOk;
     }
@@ -137,7 +137,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* des
     {
       struct in6_addr addr;
       if (1 != inet_pton(AF_INET6, src, &addr))
-        return kLwpaErrSys;
+        return kLwpaErrInvalid;
       LWPA_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kLwpaErrOk;
     }

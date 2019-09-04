@@ -149,7 +149,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* des
     {
       struct in_addr addr;
       if (RTCS_OK != inet_pton(AF_INET, src, &addr, sizeof addr))
-        return kLwpaErrSys;
+        return kLwpaErrInvalid;
       /* RTCS gives us host byte order in their in_addrs. Thus no htonl is needed. */
       LWPA_IP_SET_V4_ADDRESS(dest, addr.s_addr);
       return kLwpaErrOk;
@@ -158,7 +158,7 @@ lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* des
     {
       struct in6_addr addr;
       if (RTCS_OK != inet_pton(AF_INET6, src, &addr, sizeof addr))
-        return kLwpaErrSys;
+        return kLwpaErrInvalid;
       LWPA_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kLwpaErrOk;
     }

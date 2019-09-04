@@ -20,6 +20,7 @@
 #include "unity_fixture.h"
 
 #include <stddef.h>
+#include <stdio.h>
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -103,7 +104,17 @@ TEST(lwpa_uuid, generates_correct_v1_uuids)
     char error_msg[100];
     sprintf(error_msg, "This failure occurred on UUID attempt %d of %d", i + 1, NUM_V1_UUID_GENERATIONS);
 
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_generate_v1_uuid(&uuid), error_msg);
+    lwpa_error_t generate_result = lwpa_generate_v1_uuid(&uuid);
+
+    // Special case - this function isn't implemented on all platforms, so we abort this test
+    // prematurely if that's the case.
+    if (generate_result == kLwpaErrNotImpl)
+    {
+      TEST_PASS_MESSAGE(
+          "lwpa_generate_v1_uuid() not implemented on this platform. Skipping the remainder of the test.");
+    }
+
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, generate_result, error_msg);
 
     // We should always have Variant 1, Version 1.
     TEST_ASSERT_EQUAL_UINT8_MESSAGE((uuid.data[6] & 0xf0u), 0x10u, error_msg);
@@ -165,7 +176,17 @@ TEST(lwpa_uuid, generates_correct_v4_uuids)
     char error_msg[100];
     sprintf(error_msg, "This failure occurred on UUID attempt %d of %d", i + 1, NUM_V4_UUID_GENERATIONS);
 
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, lwpa_generate_v4_uuid(&uuid), error_msg);
+    lwpa_error_t generate_result = lwpa_generate_v4_uuid(&uuid);
+
+    // Special case - this function isn't implemented on all platforms, so we abort this test
+    // prematurely if that's the case.
+    if (generate_result == kLwpaErrNotImpl)
+    {
+      TEST_PASS_MESSAGE(
+          "lwpa_generate_v4_uuid() not implemented on this platform. Skipping the remainder of the test.");
+    }
+
+    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, generate_result, error_msg);
 
     // We should always have Variant 1, Version 4.
     TEST_ASSERT_EQUAL_MESSAGE((uuid.data[6] & 0xf0u), 0x40u, error_msg);
@@ -187,9 +208,4 @@ TEST_GROUP_RUNNER(lwpa_uuid)
   RUN_TEST_CASE(lwpa_uuid, generates_correct_v1_uuids);
   RUN_TEST_CASE(lwpa_uuid, generates_correct_v3_uuids);
   RUN_TEST_CASE(lwpa_uuid, generates_correct_v4_uuids);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_uuid);
 }

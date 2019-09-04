@@ -17,15 +17,13 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#ifndef _LWPA_OPTS_H_
-#define _LWPA_OPTS_H_
+#ifndef _LWPA_OS_INET_H_
+#define _LWPA_OS_INET_H_
 
-#if HAVE_LWPA_CONFIG_H
-#include "lwpa_config.h"
-#endif /* HAVE_LWPA_CONFIG_H */
+#include <lwip/sockets.h>
 
-#ifndef LWPA_64BIT_SUPPORT
-#define LWPA_64BIT_SUPPORT 1
-#endif
+typedef struct sockaddr lwpa_os_sockaddr_t;
+typedef struct sockaddr lwpa_os_ipaddr_t;
 
-#endif /* _LWPA_OPTS_H_ */
+#endif /* _LWPA_OS_INET_H_ */
+

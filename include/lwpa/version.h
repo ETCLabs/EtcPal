@@ -32,14 +32,14 @@
 #define LWPA_VERSION_MAJOR 0
 #define LWPA_VERSION_MINOR 3
 #define LWPA_VERSION_PATCH 0
-#define LWPA_VERSION_BUILD 1
+#define LWPA_VERSION_BUILD 2
 /*! @} */
 
 /*! \name lwpa version strings
  *  @{
  */
-#define LWPA_VERSION_STRING "0.3.0.1"
-#define LWPA_VERSION_DATESTR "19.Jun.2019"
+#define LWPA_VERSION_STRING "0.3.0.2"
+#define LWPA_VERSION_DATESTR "04.Sep.2019"
 #define LWPA_VERSION_COPYRIGHT "Copyright 2019 ETC Inc."
 #define LWPA_VERSION_PRODUCTNAME "lwpa"
 /*! @} */

@@ -128,6 +128,18 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   if (res != kLwpaErrOk)
     return res;
 
+  // Fill in the default index information
+  if (routing_table_v4.default_route)
+  {
+    cache->def.v4_valid = true;
+    cache->def.v4_index = routing_table_v4.default_route->interface_index;
+  }
+  if (routing_table_v6.default_route)
+  {
+    cache->def.v6_valid = true;
+    cache->def.v6_index = routing_table_v6.default_route->interface_index;
+  }
+
   struct ifaddrs* os_addrs;
   if (getifaddrs(&os_addrs) < 0)
   {
@@ -236,8 +248,10 @@ void os_free_interfaces(CachedNetintInfo* cache)
   free_routing_tables();
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, unsigned int* index)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
+  (void)cache;  // unused
+
   RoutingTable* table_to_use = (LWPA_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
   unsigned int index_found = 0;
