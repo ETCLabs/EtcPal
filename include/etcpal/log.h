@@ -185,13 +185,13 @@ typedef enum
 {
   /*! etcpal_log() and etcpal_vlog() create a syslog message and pass it back in the syslog_str
    *  parameter of the log callback. */
-  kLwpaLogCreateSyslog,
+  kEtcPalLogCreateSyslog,
   /*! etcpal_log() and etcpal_vlog() create a human-readable log message and pass it back in the
    *  human_str parameter of the log callback. */
-  kLwpaLogCreateHumanReadableLog,
+  kEtcPalLogCreateHumanReadableLog,
   /*! etcpal_log() and etcpal_vlog() create both a syslog message and a human-readable log message and
    *  pass them back in the syslog_str and human_str parameters of the log callback. */
-  kLwpaLogCreateBoth
+  kEtcPalLogCreateBoth
 } etcpal_log_action_t;
 
 /*! A set of parameters for the syslog header. */

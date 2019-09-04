@@ -44,11 +44,11 @@ extern "C" {
 typedef enum
 {
   /*! This LwpaIpAddr is not valid. */
-  kLwpaIpTypeInvalid,
+  kEtcPalIpTypeInvalid,
   /*! This LwpaIpAddr contains an IPv4 address. */
-  kLwpaIpTypeV4,
+  kEtcPalIpTypeV4,
   /*! This LwpaIpAddr contains an IPv6 address. */
-  kLwpaIpTypeV6
+  kEtcPalIpTypeV6
 } etcpal_iptype_t;
 
 /*! The number of bytes in an IPv6 address. */
@@ -87,17 +87,17 @@ typedef struct LwpaIpAddr
 /*! Determine whether a LwpaIpAddr contains an IPv4 address.
  *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
  *  \return true (contains an IPv4 address) or false (does not contain an IPv4 address). */
-#define LWPA_IP_IS_V4(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kLwpaIpTypeV4)
+#define LWPA_IP_IS_V4(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeV4)
 
 /*! Determine whether a LwpaIpAddr contains an IPv6 address.
  *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
  *  \return true (contains an IPv6 address) or false (does not contain an IPv6 address). */
-#define LWPA_IP_IS_V6(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kLwpaIpTypeV6)
+#define LWPA_IP_IS_V6(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeV6)
 
 /*! Determine whether a LwpaIpAddr contains an invalid address.
  *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr.
  *  \return true (is invalid) or false (is not invalid). */
-#define LWPA_IP_IS_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kLwpaIpTypeInvalid)
+#define LWPA_IP_IS_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeInvalid)
 
 /*! Get the IPv4 address from a LwpaIpAddr. It is recommended to first use LWPA_IP_IS_V4() to make
  *  sure this LwpaIpAddr contains a valid IPv4 address.
@@ -118,7 +118,7 @@ typedef struct LwpaIpAddr
 #define LWPA_IP_SET_V4_ADDRESS(etcpal_ip_ptr, val) \
   do                                             \
   {                                              \
-    (etcpal_ip_ptr)->type = kLwpaIpTypeV4;         \
+    (etcpal_ip_ptr)->type = kEtcPalIpTypeV4;         \
     (etcpal_ip_ptr)->addr.v4 = val;                \
   } while (0)
 
@@ -138,14 +138,14 @@ typedef struct LwpaIpAddr
 #define LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(etcpal_ip_ptr, addr_val, scope_id_val) \
   do                                                                              \
   {                                                                               \
-    (etcpal_ip_ptr)->type = kLwpaIpTypeV6;                                          \
+    (etcpal_ip_ptr)->type = kEtcPalIpTypeV6;                                          \
     memcpy((etcpal_ip_ptr)->addr.v6.addr_buf, (addr_val), LWPA_IPV6_BYTES);         \
     (etcpal_ip_ptr)->addr.v6.scope_id = (scope_id_val);                             \
   } while (0)
 
 /*! Set the type field in a LwpaIpAddr to indicate that it does not contain a valid address.
  *  \param etcpal_ip_ptr Pointer to a LwpaIpAddr. */
-#define LWPA_IP_SET_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type = kLwpaIpTypeInvalid)
+#define LWPA_IP_SET_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type = kEtcPalIpTypeInvalid)
 
 /*! @} */
 

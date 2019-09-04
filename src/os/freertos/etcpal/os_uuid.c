@@ -22,10 +22,10 @@
 /* We don't have the capability to generate V1 or V4 UUIDs on FreeRTOS. */
 etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
 {
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
 {
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }

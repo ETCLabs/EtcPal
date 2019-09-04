@@ -130,10 +130,10 @@ TEST(etcpal_inet, ip_is_wildcard_works)
 {
   LwpaIpAddr test_addr;
 
-  etcpal_ip_set_wildcard(kLwpaIpTypeV4, &test_addr);
+  etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &test_addr);
   TEST_ASSERT(etcpal_ip_is_wildcard(&test_addr));
 
-  etcpal_ip_set_wildcard(kLwpaIpTypeV6, &test_addr);
+  etcpal_ip_set_wildcard(kEtcPalIpTypeV6, &test_addr);
   TEST_ASSERT(etcpal_ip_is_wildcard(&test_addr));
 }
 
@@ -248,48 +248,48 @@ TEST(etcpal_inet, ip_mask_length_works)
 TEST(etcpal_inet, ip_mask_from_length_works)
 {
   // Test mask: /0, V4
-  LwpaIpAddr mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV4, 0);
+  LwpaIpAddr mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 0);
   TEST_ASSERT(LWPA_IP_IS_V4(&mask_out));
   TEST_ASSERT_EQUAL_UINT32(LWPA_IP_V4_ADDRESS(&mask_out), 0u);
 
   // Test mask: /7, V4
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV4, 7);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 7);
   TEST_ASSERT(LWPA_IP_IS_V4(&mask_out));
   TEST_ASSERT_EQUAL_UINT32(LWPA_IP_V4_ADDRESS(&mask_out), 0xfe000000u);
 
   // Test mask: /25, V4
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV4, 25);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 25);
   TEST_ASSERT(LWPA_IP_IS_V4(&mask_out));
   TEST_ASSERT_EQUAL_UINT32(LWPA_IP_V4_ADDRESS(&mask_out), 0xffffff80u);
 
   // Test mask: /32, V4
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV4, 32);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 32);
   TEST_ASSERT(LWPA_IP_IS_V4(&mask_out));
   TEST_ASSERT_EQUAL_UINT32(LWPA_IP_V4_ADDRESS(&mask_out), 0xffffffffu);
 
   // Test mask: Greater than /32, V4
   // Should truncate to 32
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV4, UINT_MAX);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, UINT_MAX);
   TEST_ASSERT(LWPA_IP_IS_V4(&mask_out));
   TEST_ASSERT_EQUAL_UINT32(LWPA_IP_V4_ADDRESS(&mask_out), 0xffffffffu);
 
   // Test mask: /0, V6
   uint8_t v6_compare_val[LWPA_IPV6_BYTES] = {0};
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV6, 0);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 0);
   TEST_ASSERT(LWPA_IP_IS_V6(&mask_out));
   TEST_ASSERT_EQUAL_UINT8_ARRAY(LWPA_IP_V6_ADDRESS(&mask_out), v6_compare_val, LWPA_IPV6_BYTES);
 
   // Test mask: /64, V6
   memcpy(v6_compare_val, (uint8_t[]){0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0, 0, 0, 0, 0, 0, 0, 0},
          LWPA_IPV6_BYTES);
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV6, 64);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 64);
   TEST_ASSERT(LWPA_IP_IS_V6(&mask_out));
   TEST_ASSERT_EQUAL_UINT8_ARRAY(LWPA_IP_V6_ADDRESS(&mask_out), v6_compare_val, LWPA_IPV6_BYTES);
 
   // Test mask: /77, V6
   memcpy(v6_compare_val, (uint8_t[]){0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xf8, 0, 0, 0, 0, 0, 0},
          LWPA_IPV6_BYTES);
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV6, 77);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 77);
   TEST_ASSERT(LWPA_IP_IS_V6(&mask_out));
   TEST_ASSERT_EQUAL_UINT8_ARRAY(LWPA_IP_V6_ADDRESS(&mask_out), v6_compare_val, LWPA_IPV6_BYTES);
 
@@ -297,13 +297,13 @@ TEST(etcpal_inet, ip_mask_from_length_works)
   memcpy(v6_compare_val,
          (uint8_t[]){0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
          LWPA_IPV6_BYTES);
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV6, 128);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
   TEST_ASSERT(LWPA_IP_IS_V6(&mask_out));
   TEST_ASSERT_EQUAL_UINT8_ARRAY(LWPA_IP_V6_ADDRESS(&mask_out), v6_compare_val, LWPA_IPV6_BYTES);
 
   // Test mask: Greater than /128, V6
   // Should truncate to 128
-  mask_out = etcpal_ip_mask_from_length(kLwpaIpTypeV6, UINT_MAX);
+  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, UINT_MAX);
   TEST_ASSERT(LWPA_IP_IS_V6(&mask_out));
   TEST_ASSERT_EQUAL_UINT8_ARRAY(LWPA_IP_V6_ADDRESS(&mask_out), v6_compare_val, LWPA_IPV6_BYTES);
 }
@@ -327,34 +327,34 @@ TEST(etcpal_inet, inet_string_functions_work)
   LwpaIpAddr addr;
 
   // Test etcpal_inet_pton()
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_pton(kLwpaIpTypeV4, test_ip4_1, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV4, test_ip4_1, &addr));
   TEST_ASSERT_EQUAL(LWPA_IP_V4_ADDRESS(&addr), 0u);
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_pton(kLwpaIpTypeV4, test_ip4_2, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV4, test_ip4_2, &addr));
   TEST_ASSERT_EQUAL(LWPA_IP_V4_ADDRESS(&addr), 0xffffffffu);
-  TEST_ASSERT_NOT_EQUAL(kLwpaErrOk, etcpal_inet_pton(kLwpaIpTypeV4, test_ip4_fail, &addr));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_pton(kLwpaIpTypeV6, test_ip6_1, &addr));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV4, test_ip4_fail, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV6, test_ip6_1, &addr));
   TEST_ASSERT_EQUAL(0, memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_1_bin, LWPA_IPV6_BYTES));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_pton(kLwpaIpTypeV6, test_ip6_2, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV6, test_ip6_2, &addr));
   TEST_ASSERT_EQUAL(0, memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_2_bin, LWPA_IPV6_BYTES));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_pton(kLwpaIpTypeV6, test_ip6_3, &addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV6, test_ip6_3, &addr));
   TEST_ASSERT_EQUAL(0, memcmp(LWPA_IP_V6_ADDRESS(&addr), test_ip6_3_bin, LWPA_IPV6_BYTES));
-  TEST_ASSERT_NOT_EQUAL(kLwpaErrOk, etcpal_inet_pton(kLwpaIpTypeV6, test_ip6_fail, &addr));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_inet_pton(kEtcPalIpTypeV6, test_ip6_fail, &addr));
 
   // Test etcpal_inet_ntop()
   LWPA_IP_SET_V4_ADDRESS(&addr, 0);
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
   TEST_ASSERT_EQUAL(0, strcmp(str, test_ip4_1));
   LWPA_IP_SET_V4_ADDRESS(&addr, 0xffffffff);
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET_ADDRSTRLEN));
   TEST_ASSERT_EQUAL(0, strcmp(str, test_ip4_2));
   LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_1_bin);
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   TEST_ASSERT_EQUAL(0, strcmp(str, test_ip6_1));
   LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_2_bin);
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   TEST_ASSERT_EQUAL(0, strcmp(str, test_ip6_2));
   LWPA_IP_SET_V6_ADDRESS(&addr, test_ip6_3_bin);
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, LWPA_INET6_ADDRSTRLEN));
   TEST_ASSERT((0 == strcmp(str, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")) ||
               (0 == strcmp(str, "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF")));
 }

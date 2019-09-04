@@ -98,7 +98,7 @@ TEST(etcpal_netint, get_netints_by_index_works)
 
       // Get the new one
       current_index = netint->index;
-      TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_netint_get_interfaces_by_index(netint->index, &current_arr_by_index,
+      TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces_by_index(netint->index, &current_arr_by_index,
                                                                         &current_index_arr_size));
       TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
     }
@@ -119,8 +119,8 @@ TEST(etcpal_netint, default_netint_is_consistent)
   unsigned int def_v4 = 0;
   unsigned int def_v6 = 0;
 
-  bool have_default_v4 = (kLwpaErrOk == etcpal_netint_get_default_interface(kLwpaIpTypeV4, &def_v4));
-  bool have_default_v6 = (kLwpaErrOk == etcpal_netint_get_default_interface(kLwpaIpTypeV6, &def_v6));
+  bool have_default_v4 = (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_v4));
+  bool have_default_v6 = (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &def_v6));
 
   if (have_default_v4)
   {
@@ -137,11 +137,11 @@ TEST(etcpal_netint, default_netint_is_consistent)
   {
     if (netint->is_default)
     {
-      if (netint->addr.type == kLwpaIpTypeV4)
+      if (netint->addr.type == kEtcPalIpTypeV4)
       {
         TEST_ASSERT_EQUAL_UINT(netint->index, def_v4);
       }
-      else if (netint->addr.type == kLwpaIpTypeV6)
+      else if (netint->addr.type == kEtcPalIpTypeV6)
       {
         TEST_ASSERT_EQUAL_UINT(netint->index, def_v6);
       }
@@ -166,7 +166,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
 
     LwpaIpAddr test_addr = netint->addr;
     unsigned int netint_index_res;
-    TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
     // Put addresses in print form to test meaningful information in case of test failure
     char test_addr_str[LWPA_INET6_ADDRSTRLEN];
@@ -182,8 +182,8 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
   LWPA_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
   unsigned int netint_index_res;
   unsigned int netint_index_default;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_netint_get_default_interface(kLwpaIpTypeV4, &netint_index_default));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_netint_get_interface_for_dest(&ext_addr, &netint_index_res));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &netint_index_default));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&ext_addr, &netint_index_res));
   TEST_ASSERT_EQUAL_UINT(netint_index_res, netint_index_default);
 }
 

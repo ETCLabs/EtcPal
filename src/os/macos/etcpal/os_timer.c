@@ -30,7 +30,7 @@ etcpal_error_t etcpal_timer_init()
   mach_timebase_info(&timebase);
 
   ticks_to_ms = (((double)timebase.numer) / (((double)timebase.denom) * ((double)1000000)));
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void etcpal_timer_deinit()

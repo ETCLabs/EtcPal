@@ -66,7 +66,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   cache->def.v4_valid = true;
   cache->def.v4_index = BSP_DEFAULT_ENET_DEVICE + 1;
 
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -92,5 +92,5 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
     index_found = netints[BSP_DEFAULT_ENET_DEVICE].index;
 
   *index = index_found;
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }

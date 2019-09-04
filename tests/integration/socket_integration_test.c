@@ -64,11 +64,11 @@ static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
 // if not.
 static void select_network_interface_v4()
 {
-  if (kLwpaErrOk == etcpal_netint_get_default_interface(kLwpaIpTypeV4, &v4_netint))
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &v4_netint))
   {
     const LwpaNetintInfo* netint_arr;
     size_t netint_arr_size;
-    if (kLwpaErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->name, "utun"))
     {
       run_ipv4_mcast_test = true;
@@ -100,11 +100,11 @@ static void select_network_interface_v4()
 // Select the default interface if available, the very first non-loopback interface if not.
 static void select_network_interface_v6()
 {
-  if (kLwpaErrOk == etcpal_netint_get_default_interface(kLwpaIpTypeV6, &v6_netint))
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &v6_netint))
   {
     const LwpaNetintInfo* netint_arr;
     size_t netint_arr_size;
-    if (kLwpaErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->name, "utun"))
     {
       run_ipv6_mcast_test = true;
@@ -164,20 +164,20 @@ static void send_thread(void* arg)
 void unicast_udp_test(etcpal_iptype_t ip_type)
 {
   int intval = 500;
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
   intval = 1;
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
 
   LwpaSockaddr bind_addr;
   etcpal_ip_set_wildcard(ip_type, &bind_addr.ip);
   bind_addr.port = UNICAST_UDP_PORT_BASE;
   // Bind socket 1 to the wildcard address and a specific port.
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_bind(recv_socks[0], &bind_addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(recv_socks[0], &bind_addr));
   // Bind socket 2 to the wildcard address and a different port.
   bind_addr.port = UNICAST_UDP_PORT_BASE + 1;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_bind(recv_socks[1], &bind_addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(recv_socks[1], &bind_addr));
 
   send_addr.port = UNICAST_UDP_PORT_BASE;
 
@@ -200,7 +200,7 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
     }
     else
     {
-      TEST_ASSERT(res == kLwpaErrTimedOut || res == kLwpaErrWouldBlock);
+      TEST_ASSERT(res == kEtcPalErrTimedOut || res == kEtcPalErrWouldBlock);
       break;
     }
 
@@ -225,30 +225,30 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
 
 TEST(socket_integration_udp, unicast_udp_ipv4)
 {
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], LWPA_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], LWPA_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, LWPA_SOCKET_INVALID);
 
   LWPA_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001u);
 
-  unicast_udp_test(kLwpaIpTypeV4);
+  unicast_udp_test(kEtcPalIpTypeV4);
 }
 
 #if ETCPAL_TEST_IPV6
 TEST(socket_integration_udp, unicast_udp_ipv6)
 {
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], LWPA_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], LWPA_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, LWPA_SOCKET_INVALID);
 
   uint8_t v6_loopback[LWPA_IPV6_BYTES];
@@ -256,7 +256,7 @@ TEST(socket_integration_udp, unicast_udp_ipv6)
   v6_loopback[15] = 1;
   LWPA_IP_SET_V6_ADDRESS(&send_addr.ip, &v6_loopback);
 
-  unicast_udp_test(kLwpaIpTypeV6);
+  unicast_udp_test(kEtcPalIpTypeV6);
 }
 #endif  // ETCPAL_TEST_IPV6
 
@@ -265,10 +265,10 @@ TEST(socket_integration_udp, unicast_udp_ipv6)
 void multicast_udp_test(void)
 {
   int intval = 500;
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
   intval = 1;
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], LWPA_SOL_SOCKET, LWPA_SO_RCVTIMEO, &intval, sizeof(int)));
 
   // Start the send thread
@@ -290,7 +290,7 @@ void multicast_udp_test(void)
     }
     else
     {
-      TEST_ASSERT(res == kLwpaErrTimedOut || res == kLwpaErrWouldBlock);
+      TEST_ASSERT(res == kEtcPalErrTimedOut || res == kEtcPalErrWouldBlock);
       break;
     }
 
@@ -315,44 +315,44 @@ TEST(socket_integration_udp, multicast_udp_ipv4)
 {
   LwpaSockaddr bind_addr;
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], LWPA_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], LWPA_SOCKET_INVALID);
 
   int intval = 1;
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, LWPA_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int)));
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(send_sock, LWPA_IPPROTO_IP, LWPA_IP_MULTICAST_IF, &v4_netint, sizeof v4_netint));
 
   // Bind socket 1 to the wildcard address and a specific port.
-  etcpal_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
+  etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
   bind_addr.port = MULTICAST_UDP_PORT_BASE;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_bind(recv_socks[0], &bind_addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(recv_socks[0], &bind_addr));
 
   // Bind socket 2 to the wildcard address and a different port.
   bind_addr.port = MULTICAST_UDP_PORT_BASE + 1;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_bind(recv_socks[1], &bind_addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(recv_socks[1], &bind_addr));
 
   // Subscribe socket 1 to the multicast address.
   LwpaGroupReq greq;
   greq.ifindex = v4_netint;
   LWPA_IP_SET_V4_ADDRESS(&greq.group, kTestMcastAddrIPv4);
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
   // Subscribe socket 2 to the multicast address
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], LWPA_IPPROTO_IP, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
   LWPA_IP_SET_V4_ADDRESS(&send_addr.ip, kTestMcastAddrIPv4);
@@ -366,44 +366,44 @@ TEST(socket_integration_udp, multicast_udp_ipv6)
 {
   LwpaSockaddr bind_addr;
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], LWPA_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], LWPA_SOCKET_INVALID);
 
   int intval = 1;
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], LWPA_SOL_SOCKET, LWPA_SO_REUSEADDR, &intval, sizeof(int)));
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET6, LWPA_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, LWPA_SOCKET_INVALID);
 
-  // TEST_ASSERT_EQUAL(kLwpaErrOk,
+  // TEST_ASSERT_EQUAL(kEtcPalErrOk,
   etcpal_setsockopt(send_sock, LWPA_IPPROTO_IPV6, LWPA_IP_MULTICAST_LOOP, &intval, sizeof(int));  //);
-  // TEST_ASSERT_EQUAL(kLwpaErrOk,
+  // TEST_ASSERT_EQUAL(kEtcPalErrOk,
   etcpal_setsockopt(send_sock, LWPA_IPPROTO_IPV6, LWPA_IP_MULTICAST_IF, &v6_netint, sizeof v6_netint);  //);
 
   // Bind socket 1 to the wildcard address and a specific port.
-  etcpal_ip_set_wildcard(kLwpaIpTypeV6, &bind_addr.ip);
+  etcpal_ip_set_wildcard(kEtcPalIpTypeV6, &bind_addr.ip);
   bind_addr.port = MULTICAST_UDP_PORT_BASE;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_bind(recv_socks[0], &bind_addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(recv_socks[0], &bind_addr));
 
   // Bind socket 2 to the wildcard address and a different port.
   bind_addr.port = MULTICAST_UDP_PORT_BASE + 1;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_bind(recv_socks[1], &bind_addr));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(recv_socks[1], &bind_addr));
 
   // Subscribe socket 1 to the multicast address.
   LwpaGroupReq greq;
   greq.ifindex = v6_netint;
   LWPA_IP_SET_V6_ADDRESS(&greq.group, kTestMcastAddrIPv6);
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], LWPA_IPPROTO_IPV6, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
   // Subscribe socket 2 to the multicast address
-  TEST_ASSERT_EQUAL(kLwpaErrOk,
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], LWPA_IPPROTO_IPV6, LWPA_MCAST_JOIN_GROUP, &greq, sizeof greq));
 
   LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&send_addr.ip, kTestMcastAddrIPv6, v6_netint);
@@ -419,7 +419,7 @@ TEST(socket_integration_udp, multicast_udp_ipv6)
 TEST(socket_integration_udp, bulk_poll)
 {
   LwpaPollContext context;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_poll_context_init(&context));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   static uint16_t bind_ports[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
   for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)
@@ -427,20 +427,20 @@ TEST(socket_integration_udp, bulk_poll)
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
 
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[i]), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &recv_socks[i]), error_msg);
     TEST_ASSERT_NOT_EQUAL_MESSAGE(recv_socks[i], LWPA_SOCKET_INVALID, error_msg);
 
     LwpaSockaddr bind_addr;
-    etcpal_ip_set_wildcard(kLwpaIpTypeV4, &bind_addr.ip);
+    etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
     bind_addr.port = 0;
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, etcpal_bind(recv_socks[i], &bind_addr), error_msg);
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, etcpal_getsockname(recv_socks[i], &bind_addr), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_bind(recv_socks[i], &bind_addr), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_getsockname(recv_socks[i], &bind_addr), error_msg);
     bind_ports[i] = bind_addr.port;
 
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, etcpal_poll_add_socket(&context, recv_socks[i], LWPA_POLL_IN, NULL), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_poll_add_socket(&context, recv_socks[i], LWPA_POLL_IN, NULL), error_msg);
   }
 
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
 
   LWPA_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)
@@ -453,10 +453,10 @@ TEST(socket_integration_udp, bulk_poll)
     etcpal_sendto(send_sock, kSocketTestMessage, SOCKET_TEST_MESSAGE_LENGTH, 0, &send_addr);
 
     LwpaPollEvent event;
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, etcpal_poll_wait(&context, &event, 100), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100), error_msg);
     TEST_ASSERT_EQUAL_MESSAGE(event.socket, recv_socks[i], error_msg);
     TEST_ASSERT_EQUAL_MESSAGE(event.events, LWPA_POLL_IN, error_msg);
-    TEST_ASSERT_EQUAL_MESSAGE(event.err, kLwpaErrOk, error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(event.err, kEtcPalErrOk, error_msg);
 
     uint8_t recv_buf[SOCKET_TEST_MESSAGE_LENGTH];
     TEST_ASSERT_GREATER_THAN(0, etcpal_recvfrom(recv_socks[i], recv_buf, SOCKET_TEST_MESSAGE_LENGTH, 0, NULL));
@@ -465,7 +465,7 @@ TEST(socket_integration_udp, bulk_poll)
 
 TEST_GROUP_RUNNER(socket_integration_udp)
 {
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_init(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_SOCKETS | LWPA_FEATURE_NETINTS));
 
 #if !ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS
   select_network_interface_v4();

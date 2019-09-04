@@ -113,7 +113,7 @@ TEST(etcpal_rbtree, insert_node_functions_work)
   {
     LwpaRbNode* node = &node_pool[i];
     TEST_ASSERT_NOT_NULL(etcpal_rbnode_init(node, &random_int_array[i]));
-    TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_insert_node(&tree, node));
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert_node(&tree, node));
   }
   TEST_ASSERT_EQUAL_UINT(INT_ARRAY_SIZE, etcpal_rbtree_size(&tree));
   TEST_ASSERT_GREATER_THAN(0, etcpal_rbtree_test(&tree, tree.root));
@@ -130,11 +130,11 @@ TEST(etcpal_rbtree, insert_node_functions_work)
 
   // Try removing one item
   int to_remove = RANDOM_INT_IN_ARRAY();
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_remove_with_cb(&tree, &to_remove, clear_func));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_remove_with_cb(&tree, &to_remove, clear_func));
   TEST_ASSERT_EQUAL(to_remove, *((int*)(clear_func_fake.arg1_val->value)));
 
   // Clear the tree
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_clear_with_cb(&tree, clear_func));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_clear_with_cb(&tree, clear_func));
   TEST_ASSERT_EQUAL_UINT(0u, etcpal_rbtree_size(&tree));
   TEST_ASSERT_EQUAL_UINT(clear_func_fake.call_count, INT_ARRAY_SIZE);
 }
@@ -146,7 +146,7 @@ TEST(etcpal_rbtree, insert_functions_work)
 
   // Insert each value into the tree; dynamic alloc functions should be called.
   for (int i = 0; i < INT_ARRAY_SIZE; ++i)
-    TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_insert(&tree, &random_int_array[i]));
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(&tree, &random_int_array[i]));
   TEST_ASSERT_EQUAL_UINT(INT_ARRAY_SIZE, etcpal_rbtree_size(&tree));
   TEST_ASSERT_EQUAL_UINT(INT_ARRAY_SIZE, node_alloc_fake.call_count);
   TEST_ASSERT_GREATER_THAN(0, etcpal_rbtree_test(&tree, tree.root));
@@ -163,11 +163,11 @@ TEST(etcpal_rbtree, insert_functions_work)
 
   // Make sure removing something that wasn't in the tree fails.
   int not_in_tree = INT_ARRAY_SIZE;
-  TEST_ASSERT_EQUAL(kLwpaErrNotFound, etcpal_rbtree_remove(&tree, &not_in_tree));
+  TEST_ASSERT_EQUAL(kEtcPalErrNotFound, etcpal_rbtree_remove(&tree, &not_in_tree));
   TEST_ASSERT_EQUAL_UINT(node_dealloc_fake.call_count, 0u);
 
   // Clear the tree
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_clear(&tree));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_clear(&tree));
   TEST_ASSERT_EQUAL_UINT(0u, etcpal_rbtree_size(&tree));
   TEST_ASSERT_EQUAL_UINT(node_dealloc_fake.call_count, INT_ARRAY_SIZE);
 }
@@ -179,16 +179,16 @@ TEST(etcpal_rbtree, insert_should_fail_if_element_already_exists)
 
   // Insert a few values into the tree. Enough so we have some branches to traverse
   for (int i = 0; i < 10; ++i)
-    TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_insert(&tree, &incrementing_int_array[i]));
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(&tree, &incrementing_int_array[i]));
   TEST_ASSERT_EQUAL_UINT(10u, etcpal_rbtree_size(&tree));
 
   // Try inserting a duplicate value - should fail with error 'already exists'
   int duplicate = 5;
-  TEST_ASSERT_EQUAL(kLwpaErrExists, etcpal_rbtree_insert(&tree, &duplicate));
+  TEST_ASSERT_EQUAL(kEtcPalErrExists, etcpal_rbtree_insert(&tree, &duplicate));
 
   // Remove the offending value and try inserting it again, should succeed
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_remove(&tree, &duplicate));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_insert(&tree, &duplicate));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_remove(&tree, &duplicate));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(&tree, &duplicate));
 }
 
 TEST(etcpal_rbtree, insert_failure_should_not_leak_memory)
@@ -198,11 +198,11 @@ TEST(etcpal_rbtree, insert_failure_should_not_leak_memory)
 
   // Insert a value, then try to insert it again
   int val = 0;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_insert(&tree, &val));
-  TEST_ASSERT_EQUAL(kLwpaErrExists, etcpal_rbtree_insert(&tree, &val));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(&tree, &val));
+  TEST_ASSERT_EQUAL(kEtcPalErrExists, etcpal_rbtree_insert(&tree, &val));
 
   // Now clear the tree
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_clear(&tree));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_clear(&tree));
 
   // The alloc and dealloc count should be equal - no memory should be leaked
   TEST_ASSERT_EQUAL(node_alloc_fake.call_count, node_dealloc_fake.call_count);
@@ -215,7 +215,7 @@ TEST(etcpal_rbtree, iterators_work_as_expected)
 
   // Insert each value into the tree; dynamic alloc functions should be called.
   for (int i = 0; i < INT_ARRAY_SIZE; ++i)
-    TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_insert(&tree, &random_int_array[i]));
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(&tree, &random_int_array[i]));
   TEST_ASSERT_EQUAL_UINT(INT_ARRAY_SIZE, etcpal_rbtree_size(&tree));
 
   // Initialize an iterator
@@ -268,7 +268,7 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
   // would result in a worst-case unbalanced tree of height INT_ARRAY_SIZE. In the red-black tree,
   // the maximum height should be determined by the formula 2 * log2(INT_ARRAY_SIZE + 1).
   for (int i = 0; i < INT_ARRAY_SIZE; ++i)
-    TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_rbtree_insert(&tree, &incrementing_int_array[i]));
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(&tree, &incrementing_int_array[i]));
   TEST_ASSERT_EQUAL_UINT(INT_ARRAY_SIZE, etcpal_rbtree_size(&tree));
 
   // Get the height of the tree and compare it against the theoretical maximum.

@@ -35,18 +35,18 @@ static int compare_netints(const void* a, const void* b);
 
 etcpal_error_t etcpal_netint_init()
 {
-  etcpal_error_t res = kLwpaErrOk;
+  etcpal_error_t res = kEtcPalErrOk;
   if (init_count == 0)
   {
     res = os_enumerate_interfaces(&netint_cache);
-    if (res == kLwpaErrOk)
+    if (res == kEtcPalErrOk)
     {
       // Sort the interfaces by OS index
       qsort(netint_cache.netints, netint_cache.num_netints, sizeof(LwpaNetintInfo), compare_netints);
     }
   }
 
-  if (res == kLwpaErrOk)
+  if (res == kEtcPalErrOk)
     ++init_count;
 
   return res;
@@ -112,15 +112,15 @@ size_t etcpal_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_a
  *  \param[in] index Index for which to get interfaces.
  *  \param[out] netint_arr Filled in on success with the array of matching interfaces.
  *  \param[out] netint_arr_size Filled in on success with the size of the matching interface array.
- *  \return #kLwpaErrOk: netint_arr and netint_arr_size were filled in.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
- *  \return #kLwpaErrNotFound: No interfaces found for this index.
+ *  \return #kEtcPalErrOk: netint_arr and netint_arr_size were filled in.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotFound: No interfaces found for this index.
  */
 etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const LwpaNetintInfo** netint_arr,
                                                  size_t* netint_arr_size)
 {
   if (index == 0 || !netint_arr || !netint_arr_size)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   size_t arr_size = 0;
   for (const LwpaNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
@@ -146,11 +146,11 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const L
   if (arr_size != 0)
   {
     *netint_arr_size = arr_size;
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   }
   else
   {
-    return kLwpaErrNotFound;
+    return kEtcPalErrNotFound;
   }
 }
 
@@ -163,43 +163,43 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const L
  *  etcpal_netint_get_interfaces().
  *
  *  \param[in] type The IP protocol for which to get the default network interface, either
- *                  #kLwpaIpTypeV4 or #kLwpaIpTypeV6. A separate default interface is maintained for
+ *                  #kEtcPalIpTypeV4 or #kEtcPalIpTypeV6. A separate default interface is maintained for
  *                  each.
  *  \param[out] netint_index Pointer to value to fill with the index of the default interface.
- *  \return #kLwpaErrOk: netint was filled in.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
- *  \return #kLwpaErrNotFound: No default interface found for this type.
+ *  \return #kEtcPalErrOk: netint was filled in.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotFound: No default interface found for this type.
  */
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index)
 {
   if (init_count && netint_index)
   {
-    if (type == kLwpaIpTypeV4)
+    if (type == kEtcPalIpTypeV4)
     {
       if (netint_cache.def.v4_valid)
       {
         *netint_index = netint_cache.def.v4_index;
-        return kLwpaErrOk;
+        return kEtcPalErrOk;
       }
       else
       {
-        return kLwpaErrNotFound;
+        return kEtcPalErrNotFound;
       }
     }
-    else if (type == kLwpaIpTypeV6)
+    else if (type == kEtcPalIpTypeV6)
     {
       if (netint_cache.def.v6_valid)
       {
         *netint_index = netint_cache.def.v6_index;
-        return kLwpaErrOk;
+        return kEtcPalErrOk;
       }
       else
       {
-        return kLwpaErrNotFound;
+        return kEtcPalErrNotFound;
       }
     }
   }
-  return kLwpaErrInvalid;
+  return kEtcPalErrInvalid;
 }
 
 /*! \brief Get the network interface that the system will choose when routing an IP packet to the
@@ -208,20 +208,20 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
  *  \param[in] dest IP address of the destination.
  *  \param[out] netint Pointer to network interface description struct to fill in with information
  *                     about the chosen interface.
- *  \return #kLwpaErrOk: Netint filled in successfully.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
- *  \return #kLwpaErrNotInit: Module not initialized.
- *  \return #kLwpaErrNoNetints: No network interfaces found on system.
- *  \return #kLwpaErrNotFound: No route was able to be resolved to the destination.
+ *  \return #kEtcPalErrOk: Netint filled in successfully.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotInit: Module not initialized.
+ *  \return #kEtcPalErrNoNetints: No network interfaces found on system.
+ *  \return #kEtcPalErrNotFound: No route was able to be resolved to the destination.
  */
 etcpal_error_t etcpal_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsigned int* netint_index)
 {
   if (!dest || !netint_index)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
   if (!init_count)
-    return kLwpaErrNotInit;
+    return kEtcPalErrNotInit;
   if (netint_cache.num_netints == 0)
-    return kLwpaErrNoNetints;
+    return kEtcPalErrNoNetints;
 
   return os_resolve_route(dest, &netint_cache, netint_index);
 }

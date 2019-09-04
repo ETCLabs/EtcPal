@@ -30,7 +30,7 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
  *  \param[in] id Listening socket on which to accept a new connection.
  *  \param[out] address Remote address from which the connection was accepted.
  *  \param[out] conn_sock Filled in on success with handle to connected socket.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (failure).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (failure).
  */
 etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr *address, etcpal_socket_t *conn_sock);
 
@@ -43,7 +43,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr *address, etcpal_s
  *
  *  \param[in] id Socket to which to bind an address (traditionally called a 'name').
  *  \param[in] address Address to assign to the socket.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr *address);
 
@@ -56,7 +56,7 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr *address);
  *  an etcpal_* function.
  *
  *  \param[in] id Socket to close.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_close(etcpal_socket_t id);
 
@@ -69,7 +69,7 @@ etcpal_error_t etcpal_close(etcpal_socket_t id);
  *
  *  \param[in] id Socket to connect.
  *  \param[in] address Address to which to connect.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr *address);
 
@@ -82,7 +82,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr *address);
  *
  *  \param[in] id Connected socket for which to get the peer address.
  *  \param[in] address Filled in with peer address on success.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr *address);
 
@@ -95,7 +95,7 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr *address);
  *
  *  \param[in] id Connected socket for which to get the bound address.
  *  \param[in] address Filled in with bound address on success.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr *address);
 
@@ -113,7 +113,7 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr *address);
  *  \param[out] option_value Filled in with option value on success.
  *  \param[in,out] option_len Contains size of buffer pointed to by option_value, filled in with
  *                            actual size of value returned.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void *option_value, size_t *option_len);
 
@@ -123,7 +123,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
  *
  *  \param[in] id LWPA_STREAM socket on which to listen.
  *  \param[in] backlog Maximum length of pending connection queue.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog);
 
@@ -199,7 +199,7 @@ int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int fl
  *  \param[in] option_name Name of the option for which to set the value.
  *  \param[out] option_value Value to set for the option.
  *  \param[in,out] option_len Size of value pointed to by option_value.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void *option_value, size_t option_len);
 
@@ -209,7 +209,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
  *
  *  \param[in] id Socket to be shut down.
  *  \param[in] how How to shut down the socket, one of the LWPA_SHUT_* values.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
 
@@ -224,7 +224,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
  *  \param[in] type Socket communication type.
  *  \param[out] id Filled in with socket handle on success. Filled in with #LWPA_SOCKET_INVALID on
  *                 failure.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t *id);
 
@@ -235,7 +235,7 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
  *
  *  \param[in] id Socket for which to change the blocking behavior.
  *  \param[in] blocking true (socket should block) or false (socket should not block).
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking);
 
@@ -246,7 +246,7 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking);
  *
  *  \param[in] id Socket for which to read the blocking behavior.
  *  \param[out] blocking Filled in with whether the socket is currently blocking or not.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
 
@@ -273,9 +273,9 @@ typedef PLATFORM_DEFINED LwpaPollContext;
  *  etcpal_poll_* function.
  * 
  *  \param[in,out] context Pointer to LwpaPollContext to initialize.
- *  \return #kLwpaErrOk: Init successful.
- *  \return #kLwpaErrInvalid: Invalid argument.
- *  \return #kLwpaErrSys: System call failed.
+ *  \return #kEtcPalErrOk: Init successful.
+ *  \return #kEtcPalErrInvalid: Invalid argument.
+ *  \return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_poll_context_init(LwpaPollContext *context);
 
@@ -304,11 +304,11 @@ void etcpal_poll_context_deinit(LwpaPollContext *context);
  *  \param[in] socket Socket to start monitoring.
  *  \param[in] events Events to monitor for on this socket.
  *  \param[in] user_data Opaque data pointer that is passed back with events on this socket.
- *  \return #kLwpaErrOk: Socket added successfully.
- *  \return #kLwpaErrExists: The socket has already been added to this context.
- *  \return #kLwpaErrInvalid: Invalid argument.
- *  \return #kLwpaErrNoMem: #LWPA_SOCKET_MAX_POLL_SIZE is exceeded in this context.
- *  \return #kLwpaErrSys: System call failed.
+ *  \return #kEtcPalErrOk: Socket added successfully.
+ *  \return #kEtcPalErrExists: The socket has already been added to this context.
+ *  \return #kEtcPalErrInvalid: Invalid argument.
+ *  \return #kEtcPalErrNoMem: #LWPA_SOCKET_MAX_POLL_SIZE is exceeded in this context.
+ *  \return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_poll_add_socket(LwpaPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data);
 
@@ -323,10 +323,10 @@ etcpal_error_t etcpal_poll_add_socket(LwpaPollContext *context, etcpal_socket_t 
  * \param[in] new_user_data New opaque data pointer that is passed back with events on this socket.
  *                          Passing the same pointer as before is also valid if only the events are
  *                          being changed.
- * \return #kLwpaErrOk: Socket modified successfully.
- * \return #kLwpaErrInvalid: Invalid argument.
- * \return #kLwpaErrNotFound: Socket was not previously added to this context.
- * \return #kLwpaErrSys: System call failed.
+ * \return #kEtcPalErrOk: Socket modified successfully.
+ * \return #kEtcPalErrInvalid: Invalid argument.
+ * \return #kEtcPalErrNotFound: Socket was not previously added to this context.
+ * \return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t new_events, void *new_user_data);
 
@@ -344,7 +344,7 @@ void etcpal_poll_remove_socket(LwpaPollContext *context, etcpal_socket_t socket)
  *  Waits for events defined by previous calls to etcpal_poll_add_socket() on this context structure.
  *  Reports one event at a time in the output 'event' parameter. Waits up to timeout_ms
  *  milliseconds; use #LWPA_WAIT_FOREVER to wait indefinitely. If there are no sockets currently
- *  added to the context structure, returns the special error code #kLwpaErrNoSockets immediately.
+ *  added to the context structure, returns the special error code #kEtcPalErrNoSockets immediately.
  *
  *  This function should not be assumed to be thread-safe with respect to the other etcpal_poll API
  *  functions; for this reason, etcpal_poll_add_socket(), etcpal_poll_modify_socket(), and
@@ -364,11 +364,11 @@ void etcpal_poll_remove_socket(LwpaPollContext *context, etcpal_socket_t socket)
  *  \param[out] event On success, contains information about the event that occurred.
  *  \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #LWPA_WAIT_FOREVER to
  *                        wait indefinitely.
- *  \return #kLwpaErrOk: An event occurred, and information is available in the event argument.
- *  \return #kLwpaErrInvalid: Invalid argument.
- *  \return #kLwpaErrNoSockets: The context has no sockets added to it.
- *  \return #kLwpaErrTimedOut: Timed out waiting for an event to occur.
- *  \return #kLwpaErrSys: System or socket call failed.
+ *  \return #kEtcPalErrOk: An event occurred, and information is available in the event argument.
+ *  \return #kEtcPalErrInvalid: Invalid argument.
+ *  \return #kEtcPalErrNoSockets: The context has no sockets added to it.
+ *  \return #kEtcPalErrTimedOut: Timed out waiting for an event to occur.
+ *  \return #kEtcPalErrSys: System or socket call failed.
  *  \return Other #etcpal_error_t values are possible from underlying socket calls.
  */
 etcpal_error_t etcpal_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms);
@@ -389,7 +389,7 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, 
  *    do
  *    {
  *      char inet_str[LWPA_INET6_ADDRSTRLEN];
- *      if (kLwpaErrOk == etcpal_inet_ntop(&info.ai_addr.ip, inet_str, LWPA_INET6_ADDRSTRLEN))
+ *      if (kEtcPalErrOk == etcpal_inet_ntop(&info.ai_addr.ip, inet_str, LWPA_INET6_ADDRSTRLEN))
  *      {
  *        printf("Address: %s\n", inet_str);
  *      }
@@ -417,7 +417,7 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, 
  *  \param[in] service Either a string-represented numerical port number or a service name.
  *  \param[in] hints Structure containing hints restricting the address types that can be returned.
  *  \param[out] result On success, filled in with the first address result.
- *  \return #kLwpaErrOk (success) or #etcpal_error_t code from system (an error occurred).
+ *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (an error occurred).
  */
 etcpal_error_t etcpal_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints,
                               LwpaAddrinfo *result);
@@ -457,9 +457,9 @@ void etcpal_freeaddrinfo(LwpaAddrinfo *ai);
  *  \param[in] src Address to convert to string form.
  *  \param[out] dest Filled in on success with the string-represented address.
  *  \param[in] size Size in bytes of dest buf.
- *  \return #kLwpaErrOk: Success.
- *  \return #kLwpaErrInvalid: Invalid parameter.
- *  \return #kLwpaErrSys: System call failed.
+ *  \return #kEtcPalErrOk: Success.
+ *  \return #kEtcPalErrInvalid: Invalid parameter.
+ *  \return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
 
@@ -473,9 +473,9 @@ etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size);
  *  \param[in] type Type of string-represented IP address pointed to by src.
  *  \param[in] src Character string containing a string-represented IP address.
  *  \param[out] dest Filled in on success with the address.
- *  \return #kLwpaErrOk: Success.
- *  \return #kLwpaErrInvalid: Invalid parameter.
- *  \return #kLwpaErrSys: System call failed.
+ *  \return #kEtcPalErrOk: Success.
+ *  \return #kEtcPalErrInvalid: Invalid parameter.
+ *  \return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char *src, LwpaIpAddr *dest);
 

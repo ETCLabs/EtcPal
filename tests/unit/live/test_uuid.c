@@ -44,7 +44,7 @@ TEST(etcpal_uuid, uuid_is_null_works)
 {
   LwpaUuid uuid = {{0}};
   TEST_ASSERT(LWPA_UUID_IS_NULL(&uuid));
-  uuid = kLwpaNullUuid;
+  uuid = kEtcPalNullUuid;
   TEST_ASSERT(LWPA_UUID_IS_NULL(&uuid));
   for (uint8_t i = 0; i < LWPA_UUID_BYTES; ++i)
     uuid.data[i] = i;
@@ -70,7 +70,7 @@ TEST(etcpal_uuid, uuid_to_string_conversion_works)
   etcpal_uuid_to_string(str_buf, &uuid);
   TEST_ASSERT_EQUAL_STRING(str_buf, "01020304-0506-0708-090a-0b0c0d0e0f10");
 
-  uuid = kLwpaNullUuid;
+  uuid = kEtcPalNullUuid;
   etcpal_uuid_to_string(str_buf, &uuid);
   TEST_ASSERT_EQUAL_STRING(str_buf, "00000000-0000-0000-0000-000000000000");
 }
@@ -86,7 +86,7 @@ TEST(etcpal_uuid, string_to_uuid_conversion_works)
   LwpaUuid uuid_cmp = {{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}};
   TEST_ASSERT_EQUAL(0, LWPA_UUID_CMP(&uuid, &uuid_cmp));
 
-  uuid = kLwpaNullUuid;
+  uuid = kEtcPalNullUuid;
   TEST_ASSERT_UNLESS(etcpal_string_to_uuid(&uuid, short_str, strlen(short_str)));
   TEST_ASSERT_UNLESS(etcpal_string_to_uuid(&uuid, bad_str, strlen(bad_str)));
 }
@@ -96,7 +96,7 @@ TEST(etcpal_uuid, generates_correct_v1_uuids)
   // Generate a bunch of V1 UUIDs. They should all be unique from each other and have the proper
   // version and variant information. We will cheat a little and just make sure that each one is
   // unique from the last one generated.
-  LwpaUuid last_uuid = kLwpaNullUuid;
+  LwpaUuid last_uuid = kEtcPalNullUuid;
 
   for (int i = 0; i < NUM_V1_UUID_GENERATIONS; ++i)
   {
@@ -108,13 +108,13 @@ TEST(etcpal_uuid, generates_correct_v1_uuids)
 
     // Special case - this function isn't implemented on all platforms, so we abort this test
     // prematurely if that's the case.
-    if (generate_result == kLwpaErrNotImpl)
+    if (generate_result == kEtcPalErrNotImpl)
     {
       TEST_PASS_MESSAGE(
           "etcpal_generate_v1_uuid() not implemented on this platform. Skipping the remainder of the test.");
     }
 
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, generate_result, error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, generate_result, error_msg);
 
     // We should always have Variant 1, Version 1.
     TEST_ASSERT_EQUAL_UINT8_MESSAGE((uuid.data[6] & 0xf0u), 0x10u, error_msg);
@@ -135,11 +135,11 @@ TEST(etcpal_uuid, generates_correct_v3_uuids)
 
   // Version 3 UUIDs should be deterministic for the same combination of the three possible input
   // arguments. If any of the arguments is different, a different UUID should result.
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_generate_v3_uuid(&uuid1, "Test Device", mac1, 0));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_generate_v3_uuid(&uuid2, "Test Device", mac1, 1));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_generate_v3_uuid(&uuid3, "Tst Device", mac1, 0));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_generate_v3_uuid(&uuid4, "Test Device", mac2, 0));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_generate_v3_uuid(&uuid1_dup, "Test Device", mac1, 0));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid1, "Test Device", mac1, 0));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid2, "Test Device", mac1, 1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid3, "Tst Device", mac1, 0));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid4, "Test Device", mac2, 0));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid1_dup, "Test Device", mac1, 0));
 
   TEST_ASSERT_NOT_EQUAL(0, LWPA_UUID_CMP(&uuid1, &uuid2));
   TEST_ASSERT_NOT_EQUAL(0, LWPA_UUID_CMP(&uuid1, &uuid3));
@@ -168,7 +168,7 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
   // Generate a bunch of V4 UUIDs. They should all be unique from each other and have the proper
   // version and variant information. We will cheat a little and just make sure that each one is
   // unique from the last one generated.
-  LwpaUuid last_uuid = kLwpaNullUuid;
+  LwpaUuid last_uuid = kEtcPalNullUuid;
 
   for (int i = 0; i < NUM_V4_UUID_GENERATIONS; ++i)
   {
@@ -180,13 +180,13 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
 
     // Special case - this function isn't implemented on all platforms, so we abort this test
     // prematurely if that's the case.
-    if (generate_result == kLwpaErrNotImpl)
+    if (generate_result == kEtcPalErrNotImpl)
     {
       TEST_PASS_MESSAGE(
           "etcpal_generate_v4_uuid() not implemented on this platform. Skipping the remainder of the test.");
     }
 
-    TEST_ASSERT_EQUAL_MESSAGE(kLwpaErrOk, generate_result, error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, generate_result, error_msg);
 
     // We should always have Variant 1, Version 4.
     TEST_ASSERT_EQUAL_MESSAGE((uuid.data[6] & 0xf0u), 0x40u, error_msg);

@@ -76,7 +76,7 @@ static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
 #else
     LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
     // TODO revisit
-    netint->mask = etcpal_ip_mask_from_length(kLwpaIpTypeV6, 128);
+    netint->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
 #endif
 
     if (lwip_netif == netif_default)
@@ -110,7 +110,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
   cache->netints = (LwpaNetintInfo*)calloc(sizeof(LwpaNetintInfo), num_lwip_netints);
   if (!cache->netints)
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
 #endif
 
   num_static_netints = 0;
@@ -169,7 +169,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   cache->netints = static_netints;
   cache->num_netints = num_static_netints;
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -206,11 +206,11 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
 
   if (index_found == 0)
   {
-    return kLwpaErrNotFound;
+    return kEtcPalErrNotFound;
   }
   else
   {
     *index = index_found;
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   }
 }

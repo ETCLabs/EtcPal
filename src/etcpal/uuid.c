@@ -29,7 +29,7 @@
 #define LWPA_SPRINTF sprintf
 #endif
 
-const LwpaUuid kLwpaNullUuid = {{0}};
+const LwpaUuid kEtcPalNullUuid = {{0}};
 
 /*! \brief Create a string representation of a UUID.
  *
@@ -118,14 +118,14 @@ bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
  *  is a concern, etcpal_generate_v4_uuid() should be preferred. If you want to generate UUIDs that
  *  are deterministic for a combination of inputs you provide, see etcpal_generate_v3_uuid().
  *
- *  This function may return #kLwpaErrNotImpl on platforms that do not have this functionality
+ *  This function may return #kEtcPalErrNotImpl on platforms that do not have this functionality
  *  available (this is mostly a concern for RTOS-level embedded platforms).
  *
  *  \param[out] uuid UUID to fill in with the generation result.
- *  \return #kLwpaErrOk: UUID generated successfully.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
- *  \return #kLwpaErrNotImpl: This UUID generation method is not available on this platform.
- *  \return #kLwpaErrSys: An internal library of system call error occurred.
+ *  \return #kEtcPalErrOk: UUID generated successfully.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
+ *  \return #kEtcPalErrSys: An internal library of system call error occurred.
  */
 
 /* Quick utility for generating a uuid out of a md5 hash buffer */
@@ -159,8 +159,8 @@ static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
  *  \param[in] macaddr The device's MAC address as an array of 6 bytes.
  *  \param[in] uuidnum Component number. By changing this number, multiple unique UUIDs can be
  *                     generated for the same device string-MAC address combination.
- *  \return #kLwpaErrOk: UUID generated successfully.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrOk: UUID generated successfully.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
 {
@@ -170,7 +170,7 @@ etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const
   uint8_t ns[16] = {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a};
 
   if (!uuid || !devstr || !macaddr)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   MD5Init(&md5);
   MD5Update(&md5, ns, 16);
@@ -189,7 +189,7 @@ etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const
   MD5Update(&md5, num, 4);
 
   generate_from_hash(uuid, &md5);
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
@@ -200,12 +200,12 @@ etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const
  *  quality of the random data used may differ across platforms. If you want to generate UUIDs that
  *  are deterministic for a combination of inputs you provide, see etcpal_generate_v3_uuid().
  *
- *  This function may return #kLwpaErrNotImpl on platforms that do not have this functionality
+ *  This function may return #kEtcPalErrNotImpl on platforms that do not have this functionality
  *  available (this is mostly a concern for RTOS-level embedded platforms).
  *
  *  \param[out] uuid UUID to fill in with the generation result.
- *  \return #kLwpaErrOk: UUID generated successfully.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
- *  \return #kLwpaErrNotImpl: This UUID generation method is not available on this platform.
- *  \return #kLwpaErrSys: An internal library of system call error occurred.
+ *  \return #kEtcPalErrOk: UUID generated successfully.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
+ *  \return #kEtcPalErrSys: An internal library of system call error occurred.
  */

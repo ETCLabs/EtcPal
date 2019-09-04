@@ -26,7 +26,7 @@
 etcpal_error_t etcpal_timer_init()
 {
   // No initialization necessary on this platform
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void etcpal_timer_deinit()

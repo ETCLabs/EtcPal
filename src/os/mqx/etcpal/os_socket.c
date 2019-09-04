@@ -123,13 +123,13 @@ static etcpal_error_t err_os_to_lwpa(uint32_t rtcserr)
   switch (rtcserr)
   {
     case RTCS_OK:
-      return kLwpaErrOk;
+      return kEtcPalErrOk;
     case RTCSERR_OUT_OF_MEMORY:
     case RTCSERR_OUT_OF_BUFFERS:
     case RTCSERR_OUT_OF_SOCKETS:
-      return kLwpaErrNoMem;
+      return kEtcPalErrNoMem;
     case RTCSERR_TIMEOUT:
-      return kLwpaErrTimedOut;
+      return kEtcPalErrTimedOut;
     case RTCSERR_INVALID_ADDRESS:
     case RTCSERR_INVALID_PARAMETER:
     case RTCSERR_SOCK_INVALID:
@@ -147,28 +147,28 @@ static etcpal_error_t err_os_to_lwpa(uint32_t rtcserr)
     case RTCSERR_SOCK_EBADF:
     case RTCSERR_SOCK_EINVAL:
     case RTCSERR_SOCK_OPTION_IS_READ_ONLY:
-      return kLwpaErrInvalid;
+      return kEtcPalErrInvalid;
     case RTCSERR_FEATURE_NOT_ENABLED:
     case RTCSERR_SOCK_NOT_SUPPORTED:
-      return kLwpaErrNotImpl;
+      return kEtcPalErrNotImpl;
     case RTCSERR_SOCK_NOT_CONNECTED:
-      return kLwpaErrNotConn;
+      return kEtcPalErrNotConn;
     case RTCSERR_SOCK_IS_BOUND:
     case RTCSERR_SOCK_IS_LISTENING:
-      return kLwpaErrAlready;
+      return kEtcPalErrAlready;
     case RTCSERR_SOCK_IS_CONNECTED:
-      return kLwpaErrIsConn;
+      return kEtcPalErrIsConn;
     case RTCSERR_SOCK_ESHUTDOWN:
-      return kLwpaErrShutdown;
+      return kEtcPalErrShutdown;
     default:
-      return kLwpaErrSys;
+      return kEtcPalErrSys;
   }
 }
 
 etcpal_error_t etcpal_socket_init()
 {
   // No initialization is necessary on this platform.
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void etcpal_socket_deinit()
@@ -179,7 +179,7 @@ void etcpal_socket_deinit()
 etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr* address, etcpal_socket_t* conn_sock)
 {
   /* TODO */
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr* address)
@@ -188,11 +188,11 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr* address)
   size_t sa_size;
 
   if (!address)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   sa_size = sockaddr_etcpal_to_os(address, &ss);
   if (sa_size == 0)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   return err_os_to_lwpa(bind(id, &ss, (uint16_t)sa_size));
 }
@@ -205,13 +205,13 @@ etcpal_error_t etcpal_close(etcpal_socket_t id)
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr* address)
 {
   /* TODO */
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr* address)
 {
   /* TODO */
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr* address)
@@ -221,13 +221,13 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr* address)
   uint32_t res;
 
   if (!address)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   res = getsockname(id, &ss, &size);
   if (res == RTCS_OK)
   {
     if (!sockaddr_os_to_lwpa(&ss, address))
-      return kLwpaErrSys;
+      return kEtcPalErrSys;
   }
   return err_os_to_lwpa(res);
 }
@@ -235,19 +235,19 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr* address)
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
   /* TODO */
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
 {
   /* TODO */
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
 {
   /* TODO */
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address)
@@ -258,7 +258,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
   uint16_t fromlen = sizeof fromaddr;
 
   if (!buffer)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   res = recvfrom(id, buffer, length, impl_flags, &fromaddr, &fromlen);
 
@@ -267,7 +267,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
     if (address && fromlen > 0)
     {
       if (!sockaddr_os_to_lwpa(&fromaddr, address))
-        return kLwpaErrInvalid;
+        return kEtcPalErrInvalid;
     }
   }
   return (res == RTCS_ERROR ? err_os_to_lwpa(RTCS_geterror(id)) : res);
@@ -276,7 +276,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
 {
   /* TODO */
-  return kLwpaErrNotImpl;
+  return kEtcPalErrNotImpl;
 }
 
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr)
@@ -286,10 +286,10 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
   struct sockaddr ss;
 
   if (!dest_addr || !message)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   if ((ss_size = sockaddr_etcpal_to_os(dest_addr, &ss)) == 0)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   res = sendto(id, (char*)message, (uint32_t)length, 0, &ss, (uint16_t)ss_size);
   return (res == RTCS_ERROR ? err_os_to_lwpa(RTCS_geterror(id)) : res);
@@ -300,7 +300,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
   int32_t res = RTCSERR_SOCK_INVALID_OPTION;
 
   if (!option_value)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   switch (option_name)
   {
@@ -371,7 +371,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
           }
           else
           {
-            etcpal_ip_set_wildcard(kLwpaIpTypeV4, &mreq.netint);
+            etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &mreq.netint);
           }
 
           if (keep_going)
@@ -441,7 +441,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
 
           LWPA_IP_SET_V4_ADDRESS(&default_netint_ip, ip_data.ip);
           if (etcpal_ip_equal(netint_requested, &default_netint_ip))
-            res = kLwpaErrOk;
+            res = kEtcPalErrOk;
         }
       }
 #endif
@@ -484,7 +484,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
   {
     return err_os_to_lwpa((uint32_t)shutdownsocket(id, (int32_t)shutmap[how]));
   }
-  return kLwpaErrInvalid;
+  return kEtcPalErrInvalid;
 }
 
 etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t* id)
@@ -497,13 +497,13 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
       if (sock != RTCS_SOCKET_ERROR)
       {
         *id = sock;
-        return kLwpaErrOk;
+        return kEtcPalErrOk;
       }
       else
       {
         *id = LWPA_SOCKET_INVALID;
         /* RTCS does not provide error codes on socket failure */
-        return kLwpaErrSys;
+        return kEtcPalErrSys;
       }
     }
     else
@@ -511,7 +511,7 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
       *id = LWPA_SOCKET_INVALID;
     }
   }
-  return kLwpaErrInvalid;
+  return kEtcPalErrInvalid;
 }
 
 etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
@@ -538,22 +538,22 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
     }
     else
     {
-      return kLwpaErrInvalid;
+      return kEtcPalErrInvalid;
     }
   }
-  return kLwpaErrSys;
+  return kEtcPalErrSys;
 }
 
 etcpal_error_t etcpal_poll_context_init(LwpaPollContext* context)
 {
   if (!context)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   init_context_socket_array(context);
   LWPA_FD_ZERO(&context->readfds);
   LWPA_FD_ZERO(&context->writefds);
   context->valid = true;
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void etcpal_poll_context_deinit(LwpaPollContext* context)
@@ -568,11 +568,11 @@ etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t 
                                   void* user_data)
 {
   if (!context || !context->valid || socket == LWPA_SOCKET_INVALID || !(events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   if (context->num_valid_sockets >= LWPA_SOCKET_MAX_POLL_SIZE)
   {
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
   }
   else
   {
@@ -584,9 +584,9 @@ etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t 
       new_sock->user_data = user_data;
       set_in_fd_sets(context, new_sock);
       context->num_valid_sockets++;
-      return kLwpaErrOk;
+      return kEtcPalErrOk;
     }
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
   }
 }
 
@@ -594,7 +594,7 @@ etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket
                                      void* new_user_data)
 {
   if (!context || !context->valid || socket == LWPA_SOCKET_INVALID || !(new_events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   LwpaPollCtxSocket* sock_desc = find_socket(context, socket);
   if (sock_desc)
@@ -603,11 +603,11 @@ etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket
     sock_desc->events = new_events;
     sock_desc->user_data = new_user_data;
     set_in_fd_sets(context, sock_desc);
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   }
   else
   {
-    return kLwpaErrNotFound;
+    return kEtcPalErrNotFound;
   }
 }
 
@@ -628,12 +628,12 @@ void etcpal_poll_remove_socket(LwpaPollContext* context, etcpal_socket_t socket)
 etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms)
 {
   if (!context || !context->valid || !event)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   if (context->readfds.count == 0 && context->writefds.count == 0)
   {
     // No valid sockets are currently added to the context.
-    return kLwpaErrNoSockets;
+    return kEtcPalErrNoSockets;
   }
 
   rtcs_fd_set readfds = context->readfds.set;
@@ -657,19 +657,19 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, 
     // RTCS handles some socket errors by returning them from select().
     uint32_t rtcs_err = RTCS_get_errno();
     if (rtcs_err == RTCSERR_SOCK_ESHUTDOWN)
-      return handle_select_result(context, event, kLwpaErrConnClosed, &readfds, &writefds);
+      return handle_select_result(context, event, kEtcPalErrConnClosed, &readfds, &writefds);
     else if (rtcs_err == RTCSERR_SOCK_CLOSED)
-      return handle_select_result(context, event, kLwpaErrNotFound, &readfds, &writefds);
+      return handle_select_result(context, event, kEtcPalErrNotFound, &readfds, &writefds);
     else
       return err_os_to_lwpa(rtcs_err);
   }
   else if (sel_res == 0)
   {
-    return kLwpaErrTimedOut;
+    return kEtcPalErrTimedOut;
   }
   else
   {
-    return handle_select_result(context, event, kLwpaErrOk, &readfds, &writefds);
+    return handle_select_result(context, event, kEtcPalErrOk, &readfds, &writefds);
   }
 }
 
@@ -679,11 +679,11 @@ etcpal_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* eve
   // Init the event data.
   event->socket = LWPA_SOCKET_INVALID;
   event->events = 0;
-  event->err = kLwpaErrOk;
+  event->err = kEtcPalErrOk;
 
   // The default return; if we don't find any sockets set that we passed to select(), something has
   // gone wrong.
-  etcpal_error_t res = kLwpaErrSys;
+  etcpal_error_t res = kEtcPalErrSys;
 
   for (LwpaPollCtxSocket* sock_desc = context->sockets; sock_desc < context->sockets + LWPA_SOCKET_MAX_POLL_SIZE;
        ++sock_desc)
@@ -693,12 +693,12 @@ etcpal_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* eve
 
     if (RTCS_FD_ISSET(sock_desc->socket, readfds) || RTCS_FD_ISSET(sock_desc->socket, writefds))
     {
-      res = kLwpaErrOk;
+      res = kEtcPalErrOk;
       event->socket = sock_desc->socket;
       event->user_data = sock_desc->user_data;
 
       /* Check for errors */
-      if (socket_error != kLwpaErrOk)
+      if (socket_error != kEtcPalErrOk)
       {
         event->events |= LWPA_POLL_ERR;
         event->err = socket_error;
@@ -781,7 +781,7 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
   struct addrinfo pf_hints;
 
   if ((!hostname && !service) || !result)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
@@ -798,7 +798,7 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
     result->pd[0] = pf_res;
     result->pd[1] = pf_res;
     if (!etcpal_nextaddr(result))
-      return kLwpaErrSys;
+      return kEtcPalErrSys;
   }
   return err_os_to_lwpa((uint32_t)res);
 }

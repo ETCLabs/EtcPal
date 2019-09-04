@@ -27,9 +27,9 @@
 etcpal_error_t etcpal_timer_init()
 {
   if (TIMERR_NOERROR == timeBeginPeriod(LWPA_WINDOWS_TIMER_RESOLUTION))
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   else
-    return kLwpaErrSys;
+    return kEtcPalErrSys;
 }
 
 void etcpal_timer_deinit()

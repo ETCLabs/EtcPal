@@ -120,7 +120,7 @@ TEST(etcpal_log, validate_log_params_works)
   };
 
   // Test some normal params
-  lparams.action = kLwpaLogCreateSyslog;
+  lparams.action = kEtcPalLogCreateSyslog;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
   memcpy(lparams.syslog_params.app_name, special_char_array, sizeof special_char_array);
@@ -146,7 +146,7 @@ TEST(etcpal_log, validate_log_params_works)
 TEST(etcpal_log, log_action_is_honored)
 {
   LwpaLogParams lparams;
-  lparams.action = kLwpaLogCreateSyslog;
+  lparams.action = kEtcPalLogCreateSyslog;
 
   lparams.log_fn = log_callback;
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
@@ -175,7 +175,7 @@ TEST(etcpal_log, log_action_is_honored)
   TEST_ASSERT_EQUAL_STRING(last_log_strings_received.raw, expect_raw_str);
 
   // Try logging both
-  lparams.action = kLwpaLogCreateBoth;
+  lparams.action = kEtcPalLogCreateBoth;
   etcpal_log(&lparams, LWPA_LOG_EMERG, LOG_ACTION_TEST_MESSAGE);
   // Make sure the callback was called with all three strings.
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 2);
@@ -187,7 +187,7 @@ TEST(etcpal_log, log_action_is_honored)
   TEST_ASSERT_EQUAL_STRING(last_log_strings_received.raw, expect_raw_str);
 
   // Try logging only human-readable
-  lparams.action = kLwpaLogCreateHumanReadableLog;
+  lparams.action = kEtcPalLogCreateHumanReadableLog;
   etcpal_log(&lparams, LWPA_LOG_EMERG, LOG_ACTION_TEST_MESSAGE);
   // Make sure the callback was called with the human-readable and raw strings, but not the syslog
   // string.
@@ -202,7 +202,7 @@ TEST(etcpal_log, log_action_is_honored)
 TEST(etcpal_log, context_pointer_is_passed_unmodified)
 {
   LwpaLogParams lparams;
-  lparams.action = kLwpaLogCreateHumanReadableLog;
+  lparams.action = kEtcPalLogCreateHumanReadableLog;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
@@ -234,7 +234,7 @@ TEST(etcpal_log, syslog_header_is_well_formed)
   // A string with a non-printing character: "My\x001App"
   const char weird_appname[] = {0x4d, 0x79, 0x01, 0x41, 0x70, 0x70, 0x00};
 
-  lparams.action = kLwpaLogCreateSyslog;
+  lparams.action = kEtcPalLogCreateSyslog;
   lparams.log_fn = log_callback;
   memcpy(lparams.syslog_params.hostname, weird_hostname, sizeof weird_hostname);
   memcpy(lparams.syslog_params.procid, weird_procid, sizeof weird_procid);
@@ -321,7 +321,7 @@ TEST(etcpal_log, log_mask_is_honored)
 {
   LwpaLogParams lparams;
 
-  lparams.action = kLwpaLogCreateSyslog;
+  lparams.action = kEtcPalLogCreateSyslog;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
   lparams.log_mask = 0;
@@ -415,7 +415,7 @@ TEST(etcpal_log, formatting_int_values_works)
 {
   LwpaLogParams lparams;
 
-  lparams.action = kLwpaLogCreateBoth;
+  lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
@@ -454,7 +454,7 @@ TEST(etcpal_log, formatting_string_values_works)
 {
   LwpaLogParams lparams;
 
-  lparams.action = kLwpaLogCreateBoth;
+  lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
@@ -506,7 +506,7 @@ TEST(etcpal_log, logging_maximum_length_string_works)
 {
   LwpaLogParams lparams;
 
-  lparams.action = kLwpaLogCreateBoth;
+  lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
   lparams.syslog_params.facility = LWPA_LOG_LOCAL7;
   lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);

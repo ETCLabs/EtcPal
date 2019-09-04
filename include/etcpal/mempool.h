@@ -115,8 +115,8 @@ typedef struct LwpaMempoolDesc
  *  call this function again.
  *
  *  \param name The name of the memory pool to initialize.
- *  \return #kLwpaErrOk: The memory pool was initialized successfully.\n
- *          #kLwpaErrSys: An internal system call error occurred.
+ *  \return #kEtcPalErrOk: The memory pool was initialized successfully.\n
+ *          #kEtcPalErrSys: An internal system call error occurred.
  */
 #define etcpal_mempool_init(name) etcpal_mempool_init_priv(&name##_pool_desc)
 

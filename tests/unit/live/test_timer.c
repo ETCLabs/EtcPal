@@ -27,7 +27,7 @@ TEST_GROUP(etcpal_timer);
 
 TEST_SETUP(etcpal_timer)
 {
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_init(LWPA_FEATURE_TIMERS));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_TIMERS));
 }
 
 TEST_TEAR_DOWN(etcpal_timer)

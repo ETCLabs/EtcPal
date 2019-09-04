@@ -119,7 +119,7 @@ static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   etcpal_error_t res = build_routing_tables();
-  if (res != kLwpaErrOk)
+  if (res != kEtcPalErrOk)
     return res;
 
   // Fill in the default index information
@@ -160,7 +160,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   {
     freeifaddrs(os_addrs);
     close(ioctl_sock);
-    return kLwpaErrNoNetints;
+    return kEtcPalErrNoNetints;
   }
 
   // Allocate our interface array
@@ -169,7 +169,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   {
     freeifaddrs(os_addrs);
     close(ioctl_sock);
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
   }
 
   // Pass 2: Fill in all the info about each address
@@ -228,7 +228,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   freeifaddrs(os_addrs);
   close(ioctl_sock);
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -269,23 +269,23 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
   if (index_found > 0)
   {
     *index = index_found;
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   }
   else
   {
-    return kLwpaErrNotFound;
+    return kEtcPalErrNotFound;
   }
 }
 
 etcpal_error_t build_routing_tables()
 {
   etcpal_error_t res = build_routing_table(AF_INET, &routing_table_v4);
-  if (res == kLwpaErrOk)
+  if (res == kEtcPalErrOk)
   {
     res = build_routing_table(AF_INET6, &routing_table_v6);
   }
 
-  if (res != kLwpaErrOk)
+  if (res != kEtcPalErrOk)
     free_routing_tables();
 
 #if LWPA_NETINT_DEBUG_OUTPUT
@@ -302,10 +302,10 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
   // reply. If the buffer was not big enough, repeat (cannot reuse the same socket because we've
   // often received partial messages that must be discarded)
 
-  etcpal_error_t result = kLwpaErrOk;
+  etcpal_error_t result = kEtcPalErrOk;
   bool done = false;
   size_t recv_buf_size = 2048;  // Tests show this is usually enough for small routing tables
-  while (result == kLwpaErrOk && !done)
+  while (result == kEtcPalErrOk && !done)
   {
     struct sockaddr_nl addr;
     memset(&addr, 0, sizeof(struct sockaddr_nl));
@@ -315,26 +315,26 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
     if (sock == -1)
       result = errno_os_to_lwpa(errno);
 
-    if (result == kLwpaErrOk)
+    if (result == kEtcPalErrOk)
     {
       if (0 != bind(sock, (struct sockaddr*)&addr, sizeof(addr)))
         result = errno_os_to_lwpa(errno);
     }
 
-    if (result == kLwpaErrOk)
+    if (result == kEtcPalErrOk)
       result = send_netlink_route_request(sock, family);
 
-    if (result == kLwpaErrOk)
+    if (result == kEtcPalErrOk)
     {
       result = receive_netlink_route_reply(sock, family, recv_buf_size, table);
       switch (result)
       {
-        case kLwpaErrOk:
+        case kEtcPalErrOk:
           done = true;
           break;
-        case kLwpaErrBufSize:
+        case kEtcPalErrBufSize:
           recv_buf_size *= 2;  // Double the buffer size and try again.
-          result = kLwpaErrOk;
+          result = kEtcPalErrOk;
           break;
         default:
           break;
@@ -364,7 +364,7 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
   naddr.nl_family = AF_NETLINK;
 
   if (sendto(socket, &req.nl_header, req.nl_header.nlmsg_len, 0, (struct sockaddr*)&naddr, sizeof(naddr)) >= 0)
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   else
     return errno_os_to_lwpa(errno);
 }
@@ -375,7 +375,7 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
   size_t real_size = buf_size + 20;
   char* buffer = (char*)malloc(real_size);
   if (!buffer)
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
   memset(buffer, 0, real_size);
 
   char* cur_ptr = buffer;
@@ -389,7 +389,7 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
     if (buf_size <= nl_msg_size)
     {
       free(buffer);
-      return kLwpaErrBufSize;
+      return kEtcPalErrBufSize;
     }
 
     ssize_t recv_res = recv(sock, cur_ptr, real_size - nl_msg_size, 0);
@@ -505,11 +505,11 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
         break;
       }
     }
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   }
   else
   {
-    return kLwpaErrSys;
+    return kEtcPalErrSys;
   }
 }
 

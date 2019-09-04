@@ -74,11 +74,11 @@ etcpal_error_t etcpal_log_init()
   {
     if (!etcpal_mutex_create(&buf_lock))
     {
-      return kLwpaErrSys;
+      return kEtcPalErrSys;
     }
   }
   ++init_count;
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 /* Deinitialize the etcpal_log module. */
@@ -127,7 +127,7 @@ void etcpal_sanitize_syslog_params(LwpaSyslogParams* params)
 /*! \brief Ensure that the given etcpal_log_params are valid.
  *
  *  This also sanitizes the syslog params using etcpal_sanitize_syslog_params() if action is set to
- *  kLwpaLogCreateSyslog or kLwpaLogCreateBoth.
+ *  kEtcPalLogCreateSyslog or kEtcPalLogCreateBoth.
  *
  *  \param[in,out] params etcpal_log_params to validate.
  *  \return true (params are valid) or false (params are invalid).
@@ -139,7 +139,7 @@ bool etcpal_validate_log_params(LwpaLogParams* params)
     return false;
   }
 
-  if (params->action == kLwpaLogCreateSyslog || params->action == kLwpaLogCreateBoth)
+  if (params->action == kEtcPalLogCreateSyslog || params->action == kEtcPalLogCreateBoth)
   {
     etcpal_sanitize_syslog_params(&params->syslog_params);
   }
@@ -376,13 +376,13 @@ void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_li
     static char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];
     LwpaLogStrings strings = {NULL, NULL, NULL};
 
-    if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateSyslog)
+    if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateSyslog)
     {
       // If we are calling both vcreate functions, we will need to copy the va_list.
       // For more info on using a va_list multiple times, see:
       // https://wiki.sei.cmu.edu/confluence/display/c/MSC39-C.+Do+not+call+va_arg%28%29+on+a+va_list+that+has+an+indeterminate+value
       // https://stackoverflow.com/a/26919307
-      if (params->action == kLwpaLogCreateBoth)
+      if (params->action == kEtcPalLogCreateBoth)
       {
         va_list args_copy;
         va_copy(args_copy, args);
@@ -401,7 +401,7 @@ void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_li
       }
     }
 
-    if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateHumanReadableLog)
+    if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadableLog)
     {
       strings.raw = etcpal_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
                                                have_time ? &time_params : NULL, format, args);

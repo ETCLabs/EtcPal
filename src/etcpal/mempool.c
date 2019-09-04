@@ -28,7 +28,7 @@ static etcpal_mutex_t mempool_lock;
 
 etcpal_error_t etcpal_mempool_init_priv(LwpaMempoolDesc* desc)
 {
-  etcpal_error_t res = kLwpaErrSys;
+  etcpal_error_t res = kEtcPalErrSys;
 
   if (!mempool_lock_initted)
   {
@@ -46,7 +46,7 @@ etcpal_error_t etcpal_mempool_init_priv(LwpaMempoolDesc* desc)
     desc->list[i].next = NULL;
     desc->freelist = desc->list;
     desc->current_used = 0;
-    res = kLwpaErrOk;
+    res = kEtcPalErrOk;
     etcpal_mutex_give(&mempool_lock);
   }
   return res;

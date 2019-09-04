@@ -68,7 +68,7 @@ TEST_TEAR_DOWN(etcpal_mempool)
 TEST(etcpal_mempool, alloc_and_free_works)
 {
   // Initialize the pool.
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_mempool_init(alloc_test));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_mempool_init(alloc_test));
   TEST_ASSERT_EQUAL_UINT(ALLOC_TEST_MEMP_SIZE, etcpal_mempool_size(alloc_test));
 
   // Allocate the entire pool.
@@ -100,7 +100,7 @@ TEST(etcpal_mempool, alloc_and_free_works)
 TEST(etcpal_mempool, alloc_and_free_array_works)
 {
   // Initialize the pool.
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_mempool_init(alloc_array_test));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_mempool_init(alloc_array_test));
   TEST_ASSERT_EQUAL_UINT(ALLOC_TEST_MEMP_SIZE, etcpal_mempool_size(alloc_array_test));
 
   // Allocate the entire pool.

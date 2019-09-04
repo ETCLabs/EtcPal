@@ -52,14 +52,14 @@ TEST(etcpal_common, features_all_but_macro_works)
 // Test multiple calls of etcpal_init() for the netint module.
 TEST(etcpal_common, netint_double_init_works)
 {
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_init(LWPA_FEATURE_NETINTS));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_init(LWPA_FEATURE_NETINTS));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_NETINTS));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_NETINTS));
 
   etcpal_deinit(LWPA_FEATURE_NETINTS);
 
   // After 2 inits and one deinit, we should still be able to make valid calls to the module.
   unsigned int def_netint;
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_netint_get_default_interface(kLwpaIpTypeV4, &def_netint));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_netint));
 
   etcpal_deinit(LWPA_FEATURE_NETINTS);
 }
@@ -70,11 +70,11 @@ FAKE_VOID_FUNC(common_test_log_callback, void*, const LwpaLogStrings*);
 // Test multiple calls of etcpal_init() for the log module.
 TEST(etcpal_common, log_double_init_works)
 {
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_init(LWPA_FEATURE_LOGGING));
-  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_init(LWPA_FEATURE_LOGGING));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_LOGGING));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_LOGGING));
 
   LwpaLogParams params;
-  params.action = kLwpaLogCreateHumanReadableLog;
+  params.action = kEtcPalLogCreateHumanReadableLog;
   params.log_fn = common_test_log_callback;
   params.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
   params.time_fn = NULL;

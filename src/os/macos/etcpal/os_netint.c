@@ -125,7 +125,7 @@ static size_t count_ifaddrs(const struct ifaddrs* ifaddrs)
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   etcpal_error_t res = build_routing_tables();
-  if (res != kLwpaErrOk)
+  if (res != kEtcPalErrOk)
     return res;
 
   // Fill in the default index information
@@ -152,7 +152,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   if (cache->num_netints == 0)
   {
     freeifaddrs(os_addrs);
-    return kLwpaErrNoNetints;
+    return kEtcPalErrNoNetints;
   }
 
   // Allocate our interface array
@@ -160,7 +160,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   if (!cache->netints)
   {
     freeifaddrs(os_addrs);
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
   }
 
   // Pass 2: Fill in all the info about each address
@@ -234,7 +234,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
 
   freeifaddrs(os_addrs);
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -275,11 +275,11 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
   if (index_found > 0)
   {
     *index = index_found;
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   }
   else
   {
-    return kLwpaErrNotFound;
+    return kEtcPalErrNotFound;
   }
 }
 
@@ -290,12 +290,12 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
 etcpal_error_t build_routing_tables()
 {
   etcpal_error_t res = build_routing_table(AF_INET, &routing_table_v4);
-  if (res == kLwpaErrOk)
+  if (res == kEtcPalErrOk)
   {
     res = build_routing_table(AF_INET6, &routing_table_v6);
   }
 
-  if (res != kLwpaErrOk)
+  if (res != kEtcPalErrOk)
     free_routing_tables();
 
 #if LWPA_NETINT_DEBUG_OUTPUT
@@ -312,7 +312,7 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
   size_t buf_len = 0;
 
   etcpal_error_t res = get_routing_table_dump(family, &buf, &buf_len);
-  if (res == kLwpaErrOk)
+  if (res == kEtcPalErrOk)
   {
     res = parse_routing_table_dump(family, buf, buf_len, table);
   }
@@ -342,7 +342,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   // Allocate the buffer
   *buf = (uint8_t*)malloc(*buf_len);
   if (!(*buf))
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
 
   // Second pass to actually get the info
   sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
@@ -352,7 +352,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
     return errno_os_to_lwpa(errno);
   }
 
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 /* These two macros and the following function were taken from the Unix Network Programming book
@@ -582,9 +582,9 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
       if (rmsg->rtm_flags & RTF_HOST)
       {
         if (family == AF_INET6)
-          new_entry.mask = etcpal_ip_mask_from_length(kLwpaIpTypeV6, 128);
+          new_entry.mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
         else
-          new_entry.mask = etcpal_ip_mask_from_length(kLwpaIpTypeV4, 32);
+          new_entry.mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 32);
       }
       else if (rti_info[RTAX_NETMASK] != NULL)
       {
@@ -632,11 +632,11 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
         break;
       }
     }
-    return kLwpaErrOk;
+    return kEtcPalErrOk;
   }
   else
   {
-    return kLwpaErrSys;
+    return kEtcPalErrSys;
   }
 }
 

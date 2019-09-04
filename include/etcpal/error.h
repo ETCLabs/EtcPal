@@ -36,70 +36,70 @@
 typedef enum
 {
   /*! The call was successful, no error occurred. */
-  kLwpaErrOk = 0,
+  kEtcPalErrOk = 0,
   /*! An identifier or handle passed to a function was not valid or not previously initialized. */
-  kLwpaErrNotFound = -1,
+  kEtcPalErrNotFound = -1,
   /*! A dynamic memory allocation failed, or there is no space left in a statically allocated
    *  array. */
-  kLwpaErrNoMem = -2,
+  kEtcPalErrNoMem = -2,
   /*! The resource being requested is temporarily unavailable. */
-  kLwpaErrBusy = -3,
+  kEtcPalErrBusy = -3,
   /*! The item being created already exists. */
-  kLwpaErrExists = -4,
+  kEtcPalErrExists = -4,
   /*! An invalid argument was provided to an API function. */
-  kLwpaErrInvalid = -5,
+  kEtcPalErrInvalid = -5,
   /*! The requested operation would block. */
-  kLwpaErrWouldBlock = -6,
+  kEtcPalErrWouldBlock = -6,
   /*! Returned from a function that is meant to be called repeatedly to indicate that there is no
    *  more data available. */
-  kLwpaErrNoData = -7,
+  kEtcPalErrNoData = -7,
   /*! A protocol parsing function encountered a malformed packet. */
-  kLwpaErrProtocol = -8,
+  kEtcPalErrProtocol = -8,
   /*! Message too long. */
-  kLwpaErrMsgSize = -9,
+  kEtcPalErrMsgSize = -9,
   /*! The requested address is already in use. */
-  kLwpaErrAddrInUse = -10,
+  kEtcPalErrAddrInUse = -10,
   /*! Cannot assign the requested address. */
-  kLwpaErrAddrNotAvail = -11,
+  kEtcPalErrAddrNotAvail = -11,
   /*! The operation failed because a network was down or unreachable. */
-  kLwpaErrNetwork = -12,
+  kEtcPalErrNetwork = -12,
   /*! A connection was reset (hard/abortive close) by the remote peer. */
-  kLwpaErrConnReset = -13,
+  kEtcPalErrConnReset = -13,
   /*! A connection was gracefully closed by the remote peer. This code is only used for protocols
    *  above the transport layer. */
-  kLwpaErrConnClosed = -14,
+  kEtcPalErrConnClosed = -14,
   /*! Transport endpoint is already connected. */
-  kLwpaErrIsConn = -15,
+  kEtcPalErrIsConn = -15,
   /*! Transport endpoint is not connected. */
-  kLwpaErrNotConn = -16,
+  kEtcPalErrNotConn = -16,
   /*! Transport endpoint is shut down. */
-  kLwpaErrShutdown = -17,
+  kEtcPalErrShutdown = -17,
   /*! A connection timed out. */
-  kLwpaErrTimedOut = -18,
+  kEtcPalErrTimedOut = -18,
   /*! A connection has been aborted. */
-  kLwpaErrConnAborted = -19,
+  kEtcPalErrConnAborted = -19,
   /*! A connection was refused. */
-  kLwpaErrConnRefused = -20,
+  kEtcPalErrConnRefused = -20,
   /*! The operation requested is already in progress. */
-  kLwpaErrAlready = -21,
+  kEtcPalErrAlready = -21,
   /*! The operation requested is now in progress and will complete later. */
-  kLwpaErrInProgress = -22,
+  kEtcPalErrInProgress = -22,
   /*! A buffer provided to a function was not big enough to hold the data that needed to be packed
    *  into it. */
-  kLwpaErrBufSize = -23,
+  kEtcPalErrBufSize = -23,
   /*! An API function was called from a module that was not previously initialized. */
-  kLwpaErrNotInit = -24,
+  kEtcPalErrNotInit = -24,
   /*! No network interfaces were found on the system, or there are no network interfaces of a type
    *  that can satisfy the call being made. */
-  kLwpaErrNoNetints = -25,
+  kEtcPalErrNoNetints = -25,
   /*! No sockets have been added to the context. */
-  kLwpaErrNoSockets = -26,
+  kEtcPalErrNoSockets = -26,
   /*! A function or specific use of a function is not implemented yet. */
-  kLwpaErrNotImpl = -27,
+  kEtcPalErrNotImpl = -27,
   /*! The operation is not permitted. */
-  kLwpaErrPerm = -28,
+  kEtcPalErrPerm = -28,
   /*! A system call or C library call failed in a way not covered by other errors. */
-  kLwpaErrSys = -29,
+  kEtcPalErrSys = -29,
 } etcpal_error_t;
 
 #define LWPA_NUM_ERROR_CODES 30

@@ -63,7 +63,7 @@ typedef struct LwpaModuleInit
  *  deinit-time code is serialized.
  *
  *  \param[in] features Mask of lwpa features required.
- *  \return #kLwpaErrOk: lwpa library initialized successfully.
+ *  \return #kEtcPalErrOk: lwpa library initialized successfully.
  *  \return Various error codes possible from initialization of feature modules.
  */
 etcpal_error_t etcpal_init(etcpal_features_t features)
@@ -78,7 +78,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
 
   LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
 
-  etcpal_error_t init_res = kLwpaErrOk;
+  etcpal_error_t init_res = kEtcPalErrOk;
   etcpal_features_t feature_mask = 1u;
 
   // Initialize each module in turn.
@@ -87,7 +87,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
     if (features & feature_mask)
     {
       init_res = init_struct->init_fn();
-      if (init_res == kLwpaErrOk)
+      if (init_res == kEtcPalErrOk)
         init_struct->initted = true;
       else
         break;
@@ -95,7 +95,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
     feature_mask <<= 1;
   }
 
-  if (init_res != kLwpaErrOk)
+  if (init_res != kEtcPalErrOk)
   {
     // Clean up on failure.
     for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)

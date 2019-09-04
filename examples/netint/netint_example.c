@@ -81,7 +81,7 @@ void create_format_strings(const LwpaNetintInfo* netint_arr, size_t num_interfac
 int main()
 {
   etcpal_error_t init_res = etcpal_init(LWPA_FEATURE_NETINTS);
-  if (init_res != kLwpaErrOk)
+  if (init_res != kEtcPalErrOk)
   {
     printf("etcpal_init() failed with error: '%s'\n", etcpal_strerror(init_res));
     return 1;
@@ -117,22 +117,22 @@ int main()
   }
 
   unsigned int default_v4;
-  if (kLwpaErrOk == etcpal_netint_get_default_interface(kLwpaIpTypeV4, &default_v4))
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &default_v4))
   {
     const LwpaNetintInfo* addr_arr;
     size_t addr_arr_size;
-    if (kLwpaErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv4 interface: %s (%u)\n", addr_arr->friendly_name, default_v4);
     }
   }
 
   unsigned int default_v6;
-  if (kLwpaErrOk == etcpal_netint_get_default_interface(kLwpaIpTypeV6, &default_v6))
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &default_v6))
   {
     const LwpaNetintInfo* addr_arr;
     size_t addr_arr_size;
-    if (kLwpaErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv6 interface: %s (%u)\n", addr_arr->friendly_name, default_v6);
     }

@@ -52,20 +52,20 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
     if (res == NO_ERROR)
     {
       *index = resolved_index;
-      return kLwpaErrOk;
+      return kEtcPalErrOk;
     }
     else if (res == ERROR_INVALID_PARAMETER)
     {
-      return kLwpaErrInvalid;
+      return kEtcPalErrInvalid;
     }
     else
     {
-      return kLwpaErrNotFound;
+      return kEtcPalErrNotFound;
     }
   }
   else
   {
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
   }
 }
 
@@ -75,7 +75,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   padapters = get_windows_adapters();
   if (!padapters)
-    return kLwpaErrSys;
+    return kEtcPalErrSys;
   pcur = padapters;
 
   cache->num_netints = 0;
@@ -102,19 +102,19 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   if (cache->num_netints == 0)
   {
     free(padapters);
-    return kLwpaErrNoNetints;
+    return kEtcPalErrNoNetints;
   }
 
   cache->netints = calloc(cache->num_netints, sizeof(LwpaNetintInfo));
   if (!cache->netints)
   {
     free(padapters);
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
   }
 
   copy_all_netint_info(padapters, cache);
   free(padapters);
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -155,7 +155,7 @@ void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
   const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
 
   LWPA_IP_SET_V4_ADDRESS(&info->addr, ntohl(sin->sin_addr.s_addr));
-  info->mask = etcpal_ip_mask_from_length(kLwpaIpTypeV4, pip->OnLinkPrefixLength);
+  info->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, pip->OnLinkPrefixLength);
 }
 
 void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
@@ -163,7 +163,7 @@ void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
   const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;
 
   LWPA_IP_SET_V6_ADDRESS(&info->addr, sin6->sin6_addr.s6_addr);
-  info->mask = etcpal_ip_mask_from_length(kLwpaIpTypeV6, pip->OnLinkPrefixLength);
+  info->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, pip->OnLinkPrefixLength);
 }
 
 void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache)

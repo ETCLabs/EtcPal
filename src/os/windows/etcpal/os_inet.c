@@ -94,63 +94,63 @@ size_t sockaddr_etcpal_to_os(const LwpaSockaddr* sa, etcpal_os_sockaddr_t* os_sa
 etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
 {
   if (!src || !dest)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   switch (src->type)
   {
-    case kLwpaIpTypeV4:
+    case kEtcPalIpTypeV4:
     {
       struct in_addr addr;
       addr.s_addr = htonl(LWPA_IP_V4_ADDRESS(src));
       if (NULL != inet_ntop(AF_INET, &addr, dest, size))
-        return kLwpaErrOk;
+        return kEtcPalErrOk;
       return err_winsock_to_lwpa(WSAGetLastError());
     }
-    case kLwpaIpTypeV6:
+    case kEtcPalIpTypeV6:
     {
       struct in6_addr addr;
       memcpy(addr.s6_addr, LWPA_IP_V6_ADDRESS(src), LWPA_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
-        return kLwpaErrOk;
+        return kEtcPalErrOk;
       return err_winsock_to_lwpa(WSAGetLastError());
     }
     default:
-      return kLwpaErrInvalid;
+      return kEtcPalErrInvalid;
   }
 }
 
 etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, LwpaIpAddr* dest)
 {
   if (!src || !dest)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
 
   switch (type)
   {
-    case kLwpaIpTypeV4:
+    case kEtcPalIpTypeV4:
     {
       struct in_addr addr;
       INT res = inet_pton(AF_INET, src, &addr);
       if (res == 0)
-        return kLwpaErrInvalid;
+        return kEtcPalErrInvalid;
       else if (res < 0)
         return err_winsock_to_lwpa(WSAGetLastError());
 
       LWPA_IP_SET_V4_ADDRESS(dest, ntohl(addr.s_addr));
-      return kLwpaErrOk;
+      return kEtcPalErrOk;
     }
-    case kLwpaIpTypeV6:
+    case kEtcPalIpTypeV6:
     {
       struct in6_addr addr;
       INT res = inet_pton(AF_INET6, src, &addr);
       if (res == 0)
-        return kLwpaErrInvalid;
+        return kEtcPalErrInvalid;
       else if (res < 0)
         return err_winsock_to_lwpa(WSAGetLastError());
 
       LWPA_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
-      return kLwpaErrOk;
+      return kEtcPalErrOk;
     }
     default:
-      return kLwpaErrInvalid;
+      return kEtcPalErrInvalid;
   }
 }

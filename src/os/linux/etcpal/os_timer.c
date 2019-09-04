@@ -26,8 +26,8 @@
 etcpal_error_t etcpal_timer_init()
 {
   if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
-    return kLwpaErrSys;
-  return kLwpaErrOk;
+    return kEtcPalErrSys;
+  return kEtcPalErrOk;
 }
 
 void etcpal_timer_deinit()

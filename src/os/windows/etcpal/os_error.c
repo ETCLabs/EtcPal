@@ -36,58 +36,58 @@ etcpal_error_t err_winsock_to_lwpa(int wsaerror)
     case WSATYPE_NOT_FOUND:
     case WSAHOST_NOT_FOUND:
     case WSAESTALE:
-      return kLwpaErrNotFound;
+      return kEtcPalErrNotFound;
     case WSA_INVALID_HANDLE:
     case WSA_INVALID_PARAMETER:
     case WSAEFAULT:
     case WSAEINVAL:
     case WSAEDESTADDRREQ:
     case WSAENOPROTOOPT:
-      return kLwpaErrInvalid;
+      return kEtcPalErrInvalid;
     case WSA_NOT_ENOUGH_MEMORY:
     case WSAEMFILE:
     case WSAETOOMANYREFS:
     case WSAEPROCLIM:
     case WSAEUSERS:
-      return kLwpaErrNoMem;
+      return kEtcPalErrNoMem;
     case WSA_IO_PENDING:
     case WSAEINPROGRESS:
-      return kLwpaErrInProgress;
+      return kEtcPalErrInProgress;
     case WSA_IO_INCOMPLETE:
     case WSAEALREADY:
-      return kLwpaErrAlready;
+      return kEtcPalErrAlready;
     case WSAEWOULDBLOCK:
-      return kLwpaErrWouldBlock;
+      return kEtcPalErrWouldBlock;
     case WSAEMSGSIZE:
-      return kLwpaErrMsgSize;
+      return kEtcPalErrMsgSize;
     case WSAEADDRINUSE:
-      return kLwpaErrAddrInUse;
+      return kEtcPalErrAddrInUse;
     case WSAEADDRNOTAVAIL:
-      return kLwpaErrAddrNotAvail;
+      return kEtcPalErrAddrNotAvail;
     case WSAENETDOWN:
     case WSAENETUNREACH:
     case WSAENETRESET:
     case WSAEHOSTDOWN:
     case WSAEHOSTUNREACH:
-      return kLwpaErrNetwork;
+      return kEtcPalErrNetwork;
     case WSAECONNRESET:
     case WSAECONNABORTED:
-      return kLwpaErrConnReset;
+      return kEtcPalErrConnReset;
     case WSAEISCONN:
-      return kLwpaErrIsConn;
+      return kEtcPalErrIsConn;
     case WSAENOTCONN:
-      return kLwpaErrNotConn;
+      return kEtcPalErrNotConn;
     case WSAESHUTDOWN:
-      return kLwpaErrShutdown;
+      return kEtcPalErrShutdown;
     case WSAETIMEDOUT:
-      return kLwpaErrTimedOut;
+      return kEtcPalErrTimedOut;
     case WSAECONNREFUSED:
-      return kLwpaErrConnRefused;
+      return kEtcPalErrConnRefused;
     case WSAENOBUFS:
-      return kLwpaErrBufSize;
+      return kEtcPalErrBufSize;
     case WSANOTINITIALISED:
     case WSASYSNOTREADY:
-      return kLwpaErrNotInit;
+      return kEtcPalErrNotInit;
     case WSAEACCES:
     case WSA_OPERATION_ABORTED:
     case WSAEPROTOTYPE:
@@ -98,6 +98,6 @@ etcpal_error_t err_winsock_to_lwpa(int wsaerror)
     case WSAEAFNOSUPPORT:
     case WSASYSCALLFAILURE:
     default:
-      return kLwpaErrSys;
+      return kEtcPalErrSys;
   }
 }

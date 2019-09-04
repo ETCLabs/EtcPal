@@ -24,34 +24,34 @@
 /* The etcpal_error string array, for use by etcpal_strerror(). */
 const char *etcpal_error_strings[LWPA_NUM_ERROR_CODES] =
 {
-  "No error",                         /* kLwpaErrOk */
-  "Handle not found",                 /* kLwpaErrNotFound */
-  "Out of memory",                    /* kLwpaErrNoMem */
-  "Resource unavailable",             /* kLwpaErrBusy */
-  "Already exists",                   /* kLwpaErrExists */
-  "Invalid argument",                 /* kLwpaErrInvalid */
-  "Operation would block",            /* kLwpaErrWouldBlock */
-  "No data available",                /* kLwpaErrNoData */
-  "Malformed packet",                 /* kLwpaErrProtocol */
-  "Message too long",                 /* kLwpaErrMsgSize */
-  "Address already in use",           /* kLwpaErrAddrInUse */
-  "Cannot assign requested address",  /* kLwpaErrAddrNotAvail */
-  "Network down or unreachable",      /* kLwpaErrNetwork */
-  "Connection reset by peer",         /* kLwpaErrConnReset */
-  "Connection closed by peer",        /* kLwpaErrConnClosed */
-  "Already connected",                /* kLwpaErrIsConn */
-  "Not connected",                    /* kLwpaErrNotConn */
-  "Transport endpoint shut down",     /* kLwpaErrShutdown */
-  "Operation timed out",              /* kLwpaErrTimedOut */
-  "Software caused connection abort", /* kLwpaErrConnAborted */
-  "Connection refused",               /* kLwpaErrConnRefused */
-  "Operation already in progress",    /* kLwpaErrAlready */
-  "Operation now in progress",        /* kLwpaErrInProgress */
-  "Buffer not big enough",            /* kLwpaErrBufSize */
-  "Module not initialized",           /* kLwpaErrNotInit */
-  "No network interfaces",            /* kLwpaErrNoNetints */
-  "No sockets",                       /* kLwpaErrNoSockets */
-  "Not implemented",                  /* kLwpaErrNotImpl */
-  "Operation not permitted",          /* kLwpaErrPerm */
-  "System or library call failed",    /* kLwpaErrSys */
+  "No error",                         /* kEtcPalErrOk */
+  "Handle not found",                 /* kEtcPalErrNotFound */
+  "Out of memory",                    /* kEtcPalErrNoMem */
+  "Resource unavailable",             /* kEtcPalErrBusy */
+  "Already exists",                   /* kEtcPalErrExists */
+  "Invalid argument",                 /* kEtcPalErrInvalid */
+  "Operation would block",            /* kEtcPalErrWouldBlock */
+  "No data available",                /* kEtcPalErrNoData */
+  "Malformed packet",                 /* kEtcPalErrProtocol */
+  "Message too long",                 /* kEtcPalErrMsgSize */
+  "Address already in use",           /* kEtcPalErrAddrInUse */
+  "Cannot assign requested address",  /* kEtcPalErrAddrNotAvail */
+  "Network down or unreachable",      /* kEtcPalErrNetwork */
+  "Connection reset by peer",         /* kEtcPalErrConnReset */
+  "Connection closed by peer",        /* kEtcPalErrConnClosed */
+  "Already connected",                /* kEtcPalErrIsConn */
+  "Not connected",                    /* kEtcPalErrNotConn */
+  "Transport endpoint shut down",     /* kEtcPalErrShutdown */
+  "Operation timed out",              /* kEtcPalErrTimedOut */
+  "Software caused connection abort", /* kEtcPalErrConnAborted */
+  "Connection refused",               /* kEtcPalErrConnRefused */
+  "Operation already in progress",    /* kEtcPalErrAlready */
+  "Operation now in progress",        /* kEtcPalErrInProgress */
+  "Buffer not big enough",            /* kEtcPalErrBufSize */
+  "Module not initialized",           /* kEtcPalErrNotInit */
+  "No network interfaces",            /* kEtcPalErrNoNetints */
+  "No sockets",                       /* kEtcPalErrNoSockets */
+  "Not implemented",                  /* kEtcPalErrNotImpl */
+  "Operation not permitted",          /* kEtcPalErrPerm */
+  "System or library call failed",    /* kEtcPalErrSys */
 };

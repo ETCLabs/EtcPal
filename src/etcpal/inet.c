@@ -150,10 +150,10 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, LwpaIpAddr* ip)
   {
     switch (type)
     {
-      case kLwpaIpTypeV4:
+      case kEtcPalIpTypeV4:
         LWPA_IP_SET_V4_ADDRESS(ip, 0);
         break;
-      case kLwpaIpTypeV6:
+      case kEtcPalIpTypeV6:
         LWPA_IP_SET_V6_ADDRESS(ip, v6_wildcard);
         break;
       default:
@@ -176,7 +176,7 @@ bool etcpal_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
 {
   if (ip1 && ip2 && ip1->type == ip2->type)
   {
-    if (ip1->type == kLwpaIpTypeV4)
+    if (ip1->type == kEtcPalIpTypeV4)
     {
       return LWPA_IP_V4_ADDRESS(ip1) == LWPA_IP_V4_ADDRESS(ip2);
     }
@@ -210,11 +210,11 @@ int etcpal_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
     {
       return (int)(ip1->type - ip2->type);
     }
-    else if (ip1->type == kLwpaIpTypeV4)
+    else if (ip1->type == kEtcPalIpTypeV4)
     {
       return (LWPA_IP_V4_ADDRESS(ip1) > LWPA_IP_V4_ADDRESS(ip2)) - (LWPA_IP_V4_ADDRESS(ip1) < LWPA_IP_V4_ADDRESS(ip2));
     }
-    else if (ip1->type == kLwpaIpTypeV6)
+    else if (ip1->type == kEtcPalIpTypeV6)
     {
       return memcmp(LWPA_IP_V6_ADDRESS(ip1), LWPA_IP_V6_ADDRESS(ip2), LWPA_IPV6_BYTES);
     }
@@ -295,8 +295,8 @@ unsigned int etcpal_ip_mask_length(const LwpaIpAddr* netmask)
  *  Creates either an IPv4 or IPv6 netmask, setting the most-significant mask_length bits.
  *
  *  For example:
- *  type = kLwpaIpTypeV4; mask_length = 16; result = 255.255.0.0
- *  type = kLwpaIpTypeV6; mask_length = 64; result = ffff:ffff:ffff:ffff::
+ *  type = kEtcPalIpTypeV4; mask_length = 16; result = 255.255.0.0
+ *  type = kEtcPalIpTypeV6; mask_length = 64; result = ffff:ffff:ffff:ffff::
  *
  *  \param[in] type Type of netmask to create, either IPv4 or IPv6.
  *  \param[in] mask_length Length in bits of the mask, counting from the MSB.
@@ -306,7 +306,7 @@ LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_le
 {
   LwpaIpAddr result;
 
-  if (type == kLwpaIpTypeV4)
+  if (type == kEtcPalIpTypeV4)
   {
     uint32_t mask_val = 0;
     uint32_t bit_mask = 0x80000000u;
@@ -318,7 +318,7 @@ LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_le
 
     LWPA_IP_SET_V4_ADDRESS(&result, mask_val);
   }
-  else if (type == kLwpaIpTypeV6)
+  else if (type == kEtcPalIpTypeV6)
   {
     uint8_t mask_buf[LWPA_IPV6_BYTES];
     memset(mask_buf, 0, sizeof(mask_buf));

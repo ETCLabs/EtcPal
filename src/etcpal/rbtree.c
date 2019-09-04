@@ -207,10 +207,10 @@ void* etcpal_rbtree_find(LwpaRbTree* self, void* value)
  *
  *  \param[in] self Tree in which to insert the value.
  *  \param[in] value Value to insert.
- *  \return #kLwpaErrOk: the value was inserted.
- *  \return #kLwpaErrExists: the value already existed in the tree.
- *  \return #kLwpaErrNoMem: Couldn't allocate new node.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrOk: the value was inserted.
+ *  \return #kEtcPalErrExists: the value already existed in the tree.
+ *  \return #kEtcPalErrNoMem: Couldn't allocate new node.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value)
 {
@@ -218,9 +218,9 @@ etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value)
   if (new_node)
   {
     etcpal_error_t insert_res = etcpal_rbtree_insert_node(self, new_node);
-    if (insert_res == kLwpaErrOk)
+    if (insert_res == kEtcPalErrOk)
     {
-      return kLwpaErrOk;
+      return kEtcPalErrOk;
     }
     else
     {
@@ -230,7 +230,7 @@ etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value)
   }
   else
   {
-    return kLwpaErrNoMem;
+    return kEtcPalErrNoMem;
   }
 }
 
@@ -243,19 +243,19 @@ etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value)
  *  \param[in] self Tree in which to insert the value.
  *  \param[in] node Node containing value to insert. Must have been previously initialized using
  *                  etcpal_rbnode_init().
- *  \return #kLwpaErrOk: The value was inserted.
- *  \return #kLwpaErrExists: The value already existed in the tree.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrOk: The value was inserted.
+ *  \return #kEtcPalErrExists: The value already existed in the tree.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
 {
-  etcpal_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kEtcPalErrInvalid;
   if (self && node)
   {
     if (self->root == NULL)
     {
       self->root = node;
-      result = kLwpaErrOk;
+      result = kEtcPalErrOk;
     }
     else
     {
@@ -301,7 +301,7 @@ etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
         /* Stop working if we inserted a node. This check also disallows duplicates in the tree */
         if (self->cmp(self, q, node) == 0)
         {
-          result = inserted ? kLwpaErrOk : kLwpaErrExists;
+          result = inserted ? kEtcPalErrOk : kEtcPalErrExists;
           break;
         }
 
@@ -336,13 +336,13 @@ etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
  *
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
- *  \return #kLwpaErrOk: The value was removed.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
- *  \return #kLwpaErrNotFound: The value did not exist in the tree.
+ *  \return #kEtcPalErrOk: The value was removed.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
 etcpal_error_t etcpal_rbtree_remove(LwpaRbTree* self, void* value)
 {
-  etcpal_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kEtcPalErrInvalid;
   if (self)
     result = etcpal_rbtree_remove_with_cb(self, value, etcpal_rbtree_node_dealloc_cb);
   return result;
@@ -358,9 +358,9 @@ etcpal_error_t etcpal_rbtree_remove(LwpaRbTree* self, void* value)
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
  *  \param[in] node_cb Callback function to call with the node and value being removed.
- *  \return #kLwpaErrOk: The value was removed.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
- *  \return #kLwpaErrNotFound: The value did not exist in the tree.
+ *  \return #kEtcPalErrOk: The value was removed.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
 etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpal_rbtree_node_f node_cb)
 {
@@ -371,14 +371,14 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpa
   int dir = 1;
 
   if (!self)
-    return kLwpaErrInvalid;
+    return kEtcPalErrInvalid;
   if (self->root == NULL)
-    return kLwpaErrNotFound;
+    return kEtcPalErrNotFound;
 
   /* SMK added this check, because the removal code seems to fail badly in the case where the node
    * being removed didn't previously exist in the tree. */
   if (NULL == etcpal_rbtree_find(self, value))
-    return kLwpaErrNotFound;
+    return kEtcPalErrNotFound;
 
   /* Set up our helpers */
   node.value = value;
@@ -459,7 +459,7 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpa
     self->root->red = 0;
 
   --self->size;
-  return kLwpaErrOk;
+  return kEtcPalErrOk;
 }
 
 /*! \brief Clear all values from a red-black tree.
@@ -468,12 +468,12 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpa
  *  the user is responsible for deallocating the value memory.
  *
  *  \param[in] self Tree to clear.
- *  \return #kLwpaErrOk: The tree was cleared.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrOk: The tree was cleared.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_rbtree_clear(LwpaRbTree* self)
 {
-  etcpal_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kEtcPalErrInvalid;
   if (self)
     result = etcpal_rbtree_clear_with_cb(self, etcpal_rbtree_node_dealloc_cb);
   return result;
@@ -487,12 +487,12 @@ etcpal_error_t etcpal_rbtree_clear(LwpaRbTree* self)
  *
  *  \param[in] self Tree to clear.
  *  \param[in] node_cb Callback function to call with each node and value being removed.
- *  \return #kLwpaErrOk: The tree was cleared.
- *  \return #kLwpaErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrOk: The tree was cleared.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_rbtree_clear_with_cb(LwpaRbTree* self, etcpal_rbtree_node_f node_cb)
 {
-  etcpal_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kEtcPalErrInvalid;
   if (self && node_cb)
   {
     LwpaRbNode* node = self->root;
@@ -519,7 +519,7 @@ etcpal_error_t etcpal_rbtree_clear_with_cb(LwpaRbTree* self, etcpal_rbtree_node_
     }
     self->root = NULL;
     self->size = 0;
-    result = kLwpaErrOk;
+    result = kEtcPalErrOk;
   }
   return result;
 }

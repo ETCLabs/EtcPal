@@ -26,59 +26,59 @@ etcpal_error_t errno_os_to_lwpa(int os_errno)
   {
     case EPERM:
     case EACCES:
-      return kLwpaErrPerm;
+      return kEtcPalErrPerm;
     case ENOENT:
     case EBADF:
     case ENOTSOCK:
-      return kLwpaErrNotFound;
+      return kEtcPalErrNotFound;
     case EFAULT:
     case EINVAL:
     case EDESTADDRREQ:
     case EPROTOTYPE:
     case EOPNOTSUPP:
-      return kLwpaErrInvalid;
+      return kEtcPalErrInvalid;
       // case EAGAIN: // EWOULDBLOCK defined to EAGAIN
     case EWOULDBLOCK:
-      return kLwpaErrWouldBlock;
+      return kEtcPalErrWouldBlock;
     case EBUSY:
-      return kLwpaErrBusy;
+      return kEtcPalErrBusy;
     case ENOMEM:
     case ENOBUFS:
-      return kLwpaErrNoMem;
+      return kEtcPalErrNoMem;
     case EEXIST:
-      return kLwpaErrExists;
+      return kEtcPalErrExists;
     case ENOSYS:
-      return kLwpaErrNotImpl;
+      return kEtcPalErrNotImpl;
     case EPROTO:
-      return kLwpaErrProtocol;
+      return kEtcPalErrProtocol;
     case EMSGSIZE:
-      return kLwpaErrMsgSize;
+      return kEtcPalErrMsgSize;
     case EADDRINUSE:
-      return kLwpaErrAddrInUse;
+      return kEtcPalErrAddrInUse;
     case EADDRNOTAVAIL:
-      return kLwpaErrAddrNotAvail;
+      return kEtcPalErrAddrNotAvail;
     case ENETDOWN:
     case ENETUNREACH:
     case ENETRESET:
-      return kLwpaErrNetwork;
+      return kEtcPalErrNetwork;
     case ECONNABORTED:
-      return kLwpaErrConnAborted;
+      return kEtcPalErrConnAborted;
     case ECONNRESET:
-      return kLwpaErrConnReset;
+      return kEtcPalErrConnReset;
     case EISCONN:
-      return kLwpaErrIsConn;
+      return kEtcPalErrIsConn;
     case ENOTCONN:
-      return kLwpaErrNotConn;
+      return kEtcPalErrNotConn;
     case ESHUTDOWN:
-      return kLwpaErrShutdown;
+      return kEtcPalErrShutdown;
     case ETIMEDOUT:
-      return kLwpaErrTimedOut;
+      return kEtcPalErrTimedOut;
     case ECONNREFUSED:
-      return kLwpaErrConnRefused;
+      return kEtcPalErrConnRefused;
     case EALREADY:
-      return kLwpaErrAlready;
+      return kEtcPalErrAlready;
     case EINPROGRESS:
-      return kLwpaErrInProgress;
+      return kEtcPalErrInProgress;
     case EINTR:
     case ENFILE:
     case EMFILE:
@@ -88,6 +88,6 @@ etcpal_error_t errno_os_to_lwpa(int os_errno)
     case EPROTONOSUPPORT:
     case ESOCKTNOSUPPORT:
     default:
-      return kLwpaErrSys;
+      return kEtcPalErrSys;
   }
 }
