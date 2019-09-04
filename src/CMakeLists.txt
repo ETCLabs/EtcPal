@@ -1,11 +1,11 @@
 
-set(ETCPAL_CONFIG_FILE_DIR "" CACHE STRING "The directory path of the lwpa_config.h file, if provided")
+set(ETCPAL_CONFIG_FILE_DIR "" CACHE STRING "The directory path of the etcpal_config.h file, if provided")
 if(ETCPAL_CONFIG_FILE_DIR)
   set(${ETCPAL_HAVE_CONFIG_H} ETCPAL_HAVE_CONFIG_H)
 endif()
 
 ###############################################################################
-# Core lwpa library
+# Core EtcPal library
 ###############################################################################
 
 add_library(EtcPal
@@ -77,7 +77,6 @@ if(ETCPAL_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(EtcPal PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
 endif()
 target_link_libraries(EtcPal PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
-set_target_properties(EtcPal PROPERTIES DEBUG_POSTFIX d)
 
 if(NOT MSVC)
   set_target_properties(EtcPal PROPERTIES C_STANDARD 99)
@@ -85,12 +84,12 @@ endif()
 
 # Installation
 install(TARGETS EtcPal ARCHIVE DESTINATION lib)
-install(DIRECTORY ${ETCPAL_ROOT}/include/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/lwpa DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${ETCPAL_ROOT}/include/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
 
 ###############################################################################
-# Mock lwpa library
+# Mock EtcPal library
 ###############################################################################
 
 if(ETCPAL_BUILD_MOCK_LIB)
@@ -119,7 +118,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.h
     ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.h
 
-    ${ETCPAL_ROOT}/include/lwpa_mock/socket.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/socket.h
 
     # EtcPal sources
     # We will gradually substitute these with mocks as needed
@@ -147,7 +146,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.c
 
-    ${ETCPAL_ROOT}/src/lwpa_mock/socket.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
   )
   target_include_directories(EtcPalMock PUBLIC
     ${ETCPAL_ROOT}/include
@@ -158,7 +157,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
   target_compile_definitions(EtcPalMock PRIVATE ETCPAL_BUILDING_MOCK_LIB)
   target_link_libraries(EtcPalMock PUBLIC meekrosoft::fff)
   target_link_libraries(EtcPalMock PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
-  set_target_properties(EtcPalMock PROPERTIES DEBUG_POSTFIX d)
   if(NOT MSVC)
     set_target_properties(EtcPalMock PROPERTIES C_STANDARD 99)
   endif()
