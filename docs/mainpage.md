@@ -8,8 +8,9 @@ modules to abstract common system calls. There are also a few
 platform-neutral utilities (i.e. data structures, logging) thrown in here
 and there for convenience.
 
-lwpa modules are typically optimized for embedded platforms and thus designed
-to be as thin a wrapper over the underlying OS functionality as possible.
+lwpa modules are designed to run with low overhead on embedded platforms, and
+thus are designed to be as thin a wrapper over the underlying OS functionality
+as possible.
 
 To jump right into the documentation, check out the
 [Modules Overview](@ref lwpa).
@@ -20,7 +21,7 @@ the sources for lwpa are located in the heirarchy:
 ```
 src/
   os/
-    [OS name]/
+    [OS or network stack provider]/
       [platform-specific lwpa sources]
   [platform-neutral lwpa sources]
 ```
@@ -29,22 +30,36 @@ The includes are in the heirarchy:
 ```
 include/
   os/
-    [OS name]/
+    [OS or network stack provider]/
       [platform-specific lwpa headers]
   [platform-neutral lwpa headers]
 ```
-Some lwpa headers are platform-specific and duplicated for each OS.
+Some lwpa headers are platform-specific and duplicated for each platform.
 Platform-specific headers for the same module will always conform to an
 identical interface, as documented in that module's documentation.
 
 ## Supported Platforms
 
-lwpa is currently ported for the following operating systems:
+lwpa distinguishes between two major constructs which provide services to
+applications. 'OS' targets provide threading, synchronization and other
+utilities not provided by the C standard library. 'Network' targets provide a
+network stack.
+
+lwpa is currently ported for the following OS targets:
+
++ FreeRTOS
++ macOS
++ Microsoft Windows
++ Linux
++ MQX
+
+And the following network targets:
 
 + macOS
 + Microsoft Windows
 + Linux
-+ MQX RTOS
++ lwIP
++ MQX (RTCS)
 
 ### Building lwpa for Your Platform
 
@@ -62,9 +77,12 @@ To configure and build lwpa on its own using CMake, follow these steps:
    $ cd build
    ```
    This directory can be inside or outside the lwpa repository.
+3. Optionally, provide a CMake toolchain file for cross-compilation. Those
+   building native code can skip this step. There are some examples in
+   `tools/cmake/cross-toolchains`.
 3. Run CMake to configure the lwpa project:
    ```
-   $ cmake path/to/lwpa/root
+   $ cmake [-DCMAKE_TOOLCHAIN_FILE=path/to/toolchain/file] path/to/lwpa/root
    ```
    You can optionally specify your build system with the `-G` option;
    otherwise, CMake will choose a system-appropriate default. Use `cmake --help`
@@ -81,14 +99,14 @@ To configure and build lwpa on its own using CMake, follow these steps:
    ```
 5. To run the unit tests after building:
    ```
-   # On Windows
-   > .\test\[Build_Configuration]\test_lwpa.exe
-
-   # Elsewhere
-   $ ./test/test_lwpa
+   $ ctest [-C Configuration]
    ```
-   Or, if you are generating IDE project files, simply run the test_lwpa
-   project from your IDE.
+   Or, if you are generating IDE project files, simply run the projects in the
+   'tests' folder in your IDE.
+
+   Alternatively, you can define `LWPA_TEST_BUILD_AS_LIBRARIES=ON` to compile
+   the unit and integration tests into static libraries, which is often useful
+   for running tests on embedded targets.
 
 Alternatively, if you don't want to use CMake, your project can simply build in
 the lwpa sources directly using the appropriate directories for your target
@@ -97,9 +115,13 @@ platform.
 ### Platform Dependencies
 
 The platform ports of lwpa have the following dependencies:
++ FreeRTOS
+  - Tested back to FreeRTOS 9.0.0. Not guaranteed to work with older versions.
+  - Optional Features:
+    * lwpa_uuid: Creation of V1 and V4 UUIDs not implemented (not provided by
+      FreeRTOS).
 + macOS
-  - The macOS port has been tested back to macOS 10.11. It is not guaranteed to
-    work on older versions.
+  - Tested back to macOS 10.11. Not guaranteed to work with older versions.
   - If compiling with macOS 10.7 or earlier, you might need to install a UUID
     package like `ossp-uuid`.
 + Microsoft Windows
@@ -110,8 +132,11 @@ The platform ports of lwpa have the following dependencies:
     * lwpa_socket (socket interface): Iphlpapi.lib, Ws2_32.lib
     * lwpa_uuid (UUID creation): Rpcrt4.lib
     * lwpa_timer (system timers): Winmm.lib
-+ MQX RTOS
++ MQX
   - MQX 4.2.0
+  - Optional Features:
+    * lwpa_uuid: Creation of V1 and V4 UUIDs not implemented (not provided by
+      MQX)
 + Linux
   - Optional Features:
     * lwpa_netint (network interfaces): Linux 2.2, glibc 2.3.3
@@ -119,3 +144,5 @@ The platform ports of lwpa have the following dependencies:
     * lwpa_uuid (UUID creation): libuuid (if compiling lwpa, use
       `sudo apt-get install uuid-dev` or the equivalent method for your
       distribution)
++ lwIP
+  - lwIP 2.1.0 or later

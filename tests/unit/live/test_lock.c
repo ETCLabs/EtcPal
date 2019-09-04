@@ -110,8 +110,3 @@ TEST_GROUP_RUNNER(lwpa_lock)
   RUN_TEST_CASE(lwpa_lock, rwlock_create_and_destroy_works);
   RUN_TEST_CASE(lwpa_lock, signal_create_and_destroy_works);
 }
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_lock);
-}

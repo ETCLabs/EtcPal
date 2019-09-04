@@ -17,6 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 #include "lwpa/pack.h"
+#include "lwpa/pack64.h"
 #include "unity_fixture.h"
 
 #include <stddef.h>
@@ -241,9 +242,4 @@ TEST_GROUP_RUNNER(lwpa_pack)
   RUN_TEST_CASE(lwpa_pack, pack_16_functions_work);
   RUN_TEST_CASE(lwpa_pack, pack_32_functions_work);
   RUN_TEST_CASE(lwpa_pack, pack_64_functions_work);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_pack);
 }

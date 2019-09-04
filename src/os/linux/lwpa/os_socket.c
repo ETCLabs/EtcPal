@@ -588,9 +588,24 @@ lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking)
   int val = fcntl(id, F_GETFL, 0);
   if (val >= 0)
   {
-    val = fcntl(id, F_SETFL, val | O_NONBLOCK);
+    val = fcntl(id, F_SETFL, (blocking ? (val & (int)(~O_NONBLOCK)) : (val | O_NONBLOCK)));
   }
   return (val >= 0 ? kLwpaErrOk : errno_os_to_lwpa(errno));
+}
+
+lwpa_error_t lwpa_getblocking(lwpa_socket_t id, bool* blocking)
+{
+  if (blocking)
+  {
+    int val = fcntl(id, F_GETFL, 0);
+    if (val >= 0)
+    {
+      *blocking = ((val & O_NONBLOCK) == 0);
+      return kLwpaErrOk;
+    }
+    return errno_os_to_lwpa(errno);
+  }
+  return kLwpaErrInvalid;
 }
 
 lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context)

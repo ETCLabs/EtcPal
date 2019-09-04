@@ -19,7 +19,13 @@
 #include "lwpa/lock.h"
 #include "unity_fixture.h"
 
+#include <stdio.h>
 #include "lwpa/thread.h"
+
+// Disable sprintf() warning on Windows/MSVC
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
 
 // For general usage
 static lwpa_signal_t sig;
@@ -55,7 +61,9 @@ TEST(signal_integration, signal_thread_test)
 
   for (size_t i = 0; i < 2; ++i)
   {
-    TEST_ASSERT_TRUE(lwpa_thread_create(&threads[i], &params, signal_test_thread, NULL));
+    char error_msg[50];
+    sprintf(error_msg, "Failed on iteration %zu", i);
+    TEST_ASSERT_TRUE_MESSAGE(lwpa_thread_create(&threads[i], &params, signal_test_thread, NULL), error_msg);
   }
 
   for (size_t i = 0; i < 6; ++i)

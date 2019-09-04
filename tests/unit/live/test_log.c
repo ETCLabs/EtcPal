@@ -31,13 +31,15 @@
 #pragma warning(disable : 4996)
 #endif
 
-DEFINE_FFF_GLOBALS;
-
 FAKE_VOID_FUNC(log_callback, void*, const LwpaLogStrings*);
 FAKE_VOID_FUNC(time_callback, void*, LwpaLogTimeParams*);
 
 LwpaLogTimeParams cur_time;
 LwpaLogStrings last_log_strings_received;
+
+// Buffers for tests of the create_*_str functions
+static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
+static char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
 
 static void fill_time_params(void* context, LwpaLogTimeParams* time_params)
 {
@@ -223,7 +225,6 @@ TEST(lwpa_log, context_pointer_is_passed_unmodified)
 TEST(lwpa_log, syslog_header_is_well_formed)
 {
   LwpaLogParams lparams;
-  static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
 
   // A string with a non-ASCII character: "host\xC8name"
   // Should be sanitized to "host?name"
@@ -293,7 +294,6 @@ TEST(lwpa_log, syslog_header_is_well_formed)
 
 TEST(lwpa_log, syslog_prival_is_correct)
 {
-  static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
   LwpaSyslogParams syslog_params;
   memset(&syslog_params, 0, sizeof(LwpaSyslogParams));
 
@@ -380,8 +380,6 @@ TEST(lwpa_log, log_mask_is_honored)
 TEST(lwpa_log, time_header_is_well_formed)
 {
   LwpaSyslogParams syslog_params;
-  static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
-  static char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
 
   memset(&syslog_params, 0, sizeof syslog_params);
   TEST_ASSERT(lwpa_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, LWPA_LOG_EMERG,
@@ -416,8 +414,6 @@ TEST(lwpa_log, time_header_is_well_formed)
 TEST(lwpa_log, formatting_int_values_works)
 {
   LwpaLogParams lparams;
-  static char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
-  static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
 
   lparams.action = kLwpaLogCreateBoth;
   lparams.log_fn = log_callback;
@@ -457,8 +453,6 @@ TEST(lwpa_log, formatting_int_values_works)
 TEST(lwpa_log, formatting_string_values_works)
 {
   LwpaLogParams lparams;
-  static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
-  static char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
 
   lparams.action = kLwpaLogCreateBoth;
   lparams.log_fn = log_callback;
@@ -511,8 +505,6 @@ static unsigned char get_sanitized_char(size_t i)
 TEST(lwpa_log, logging_maximum_length_string_works)
 {
   LwpaLogParams lparams;
-  static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
-  static char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
 
   lparams.action = kLwpaLogCreateBoth;
   lparams.log_fn = log_callback;
@@ -622,9 +614,4 @@ TEST_GROUP_RUNNER(lwpa_log)
   RUN_TEST_CASE(lwpa_log, formatting_int_values_works);
   RUN_TEST_CASE(lwpa_log, formatting_string_values_works);
   RUN_TEST_CASE(lwpa_log, logging_maximum_length_string_works);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(lwpa_log);
 }

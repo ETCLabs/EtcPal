@@ -17,11 +17,17 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "unity_fixture.h"
+#ifndef _LWPA_OS_ERROR_H_
+#define _LWPA_OS_ERROR_H_
 
-extern void run_all_tests(void);
+#include "lwpa/error.h"
+#include <lwip/errno.h>
 
-int main(int argc, char* argv[])
-{
-  return UnityMain(argc, (const char**)argv, run_all_tests);
-}
+#if !LWIP_PROVIDE_ERRNO && !LWIP_ERRNO_STDINCLUDE && !defined(LWIP_ERRNO_INCLUDE)
+#include <errno.h>
+#endif
+
+lwpa_error_t errno_lwip_to_lwpa(int lwip_errno);
+lwpa_error_t err_gai_to_lwpa(int gai_error);
+
+#endif /* _LWPA_OS_ERROR_H_ */

@@ -17,176 +17,200 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa_netint.h"
+#include "lwpa/netint.h"
 #include <string.h>
-#include "lwip/netif.h"
+#include <lwip/netif.h>
+#include "lwpa/private/opts.h"
+#include "lwpa/private/netint.h"
 
-static bool mask_is_empty(const LwpaIpAddr* mask);
-static bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask);
+#if LWPA_EMBOS_USE_MALLOC
+#include <stdlib.h>
+static LwpaNetintInfo* static_netints;
+#else
+static LwpaNetintInfo static_netints[LWPA_EMBOS_MAX_NETINTS];
+#endif
+size_t num_static_netints;
+size_t default_index;
 
-static void copy_interface_info(struct netif* lwip_netint, LwpaNetintInfo* netint)
+static void copy_common_interface_info(const struct netif* lwip_netif, LwpaNetintInfo* netint)
 {
-  netint->index = (int)lwip_netint->num;
-  if (lwip_netint->hwaddr_len == NETINTINFO_MAC_LEN)
-    memcpy(netint->mac, lwip_netint->hwaddr, NETINTINFO_MAC_LEN);
-  else
-    memset(netint->mac, 0, NETINTINFO_MAC_LEN);
-  if (lwip_netint->name[0] != '\0')
+  netint->index = netif_get_index(lwip_netif);
+  memset(netint->mac, 0, LWPA_NETINTINFO_MAC_LEN);
+  memcpy(netint->mac, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
+
+  char lwip_name[NETIF_NAMESIZE];
+  if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
   {
-    netint->name[0] = lwip_netint->name[0];
-    netint->name[1] = lwip_netint->name[1];
-    netint->name[2] = (char)(lwip_netint->num + '0');
-    netint->name[3] = '\0';
+    strncpy(netint->name, lwip_name, LWPA_NETINTINFO_NAME_LEN);
+    strncpy(netint->friendly_name, lwip_name, LWPA_NETINTINFO_FRIENDLY_NAME_LEN);
   }
-  if (lwip_netint == netif_default)
+}
+
+static void copy_interface_info_v4(const struct netif* lwip_netif, LwpaNetintInfo* netint)
+{
+  copy_common_interface_info(lwip_netif, netint);
+
+  if (!ip_addr_isany(netif_ip_addr4(lwip_netif)))
+  {
+    LWPA_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netif)->addr));
+    LWPA_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netif)->addr));
+  }
+
+  if (lwip_netif == netif_default)
     netint->is_default = true;
   else
     netint->is_default = false;
+}
 
-#if LWIP_IPV4
-  if (!ip_addr_isany(netif_ip_addr4(lwip_netint)))
+static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, LwpaNetintInfo* netint)
+{
+  copy_common_interface_info(lwip_netif, netint);
+
+  /* Finish filling in a netintinfo for a single IPv6 address. */
+
+  if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[v6_addr_index]))
   {
-    LWPA_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netint)->addr));
-    LWPA_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netint)->addr));
-    LWPA_IP_SET_V4_ADDRESS(&netint->gate, ntohl(netif_ip4_gw(lwip_netint)->addr));
-  }
+#if LWIP_IPV6_SCOPES
+    LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
+                                         ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
+#else
+    LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
+    // TODO revisit
+    netint->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, 128);
 #endif
-#if 0
-  /* TODO port this IPv6 code copied from AsyncSocket */
-  /* Add all of the IPv6 addresses that are valid, each gets its own
-    * netintinfo */
 
-  /* NOTE: We are not currently supporting IPv6 in any lwIP products, and
-    * this implementation will probably need to be revisited before we do,
-    * especially the default interface code. */
-  for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
+    if (lwip_netif == netif_default)
+      netint->is_default = true;
+    else
+      netint->is_default = false;
+
+    return true;
+  }
+  return false;
+}
+
+lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
+{
+  struct netif* lwip_netif;
+
+#if LWPA_EMBOS_USE_MALLOC
+  size_t num_lwip_netints = 0;
+  NETIF_FOREACH(lwip_netif)
   {
-    if (ip6_addr_isvalid(iface->ip6_addr_mca_state[i]))
+#if LWIP_IPV4
+    ++num_lwip_netints;
+#endif
+#if LWIP_IPV6
+    for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
     {
-      IAsyncSocketServ::netintinfo v6info = info;
-      v6info.addr.SetV6Address(reinterpret_cast<uint8_t*>(
-            ip_2_ip6(&iface->ip6_addr[i])->addr));
-      v6info.id = m_ifaces.size();
-      m_ifaces.push_back(v6info);
-      /* This will result in the last valid IPv6 address on the
-        * default interface being made the 'default'. Or if there are
-        * no IPv6 addresses, the IPv4 address will get it. Good enough
-        * for now. */
-      if (iface == netif_default)
-        m_defaultiface = v6info.id;
+      if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[i]))
+        ++num_lwip_netints;
     }
+#endif
+  }
+  cache->netints = (LwpaNetintInfo*)calloc(sizeof(LwpaNetintInfo), num_lwip_netints);
+  if (!cache->netints)
+    return kLwpaErrNoMem;
+#endif
+
+  num_static_netints = 0;
+
+  // Make sure the default netint is included
+#if LWIP_IPV4
+  if (netif_default)
+  {
+    cache->def.v4_valid = true;
+    cache->def.v4_index = netif_get_index(netif_default);
+    copy_interface_info_v4(netif_default, &static_netints[num_static_netints++]);
   }
 #endif
-}
-
-size_t netint_get_num_interfaces()
-{
-  size_t num_interfaces = 0;
-  struct netif* netint;
-  for (netint = netif_list; netint; netint = netint->next)
+#if LWIP_IPV6
+  if (netif_default)
   {
-    /* Skip loopback interfaces */
-    if (!ip4_addr_isloopback(netif_ip4_addr(netint)))
-      ++num_interfaces;
+    cache->def.v6_valid = true;
+    cache->def.v6_index = netif_get_index(netif_default);
+    for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
+    {
+#if !LWPA_EMBOS_USE_MALLOC
+      if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
+        break;
+#endif
+      if (copy_interface_info_v6(netif_default, i, &static_netints[num_static_netints]))
+        ++num_static_netints;
+    }
+#endif
   }
-  return num_interfaces;
-}
 
-size_t netint_get_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
-{
-  size_t num_interfaces = 0;
-  struct netif* lwip_netint;
-
-  if (!netint_arr || netint_arr_size == 0)
-    return 0;
-
-  for (lwip_netint = netif_list; lwip_netint; lwip_netint = lwip_netint->next)
+  NETIF_FOREACH(lwip_netif)
   {
-#if LWIP_IPV4
-    /* Skip loopback interfaces */
-    if (ip4_addr_isloopback(netif_ip4_addr(lwip_netint)))
+    if (lwip_netif == netif_default)
       continue;
+
+#if !LWPA_EMBOS_USE_MALLOC
+    if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
+      break;
 #endif
 
-    copy_interface_info(lwip_netint, &netint_arr[num_interfaces++]);
-    if (num_interfaces >= netint_arr_size)
-      break;
-  }
-
-  return num_interfaces;
-}
-
-bool netint_get_default_interface(LwpaNetintInfo* netint)
-{
-  if (netint && netif_default)
-  {
-    copy_interface_info(netif_default, netint);
-    return true;
-  }
-  return false;
-}
-
-bool mask_compare(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* mask)
-{
-  if (LWPA_IP_IS_V4(ip1) && LWPA_IP_IS_V4(ip2) && LWPA_IP_IS_V4(mask))
-  {
-    return ((LWPA_IP_V4_ADDRESS(ip1) & LWPA_IP_V4_ADDRESS(mask)) ==
-            (LWPA_IP_V4_ADDRESS(ip2) & LWPA_IP_V4_ADDRESS(mask)));
-  }
-  else if (LWPA_IP_IS_V6(ip1) && LWPA_IP_IS_V6(ip2) && LWPA_IP_IS_V6(mask))
-  {
-    size_t i;
-    const uint32_t* p1 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip1);
-    const uint32_t* p2 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip2);
-    const uint32_t* pm = (const uint32_t*)LWPA_IP_V6_ADDRESS(mask);
-
-    for (i = 0; i < IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
+#if LWIP_IPV4
+    copy_interface_info_v4(lwip_netif, &static_netints[num_static_netints++]);
+#endif
+#if LWIP_IPV6
+    for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
     {
-      if ((*p1 & *pm) != (*p2 & *pm))
-        return false;
+#if !LWPA_EMBOS_USE_MALLOC
+      if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
+        break;
+#endif
+      if (copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints]))
+        ++num_static_netints;
     }
-    return true;
+#endif
   }
-  return false;
+
+  cache->netints = static_netints;
+  cache->num_netints = num_static_netints;
+  return kLwpaErrOk;
 }
 
-bool mask_is_empty(const LwpaIpAddr* mask)
+void os_free_interfaces(CachedNetintInfo* cache)
 {
-  uint32_t mask_part = 0;
-
-  if (LWPA_IP_IS_V4(mask))
-    mask_part = LWPA_IP_V4_ADDRESS(mask);
-  else if (LWPA_IP_IS_V6(mask))
+#if LWPA_EMBOS_USE_MALLOC
+  if (cache->netints)
   {
-    size_t i;
-    const uint32_t* p = (const uint32_t*)LWPA_IP_V6_ADDRESS(mask);
-    for (i = 0; i < IPV6_BYTES / 4; ++i, ++p)
-      mask_part |= *p;
+    free(cache->netints);
+    cache->netints = NULL;
   }
-  return (mask_part == 0);
+#endif
 }
 
-const LwpaNetintInfo* netint_get_iface_for_dest(const LwpaIpAddr* dest, const LwpaNetintInfo* netint_arr,
-                                                size_t netint_arr_size)
+lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
-  const LwpaNetintInfo* res = NULL;
-  const LwpaNetintInfo* def = NULL;
-  const LwpaNetintInfo* netint;
+  unsigned int index_found = 0;
 
-  if (!dest || !netint_arr || netint_arr_size == 0)
-    return false;
-
-  for (netint = netint_arr; netint < netint_arr + netint_arr_size; ++netint)
+  for (const LwpaNetintInfo* netint = static_netints; netint < static_netints + num_static_netints; ++netint)
   {
-    if (netint->is_default)
-      def = netint;
-    if (!mask_is_empty(&netint->mask) && mask_compare(&netint->addr, dest, &netint->mask))
+    if (!lwpa_ip_is_wildcard(&netint->mask) && lwpa_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {
-      res = netint;
+      index_found = netint->index;
       break;
     }
   }
-  if (!res)
-    res = def;
-  return res;
+
+  if (index_found == 0)
+  {
+    if (LWPA_IP_IS_V4(dest) && cache->def.v4_valid)
+      index_found = cache->def.v4_index;
+    else if (LWPA_IP_IS_V6(dest) && cache->def.v6_valid)
+      index_found = cache->def.v6_index;
+  }
+
+  if (index_found == 0)
+  {
+    return kLwpaErrNotFound;
+  }
+  else
+  {
+    *index = index_found;
+    return kLwpaErrOk;
+  }
 }

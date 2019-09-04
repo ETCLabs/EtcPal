@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "lwpa/pack.h"
+#include "lwpa/private/opts.h"
 
 /*************************** Function definitions ****************************/
 
@@ -141,7 +142,7 @@ void lwpa_pack_32l(uint8_t* buf, uint32_t val)
   }
 }
 
-#if LWPA_64BIT_SUPPORT
+#if LWPA_INCLUDE_PACK_64
 
 /*! \brief Unpack a uint64_t from a known big-endian buffer.
  *  \param buf Pointer to the buffer from which to unpack a uint64_t.
@@ -223,4 +224,4 @@ void lwpa_pack_64l(uint8_t* buf, uint64_t val)
   }
 }
 
-#endif
+#endif /* LWPA_INCLUDE_PACK_64 */
