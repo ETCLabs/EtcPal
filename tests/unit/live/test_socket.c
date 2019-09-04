@@ -23,8 +23,10 @@
 #include <stddef.h>
 
 // For getaddrinfo
+#if 0
 static const char* test_hostname = "www.google.com";
 static const char* test_service = "http";
+#endif
 
 static const char* test_gai_ip_str = "10.101.1.1";
 static const uint32_t test_gai_ip = 0x0a650101;
@@ -354,16 +356,21 @@ TEST(lwpa_socket, getaddrinfo_works_as_expected)
   LwpaAddrinfo ai;
 
   memset(&ai_hints, 0, sizeof ai_hints);
+
+  // We can't currently assume internet access for our tests.
+#if 0
   ai_hints.ai_family = LWPA_AF_INET;
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_getaddrinfo(test_hostname, test_service, &ai_hints, &ai));
   TEST_ASSERT(LWPA_IP_IS_V4(&ai.ai_addr.ip));
   lwpa_freeaddrinfo(&ai);
+#endif
 
   ai_hints.ai_flags = LWPA_AI_NUMERICHOST;
   TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_getaddrinfo(test_gai_ip_str, test_gai_port_str, &ai_hints, &ai));
   TEST_ASSERT(LWPA_IP_IS_V4(&ai.ai_addr.ip));
   TEST_ASSERT_EQUAL_UINT32(LWPA_IP_V4_ADDRESS(&ai.ai_addr.ip), test_gai_ip);
   TEST_ASSERT_EQUAL_UINT16(ai.ai_addr.port, test_gai_port);
+  lwpa_freeaddrinfo(&ai);
 }
 
 TEST_GROUP_RUNNER(lwpa_socket)

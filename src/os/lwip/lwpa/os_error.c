@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "os_error.h"
+#include <lwip/netdb.h>
 
 lwpa_error_t errno_lwip_to_lwpa(int lwip_errno)
 {
@@ -89,4 +90,26 @@ lwpa_error_t errno_lwip_to_lwpa(int lwip_errno)
     default:
       return kLwpaErrSys;
   }
+}
+
+lwpa_error_t err_gai_to_lwpa(int gai_error)
+{
+#if LWIP_DNS
+  switch (gai_error)
+  {
+    case EAI_SERVICE:
+    case EAI_FAIL:
+    case EAI_NONAME:
+      return kLwpaErrNotFound;
+    case EAI_MEMORY:
+      return kLwpaErrNoMem;
+    case EAI_FAMILY:
+      return kLwpaErrInvalid;
+    default:
+      return kLwpaErrSys;
+  }
+#else
+  (void)gai_error;  // unused
+  return kLwpaErrSys;
+#endif
 }

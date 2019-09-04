@@ -28,5 +28,6 @@
 #endif
 
 lwpa_error_t errno_lwip_to_lwpa(int lwip_errno);
+lwpa_error_t err_gai_to_lwpa(int gai_error);
 
 #endif /* _LWPA_OS_ERROR_H_ */

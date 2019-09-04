@@ -857,7 +857,7 @@ lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const L
     if (!lwpa_nextaddr(result))
       res = -1;
   }
-  return res;
+  return (res == 0 ? kLwpaErrOk : err_gai_to_lwpa(res));
 #else   // LWIP_DNS
   return kLwpaErrNotImpl;
 #endif  // LWIP_DNS
@@ -870,7 +870,7 @@ bool lwpa_nextaddr(LwpaAddrinfo* ai)
   {
     struct addrinfo* pf_ai = (struct addrinfo*)ai->pd[1];
     ai->ai_flags = 0;
-    if (!sockaddr_os_to_lwpa(&ai->ai_addr, pf_ai->ai_addr))
+    if (!sockaddr_os_to_lwpa(pf_ai->ai_addr, &ai->ai_addr))
       return false;
     /* Can't use reverse maps, because we have no guarantee of the numeric
      * values of the os constants. Ugh. */
