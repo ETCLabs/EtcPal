@@ -97,7 +97,8 @@ static void free_routing_table(RoutingTable* table);
 // Interacting with RTNETLINK
 static etcpal_error_t send_netlink_route_request(int socket, int family);
 static etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
-static etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table);
+static etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size,
+                                                RoutingTable* table);
 
 // Manipulating routing table entries
 static void init_routing_table_entry(RoutingTableEntry* entry);
@@ -137,13 +138,13 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   // Create the OS resources necessary to enumerate the interfaces
   int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (ioctl_sock == -1)
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
 
   struct ifaddrs* os_addrs;
   if (getifaddrs(&os_addrs) < 0)
   {
     close(ioctl_sock);
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
   }
 
   // Pass 1: Total the number of addresses
@@ -188,10 +189,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
 
     // Interface address
-    ip_os_to_lwpa(ifaddr->ifa_addr, &current_info->addr);
+    ip_os_to_etcpal(ifaddr->ifa_addr, &current_info->addr);
 
     // Interface netmask
-    ip_os_to_lwpa(ifaddr->ifa_netmask, &current_info->mask);
+    ip_os_to_etcpal(ifaddr->ifa_netmask, &current_info->mask);
 
     // Struct ifreq to use with ioctl() calls
     struct ifreq if_req;
@@ -313,12 +314,12 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
 
     int sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
     if (sock == -1)
-      result = errno_os_to_lwpa(errno);
+      result = errno_os_to_etcpal(errno);
 
     if (result == kEtcPalErrOk)
     {
       if (0 != bind(sock, (struct sockaddr*)&addr, sizeof(addr)))
-        result = errno_os_to_lwpa(errno);
+        result = errno_os_to_etcpal(errno);
     }
 
     if (result == kEtcPalErrOk)
@@ -366,7 +367,7 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
   if (sendto(socket, &req.nl_header, req.nl_header.nlmsg_len, 0, (struct sockaddr*)&naddr, sizeof(naddr)) >= 0)
     return kEtcPalErrOk;
   else
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
 }
 
 etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
@@ -396,7 +397,7 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
     if (recv_res == -1)
     {
       free(buffer);
-      return errno_os_to_lwpa(errno);
+      return errno_os_to_etcpal(errno);
     }
 
     struct nlmsghdr* nl_header = (struct nlmsghdr*)cur_ptr;
@@ -499,7 +500,8 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     // table)
     for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
     {
-      if (ETCPAL_IP_IS_INVALID(&entry->addr) && ETCPAL_IP_IS_INVALID(&entry->mask) && !ETCPAL_IP_IS_INVALID(&entry->gateway))
+      if (ETCPAL_IP_IS_INVALID(&entry->addr) && ETCPAL_IP_IS_INVALID(&entry->mask) &&
+          !ETCPAL_IP_IS_INVALID(&entry->gateway))
       {
         table->default_route = entry;
         break;

@@ -28,14 +28,14 @@
 extern "C" {
 #endif
 
-/* Definitions for the lwpa socket type */
+/* Definitions for the EtcPal socket type */
 
 typedef uint32_t etcpal_socket_t;
 
 #ifdef PRIu32
-#define PRIlwpasockt PRIu32
+#define PRIepsock PRIu32
 #else
-#define PRIlwpasockt "u"
+#define PRIepsock "u"
 #endif
 
 #define ETCPAL_SOCKET_INVALID RTCS_SOCKET_ERROR

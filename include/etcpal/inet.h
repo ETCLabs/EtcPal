@@ -28,7 +28,7 @@
 #include "etcpal/os_inet.h"
 
 /*! \defgroup etcpal_inet etcpal_inet
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief POSIX-like identifiers for IP addresses and network interfaces.
  *
  *  \#include "etcpal/inet.h"
@@ -116,10 +116,10 @@ typedef struct EtcPalIpAddr
  *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \param val IPv4 address to set (uint32_t). */
 #define ETCPAL_IP_SET_V4_ADDRESS(etcpal_ip_ptr, val) \
-  do                                             \
-  {                                              \
+  do                                                 \
+  {                                                  \
     (etcpal_ip_ptr)->type = kEtcPalIpTypeV4;         \
-    (etcpal_ip_ptr)->addr.v4 = val;                \
+    (etcpal_ip_ptr)->addr.v4 = val;                  \
   } while (0)
 
 /*! Set the IPv6 address in a EtcPalIpAddr. Also sets the type field to indicate that this EtcPalIpAddr
@@ -127,7 +127,8 @@ typedef struct EtcPalIpAddr
  *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #ETCPAL_IPV6_BYTES.
  *                  Gets copied into the struct. */
-#define ETCPAL_IP_SET_V6_ADDRESS(etcpal_ip_ptr, addr_val) ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(etcpal_ip_ptr, addr_val, 0u)
+#define ETCPAL_IP_SET_V6_ADDRESS(etcpal_ip_ptr, addr_val) \
+  ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(etcpal_ip_ptr, addr_val, 0u)
 
 /*! Set an IPv6 address with an explicit scope ID in a EtcPalIpAddr. Also sets the type field to
  *  indicate that this EtcPalIpAddr contains an IPv6 address.
@@ -136,11 +137,11 @@ typedef struct EtcPalIpAddr
  *                  Gets copied into the struct.
  *  \param scope_id_val IPv6 scope ID to set. */
 #define ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(etcpal_ip_ptr, addr_val, scope_id_val) \
-  do                                                                              \
-  {                                                                               \
+  do                                                                                  \
+  {                                                                                   \
     (etcpal_ip_ptr)->type = kEtcPalIpTypeV6;                                          \
     memcpy((etcpal_ip_ptr)->addr.v6.addr_buf, (addr_val), ETCPAL_IPV6_BYTES);         \
-    (etcpal_ip_ptr)->addr.v6.scope_id = (scope_id_val);                             \
+    (etcpal_ip_ptr)->addr.v6.scope_id = (scope_id_val);                               \
   } while (0)
 
 /*! Set the type field in a EtcPalIpAddr to indicate that it does not contain a valid address.
@@ -152,7 +153,7 @@ typedef struct EtcPalIpAddr
 /*! An IP address with associated interface and port. Ports are in host byte order. */
 typedef struct EtcPalSockaddr
 {
-  uint16_t port; /*!< TCP or UDP port. */
+  uint16_t port;   /*!< TCP or UDP port. */
   EtcPalIpAddr ip; /*!< IP address. */
 } EtcPalSockaddr;
 
@@ -207,10 +208,10 @@ unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask);
 EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length);
 bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2, const EtcPalIpAddr* netmask);
 
-bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip);
+bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip);
 size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip);
 
-bool sockaddr_os_to_lwpa(const etcpal_os_sockaddr_t* os_sa, EtcPalSockaddr* sa);
+bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockaddr* sa);
 size_t sockaddr_etcpal_to_os(const EtcPalSockaddr* sa, etcpal_os_sockaddr_t* os_sa);
 
 etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size);

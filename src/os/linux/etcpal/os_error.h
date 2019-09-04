@@ -22,6 +22,6 @@
 
 #include "etcpal/error.h"
 
-etcpal_error_t errno_os_to_lwpa(int os_errno);
+etcpal_error_t errno_os_to_etcpal(int os_errno);
 
 #endif /* _ETCPAL_OS_ERROR_H_ */

@@ -38,14 +38,14 @@
 extern "C" {
 #endif
 
-/* Definitions for the lwpa socket type */
+/* Definitions for the EtcPal socket type */
 
 typedef SOCKET etcpal_socket_t;
 
 #if defined(_WIN64)
-#define PRIlwpasockt "I64u"
+#define PRIepsock "I64u"
 #else
-#define PRIlwpasockt "u"
+#define PRIepsock "u"
 #endif
 
 #define ETCPAL_SOCKET_INVALID INVALID_SOCKET

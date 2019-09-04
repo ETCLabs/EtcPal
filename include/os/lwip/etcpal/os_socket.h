@@ -26,11 +26,11 @@
 extern "C" {
 #endif
 
-/* Definitions for the lwpa socket type */
+/* Definitions for the EtcPal socket type */
 
 typedef int etcpal_socket_t;
 
-#define PRIlwpasockt "d"
+#define PRIepsock "d"
 
 #define ETCPAL_SOCKET_INVALID -1
 

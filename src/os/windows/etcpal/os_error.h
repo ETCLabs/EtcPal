@@ -24,6 +24,6 @@
 #include <Windows.h>
 #include "etcpal/error.h"
 
-etcpal_error_t err_winsock_to_lwpa(int wsaerror);
+etcpal_error_t err_winsock_to_etcpal(int wsaerror);
 
 #endif /* _ETCPAL_OS_ERROR_H_ */

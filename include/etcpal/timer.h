@@ -25,7 +25,7 @@
 #include "etcpal/bool.h"
 
 /*! \defgroup etcpal_timer etcpal_timer
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Platform-neutral system timers.
  *
  *  \#include "etcpal/timer.h"

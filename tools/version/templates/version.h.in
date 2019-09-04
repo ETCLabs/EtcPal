@@ -18,7 +18,7 @@
  ******************************************************************************/
 
 /*! \file etcpal/version.h
- *  \brief Provides the current version of the lwpa library.
+ *  \brief Provides the current version of the EtcPal library.
  *  \author Sam Kearney
  */
 #ifndef _ETCPAL_VERSION_H_
@@ -26,7 +26,7 @@
 
 /* clang-format off */
 
-/*! \name lwpa version numbers
+/*! \name EtcPal version numbers
  *  @{
  */
 #define ETCPAL_VERSION_MAJOR @ETCPAL_VERSION_MAJOR@
@@ -35,13 +35,13 @@
 #define ETCPAL_VERSION_BUILD @ETCPAL_VERSION_BUILD@
 /*! @} */
 
-/*! \name lwpa version strings
+/*! \name EtcPal version strings
  *  @{
  */
 #define ETCPAL_VERSION_STRING "@ETCPAL_VERSION_STRING@"
 #define ETCPAL_VERSION_DATESTR "@ETCPAL_VERSION_DATESTR@"
 #define ETCPAL_VERSION_COPYRIGHT "@ETCPAL_VERSION_COPYRIGHT@"
-#define ETCPAL_VERSION_PRODUCTNAME "lwpa"
+#define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
 /*! @} */
 
 #endif /* _ETCPAL_VERSION_H_ */

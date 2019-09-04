@@ -24,7 +24,7 @@
 #include <stdlib.h>
 
 /*! \defgroup etcpal_error etcpal_error
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Platform-neutral error codes.
  *
  *  \#include "etcpal/error.h"
@@ -111,7 +111,7 @@ extern "C" {
 extern const char* etcpal_error_strings[ETCPAL_NUM_ERROR_CODES];
 
 /*! \brief Get a string representation of an error code.
- *  \param errcode lwpa error code.
+ *  \param errcode EtcPal error code.
  *  \return Error string (char *) (valid error code) or NULL (invalid error code).
  */
 #define etcpal_strerror(errcode) \

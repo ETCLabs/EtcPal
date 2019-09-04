@@ -143,7 +143,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   struct ifaddrs* os_addrs;
   if (getifaddrs(&os_addrs) < 0)
   {
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
   }
 
   // Pass 1: Total the number of addresses
@@ -200,10 +200,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
 
     // Interface address
-    ip_os_to_lwpa(ifaddr->ifa_addr, &current_info->addr);
+    ip_os_to_etcpal(ifaddr->ifa_addr, &current_info->addr);
 
     // Interface netmask
-    ip_os_to_lwpa(ifaddr->ifa_netmask, &current_info->mask);
+    ip_os_to_etcpal(ifaddr->ifa_netmask, &current_info->mask);
 
     // Make sure we match the corresponding link information
     if (link_name && link_addr && 0 == strcmp(ifaddr->ifa_name, link_name))
@@ -337,7 +337,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   // First pass just determines the size of buffer that is needed.
   int sysctl_res = sysctl(mib, 6, NULL, buf_len, NULL, 0);
   if ((sysctl_res != 0 && errno != ENOMEM) || *buf_len == 0)
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
 
   // Allocate the buffer
   *buf = (uint8_t*)malloc(*buf_len);
@@ -349,7 +349,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   if (sysctl_res != 0 || *buf_len == 0)
   {
     free(*buf);
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
   }
 
   return kEtcPalErrOk;

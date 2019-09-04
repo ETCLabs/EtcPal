@@ -91,7 +91,7 @@ jobs:
       ./publish_docs.sh
     displayName: 'Generate and deploy documentation'
     env:
-      GH_REPO_NAME: lwpa
-      GH_REPO_REF: github.com/ETCLabs/lwpa.git
+      GH_REPO_NAME: EtcPal
+      GH_REPO_REF: github.com/ETCLabs/EtcPal.git
       GH_REPO_TOKEN: $(GH_ACCESS_TOKEN)
   

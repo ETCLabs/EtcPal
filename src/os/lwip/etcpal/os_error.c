@@ -20,7 +20,7 @@
 #include "os_error.h"
 #include <lwip/netdb.h>
 
-etcpal_error_t errno_lwip_to_lwpa(int lwip_errno)
+etcpal_error_t errno_lwip_to_etcpal(int lwip_errno)
 {
   switch (lwip_errno)
   {
@@ -92,7 +92,7 @@ etcpal_error_t errno_lwip_to_lwpa(int lwip_errno)
   }
 }
 
-etcpal_error_t err_gai_to_lwpa(int gai_error)
+etcpal_error_t err_gai_to_etcpal(int gai_error)
 {
 #if LWIP_DNS
   switch (gai_error)

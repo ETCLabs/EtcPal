@@ -3,7 +3,7 @@ platform-specific, and some of them implement types and functions differently (i
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
 /*! \defgroup etcpal_lock etcpal_lock
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Platform-neutral locks, mutexes and signals.
  *
  *  \#include "etcpal_lock.h"
@@ -163,7 +163,7 @@ void etcpal_signal_destroy(etcpal_signal_t *id);
  *  These are implemented as "write-preferring" reader-writer locks; this means that new readers are
  *  blocked from acquiring a read lock if any context is currently waiting for a write lock.
  *
- *  lwpa read-write locks are typically implemented using multiple OS synchronization constructs
+ *  EtcPal read-write locks are typically implemented using multiple OS synchronization constructs
  *  under the hood.
  *
  *  @{

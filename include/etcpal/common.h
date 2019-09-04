@@ -17,23 +17,23 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* etcpal/common.h: Common definitions for Lightwei.ht Platform Abstraction modules. */
+/* etcpal/common.h: Common definitions for EtcPal modules. */
 #ifndef _ETCPAL_COMMON_H_
 #define _ETCPAL_COMMON_H_
 
 #include "etcpal/int.h"
 #include "etcpal/error.h"
 
-/*! \defgroup lwpa lwpa
- *  \brief Lightweight Platform Abstraction (lwpa): A set of platform abstraction and utility
- *         modules.
+/*! \defgroup etcpal EtcPal
+ *  \brief ETC Platform Abstraction Layer (EtcPal): A set of platform abstraction and utility
+ *         modules used by ETC software libraries.
  *
- *  Lightweight Platform Abstraction (lwpa) supports the writing of platform-neutral C and C++
- *  libraries by providing a set of modules to abstract common system calls. There are also a few
- *  platform-neutral utilities (e.g. data structures, logging) thrown in here and there for
- *  convenience. lwpa headers can be either platform-neutral (contained in include/) or
- *  platform-specific (contained in include/os/[platform]). All platform-specific headers of the
- *  same lwpa module will conform to an identical interface.
+ *  EtcPal supports the writing of platform-neutral C and C++ libraries by providing a set of
+ *  modules to abstract common system calls. There are also a few platform-neutral utilities
+ *  (e.g. data structures, logging) thrown in here and there for convenience. EtcPal headers can be
+ *  either platform-neutral (contained in include/) or platform-specific (contained in
+ *  include/os/[platform]). All platform-specific headers of the same EtcPal module will conform to
+ *  an identical interface.
  *
  * @{
  */
@@ -41,7 +41,7 @@
 /*! For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely. */
 #define ETCPAL_WAIT_FOREVER -1
 
-/*! A mask of desired lwpa features. See "lwpa feature masks". */
+/*! A mask of desired EtcPal features. See "EtcPal feature masks". */
 typedef uint32_t etcpal_features_t;
 
 #define ETCPAL_FEATURE_SOCKETS_OFFSET 0
@@ -50,23 +50,27 @@ typedef uint32_t etcpal_features_t;
 #define ETCPAL_FEATURE_LOGGING_OFFSET 3
 #define ETCPAL_NUM_FEATURES 4
 
-/*! \name lwpa feature masks
- *  Pass one or more of these to etcpal_init() to initialize the relevant lwpa feature. Multiple
+/*! \name EtcPal feature masks
+ *  Pass one or more of these to etcpal_init() to initialize the relevant EtcPal feature. Multiple
  *  features can be requested using logical OR.
  *
- *  lwpa modules not represented here require no initialization and are enabled by default.
+ *  EtcPal modules not represented here require no initialization and are enabled by default.
  *
  *  @{
  */
-#define ETCPAL_FEATURE_SOCKETS ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal_socket module. */
-#define ETCPAL_FEATURE_NETINTS ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal_netint module. */
-#define ETCPAL_FEATURE_TIMERS ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET))   /*!< Use the etcpal_timer module. */
-#define ETCPAL_FEATURE_LOGGING ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal_log module. */
-#define ETCPAL_FEATURES_ALL 0xffffffffu                                               /*!< Use every available module. */
+#define ETCPAL_FEATURE_SOCKETS \
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal_socket module. */
+#define ETCPAL_FEATURE_NETINTS \
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal_netint module. */
+#define ETCPAL_FEATURE_TIMERS \
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET)) /*!< Use the etcpal_timer module. */
+#define ETCPAL_FEATURE_LOGGING \
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal_log module. */
+#define ETCPAL_FEATURES_ALL 0xffffffffu                      /*!< Use every available module. */
 
 /*! \brief Use every available module except the ones passed in mask.
  *  \param mask Mask of ETCPAL_FEATURE_* macros to not include in the feature mask.
- *  \return Resulting lwpa feature mask to pass to etcpal_init().
+ *  \return Resulting EtcPal feature mask to pass to etcpal_init().
  */
 #define ETCPAL_FEATURES_ALL_BUT(mask) (((uint32_t)ETCPAL_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
 /*! @} */

@@ -25,7 +25,7 @@
 #include "etcpal/error.h"
 
 /*! \defgroup etcpal_mempool etcpal_mempool
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Memory pools with fixed-size elements.
  *
  *  \#include "etcpal/mempool.h"
@@ -51,12 +51,12 @@ struct EtcPalMempool
  *  ETCPAL_MEMPOOL_DEFINE_ARRAY(), and the etcpal_mempool_* macros to interact with it. */
 typedef struct EtcPalMempoolDesc
 {
-  const size_t elem_size;  /*!< The size of each element. */
-  const size_t pool_size;  /*!< The number of elements in the pool. */
+  const size_t elem_size;    /*!< The size of each element. */
+  const size_t pool_size;    /*!< The number of elements in the pool. */
   EtcPalMempool* freelist;   /*!< The current freelist. */
   EtcPalMempool* const list; /*!< The array of mempool list structs. */
-  size_t current_used;     /*!< The number of pool elements that have currently been allocated. */
-  void* const pool;        /*!< The actual pool memory. */
+  size_t current_used;       /*!< The number of pool elements that have currently been allocated. */
+  void* const pool;          /*!< The actual pool memory. */
 } EtcPalMempoolDesc;
 
 /*! \brief Declare a pool as an external variable.
@@ -79,14 +79,14 @@ typedef struct EtcPalMempoolDesc
  *  \param size The number of elements in the memory pool.
  */
 #define ETCPAL_MEMPOOL_DEFINE(name, type, size)                                     \
-  type name##_pool[size];                                                         \
+  type name##_pool[size];                                                           \
   struct EtcPalMempool name##_pool_list[size];                                      \
   struct EtcPalMempoolDesc name##_pool_desc = {sizeof(type),     /* elem_size */    \
-                                             size,             /* pool_size */    \
-                                             NULL,             /* freelist */     \
-                                             name##_pool_list, /* list */         \
-                                             0,                /* current_used */ \
-                                             name##_pool /* pool */}
+                                               size,             /* pool_size */    \
+                                               NULL,             /* freelist */     \
+                                               name##_pool_list, /* list */         \
+                                               0,                /* current_used */ \
+                                               name##_pool /* pool */}
 
 /*! \brief Define a new memory pool composed of arrays of elements.
  *
@@ -99,14 +99,14 @@ typedef struct EtcPalMempoolDesc
  *  \param pool_size The number of arrays in the memory pool.
  */
 #define ETCPAL_MEMPOOL_DEFINE_ARRAY(name, type, array_size, pool_size)                      \
-  type name##_pool[array_size][pool_size];                                                \
+  type name##_pool[array_size][pool_size];                                                  \
   struct EtcPalMempool name##_pool_list[pool_size];                                         \
   struct EtcPalMempoolDesc name##_pool_desc = {sizeof(type[array_size]), /* elem_size */    \
-                                             pool_size,                /* pool_size */    \
-                                             NULL,                     /* freelist */     \
-                                             name##_pool_list,         /* list */         \
-                                             0,                        /* current_used */ \
-                                             name##_pool /* pool */}
+                                               pool_size,                /* pool_size */    \
+                                               NULL,                     /* freelist */     \
+                                               name##_pool_list,         /* list */         \
+                                               0,                        /* current_used */ \
+                                               name##_pool /* pool */}
 
 /*! \brief Initialize a memory pool.
  *

@@ -1,9 +1,9 @@
-"""Script to create a new versioned build of lwpa.
+"""Script to create a new versioned build of EtcPal.
 
 Updates the etcpal/version.h file
 Prompts the user to review before committing and tagging
 
-This script is meant to be run by an lwpa developer on a development workstation. It assumes that
+This script is meant to be run by an EtcPal developer on a development workstation. It assumes that
 git is already configured globally and git commands can be run without further configuration.
 """
 import argparse
@@ -20,11 +20,11 @@ except ImportError as ie:
 
 
 VERSION_H_IN_FILE_REL_PATH = os.path.join('tools', 'version', 'templates', 'version.h.in')
-VERSION_H_OUT_FILE_REL_PATH = os.path.join('include', 'lwpa', 'version.h')
+VERSION_H_OUT_FILE_REL_PATH = os.path.join('include', 'etcpal', 'version.h')
 CURRENT_VERSION_TXT_FILE_REL_PATH = os.path.join('tools', 'version', 'current_version.txt')
-COMMIT_MSG_TEMPLATE = 'Update version files for lwpa build {}'
-TAG_MSG_TEMPLATE = 'lwpa version {}'
-RELEASE_TAG_MSG_TEMPLATE = 'lwpa release version {}'
+COMMIT_MSG_TEMPLATE = 'Update version files for EtcPal build {}'
+TAG_MSG_TEMPLATE = 'EtcPal version {}'
+RELEASE_TAG_MSG_TEMPLATE = 'EtcPal release version {}'
 
 
 def parse_version(vers_string):
@@ -115,9 +115,9 @@ def main():
     """The script entry point."""
 
     # Parse the command-line arguments.
-    parser = argparse.ArgumentParser(description='Create a new versioned build of lwpa')
+    parser = argparse.ArgumentParser(description='Create a new versioned build of EtcPal')
     parser.add_argument('new_version', help='New version number (format M.m.p.b)')
-    parser.add_argument('-r', '--release', action='store_true', help='Tag a release build of lwpa.')
+    parser.add_argument('-r', '--release', action='store_true', help='Tag a release build of EtcPal.')
     args = parser.parse_args()
 
     new_version = parse_version(args.new_version)

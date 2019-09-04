@@ -1,4 +1,5 @@
-/******************************************************************************
+/****
+    :  // github.com/ETCLabs/EtcPaletcpal_kEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalto_etcpal
  * Copyright 2019 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +21,7 @@
 #include "os_error.h"
 #include <errno.h>
 
-etcpal_error_t errno_os_to_lwpa(int os_errno)
+etcpal_error_t errno_os_to_etcpal(int os_errno)
 {
   switch (os_errno)
   {

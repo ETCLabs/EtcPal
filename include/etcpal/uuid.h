@@ -27,10 +27,10 @@
 #include "etcpal/error.h"
 
 /*! \defgroup etcpal_uuid etcpal_uuid
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
- *  UUIDs (per RFC 4122) are used in several protocols supported by lwpa. This module contains a
+ *  UUIDs (per RFC 4122) are used in several libraries supported by EtcPal. This module contains a
  *  type for a UUID and functions to generate, inspect and manipulate them.
  *
  *  \#include "etcpal/uuid.h"

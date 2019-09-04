@@ -27,7 +27,7 @@
 #include "etcpal/common.h"
 
 /*! \defgroup etcpal_log etcpal_log
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief A platform-neutral module enabling applications and libraries to log messages in either
  *         or both of syslog-compliant and human-readable format.
  *
@@ -113,7 +113,7 @@
 /*! The maximum length of the syslog header. */
 #define ETCPAL_SYSLOG_HEADER_MAX_LEN                                                                        \
   (5u /*PRIVAL*/ + 3u /*Version*/ + 1u /*SP*/ + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) /*Timestamp*/ + 1u /*SP*/ + \
-   (ETCPAL_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (ETCPAL_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +          \
+   (ETCPAL_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (ETCPAL_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +        \
    (ETCPAL_LOG_PROCID_MAX_LEN - 1u) + 1u /*SP*/ + 1u /*MSGID*/ + 1u /*SP*/ + 1u /*STRUCTURED-DATA*/ + 1u /*SP*/)
 
 /*! The minimum length of a buffer passed to etcpal_create_syslog_str(). */
@@ -236,7 +236,7 @@ extern "C" {
 #pragma __printf_args
 #endif
 bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time,
-                            const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
+                              const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 6, 7)))
 #endif

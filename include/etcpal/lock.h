@@ -23,12 +23,12 @@
 #include "etcpal/os_lock.h"
 
 #if defined(__cplusplus) || defined(DOXYGEN)
-// C++ extras defined if including lwpa in a C++ application.
+// C++ extras defined if including EtcPal in a C++ application.
 
 #include <stdexcept>
 
-/// The C++ namespace for lwpa.
-namespace lwpa
+/// The C++ namespace for etcpal.
+namespace etcpal
 {
 /// \addtogroup etcpal_lock
 /// @{
@@ -44,7 +44,7 @@ namespace lwpa
 /// \code
 /// void Class::CriticalFunction()
 /// {
-///   lwpa::MutexGuard lock(mutex_);
+///   etcpal::MutexGuard lock(mutex_);
 ///   // Do critical section operations here
 ///
 ///   // Lock is released when it goes out of scope
@@ -71,7 +71,7 @@ private:
 /// \code
 /// void Class::CriticalFunction()
 /// {
-///   lwpa::ReadGuard read_lock(rwlock_);
+///   etcpal::ReadGuard read_lock(rwlock_);
 ///   // Do critical read operations here
 ///
 ///   // Lock is released when it goes out of scope
@@ -98,7 +98,7 @@ private:
 /// \code
 /// void Class::CriticalFunction()
 /// {
-///   lwpa::WriteGuard write_lock(rwlock_);
+///   etcpal::WriteGuard write_lock(rwlock_);
 ///   // Do critical write operations here
 ///
 ///   // Lock is released when it goes out of scope
@@ -122,7 +122,7 @@ private:
 
 /// @}
 
-};  // namespace lwpa
+};  // namespace etcpal
 
 #endif /* __cplusplus || DOXYGEN */
 

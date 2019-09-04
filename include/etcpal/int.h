@@ -23,7 +23,7 @@
 #define _ETCPAL_INT_H_
 
 /*! \defgroup etcpal_int etcpal_int
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Fixed-width integer types.
  *
  *  \#include "etcpal/int.h"

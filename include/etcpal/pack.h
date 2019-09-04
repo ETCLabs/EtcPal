@@ -24,7 +24,7 @@
 #include "etcpal/int.h"
 
 /*! \defgroup etcpal_pack etcpal_pack
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Platform- and endianness-independent buffer packing and unpacking.
  *
  *  For 16- and 32-bit integer packing and unpacking:

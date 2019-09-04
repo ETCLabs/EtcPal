@@ -28,7 +28,7 @@
 #include "etcpal/inet.h"
 
 /*! \defgroup etcpal_socket etcpal_socket
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Platform-neutral BSD-modeled network socket implementation.
  *
  *  \#include "etcpal/socket.h"
@@ -167,7 +167,8 @@ etcpal_error_t etcpal_close(etcpal_socket_t id);
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address);
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address);
 etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address);
-etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len);
+etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value,
+                                 size_t* option_len);
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog);
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags);
 int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address);
@@ -175,7 +176,8 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags);
 /* sendmsg - not implemented */
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr);
-etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value, size_t option_len);
+etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value,
+                                 size_t option_len);
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
 etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t* id);
 /* socketpair - not implemented */
@@ -206,15 +208,15 @@ typedef struct EtcPalPollEvent
   etcpal_socket_t socket;      /*!< Socket which had activity. */
   etcpal_poll_events_t events; /*!< Event(s) that occurred on the socket. */
   etcpal_error_t err;          /*!< More information about an error that occurred on the socket. */
-  void* user_data;           /*!< The user data that was given when this socket was added. */
+  void* user_data;             /*!< The user data that was given when this socket was added. */
 } EtcPalPollEvent;
 
 etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context);
 void etcpal_poll_context_deinit(EtcPalPollContext* context);
 etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
-                                  void* user_data);
-etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
-                                     void* new_user_data);
+                                      void* user_data);
+etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_socket_t socket,
+                                         etcpal_poll_events_t new_events, void* new_user_data);
 void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socket);
 etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* event, int timeout_ms);
 
@@ -233,17 +235,17 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
  *  etcpal_getaddrinfo(). */
 typedef struct EtcPalAddrinfo
 {
-  int ai_flags;         /*!< i.e. ETCPAL_AI_xxx */
-  int ai_family;        /*!< i.e. ETCPAL_AF_xxx */
-  int ai_socktype;      /*!< i.e. ETCPAL_STREAM or ETCPAL_DGRAM */
-  int ai_protocol;      /*!< i.e. ETCPAL_IPPROTO_xxx */
-  char* ai_canonname;   /*!< Canonical name for host */
+  int ai_flags;           /*!< i.e. ETCPAL_AI_xxx */
+  int ai_family;          /*!< i.e. ETCPAL_AF_xxx */
+  int ai_socktype;        /*!< i.e. ETCPAL_STREAM or ETCPAL_DGRAM */
+  int ai_protocol;        /*!< i.e. ETCPAL_IPPROTO_xxx */
+  char* ai_canonname;     /*!< Canonical name for host */
   EtcPalSockaddr ai_addr; /*!< Address of host */
-  void* pd[2];          /*!< Used by internal platform logic; don't touch */
+  void* pd[2];            /*!< Used by internal platform logic; don't touch */
 } EtcPalAddrinfo;
 
 etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const EtcPalAddrinfo* hints,
-                              EtcPalAddrinfo* result);
+                                  EtcPalAddrinfo* result);
 
 bool etcpal_nextaddr(EtcPalAddrinfo* ai);
 

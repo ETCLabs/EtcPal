@@ -27,7 +27,7 @@
 #include <errno.h>
 #endif
 
-etcpal_error_t errno_lwip_to_lwpa(int lwip_errno);
-etcpal_error_t err_gai_to_lwpa(int gai_error);
+etcpal_error_t errno_lwip_to_etcpal(int lwip_errno);
+etcpal_error_t err_gai_to_etcpal(int gai_error);
 
 #endif /* _ETCPAL_OS_ERROR_H_ */

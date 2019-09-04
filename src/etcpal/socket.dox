@@ -64,7 +64,7 @@ etcpal_error_t etcpal_close(etcpal_socket_t id);
  *
  *  Refer to your favorite connect() man page for more information.
  *
- *  Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr
+ *  Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  *  type.
  *
  *  \param[in] id Socket to connect.
@@ -77,7 +77,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr *address)
  *
  *  Refer to your favorite getpeername() man page for more information.
  *
- *  Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr
+ *  Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  *  type.
  *
  *  \param[in] id Connected socket for which to get the peer address.
@@ -90,7 +90,7 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr *address);
  *
  *  Refer to your favorite getsockname() man page for more information.
  *
- *  Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr
+ *  Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  *  type.
  *
  *  \param[in] id Connected socket for which to get the bound address.
@@ -143,7 +143,7 @@ int etcpal_recv(etcpal_socket_t id, void *buffer, size_t length, int flags);
  *
  *  Refer to your favorite recvfrom() man page for more information.
  *
- *  Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr
+ *  Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  *  type.
  *
  *  \param[in] id Socket on which to receive.
@@ -175,7 +175,7 @@ int etcpal_send(etcpal_socket_t id, const void *message, size_t length, int flag
  *  Refer to your favorite sendto() man page for more information.
  *
  *  Differences from POSIX: Returns int rather than nonstandard ssize_t. addrlen parameter is
- *  omitted because there is only one lwpa sockaddr type.
+ *  omitted because there is only one EtcPal sockaddr type.
  *
  *  \param[in] id Socket on which to send.
  *  \param[in] message Message to send.
@@ -378,7 +378,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext *context, EtcPalPollEvent *eve
 /*! \brief Get address information for a named internet host and/or service.
  *
  *  Refer to your favorite getaddrinfo() man page for more information. One difference between this
- *  and the POSIX function is the way that multiple addresses are iterated. lwpa uses the
+ *  and the POSIX function is the way that multiple addresses are iterated. EtcPal uses the
  *  etcpal_nextaddr() function instead of a next pointer to iterate over multiple addresses. For
  *  example:
  *

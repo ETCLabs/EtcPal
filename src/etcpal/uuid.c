@@ -47,7 +47,7 @@ void etcpal_uuid_to_string(char* buf, const EtcPalUuid* uuid)
   /* Automatically suppresses MSVC warning - minimum buffer size is well documented and cannot be
    * exceeded by this format string. */
   ETCPAL_SPRINTF(buf, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0], c[1], c[2], c[3],
-               c[4], c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
+                 c[4], c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
 }
 
 /*! \brief Create a UUID from a string representation.
@@ -175,8 +175,8 @@ etcpal_error_t etcpal_generate_v3_uuid(EtcPalUuid* uuid, const char* devstr, con
   MD5Init(&md5);
   MD5Update(&md5, ns, 16);
 
-  /* The string we'll be encoding is "lwpa device,[devstr][macaddr][uuidnum in network order]" */
-  MD5Update(&md5, (uint8_t*)"lwpa device, ", 13);
+  /* The string we'll be encoding is "EtcPal device,[devstr][macaddr][uuidnum in network order]" */
+  MD5Update(&md5, (uint8_t*)"EtcPal device, ", 15);
   if (devstr)
     MD5Update(&md5, (uint8_t*)(devstr), (unsigned int)strlen(devstr));
 

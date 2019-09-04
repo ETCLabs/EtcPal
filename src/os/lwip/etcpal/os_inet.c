@@ -26,7 +26,7 @@
 #error "LWIP_SOCKET is necessary in lwipopts.h to use the etcpal_inet module."
 #endif
 
-bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
+bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
 {
 #if LWIP_IPV4
   if (os_ip->sa_family == AF_INET)
@@ -76,9 +76,9 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
   return ret;
 }
 
-bool sockaddr_os_to_lwpa(const etcpal_os_sockaddr_t* os_sa, EtcPalSockaddr* sa)
+bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockaddr* sa)
 {
-  if (ip_os_to_lwpa(os_sa, &sa->ip))
+  if (ip_os_to_etcpal(os_sa, &sa->ip))
   {
 #if LWIP_IPV4
     if (os_sa->sa_family == AF_INET)
@@ -128,7 +128,7 @@ etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size
       addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(src));
       if (NULL != inet_ntop(AF_INET, &addr, dest, size))
         return kEtcPalErrOk;
-      return errno_lwip_to_lwpa(errno);
+      return errno_lwip_to_etcpal(errno);
     }
     case kEtcPalIpTypeV6:
     {
@@ -136,7 +136,7 @@ etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size
       memcpy(addr.s6_addr, ETCPAL_IP_V6_ADDRESS(src), ETCPAL_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
         return kEtcPalErrOk;
-      return errno_lwip_to_lwpa(errno);
+      return errno_lwip_to_etcpal(errno);
     }
     default:
       return kEtcPalErrInvalid;

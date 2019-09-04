@@ -122,7 +122,7 @@ static int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* optio
 // Helpers for etcpal_poll API
 static int events_etcpal_to_kqueue(etcpal_socket_t socket, etcpal_poll_events_t prev_events, etcpal_poll_events_t new_events,
                                  void* user_data, struct kevent* events);
-static etcpal_poll_events_t events_kqueue_to_lwpa(const struct kevent* kevent, const EtcPalPollSocket* sock_desc);
+static etcpal_poll_events_t events_kqueue_to_etcpal(const struct kevent* kevent, const EtcPalPollSocket* sock_desc);
 
 static int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
 static EtcPalRbNode* poll_socket_alloc();
@@ -152,7 +152,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal
 
   if (res != -1)
   {
-    if (address && !sockaddr_os_to_lwpa((etcpal_os_sockaddr_t*)&ss, address))
+    if (address && !sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
     {
       close(res);
       return kEtcPalErrSys;
@@ -160,7 +160,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal
     *conn_sock = res;
     return kEtcPalErrOk;
   }
-  return errno_os_to_lwpa(errno);
+  return errno_os_to_etcpal(errno);
 }
 
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
@@ -174,13 +174,13 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
     return kEtcPalErrInvalid;
 
   int res = bind(id, (struct sockaddr*)&ss, sa_size);
-  return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
+  return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 etcpal_error_t etcpal_close(etcpal_socket_t id)
 {
   int res = close(id);
-  return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
+  return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
@@ -194,7 +194,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
     return kEtcPalErrInvalid;
 
   int res = connect(id, (struct sockaddr*)&ss, sa_size);
-  return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
+  return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address)
@@ -215,11 +215,11 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address)
   int res = getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
-    if (!sockaddr_os_to_lwpa((etcpal_os_sockaddr_t*)&ss, address))
+    if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
       return kEtcPalErrSys;
     return kEtcPalErrOk;
   }
-  return errno_os_to_lwpa(errno);
+  return errno_os_to_etcpal(errno);
 }
 
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
@@ -236,7 +236,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
 {
   int res = listen(id, backlog);
-  return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
+  return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
@@ -246,7 +246,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
 
   int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
   int res = (int)recv(id, buffer, length, impl_flags);
-  return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
+  return (res >= 0 ? res : (int)errno_os_to_etcpal(errno));
 }
 
 int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address)
@@ -263,12 +263,12 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
   {
     if (address && fromlen > 0)
     {
-      if (!sockaddr_os_to_lwpa((etcpal_os_sockaddr_t*)&fromaddr, address))
+      if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&fromaddr, address))
         return kEtcPalErrSys;
     }
     return res;
   }
-  return (int)errno_os_to_lwpa(errno);
+  return (int)errno_os_to_etcpal(errno);
 }
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
@@ -279,7 +279,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
     return (int)kEtcPalErrInvalid;
 
   int res = (int)send(id, message, length, 0);
-  return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
+  return (res >= 0 ? res : (int)errno_os_to_etcpal(errno));
 }
 
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr)
@@ -296,7 +296,7 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
 
   int res = (int)sendto(id, message, length, 0, (struct sockaddr*)&ss, ss_size);
 
-  return (res >= 0 ? res : (int)errno_os_to_lwpa(errno));
+  return (res >= 0 ? res : (int)errno_os_to_etcpal(errno));
 }
 
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value, size_t option_len)
@@ -321,7 +321,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
     default:
       return kEtcPalErrInvalid;
   }
-  return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
+  return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
@@ -539,7 +539,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
   if (how >= 0 && how < ETCPAL_NUM_SHUT)
   {
     int res = shutdown(id, shutmap[how]);
-    return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
+    return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
   }
   return kEtcPalErrInvalid;
 }
@@ -559,7 +559,7 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
       else
       {
         *id = ETCPAL_SOCKET_INVALID;
-        return errno_os_to_lwpa(errno);
+        return errno_os_to_etcpal(errno);
       }
     }
     else
@@ -577,7 +577,7 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
   {
     val = fcntl(id, F_SETFL, (blocking ? (val & (int)(~O_NONBLOCK)) : (val | O_NONBLOCK)));
   }
-  return (val >= 0 ? kEtcPalErrOk : errno_os_to_lwpa(errno));
+  return (val >= 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
@@ -590,7 +590,7 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
       *blocking = ((val & O_NONBLOCK) == 0);
       return kEtcPalErrOk;
     }
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
   }
   return kEtcPalErrInvalid;
 }
@@ -609,7 +609,7 @@ etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
   }
   else
   {
-    return errno_os_to_lwpa(errno);
+    return errno_os_to_etcpal(errno);
   }
 }
 
@@ -648,7 +648,7 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_
         {
           // Our node dealloc function also deallocates sock_desc, so no need to free it here.
           etcpal_rbtree_remove(&context->sockets, sock_desc);
-          return errno_os_to_lwpa(errno);
+          return errno_os_to_etcpal(errno);
         }
       }
       else
@@ -687,7 +687,7 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_sock
       }
       else
       {
-        return errno_os_to_lwpa(errno);
+        return errno_os_to_etcpal(errno);
       }
     }
     else
@@ -745,7 +745,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
         if (sock_desc)
         {
           event->socket = sock_desc->sock;
-          event->events = events_kqueue_to_lwpa(&kevt, sock_desc);
+          event->events = events_kqueue_to_etcpal(&kevt, sock_desc);
           event->err = kEtcPalErrOk;
           event->user_data = kevt.udata;
 
@@ -757,7 +757,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
             if (error != 0)
             {
               event->events |= ETCPAL_POLL_ERR;
-              event->err = errno_os_to_lwpa(error);
+              event->err = errno_os_to_etcpal(error);
             }
           }
 
@@ -774,7 +774,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
       }
       else
       {
-        return errno_os_to_lwpa(errno);
+        return errno_os_to_etcpal(errno);
       }
     }
     else
@@ -839,7 +839,7 @@ int events_etcpal_to_kqueue(etcpal_socket_t socket, etcpal_poll_events_t prev_ev
   return num_events;
 }
 
-etcpal_poll_events_t events_kqueue_to_lwpa(const struct kevent* kevent, const EtcPalPollSocket* sock_desc)
+etcpal_poll_events_t events_kqueue_to_etcpal(const struct kevent* kevent, const EtcPalPollSocket* sock_desc)
 {
   etcpal_poll_events_t events_out = 0;
   if (kevent->filter == EVFILT_READ)
@@ -920,7 +920,7 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
     if (!etcpal_nextaddr(result))
       res = -1;
   }
-  return (res == 0 ? kEtcPalErrOk : errno_os_to_lwpa(res));
+  return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(res));
 }
 
 bool etcpal_nextaddr(EtcPalAddrinfo* ai)
@@ -929,7 +929,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
   {
     struct addrinfo* pf_ai = (struct addrinfo*)ai->pd[1];
     ai->ai_flags = 0;
-    if (!sockaddr_os_to_lwpa(pf_ai->ai_addr, &ai->ai_addr))
+    if (!sockaddr_os_to_etcpal(pf_ai->ai_addr, &ai->ai_addr))
       return false;
 
     /* Can't use reverse maps, because we have no guarantee of the numeric values of the OS

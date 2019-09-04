@@ -22,7 +22,7 @@
 #include <mqx.h>
 #include <rtcs.h>
 
-bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
+bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
 {
   if (os_ip->sa_family == AF_INET)
   {
@@ -78,9 +78,9 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
   return ret;
 }
 
-bool sockaddr_os_to_lwpa(const struct sockaddr* os_sa, EtcPalSockaddr* sa)
+bool sockaddr_os_to_etcpal(const struct sockaddr* os_sa, EtcPalSockaddr* sa)
 {
-  if (ip_os_to_lwpa(os_sa, &sa->ip))
+  if (ip_os_to_etcpal(os_sa, &sa->ip))
   {
     if (os_sa->sa_family == AF_INET)
     {

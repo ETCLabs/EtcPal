@@ -26,7 +26,7 @@
 #include "etcpal/bool.h"
 
 /*! \defgroup etcpal_pdu etcpal_pdu
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN).
  *
  *  \#include "etcpal/pdu.h"
@@ -60,8 +60,8 @@
 /*! Get the length from the Length field of a PDU.
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \return The length of the PDU. */
-#define ETCPAL_PDU_LENGTH(pdu_buf)                                                                                  \
-  ((uint32_t)(ETCPAL_PDU_L_FLAG_SET(pdu_buf[0])                                                                     \
+#define ETCPAL_PDU_LENGTH(pdu_buf)                                                                                \
+  ((uint32_t)(ETCPAL_PDU_L_FLAG_SET(pdu_buf[0])                                                                   \
                   ? ((uint32_t)((pdu_buf[0] & 0x0fu) << 16) | (uint32_t)(pdu_buf[1] << 8) | (uint32_t)pdu_buf[2]) \
                   : ((uint32_t)((pdu_buf[0] & 0x0fu) << 8) | (uint32_t)pdu_buf[1])))
 
@@ -89,7 +89,7 @@
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \param length Length of this PDU.
  */
-#define ETCPAL_PDU_PACK_NORMAL_LEN(pdu_buf, length)                                \
+#define ETCPAL_PDU_PACK_NORMAL_LEN(pdu_buf, length)                              \
   do                                                                             \
   {                                                                              \
     (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] & 0xf0) | (((length) >> 8) & 0x0fu)); \
@@ -101,7 +101,7 @@
  *  \param pdu_buf Pointer to the start of the PDU buffer.
  *  \param length Length of this PDU.
  */
-#define ETCPAL_PDU_PACK_EXT_LEN(pdu_buf, length)                                    \
+#define ETCPAL_PDU_PACK_EXT_LEN(pdu_buf, length)                                  \
   do                                                                              \
   {                                                                               \
     (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] & 0xf0) | (((length) >> 16) & 0x0fu)); \
@@ -121,7 +121,7 @@ typedef struct EtcPalPdu
 
 /*! Default EtcPalPdu initializer values; must be used to intialize an EtcPalPdu when parsing the first
  *  PDU in a block. */
-#define ETCPAL_PDU_INIT         \
+#define ETCPAL_PDU_INIT       \
   {                           \
     NULL, NULL, NULL, 0, NULL \
   }
@@ -129,14 +129,14 @@ typedef struct EtcPalPdu
 /*! An alternative to #ETCPAL_PDU_INIT which can be used on an existing EtcPalPdu to re-initialize its
  *  values.
  *  \param pduptr Pointer to EtcPalPdu to initialize. */
-#define ETCPAL_INIT_PDU(pduptr)  \
-  do                           \
-  {                            \
-    (pduptr)->pvector = NULL;  \
-    (pduptr)->pheader = NULL;  \
-    (pduptr)->pdata = NULL;    \
-    (pduptr)->datalen = 0;     \
-    (pduptr)->pnextpdu = NULL; \
+#define ETCPAL_INIT_PDU(pduptr) \
+  do                            \
+  {                             \
+    (pduptr)->pvector = NULL;   \
+    (pduptr)->pheader = NULL;   \
+    (pduptr)->pdata = NULL;     \
+    (pduptr)->datalen = 0;      \
+    (pduptr)->pnextpdu = NULL;  \
   } while (0)
 
 /*! Contains specific PDU info used by the generic helper parse_pdu(). */

@@ -147,7 +147,7 @@ etcpal_error_t etcpal_socket_init()
   int startup_res = WSAStartup(wsver, &wsdata);
   if (startup_res != 0)
   {
-    return err_winsock_to_lwpa(startup_res);
+    return err_winsock_to_etcpal(startup_res);
   }
   return kEtcPalErrOk;
 }
@@ -170,7 +170,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal
 
   if (res != INVALID_SOCKET)
   {
-    if (address && !sockaddr_os_to_lwpa((etcpal_os_sockaddr_t*)&ss, address))
+    if (address && !sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
     {
       closesocket(res);
       return kEtcPalErrSys;
@@ -178,7 +178,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal
     *conn_sock = res;
     return kEtcPalErrOk;
   }
-  return err_winsock_to_lwpa(WSAGetLastError());
+  return err_winsock_to_etcpal(WSAGetLastError());
 }
 
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
@@ -195,13 +195,13 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
     return kEtcPalErrInvalid;
 
   res = bind(id, (struct sockaddr*)&ss, (int)sa_size);
-  return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(WSAGetLastError()));
+  return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 etcpal_error_t etcpal_close(etcpal_socket_t id)
 {
   int res = closesocket(id);
-  return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(WSAGetLastError()));
+  return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
@@ -218,7 +218,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
     return kEtcPalErrInvalid;
 
   res = connect(id, (struct sockaddr*)&ss, (int)sa_size);
-  return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(WSAGetLastError()));
+  return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address)
@@ -241,11 +241,11 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address)
   res = getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
-    if (!sockaddr_os_to_lwpa((etcpal_os_sockaddr_t*)&ss, address))
+    if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
       return kEtcPalErrSys;
     return kEtcPalErrOk;
   }
-  return err_winsock_to_lwpa(WSAGetLastError());
+  return err_winsock_to_etcpal(WSAGetLastError());
 }
 
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
@@ -262,7 +262,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
 {
   int res = listen(id, backlog);
-  return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(WSAGetLastError()));
+  return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
@@ -274,7 +274,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
     return kEtcPalErrInvalid;
 
   res = recv(id, buffer, (int)length, impl_flags);
-  return (res >= 0 ? res : (int)err_winsock_to_lwpa(WSAGetLastError()));
+  return (res >= 0 ? res : (int)err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address)
@@ -293,12 +293,12 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
   {
     if (address && fromlen > 0)
     {
-      if (!sockaddr_os_to_lwpa((etcpal_os_sockaddr_t*)&fromaddr, address))
+      if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&fromaddr, address))
         return kEtcPalErrSys;
     }
     return res;
   }
-  return (int)err_winsock_to_lwpa(WSAGetLastError());
+  return (int)err_winsock_to_etcpal(WSAGetLastError());
 }
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
@@ -310,7 +310,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
     return kEtcPalErrInvalid;
 
   res = send(id, message, (int)length, 0);
-  return (res >= 0 ? res : (int)err_winsock_to_lwpa(WSAGetLastError()));
+  return (res >= 0 ? res : (int)err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr)
@@ -326,7 +326,7 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
   if ((ss_size = sockaddr_etcpal_to_os(dest_addr, (etcpal_os_sockaddr_t*)&ss)) > 0)
     res = sendto(id, message, (int)length, 0, (struct sockaddr*)&ss, (int)ss_size);
 
-  return (res >= 0 ? res : (int)err_winsock_to_lwpa(WSAGetLastError()));
+  return (res >= 0 ? res : (int)err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value, size_t option_len)
@@ -351,7 +351,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
     default:
       return kEtcPalErrInvalid;
   }
-  return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(WSAGetLastError()));
+  return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
@@ -600,7 +600,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
   if (how >= 0 && how < ETCPAL_NUM_SHUT)
   {
     int res = shutdown(id, shutmap[how]);
-    return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(WSAGetLastError()));
+    return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
   }
   return kEtcPalErrInvalid;
 }
@@ -620,7 +620,7 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
       else
       {
         *id = ETCPAL_SOCKET_INVALID;
-        return err_winsock_to_lwpa(WSAGetLastError());
+        return err_winsock_to_etcpal(WSAGetLastError());
       }
     }
     else
@@ -635,7 +635,7 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
 {
   unsigned long val = (blocking ? 0 : 1);
   int res = ioctlsocket(id, FIONBIO, &val);
-  return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(WSAGetLastError()));
+  return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
@@ -830,7 +830,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
 
   if (sel_res < 0)
   {
-    return err_winsock_to_lwpa(WSAGetLastError());
+    return err_winsock_to_etcpal(WSAGetLastError());
   }
   else if (sel_res == 0)
   {
@@ -883,12 +883,12 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent*
         if (error != 0)
         {
           event->events |= ETCPAL_POLL_ERR;
-          event->err = err_winsock_to_lwpa(error);
+          event->err = err_winsock_to_etcpal(error);
         }
       }
       else
       {
-        res = err_winsock_to_lwpa(WSAGetLastError());
+        res = err_winsock_to_etcpal(WSAGetLastError());
         break;
       }
       if (ETCPAL_FD_ISSET(sock_desc->sock, readfds))
@@ -967,7 +967,7 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
     if (!etcpal_nextaddr(result))
       res = -1;
   }
-  return (res == 0 ? kEtcPalErrOk : err_winsock_to_lwpa(res));
+  return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(res));
 }
 
 bool etcpal_nextaddr(EtcPalAddrinfo* ai)
@@ -976,7 +976,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
   {
     struct addrinfo* pf_ai = (struct addrinfo*)ai->pd[1];
     ai->ai_flags = 0;
-    if (!sockaddr_os_to_lwpa((etcpal_os_sockaddr_t*)pf_ai->ai_addr, &ai->ai_addr))
+    if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)pf_ai->ai_addr, &ai->ai_addr))
       return false;
 
     /* Can't use reverse maps, because we have no guarantee of the numeric values of the OS

@@ -118,7 +118,7 @@ static int32_t join_leave_mcast_group_ipv4(etcpal_socket_t id, const struct EtcP
 
 /*************************** Function definitions ****************************/
 
-static etcpal_error_t err_os_to_lwpa(uint32_t rtcserr)
+static etcpal_error_t err_os_to_etcpal(uint32_t rtcserr)
 {
   switch (rtcserr)
   {
@@ -194,12 +194,12 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
   if (sa_size == 0)
     return kEtcPalErrInvalid;
 
-  return err_os_to_lwpa(bind(id, &ss, (uint16_t)sa_size));
+  return err_os_to_etcpal(bind(id, &ss, (uint16_t)sa_size));
 }
 
 etcpal_error_t etcpal_close(etcpal_socket_t id)
 {
-  return err_os_to_lwpa((uint32_t)closesocket(id));
+  return err_os_to_etcpal((uint32_t)closesocket(id));
 }
 
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
@@ -226,10 +226,10 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address)
   res = getsockname(id, &ss, &size);
   if (res == RTCS_OK)
   {
-    if (!sockaddr_os_to_lwpa(&ss, address))
+    if (!sockaddr_os_to_etcpal(&ss, address))
       return kEtcPalErrSys;
   }
-  return err_os_to_lwpa(res);
+  return err_os_to_etcpal(res);
 }
 
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
@@ -266,11 +266,11 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
   {
     if (address && fromlen > 0)
     {
-      if (!sockaddr_os_to_lwpa(&fromaddr, address))
+      if (!sockaddr_os_to_etcpal(&fromaddr, address))
         return kEtcPalErrInvalid;
     }
   }
-  return (res == RTCS_ERROR ? err_os_to_lwpa(RTCS_geterror(id)) : res);
+  return (res == RTCS_ERROR ? err_os_to_etcpal(RTCS_geterror(id)) : res);
 }
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
@@ -292,7 +292,7 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
     return kEtcPalErrInvalid;
 
   res = sendto(id, (char*)message, (uint32_t)length, 0, &ss, (uint16_t)ss_size);
-  return (res == RTCS_ERROR ? err_os_to_lwpa(RTCS_geterror(id)) : res);
+  return (res == RTCS_ERROR ? err_os_to_etcpal(RTCS_geterror(id)) : res);
 }
 
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value, size_t option_len)
@@ -457,7 +457,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
       break;
   }
 
-  return err_os_to_lwpa((uint32_t)res);
+  return err_os_to_etcpal((uint32_t)res);
 }
 
 int32_t join_leave_mcast_group_ipv4(etcpal_socket_t id, const struct EtcPalMreq* mreq, bool join)
@@ -482,7 +482,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
 {
   if (how >= 0 && how < ETCPAL_NUM_SHUT)
   {
-    return err_os_to_lwpa((uint32_t)shutdownsocket(id, (int32_t)shutmap[how]));
+    return err_os_to_etcpal((uint32_t)shutdownsocket(id, (int32_t)shutmap[how]));
   }
   return kEtcPalErrInvalid;
 }
@@ -527,14 +527,14 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
       res = setsockopt(id, SOL_TCP, OPT_RECEIVE_NOWAIT, &opt_value, uint32_size);
       if (res == RTCS_OK)
         res = setsockopt(id, SOL_TCP, OPT_SEND_NOWAIT, &opt_value, uint32_size);
-      return err_os_to_lwpa((uint32_t)res);
+      return err_os_to_etcpal((uint32_t)res);
     }
     else if (sock_type == SOCK_DGRAM)
     {
       res = setsockopt(id, SOL_UDP, OPT_RECEIVE_NOWAIT, &opt_value, uint32_size);
       if (res == RTCS_OK)
         res = setsockopt(id, SOL_UDP, OPT_SEND_NOWAIT, &opt_value, uint32_size);
-      return err_os_to_lwpa((uint32_t)res);
+      return err_os_to_etcpal((uint32_t)res);
     }
     else
     {
@@ -661,7 +661,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
     else if (rtcs_err == RTCSERR_SOCK_CLOSED)
       return handle_select_result(context, event, kEtcPalErrNotFound, &readfds, &writefds);
     else
-      return err_os_to_lwpa(rtcs_err);
+      return err_os_to_etcpal(rtcs_err);
   }
   else if (sel_res == 0)
   {
@@ -800,7 +800,7 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
     if (!etcpal_nextaddr(result))
       return kEtcPalErrSys;
   }
-  return err_os_to_lwpa((uint32_t)res);
+  return err_os_to_etcpal((uint32_t)res);
 }
 
 bool etcpal_nextaddr(EtcPalAddrinfo* ai)
@@ -809,7 +809,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
   {
     struct addrinfo* os_ai = (struct addrinfo*)ai->pd[1];
     ai->ai_flags = 0;
-    if (!sockaddr_os_to_lwpa(os_ai->ai_addr, &ai->ai_addr))
+    if (!sockaddr_os_to_etcpal(os_ai->ai_addr, &ai->ai_addr))
       return false;
     /* Can't use reverse maps, because we have no guarantee of the numeric values of the OS
      * constants. Ugh. */

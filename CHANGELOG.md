@@ -8,33 +8,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - New port: Linux
 - New port: macOS
-- lwpa_init() in lwpa/common.h. lwpa_init() must be called before using features
-  defined by feature macros defined in lwpa/common.h.
+- New port: FreeRTOS
+- New port: lwIP
+- etcpal_init() in etcpal/common.h. etcpal_init() must be called before using
+  features defined by feature macros defined in etcpal/common.h.
 - Extra documentation page for network interface indexes.
-- New function lwpa_netint_copy_interfaces() to perform the old behavior of
-  lwpa_netint_get_interfaces() (see Changed below)
+- New function etcpal_netint_copy_interfaces() to perform the old behavior of
+  etcpal_netint_get_interfaces() (see Changed below)
+- New function etcpal_netint_get_interfaces_by_index()
 
 ### Changed
 - Naming: Library name changed from lwpa to EtcPal. All API names updated
   accordingly.
-- Naming: 'operating system' and 'platform' are used somewhat interchangably by
-  this library, but operating system more correctly refers to what lwpa targets.
-  Plus, 'os' makes for nicer names than 'plat'. A pass is made for consistency.
-- Moved the sockaddr and inet_xtox conversion functions into the lwpa_inet
+- Naming: Separated the platform-specific sources into 'os' and 'net' targets
+  to aid in targeting mix-and-match stack environments like FreeRTOS and lwIP.
+- Moved the sockaddr and inet_xtox conversion functions into the etcpal_inet
   module
-- lwpa_thread_stop() changed to lwpa_thread_join() to better describe behavior
+- etcpal_thread_stop() changed to etcpal_thread_join() to better describe
+  behavior
 - LwpaNetintInfo: Removed 'gate' member, which has no consistent meaning across
   platforms.
-- lwpa_log_callback interface tweak - combine the various log message pointers
+- etcpal_log_callback interface tweak - combine the various log message pointers
   into a struct LwpaLogStrings.
 - LwpaNetintInfo: 'ifindex' renamed to 'index' and changed to type unsigned int
   for better compliance with RFC 3493
-- lwpa_netint_get_interface_for_dest(): Signature changed to return lwpa_error_t
-- lwpa_socket: Multicast socket options now refer to network interfaces only by
-  interface index, for portability and compatibility with IPv6.
-- lwpa_netint_get_interfaces() simply provides const access to the cached array
-  of network interfaces built at init time.
-- lwpa_rbtree: Change some function signatures to give more meaningful return
+- etcpal_netint_get_interface_for_dest(): Signature changed to return
+  etcpal_error_t
+- etcpal_socket: Multicast socket options now refer to network interfaces only
+  by interface index, for portability and compatibility with IPv6.
+- etcpal_netint_get_interfaces() simply provides const access to the cached
+  array of network interfaces built at init time.
+- etcpal_netint_get_default_interface() and
+  etcpal_netint_get_interface_for_dest() now return network interface indexes
+  instead of addresses.
+- etcpal_rbtree: Change some function signatures to give more meaningful return
   information.
 
 ### Removed

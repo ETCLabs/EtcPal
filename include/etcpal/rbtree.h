@@ -41,7 +41,7 @@
 #include "etcpal/error.h"
 
 /*! \defgroup etcpal_rbtree etcpal_rbtree
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief A red-black tree implementation.
  *
  *  \#include "etcpal/rbtree.h"
@@ -76,7 +76,8 @@ typedef struct EtcPalRbTree EtcPalRbTree;
  *            0 (node_a's value is equal to node_b's value)\n
  *          > 0 (node_a's value is greater than node_b's value)
  */
-typedef int (*etcpal_rbtree_node_cmp_f)(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
+typedef int (*etcpal_rbtree_node_cmp_f)(const EtcPalRbTree* self, const EtcPalRbNode* node_a,
+                                        const EtcPalRbNode* node_b);
 
 /*! \brief A function type to be called for each node in a tree.
  *
@@ -115,9 +116,9 @@ typedef void (*etcpal_rbnode_dealloc_f)(EtcPalRbNode* node);
 /*! \brief A red-black tree node. */
 struct EtcPalRbNode
 {
-  int red;             /*!< The node color: red (1), black (0) */
+  int red;               /*!< The node color: red (1), black (0) */
   EtcPalRbNode* link[2]; /*!< Child node links: left [0], right [1] */
-  void* value;         /*!< The value object represented by this node. */
+  void* value;           /*!< The value object represented by this node. */
 };
 
 /*! \brief A red-black tree.
@@ -128,10 +129,10 @@ struct EtcPalRbTree
 {
   EtcPalRbNode* root;                /*!< The root node of the tree. */
   etcpal_rbtree_node_cmp_f cmp;      /*!< A function to use for comparing two nodes. */
-  size_t size;                     /*!< The current count of nodes in the tree. */
+  size_t size;                       /*!< The current count of nodes in the tree. */
   etcpal_rbnode_alloc_f alloc_f;     /*!< A function to use for allocating a new node.*/
   etcpal_rbnode_dealloc_f dealloc_f; /*!< A function to use for deallocating a node. */
-  void* info;                      /*!< User provided, not used by etcpal_rbtree. */
+  void* info;                        /*!< User provided, not used by etcpal_rbtree. */
 };
 
 /*! \brief A red-black tree iterator.
@@ -140,11 +141,11 @@ struct EtcPalRbTree
  */
 typedef struct EtcPalRbIter
 {
-  EtcPalRbTree* tree;                          /*!< The tree being iterated over. */
-  EtcPalRbNode* node;                          /*!< The current node. */
+  EtcPalRbTree* tree;                            /*!< The tree being iterated over. */
+  EtcPalRbNode* node;                            /*!< The current node. */
   EtcPalRbNode* path[ETCPAL_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
-  size_t top;                                /*!< Top of the traversal stack. */
-  void* info;                                /*!< User provided, not used by etcpal_rbiter. */
+  size_t top;                                    /*!< Top of the traversal stack. */
+  void* info;                                    /*!< User provided, not used by etcpal_rbiter. */
 } EtcPalRbIter;
 
 #ifdef __cplusplus
@@ -157,7 +158,7 @@ void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node)
 EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value);
 
 EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, etcpal_rbtree_node_cmp_f cmp, etcpal_rbnode_alloc_f alloc_f,
-                             etcpal_rbnode_dealloc_f dealloc_f);
+                                 etcpal_rbnode_dealloc_f dealloc_f);
 void* etcpal_rbtree_find(EtcPalRbTree* self, void* value);
 etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value);
 etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value);

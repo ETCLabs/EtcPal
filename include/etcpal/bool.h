@@ -22,7 +22,7 @@
 #define _ETCPAL_BOOL_H_
 
 /*! \defgroup etcpal_bool etcpal_bool
- *  \ingroup lwpa
+ *  \ingroup etcpal
  *  \brief A C boolean type.
  *
  *  \#include "etcpal/bool.h"
