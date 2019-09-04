@@ -15,10 +15,12 @@ The lwpa library serves two main purposes:
 ## Platform Ports
 
 lwpa is currently ported for the following platforms:
++ FreeRTOS
 + Linux
++ lwIP
 + macOS
 + Microsoft Windows
-+ MQX RTOS
++ MQX
 
 ## Building
 

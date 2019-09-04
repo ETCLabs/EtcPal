@@ -4,8 +4,7 @@ set(LWPA_LWIP_INCLUDE_DIRS "" CACHE STRING "The include directories for the lwIP
 set(LWPA_LWIPOPTS_DIR "" CACHE STRING "The directory of the project's lwipopts.h file")
 if(NOT LWPA_LWIP_INCLUDE_DIRS OR NOT LWPA_LWIPOPTS_DIR)
   message(FATAL_ERROR "You must provide the options LWPA_LWIP_INCLUDE_DIRS to specify the lwIP include directories "
-                      "and LWPA_LWIPOPTS_DIR to specify the location of the lwipopts.h file."
-  )
+                      "and LWPA_LWIPOPTS_DIR to specify the location of the lwipopts.h file.")
 endif()
 
 set(LWPA_NET_ADDITIONAL_SOURCES

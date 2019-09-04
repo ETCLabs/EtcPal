@@ -1,5 +1,5 @@
-# A CMake toolchain file for cross-compiling for NXP Kinetis (ARM Cortex-M4) with MQX RTOS and the
-# IAR Embedded Workbench toolchain.
+# An example CMake toolchain file for cross-compiling for NXP Kinetis K61 (ARM Cortex-M4) with MQX
+# RTOS and the CodeWarrior 10.6 gcc toolchain.
 #
 # You need to pick the type of build files that CMake generates (the Generator). If you have a
 # build system already that uses GNU Make, or are building on a macOS or Unix-based host,
@@ -13,22 +13,20 @@
 
 # Setting these names causes CMake to look in the Platform subdirectory for files called:
 # Platform/MQX.cmake
-# Platform/MQX-IAR-C-K61F120M.cmake
+# Platform/MQX-GNU-C-K61F120M.cmake
 set(CMAKE_SYSTEM_NAME MQX)
 set(CMAKE_SYSTEM_PROCESSOR K61F120M)
 
-# Set this to the location of the Platform subdirectory containing the platform files.
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
-
 if(NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
-  message(FATAL_ERROR "IAR is Windows-only.")
+  message(FATAL_ERROR "CodeWarrior is Windows-only.")
 endif()
 
-# The IAR installation directory, highly likely to require customization
-set(IAR_INSTALL_DIR "C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.5" CACHE STRING "The IAR install directory")
+# The CodeWarrior installation directory, highly likely to require customization
+set(CODEWARRIOR_INSTALL_DIR "C:/Freescale/CW MCU v10.6" CACHE STRING "The CodeWarrior install directory")
 
-set(CMAKE_C_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe CACHE FILEPATH "IAR C Compiler")
-set(CMAKE_CXX_COMPILER ${IAR_INSTALL_DIR}/arm/bin/iccarm.exe CACHE FILEPATH "IAR C++ Compiler")
+set(TOOLS_DIR ${CODEWARRIOR_INSTALL_DIR}/Cross_Tools/arm-none-eabi-gcc-4_7_3)
+set(CMAKE_C_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-gcc.exe CACHE FILEPATH "CodeWarrior/gcc C Compiler")
+set(CMAKE_CXX_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-g++.exe CACHE FILEPATH "CodeWarrior/gcc C++ Compiler")
 
 # This tells CMake to use a static library program to do its minimal compiler
 # test instead of an executable - this translates well to embedded toolchains.
