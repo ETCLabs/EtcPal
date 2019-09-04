@@ -10,7 +10,7 @@ source file.
 typedef PLATFORM_DEFINED etcpal_socket_t;
 
 /*! An identifier for an invalid socket handle. */
-#define LWPA_SOCKET_INVALID [PLATFORM_DEFINED]
+#define ETCPAL_SOCKET_INVALID [PLATFORM_DEFINED]
 
 /*! \brief The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().
  *
@@ -18,7 +18,7 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
  *  limit (e.g. ulimit) or even limited only by the amount of available memory. In that case this
  *  constant will have the value -1.
  */
-#define LWPA_SOCKET_MAX_POLL_SIZE [PLATFORM_DEFINED]
+#define ETCPAL_SOCKET_MAX_POLL_SIZE [PLATFORM_DEFINED]
 
 /*! \brief Accept a connection on a socket.
  *
@@ -121,7 +121,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
  *
  *  Refer to your favorite listen() man page for more information.
  *
- *  \param[in] id LWPA_STREAM socket on which to listen.
+ *  \param[in] id ETCPAL_STREAM socket on which to listen.
  *  \param[in] backlog Maximum length of pending connection queue.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
@@ -208,7 +208,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
  *  Refer to your favorite shutdown() man page for more information.
  *
  *  \param[in] id Socket to be shut down.
- *  \param[in] how How to shut down the socket, one of the LWPA_SHUT_* values.
+ *  \param[in] how How to shut down the socket, one of the ETCPAL_SHUT_* values.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
@@ -222,7 +222,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
  *
  *  \param[in] family Protocol family that the socket should use.
  *  \param[in] type Socket communication type.
- *  \param[out] id Filled in with socket handle on success. Filled in with #LWPA_SOCKET_INVALID on
+ *  \param[out] id Filled in with socket handle on success. Filled in with #ETCPAL_SOCKET_INVALID on
  *                 failure.
  *  \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
@@ -291,14 +291,14 @@ void etcpal_poll_context_deinit(LwpaPollContext *context);
 /*! \brief Add a new socket to an LwpaPollContext.
  *
  *  This socket will be monitored on future calls to etcpal_poll_wait() for the events specified in
- *  the 'events' parameter. See the definitions of the LWPA_POLL_* flag values for more information.
+ *  the 'events' parameter. See the definitions of the ETCPAL_POLL_* flag values for more information.
  *  The flag values can be 'or'ed together to monitor for multiple events. Only flag values that are
  *  not marked 'output only' are valid for use with this function. Errors on sockets will always be
- *  reported with the #LWPA_POLL_ERR flag.
+ *  reported with the #ETCPAL_POLL_ERR flag.
  *
  *  On some systems, the underlying polling method has a limit to how many sockets can be monitored
  *  in a single call. If there is a limit, it is defined as the positive value
- *  #LWPA_SOCKET_MAX_POLL_SIZE. Otherwise, that constant is set to -1.
+ *  #ETCPAL_SOCKET_MAX_POLL_SIZE. Otherwise, that constant is set to -1.
  *
  *  \param[in,out] context Pointer to LwpaPollContext to which to add new socket.
  *  \param[in] socket Socket to start monitoring.
@@ -307,7 +307,7 @@ void etcpal_poll_context_deinit(LwpaPollContext *context);
  *  \return #kEtcPalErrOk: Socket added successfully.
  *  \return #kEtcPalErrExists: The socket has already been added to this context.
  *  \return #kEtcPalErrInvalid: Invalid argument.
- *  \return #kEtcPalErrNoMem: #LWPA_SOCKET_MAX_POLL_SIZE is exceeded in this context.
+ *  \return #kEtcPalErrNoMem: #ETCPAL_SOCKET_MAX_POLL_SIZE is exceeded in this context.
  *  \return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_poll_add_socket(LwpaPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data);
@@ -343,7 +343,7 @@ void etcpal_poll_remove_socket(LwpaPollContext *context, etcpal_socket_t socket)
  *
  *  Waits for events defined by previous calls to etcpal_poll_add_socket() on this context structure.
  *  Reports one event at a time in the output 'event' parameter. Waits up to timeout_ms
- *  milliseconds; use #LWPA_WAIT_FOREVER to wait indefinitely. If there are no sockets currently
+ *  milliseconds; use #ETCPAL_WAIT_FOREVER to wait indefinitely. If there are no sockets currently
  *  added to the context structure, returns the special error code #kEtcPalErrNoSockets immediately.
  *
  *  This function should not be assumed to be thread-safe with respect to the other etcpal_poll API
@@ -355,14 +355,14 @@ void etcpal_poll_remove_socket(LwpaPollContext *context, etcpal_socket_t socket)
  * | Platform:         | API used: | Notes: |
  * |-------------------|-----------|--------|
  * | Linux             | epoll()   |        |
- * | lwIP              | select()  | #LWPA_SOCKET_MAX_POLL_SIZE is controlled by FD_SETSIZE which is in turn controlled by MEMP_NUM_NETCONN in lwipopts.h. |
+ * | lwIP              | select()  | #ETCPAL_SOCKET_MAX_POLL_SIZE is controlled by FD_SETSIZE which is in turn controlled by MEMP_NUM_NETCONN in lwipopts.h. |
  * | macOS             | kqueue()  |        |
- * | MQX (RTCS)        | select()  | #LWPA_SOCKET_MAX_POLL_SIZE is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE. |
- * | Microsoft Windows | select()  | #LWPA_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
+ * | MQX (RTCS)        | select()  | #ETCPAL_SOCKET_MAX_POLL_SIZE is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE. |
+ * | Microsoft Windows | select()  | #ETCPAL_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
  *
  *  \param[in] context Pointer to LwpaPollContext for which to wait for events.
  *  \param[out] event On success, contains information about the event that occurred.
- *  \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #LWPA_WAIT_FOREVER to
+ *  \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #ETCPAL_WAIT_FOREVER to
  *                        wait indefinitely.
  *  \return #kEtcPalErrOk: An event occurred, and information is available in the event argument.
  *  \return #kEtcPalErrInvalid: Invalid argument.
@@ -388,8 +388,8 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext *context, LwpaPollEvent *event, 
  *  {
  *    do
  *    {
- *      char inet_str[LWPA_INET6_ADDRSTRLEN];
- *      if (kEtcPalErrOk == etcpal_inet_ntop(&info.ai_addr.ip, inet_str, LWPA_INET6_ADDRSTRLEN))
+ *      char inet_str[ETCPAL_INET6_ADDRSTRLEN];
+ *      if (kEtcPalErrOk == etcpal_inet_ntop(&info.ai_addr.ip, inet_str, ETCPAL_INET6_ADDRSTRLEN))
  *      {
  *        printf("Address: %s\n", inet_str);
  *      }

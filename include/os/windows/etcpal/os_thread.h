@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_THREAD_H_
-#define _LWPA_OS_THREAD_H_
+#ifndef _ETCPAL_OS_THREAD_H_
+#define _ETCPAL_OS_THREAD_H_
 
 #ifndef NOMINMAX
 #define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
@@ -40,18 +40,18 @@ extern "C" {
 /* Windows has no additional platform data and thus platform_data in the LwpaThreadParams struct
  * is ignored. */
 
-#define LWPA_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL
-#define LWPA_THREAD_DEFAULT_STACK 0
-#define LWPA_THREAD_DEFAULT_NAME "etcpal_thread"
+#define ETCPAL_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL
+#define ETCPAL_THREAD_DEFAULT_STACK 0
+#define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
 
-#define LWPA_THREAD_NAME_MAX_LENGTH 32
+#define ETCPAL_THREAD_NAME_MAX_LENGTH 32
 
 typedef struct
 {
   void (*fn)(void*);
   void* arg;
   HANDLE tid;
-  char name[LWPA_THREAD_NAME_MAX_LENGTH];
+  char name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms) Sleep(sleep_ms)
@@ -60,4 +60,4 @@ typedef struct
 }
 #endif
 
-#endif /* _LWPA_OS_THREAD_H_ */
+#endif /* _ETCPAL_OS_THREAD_H_ */

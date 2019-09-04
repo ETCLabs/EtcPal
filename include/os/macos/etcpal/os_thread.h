@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_THREAD_H_
-#define _LWPA_OS_THREAD_H_
+#ifndef _ETCPAL_OS_THREAD_H_
+#define _ETCPAL_OS_THREAD_H_
 
 #include <pthread.h>
 #include <unistd.h>
@@ -28,11 +28,11 @@
 extern "C" {
 #endif
 
-#define LWPA_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on macOS */
-#define LWPA_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
-#define LWPA_THREAD_DEFAULT_NAME NULL  /* Name ignored on macOS */
+#define ETCPAL_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on macOS */
+#define ETCPAL_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
+#define ETCPAL_THREAD_DEFAULT_NAME NULL  /* Name ignored on macOS */
 
-#define LWPA_THREAD_NAME_MAX_LENGTH 0
+#define ETCPAL_THREAD_NAME_MAX_LENGTH 0
 
 typedef struct
 {
@@ -47,4 +47,4 @@ typedef struct
 }
 #endif
 
-#endif /* _LWPA_OS_THREAD_H_ */
+#endif /* _ETCPAL_OS_THREAD_H_ */

@@ -75,7 +75,7 @@ bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, v
   if (!id || !params || !thread_fn)
     return false;
 
-  strncpy_s(id->name, LWPA_THREAD_NAME_MAX_LENGTH, params->thread_name, _TRUNCATE);
+  strncpy_s(id->name, ETCPAL_THREAD_NAME_MAX_LENGTH, params->thread_name, _TRUNCATE);
   id->arg = thread_arg;
   id->fn = thread_fn;
   id->tid = (HANDLE)_beginthreadex(NULL, params->stack_size, thread_func_internal, id, CREATE_SUSPENDED, NULL);

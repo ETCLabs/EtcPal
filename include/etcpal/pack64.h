@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/pack64.h: Optional extensions to etcpal_pack for 64-bit types. */
-#ifndef _LWPA_PACK64_H_
-#define _LWPA_PACK64_H_
+#ifndef _ETCPAL_PACK64_H_
+#define _ETCPAL_PACK64_H_
 
 #include "etcpal/int.h"
 
@@ -42,4 +42,4 @@ void etcpal_pack_64l(uint8_t* buf, uint64_t val);
 
 /*! @} */
 
-#endif /* _LWPA_PACK64_H_ */
+#endif /* _ETCPAL_PACK64_H_ */

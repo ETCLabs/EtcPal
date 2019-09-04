@@ -47,8 +47,8 @@ bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, v
   }
   else
   {
-    template.TASK_ATTRIBUTES = (_mqx_uint)LWPA_THREAD_MQX_DEFAULT_ATTRIBUTES;
-    template.DEFAULT_TIME_SLICE = LWPA_THREAD_MQX_DEFAULT_TIME_SLICE;
+    template.TASK_ATTRIBUTES = (_mqx_uint)ETCPAL_THREAD_MQX_DEFAULT_ATTRIBUTES;
+    template.DEFAULT_TIME_SLICE = ETCPAL_THREAD_MQX_DEFAULT_TIME_SLICE;
   }
   id->fn = thread_fn;
   id->arg = thread_arg;

@@ -53,7 +53,7 @@
 #define MSGID_STR NILVALUE_STR
 #define STRUCTURED_DATA_STR NILVALUE_STR
 /* LOG_LOCAL1 seems to be one that's lightly used */
-#define DEFAULT_FACILITY LWPA_LOG_LOCAL1
+#define DEFAULT_FACILITY ETCPAL_LOG_LOCAL1
 
 /**************************** Private variables ******************************/
 
@@ -110,13 +110,13 @@ void sanitize_str(char* str)
  *
  *  Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
  *  are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
- *  within the correct range (#LWPA_LOG_NFACILITIES).
+ *  within the correct range (#ETCPAL_LOG_NFACILITIES).
  *
  *  \param[in,out] params Syslog params to sanitize.
  */
 void etcpal_sanitize_syslog_params(LwpaSyslogParams* params)
 {
-  if (LWPA_LOG_FAC(params->facility) >= LWPA_LOG_NFACILITIES)
+  if (ETCPAL_LOG_FAC(params->facility) >= ETCPAL_LOG_NFACILITIES)
     params->facility = DEFAULT_FACILITY;
 
   sanitize_str(params->hostname);
@@ -155,7 +155,7 @@ static bool validate_time(const LwpaLogTimeParams* tparams)
           tparams->msec >= 0 && tparams->msec <= 999);
 }
 
-/* Build the current timestamp. Buffer must be of length LWPA_LOG_TIMESTAMP_LEN. */
+/* Build the current timestamp. Buffer must be of length ETCPAL_LOG_TIMESTAMP_LEN. */
 static void make_timestamp(const LwpaLogTimeParams* tparams, char* buf, bool human_readable)
 {
   bool timestamp_created = false;
@@ -164,11 +164,11 @@ static void make_timestamp(const LwpaLogTimeParams* tparams, char* buf, bool hum
   {
     // Print the basic timestamp
     int print_res = snprintf(
-        buf, LWPA_LOG_TIMESTAMP_LEN,
+        buf, ETCPAL_LOG_TIMESTAMP_LEN,
         human_readable ? "%04d-%02d-%02d %02d:%02d:%02d.%03d" : "%04d-%02d-%02dT%02d:%02d:%02d.%03d", tparams->year,
         tparams->month, tparams->day, tparams->hour, tparams->minute, tparams->second, tparams->msec);
 
-    if (print_res > 0 && print_res < LWPA_LOG_TIMESTAMP_LEN - 1)
+    if (print_res > 0 && print_res < ETCPAL_LOG_TIMESTAMP_LEN - 1)
     {
       // Add the UTC offset
       if (tparams->utc_offset == 0)
@@ -178,7 +178,7 @@ static void make_timestamp(const LwpaLogTimeParams* tparams, char* buf, bool hum
       }
       else
       {
-        snprintf(&buf[print_res], LWPA_LOG_TIMESTAMP_LEN - (size_t)print_res, "%s%02d:%02d",
+        snprintf(&buf[print_res], ETCPAL_LOG_TIMESTAMP_LEN - (size_t)print_res, "%s%02d:%02d",
                  tparams->utc_offset > 0 ? "+" : "-", abs(tparams->utc_offset) / 60, abs(tparams->utc_offset) % 60);
       }
 
@@ -215,15 +215,15 @@ static bool get_time(const LwpaLogParams* params, LwpaLogTimeParams* time_params
 static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* tparams,
                                      const LwpaSyslogParams* syslog_params, int pri, const char* format, va_list args)
 {
-  if (!buf || buflen < LWPA_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
     return NULL;
 
-  char timestamp[LWPA_LOG_TIMESTAMP_LEN];
+  char timestamp[ETCPAL_LOG_TIMESTAMP_LEN];
   make_timestamp(tparams, timestamp, false);
 
-  int prival = LWPA_LOG_PRI(pri) | syslog_params->facility;
+  int prival = ETCPAL_LOG_PRI(pri) | syslog_params->facility;
   int syslog_header_size =
-      snprintf(buf, LWPA_SYSLOG_HEADER_MAX_LEN, "<%d>%d %s %s %s %s %s %s ", prival, SYSLOG_PROT_VERSION, timestamp,
+      snprintf(buf, ETCPAL_SYSLOG_HEADER_MAX_LEN, "<%d>%d %s %s %s %s %s %s ", prival, SYSLOG_PROT_VERSION, timestamp,
                syslog_params->hostname[0] ? syslog_params->hostname : NILVALUE_STR,
                syslog_params->app_name[0] ? syslog_params->app_name : NILVALUE_STR,
                syslog_params->procid[0] ? syslog_params->procid : NILVALUE_STR, MSGID_STR, STRUCTURED_DATA_STR);
@@ -231,7 +231,7 @@ static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTi
   if (syslog_header_size >= 0)
   {
     // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
-    // This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written.
+    // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
     vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
     return &buf[syslog_header_size];
   }
@@ -243,7 +243,7 @@ static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTi
 
 /*! \brief Create a log message with syslog header in the given buffer.
  *
- *  Buffer must be at least #LWPA_SYSLOG_STR_MIN_LEN in length.
+ *  Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length.
  *
  *  \param[out] buf Buffer in which to build the syslog message.
  *  \param[in] buflen Length in bytes of buf.
@@ -270,22 +270,22 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams*
 static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format,
                                         va_list args)
 {
-  if (!buf || buflen < LWPA_LOG_TIMESTAMP_LEN + 1 || !format)
+  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || !format)
     return NULL;
 
-  char timestamp[LWPA_LOG_TIMESTAMP_LEN];
+  char timestamp[ETCPAL_LOG_TIMESTAMP_LEN];
   make_timestamp(time, timestamp, true);
 
   int human_header_size;
   if (timestamp[0] == '\0')
     human_header_size = 0;
   else
-    human_header_size = snprintf(buf, LWPA_LOG_TIMESTAMP_LEN + 1, "%s ", timestamp);
+    human_header_size = snprintf(buf, ETCPAL_LOG_TIMESTAMP_LEN + 1, "%s ", timestamp);
 
   if (human_header_size >= 0)
   {
     // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
-    // This allows LWPA_LOG_MSG_MAX_LEN valid bytes to be written.
+    // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
     vsnprintf(&buf[human_header_size], buflen - (size_t)human_header_size, format, args);
     return &buf[human_header_size];
   }
@@ -298,7 +298,7 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLo
 /*! \brief Create a log message with a human-readable header in the given
  *         buffer.
  *
- *  Buffer must be at least #LWPA_HUMAN_LOG_STR_MIN_LEN in length.
+ *  Buffer must be at least #ETCPAL_HUMAN_LOG_STR_MIN_LEN in length.
  *
  *  \param[out] buf Buffer in which to build the log message.
  *  \param[in] buflen Length in bytes of buf.
@@ -331,7 +331,7 @@ bool etcpal_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimePara
 bool etcpal_can_log(const LwpaLogParams* params, int pri)
 {
   if (params)
-    return ((LWPA_LOG_MASK(pri) & params->log_mask) != 0);
+    return ((ETCPAL_LOG_MASK(pri) & params->log_mask) != 0);
   return false;
 }
 
@@ -364,7 +364,7 @@ void etcpal_log(const LwpaLogParams* params, int pri, const char* format, ...)
  */
 void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args)
 {
-  if (!init_count || !params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
+  if (!init_count || !params || !params->log_fn || !format || !(ETCPAL_LOG_MASK(pri) & params->log_mask))
     return;
 
   LwpaLogTimeParams time_params;
@@ -372,8 +372,8 @@ void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_li
 
   if (etcpal_mutex_take(&buf_lock))
   {
-    static char syslogmsg[LWPA_SYSLOG_STR_MAX_LEN + 1];
-    static char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];
+    static char syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
+    static char humanlogmsg[ETCPAL_HUMAN_LOG_STR_MAX_LEN + 1];
     LwpaLogStrings strings = {NULL, NULL, NULL};
 
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateSyslog)
@@ -386,13 +386,13 @@ void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_li
       {
         va_list args_copy;
         va_copy(args_copy, args);
-        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
                                               &params->syslog_params, pri, format, args_copy);
         va_end(args_copy);
       }
       else
       {
-        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
                                               &params->syslog_params, pri, format, args);
       }
       if (strings.raw)
@@ -403,7 +403,7 @@ void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_li
 
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadableLog)
     {
-      strings.raw = etcpal_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
+      strings.raw = etcpal_vcreate_human_log_str(humanlogmsg, ETCPAL_HUMAN_LOG_STR_MAX_LEN + 1,
                                                have_time ? &time_params : NULL, format, args);
       if (strings.raw)
       {

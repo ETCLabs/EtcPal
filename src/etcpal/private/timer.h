@@ -17,12 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_PRIVATE_TIMER_H_
-#define _LWPA_PRIVATE_TIMER_H_
+#ifndef _ETCPAL_PRIVATE_TIMER_H_
+#define _ETCPAL_PRIVATE_TIMER_H_
 
 #include "etcpal/error.h"
 
 etcpal_error_t etcpal_timer_init();
 void etcpal_timer_deinit();
 
-#endif /* _LWPA_PRIVATE_TIMER_H_ */
+#endif /* _ETCPAL_PRIVATE_TIMER_H_ */

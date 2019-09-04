@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_THREAD_H_
-#define _LWPA_OS_THREAD_H_
+#ifndef _ETCPAL_OS_THREAD_H_
+#define _ETCPAL_OS_THREAD_H_
 
 #include <mqx.h>
 #include "etcpal/common.h"
@@ -34,11 +34,11 @@ typedef struct LwpaThreadParamsMqx
   _mqx_uint time_slice;
 } LwpaThreadParamsMqx;
 
-#define LWPA_THREAD_DEFAULT_PRIORITY 11
-#define LWPA_THREAD_DEFAULT_STACK 8000
-#define LWPA_THREAD_DEFAULT_NAME "etcpal_thread"
-#define LWPA_THREAD_MQX_DEFAULT_ATTRIBUTES NULL
-#define LWPA_THREAD_MQX_DEFAULT_TIME_SLICE 0
+#define ETCPAL_THREAD_DEFAULT_PRIORITY 11
+#define ETCPAL_THREAD_DEFAULT_STACK 8000
+#define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
+#define ETCPAL_THREAD_MQX_DEFAULT_ATTRIBUTES NULL
+#define ETCPAL_THREAD_MQX_DEFAULT_TIME_SLICE 0
 
 typedef struct
 {
@@ -54,4 +54,4 @@ typedef struct
 }
 #endif
 
-#endif /* _LWPA_OS_THREAD_H_ */
+#endif /* _ETCPAL_OS_THREAD_H_ */

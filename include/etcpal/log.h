@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/log.h: Common logging functions. */
-#ifndef _LWPA_LOG_H_
-#define _LWPA_LOG_H_
+#ifndef _ETCPAL_LOG_H_
+#define _ETCPAL_LOG_H_
 
 #include <stdarg.h>
 #include <stddef.h>
@@ -51,82 +51,82 @@
 /*! \name Log Facility
  *  @{
  */
-#define LWPA_LOG_KERN (0 << 3)      /*!< Kernel messages. */
-#define LWPA_LOG_USER (1 << 3)      /*!< Random user-level messages. */
-#define LWPA_LOG_MAIL (2 << 3)      /*!< Mail system. */
-#define LWPA_LOG_DAEMON (3 << 3)    /*!< System daemons. */
-#define LWPA_LOG_AUTH (4 << 3)      /*!< Security/authorization messages. */
-#define LWPA_LOG_SYSLOG (5 << 3)    /*!< Messages generated internally by syslogd. */
-#define LWPA_LOG_LPR (6 << 3)       /*!< Line printer subsystem. */
-#define LWPA_LOG_NEWS (7 << 3)      /*!< Network news subsystem. */
-#define LWPA_LOG_UUCP (8 << 3)      /*!< UUCP subsystem. */
-#define LWPA_LOG_CRON (9 << 3)      /*!< Clock daemon. */
-#define LWPA_LOG_AUTHPRIV (10 << 3) /*!< Security/authorization messages. */
-#define LWPA_LOG_FTP (11 << 3)      /*!< FTP daemon. */
+#define ETCPAL_LOG_KERN (0 << 3)      /*!< Kernel messages. */
+#define ETCPAL_LOG_USER (1 << 3)      /*!< Random user-level messages. */
+#define ETCPAL_LOG_MAIL (2 << 3)      /*!< Mail system. */
+#define ETCPAL_LOG_DAEMON (3 << 3)    /*!< System daemons. */
+#define ETCPAL_LOG_AUTH (4 << 3)      /*!< Security/authorization messages. */
+#define ETCPAL_LOG_SYSLOG (5 << 3)    /*!< Messages generated internally by syslogd. */
+#define ETCPAL_LOG_LPR (6 << 3)       /*!< Line printer subsystem. */
+#define ETCPAL_LOG_NEWS (7 << 3)      /*!< Network news subsystem. */
+#define ETCPAL_LOG_UUCP (8 << 3)      /*!< UUCP subsystem. */
+#define ETCPAL_LOG_CRON (9 << 3)      /*!< Clock daemon. */
+#define ETCPAL_LOG_AUTHPRIV (10 << 3) /*!< Security/authorization messages. */
+#define ETCPAL_LOG_FTP (11 << 3)      /*!< FTP daemon. */
 
-#define LWPA_LOG_LOCAL0 (16 << 3) /*!< Reserved for local use. */
-#define LWPA_LOG_LOCAL1 (17 << 3) /*!< Reserved for local use. */
-#define LWPA_LOG_LOCAL2 (18 << 3) /*!< Reserved for local use. */
-#define LWPA_LOG_LOCAL3 (19 << 3) /*!< Reserved for local use. */
-#define LWPA_LOG_LOCAL4 (20 << 3) /*!< Reserved for local use. */
-#define LWPA_LOG_LOCAL5 (21 << 3) /*!< Reserved for local use. */
-#define LWPA_LOG_LOCAL6 (22 << 3) /*!< Reserved for local use. */
-#define LWPA_LOG_LOCAL7 (23 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL0 (16 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL1 (17 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL2 (18 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL3 (19 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL4 (20 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL5 (21 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL6 (22 << 3) /*!< Reserved for local use. */
+#define ETCPAL_LOG_LOCAL7 (23 << 3) /*!< Reserved for local use. */
 /*! @} */
 
-#define LWPA_LOG_NFACILITIES 24 /*!< Current number of facilities. */
-#define LWPA_LOG_FACMASK 0x03f8 /* Mask to extract facility part of a prival. */
-#define LWPA_LOG_FAC(p) (((p)&LWPA_LOG_FACMASK) >> 3)
+#define ETCPAL_LOG_NFACILITIES 24 /*!< Current number of facilities. */
+#define ETCPAL_LOG_FACMASK 0x03f8 /* Mask to extract facility part of a prival. */
+#define ETCPAL_LOG_FAC(p) (((p)&ETCPAL_LOG_FACMASK) >> 3)
 
 /*! \name Log Priority
  *  @{
  */
-#define LWPA_LOG_EMERG 0   /*!< System is unusable. */
-#define LWPA_LOG_ALERT 1   /*!< Action must be taken immediately. */
-#define LWPA_LOG_CRIT 2    /*!< Critical conditions. */
-#define LWPA_LOG_ERR 3     /*!< Error conditions. */
-#define LWPA_LOG_WARNING 4 /*!< Warning conditions. */
-#define LWPA_LOG_NOTICE 5  /*!< Normal but significant condition. */
-#define LWPA_LOG_INFO 6    /*!< Informational. */
-#define LWPA_LOG_DEBUG 7   /*!< Debug-level messages. */
+#define ETCPAL_LOG_EMERG 0   /*!< System is unusable. */
+#define ETCPAL_LOG_ALERT 1   /*!< Action must be taken immediately. */
+#define ETCPAL_LOG_CRIT 2    /*!< Critical conditions. */
+#define ETCPAL_LOG_ERR 3     /*!< Error conditions. */
+#define ETCPAL_LOG_WARNING 4 /*!< Warning conditions. */
+#define ETCPAL_LOG_NOTICE 5  /*!< Normal but significant condition. */
+#define ETCPAL_LOG_INFO 6    /*!< Informational. */
+#define ETCPAL_LOG_DEBUG 7   /*!< Debug-level messages. */
 /*! @} */
 
-#define LWPA_LOG_PRIMASK 0x07 /* mask to extract priority part (internal) */
-#define LWPA_LOG_PRI(p) ((p) & LWPA_LOG_PRIMASK) /* extract priority */
-#define LWPA_LOG_MAKEPRI(fac, pri) (((fac) << 3) | (pri))
+#define ETCPAL_LOG_PRIMASK 0x07 /* mask to extract priority part (internal) */
+#define ETCPAL_LOG_PRI(p) ((p) & ETCPAL_LOG_PRIMASK) /* extract priority */
+#define ETCPAL_LOG_MAKEPRI(fac, pri) (((fac) << 3) | (pri))
 
-#define LWPA_LOG_MASK(pri) (1 << (pri)) /* mask for one priority */
-#define LWPA_LOG_UPTO(pri) ((1 << ((pri) + 1)) - 1) /* all priorities through pri */
+#define ETCPAL_LOG_MASK(pri) (1 << (pri)) /* mask for one priority */
+#define ETCPAL_LOG_UPTO(pri) ((1 << ((pri) + 1)) - 1) /* all priorities through pri */
 
-#define LWPA_LOG_HOSTNAME_MAX_LEN 256u /*!< Max length of the hostname param. */
-#define LWPA_LOG_APP_NAME_MAX_LEN 49u  /*!< Max length of the app_name param. */
-#define LWPA_LOG_PROCID_MAX_LEN 129u   /*!< Max length of the procid param. */
+#define ETCPAL_LOG_HOSTNAME_MAX_LEN 256u /*!< Max length of the hostname param. */
+#define ETCPAL_LOG_APP_NAME_MAX_LEN 49u  /*!< Max length of the app_name param. */
+#define ETCPAL_LOG_PROCID_MAX_LEN 129u   /*!< Max length of the procid param. */
 
 /*! Max length of a log message string passed to etcpal_log() or etcpal_vlog(). */
-#define LWPA_LOG_MSG_MAX_LEN 480u
+#define ETCPAL_LOG_MSG_MAX_LEN 480u
 
 /* clang-format on */
 
 /*! The maximum length of the timestamp used in syslog and human-readable logging. */
-#define LWPA_LOG_TIMESTAMP_LEN (10u /*Date*/ + 1u /*T*/ + 12u /*Time*/ + 6u /*Offset*/ + 1u /*Nullterm*/)
+#define ETCPAL_LOG_TIMESTAMP_LEN (10u /*Date*/ + 1u /*T*/ + 12u /*Time*/ + 6u /*Offset*/ + 1u /*Nullterm*/)
 
 /*! The maximum length of the syslog header. */
-#define LWPA_SYSLOG_HEADER_MAX_LEN                                                                        \
-  (5u /*PRIVAL*/ + 3u /*Version*/ + 1u /*SP*/ + (LWPA_LOG_TIMESTAMP_LEN - 1u) /*Timestamp*/ + 1u /*SP*/ + \
-   (LWPA_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (LWPA_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +          \
-   (LWPA_LOG_PROCID_MAX_LEN - 1u) + 1u /*SP*/ + 1u /*MSGID*/ + 1u /*SP*/ + 1u /*STRUCTURED-DATA*/ + 1u /*SP*/)
+#define ETCPAL_SYSLOG_HEADER_MAX_LEN                                                                        \
+  (5u /*PRIVAL*/ + 3u /*Version*/ + 1u /*SP*/ + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) /*Timestamp*/ + 1u /*SP*/ + \
+   (ETCPAL_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (ETCPAL_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +          \
+   (ETCPAL_LOG_PROCID_MAX_LEN - 1u) + 1u /*SP*/ + 1u /*MSGID*/ + 1u /*SP*/ + 1u /*STRUCTURED-DATA*/ + 1u /*SP*/)
 
 /*! The minimum length of a buffer passed to etcpal_create_syslog_str(). */
-#define LWPA_SYSLOG_STR_MIN_LEN LWPA_SYSLOG_HEADER_MAX_LEN
+#define ETCPAL_SYSLOG_STR_MIN_LEN ETCPAL_SYSLOG_HEADER_MAX_LEN
 /*! The minimum length of a buffer passed to etcpal_create_human_log_str(). */
-#define LWPA_HUMAN_LOG_STR_MIN_LEN LWPA_LOG_TIMESTAMP_LEN
+#define ETCPAL_HUMAN_LOG_STR_MIN_LEN ETCPAL_LOG_TIMESTAMP_LEN
 
 /*! The maximum length of a syslog string that will be passed to an etcpal_log_callback function. */
-#define LWPA_SYSLOG_STR_MAX_LEN (LWPA_SYSLOG_HEADER_MAX_LEN + LWPA_LOG_MSG_MAX_LEN)
+#define ETCPAL_SYSLOG_STR_MAX_LEN (ETCPAL_SYSLOG_HEADER_MAX_LEN + ETCPAL_LOG_MSG_MAX_LEN)
 
 /*! The maximum length of a human-readable string that will be passed to an etcpal_log_callback
  *  function.  */
-#define LWPA_HUMAN_LOG_STR_MAX_LEN ((LWPA_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + LWPA_LOG_MSG_MAX_LEN)
+#define ETCPAL_HUMAN_LOG_STR_MAX_LEN ((ETCPAL_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + ETCPAL_LOG_MSG_MAX_LEN)
 
 /*! A set of parameters which represent the current local time with millisecond resolution. */
 typedef struct LwpaLogTimeParams
@@ -200,11 +200,11 @@ typedef struct LwpaSyslogParams
   /*! Syslog Facility; see RFC 5424 &sect; 6.2.1. */
   int facility;
   /*! Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4. */
-  char hostname[LWPA_LOG_HOSTNAME_MAX_LEN];
+  char hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN];
   /*! Syslog APP-NAME; see RFC 5424 &sect; 6.2.5. */
-  char app_name[LWPA_LOG_APP_NAME_MAX_LEN];
+  char app_name[ETCPAL_LOG_APP_NAME_MAX_LEN];
   /*! Syslog PROCID; see RFC 5424 &sect; 6.2.6. */
-  char procid[LWPA_LOG_PROCID_MAX_LEN];
+  char procid[ETCPAL_LOG_PROCID_MAX_LEN];
 } LwpaSyslogParams;
 
 /*! A set of parameters used for the etcpal_*log() functions. */
@@ -273,4 +273,4 @@ void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_li
 
 /*! @} */
 
-#endif /* _LWPA_LOG_H_ */
+#endif /* _ETCPAL_LOG_H_ */

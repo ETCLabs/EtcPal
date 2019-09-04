@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_SOCKET_H_
-#define _LWPA_OS_SOCKET_H_
+#ifndef _ETCPAL_OS_SOCKET_H_
+#define _ETCPAL_OS_SOCKET_H_
 
 #include <rtcs.h>
 #include "etcpal/inet.h"
@@ -38,9 +38,9 @@ typedef uint32_t etcpal_socket_t;
 #define PRIlwpasockt "u"
 #endif
 
-#define LWPA_SOCKET_INVALID RTCS_SOCKET_ERROR
+#define ETCPAL_SOCKET_INVALID RTCS_SOCKET_ERROR
 
-#define LWPA_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE
+#define ETCPAL_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE
 
 typedef struct LwpaPollCtxSocket
 {
@@ -59,7 +59,7 @@ typedef struct LwpaPollContext
 {
   bool valid;
 
-  LwpaPollCtxSocket sockets[LWPA_SOCKET_MAX_POLL_SIZE];
+  LwpaPollCtxSocket sockets[ETCPAL_SOCKET_MAX_POLL_SIZE];
   size_t num_valid_sockets;
 
   LwpaPollFdSet readfds;
@@ -70,4 +70,4 @@ typedef struct LwpaPollContext
 }
 #endif
 
-#endif /* _LWPA_OS_SOCKET_H_ */
+#endif /* _ETCPAL_OS_SOCKET_H_ */

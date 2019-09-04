@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/common.h: Common definitions for Lightwei.ht Platform Abstraction modules. */
-#ifndef _LWPA_COMMON_H_
-#define _LWPA_COMMON_H_
+#ifndef _ETCPAL_COMMON_H_
+#define _ETCPAL_COMMON_H_
 
 #include "etcpal/int.h"
 #include "etcpal/error.h"
@@ -39,16 +39,16 @@
  */
 
 /*! For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely. */
-#define LWPA_WAIT_FOREVER -1
+#define ETCPAL_WAIT_FOREVER -1
 
 /*! A mask of desired lwpa features. See "lwpa feature masks". */
 typedef uint32_t etcpal_features_t;
 
-#define LWPA_FEATURE_SOCKETS_OFFSET 0
-#define LWPA_FEATURE_NETINTS_OFFSET 1
-#define LWPA_FEATURE_TIMERS_OFFSET 2
-#define LWPA_FEATURE_LOGGING_OFFSET 3
-#define LWPA_NUM_FEATURES 4
+#define ETCPAL_FEATURE_SOCKETS_OFFSET 0
+#define ETCPAL_FEATURE_NETINTS_OFFSET 1
+#define ETCPAL_FEATURE_TIMERS_OFFSET 2
+#define ETCPAL_FEATURE_LOGGING_OFFSET 3
+#define ETCPAL_NUM_FEATURES 4
 
 /*! \name lwpa feature masks
  *  Pass one or more of these to etcpal_init() to initialize the relevant lwpa feature. Multiple
@@ -58,17 +58,17 @@ typedef uint32_t etcpal_features_t;
  *
  *  @{
  */
-#define LWPA_FEATURE_SOCKETS ((etcpal_features_t)(1u << LWPA_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal_socket module. */
-#define LWPA_FEATURE_NETINTS ((etcpal_features_t)(1u << LWPA_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal_netint module. */
-#define LWPA_FEATURE_TIMERS ((etcpal_features_t)(1u << LWPA_FEATURE_TIMERS_OFFSET))   /*!< Use the etcpal_timer module. */
-#define LWPA_FEATURE_LOGGING ((etcpal_features_t)(1u << LWPA_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal_log module. */
-#define LWPA_FEATURES_ALL 0xffffffffu                                               /*!< Use every available module. */
+#define ETCPAL_FEATURE_SOCKETS ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal_socket module. */
+#define ETCPAL_FEATURE_NETINTS ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal_netint module. */
+#define ETCPAL_FEATURE_TIMERS ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET))   /*!< Use the etcpal_timer module. */
+#define ETCPAL_FEATURE_LOGGING ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal_log module. */
+#define ETCPAL_FEATURES_ALL 0xffffffffu                                               /*!< Use every available module. */
 
 /*! \brief Use every available module except the ones passed in mask.
- *  \param mask Mask of LWPA_FEATURE_* macros to not include in the feature mask.
+ *  \param mask Mask of ETCPAL_FEATURE_* macros to not include in the feature mask.
  *  \return Resulting lwpa feature mask to pass to etcpal_init().
  */
-#define LWPA_FEATURES_ALL_BUT(mask) (((uint32_t)LWPA_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
+#define ETCPAL_FEATURES_ALL_BUT(mask) (((uint32_t)ETCPAL_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
 /*! @} */
 
 #ifdef __cplusplus
@@ -84,4 +84,4 @@ void etcpal_deinit(etcpal_features_t features);
 
 /*! @} */
 
-#endif /* _LWPA_COMMON_H_ */
+#endif /* _ETCPAL_COMMON_H_ */

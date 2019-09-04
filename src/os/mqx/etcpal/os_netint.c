@@ -41,8 +41,8 @@ static void copy_interface_info(uint32_t mqx_index, LwpaNetintInfo* netint)
   netint->index = mqx_index + 1;
 
   ipcfg_get_ip(mqx_index, &ip_data);
-  LWPA_IP_SET_V4_ADDRESS(&netint->addr, ip_data.ip);
-  LWPA_IP_SET_V4_ADDRESS(&netint->mask, ip_data.mask);
+  ETCPAL_IP_SET_V4_ADDRESS(&netint->addr, ip_data.ip);
+  ETCPAL_IP_SET_V4_ADDRESS(&netint->mask, ip_data.mask);
 
   ipcfg_get_mac(mqx_index, netint->mac);
   sprintf(netint->name, "en%d", mqx_index);

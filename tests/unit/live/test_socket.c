@@ -37,20 +37,20 @@ TEST_GROUP(etcpal_socket);
 
 TEST_SETUP(etcpal_socket)
 {
-  etcpal_init(LWPA_FEATURE_SOCKETS);
+  etcpal_init(ETCPAL_FEATURE_SOCKETS);
 }
 
 TEST_TEAR_DOWN(etcpal_socket)
 {
-  etcpal_deinit(LWPA_FEATURE_SOCKETS);
+  etcpal_deinit(ETCPAL_FEATURE_SOCKETS);
 }
 
 TEST(etcpal_socket, bind_works_as_expected)
 {
-  etcpal_socket_t sock = LWPA_SOCKET_INVALID;
+  etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &sock));
-  TEST_ASSERT_NOT_EQUAL(sock, LWPA_SOCKET_INVALID);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock));
+  TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Make sure we can bind to the wildcard address and port
   LwpaSockaddr bind_addr;
@@ -72,8 +72,8 @@ TEST(etcpal_socket, blocking_state_is_consistent)
 {
   etcpal_socket_t sock;
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_STREAM, &sock));
-  TEST_ASSERT_NOT_EQUAL(sock, LWPA_SOCKET_INVALID);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_STREAM, &sock));
+  TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Set the socket to non-blocking, make sure it reads as non-blocking
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setblocking(sock, false));
@@ -110,34 +110,34 @@ TEST(etcpal_socket, poll_invalid_calls_fail)
   TEST_ASSERT_EQUAL(kEtcPalErrNoSockets, etcpal_poll_wait(&context, &event, 100));
 
   etcpal_socket_t sock;
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &sock));
-  TEST_ASSERT_NOT_EQUAL(sock, LWPA_SOCKET_INVALID);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock));
+  TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Deinit and make sure add of a valid socket fails
   etcpal_poll_context_deinit(&context);
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, LWPA_POLL_IN, NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_IN, NULL));
 
   // Initialize the context and add invalid sockets or invalid events
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   // Add invalid socket
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, LWPA_SOCKET_INVALID, LWPA_POLL_IN, NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, ETCPAL_SOCKET_INVALID, ETCPAL_POLL_IN, NULL));
 
   // Add socket with invalid events
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, 0, NULL));
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, LWPA_POLL_ERR, NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_ERR, NULL));
 
   // Try to modify a socket that has not been added
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, LWPA_POLL_IN, NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, ETCPAL_POLL_IN, NULL));
 
   // Add the socket and try to modify it with invalid calls
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, LWPA_POLL_IN, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_IN, NULL));
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, 0, NULL));              // Invalid events
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, LWPA_POLL_ERR, NULL));  // Invalid events
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, ETCPAL_POLL_ERR, NULL));  // Invalid events
 
   // Deinit and make sure we cannot modify
   etcpal_poll_context_deinit(&context);
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, LWPA_POLL_OUT, NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, ETCPAL_POLL_OUT, NULL));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock));
 }
@@ -154,10 +154,10 @@ TEST(etcpal_socket, poll_user_data_works)
   // Create two UDP sockets and poll for writability, make sure our user data gets passed back to us
   // intact.
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &sock_1));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &sock_2));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock_1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock_2));
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_1, LWPA_POLL_OUT, user_data_1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_1, ETCPAL_POLL_OUT, user_data_1));
 
   LwpaPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
@@ -165,14 +165,14 @@ TEST(etcpal_socket, poll_user_data_works)
   TEST_ASSERT_EQUAL(event.user_data, user_data_1);
 
   etcpal_poll_remove_socket(&context, sock_1);
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_2, LWPA_POLL_OUT, user_data_2));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_2, ETCPAL_POLL_OUT, user_data_2));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_2);
   TEST_ASSERT_EQUAL(event.user_data, user_data_2);
 
   // Modify and make sure we get the updated user data
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock_2, LWPA_POLL_OUT, user_data_1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock_2, ETCPAL_POLL_OUT, user_data_1));
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_2);
   TEST_ASSERT_EQUAL(event.user_data, user_data_1);
@@ -187,13 +187,13 @@ TEST(etcpal_socket, poll_user_data_works)
 // Test the etcpal_poll_modify_socket() functionality, using UDP sockets for simplicity
 TEST(etcpal_socket, poll_modify_socket_works)
 {
-  etcpal_socket_t sock = LWPA_SOCKET_INVALID;
+  etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
 
   LwpaPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &sock));
-  TEST_ASSERT_NOT_EQUAL(sock, LWPA_SOCKET_INVALID);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock));
+  TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Bind the socket to the wildcard address and a specific port.
   LwpaSockaddr bind_addr;
@@ -202,31 +202,31 @@ TEST(etcpal_socket, poll_modify_socket_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(sock, &bind_addr));
 
   // Add it for output polling first
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, LWPA_POLL_OUT, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_OUT, NULL));
 
   // Socket should be ready right away
   LwpaPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock);
-  TEST_ASSERT_EQUAL(event.events, LWPA_POLL_OUT);
+  TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_OUT);
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   // Modify it to do input polling
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, LWPA_POLL_IN, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, ETCPAL_POLL_IN, NULL));
 
   // Should time out now
   TEST_ASSERT_EQUAL(kEtcPalErrTimedOut, etcpal_poll_wait(&context, &event, 100));
 
   // Send data to socket
   LwpaSockaddr send_addr;
-  LWPA_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
+  ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   send_addr.port = POLL_MODIFY_TEST_PORT_BASE;
   etcpal_sendto(sock, (const uint8_t*)"test message", sizeof("test message"), 0, &send_addr);
 
   // Should get the poll in event
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock);
-  TEST_ASSERT_EQUAL(event.events, LWPA_POLL_IN);
+  TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_IN);
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock));
@@ -238,21 +238,21 @@ TEST(etcpal_socket, poll_modify_socket_works)
 // Test the etcpal_poll_* API, polling for readability on UDP sockets.
 TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
 {
-  etcpal_socket_t send_sock = LWPA_SOCKET_INVALID;
-  etcpal_socket_t rcvsock1 = LWPA_SOCKET_INVALID;
-  etcpal_socket_t rcvsock2 = LWPA_SOCKET_INVALID;
+  etcpal_socket_t send_sock = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t rcvsock1 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t rcvsock2 = ETCPAL_SOCKET_INVALID;
 
   LwpaPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock1));
-  TEST_ASSERT_NOT_EQUAL(rcvsock1, LWPA_SOCKET_INVALID);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &rcvsock1));
+  TEST_ASSERT_NOT_EQUAL(rcvsock1, ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &rcvsock2));
-  TEST_ASSERT_NOT_EQUAL(rcvsock2, LWPA_SOCKET_INVALID);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &rcvsock2));
+  TEST_ASSERT_NOT_EQUAL(rcvsock2, ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &send_sock));
-  TEST_ASSERT_NOT_EQUAL(send_sock, LWPA_SOCKET_INVALID);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &send_sock));
+  TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   // Bind socket 1 to the wildcard address and a specific port.
   LwpaSockaddr bind_addr;
@@ -265,15 +265,15 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(rcvsock2, &bind_addr));
 
   // Get the poll context set up
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, rcvsock1, LWPA_POLL_IN, NULL));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, rcvsock2, LWPA_POLL_IN, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, rcvsock1, ETCPAL_POLL_IN, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, rcvsock2, ETCPAL_POLL_IN, NULL));
 
   // Test poll with nothing sending - should time out.
   LwpaPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrTimedOut, etcpal_poll_wait(&context, &event, 100));
 
   LwpaSockaddr send_addr;
-  LWPA_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
+  ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   send_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
 
 #define POLL_UDP_IN_TEST_MESSAGE (const uint8_t*)"test message"
@@ -286,7 +286,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   // Poll once, make sure we get one of the sockets.
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 1000));
   TEST_ASSERT(event.socket == rcvsock1 || event.socket == rcvsock2);
-  TEST_ASSERT_EQUAL(event.events, LWPA_POLL_IN);
+  TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_IN);
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   // Receive data on the socket.
@@ -307,7 +307,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
     TEST_ASSERT_EQUAL(event.socket, rcvsock2);
   else
     TEST_ASSERT_EQUAL(event.socket, rcvsock1);
-  TEST_ASSERT_EQUAL(event.events, LWPA_POLL_IN);
+  TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_IN);
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(rcvsock1));
@@ -324,25 +324,25 @@ TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
   LwpaPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &sock_1));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(LWPA_AF_INET, LWPA_DGRAM, &sock_2));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock_1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock_2));
 
   // The sockets should poll as ready for output right away. Not sure what else there is to test
   // here.
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_1, LWPA_POLL_OUT, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_1, ETCPAL_POLL_OUT, NULL));
 
   LwpaPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_1);
-  TEST_ASSERT_EQUAL(event.events, LWPA_POLL_OUT);
+  TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_OUT);
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   etcpal_poll_remove_socket(&context, sock_1);
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_2, LWPA_POLL_OUT, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_2, ETCPAL_POLL_OUT, NULL));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_2);
-  TEST_ASSERT_EQUAL(event.events, LWPA_POLL_OUT);
+  TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_OUT);
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock_1));
@@ -359,16 +359,16 @@ TEST(etcpal_socket, getaddrinfo_works_as_expected)
 
   // We can't currently assume internet access for our tests.
 #if 0
-  ai_hints.ai_family = LWPA_AF_INET;
+  ai_hints.ai_family = ETCPAL_AF_INET;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_getaddrinfo(test_hostname, test_service, &ai_hints, &ai));
-  TEST_ASSERT(LWPA_IP_IS_V4(&ai.ai_addr.ip));
+  TEST_ASSERT(ETCPAL_IP_IS_V4(&ai.ai_addr.ip));
   etcpal_freeaddrinfo(&ai);
 #endif
 
-  ai_hints.ai_flags = LWPA_AI_NUMERICHOST;
+  ai_hints.ai_flags = ETCPAL_AI_NUMERICHOST;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_getaddrinfo(test_gai_ip_str, test_gai_port_str, &ai_hints, &ai));
-  TEST_ASSERT(LWPA_IP_IS_V4(&ai.ai_addr.ip));
-  TEST_ASSERT_EQUAL_UINT32(LWPA_IP_V4_ADDRESS(&ai.ai_addr.ip), test_gai_ip);
+  TEST_ASSERT(ETCPAL_IP_IS_V4(&ai.ai_addr.ip));
+  TEST_ASSERT_EQUAL_UINT32(ETCPAL_IP_V4_ADDRESS(&ai.ai_addr.ip), test_gai_ip);
   TEST_ASSERT_EQUAL_UINT16(ai.ai_addr.port, test_gai_port);
   etcpal_freeaddrinfo(&ai);
 }

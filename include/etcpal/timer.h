@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal_timer.h: Platform-neutral implementation of system timers. */
-#ifndef _LWPA_TIMER_H_
-#define _LWPA_TIMER_H_
+#ifndef _ETCPAL_TIMER_H_
+#define _ETCPAL_TIMER_H_
 
 #include "etcpal/int.h"
 #include "etcpal/bool.h"
@@ -70,4 +70,4 @@ uint32_t etcpal_timer_remaining(const LwpaTimer* timer);
 
 /*! @} */
 
-#endif /* _LWPA_TIMER_H_ */
+#endif /* _ETCPAL_TIMER_H_ */

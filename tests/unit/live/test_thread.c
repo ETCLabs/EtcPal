@@ -45,8 +45,8 @@ void wait_and_exit(void* param)
 TEST(etcpal_thread, create_and_destroy_functions_work)
 {
   LwpaThreadParams params = {
-      LWPA_THREAD_DEFAULT_PRIORITY,  // thread_priority
-      LWPA_THREAD_DEFAULT_STACK,     // thread_stack
+      ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
+      ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
       "cd_thread",                   // thread_name
       NULL                           // platform_data
   };
@@ -88,8 +88,8 @@ void oneshot(void* param)
 TEST(etcpal_thread, threads_are_time_sliced)
 {
   LwpaThreadParams params = {
-      LWPA_THREAD_DEFAULT_PRIORITY,  // thread_priority
-      LWPA_THREAD_DEFAULT_STACK,     // thread_stack
+      ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
+      ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
       "ts_thread",                   // thread_name
       NULL                           // platform_data
   };

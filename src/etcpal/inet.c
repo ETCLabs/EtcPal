@@ -21,8 +21,8 @@
 
 /**************************** Private variables ******************************/
 
-static const uint8_t v6_wildcard[LWPA_IPV6_BYTES] = {0};
-static const uint8_t v6_loopback[LWPA_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+static const uint8_t v6_wildcard[ETCPAL_IPV6_BYTES] = {0};
+static const uint8_t v6_loopback[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
 
 /*************************** Function definitions ****************************/
 
@@ -38,15 +38,15 @@ bool etcpal_ip_is_link_local(const LwpaIpAddr* ip)
 {
   if (ip)
   {
-    if (LWPA_IP_IS_V4(ip))
+    if (ETCPAL_IP_IS_V4(ip))
     {
       // An IPv4 address is link-local if the first two octets are 0xa9fe (169.254.0.0/16)
-      return ((LWPA_IP_V4_ADDRESS(ip) & 0xffff0000u) == 0xa9fe0000u);
+      return ((ETCPAL_IP_V4_ADDRESS(ip) & 0xffff0000u) == 0xa9fe0000u);
     }
-    else if (LWPA_IP_IS_V6(ip))
+    else if (ETCPAL_IP_IS_V6(ip))
     {
       // An IPv6 address is link-local if the first 10 bits are 1111111010 (fe80::/10)
-      const uint8_t* addr_buf = LWPA_IP_V6_ADDRESS(ip);
+      const uint8_t* addr_buf = ETCPAL_IP_V6_ADDRESS(ip);
       return (addr_buf[0] == 0xfeu && ((addr_buf[1] & 0xc0u) == 0x80u));
     }
   }
@@ -65,15 +65,15 @@ bool etcpal_ip_is_loopback(const LwpaIpAddr* ip)
 {
   if (ip)
   {
-    if (LWPA_IP_IS_V4(ip))
+    if (ETCPAL_IP_IS_V4(ip))
     {
       // An IPv4 address is loopback if the first octet is 0x7f (127.0.0.0/8)
-      return ((LWPA_IP_V4_ADDRESS(ip) & 0xff000000u) == 0x7f000000u);
+      return ((ETCPAL_IP_V4_ADDRESS(ip) & 0xff000000u) == 0x7f000000u);
     }
-    else if (LWPA_IP_IS_V6(ip))
+    else if (ETCPAL_IP_IS_V6(ip))
     {
       // An IPv6 address is loopback if it is equal to the address ::1
-      return (0 == memcmp(LWPA_IP_V6_ADDRESS(ip), v6_loopback, LWPA_IPV6_BYTES));
+      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip), v6_loopback, ETCPAL_IPV6_BYTES));
     }
   }
   return false;
@@ -91,16 +91,16 @@ bool etcpal_ip_is_multicast(const LwpaIpAddr* ip)
 {
   if (ip)
   {
-    if (LWPA_IP_IS_V4(ip))
+    if (ETCPAL_IP_IS_V4(ip))
     {
       // An IPv4 address is multicast if it is in the range 224.0.0.0 to 239.255.255.255, inclusive
       // (224.0.0.0/4)
-      return (LWPA_IP_V4_ADDRESS(ip) >= 0xe0000000u && LWPA_IP_V4_ADDRESS(ip) <= 0xefffffffu);
+      return (ETCPAL_IP_V4_ADDRESS(ip) >= 0xe0000000u && ETCPAL_IP_V4_ADDRESS(ip) <= 0xefffffffu);
     }
-    else if (LWPA_IP_IS_V6(ip))
+    else if (ETCPAL_IP_IS_V6(ip))
     {
       // An IPv6 address is multicast if the first octet is 0xff (ff00::/8)
-      return (LWPA_IP_V6_ADDRESS(ip)[0] == 0xff);
+      return (ETCPAL_IP_V6_ADDRESS(ip)[0] == 0xff);
     }
   }
   return false;
@@ -110,8 +110,8 @@ bool etcpal_ip_is_multicast(const LwpaIpAddr* ip)
  *
  *  Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
  *  etcpal_bind() to indicate that a socket should be bound to all available network interfaces. It
- *  should not be used as a placeholder or invalid address - use LWPA_IP_SET_INVALID() and
- *  LWPA_IP_IS_INVALID() for that.
+ *  should not be used as a placeholder or invalid address - use ETCPAL_IP_SET_INVALID() and
+ *  ETCPAL_IP_IS_INVALID() for that.
  *
  *  \param[in] ip Address to check.
  *  \return true: ip contains a wildcard address.
@@ -122,13 +122,13 @@ bool etcpal_ip_is_wildcard(const LwpaIpAddr* ip)
   if (ip)
   {
     // Wildcard addresses are all-zeroes
-    if (LWPA_IP_IS_V4(ip))
+    if (ETCPAL_IP_IS_V4(ip))
     {
-      return (LWPA_IP_V4_ADDRESS(ip) == 0);
+      return (ETCPAL_IP_V4_ADDRESS(ip) == 0);
     }
-    else if (LWPA_IP_IS_V6(ip))
+    else if (ETCPAL_IP_IS_V6(ip))
     {
-      return (0 == memcmp(LWPA_IP_V6_ADDRESS(ip), v6_wildcard, LWPA_IPV6_BYTES));
+      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip), v6_wildcard, ETCPAL_IPV6_BYTES));
     }
   }
   return false;
@@ -138,8 +138,8 @@ bool etcpal_ip_is_wildcard(const LwpaIpAddr* ip)
  *
  *  Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
  *  etcpal_bind() to indicate that a socket should be bound to all available network interfaces. It
- *  should not be used as a placeholder or invalid address - use LWPA_IP_SET_INVALID() and
- *  LWPA_IP_IS_INVALID() for that.
+ *  should not be used as a placeholder or invalid address - use ETCPAL_IP_SET_INVALID() and
+ *  ETCPAL_IP_IS_INVALID() for that.
  *
  *  \param[in] type Type of wildcard to create, either IPv4 or IPv6.
  *  \param[out] ip Address in which to store the wildcard value.
@@ -151,13 +151,13 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, LwpaIpAddr* ip)
     switch (type)
     {
       case kEtcPalIpTypeV4:
-        LWPA_IP_SET_V4_ADDRESS(ip, 0);
+        ETCPAL_IP_SET_V4_ADDRESS(ip, 0);
         break;
       case kEtcPalIpTypeV6:
-        LWPA_IP_SET_V6_ADDRESS(ip, v6_wildcard);
+        ETCPAL_IP_SET_V6_ADDRESS(ip, v6_wildcard);
         break;
       default:
-        LWPA_IP_SET_INVALID(ip);
+        ETCPAL_IP_SET_INVALID(ip);
         break;
     }
   }
@@ -178,11 +178,11 @@ bool etcpal_ip_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
   {
     if (ip1->type == kEtcPalIpTypeV4)
     {
-      return LWPA_IP_V4_ADDRESS(ip1) == LWPA_IP_V4_ADDRESS(ip2);
+      return ETCPAL_IP_V4_ADDRESS(ip1) == ETCPAL_IP_V4_ADDRESS(ip2);
     }
     else
     {
-      return (0 == memcmp(LWPA_IP_V6_ADDRESS(ip1), LWPA_IP_V6_ADDRESS(ip2), LWPA_IPV6_BYTES));
+      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip1), ETCPAL_IP_V6_ADDRESS(ip2), ETCPAL_IPV6_BYTES));
     }
   }
   return false;
@@ -212,11 +212,11 @@ int etcpal_ip_cmp(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2)
     }
     else if (ip1->type == kEtcPalIpTypeV4)
     {
-      return (LWPA_IP_V4_ADDRESS(ip1) > LWPA_IP_V4_ADDRESS(ip2)) - (LWPA_IP_V4_ADDRESS(ip1) < LWPA_IP_V4_ADDRESS(ip2));
+      return (ETCPAL_IP_V4_ADDRESS(ip1) > ETCPAL_IP_V4_ADDRESS(ip2)) - (ETCPAL_IP_V4_ADDRESS(ip1) < ETCPAL_IP_V4_ADDRESS(ip2));
     }
     else if (ip1->type == kEtcPalIpTypeV6)
     {
-      return memcmp(LWPA_IP_V6_ADDRESS(ip1), LWPA_IP_V6_ADDRESS(ip2), LWPA_IPV6_BYTES);
+      return memcmp(ETCPAL_IP_V6_ADDRESS(ip1), ETCPAL_IP_V6_ADDRESS(ip2), ETCPAL_IPV6_BYTES);
     }
   }
   return 0;
@@ -254,9 +254,9 @@ unsigned int etcpal_ip_mask_length(const LwpaIpAddr* netmask)
 
   if (netmask)
   {
-    if (LWPA_IP_IS_V4(netmask))
+    if (ETCPAL_IP_IS_V4(netmask))
     {
-      uint32_t addr_val = LWPA_IP_V4_ADDRESS(netmask);
+      uint32_t addr_val = ETCPAL_IP_V4_ADDRESS(netmask);
       uint32_t bit_mask = 0x80000000u;
       while (addr_val & bit_mask)
       {
@@ -264,17 +264,17 @@ unsigned int etcpal_ip_mask_length(const LwpaIpAddr* netmask)
         bit_mask >>= 1;
       }
     }
-    else if (LWPA_IP_IS_V6(netmask))
+    else if (ETCPAL_IP_IS_V6(netmask))
     {
-      const uint8_t* addr_buf = LWPA_IP_V6_ADDRESS(netmask);
+      const uint8_t* addr_buf = ETCPAL_IP_V6_ADDRESS(netmask);
       size_t addr_index = 0;
-      while (addr_index < LWPA_IPV6_BYTES && addr_buf[addr_index] == 0xffu)
+      while (addr_index < ETCPAL_IPV6_BYTES && addr_buf[addr_index] == 0xffu)
       {
         length += 8;
         addr_index++;
       }
 
-      if (addr_index < LWPA_IPV6_BYTES)
+      if (addr_index < ETCPAL_IPV6_BYTES)
       {
         uint8_t addr_val = addr_buf[addr_index];
         uint8_t bit_mask = 0x80u;
@@ -316,11 +316,11 @@ LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_le
       mask_val |= bit_mask;
     }
 
-    LWPA_IP_SET_V4_ADDRESS(&result, mask_val);
+    ETCPAL_IP_SET_V4_ADDRESS(&result, mask_val);
   }
   else if (type == kEtcPalIpTypeV6)
   {
-    uint8_t mask_buf[LWPA_IPV6_BYTES];
+    uint8_t mask_buf[ETCPAL_IPV6_BYTES];
     memset(mask_buf, 0, sizeof(mask_buf));
     unsigned int adjusted_length = (mask_length > 128 ? 128 : mask_length);
 
@@ -341,11 +341,11 @@ LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_le
       bit_mask >>= 1;
     } while (bit_mask != 0);
 
-    LWPA_IP_SET_V6_ADDRESS(&result, mask_buf);
+    ETCPAL_IP_SET_V6_ADDRESS(&result, mask_buf);
   }
   else
   {
-    LWPA_IP_SET_INVALID(&result);
+    ETCPAL_IP_SET_INVALID(&result);
   }
   return result;
 }
@@ -371,19 +371,19 @@ LwpaIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_le
  */
 bool etcpal_ip_network_portions_equal(const LwpaIpAddr* ip1, const LwpaIpAddr* ip2, const LwpaIpAddr* netmask)
 {
-  if (LWPA_IP_IS_V4(ip1) && LWPA_IP_IS_V4(ip2) && LWPA_IP_IS_V4(netmask))
+  if (ETCPAL_IP_IS_V4(ip1) && ETCPAL_IP_IS_V4(ip2) && ETCPAL_IP_IS_V4(netmask))
   {
-    return ((LWPA_IP_V4_ADDRESS(ip1) & LWPA_IP_V4_ADDRESS(netmask)) ==
-            (LWPA_IP_V4_ADDRESS(ip2) & LWPA_IP_V4_ADDRESS(netmask)));
+    return ((ETCPAL_IP_V4_ADDRESS(ip1) & ETCPAL_IP_V4_ADDRESS(netmask)) ==
+            (ETCPAL_IP_V4_ADDRESS(ip2) & ETCPAL_IP_V4_ADDRESS(netmask)));
   }
-  else if (LWPA_IP_IS_V6(ip1) && LWPA_IP_IS_V6(ip2) && LWPA_IP_IS_V6(netmask))
+  else if (ETCPAL_IP_IS_V6(ip1) && ETCPAL_IP_IS_V6(ip2) && ETCPAL_IP_IS_V6(netmask))
   {
     size_t i;
-    const uint32_t* p1 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip1);
-    const uint32_t* p2 = (const uint32_t*)LWPA_IP_V6_ADDRESS(ip2);
-    const uint32_t* pm = (const uint32_t*)LWPA_IP_V6_ADDRESS(netmask);
+    const uint32_t* p1 = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(ip1);
+    const uint32_t* p2 = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(ip2);
+    const uint32_t* pm = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(netmask);
 
-    for (i = 0; i < LWPA_IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
+    for (i = 0; i < ETCPAL_IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
     {
       if ((*p1 & *pm) != (*p2 & *pm))
         return false;

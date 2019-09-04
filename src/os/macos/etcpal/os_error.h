@@ -17,11 +17,11 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_ERROR_H_
-#define _LWPA_OS_ERROR_H_
+#ifndef _ETCPAL_OS_ERROR_H_
+#define _ETCPAL_OS_ERROR_H_
 
 #include "etcpal/error.h"
 
 etcpal_error_t errno_os_to_lwpa(int os_errno);
 
-#endif /* _LWPA_OS_ERROR_H_ */
+#endif /* _ETCPAL_OS_ERROR_H_ */

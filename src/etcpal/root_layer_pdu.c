@@ -120,10 +120,10 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootL
   buf_end = buf + buflen;
 
   flags_byte = *buf;
-  extlength = LWPA_PDU_L_FLAG_SET(flags_byte);
-  inheritvect = !LWPA_PDU_V_FLAG_SET(flags_byte);
-  inherithead = !LWPA_PDU_H_FLAG_SET(flags_byte);
-  inheritdata = !LWPA_PDU_D_FLAG_SET(flags_byte);
+  extlength = ETCPAL_PDU_L_FLAG_SET(flags_byte);
+  inheritvect = !ETCPAL_PDU_V_FLAG_SET(flags_byte);
+  inherithead = !ETCPAL_PDU_H_FLAG_SET(flags_byte);
+  inheritdata = !ETCPAL_PDU_D_FLAG_SET(flags_byte);
 
   cur_ptr = buf;
   if (cur_ptr + (extlength ? 3 : 2) >= buf_end)
@@ -132,7 +132,7 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootL
     return false;
   }
 
-  pdu_len = LWPA_PDU_LENGTH(buf);
+  pdu_len = ETCPAL_PDU_LENGTH(buf);
   min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : 4) + (inherithead ? 0 : 16));
   if (((inheritvect || inherithead || inheritdata) && !last_pdu) || (pdu_len < min_pdu_len))
   {
@@ -155,8 +155,8 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootL
   }
   else
   {
-    memcpy(pdu->sender_cid.data, cur_ptr, LWPA_UUID_BYTES);
-    cur_ptr += LWPA_UUID_BYTES;
+    memcpy(pdu->sender_cid.data, cur_ptr, ETCPAL_UUID_BYTES);
+    cur_ptr += ETCPAL_UUID_BYTES;
   }
   if (inheritdata)
   {
@@ -184,7 +184,7 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootL
  *  length parsed from the preamble...
  *
  *  \code
- *  LwpaPdu pdu = LWPA_PDU_INIT; // Must initialize this!!
+ *  LwpaPdu pdu = ETCPAL_PDU_INIT; // Must initialize this!!
  *  bool res = false;
  *  do
  *  {
@@ -216,7 +216,7 @@ bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLaye
   if (etcpal_parse_pdu(buf, buflen, &rlp_constraints, last_pdu))
   {
     pdu->vector = etcpal_upack_32b(last_pdu->pvector);
-    memcpy(pdu->sender_cid.data, last_pdu->pheader, LWPA_UUID_BYTES);
+    memcpy(pdu->sender_cid.data, last_pdu->pheader, ETCPAL_UUID_BYTES);
     pdu->pdata = last_pdu->pdata;
     pdu->datalen = last_pdu->datalen;
     return true;
@@ -321,19 +321,19 @@ size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRoot
   *cur_ptr = 0x70;
   if (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->datalen))
   {
-    LWPA_PDU_SET_L_FLAG(*cur_ptr);
-    LWPA_PDU_PACK_EXT_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_EXT_LEN + pdu->datalen);
+    ETCPAL_PDU_SET_L_FLAG(*cur_ptr);
+    ETCPAL_PDU_PACK_EXT_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_EXT_LEN + pdu->datalen);
     cur_ptr += 3;
   }
   else
   {
-    LWPA_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->datalen);
+    ETCPAL_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->datalen);
     cur_ptr += 2;
   }
   etcpal_pack_32b(cur_ptr, pdu->vector);
   cur_ptr += 4;
-  memcpy(cur_ptr, pdu->sender_cid.data, LWPA_UUID_BYTES);
-  cur_ptr += LWPA_UUID_BYTES;
+  memcpy(cur_ptr, pdu->sender_cid.data, ETCPAL_UUID_BYTES);
+  cur_ptr += ETCPAL_UUID_BYTES;
   return (size_t)(cur_ptr - buf);
 }
 
@@ -370,15 +370,15 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootL
     if (pdu == pdu_block)
     {
       /* First PDU in the block - no inheritance */
-      LWPA_PDU_SET_V_FLAG(*cur_ptr);
+      ETCPAL_PDU_SET_V_FLAG(*cur_ptr);
       inheritvec = false;
       last_pdu.vector = pdu->vector;
 
-      LWPA_PDU_SET_H_FLAG(*cur_ptr);
+      ETCPAL_PDU_SET_H_FLAG(*cur_ptr);
       inherithead = false;
       last_pdu.sender_cid = pdu->sender_cid;
 
-      LWPA_PDU_SET_D_FLAG(*cur_ptr);
+      ETCPAL_PDU_SET_D_FLAG(*cur_ptr);
       inheritdata = false;
       last_pdu.pdata = pdu->pdata;
       last_pdu.datalen = pdu->datalen;
@@ -388,19 +388,19 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootL
       /* Check if we can use some inheritance */
       if (pdu->vector != last_pdu.vector)
       {
-        LWPA_PDU_SET_V_FLAG(*cur_ptr);
+        ETCPAL_PDU_SET_V_FLAG(*cur_ptr);
         inheritvec = false;
         last_pdu.vector = pdu->vector;
       }
-      if (0 != LWPA_UUID_CMP(&pdu->sender_cid, &last_pdu.sender_cid))
+      if (0 != ETCPAL_UUID_CMP(&pdu->sender_cid, &last_pdu.sender_cid))
       {
-        LWPA_PDU_SET_H_FLAG(*cur_ptr);
+        ETCPAL_PDU_SET_H_FLAG(*cur_ptr);
         inherithead = false;
         last_pdu.sender_cid = pdu->sender_cid;
       }
       if ((pdu->datalen != last_pdu.datalen) || (0 != memcmp(pdu->pdata, last_pdu.pdata, last_pdu.datalen)))
       {
-        LWPA_PDU_SET_D_FLAG(*cur_ptr);
+        ETCPAL_PDU_SET_D_FLAG(*cur_ptr);
         inheritdata = false;
         last_pdu.pdata = pdu->pdata;
         last_pdu.datalen = pdu->datalen;
@@ -414,15 +414,15 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootL
     {
       size_t len = 3u + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
                    (inheritdata ? 0u : pdu->datalen);
-      LWPA_PDU_SET_L_FLAG(*cur_ptr);
-      LWPA_PDU_PACK_EXT_LEN(cur_ptr, len);
+      ETCPAL_PDU_SET_L_FLAG(*cur_ptr);
+      ETCPAL_PDU_PACK_EXT_LEN(cur_ptr, len);
       cur_ptr += 3;
     }
     else
     {
       size_t len = 2 + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
                    (inheritdata ? 0u : pdu->datalen);
-      LWPA_PDU_PACK_NORMAL_LEN(cur_ptr, len);
+      ETCPAL_PDU_PACK_NORMAL_LEN(cur_ptr, len);
       cur_ptr += 2;
     }
 
@@ -433,8 +433,8 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootL
     }
     if (!inherithead)
     {
-      memcpy(cur_ptr, pdu->sender_cid.data, LWPA_UUID_BYTES);
-      cur_ptr += LWPA_UUID_BYTES;
+      memcpy(cur_ptr, pdu->sender_cid.data, ETCPAL_UUID_BYTES);
+      cur_ptr += ETCPAL_UUID_BYTES;
     }
     if (!inheritdata)
     {

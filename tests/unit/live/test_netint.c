@@ -29,13 +29,13 @@ TEST_GROUP(etcpal_netint);
 
 TEST_SETUP(etcpal_netint)
 {
-  etcpal_init(LWPA_FEATURE_NETINTS);
+  etcpal_init(ETCPAL_FEATURE_NETINTS);
   num_netints = etcpal_netint_get_num_interfaces();
 }
 
 TEST_TEAR_DOWN(etcpal_netint)
 {
-  etcpal_deinit(LWPA_FEATURE_NETINTS);
+  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 }
 
 TEST(etcpal_netint, netint_enumeration_works)
@@ -161,7 +161,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
   // the interface address itself.
   for (const LwpaNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
-    if (!LWPA_IP_IS_V4(&netint->addr) || etcpal_ip_is_loopback(&netint->addr) || etcpal_ip_is_link_local(&netint->addr))
+    if (!ETCPAL_IP_IS_V4(&netint->addr) || etcpal_ip_is_loopback(&netint->addr) || etcpal_ip_is_link_local(&netint->addr))
       continue;
 
     LwpaIpAddr test_addr = netint->addr;
@@ -169,8 +169,8 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
     TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
     // Put addresses in print form to test meaningful information in case of test failure
-    char test_addr_str[LWPA_INET6_ADDRSTRLEN];
-    etcpal_inet_ntop(&test_addr, test_addr_str, LWPA_INET6_ADDRSTRLEN);
+    char test_addr_str[ETCPAL_INET6_ADDRSTRLEN];
+    etcpal_inet_ntop(&test_addr, test_addr_str, ETCPAL_INET6_ADDRSTRLEN);
     char test_msg[150];
     snprintf(test_msg, 150, "Address tried: %s (interface %u), interface returned: %u", test_addr_str, netint->index,
              netint_index_res);
@@ -179,7 +179,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
   }
 
   LwpaIpAddr ext_addr;
-  LWPA_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
+  ETCPAL_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
   unsigned int netint_index_res;
   unsigned int netint_index_default;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &netint_index_default));

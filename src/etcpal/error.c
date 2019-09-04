@@ -22,7 +22,7 @@
 /* clang-format off */
 
 /* The etcpal_error string array, for use by etcpal_strerror(). */
-const char *etcpal_error_strings[LWPA_NUM_ERROR_CODES] =
+const char *etcpal_error_strings[ETCPAL_NUM_ERROR_CODES] =
 {
   "No error",                         /* kEtcPalErrOk */
   "Handle not found",                 /* kEtcPalErrNotFound */

@@ -17,12 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_PRIVATE_LOG_H_
-#define _LWPA_PRIVATE_LOG_H_
+#ifndef _ETCPAL_PRIVATE_LOG_H_
+#define _ETCPAL_PRIVATE_LOG_H_
 
 #include "etcpal/error.h"
 
 etcpal_error_t etcpal_log_init();
 void etcpal_log_deinit();
 
-#endif /* _LWPA_PRIVATE_LOG_H_ */
+#endif /* _ETCPAL_PRIVATE_LOG_H_ */

@@ -154,7 +154,7 @@ void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
 {
   const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
 
-  LWPA_IP_SET_V4_ADDRESS(&info->addr, ntohl(sin->sin_addr.s_addr));
+  ETCPAL_IP_SET_V4_ADDRESS(&info->addr, ntohl(sin->sin_addr.s_addr));
   info->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, pip->OnLinkPrefixLength);
 }
 
@@ -162,7 +162,7 @@ void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
 {
   const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;
 
-  LWPA_IP_SET_V6_ADDRESS(&info->addr, sin6->sin6_addr.s6_addr);
+  ETCPAL_IP_SET_V6_ADDRESS(&info->addr, sin6->sin6_addr.s6_addr);
   info->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, pip->OnLinkPrefixLength);
 }
 
@@ -232,17 +232,17 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
           continue;
       }
 
-      strncpy_s(info->name, LWPA_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
+      strncpy_s(info->name, ETCPAL_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
 
       // The friendly name requires special handling because it must be converted to UTF-8
-      memset(info->friendly_name, 0, LWPA_NETINTINFO_FRIENDLY_NAME_LEN);
+      memset(info->friendly_name, 0, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
       WideCharToMultiByte(CP_UTF8, 0, pcur->FriendlyName, -1, info->friendly_name,
-                          LWPA_NETINTINFO_FRIENDLY_NAME_LEN - 1, NULL, NULL);
+                          ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1, NULL, NULL);
 
-      if (pcur->PhysicalAddressLength == LWPA_NETINTINFO_MAC_LEN)
-        memcpy(info->mac, pcur->PhysicalAddress, LWPA_NETINTINFO_MAC_LEN);
+      if (pcur->PhysicalAddressLength == ETCPAL_NETINTINFO_MAC_LEN)
+        memcpy(info->mac, pcur->PhysicalAddress, ETCPAL_NETINTINFO_MAC_LEN);
       else
-        memset(info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
+        memset(info->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
 
       ++netint_index;
 

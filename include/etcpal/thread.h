@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_THREAD_H_
-#define _LWPA_THREAD_H_
+#ifndef _ETCPAL_THREAD_H_
+#define _ETCPAL_THREAD_H_
 
 #include "etcpal/os_thread.h"
 
@@ -34,12 +34,12 @@ typedef struct LwpaThreadParams
   void* platform_data;
 } LwpaThreadParams;
 
-#define LWPA_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)                \
+#define ETCPAL_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)                \
   do                                                                   \
   {                                                                    \
-    (threadparamsptr)->thread_priority = LWPA_THREAD_DEFAULT_PRIORITY; \
-    (threadparamsptr)->stack_size = LWPA_THREAD_DEFAULT_STACK;         \
-    (threadparamsptr)->thread_name = LWPA_THREAD_DEFAULT_NAME;         \
+    (threadparamsptr)->thread_priority = ETCPAL_THREAD_DEFAULT_PRIORITY; \
+    (threadparamsptr)->stack_size = ETCPAL_THREAD_DEFAULT_STACK;         \
+    (threadparamsptr)->thread_name = ETCPAL_THREAD_DEFAULT_NAME;         \
     (threadparamsptr)->platform_data = NULL;                           \
   } while (0)
 
@@ -54,4 +54,4 @@ void etcpal_thread_sleep(int sleep_ms);
 }
 #endif
 
-#endif /* _LWPA_THREAD_H_ */
+#endif /* _ETCPAL_THREAD_H_ */

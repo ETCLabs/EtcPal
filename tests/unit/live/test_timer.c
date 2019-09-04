@@ -27,12 +27,12 @@ TEST_GROUP(etcpal_timer);
 
 TEST_SETUP(etcpal_timer)
 {
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_TIMERS));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_TIMERS));
 }
 
 TEST_TEAR_DOWN(etcpal_timer)
 {
-  etcpal_deinit(LWPA_FEATURE_TIMERS);
+  etcpal_deinit(ETCPAL_FEATURE_TIMERS);
 }
 
 TEST(etcpal_timer, getms_gets_increasing_values)

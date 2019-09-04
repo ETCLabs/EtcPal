@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_ERROR_H_
-#define _LWPA_OS_ERROR_H_
+#ifndef _ETCPAL_OS_ERROR_H_
+#define _ETCPAL_OS_ERROR_H_
 
 #include "etcpal/error.h"
 #include <lwip/errno.h>
@@ -30,4 +30,4 @@
 etcpal_error_t errno_lwip_to_lwpa(int lwip_errno);
 etcpal_error_t err_gai_to_lwpa(int gai_error);
 
-#endif /* _LWPA_OS_ERROR_H_ */
+#endif /* _ETCPAL_OS_ERROR_H_ */

@@ -23,11 +23,11 @@
 #include "etcpal/private/opts.h"
 #include "etcpal/private/netint.h"
 
-#if LWPA_EMBOS_USE_MALLOC
+#if ETCPAL_EMBOS_USE_MALLOC
 #include <stdlib.h>
 static LwpaNetintInfo* static_netints;
 #else
-static LwpaNetintInfo static_netints[LWPA_EMBOS_MAX_NETINTS];
+static LwpaNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS];
 #endif
 size_t num_static_netints;
 size_t default_index;
@@ -35,14 +35,14 @@ size_t default_index;
 static void copy_common_interface_info(const struct netif* lwip_netif, LwpaNetintInfo* netint)
 {
   netint->index = netif_get_index(lwip_netif);
-  memset(netint->mac, 0, LWPA_NETINTINFO_MAC_LEN);
+  memset(netint->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
   memcpy(netint->mac, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
 
   char lwip_name[NETIF_NAMESIZE];
   if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
   {
-    strncpy(netint->name, lwip_name, LWPA_NETINTINFO_NAME_LEN);
-    strncpy(netint->friendly_name, lwip_name, LWPA_NETINTINFO_FRIENDLY_NAME_LEN);
+    strncpy(netint->name, lwip_name, ETCPAL_NETINTINFO_NAME_LEN);
+    strncpy(netint->friendly_name, lwip_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
   }
 }
 
@@ -52,8 +52,8 @@ static void copy_interface_info_v4(const struct netif* lwip_netif, LwpaNetintInf
 
   if (!ip_addr_isany(netif_ip_addr4(lwip_netif)))
   {
-    LWPA_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netif)->addr));
-    LWPA_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netif)->addr));
+    ETCPAL_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netif)->addr));
+    ETCPAL_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netif)->addr));
   }
 
   if (lwip_netif == netif_default)
@@ -71,10 +71,10 @@ static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
   if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[v6_addr_index]))
   {
 #if LWIP_IPV6_SCOPES
-    LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
+    ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
                                          ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
 #else
-    LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
+    ETCPAL_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
     // TODO revisit
     netint->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
 #endif
@@ -93,7 +93,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   struct netif* lwip_netif;
 
-#if LWPA_EMBOS_USE_MALLOC
+#if ETCPAL_EMBOS_USE_MALLOC
   size_t num_lwip_netints = 0;
   NETIF_FOREACH(lwip_netif)
   {
@@ -131,8 +131,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     cache->def.v6_index = netif_get_index(netif_default);
     for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
     {
-#if !LWPA_EMBOS_USE_MALLOC
-      if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
+#if !ETCPAL_EMBOS_USE_MALLOC
+      if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
         break;
 #endif
       if (copy_interface_info_v6(netif_default, i, &static_netints[num_static_netints]))
@@ -146,8 +146,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     if (lwip_netif == netif_default)
       continue;
 
-#if !LWPA_EMBOS_USE_MALLOC
-    if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
+#if !ETCPAL_EMBOS_USE_MALLOC
+    if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
       break;
 #endif
 
@@ -157,8 +157,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 #if LWIP_IPV6
     for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
     {
-#if !LWPA_EMBOS_USE_MALLOC
-      if (num_static_netints >= LWPA_EMBOS_MAX_NETINTS)
+#if !ETCPAL_EMBOS_USE_MALLOC
+      if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
         break;
 #endif
       if (copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints]))
@@ -174,7 +174,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 void os_free_interfaces(CachedNetintInfo* cache)
 {
-#if LWPA_EMBOS_USE_MALLOC
+#if ETCPAL_EMBOS_USE_MALLOC
   if (cache->netints)
   {
     free(cache->netints);
@@ -198,9 +198,9 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
 
   if (index_found == 0)
   {
-    if (LWPA_IP_IS_V4(dest) && cache->def.v4_valid)
+    if (ETCPAL_IP_IS_V4(dest) && cache->def.v4_valid)
       index_found = cache->def.v4_index;
-    else if (LWPA_IP_IS_V6(dest) && cache->def.v6_valid)
+    else if (ETCPAL_IP_IS_V6(dest) && cache->def.v6_valid)
       index_found = cache->def.v6_index;
   }
 

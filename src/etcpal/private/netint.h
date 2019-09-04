@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_PRIVATE_NETINT_H_
-#define _LWPA_PRIVATE_NETINT_H_
+#ifndef _ETCPAL_PRIVATE_NETINT_H_
+#define _ETCPAL_PRIVATE_NETINT_H_
 
 #include "etcpal/netint.h"
 #include "etcpal/error.h"
@@ -46,4 +46,4 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
 void os_free_interfaces(CachedNetintInfo* cache);
 etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index);
 
-#endif /* _LWPA_PRIVATE_NETINT_H_ */
+#endif /* _ETCPAL_PRIVATE_NETINT_H_ */

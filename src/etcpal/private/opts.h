@@ -17,10 +17,10 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_PRIVATE_OPTS_H_
-#define _LWPA_PRIVATE_OPTS_H_
+#ifndef _ETCPAL_PRIVATE_OPTS_H_
+#define _ETCPAL_PRIVATE_OPTS_H_
 
-#if LWPA_HAVE_CONFIG_H
+#if ETCPAL_HAVE_CONFIG_H
 #include "etcpal_config.h"
 #endif
 
@@ -28,13 +28,13 @@
  *  \ingroup lwpa
  *  \brief Compile-time configuration options for lwpa
  *
- *  Options starting with "LWPA_EMBOS_" (currently all of them) are ignored on Windows, macOS and
+ *  Options starting with "ETCPAL_EMBOS_" (currently all of them) are ignored on Windows, macOS and
  *  Linux.
  *
  *  To override any of these options, provide a file called etcpal_config.h and:
- *    * If not building lwpa with CMake: add LWPA_HAVE_CONFIG_H to your preprocessor definitions,
+ *    * If not building lwpa with CMake: add ETCPAL_HAVE_CONFIG_H to your preprocessor definitions,
  *      and add the path to etcpal_config.h as an include path
- *    * If building with CMake: use the CMake option LWPA_CONFIG_FILE_LOC
+ *    * If building with CMake: use the CMake option ETCPAL_CONFIG_FILE_LOC
  *
  *  In the etcpal_config.h file, simply #define any overridden options to the desired value.
  *
@@ -45,26 +45,26 @@
  *
  *  This can be defined to 0 if you are on a platform that does not provide a int64_t/uint64_t type.
  */
-#ifndef LWPA_INCLUDE_PACK_64
-#define LWPA_INCLUDE_PACK_64 1
+#ifndef ETCPAL_INCLUDE_PACK_64
+#define ETCPAL_INCLUDE_PACK_64 1
 #endif
 
 /*! \brief Whether a malloc() implementation is available.
  *
  *  Currently this only affects network interface enumeration using lwIP.
  */
-#ifndef LWPA_EMBOS_USE_MALLOC
-#define LWPA_EMBOS_USE_MALLOC 0
+#ifndef ETCPAL_EMBOS_USE_MALLOC
+#define ETCPAL_EMBOS_USE_MALLOC 0
 #endif
 
 /*! \brief The maximum number of network interfaces that can be tracked by the \ref etcpal_netint module.
  *
  *  Currently this limit is not necessary and therefore ignored on all targets except lwIP.
  */
-#ifndef LWPA_EMBOS_MAX_NETINTS
-#define LWPA_EMBOS_MAX_NETINTS 5
+#ifndef ETCPAL_EMBOS_MAX_NETINTS
+#define ETCPAL_EMBOS_MAX_NETINTS 5
 #endif
 
 /*! @} */
 
-#endif /* _LWPA_PRIVATE_OPTS_H_ */
+#endif /* _ETCPAL_PRIVATE_OPTS_H_ */

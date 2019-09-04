@@ -25,42 +25,42 @@
 
 /***************************** Private macros ********************************/
 
-#define LWPA_FD_ZERO(setptr) \
+#define ETCPAL_FD_ZERO(setptr) \
   FD_ZERO(&(setptr)->set);   \
   (setptr)->count = 0
 
-#define LWPA_FD_SET(sock, setptr) \
+#define ETCPAL_FD_SET(sock, setptr) \
   FD_SET(sock, &(setptr)->set);   \
   (setptr)->count++
 
-#define LWPA_FD_CLEAR(sock, setptr) \
+#define ETCPAL_FD_CLEAR(sock, setptr) \
   FD_CLR(sock, &(setptr)->set);     \
   (setptr)->count--
 
-#define LWPA_FD_ISSET(sock, setptr) FD_ISSET(sock, &(setptr)->set)
+#define ETCPAL_FD_ISSET(sock, setptr) FD_ISSET(sock, &(setptr)->set)
 
 /**************************** Private variables ******************************/
 
 /* clang-format off */
 
-#define LWPA_NUM_SHUT   3
-static const int shutmap[LWPA_NUM_SHUT] =
+#define ETCPAL_NUM_SHUT   3
+static const int shutmap[ETCPAL_NUM_SHUT] =
 {
   SHUT_RD,
   SHUT_WR,
   SHUT_RDWR
 };
 
-#define LWPA_NUM_AF     3
-static const int sfmap[LWPA_NUM_AF] =
+#define ETCPAL_NUM_AF     3
+static const int sfmap[ETCPAL_NUM_AF] =
 {
   AF_UNSPEC,
   AF_INET,
   AF_INET6
 };
 
-#define LWPA_NUM_TYPE   2
-static const int stmap[LWPA_NUM_TYPE] =
+#define ETCPAL_NUM_TYPE   2
+static const int stmap[ETCPAL_NUM_TYPE] =
 {
   SOCK_STREAM,
   SOCK_DGRAM
@@ -68,8 +68,8 @@ static const int stmap[LWPA_NUM_TYPE] =
 
 #if LWIP_DNS
 
-#define LWPA_NUM_AIF    8
-static const int aiflagmap[LWPA_NUM_AIF] =
+#define ETCPAL_NUM_AIF    8
+static const int aiflagmap[ETCPAL_NUM_AIF] =
 {
   0,
   AI_PASSIVE,
@@ -81,15 +81,15 @@ static const int aiflagmap[LWPA_NUM_AIF] =
   AI_PASSIVE | AI_CANONNAME | AI_NUMERICHOST
 };
 
-static const int aifammap[LWPA_NUM_AF] =
+static const int aifammap[ETCPAL_NUM_AF] =
 {
   AF_UNSPEC,
   AF_INET,
   AF_INET6
 };
 
-#define LWPA_NUM_IPPROTO    6
-static const int aiprotmap[LWPA_NUM_IPPROTO] =
+#define ETCPAL_NUM_IPPROTO    6
+static const int aiprotmap[ETCPAL_NUM_IPPROTO] =
 {
   0,
   IPPROTO_IP,
@@ -241,7 +241,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
   if (!buffer)
     return (int)kEtcPalErrInvalid;
 
-  int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
+  int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
   int res = (int)recv(id, buffer, length, impl_flags);
   return (res >= 0 ? res : (int)errno_lwip_to_lwpa(errno));
 }
@@ -253,7 +253,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 
   struct sockaddr_storage fromaddr;
   socklen_t fromlen = (socklen_t)sizeof fromaddr;
-  int impl_flags = (flags & LWPA_MSG_PEEK) ? MSG_PEEK : 0;
+  int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
   int res = (int)recvfrom(id, buffer, length, impl_flags, (struct sockaddr*)&fromaddr, &fromlen);
 
   if (res >= 0)
@@ -304,17 +304,17 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
 
   switch (level)
   {
-    case LWPA_SOL_SOCKET:
+    case ETCPAL_SOL_SOCKET:
       res = setsockopt_socket(id, option_name, option_value, option_len);
       break;
-    case LWPA_IPPROTO_IP:
+    case ETCPAL_IPPROTO_IP:
 #if LWIP_IPV4
       res = setsockopt_ip(id, option_name, option_value, option_len);
 #else
       errno = EAFNOSUPPORT;
 #endif
       break;
-    case LWPA_IPPROTO_IPV6:
+    case ETCPAL_IPPROTO_IPV6:
 #if LWIP_IPV6
       res = setsockopt_ip6(id, option_name, option_value, option_len);
 #else
@@ -332,11 +332,11 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
 {
   switch (option_name)
   {
-    case LWPA_SO_RCVBUF:
+    case ETCPAL_SO_RCVBUF:
       return setsockopt(id, SOL_SOCKET, SO_RCVBUF, option_value, option_len);
-    case LWPA_SO_SNDBUF:
+    case ETCPAL_SO_SNDBUF:
       return setsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, option_len);
-    case LWPA_SO_RCVTIMEO:
+    case ETCPAL_SO_RCVTIMEO:
       if (option_len == sizeof(int))
       {
         int ms = *(int*)option_value;
@@ -345,7 +345,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
         return setsockopt(id, SOL_SOCKET, SO_RCVTIMEO, &val, sizeof val);
       }
       break;
-    case LWPA_SO_SNDTIMEO:
+    case ETCPAL_SO_SNDTIMEO:
       if (option_len == sizeof(int))
       {
         int ms = *(int*)option_value;
@@ -354,15 +354,15 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
         return setsockopt(id, SOL_SOCKET, SO_SNDTIMEO, &val, sizeof val);
       }
       break;
-    case LWPA_SO_REUSEADDR:
+    case ETCPAL_SO_REUSEADDR:
       return setsockopt(id, SOL_SOCKET, SO_REUSEADDR, option_value, option_len);
-    case LWPA_SO_REUSEPORT:
+    case ETCPAL_SO_REUSEPORT:
       return setsockopt(id, SOL_SOCKET, SO_REUSEPORT, option_value, option_len);
-    case LWPA_SO_BROADCAST:
+    case ETCPAL_SO_BROADCAST:
       return setsockopt(id, SOL_SOCKET, SO_BROADCAST, option_value, option_len);
-    case LWPA_SO_KEEPALIVE:
+    case ETCPAL_SO_KEEPALIVE:
       return setsockopt(id, SOL_SOCKET, SO_KEEPALIVE, option_value, option_len);
-    case LWPA_SO_LINGER:
+    case ETCPAL_SO_LINGER:
       if (option_len == sizeof(LwpaLinger))
       {
         LwpaLinger* ll = (LwpaLinger*)option_value;
@@ -372,8 +372,8 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
         return setsockopt(id, SOL_SOCKET, SO_LINGER, &val, sizeof val);
       }
       break;
-    case LWPA_SO_ERROR:  // Set not supported
-    case LWPA_SO_TYPE:   // Set not supported
+    case ETCPAL_SO_ERROR:  // Set not supported
+    case ETCPAL_SO_TYPE:   // Set not supported
     default:
       break;
   }
@@ -399,52 +399,52 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 {
   switch (option_name)
   {
-    case LWPA_IP_TTL:
+    case ETCPAL_IP_TTL:
       return setsockopt(id, IPPROTO_IP, IP_TTL, option_value, option_len);
 #if LWIP_IGMP
-    case LWPA_IP_ADD_MEMBERSHIP:
+    case ETCPAL_IP_ADD_MEMBERSHIP:
       if (option_len == sizeof(LwpaMreq))
       {
         LwpaMreq* amreq = (LwpaMreq*)option_value;
-        if (LWPA_IP_IS_V4(&amreq->group))
+        if (ETCPAL_IP_IS_V4(&amreq->group))
         {
           struct ip_mreq val;
-          val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->group));
-          val.imr_interface.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->netint));
+          val.imr_multiaddr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&amreq->group));
+          val.imr_interface.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&amreq->netint));
           return setsockopt(id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &val, sizeof val);
         }
       }
       break;
-    case LWPA_IP_DROP_MEMBERSHIP:
+    case ETCPAL_IP_DROP_MEMBERSHIP:
       if (option_len == sizeof(LwpaMreq))
       {
         LwpaMreq* amreq = (LwpaMreq*)option_value;
-        if (LWPA_IP_IS_V4(&amreq->group))
+        if (ETCPAL_IP_IS_V4(&amreq->group))
         {
           struct ip_mreq val;
-          val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->group));
-          val.imr_interface.s_addr = htonl(LWPA_IP_V4_ADDRESS(&amreq->netint));
+          val.imr_multiaddr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&amreq->group));
+          val.imr_interface.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&amreq->netint));
           return setsockopt(id, IPPROTO_IP, IP_DROP_MEMBERSHIP, &val, sizeof val);
         }
       }
       break;
-    case LWPA_MCAST_JOIN_GROUP:
+    case ETCPAL_MCAST_JOIN_GROUP:
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
         struct ip_mreq val;
-        val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&greq->group));
+        val.imr_multiaddr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
         if (!netif_index_to_ipv4_addr(greq->ifindex, &val.imr_interface))
           return -1;
         return setsockopt(id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &val, sizeof val);
       }
       break;
-    case LWPA_MCAST_LEAVE_GROUP:
+    case ETCPAL_MCAST_LEAVE_GROUP:
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
         struct ip_mreq val;
-        val.imr_multiaddr.s_addr = htonl(LWPA_IP_V4_ADDRESS(&greq->group));
+        val.imr_multiaddr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
         if (!netif_index_to_ipv4_addr(greq->ifindex, &val.imr_interface))
           return -1;
         return setsockopt(id, IPPROTO_IP, IP_DROP_MEMBERSHIP, &val, sizeof val);
@@ -452,7 +452,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       break;
 #endif  // LWIP_IGMP
 #if LWIP_MULTICAST_TX_OPTIONS
-    case LWPA_IP_MULTICAST_IF:
+    case ETCPAL_IP_MULTICAST_IF:
       if (option_len == sizeof(unsigned int))
       {
         unsigned int netint_index = *((unsigned int*)option_value);
@@ -462,12 +462,12 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
         return setsockopt(id, IPPROTO_IP, IP_MULTICAST_IF, &val, sizeof val);
       }
       break;
-    case LWPA_IP_MULTICAST_TTL:
+    case ETCPAL_IP_MULTICAST_TTL:
     {
       unsigned char val = (unsigned char)*(int*)option_value;
       return setsockopt(id, IPPROTO_IP, IP_MULTICAST_TTL, &val, sizeof val);
     }
-    case LWPA_IP_MULTICAST_LOOP:
+    case ETCPAL_IP_MULTICAST_LOOP:
     {
       unsigned char val = (unsigned char)*(int*)option_value;
       return setsockopt(id, IPPROTO_IP, IP_MULTICAST_LOOP, &val, sizeof val);
@@ -487,33 +487,33 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 {
   switch (option_name)
   {
-    case LWPA_MCAST_JOIN_GROUP:
+    case ETCPAL_MCAST_JOIN_GROUP:
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
-        if (LWPA_IP_IS_V6(&greq->group))
+        if (ETCPAL_IP_IS_V6(&greq->group))
         {
           struct ipv6_mreq val;
           val.ipv6mr_interface = greq->ifindex;
-          memcpy(&val.ipv6mr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
+          memcpy(&val.ipv6mr_multiaddr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, IPV6_JOIN_GROUP, &val, sizeof val);
         }
       }
       break;
-    case LWPA_MCAST_LEAVE_GROUP:
+    case ETCPAL_MCAST_LEAVE_GROUP:
       if (option_len == sizeof(LwpaGroupReq))
       {
         LwpaGroupReq* greq = (LwpaGroupReq*)option_value;
-        if (LWPA_IP_IS_V6(&greq->group))
+        if (ETCPAL_IP_IS_V6(&greq->group))
         {
           struct ipv6_mreq val;
           val.ipv6mr_interface = greq->ifindex;
-          memcpy(&val.ipv6mr_multiaddr.s6_addr, LWPA_IP_V6_ADDRESS(&greq->group), LWPA_IPV6_BYTES);
+          memcpy(&val.ipv6mr_multiaddr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, IPV6_JOIN_GROUP, &val, sizeof val);
         }
       }
       break;
-    case LWPA_IPV6_V6ONLY:
+    case ETCPAL_IPV6_V6ONLY:
       return setsockopt(id, IPPROTO_IPV6, IPV6_V6ONLY, option_value, option_len);
     default:  // lwIP does not have support for the IPv6 multicast TX options yet.
       break;
@@ -532,7 +532,7 @@ void ms_to_timeval(int ms, struct timeval* tv)
 
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
 {
-  if (how >= 0 && how < LWPA_NUM_SHUT)
+  if (how >= 0 && how < ETCPAL_NUM_SHUT)
   {
     int res = shutdown(id, shutmap[how]);
     return (res == 0 ? kEtcPalErrOk : errno_lwip_to_lwpa(errno));
@@ -544,7 +544,7 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
 {
   if (id)
   {
-    if (family < LWPA_NUM_AF && type < LWPA_NUM_TYPE)
+    if (family < ETCPAL_NUM_AF && type < ETCPAL_NUM_TYPE)
     {
       int sock = socket(sfmap[family], stmap[type], 0);
       if (sock >= 0)
@@ -554,13 +554,13 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
       }
       else
       {
-        *id = LWPA_SOCKET_INVALID;
+        *id = ETCPAL_SOCKET_INVALID;
         return errno_lwip_to_lwpa(errno);
       }
     }
     else
     {
-      *id = LWPA_SOCKET_INVALID;
+      *id = ETCPAL_SOCKET_INVALID;
     }
   }
   return kEtcPalErrInvalid;
@@ -598,9 +598,9 @@ etcpal_error_t etcpal_poll_context_init(LwpaPollContext* context)
 
   init_context_socket_array(context);
   context->max_fd = -1;
-  LWPA_FD_ZERO(&context->readfds);
-  LWPA_FD_ZERO(&context->writefds);
-  LWPA_FD_ZERO(&context->exceptfds);
+  ETCPAL_FD_ZERO(&context->readfds);
+  ETCPAL_FD_ZERO(&context->writefds);
+  ETCPAL_FD_ZERO(&context->exceptfds);
   context->valid = true;
   return kEtcPalErrOk;
 }
@@ -615,10 +615,10 @@ void etcpal_poll_context_deinit(LwpaPollContext* context)
 etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
                                   void* user_data)
 {
-  if (!context || !context->valid || socket == LWPA_SOCKET_INVALID || !(events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
+  if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID || !(events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
     return kEtcPalErrInvalid;
 
-  if (context->num_valid_sockets >= LWPA_SOCKET_MAX_POLL_SIZE)
+  if (context->num_valid_sockets >= ETCPAL_SOCKET_MAX_POLL_SIZE)
   {
     return kEtcPalErrNoMem;
   }
@@ -644,7 +644,7 @@ etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t 
 etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
                                      void* new_user_data)
 {
-  if (!context || !context->valid || socket == LWPA_SOCKET_INVALID || !(new_events & LWPA_POLL_VALID_INPUT_EVENT_MASK))
+  if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID || !(new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
     return kEtcPalErrInvalid;
 
   LwpaPollSocket* sock_desc = find_socket(context, socket);
@@ -664,20 +664,20 @@ etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket
 
 void etcpal_poll_remove_socket(LwpaPollContext* context, etcpal_socket_t socket)
 {
-  if (!context || !context->valid || socket == LWPA_SOCKET_INVALID)
+  if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID)
     return;
 
   LwpaPollSocket* sock_desc = find_socket(context, socket);
   if (sock_desc)
   {
     clear_in_fd_sets(context, sock_desc);
-    sock_desc->sock = LWPA_SOCKET_INVALID;
+    sock_desc->sock = ETCPAL_SOCKET_INVALID;
     context->num_valid_sockets--;
     if (socket == context->max_fd)
     {
       while (context->max_fd > 0 &&
-             (LWPA_FD_ISSET(context->max_fd, &context->readfds) || LWPA_FD_ISSET(context->max_fd, &context->writefds) ||
-              LWPA_FD_ISSET(context->max_fd, &context->exceptfds)))
+             (ETCPAL_FD_ISSET(context->max_fd, &context->readfds) || ETCPAL_FD_ISSET(context->max_fd, &context->writefds) ||
+              ETCPAL_FD_ISSET(context->max_fd, &context->exceptfds)))
       {
         --context->max_fd;
       }
@@ -701,12 +701,12 @@ etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, 
   fd_set exceptfds = context->exceptfds.set;
 
   struct timeval os_timeout;
-  if (timeout_ms != LWPA_WAIT_FOREVER)
+  if (timeout_ms != ETCPAL_WAIT_FOREVER)
     ms_to_timeval(timeout_ms, &os_timeout);
 
   int sel_res =
       select(context->max_fd + 1, context->readfds.count ? &readfds : NULL, context->writefds.count ? &writefds : NULL,
-             context->exceptfds.count ? &exceptfds : NULL, timeout_ms == LWPA_WAIT_FOREVER ? NULL : &os_timeout);
+             context->exceptfds.count ? &exceptfds : NULL, timeout_ms == ETCPAL_WAIT_FOREVER ? NULL : &os_timeout);
 
   if (sel_res < 0)
   {
@@ -726,7 +726,7 @@ etcpal_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* eve
                                   const fd_set* writefds, const fd_set* exceptfds)
 {
   // Init the event data.
-  event->socket = LWPA_SOCKET_INVALID;
+  event->socket = ETCPAL_SOCKET_INVALID;
   event->events = 0;
   event->err = kEtcPalErrOk;
 
@@ -734,10 +734,10 @@ etcpal_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* eve
   // gone wrong.
   etcpal_error_t res = kEtcPalErrSys;
 
-  for (LwpaPollSocket* sock_desc = context->sockets; sock_desc < context->sockets + LWPA_SOCKET_MAX_POLL_SIZE;
+  for (LwpaPollSocket* sock_desc = context->sockets; sock_desc < context->sockets + ETCPAL_SOCKET_MAX_POLL_SIZE;
        ++sock_desc)
   {
-    if (sock_desc->sock == LWPA_SOCKET_INVALID)
+    if (sock_desc->sock == ETCPAL_SOCKET_INVALID)
       continue;
 
     if (FD_ISSET(sock_desc->sock, readfds) || FD_ISSET(sock_desc->sock, writefds) ||
@@ -749,19 +749,19 @@ etcpal_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* eve
 
       if (FD_ISSET(sock_desc->sock, readfds))
       {
-        if (sock_desc->events & LWPA_POLL_IN)
-          event->events |= LWPA_POLL_IN;
+        if (sock_desc->events & ETCPAL_POLL_IN)
+          event->events |= ETCPAL_POLL_IN;
       }
       if (FD_ISSET(sock_desc->sock, writefds))
       {
-        if (sock_desc->events & LWPA_POLL_CONNECT)
-          event->events |= LWPA_POLL_CONNECT;
-        else if (sock_desc->events & LWPA_POLL_OUT)
-          event->events |= LWPA_POLL_OUT;
+        if (sock_desc->events & ETCPAL_POLL_CONNECT)
+          event->events |= ETCPAL_POLL_CONNECT;
+        else if (sock_desc->events & ETCPAL_POLL_OUT)
+          event->events |= ETCPAL_POLL_OUT;
       }
       if (FD_ISSET(sock_desc->sock, exceptfds))
       {
-        event->events |= LWPA_POLL_ERR;
+        event->events |= ETCPAL_POLL_ERR;
         int err;
         socklen_t err_size = (socklen_t)sizeof err;
         if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &err, &err_size) == 0)
@@ -779,16 +779,16 @@ etcpal_error_t handle_select_result(LwpaPollContext* context, LwpaPollEvent* eve
 void init_context_socket_array(LwpaPollContext* context)
 {
   context->num_valid_sockets = 0;
-  for (LwpaPollSocket* poll_sock = context->sockets; poll_sock < context->sockets + LWPA_SOCKET_MAX_POLL_SIZE;
+  for (LwpaPollSocket* poll_sock = context->sockets; poll_sock < context->sockets + ETCPAL_SOCKET_MAX_POLL_SIZE;
        ++poll_sock)
   {
-    poll_sock->sock = LWPA_SOCKET_INVALID;
+    poll_sock->sock = ETCPAL_SOCKET_INVALID;
   }
 }
 
 LwpaPollSocket* find_socket(LwpaPollContext* context, etcpal_socket_t sock)
 {
-  for (LwpaPollSocket* poll_sock = context->sockets; poll_sock < context->sockets + LWPA_SOCKET_MAX_POLL_SIZE;
+  for (LwpaPollSocket* poll_sock = context->sockets; poll_sock < context->sockets + ETCPAL_SOCKET_MAX_POLL_SIZE;
        ++poll_sock)
   {
     if (poll_sock->sock == sock)
@@ -799,34 +799,34 @@ LwpaPollSocket* find_socket(LwpaPollContext* context, etcpal_socket_t sock)
 
 LwpaPollSocket* find_hole(LwpaPollContext* context)
 {
-  return find_socket(context, LWPA_SOCKET_INVALID);
+  return find_socket(context, ETCPAL_SOCKET_INVALID);
 }
 
 void set_in_fd_sets(LwpaPollContext* context, const LwpaPollSocket* poll_sock)
 {
-  if (poll_sock->events & LWPA_POLL_IN)
+  if (poll_sock->events & ETCPAL_POLL_IN)
   {
-    LWPA_FD_SET(poll_sock->sock, &context->readfds);
+    ETCPAL_FD_SET(poll_sock->sock, &context->readfds);
   }
-  if (poll_sock->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
+  if (poll_sock->events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT))
   {
-    LWPA_FD_SET(poll_sock->sock, &context->writefds);
+    ETCPAL_FD_SET(poll_sock->sock, &context->writefds);
   }
   // exceptfds is used for errors on this platform, so set it regardless
-  LWPA_FD_SET(poll_sock->sock, &context->exceptfds);
+  ETCPAL_FD_SET(poll_sock->sock, &context->exceptfds);
 }
 
 void clear_in_fd_sets(LwpaPollContext* context, const LwpaPollSocket* poll_sock)
 {
-  if (poll_sock->events & LWPA_POLL_IN)
+  if (poll_sock->events & ETCPAL_POLL_IN)
   {
-    LWPA_FD_CLEAR(poll_sock->sock, &context->readfds);
+    ETCPAL_FD_CLEAR(poll_sock->sock, &context->readfds);
   }
-  if (poll_sock->events & (LWPA_POLL_OUT | LWPA_POLL_CONNECT))
+  if (poll_sock->events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT))
   {
-    LWPA_FD_CLEAR(poll_sock->sock, &context->writefds);
+    ETCPAL_FD_CLEAR(poll_sock->sock, &context->writefds);
   }
-  LWPA_FD_CLEAR(poll_sock->sock, &context->exceptfds);
+  ETCPAL_FD_CLEAR(poll_sock->sock, &context->exceptfds);
 }
 
 etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
@@ -843,10 +843,10 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
-    pf_hints.ai_flags = (hints->ai_flags < LWPA_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0;
-    pf_hints.ai_family = (hints->ai_family < LWPA_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
-    pf_hints.ai_socktype = (hints->ai_socktype < LWPA_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
-    pf_hints.ai_protocol = (hints->ai_protocol < LWPA_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
+    pf_hints.ai_flags = (hints->ai_flags < ETCPAL_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0;
+    pf_hints.ai_family = (hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
+    pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
+    pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
   }
 
   res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
@@ -875,21 +875,21 @@ bool etcpal_nextaddr(LwpaAddrinfo* ai)
     /* Can't use reverse maps, because we have no guarantee of the numeric
      * values of the os constants. Ugh. */
     if (pf_ai->ai_family == AF_INET)
-      ai->ai_family = LWPA_AF_INET;
+      ai->ai_family = ETCPAL_AF_INET;
     else if (pf_ai->ai_family == AF_INET6)
-      ai->ai_family = LWPA_AF_INET6;
+      ai->ai_family = ETCPAL_AF_INET6;
     else
-      ai->ai_family = LWPA_AF_UNSPEC;
+      ai->ai_family = ETCPAL_AF_UNSPEC;
     if (pf_ai->ai_socktype == SOCK_DGRAM)
-      ai->ai_socktype = LWPA_DGRAM;
+      ai->ai_socktype = ETCPAL_DGRAM;
     else if (pf_ai->ai_socktype == SOCK_STREAM)
-      ai->ai_socktype = LWPA_STREAM;
+      ai->ai_socktype = ETCPAL_STREAM;
     else
       ai->ai_socktype = 0;
     if (pf_ai->ai_protocol == IPPROTO_UDP)
-      ai->ai_protocol = LWPA_IPPROTO_UDP;
+      ai->ai_protocol = ETCPAL_IPPROTO_UDP;
     else if (pf_ai->ai_protocol == IPPROTO_TCP)
-      ai->ai_protocol = LWPA_IPPROTO_TCP;
+      ai->ai_protocol = ETCPAL_IPPROTO_TCP;
     else
       ai->ai_protocol = 0;
     ai->ai_canonname = pf_ai->ai_canonname;

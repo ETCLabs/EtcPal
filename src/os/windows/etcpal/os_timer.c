@@ -22,11 +22,11 @@
 
 #include <windows.h>
 
-#define LWPA_WINDOWS_TIMER_RESOLUTION 1  // ms
+#define ETCPAL_WINDOWS_TIMER_RESOLUTION 1  // ms
 
 etcpal_error_t etcpal_timer_init()
 {
-  if (TIMERR_NOERROR == timeBeginPeriod(LWPA_WINDOWS_TIMER_RESOLUTION))
+  if (TIMERR_NOERROR == timeBeginPeriod(ETCPAL_WINDOWS_TIMER_RESOLUTION))
     return kEtcPalErrOk;
   else
     return kEtcPalErrSys;
@@ -34,7 +34,7 @@ etcpal_error_t etcpal_timer_init()
 
 void etcpal_timer_deinit()
 {
-  timeEndPeriod(LWPA_WINDOWS_TIMER_RESOLUTION);
+  timeEndPeriod(ETCPAL_WINDOWS_TIMER_RESOLUTION);
 }
 
 uint32_t etcpal_getms()

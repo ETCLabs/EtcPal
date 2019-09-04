@@ -100,7 +100,7 @@ TEST(rwlock_integration, rwlock_thread_test)
   etcpal_thread_t read_thread;
 
   LwpaThreadParams params;
-  LWPA_THREAD_SET_DEFAULT_PARAMS(&params);
+  ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);
 
   TEST_ASSERT_TRUE(etcpal_thread_create(&read_thread, &params, read_test_thread, NULL));
 

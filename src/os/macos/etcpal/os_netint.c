@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef LWPA_NETINT_DEBUG_OUTPUT
+#ifdef ETCPAL_NETINT_DEBUG_OUTPUT
 #include <stdio.h>
 #endif
 
@@ -100,7 +100,7 @@ static etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t 
 static void init_routing_table_entry(RoutingTableEntry* entry);
 static int compare_routing_table_entries(const void* a, const void* b);
 
-#if LWPA_NETINT_DEBUG_OUTPUT
+#if ETCPAL_NETINT_DEBUG_OUTPUT
 static void debug_print_routing_table(RoutingTable* table);
 #endif
 
@@ -194,10 +194,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     LwpaNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
-    strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
-    current_info->name[LWPA_NETINTINFO_NAME_LEN - 1] = '\0';
-    strncpy(current_info->friendly_name, ifaddr->ifa_name, LWPA_NETINTINFO_FRIENDLY_NAME_LEN);
-    current_info->friendly_name[LWPA_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
+    strncpy(current_info->name, ifaddr->ifa_name, ETCPAL_NETINTINFO_NAME_LEN);
+    current_info->name[ETCPAL_NETINTINFO_NAME_LEN - 1] = '\0';
+    strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
+    current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
 
     // Interface address
     ip_os_to_lwpa(ifaddr->ifa_addr, &current_info->addr);
@@ -209,22 +209,22 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     if (link_name && link_addr && 0 == strcmp(ifaddr->ifa_name, link_name))
     {
       current_info->index = link_addr->sdl_index;
-      memcpy(current_info->mac, link_addr->sdl_data + link_addr->sdl_nlen, LWPA_NETINTINFO_MAC_LEN);
+      memcpy(current_info->mac, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_NETINTINFO_MAC_LEN);
     }
     else
     {
       // Backup - get the interface index using if_nametoindex
       current_info->index = if_nametoindex(ifaddr->ifa_name);
-      memset(current_info->mac, 0, LWPA_NETINTINFO_MAC_LEN);
+      memset(current_info->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
     }
 
     // Is Default
-    if (LWPA_IP_IS_V4(&current_info->addr) && routing_table_v4.default_route &&
+    if (ETCPAL_IP_IS_V4(&current_info->addr) && routing_table_v4.default_route &&
         current_info->index == routing_table_v4.default_route->interface_index)
     {
       current_info->is_default = true;
     }
-    else if (LWPA_IP_IS_V6(&current_info->addr) && routing_table_v6.default_route &&
+    else if (ETCPAL_IP_IS_V6(&current_info->addr) && routing_table_v6.default_route &&
              current_info->index == routing_table_v6.default_route->interface_index)
     {
       current_info->is_default = true;
@@ -252,12 +252,12 @@ etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* 
 {
   (void)cache;  // unused
 
-  RoutingTable* table_to_use = (LWPA_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
+  RoutingTable* table_to_use = (ETCPAL_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
   unsigned int index_found = 0;
   for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
   {
-    if (entry->interface_index == 0 || LWPA_IP_IS_INVALID(&entry->mask))
+    if (entry->interface_index == 0 || ETCPAL_IP_IS_INVALID(&entry->mask))
       continue;
 
     // Check each route to see if it matches the destination address explicitly
@@ -298,7 +298,7 @@ etcpal_error_t build_routing_tables()
   if (res != kEtcPalErrOk)
     free_routing_tables();
 
-#if LWPA_NETINT_DEBUG_OUTPUT
+#if ETCPAL_NETINT_DEBUG_OUTPUT
   debug_print_routing_table(&routing_table_v4);
   debug_print_routing_table(&routing_table_v6);
 #endif
@@ -386,9 +386,9 @@ static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct so
 static void dest_from_route_entry(int family, const struct sockaddr* os_dst, LwpaIpAddr* etcpal_dst)
 {
   if (family == AF_INET6)
-    LWPA_IP_SET_V6_ADDRESS(etcpal_dst, ((struct sockaddr_in6*)os_dst)->sin6_addr.s6_addr);
+    ETCPAL_IP_SET_V6_ADDRESS(etcpal_dst, ((struct sockaddr_in6*)os_dst)->sin6_addr.s6_addr);
   else
-    LWPA_IP_SET_V4_ADDRESS(etcpal_dst, ntohl(((struct sockaddr_in*)os_dst)->sin_addr.s_addr));
+    ETCPAL_IP_SET_V4_ADDRESS(etcpal_dst, ntohl(((struct sockaddr_in*)os_dst)->sin_addr.s_addr));
 }
 
 /* Get the netmask from a socket address structure packed as part of a route entry.
@@ -463,7 +463,7 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
         mask_val |= ((uint32_t)mask_ptr[2]) << 8;
       if (os_netmask->sa_len > (mask_offset + 3))
         mask_val |= ((uint32_t)mask_ptr[3]);
-      LWPA_IP_SET_V4_ADDRESS(etcpal_netmask, mask_val);
+      ETCPAL_IP_SET_V4_ADDRESS(etcpal_netmask, mask_val);
     }
   }
   else if (family == AF_INET6)
@@ -473,13 +473,13 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
 
     if (os_netmask->sa_len > mask_offset)
     {
-      uint8_t ip_buf[LWPA_IPV6_BYTES];
-      memset(ip_buf, 0, LWPA_IPV6_BYTES);
+      uint8_t ip_buf[ETCPAL_IPV6_BYTES];
+      memset(ip_buf, 0, ETCPAL_IPV6_BYTES);
       for (size_t mask_pos = 0; mask_pos < os_netmask->sa_len - mask_offset; ++mask_pos)
       {
         ip_buf[mask_pos] = mask_ptr[mask_pos];
       }
-      LWPA_IP_SET_V6_ADDRESS(etcpal_netmask, ip_buf);
+      ETCPAL_IP_SET_V6_ADDRESS(etcpal_netmask, ip_buf);
     }
   }
 }
@@ -492,11 +492,11 @@ static void gateway_from_route_entry(const struct sockaddr* os_gw, LwpaIpAddr* e
 {
   if (os_gw->sa_family == AF_INET6)
   {
-    LWPA_IP_SET_V6_ADDRESS(etcpal_gw, ((struct sockaddr_in6*)os_gw)->sin6_addr.s6_addr);
+    ETCPAL_IP_SET_V6_ADDRESS(etcpal_gw, ((struct sockaddr_in6*)os_gw)->sin6_addr.s6_addr);
   }
   else if (os_gw->sa_family == AF_INET)
   {
-    LWPA_IP_SET_V4_ADDRESS(etcpal_gw, ntohl(((struct sockaddr_in*)os_gw)->sin_addr.s_addr));
+    ETCPAL_IP_SET_V4_ADDRESS(etcpal_gw, ntohl(((struct sockaddr_in*)os_gw)->sin_addr.s_addr));
   }
 }
 
@@ -624,9 +624,9 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
     // Mark the system-wide default route: the first default route we encounter after sorting the table.
     for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
     {
-      if ((LWPA_IP_IS_INVALID(&entry->addr) || etcpal_ip_is_wildcard(&entry->addr)) &&
-          (LWPA_IP_IS_INVALID(&entry->mask) || etcpal_ip_is_wildcard(&entry->mask)) &&
-          !LWPA_IP_IS_INVALID(&entry->gateway))
+      if ((ETCPAL_IP_IS_INVALID(&entry->addr) || etcpal_ip_is_wildcard(&entry->addr)) &&
+          (ETCPAL_IP_IS_INVALID(&entry->mask) || etcpal_ip_is_wildcard(&entry->mask)) &&
+          !ETCPAL_IP_IS_INVALID(&entry->gateway))
       {
         table->default_route = entry;
         break;
@@ -642,9 +642,9 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
 
 void init_routing_table_entry(RoutingTableEntry* entry)
 {
-  LWPA_IP_SET_INVALID(&entry->addr);
-  LWPA_IP_SET_INVALID(&entry->mask);
-  LWPA_IP_SET_INVALID(&entry->gateway);
+  ETCPAL_IP_SET_INVALID(&entry->addr);
+  ETCPAL_IP_SET_INVALID(&entry->mask);
+  ETCPAL_IP_SET_INVALID(&entry->gateway);
   entry->interface_index = 0;
   entry->interface_scope = false;
 }
@@ -685,30 +685,30 @@ void free_routing_table(RoutingTable* table)
   table->size = 0;
 }
 
-#if LWPA_NETINT_DEBUG_OUTPUT
+#if ETCPAL_NETINT_DEBUG_OUTPUT
 void debug_print_routing_table(RoutingTable* table)
 {
   printf("%-40s %-40s %-40s %s %s\n", "Address", "Mask", "Gateway", "Index", "Name");
 
   for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
   {
-    char addr_str[LWPA_INET6_ADDRSTRLEN];
-    char mask_str[LWPA_INET6_ADDRSTRLEN];
-    char gw_str[LWPA_INET6_ADDRSTRLEN];
+    char addr_str[ETCPAL_INET6_ADDRSTRLEN];
+    char mask_str[ETCPAL_INET6_ADDRSTRLEN];
+    char gw_str[ETCPAL_INET6_ADDRSTRLEN];
     char ifname_str[IF_NAMESIZE];
 
-    if (!LWPA_IP_IS_INVALID(&entry->addr))
-      etcpal_inet_ntop(&entry->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
+    if (!ETCPAL_IP_IS_INVALID(&entry->addr))
+      etcpal_inet_ntop(&entry->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
     else
       strcpy(addr_str, "0.0.0.0");
 
-    if (!LWPA_IP_IS_INVALID(&entry->mask))
-      etcpal_inet_ntop(&entry->mask, mask_str, LWPA_INET6_ADDRSTRLEN);
+    if (!ETCPAL_IP_IS_INVALID(&entry->mask))
+      etcpal_inet_ntop(&entry->mask, mask_str, ETCPAL_INET6_ADDRSTRLEN);
     else
       strcpy(mask_str, "0.0.0.0");
 
-    if (!LWPA_IP_IS_INVALID(&entry->gateway))
-      etcpal_inet_ntop(&entry->gateway, gw_str, LWPA_INET6_ADDRSTRLEN);
+    if (!ETCPAL_IP_IS_INVALID(&entry->gateway))
+      etcpal_inet_ntop(&entry->gateway, gw_str, ETCPAL_INET6_ADDRSTRLEN);
     else
       strcpy(gw_str, "");
 
@@ -719,8 +719,8 @@ void debug_print_routing_table(RoutingTable* table)
 
   if (table->default_route)
   {
-    char gw_str[LWPA_INET6_ADDRSTRLEN];
-    etcpal_inet_ntop(&table->default_route->gateway, gw_str, LWPA_INET6_ADDRSTRLEN);
+    char gw_str[ETCPAL_INET6_ADDRSTRLEN];
+    etcpal_inet_ntop(&table->default_route->gateway, gw_str, ETCPAL_INET6_ADDRSTRLEN);
     printf("Default route: %s (%u)\n", gw_str, table->default_route->interface_index);
   }
   else

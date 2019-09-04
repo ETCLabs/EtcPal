@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal_mock/socket.h: Mock functions for the etcpal_socket API. */
-#ifndef _LWPA_MOCK_SOCKET_H_
-#define _LWPA_MOCK_SOCKET_H_
+#ifndef _ETCPAL_MOCK_SOCKET_H_
+#define _ETCPAL_MOCK_SOCKET_H_
 
 #include "etcpal/socket.h"
 #include "fff.h"
@@ -64,7 +64,7 @@ DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getaddrinfo, const char*, const c
 DECLARE_FAKE_VALUE_FUNC(bool, etcpal_nextaddr, LwpaAddrinfo*);
 DECLARE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, LwpaAddrinfo*);
 
-#define LWPA_SOCKET_DO_FOR_ALL_FAKES(operation) \
+#define ETCPAL_SOCKET_DO_FOR_ALL_FAKES(operation) \
   operation(etcpal_accept);                       \
   operation(etcpal_bind);                         \
   operation(etcpal_close);                        \
@@ -95,4 +95,4 @@ DECLARE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, LwpaAddrinfo*);
 }
 #endif
 
-#endif /* _LWPA_MOCK_SOCKET_H_ */
+#endif /* _ETCPAL_MOCK_SOCKET_H_ */

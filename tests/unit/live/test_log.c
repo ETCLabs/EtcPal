@@ -38,8 +38,8 @@ LwpaLogTimeParams cur_time;
 LwpaLogStrings last_log_strings_received;
 
 // Buffers for tests of the create_*_str functions
-static char syslog_buf[LWPA_SYSLOG_STR_MAX_LEN];
-static char human_buf[LWPA_HUMAN_LOG_STR_MAX_LEN];
+static char syslog_buf[ETCPAL_SYSLOG_STR_MAX_LEN];
+static char human_buf[ETCPAL_HUMAN_LOG_STR_MAX_LEN];
 
 static void fill_time_params(void* context, LwpaLogTimeParams* time_params)
 {
@@ -71,7 +71,7 @@ TEST_GROUP(etcpal_log);
 
 TEST_SETUP(etcpal_log)
 {
-  etcpal_init(LWPA_FEATURE_LOGGING);
+  etcpal_init(ETCPAL_FEATURE_LOGGING);
 
   fill_default_time(&cur_time);
 
@@ -83,7 +83,7 @@ TEST_SETUP(etcpal_log)
 
 TEST_TEAR_DOWN(etcpal_log)
 {
-  etcpal_deinit(LWPA_FEATURE_LOGGING);
+  etcpal_deinit(ETCPAL_FEATURE_LOGGING);
 }
 
 // Test the etcpal_sanitize_syslog_params() function.
@@ -105,7 +105,7 @@ TEST(etcpal_log, sanitize_syslog_params_works)
   TEST_ASSERT_EQUAL_STRING(syslog_params.app_name, "___ABC???");
   TEST_ASSERT_EQUAL_STRING(syslog_params.hostname, "___ABC???");
   TEST_ASSERT_EQUAL_STRING(syslog_params.procid, "___ABC???");
-  TEST_ASSERT_LESS_THAN(LWPA_LOG_NFACILITIES, LWPA_LOG_FAC(syslog_params.facility));
+  TEST_ASSERT_LESS_THAN(ETCPAL_LOG_NFACILITIES, ETCPAL_LOG_FAC(syslog_params.facility));
 }
 
 // Test the etcpal_validate_log_params() function.
@@ -149,11 +149,11 @@ TEST(etcpal_log, log_action_is_honored)
   lparams.action = kEtcPalLogCreateSyslog;
 
   lparams.log_fn = log_callback;
-  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   strcpy(lparams.syslog_params.hostname, "10.101.17.38");
   strcpy(lparams.syslog_params.app_name, "My_App");
   strcpy(lparams.syslog_params.procid, "\0");
-  lparams.syslog_params.facility = LWPA_LOG_KERN;
+  lparams.syslog_params.facility = ETCPAL_LOG_KERN;
   lparams.time_fn = NULL;
   lparams.context = NULL;
 
@@ -164,7 +164,7 @@ TEST(etcpal_log, log_action_is_honored)
   const char* expect_raw_str = LOG_ACTION_TEST_MESSAGE;
 
   // Try logging only syslog
-  etcpal_log(&lparams, LWPA_LOG_EMERG, "Test Message");
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, "Test Message");
   // Make sure the callback was called with the syslog and raw strings, but not the human-readable
   // string.
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
@@ -176,7 +176,7 @@ TEST(etcpal_log, log_action_is_honored)
 
   // Try logging both
   lparams.action = kEtcPalLogCreateBoth;
-  etcpal_log(&lparams, LWPA_LOG_EMERG, LOG_ACTION_TEST_MESSAGE);
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, LOG_ACTION_TEST_MESSAGE);
   // Make sure the callback was called with all three strings.
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 2);
   TEST_ASSERT(last_log_strings_received.syslog);
@@ -188,7 +188,7 @@ TEST(etcpal_log, log_action_is_honored)
 
   // Try logging only human-readable
   lparams.action = kEtcPalLogCreateHumanReadableLog;
-  etcpal_log(&lparams, LWPA_LOG_EMERG, LOG_ACTION_TEST_MESSAGE);
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, LOG_ACTION_TEST_MESSAGE);
   // Make sure the callback was called with the human-readable and raw strings, but not the syslog
   // string.
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 3);
@@ -205,18 +205,18 @@ TEST(etcpal_log, context_pointer_is_passed_unmodified)
   lparams.action = kEtcPalLogCreateHumanReadableLog;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
-  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = NULL;
 
   // Test a null pointer
   lparams.context = NULL;
-  etcpal_log(&lparams, LWPA_LOG_INFO, "Test message");
+  etcpal_log(&lparams, ETCPAL_LOG_INFO, "Test message");
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
   TEST_ASSERT_EQUAL_PTR(log_callback_fake.arg0_val, NULL);
 
   // Test a random value
   lparams.context = (void*)0x01020304;
-  etcpal_log(&lparams, LWPA_LOG_INFO, "Test message");
+  etcpal_log(&lparams, ETCPAL_LOG_INFO, "Test message");
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 2);
   TEST_ASSERT_EQUAL_PTR(log_callback_fake.arg0_val, 0x01020304);
 }
@@ -239,8 +239,8 @@ TEST(etcpal_log, syslog_header_is_well_formed)
   memcpy(lparams.syslog_params.hostname, weird_hostname, sizeof weird_hostname);
   memcpy(lparams.syslog_params.procid, weird_procid, sizeof weird_procid);
   memcpy(lparams.syslog_params.app_name, weird_appname, sizeof weird_appname);
-  lparams.syslog_params.facility = LWPA_LOG_KERN;
-  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  lparams.syslog_params.facility = ETCPAL_LOG_KERN;
+  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = time_callback;
   lparams.context = NULL;
 
@@ -248,8 +248,8 @@ TEST(etcpal_log, syslog_header_is_well_formed)
 
   // For each set of parameters, test both the etcpal_log() and etcpal_create_syslog_str() functions.
 #define SYSLOG_HEADER_TEST_AND_ASSERT(time_params)                                                                 \
-  etcpal_log(&lparams, LWPA_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                                                  \
-  etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, time_params, &lparams.syslog_params, LWPA_LOG_EMERG, \
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                                                  \
+  etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, time_params, &lparams.syslog_params, ETCPAL_LOG_EMERG, \
                          SYSLOG_HEADER_TEST_MESSAGE);                                                              \
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);                                                         \
   TEST_ASSERT_EQUAL_STRING(last_log_strings_received.syslog, expect_syslog_str);                                   \
@@ -299,7 +299,7 @@ TEST(etcpal_log, syslog_prival_is_correct)
 
 #define SYSLOG_PRIVAL_TEST_MESSAGE "Test Message"
 
-  for (int facility = 0; facility < LWPA_LOG_NFACILITIES; ++facility)
+  for (int facility = 0; facility < ETCPAL_LOG_NFACILITIES; ++facility)
   {
     syslog_params.facility = facility << 3;
     for (int priority = 0; priority < 8; ++priority)
@@ -308,7 +308,7 @@ TEST(etcpal_log, syslog_prival_is_correct)
       char error_msg[sizeof error_format + 20];
       sprintf(error_msg, error_format, facility, priority);
 
-      TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, NULL, &syslog_params, priority,
+      TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, NULL, &syslog_params, priority,
                                          SYSLOG_PRIVAL_TEST_MESSAGE));
       TEST_ASSERT_EQUAL(syslog_buf[0], '<');
       TEST_ASSERT_EQUAL_MESSAGE(atoi(&syslog_buf[1]), ((facility << 3) + priority), error_msg);
@@ -338,10 +338,10 @@ TEST(etcpal_log, log_mask_is_honored)
   }
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 0);
 
-  // Use the LWPA_LOG_UPTO macro to test logging below and above a given priority
+  // Use the ETCPAL_LOG_UPTO macro to test logging below and above a given priority
   for (int mask_pri = 0; mask_pri < 8; ++mask_pri)
   {
-    lparams.log_mask = LWPA_LOG_UPTO(mask_pri);
+    lparams.log_mask = ETCPAL_LOG_UPTO(mask_pri);
     for (int test_pri = 0; test_pri < 8; ++test_pri)
     {
       if (test_pri <= mask_pri)
@@ -359,10 +359,10 @@ TEST(etcpal_log, log_mask_is_honored)
   }
 
   // Test some other, random log masks
-  lparams.log_mask = LWPA_LOG_MASK(LWPA_LOG_ALERT) | LWPA_LOG_MASK(LWPA_LOG_WARNING);
+  lparams.log_mask = ETCPAL_LOG_MASK(ETCPAL_LOG_ALERT) | ETCPAL_LOG_MASK(ETCPAL_LOG_WARNING);
   for (int test_pri = 0; test_pri < 8; ++test_pri)
   {
-    if (test_pri == LWPA_LOG_ALERT || test_pri == LWPA_LOG_WARNING)
+    if (test_pri == ETCPAL_LOG_ALERT || test_pri == ETCPAL_LOG_WARNING)
     {
       TEST_ASSERT(etcpal_can_log(&lparams, test_pri));
     }
@@ -382,30 +382,30 @@ TEST(etcpal_log, time_header_is_well_formed)
   LwpaSyslogParams syslog_params;
 
   memset(&syslog_params, 0, sizeof syslog_params);
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, LWPA_LOG_EMERG,
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, ETCPAL_LOG_EMERG,
                                      "Test Message"));
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
 
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000Z"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000Z"));
 
   // We test absence of the time in the syslog header in a different test, but here we test absence
   // in the human-readable log string
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, NULL, "Test Message"));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, NULL, "Test Message"));
   TEST_ASSERT_EQUAL_STRING(human_buf, "Test Message");
 
   // Test the addition of UTC offsets
   cur_time.utc_offset = 30;
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, LWPA_LOG_EMERG,
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, ETCPAL_LOG_EMERG,
                                      "Test Message"));
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000+00:30"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000+00:30"));
 
   cur_time.utc_offset = -120;
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, LWPA_LOG_EMERG,
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, ETCPAL_LOG_EMERG,
                                      "Test Message"));
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000-02:00"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000-02:00"));
 }
@@ -418,7 +418,7 @@ TEST(etcpal_log, formatting_int_values_works)
   lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
-  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = NULL;
   lparams.context = NULL;
 
@@ -430,15 +430,15 @@ TEST(etcpal_log, formatting_int_values_works)
 
   // Try the functions that simply build the log strings
   // We just check to make sure the
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
-                                     LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
+                                     ETCPAL_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(syslog_buf, expect_raw_str));
 
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, INTVAL_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, INTVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(human_buf, expect_raw_str));
 
   // Now test the etcpal_log function
-  etcpal_log(&lparams, LWPA_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS);
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS);
   // Make sure the callback was called with all three strings, with the correct format.
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
   TEST_ASSERT(last_log_strings_received.syslog);
@@ -457,7 +457,7 @@ TEST(etcpal_log, formatting_string_values_works)
   lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
   memset(&lparams.syslog_params, 0, sizeof(LwpaSyslogParams));
-  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = NULL;
   lparams.context = NULL;
 
@@ -468,15 +468,15 @@ TEST(etcpal_log, formatting_string_values_works)
 #define STRVAL_FORMAT_STR_AND_ARGS "Here are some string values: %s %s %s", "hey", "wassup", "hello"
 
   // Try the functions that simply build the log strings
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, NULL, &lparams.syslog_params, LWPA_LOG_EMERG,
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, NULL, &lparams.syslog_params, ETCPAL_LOG_EMERG,
                                      STRVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(syslog_buf, expect_raw_str));
 
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, NULL, STRVAL_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, NULL, STRVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(human_buf, expect_raw_str));
 
   // Now test the etcpal_log function
-  etcpal_log(&lparams, LWPA_LOG_EMERG, STRVAL_FORMAT_STR_AND_ARGS);
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, STRVAL_FORMAT_STR_AND_ARGS);
   // Make sure the callback was called with all three strings, with the correct format.
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
   TEST_ASSERT(last_log_strings_received.syslog);
@@ -508,14 +508,14 @@ TEST(etcpal_log, logging_maximum_length_string_works)
 
   lparams.action = kEtcPalLogCreateBoth;
   lparams.log_fn = log_callback;
-  lparams.syslog_params.facility = LWPA_LOG_LOCAL7;
-  lparams.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  lparams.syslog_params.facility = ETCPAL_LOG_LOCAL7;
+  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   lparams.time_fn = time_callback;
   lparams.context = NULL;
 
-  static char expect_syslog_str[LWPA_SYSLOG_STR_MAX_LEN];
-  static char expect_human_str[LWPA_HUMAN_LOG_STR_MAX_LEN];
-  static char expect_raw_str[LWPA_HUMAN_LOG_STR_MAX_LEN];
+  static char expect_syslog_str[ETCPAL_SYSLOG_STR_MAX_LEN];
+  static char expect_human_str[ETCPAL_HUMAN_LOG_STR_MAX_LEN];
+  static char expect_raw_str[ETCPAL_HUMAN_LOG_STR_MAX_LEN];
   strcpy(expect_syslog_str, "<191>1 1970-01-01T00:00:00.000-12:00 ");
   strcpy(expect_human_str, "1970-01-01 00:00:00.000-12:00 ");
 
@@ -525,7 +525,7 @@ TEST(etcpal_log, logging_maximum_length_string_works)
 
   // Create our very long syslog header components
   size_t i;
-  for (i = 0; i < LWPA_LOG_HOSTNAME_MAX_LEN - 1; ++i)
+  for (i = 0; i < ETCPAL_LOG_HOSTNAME_MAX_LEN - 1; ++i)
   {
     char to_add = get_sanitized_char(i);
     lparams.syslog_params.hostname[i] = to_add;
@@ -534,9 +534,9 @@ TEST(etcpal_log, logging_maximum_length_string_works)
   lparams.syslog_params.hostname[i] = '\0';
   expect_syslog_str[expect_syslog_str_pos++] = ' ';
 
-  TEST_ASSERT_LESS_THAN(LWPA_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
+  TEST_ASSERT_LESS_THAN(ETCPAL_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
 
-  for (i = 0; i < LWPA_LOG_APP_NAME_MAX_LEN - 1; ++i)
+  for (i = 0; i < ETCPAL_LOG_APP_NAME_MAX_LEN - 1; ++i)
   {
     char to_add = get_sanitized_char(i);
     lparams.syslog_params.app_name[i] = to_add;
@@ -545,9 +545,9 @@ TEST(etcpal_log, logging_maximum_length_string_works)
   lparams.syslog_params.app_name[i] = '\0';
   expect_syslog_str[expect_syslog_str_pos++] = ' ';
 
-  TEST_ASSERT_LESS_THAN(LWPA_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
+  TEST_ASSERT_LESS_THAN(ETCPAL_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
 
-  for (i = 0; i < LWPA_LOG_PROCID_MAX_LEN - 1; ++i)
+  for (i = 0; i < ETCPAL_LOG_PROCID_MAX_LEN - 1; ++i)
   {
     char to_add = get_sanitized_char(i);
     lparams.syslog_params.procid[i] = to_add;
@@ -557,11 +557,11 @@ TEST(etcpal_log, logging_maximum_length_string_works)
   strcat(expect_syslog_str, " - - ");
   expect_syslog_str_pos += 5;
 
-  TEST_ASSERT_LESS_THAN(LWPA_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
+  TEST_ASSERT_LESS_THAN(ETCPAL_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
 
   // Now build our actual log message
-  char to_log_str[LWPA_LOG_MSG_MAX_LEN];
-  for (i = 0; i < LWPA_LOG_MSG_MAX_LEN - 1; ++i)
+  char to_log_str[ETCPAL_LOG_MSG_MAX_LEN];
+  for (i = 0; i < ETCPAL_LOG_MSG_MAX_LEN - 1; ++i)
   {
     char to_add = get_sanitized_char(i);
     expect_syslog_str[expect_syslog_str_pos++] = to_add;
@@ -574,23 +574,23 @@ TEST(etcpal_log, logging_maximum_length_string_works)
   expect_raw_str[expect_raw_str_pos++] = '\0';
   to_log_str[i] = '\0';
 
-  TEST_ASSERT_LESS_OR_EQUAL(LWPA_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
-  TEST_ASSERT_LESS_OR_EQUAL(LWPA_HUMAN_LOG_STR_MAX_LEN, expect_human_str_pos);
+  TEST_ASSERT_LESS_OR_EQUAL(ETCPAL_SYSLOG_STR_MAX_LEN, expect_syslog_str_pos);
+  TEST_ASSERT_LESS_OR_EQUAL(ETCPAL_HUMAN_LOG_STR_MAX_LEN, expect_human_str_pos);
 
   TEST_ASSERT(etcpal_validate_log_params(&lparams));
   // We want to have a non-zero, two-digit UTC offset for the maximum length possible.
   cur_time.utc_offset = -720;
 
   // Try the functions that simply build the log strings
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, LWPA_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
-                                     LWPA_LOG_DEBUG, to_log_str));
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
+                                     ETCPAL_LOG_DEBUG, to_log_str));
   TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);
 
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, LWPA_HUMAN_LOG_STR_MAX_LEN, &cur_time, to_log_str));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, to_log_str));
   TEST_ASSERT_EQUAL_STRING(human_buf, expect_human_str);
 
   // Now test the etcpal_log function
-  etcpal_log(&lparams, LWPA_LOG_DEBUG, to_log_str);
+  etcpal_log(&lparams, ETCPAL_LOG_DEBUG, to_log_str);
   // Make sure the callback was called with all three strings, with the correct format.
   TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);
   TEST_ASSERT(last_log_strings_received.syslog);

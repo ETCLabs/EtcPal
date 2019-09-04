@@ -19,8 +19,8 @@
 
 /* etcpal/root_layer_pdu.h: Functions to parse or pack a Root Layer PDU block (as defined in ANSI
  * E1.17) and its associated preambles. */
-#ifndef _LWPA_ROOT_LAYER_PDU_H_
-#define _LWPA_ROOT_LAYER_PDU_H_
+#ifndef _ETCPAL_ROOT_LAYER_PDU_H_
+#define _ETCPAL_ROOT_LAYER_PDU_H_
 
 #include <stddef.h>
 #include "etcpal/int.h"
@@ -114,4 +114,4 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootL
 
 /*! @} */
 
-#endif /* _LWPA_ROOT_LAYER_PDU_H_ */
+#endif /* _ETCPAL_ROOT_LAYER_PDU_H_ */

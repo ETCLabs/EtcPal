@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal_netint.h: Platform-neutral method for enumerating network interfaces. */
-#ifndef _LWPA_NETINT_H_
-#define _LWPA_NETINT_H_
+#ifndef _ETCPAL_NETINT_H_
+#define _ETCPAL_NETINT_H_
 
 #include <stddef.h>
 #include "etcpal/bool.h"
@@ -54,4 +54,4 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsi
 
 /*! @} */
 
-#endif /* _LWPA_NETINT_H_ */
+#endif /* _ETCPAL_NETINT_H_ */

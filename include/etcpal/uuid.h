@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/uuid.h: A type and.helper functions for a Universally Unique Identifier (UUID) */
-#ifndef _LWPA_UUID_H_
-#define _LWPA_UUID_H_
+#ifndef _ETCPAL_UUID_H_
+#define _ETCPAL_UUID_H_
 
 #include <string.h>
 #include "etcpal/int.h"
@@ -43,12 +43,12 @@ extern "C" {
 #endif
 
 /*! The number of bytes that make up a UUID. */
-#define LWPA_UUID_BYTES 16u
+#define ETCPAL_UUID_BYTES 16u
 
 /*! The UUID type. */
 typedef struct LwpaUuid
 {
-  uint8_t data[LWPA_UUID_BYTES];
+  uint8_t data[ETCPAL_UUID_BYTES];
 } LwpaUuid;
 
 /*! \brief Compare two UUIDs.
@@ -58,7 +58,7 @@ typedef struct LwpaUuid
  *            0 (uuid1ptr is equal to uuid2ptr)\n
  *          > 0 (uuid1ptr is greater than uuid2ptr)
  */
-#define LWPA_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, LWPA_UUID_BYTES)
+#define ETCPAL_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, ETCPAL_UUID_BYTES)
 
 /*! A null (all 0's) UUID, used by uuid_isnull() for comparison. */
 extern const LwpaUuid kEtcPalNullUuid;
@@ -70,10 +70,10 @@ extern const LwpaUuid kEtcPalNullUuid;
  *  \param uuidptr Pointer to UUID to null-check.
  *  \return true (UUID is null) or false (UUID is not null).
  */
-#define LWPA_UUID_IS_NULL(uuidptr) (memcmp((uuidptr)->data, kEtcPalNullUuid.data, LWPA_UUID_BYTES) == 0)
+#define ETCPAL_UUID_IS_NULL(uuidptr) (memcmp((uuidptr)->data, kEtcPalNullUuid.data, ETCPAL_UUID_BYTES) == 0)
 
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
-#define LWPA_UUID_STRING_BYTES 37
+#define ETCPAL_UUID_STRING_BYTES 37
 
 void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid);
 bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen);
@@ -96,16 +96,16 @@ etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid);
 
 inline bool operator<(const LwpaUuid& a, const LwpaUuid& b)
 {
-  return (LWPA_UUID_CMP(&a, &b) < 0);
+  return (ETCPAL_UUID_CMP(&a, &b) < 0);
 }
 
 inline bool operator==(const LwpaUuid& a, const LwpaUuid& b)
 {
-  return (LWPA_UUID_CMP(&a, &b) == 0);
+  return (ETCPAL_UUID_CMP(&a, &b) == 0);
 }
 
 #endif
 
 /*! @} */
 
-#endif /* _LWPA_UUID_H_ */
+#endif /* _ETCPAL_UUID_H_ */

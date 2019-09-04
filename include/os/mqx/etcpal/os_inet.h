@@ -17,13 +17,13 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_INET_H_
-#define _LWPA_OS_INET_H_
+#ifndef _ETCPAL_OS_INET_H_
+#define _ETCPAL_OS_INET_H_
 
 #include <rtcs.h>
 
 typedef struct sockaddr etcpal_os_sockaddr_t;
 typedef struct sockaddr etcpal_os_ipaddr_t;
 
-#endif /* _LWPA_OS_INET_H_ */
+#endif /* _ETCPAL_OS_INET_H_ */
 

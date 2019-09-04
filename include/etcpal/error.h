@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/error.h: Platform-neutral error codes. */
-#ifndef _LWPA_ERROR_H_
-#define _LWPA_ERROR_H_
+#ifndef _ETCPAL_ERROR_H_
+#define _ETCPAL_ERROR_H_
 
 #include <stdlib.h>
 
@@ -102,20 +102,20 @@ typedef enum
   kEtcPalErrSys = -29,
 } etcpal_error_t;
 
-#define LWPA_NUM_ERROR_CODES 30
+#define ETCPAL_NUM_ERROR_CODES 30
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern const char* etcpal_error_strings[LWPA_NUM_ERROR_CODES];
+extern const char* etcpal_error_strings[ETCPAL_NUM_ERROR_CODES];
 
 /*! \brief Get a string representation of an error code.
  *  \param errcode lwpa error code.
  *  \return Error string (char *) (valid error code) or NULL (invalid error code).
  */
 #define etcpal_strerror(errcode) \
-  (((int)errcode <= 0 && (int)errcode > -LWPA_NUM_ERROR_CODES) ? etcpal_error_strings[-((int)errcode)] : NULL)
+  (((int)errcode <= 0 && (int)errcode > -ETCPAL_NUM_ERROR_CODES) ? etcpal_error_strings[-((int)errcode)] : NULL)
 
 #ifdef __cplusplus
 }
@@ -123,4 +123,4 @@ extern const char* etcpal_error_strings[LWPA_NUM_ERROR_CODES];
 
 /*! @} */
 
-#endif /* _LWPA_ERROR_H_ */
+#endif /* _ETCPAL_ERROR_H_ */

@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_LOCK_H_
-#define _LWPA_OS_LOCK_H_
+#ifndef _ETCPAL_OS_LOCK_H_
+#define _ETCPAL_OS_LOCK_H_
 
 #include <mqx.h>
 #include <lwevent.h>
@@ -65,4 +65,4 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 }
 #endif
 
-#endif /* _LWPA_OS_LOCK_H_ */
+#endif /* _ETCPAL_OS_LOCK_H_ */

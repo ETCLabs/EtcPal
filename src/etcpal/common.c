@@ -37,14 +37,14 @@ typedef struct LwpaModuleInit
 
 /* clang-format off */
 
-#define LWPA_MODULE_INIT(module_name) { false, module_name##_init, module_name##_deinit }
+#define ETCPAL_MODULE_INIT(module_name) { false, module_name##_init, module_name##_deinit }
 
-#define LWPA_MODULE_INIT_ARRAY     \
+#define ETCPAL_MODULE_INIT_ARRAY     \
   {                                \
-    LWPA_MODULE_INIT(etcpal_socket), \
-    LWPA_MODULE_INIT(etcpal_netint), \
-    LWPA_MODULE_INIT(etcpal_timer),  \
-    LWPA_MODULE_INIT(etcpal_log)     \
+    ETCPAL_MODULE_INIT(etcpal_socket), \
+    ETCPAL_MODULE_INIT(etcpal_netint), \
+    ETCPAL_MODULE_INIT(etcpal_timer),  \
+    ETCPAL_MODULE_INIT(etcpal_log)     \
   }
 
 /* clang-format on */
@@ -76,13 +76,13 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   // If any init fails, each struct contains a flag indicating whether it has already been
   // initialized, so it can be cleaned up.
 
-  LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
+  LwpaModuleInit init_array[ETCPAL_NUM_FEATURES] = ETCPAL_MODULE_INIT_ARRAY;
 
   etcpal_error_t init_res = kEtcPalErrOk;
   etcpal_features_t feature_mask = 1u;
 
   // Initialize each module in turn.
-  for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+  for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + ETCPAL_NUM_FEATURES; ++init_struct)
   {
     if (features & feature_mask)
     {
@@ -98,7 +98,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   if (init_res != kEtcPalErrOk)
   {
     // Clean up on failure.
-    for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+    for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + ETCPAL_NUM_FEATURES; ++init_struct)
     {
       if (init_struct->initted)
         init_struct->deinit_fn();
@@ -117,12 +117,12 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
  */
 void etcpal_deinit(etcpal_features_t features)
 {
-  LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
+  LwpaModuleInit init_array[ETCPAL_NUM_FEATURES] = ETCPAL_MODULE_INIT_ARRAY;
 
   etcpal_features_t feature_mask = 1u;
 
   // Deinitialize each module in turn.
-  for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
+  for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + ETCPAL_NUM_FEATURES; ++init_struct)
   {
     if (features & feature_mask)
     {

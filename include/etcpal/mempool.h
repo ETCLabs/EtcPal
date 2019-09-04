@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/mempool.h: Fixed-size memory pools. */
-#ifndef _LWPA_MEMPOOL_H_
-#define _LWPA_MEMPOOL_H_
+#ifndef _ETCPAL_MEMPOOL_H_
+#define _ETCPAL_MEMPOOL_H_
 
 #include <stddef.h>
 #include "etcpal/error.h"
@@ -47,8 +47,8 @@ struct LwpaMempool
 };
 
 /*! (Not for direct usage) A memory pool description structure. Do not declare or use this structure
- *  directly; instead, use LWPA_MEMPOOL_DECLARE(), LWPA_MEMPOOL_DEFINE(),
- *  LWPA_MEMPOOL_DEFINE_ARRAY(), and the etcpal_mempool_* macros to interact with it. */
+ *  directly; instead, use ETCPAL_MEMPOOL_DECLARE(), ETCPAL_MEMPOOL_DEFINE(),
+ *  ETCPAL_MEMPOOL_DEFINE_ARRAY(), and the etcpal_mempool_* macros to interact with it. */
 typedef struct LwpaMempoolDesc
 {
   const size_t elem_size;  /*!< The size of each element. */
@@ -62,23 +62,23 @@ typedef struct LwpaMempoolDesc
 /*! \brief Declare a pool as an external variable.
  *
  *  This optional macro is useful for header files; when used, it must be paired with a call of
- *  LWPA_MEMPOOL_DEFINE() or LWPA_MEMPOOL_DEFINE_ARRAY() using the same name.
+ *  ETCPAL_MEMPOOL_DEFINE() or ETCPAL_MEMPOOL_DEFINE_ARRAY() using the same name.
  *
  *  \param name The name of the memory pool.
  */
-#define LWPA_MEMPOOL_DECLARE(name) extern LwpaMempoolDesc name##_pool_desc;
+#define ETCPAL_MEMPOOL_DECLARE(name) extern LwpaMempoolDesc name##_pool_desc;
 
 /*! \brief Define a new memory pool.
  *
  *  Expands to a number of variable definitions. Should not be used in a header file; if you want
- *  your memory pool to be accessible from multiple source files, use LWPA_MEMPOOL_DECLARE() in the
+ *  your memory pool to be accessible from multiple source files, use ETCPAL_MEMPOOL_DECLARE() in the
  *  header file in addition to this macro.
  *
  *  \param name The name of the memory pool.
  *  \param type The type of each element in the memory pool (e.g. int, struct foo)
  *  \param size The number of elements in the memory pool.
  */
-#define LWPA_MEMPOOL_DEFINE(name, type, size)                                     \
+#define ETCPAL_MEMPOOL_DEFINE(name, type, size)                                     \
   type name##_pool[size];                                                         \
   struct LwpaMempool name##_pool_list[size];                                      \
   struct LwpaMempoolDesc name##_pool_desc = {sizeof(type),     /* elem_size */    \
@@ -90,7 +90,7 @@ typedef struct LwpaMempoolDesc
 
 /*! \brief Define a new memory pool composed of arrays of elements.
  *
- *  This is an alternative to LWPA_MEMPOOL_DEFINE() for creating memory pools containing fixed-size
+ *  This is an alternative to ETCPAL_MEMPOOL_DEFINE() for creating memory pools containing fixed-size
  *  arrays of elements.
  *
  *  \param name The name of the memory pool.
@@ -98,7 +98,7 @@ typedef struct LwpaMempoolDesc
  *  \param array_size The number of elements in each array.
  *  \param pool_size The number of arrays in the memory pool.
  */
-#define LWPA_MEMPOOL_DEFINE_ARRAY(name, type, array_size, pool_size)                      \
+#define ETCPAL_MEMPOOL_DEFINE_ARRAY(name, type, array_size, pool_size)                      \
   type name##_pool[array_size][pool_size];                                                \
   struct LwpaMempool name##_pool_list[pool_size];                                         \
   struct LwpaMempoolDesc name##_pool_desc = {sizeof(type[array_size]), /* elem_size */    \
@@ -139,7 +139,7 @@ typedef struct LwpaMempoolDesc
 
 /*! \brief Get the total size of a memory pool.
  *
- *  This is a constant value that was provided in the LWPA_MEMPOOL_DEFINE() call.
+ *  This is a constant value that was provided in the ETCPAL_MEMPOOL_DEFINE() call.
  *
  *  \param name The name of the memory pool of which to get the size.
  *  \return The size of the memory pool.
@@ -167,4 +167,4 @@ size_t etcpal_mempool_used_priv(LwpaMempoolDesc* desc);
 
 /*! @} */
 
-#endif /* _LWPA_MEMPOOL_H_ */
+#endif /* _ETCPAL_MEMPOOL_H_ */

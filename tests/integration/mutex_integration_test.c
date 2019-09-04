@@ -74,7 +74,7 @@ TEST(mutex_integration, mutex_thread_test)
   etcpal_thread_t threads[NUM_THREADS];
 
   LwpaThreadParams params;
-  LWPA_THREAD_SET_DEFAULT_PARAMS(&params);
+  ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);
 
   for (size_t i = 0; i < NUM_THREADS; ++i)
   {

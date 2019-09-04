@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/bool.h: Provide a C boolean type for non-C99 environments. */
-#ifndef _LWPA_BOOL_H_
-#define _LWPA_BOOL_H_
+#ifndef _ETCPAL_BOOL_H_
+#define _ETCPAL_BOOL_H_
 
 /*! \defgroup etcpal_bool etcpal_bool
  *  \ingroup lwpa
@@ -70,4 +70,4 @@
 
 /*! @} */
 
-#endif /* _LWPA_BOOL_H_ */
+#endif /* _ETCPAL_BOOL_H_ */

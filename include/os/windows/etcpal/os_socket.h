@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_SOCKET_H_
-#define _LWPA_OS_SOCKET_H_
+#ifndef _ETCPAL_OS_SOCKET_H_
+#define _ETCPAL_OS_SOCKET_H_
 
 #ifndef NOMINMAX
 #define NOMINMAX 1 /* Suppress some conflicting definitions in the Windows headers */
@@ -48,9 +48,9 @@ typedef SOCKET etcpal_socket_t;
 #define PRIlwpasockt "u"
 #endif
 
-#define LWPA_SOCKET_INVALID INVALID_SOCKET
+#define ETCPAL_SOCKET_INVALID INVALID_SOCKET
 
-#define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
+#define ETCPAL_SOCKET_MAX_POLL_SIZE FD_SETSIZE
 
 /* Definitions for the etcpal_poll API */
 
@@ -76,4 +76,4 @@ typedef struct LwpaPollContext
 }
 #endif
 
-#endif /* _LWPA_OS_SOCKET_H_ */
+#endif /* _ETCPAL_OS_SOCKET_H_ */

@@ -19,8 +19,8 @@
 
 /* etcpal/int.h: Provide fixed-wid.h C integer types for non-C99 environments. */
 
-#ifndef _LWPA_INT_H_
-#define _LWPA_INT_H_
+#ifndef _ETCPAL_INT_H_
+#define _ETCPAL_INT_H_
 
 /*! \defgroup etcpal_int etcpal_int
  *  \ingroup lwpa
@@ -80,4 +80,4 @@
 
 /*! @} */
 
-#endif /* _LWPA_INT_H_ */
+#endif /* _ETCPAL_INT_H_ */

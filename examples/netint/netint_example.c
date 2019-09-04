@@ -47,11 +47,11 @@ void create_format_strings(const LwpaNetintInfo* netint_arr, size_t num_interfac
 
   for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
-    char netmask_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
+    char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
+    char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
 
-    etcpal_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-    etcpal_inet_ntop(&netint->mask, netmask_str, LWPA_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
 
     size_t name_len = strlen(netint->name);
     size_t addr_len = strlen(addr_str);
@@ -80,7 +80,7 @@ void create_format_strings(const LwpaNetintInfo* netint_arr, size_t num_interfac
 
 int main()
 {
-  etcpal_error_t init_res = etcpal_init(LWPA_FEATURE_NETINTS);
+  etcpal_error_t init_res = etcpal_init(ETCPAL_FEATURE_NETINTS);
   if (init_res != kEtcPalErrOk)
   {
     printf("etcpal_init() failed with error: '%s'\n", etcpal_strerror(init_res));
@@ -91,7 +91,7 @@ int main()
   if (num_interfaces == 0)
   {
     printf("Error: No network interfaces found on system.\n");
-    etcpal_deinit(LWPA_FEATURE_NETINTS);
+    etcpal_deinit(ETCPAL_FEATURE_NETINTS);
     return 1;
   }
 
@@ -105,11 +105,11 @@ int main()
 
   for (const LwpaNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
-    char netmask_str[LWPA_INET6_ADDRSTRLEN] = {'\0'};
+    char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
+    char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
     char mac_str[18];
-    etcpal_inet_ntop(&netint->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
-    etcpal_inet_ntop(&netint->mask, netmask_str, LWPA_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
+    etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
     snprintf(mac_str, 18, "%02x:%02x:%02x:%02x:%02x:%02x", netint->mac[0], netint->mac[1], netint->mac[2],
              netint->mac[3], netint->mac[4], netint->mac[5]);
 
@@ -138,7 +138,7 @@ int main()
     }
   }
 
-  etcpal_deinit(LWPA_FEATURE_NETINTS);
+  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 
   return 0;
 }

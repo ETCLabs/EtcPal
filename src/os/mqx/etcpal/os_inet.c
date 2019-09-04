@@ -27,7 +27,7 @@ bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
   if (os_ip->sa_family == AF_INET)
   {
     const struct sockaddr_in* sin = (const struct sockaddr_in*)os_ip;
-    LWPA_IP_SET_V4_ADDRESS(ip, ntohl(sin->sin_addr.s_addr));
+    ETCPAL_IP_SET_V4_ADDRESS(ip, ntohl(sin->sin_addr.s_addr));
     return true;
   }
   else if (os_ip->sa_family == AF_INET6)
@@ -49,7 +49,7 @@ bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
         }
       }
     }
-    LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(ip, sin6->sin6_addr.s6_addr, scope_id);
+    ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(ip, sin6->sin6_addr.s6_addr, scope_id);
     return true;
   }
   return false;
@@ -58,21 +58,21 @@ bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
 size_t ip_etcpal_to_os(const LwpaIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
 {
   size_t ret = 0;
-  if (LWPA_IP_IS_V4(ip))
+  if (ETCPAL_IP_IS_V4(ip))
   {
     struct sockaddr_in* sin = (struct sockaddr_in*)os_ip;
     memset(sin, 0, sizeof(struct sockaddr_in));
     sin->sin_family = AF_INET;
-    sin->sin_addr.s_addr = LWPA_IP_V4_ADDRESS(ip);
+    sin->sin_addr.s_addr = ETCPAL_IP_V4_ADDRESS(ip);
     ret = sizeof(struct sockaddr_in);
   }
-  else if (LWPA_IP_IS_V6(ip))
+  else if (ETCPAL_IP_IS_V6(ip))
   {
     struct sockaddr_in6* sin6 = (struct sockaddr_in6*)os_ip;
     memset(sin6, 0, sizeof(struct sockaddr_in6));
     sin6->sin6_family = AF_INET6;
     sin6->sin6_scope_id = (ip->addr.v6.scope_id > 0 ? ipcfg6_get_scope_id(ip->addr.v6.scope_id - 1) : 0);
-    memcpy(sin6->sin6_addr.s6_addr, LWPA_IP_V6_ADDRESS(ip), LWPA_IPV6_BYTES);
+    memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(ip), ETCPAL_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
   }
   return ret;
@@ -101,9 +101,9 @@ size_t sockaddr_etcpal_to_os(const LwpaSockaddr* sa, struct sockaddr* os_sa)
   size_t ret = ip_etcpal_to_os(&sa->ip, os_sa);
   if (ret != 0)
   {
-    if (LWPA_IP_IS_V4(&sa->ip))
+    if (ETCPAL_IP_IS_V4(&sa->ip))
       ((struct sockaddr_in*)os_sa)->sin_port = sa->port;
-    else if (LWPA_IP_IS_V6(&sa->ip))
+    else if (ETCPAL_IP_IS_V6(&sa->ip))
       ((struct sockaddr_in6*)os_sa)->sin6_port = sa->port;
   }
   return ret;
@@ -120,7 +120,7 @@ etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
     {
       struct in_addr addr;
       /* RTCS expects host byte order in their in_addrs. Thus no htonl is needed. */
-      addr.s_addr = LWPA_IP_V4_ADDRESS(src);
+      addr.s_addr = ETCPAL_IP_V4_ADDRESS(src);
       if (NULL != inet_ntop(AF_INET, &addr, dest, size))
         return kEtcPalErrOk;
       return kEtcPalErrSys;
@@ -128,7 +128,7 @@ etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
     case kEtcPalIpTypeV6:
     {
       struct in6_addr addr;
-      memcpy(addr.s6_addr, LWPA_IP_V6_ADDRESS(src), LWPA_IPV6_BYTES);
+      memcpy(addr.s6_addr, ETCPAL_IP_V6_ADDRESS(src), ETCPAL_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
         return kEtcPalErrOk;
       return kEtcPalErrSys;
@@ -151,7 +151,7 @@ etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, LwpaIpAdd
       if (RTCS_OK != inet_pton(AF_INET, src, &addr, sizeof addr))
         return kEtcPalErrInvalid;
       /* RTCS gives us host byte order in their in_addrs. Thus no htonl is needed. */
-      LWPA_IP_SET_V4_ADDRESS(dest, addr.s_addr);
+      ETCPAL_IP_SET_V4_ADDRESS(dest, addr.s_addr);
       return kEtcPalErrOk;
     }
     case kEtcPalIpTypeV6:
@@ -159,7 +159,7 @@ etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, LwpaIpAdd
       struct in6_addr addr;
       if (RTCS_OK != inet_pton(AF_INET6, src, &addr, sizeof addr))
         return kEtcPalErrInvalid;
-      LWPA_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
+      ETCPAL_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kEtcPalErrOk;
     }
     default:

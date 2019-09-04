@@ -24,9 +24,9 @@
 #include "md5.h"
 
 #ifdef _MSC_VER
-#define LWPA_SPRINTF __pragma(warning(suppress : 4996)) sprintf
+#define ETCPAL_SPRINTF __pragma(warning(suppress : 4996)) sprintf
 #else
-#define LWPA_SPRINTF sprintf
+#define ETCPAL_SPRINTF sprintf
 #endif
 
 const LwpaUuid kEtcPalNullUuid = {{0}};
@@ -37,7 +37,7 @@ const LwpaUuid kEtcPalNullUuid = {{0}};
  *  used for hexadecimal letters per RFC 4122 and common convention).
  *
  *  \param[out] buf Character buffer to which to write the resulting string. To avoid undefined
- *                  behavior, this buffer should be at least of size #LWPA_UUID_STRING_BYTES.
+ *                  behavior, this buffer should be at least of size #ETCPAL_UUID_STRING_BYTES.
  *  \param[in] uuid UUID to convert to a string.
  */
 void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid)
@@ -46,7 +46,7 @@ void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid)
 
   /* Automatically suppresses MSVC warning - minimum buffer size is well documented and cannot be
    * exceeded by this format string. */
-  LWPA_SPRINTF(buf, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0], c[1], c[2], c[3],
+  ETCPAL_SPRINTF(buf, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0], c[1], c[2], c[3],
                c[4], c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
 }
 
@@ -64,14 +64,14 @@ void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid)
 bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
 {
   const char* from_ptr = buf;
-  uint8_t to_buf[LWPA_UUID_BYTES];
+  uint8_t to_buf[ETCPAL_UUID_BYTES];
   uint8_t* to_ptr = to_buf;
   bool first = true; /* Whether we are doing the first or second nibble of the byte */
 
   if (!uuid || !buf || buflen == 0)
     return false;
 
-  while ((to_ptr - to_buf < LWPA_UUID_BYTES) && (from_ptr - buf < (ptrdiff_t)buflen))
+  while ((to_ptr - to_buf < ETCPAL_UUID_BYTES) && (from_ptr - buf < (ptrdiff_t)buflen))
   {
     uint8_t offset = 0;
     if ((*from_ptr >= '0') && (*from_ptr <= '9'))
@@ -99,9 +99,9 @@ bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
     ++from_ptr;
   }
 
-  if (to_ptr == to_buf + LWPA_UUID_BYTES)
+  if (to_ptr == to_buf + ETCPAL_UUID_BYTES)
   {
-    memcpy(uuid->data, to_buf, LWPA_UUID_BYTES);
+    memcpy(uuid->data, to_buf, ETCPAL_UUID_BYTES);
     return true;
   }
   return false;
@@ -131,7 +131,7 @@ bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
 /* Quick utility for generating a uuid out of a md5 hash buffer */
 static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
 {
-  uint8_t buffer[LWPA_UUID_BYTES];
+  uint8_t buffer[ETCPAL_UUID_BYTES];
   MD5Final(buffer, pmd5);
 
   /* Add the UUID flags into the buffer */
@@ -140,7 +140,7 @@ static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
   /* The variant bits to say this is encoded via RFC 4122 */
   buffer[8] = (uint8_t)(0x80 | (buffer[8] & 0x3f));
 
-  memcpy(uuid_out->data, buffer, LWPA_UUID_BYTES);
+  memcpy(uuid_out->data, buffer, ETCPAL_UUID_BYTES);
 }
 
 /*! \brief Generate a Version 3 UUID from a combination of a custom string and MAC address.

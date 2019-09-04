@@ -18,8 +18,8 @@
  ******************************************************************************/
 
 /* etcpal/pack.h: Platform- and endianness-independent buffer packing and unpacking. */
-#ifndef _LWPA_PACK_H_
-#define _LWPA_PACK_H_
+#ifndef _ETCPAL_PACK_H_
+#define _ETCPAL_PACK_H_
 
 #include "etcpal/int.h"
 
@@ -58,4 +58,4 @@ void etcpal_pack_32l(uint8_t* buf, uint32_t val);
 
 /*! @} */
 
-#endif /* _LWPA_PACK_H_ */
+#endif /* _ETCPAL_PACK_H_ */

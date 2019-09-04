@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _LWPA_OS_ERROR_H_
-#define _LWPA_OS_ERROR_H_
+#ifndef _ETCPAL_OS_ERROR_H_
+#define _ETCPAL_OS_ERROR_H_
 
 #include <WinSock2.h>
 #include <Windows.h>
@@ -26,4 +26,4 @@
 
 etcpal_error_t err_winsock_to_lwpa(int wsaerror);
 
-#endif /* _LWPA_OS_ERROR_H_ */
+#endif /* _ETCPAL_OS_ERROR_H_ */

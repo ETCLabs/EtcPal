@@ -34,8 +34,8 @@
  *
  * For more information, please refer to <http://unlicense.org/>
  */
-#ifndef _LWPA_RBTREE_H_
-#define _LWPA_RBTREE_H_
+#ifndef _ETCPAL_RBTREE_H_
+#define _ETCPAL_RBTREE_H_
 
 #include <stddef.h>
 #include "etcpal/error.h"
@@ -53,8 +53,8 @@
  */
 
 /*! The tallest allowable tree that can be iterated over. */
-#ifndef LWPA_RB_ITER_MAX_HEIGHT
-#define LWPA_RB_ITER_MAX_HEIGHT 64
+#ifndef ETCPAL_RB_ITER_MAX_HEIGHT
+#define ETCPAL_RB_ITER_MAX_HEIGHT 64
 #endif
 
 typedef struct LwpaRbNode LwpaRbNode;
@@ -142,7 +142,7 @@ typedef struct LwpaRbIter
 {
   LwpaRbTree* tree;                          /*!< The tree being iterated over. */
   LwpaRbNode* node;                          /*!< The current node. */
-  LwpaRbNode* path[LWPA_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
+  LwpaRbNode* path[ETCPAL_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
   size_t top;                                /*!< Top of the traversal stack. */
   void* info;                                /*!< User provided, not used by etcpal_rbiter. */
 } LwpaRbIter;
@@ -182,4 +182,4 @@ void* etcpal_rbiter_prev(LwpaRbIter* self);
 
 /*! @} */
 
-#endif /* _LWPA_RBTREE_H_ */
+#endif /* _ETCPAL_RBTREE_H_ */

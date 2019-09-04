@@ -21,27 +21,27 @@
  *  \brief Provides the current version of the lwpa library.
  *  \author Sam Kearney
  */
-#ifndef _LWPA_VERSION_H_
-#define _LWPA_VERSION_H_
+#ifndef _ETCPAL_VERSION_H_
+#define _ETCPAL_VERSION_H_
 
 /* clang-format off */
 
 /*! \name lwpa version numbers
  *  @{
  */
-#define LWPA_VERSION_MAJOR 0
-#define LWPA_VERSION_MINOR 3
-#define LWPA_VERSION_PATCH 0
-#define LWPA_VERSION_BUILD 2
+#define ETCPAL_VERSION_MAJOR 0
+#define ETCPAL_VERSION_MINOR 3
+#define ETCPAL_VERSION_PATCH 0
+#define ETCPAL_VERSION_BUILD 2
 /*! @} */
 
 /*! \name lwpa version strings
  *  @{
  */
-#define LWPA_VERSION_STRING "0.3.0.2"
-#define LWPA_VERSION_DATESTR "04.Sep.2019"
-#define LWPA_VERSION_COPYRIGHT "Copyright 2019 ETC Inc."
-#define LWPA_VERSION_PRODUCTNAME "lwpa"
+#define ETCPAL_VERSION_STRING "0.3.0.2"
+#define ETCPAL_VERSION_DATESTR "04.Sep.2019"
+#define ETCPAL_VERSION_COPYRIGHT "Copyright 2019 ETC Inc."
+#define ETCPAL_VERSION_PRODUCTNAME "lwpa"
 /*! @} */
 
-#endif /* _LWPA_VERSION_H_ */
+#endif /* _ETCPAL_VERSION_H_ */

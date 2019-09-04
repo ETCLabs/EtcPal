@@ -33,7 +33,7 @@ bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, v
   pthread_attr_t thread_attr;
   pthread_attr_t* p_thread_attr = NULL;
 
-  if (params && params->stack_size != LWPA_THREAD_DEFAULT_STACK)
+  if (params && params->stack_size != ETCPAL_THREAD_DEFAULT_STACK)
   {
     pthread_attr_init(&thread_attr);
     pthread_attr_setstacksize(&thread_attr, params->stack_size);

@@ -33,35 +33,35 @@ TEST_TEAR_DOWN(etcpal_common)
 {
 }
 
-// Test the LWPA_FEATURES_ALL_BUT() macro
+// Test the ETCPAL_FEATURES_ALL_BUT() macro
 TEST(etcpal_common, features_all_but_macro_works)
 {
-  etcpal_features_t mask = LWPA_FEATURES_ALL_BUT(LWPA_FEATURE_SOCKETS);
-  TEST_ASSERT(mask & LWPA_FEATURE_NETINTS);
-  TEST_ASSERT(mask & LWPA_FEATURE_TIMERS);
-  TEST_ASSERT(mask & LWPA_FEATURE_LOGGING);
-  TEST_ASSERT_UNLESS(mask & LWPA_FEATURE_SOCKETS);
+  etcpal_features_t mask = ETCPAL_FEATURES_ALL_BUT(ETCPAL_FEATURE_SOCKETS);
+  TEST_ASSERT(mask & ETCPAL_FEATURE_NETINTS);
+  TEST_ASSERT(mask & ETCPAL_FEATURE_TIMERS);
+  TEST_ASSERT(mask & ETCPAL_FEATURE_LOGGING);
+  TEST_ASSERT_UNLESS(mask & ETCPAL_FEATURE_SOCKETS);
 
-  mask = LWPA_FEATURES_ALL_BUT(LWPA_FEATURE_LOGGING);
-  TEST_ASSERT(mask & LWPA_FEATURE_SOCKETS);
-  TEST_ASSERT(mask & LWPA_FEATURE_NETINTS);
-  TEST_ASSERT(mask & LWPA_FEATURE_TIMERS);
-  TEST_ASSERT_UNLESS(mask & LWPA_FEATURE_LOGGING);
+  mask = ETCPAL_FEATURES_ALL_BUT(ETCPAL_FEATURE_LOGGING);
+  TEST_ASSERT(mask & ETCPAL_FEATURE_SOCKETS);
+  TEST_ASSERT(mask & ETCPAL_FEATURE_NETINTS);
+  TEST_ASSERT(mask & ETCPAL_FEATURE_TIMERS);
+  TEST_ASSERT_UNLESS(mask & ETCPAL_FEATURE_LOGGING);
 }
 
 // Test multiple calls of etcpal_init() for the netint module.
 TEST(etcpal_common, netint_double_init_works)
 {
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_NETINTS));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_NETINTS));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_NETINTS));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_NETINTS));
 
-  etcpal_deinit(LWPA_FEATURE_NETINTS);
+  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 
   // After 2 inits and one deinit, we should still be able to make valid calls to the module.
   unsigned int def_netint;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_netint));
 
-  etcpal_deinit(LWPA_FEATURE_NETINTS);
+  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 }
 
 // A shim from the etcpal_log module to fff.
@@ -70,29 +70,29 @@ FAKE_VOID_FUNC(common_test_log_callback, void*, const LwpaLogStrings*);
 // Test multiple calls of etcpal_init() for the log module.
 TEST(etcpal_common, log_double_init_works)
 {
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_LOGGING));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(LWPA_FEATURE_LOGGING));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_LOGGING));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_LOGGING));
 
   LwpaLogParams params;
   params.action = kEtcPalLogCreateHumanReadableLog;
   params.log_fn = common_test_log_callback;
-  params.log_mask = LWPA_LOG_UPTO(LWPA_LOG_DEBUG);
+  params.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   params.time_fn = NULL;
   params.context = NULL;
 
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&params));
 
-  etcpal_log(&params, LWPA_LOG_INFO, "Log message");
+  etcpal_log(&params, ETCPAL_LOG_INFO, "Log message");
   TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 1);
 
-  etcpal_deinit(LWPA_FEATURE_LOGGING);
+  etcpal_deinit(ETCPAL_FEATURE_LOGGING);
 
   // After 2 inits and one deinit, we should still be able to use the etcpal_log() function and get
   // callbacks.
-  etcpal_log(&params, LWPA_LOG_INFO, "Log message");
+  etcpal_log(&params, ETCPAL_LOG_INFO, "Log message");
   TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 2);
 
-  etcpal_deinit(LWPA_FEATURE_LOGGING);
+  etcpal_deinit(ETCPAL_FEATURE_LOGGING);
 }
 
 TEST_GROUP_RUNNER(etcpal_common)

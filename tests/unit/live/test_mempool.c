@@ -32,8 +32,8 @@ typedef struct TestElem
   char val2;
 } TestElem;
 
-LWPA_MEMPOOL_DEFINE(alloc_test, TestElem, ALLOC_TEST_MEMP_SIZE);
-LWPA_MEMPOOL_DEFINE_ARRAY(alloc_array_test, TestElem, ALLOC_TEST_MEMP_ARR_SIZE, ALLOC_TEST_MEMP_SIZE);
+ETCPAL_MEMPOOL_DEFINE(alloc_test, TestElem, ALLOC_TEST_MEMP_SIZE);
+ETCPAL_MEMPOOL_DEFINE_ARRAY(alloc_array_test, TestElem, ALLOC_TEST_MEMP_ARR_SIZE, ALLOC_TEST_MEMP_SIZE);
 
 TestElem* test_arr[ALLOC_TEST_MEMP_SIZE];
 size_t index_arr[ALLOC_TEST_MEMP_SIZE];

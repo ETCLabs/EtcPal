@@ -68,13 +68,13 @@ def update_version_files(repo_root, version):
         version[0], version[1], version[2], version[3])
 
     for line in version_h_in_file.readlines():
-        line = line.replace('@LWPA_VERSION_MAJOR@', str(version[0]))
-        line = line.replace('@LWPA_VERSION_MINOR@', str(version[1]))
-        line = line.replace('@LWPA_VERSION_PATCH@', str(version[2]))
-        line = line.replace('@LWPA_VERSION_BUILD@', str(version[3]))
-        line = line.replace('@LWPA_VERSION_STRING@', version_str)
-        line = line.replace('@LWPA_VERSION_DATESTR@', today.strftime('%d.%b.%Y'))
-        line = line.replace('@LWPA_VERSION_COPYRIGHT@', 'Copyright ' + str(today.year) + ' ETC Inc.')
+        line = line.replace('@ETCPAL_VERSION_MAJOR@', str(version[0]))
+        line = line.replace('@ETCPAL_VERSION_MINOR@', str(version[1]))
+        line = line.replace('@ETCPAL_VERSION_PATCH@', str(version[2]))
+        line = line.replace('@ETCPAL_VERSION_BUILD@', str(version[3]))
+        line = line.replace('@ETCPAL_VERSION_STRING@', version_str)
+        line = line.replace('@ETCPAL_VERSION_DATESTR@', today.strftime('%d.%b.%Y'))
+        line = line.replace('@ETCPAL_VERSION_COPYRIGHT@', 'Copyright ' + str(today.year) + ' ETC Inc.')
 
         version_h_out_file.write(line)
 
