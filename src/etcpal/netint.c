@@ -206,8 +206,7 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
  *         specified destination.
  *
  *  \param[in] dest IP address of the destination.
- *  \param[out] netint Pointer to network interface description struct to fill in with information
- *                     about the chosen interface.
+ *  \param[out] netint_index Pointer to value to fill in with the index of the chosen interface.
  *  \return #kEtcPalErrOk: Netint filled in successfully.
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  *  \return #kEtcPalErrNotInit: Module not initialized.

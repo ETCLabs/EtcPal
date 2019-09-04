@@ -36,7 +36,7 @@
  *      definitions, and add the path to etcpal_config.h as an include path
  *    * If building with CMake: use the CMake option ETCPAL_CONFIG_FILE_LOC
  *
- *  In the etcpal_config.h file, simply #define any overridden options to the desired value.
+ *  In the etcpal_config.h file, simply \#define any overridden options to the desired value.
  *
  *  @{
  */

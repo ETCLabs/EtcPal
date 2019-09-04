@@ -2,13 +2,13 @@
 <tagfile>
   <compound kind="file">
     <name>version.h</name>
-    <path>D:/git/ETCLabs/lwpa/include/lwpa/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="union">
-    <name>LwpaIpAddr::AddrUnion</name>
-    <filename>union_lwpa_ip_addr_1_1_addr_union.html</filename>
-    <class kind="struct">LwpaIpAddr::AddrUnion::LwpaIpv6Addr</class>
+    <name>EtcPalIpAddr::AddrUnion</name>
+    <filename>union_etc_pal_ip_addr_1_1_addr_union.html</filename>
+    <class kind="struct">EtcPalIpAddr::AddrUnion::EtcPalIpv6Addr</class>
   </compound>
   <compound kind="struct">
     <name>CachedNetintInfo</name>
@@ -19,3101 +19,3163 @@
     <filename>struct_default_netint.html</filename>
   </compound>
   <compound kind="struct">
-    <name>LwpaAddrinfo</name>
-    <filename>struct_lwpa_addrinfo.html</filename>
+    <name>EtcPalAddrinfo</name>
+    <filename>struct_etc_pal_addrinfo.html</filename>
     <member kind="variable">
       <type>int</type>
       <name>ai_flags</name>
-      <anchorfile>struct_lwpa_addrinfo.html</anchorfile>
+      <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
       <anchor>a92528a848ebf34ab99687dd06a09cc93</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>ai_family</name>
-      <anchorfile>struct_lwpa_addrinfo.html</anchorfile>
+      <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
       <anchor>a4dc44d22f13bc5c59bff73e549e96a5c</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>ai_socktype</name>
-      <anchorfile>struct_lwpa_addrinfo.html</anchorfile>
+      <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
       <anchor>a2109130e73586150c41fed16311e1af6</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>ai_protocol</name>
-      <anchorfile>struct_lwpa_addrinfo.html</anchorfile>
+      <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
       <anchor>a6ade486587feaa03d492eb84cfc83451</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>char *</type>
       <name>ai_canonname</name>
-      <anchorfile>struct_lwpa_addrinfo.html</anchorfile>
+      <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
       <anchor>a9fcbdd64fcb9adcf195a78b10f1fe8f6</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaSockaddr</type>
+      <type>EtcPalSockaddr</type>
       <name>ai_addr</name>
-      <anchorfile>struct_lwpa_addrinfo.html</anchorfile>
-      <anchor>a200d2e1203375035ef7d5c5c99e4a425</anchor>
+      <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
+      <anchor>a838f45940224c6e6bb31a64c3dd1961f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>void *</type>
       <name>pd</name>
-      <anchorfile>struct_lwpa_addrinfo.html</anchorfile>
+      <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
       <anchor>aecf048e565653706ca7120829d06e047</anchor>
       <arglist>[2]</arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaGroupReq</name>
-    <filename>struct_lwpa_group_req.html</filename>
+    <name>EtcPalGroupReq</name>
+    <filename>struct_etc_pal_group_req.html</filename>
     <member kind="variable">
       <type>unsigned int</type>
       <name>ifindex</name>
-      <anchorfile>struct_lwpa_group_req.html</anchorfile>
+      <anchorfile>struct_etc_pal_group_req.html</anchorfile>
       <anchor>a452f46bf9904a02408a12d9e406b4de7</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaIpAddr</type>
+      <type>EtcPalIpAddr</type>
       <name>group</name>
-      <anchorfile>struct_lwpa_group_req.html</anchorfile>
-      <anchor>a9d92abf5e7c4488e5d9dfc5ab9376e89</anchor>
+      <anchorfile>struct_etc_pal_group_req.html</anchorfile>
+      <anchor>ab8ed4113f331d191260b09e960e94254</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaIpAddr</name>
-    <filename>struct_lwpa_ip_addr.html</filename>
-    <class kind="union">LwpaIpAddr::AddrUnion</class>
+    <name>EtcPalIpAddr</name>
+    <filename>struct_etc_pal_ip_addr.html</filename>
+    <class kind="union">EtcPalIpAddr::AddrUnion</class>
     <member kind="variable">
-      <type>lwpa_iptype_t</type>
+      <type>etcpal_iptype_t</type>
       <name>type</name>
-      <anchorfile>struct_lwpa_ip_addr.html</anchorfile>
-      <anchor>a43f11ca9456afc383d0d550f16e3c420</anchor>
+      <anchorfile>struct_etc_pal_ip_addr.html</anchorfile>
+      <anchor>a89368dca599010efedd3d8ca663d5953</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaIpAddr::AddrUnion::LwpaIpv6Addr</name>
-    <filename>struct_lwpa_ip_addr_1_1_addr_union_1_1_lwpa_ipv6_addr.html</filename>
+    <name>EtcPalIpAddr::AddrUnion::EtcPalIpv6Addr</name>
+    <filename>struct_etc_pal_ip_addr_1_1_addr_union_1_1_etc_pal_ipv6_addr.html</filename>
   </compound>
   <compound kind="struct">
-    <name>LwpaLinger</name>
-    <filename>struct_lwpa_linger.html</filename>
+    <name>EtcPalLinger</name>
+    <filename>struct_etc_pal_linger.html</filename>
     <member kind="variable">
       <type>int</type>
       <name>onoff</name>
-      <anchorfile>struct_lwpa_linger.html</anchorfile>
+      <anchorfile>struct_etc_pal_linger.html</anchorfile>
       <anchor>a7730494d5c90b034d5937c758f354997</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>linger</name>
-      <anchorfile>struct_lwpa_linger.html</anchorfile>
+      <anchorfile>struct_etc_pal_linger.html</anchorfile>
       <anchor>a21667e862207c7c116b20764fcb8f931</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaLogParams</name>
-    <filename>struct_lwpa_log_params.html</filename>
+    <name>EtcPalLogParams</name>
+    <filename>struct_etc_pal_log_params.html</filename>
     <member kind="variable">
-      <type>lwpa_log_action_t</type>
+      <type>etcpal_log_action_t</type>
       <name>action</name>
-      <anchorfile>struct_lwpa_log_params.html</anchorfile>
-      <anchor>a599599d80aee1a85e37ad61810456cc5</anchor>
+      <anchorfile>struct_etc_pal_log_params.html</anchorfile>
+      <anchor>a97b4c2de584d731ffb8d8ce759930691</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_log_callback</type>
+      <type>etcpal_log_callback</type>
       <name>log_fn</name>
-      <anchorfile>struct_lwpa_log_params.html</anchorfile>
-      <anchor>a3e770b757979bd97f137d0801d3df5e4</anchor>
+      <anchorfile>struct_etc_pal_log_params.html</anchorfile>
+      <anchor>a878e8584783aed32b30a35697ffa27b5</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaSyslogParams</type>
+      <type>EtcPalSyslogParams</type>
       <name>syslog_params</name>
-      <anchorfile>struct_lwpa_log_params.html</anchorfile>
-      <anchor>ac3c58308b1be0a1a313137e208c15560</anchor>
+      <anchorfile>struct_etc_pal_log_params.html</anchorfile>
+      <anchor>a6b5edefad9cb5463180d2f3cc9537c44</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>log_mask</name>
-      <anchorfile>struct_lwpa_log_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_params.html</anchorfile>
       <anchor>ac695d621aaa836a9d13d65a912be9518</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_log_time_fn</type>
+      <type>etcpal_log_time_fn</type>
       <name>time_fn</name>
-      <anchorfile>struct_lwpa_log_params.html</anchorfile>
-      <anchor>aeb908ea1d2aeaea8c56ef914948986cc</anchor>
+      <anchorfile>struct_etc_pal_log_params.html</anchorfile>
+      <anchor>aaeb7319ba51e6b5fe1f4df5dea2eabce</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>void *</type>
       <name>context</name>
-      <anchorfile>struct_lwpa_log_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_params.html</anchorfile>
       <anchor>ae376f130b17d169ee51be68077a89ed0</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaLogStrings</name>
-    <filename>struct_lwpa_log_strings.html</filename>
+    <name>EtcPalLogStrings</name>
+    <filename>struct_etc_pal_log_strings.html</filename>
     <member kind="variable">
       <type>const char *</type>
       <name>syslog</name>
-      <anchorfile>struct_lwpa_log_strings.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_strings.html</anchorfile>
       <anchor>a5911dbe6a47cb2b9cfbab87a8881b5b6</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>const char *</type>
       <name>human_readable</name>
-      <anchorfile>struct_lwpa_log_strings.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_strings.html</anchorfile>
       <anchor>a4ac8b9667178849660fd3b1f99e93366</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>const char *</type>
       <name>raw</name>
-      <anchorfile>struct_lwpa_log_strings.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_strings.html</anchorfile>
       <anchor>a8129637af8920bc9328bbce2a00bfeb4</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaLogTimeParams</name>
-    <filename>struct_lwpa_log_time_params.html</filename>
+    <name>EtcPalLogTimeParams</name>
+    <filename>struct_etc_pal_log_time_params.html</filename>
     <member kind="variable">
       <type>int</type>
       <name>year</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>abeac221e38b7b9ce7df8722c842bf671</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>month</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>aedb06abe5aff12fa3e7e0e71a374edfb</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>day</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>a4c11afc03fc3ee49bab660def6558f2a</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>hour</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>a15df9ba285cfd842f284025f904edc9c</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>minute</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>a5edffad982a0566ad01d95005474eae3</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>second</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>a6cf35be1947a62f134392fcb1b3c54d2</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>msec</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>ad957f34cd6e8272740bc231865080b22</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>utc_offset</name>
-      <anchorfile>struct_lwpa_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
       <anchor>a0d5ceb6295477b5931bf54c002e36fe9</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaMempool</name>
-    <filename>struct_lwpa_mempool.html</filename>
+    <name>EtcPalMempool</name>
+    <filename>struct_etc_pal_mempool.html</filename>
   </compound>
   <compound kind="struct">
-    <name>LwpaMempoolDesc</name>
-    <filename>struct_lwpa_mempool_desc.html</filename>
+    <name>EtcPalMempoolDesc</name>
+    <filename>struct_etc_pal_mempool_desc.html</filename>
     <member kind="variable">
       <type>const size_t</type>
       <name>elem_size</name>
-      <anchorfile>struct_lwpa_mempool_desc.html</anchorfile>
+      <anchorfile>struct_etc_pal_mempool_desc.html</anchorfile>
       <anchor>a817b1b9f628c2698a9a3fb16ce738530</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>const size_t</type>
       <name>pool_size</name>
-      <anchorfile>struct_lwpa_mempool_desc.html</anchorfile>
+      <anchorfile>struct_etc_pal_mempool_desc.html</anchorfile>
       <anchor>aaeb9b2d37542fba1b318e4fcde49d9b4</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaMempool *</type>
+      <type>EtcPalMempool *</type>
       <name>freelist</name>
-      <anchorfile>struct_lwpa_mempool_desc.html</anchorfile>
-      <anchor>af38105b4ce33810fb92a498de0b73f63</anchor>
+      <anchorfile>struct_etc_pal_mempool_desc.html</anchorfile>
+      <anchor>a6e77cf602471114d51631a441c42ab0c</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaMempool *const</type>
+      <type>EtcPalMempool *const</type>
       <name>list</name>
-      <anchorfile>struct_lwpa_mempool_desc.html</anchorfile>
-      <anchor>abedf459e6fc547be7572a8fd4aecfbd5</anchor>
+      <anchorfile>struct_etc_pal_mempool_desc.html</anchorfile>
+      <anchor>a9bbae4d416583392b93135d8cc44d80e</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>current_used</name>
-      <anchorfile>struct_lwpa_mempool_desc.html</anchorfile>
+      <anchorfile>struct_etc_pal_mempool_desc.html</anchorfile>
       <anchor>aff331a9d3e0fdee5a3a504a3fe685bf0</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>void *const</type>
       <name>pool</name>
-      <anchorfile>struct_lwpa_mempool_desc.html</anchorfile>
+      <anchorfile>struct_etc_pal_mempool_desc.html</anchorfile>
       <anchor>aece14e36f8731b6f1c9602fee75c1544</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaModuleInit</name>
-    <filename>struct_lwpa_module_init.html</filename>
+    <name>EtcPalModuleInit</name>
+    <filename>struct_etc_pal_module_init.html</filename>
   </compound>
   <compound kind="struct">
-    <name>LwpaMreq</name>
-    <filename>struct_lwpa_mreq.html</filename>
+    <name>EtcPalMreq</name>
+    <filename>struct_etc_pal_mreq.html</filename>
     <member kind="variable">
-      <type>LwpaIpAddr</type>
+      <type>EtcPalIpAddr</type>
       <name>netint</name>
-      <anchorfile>struct_lwpa_mreq.html</anchorfile>
-      <anchor>aeb9189718092613b721ca97f43942753</anchor>
+      <anchorfile>struct_etc_pal_mreq.html</anchorfile>
+      <anchor>af4d9906a2a7fca6dfe6daf61b1ac55d2</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaIpAddr</type>
+      <type>EtcPalIpAddr</type>
       <name>group</name>
-      <anchorfile>struct_lwpa_mreq.html</anchorfile>
-      <anchor>a9d92abf5e7c4488e5d9dfc5ab9376e89</anchor>
+      <anchorfile>struct_etc_pal_mreq.html</anchorfile>
+      <anchor>ab8ed4113f331d191260b09e960e94254</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaNetintInfo</name>
-    <filename>struct_lwpa_netint_info.html</filename>
+    <name>EtcPalNetintInfo</name>
+    <filename>struct_etc_pal_netint_info.html</filename>
     <member kind="variable">
       <type>unsigned int</type>
       <name>index</name>
-      <anchorfile>struct_lwpa_netint_info.html</anchorfile>
+      <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
       <anchor>a589d64202487f78e3cc30dd2e04c5201</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaIpAddr</type>
+      <type>EtcPalIpAddr</type>
       <name>addr</name>
-      <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>a070c3843626368d0129cf7295c10296e</anchor>
+      <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
+      <anchor>ac10a4235b585003054f76871bad3fd85</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaIpAddr</type>
+      <type>EtcPalIpAddr</type>
       <name>mask</name>
-      <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>abff5b2b0f50f02db2d130bb3c59cd5b0</anchor>
+      <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
+      <anchor>a155577b467420f0877aa19b7265565f3</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>uint8_t</type>
       <name>mac</name>
-      <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>af218cb57bca9340eb78204cb81754bc9</anchor>
-      <arglist>[LWPA_NETINTINFO_MAC_LEN]</arglist>
+      <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
+      <anchor>aca9240e27db0f39672b30d0aac336e80</anchor>
+      <arglist>[ETCPAL_NETINTINFO_MAC_LEN]</arglist>
     </member>
     <member kind="variable">
       <type>char</type>
       <name>name</name>
-      <anchorfile>struct_lwpa_netint_info.html</anchorfile>
-      <anchor>abbe9b559861b88e242f78e5eb27b0fd5</anchor>
-      <arglist>[LWPA_NETINTINFO_NAME_LEN]</arglist>
+      <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
+      <anchor>a6eaa1f18016764aa8812196745e36463</anchor>
+      <arglist>[ETCPAL_NETINTINFO_NAME_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>friendly_name</name>
+      <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
+      <anchor>a3fa69022d71df27910811117d3e232fd</anchor>
+      <arglist>[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN]</arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>is_default</name>
-      <anchorfile>struct_lwpa_netint_info.html</anchorfile>
+      <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
       <anchor>a0c9f19a7b68ad0dad836ee153d3a230a</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaPdu</name>
-    <filename>struct_lwpa_pdu.html</filename>
+    <name>EtcPalPdu</name>
+    <filename>struct_etc_pal_pdu.html</filename>
   </compound>
   <compound kind="struct">
-    <name>LwpaPduConstraints</name>
-    <filename>struct_lwpa_pdu_constraints.html</filename>
+    <name>EtcPalPduConstraints</name>
+    <filename>struct_etc_pal_pdu_constraints.html</filename>
     <member kind="variable">
       <type>size_t</type>
       <name>vector_size</name>
-      <anchorfile>struct_lwpa_pdu_constraints.html</anchorfile>
+      <anchorfile>struct_etc_pal_pdu_constraints.html</anchorfile>
       <anchor>a28e18243c88fd99888246e855cc116fd</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>header_size</name>
-      <anchorfile>struct_lwpa_pdu_constraints.html</anchorfile>
+      <anchorfile>struct_etc_pal_pdu_constraints.html</anchorfile>
       <anchor>a64f1d0c53909f30b0aac882348cd32f2</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaPollEvent</name>
-    <filename>struct_lwpa_poll_event.html</filename>
+    <name>EtcPalPollEvent</name>
+    <filename>struct_etc_pal_poll_event.html</filename>
     <member kind="variable">
-      <type>lwpa_socket_t</type>
+      <type>etcpal_socket_t</type>
       <name>socket</name>
-      <anchorfile>struct_lwpa_poll_event.html</anchorfile>
-      <anchor>a8b54dbd84c8737203abd37d960e60779</anchor>
+      <anchorfile>struct_etc_pal_poll_event.html</anchorfile>
+      <anchor>ad32899ff82c07979513229c6f83c5f05</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_poll_events_t</type>
+      <type>etcpal_poll_events_t</type>
       <name>events</name>
-      <anchorfile>struct_lwpa_poll_event.html</anchorfile>
-      <anchor>a10ea004722be835cfea1f0c588d6d39c</anchor>
+      <anchorfile>struct_etc_pal_poll_event.html</anchorfile>
+      <anchor>a8c1a86a9a616989de3fcced4b0c0e1f7</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_error_t</type>
+      <type>etcpal_error_t</type>
       <name>err</name>
-      <anchorfile>struct_lwpa_poll_event.html</anchorfile>
-      <anchor>a2d84f39897e3cbaf81be57d00dce398b</anchor>
+      <anchorfile>struct_etc_pal_poll_event.html</anchorfile>
+      <anchor>a13b5fda068afcd9c79a54263a9fe7b07</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>void *</type>
       <name>user_data</name>
-      <anchorfile>struct_lwpa_poll_event.html</anchorfile>
+      <anchorfile>struct_etc_pal_poll_event.html</anchorfile>
       <anchor>a0f53d287ac7c064d1a49d4bd93ca1cb9</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaRbIter</name>
-    <filename>struct_lwpa_rb_iter.html</filename>
+    <name>EtcPalRbIter</name>
+    <filename>struct_etc_pal_rb_iter.html</filename>
     <member kind="variable">
-      <type>LwpaRbTree *</type>
+      <type>EtcPalRbTree *</type>
       <name>tree</name>
-      <anchorfile>struct_lwpa_rb_iter.html</anchorfile>
-      <anchor>ac7b99c0a7b935ddc4664f3301c3642d8</anchor>
+      <anchorfile>struct_etc_pal_rb_iter.html</anchorfile>
+      <anchor>a3dc7beb088200d742f70c0c895b376c4</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaRbNode *</type>
+      <type>EtcPalRbNode *</type>
       <name>node</name>
-      <anchorfile>struct_lwpa_rb_iter.html</anchorfile>
-      <anchor>aa53715d827987acdffce1862294c8349</anchor>
+      <anchorfile>struct_etc_pal_rb_iter.html</anchorfile>
+      <anchor>a46745baa1082347489f1dd6dd68c7afa</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaRbNode *</type>
+      <type>EtcPalRbNode *</type>
       <name>path</name>
-      <anchorfile>struct_lwpa_rb_iter.html</anchorfile>
-      <anchor>aca890e30bedb607e7d2164b568197d55</anchor>
-      <arglist>[LWPA_RB_ITER_MAX_HEIGHT]</arglist>
+      <anchorfile>struct_etc_pal_rb_iter.html</anchorfile>
+      <anchor>a6d248403d379988dac19bf98cfeb84b9</anchor>
+      <arglist>[ETCPAL_RB_ITER_MAX_HEIGHT]</arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>top</name>
-      <anchorfile>struct_lwpa_rb_iter.html</anchorfile>
+      <anchorfile>struct_etc_pal_rb_iter.html</anchorfile>
       <anchor>ab9332a87d0af5aa12cac847eff68b7af</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>void *</type>
       <name>info</name>
-      <anchorfile>struct_lwpa_rb_iter.html</anchorfile>
+      <anchorfile>struct_etc_pal_rb_iter.html</anchorfile>
       <anchor>acb1df3a0f703b05bc4971f79cabe2597</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaRbNode</name>
-    <filename>struct_lwpa_rb_node.html</filename>
+    <name>EtcPalRbNode</name>
+    <filename>struct_etc_pal_rb_node.html</filename>
     <member kind="variable">
       <type>int</type>
       <name>red</name>
-      <anchorfile>struct_lwpa_rb_node.html</anchorfile>
+      <anchorfile>struct_etc_pal_rb_node.html</anchorfile>
       <anchor>a6761340706096510fd89edca40a63b9b</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaRbNode *</type>
+      <type>EtcPalRbNode *</type>
       <name>link</name>
-      <anchorfile>struct_lwpa_rb_node.html</anchorfile>
-      <anchor>a791da83334fff8f52b7f4f4fbe0f4020</anchor>
+      <anchorfile>struct_etc_pal_rb_node.html</anchorfile>
+      <anchor>a629e7a1728cfe5d93fe2381d793ef93f</anchor>
       <arglist>[2]</arglist>
     </member>
     <member kind="variable">
       <type>void *</type>
       <name>value</name>
-      <anchorfile>struct_lwpa_rb_node.html</anchorfile>
+      <anchorfile>struct_etc_pal_rb_node.html</anchorfile>
       <anchor>a0f61d63b009d0880a89c843bd50d8d76</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaRbTree</name>
-    <filename>struct_lwpa_rb_tree.html</filename>
+    <name>EtcPalRbTree</name>
+    <filename>struct_etc_pal_rb_tree.html</filename>
     <member kind="variable">
-      <type>LwpaRbNode *</type>
+      <type>EtcPalRbNode *</type>
       <name>root</name>
-      <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
-      <anchor>a3c22ec40f8e99862b2a75a030e279648</anchor>
+      <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
+      <anchor>ae96f5aa846cba3ae538255b01f066bea</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_rbtree_node_cmp_f</type>
+      <type>etcpal_rbtree_node_cmp_f</type>
       <name>cmp</name>
-      <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
-      <anchor>a73b341fcbb4f0cb5c35ad5437de9da0b</anchor>
+      <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
+      <anchor>a10ccc54f5d61567cc7831f8f415687d8</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>size</name>
-      <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
+      <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
       <anchor>a854352f53b148adc24983a58a1866d66</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_rbnode_alloc_f</type>
+      <type>etcpal_rbnode_alloc_f</type>
       <name>alloc_f</name>
-      <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
-      <anchor>a7a4e85551fa2e1fb00d70745c1fd5a65</anchor>
+      <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
+      <anchor>af09735d8bf310cef3d8a0005138de5e3</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>lwpa_rbnode_dealloc_f</type>
+      <type>etcpal_rbnode_dealloc_f</type>
       <name>dealloc_f</name>
-      <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
-      <anchor>a37ee31aceb2b6af53d21336e97ce6330</anchor>
+      <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
+      <anchor>a163e7baba46efbe3c7fdd65c1c4051f2</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>void *</type>
       <name>info</name>
-      <anchorfile>struct_lwpa_rb_tree.html</anchorfile>
+      <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
       <anchor>acb1df3a0f703b05bc4971f79cabe2597</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaRootLayerPdu</name>
-    <filename>struct_lwpa_root_layer_pdu.html</filename>
+    <name>EtcPalRootLayerPdu</name>
+    <filename>struct_etc_pal_root_layer_pdu.html</filename>
     <member kind="variable">
-      <type>LwpaUuid</type>
+      <type>EtcPalUuid</type>
       <name>sender_cid</name>
-      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
-      <anchor>addaf02226137035b7f46186c67b87fe5</anchor>
+      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
+      <anchor>a341064da4798492e212c14a9aeede58d</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>uint32_t</type>
       <name>vector</name>
-      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
+      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
       <anchor>a513d751c7097b43b3968ac81f3a5715b</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>const uint8_t *</type>
       <name>pdata</name>
-      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
+      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
       <anchor>a2f9eb29aa10e0d64f27f69db1e90bd07</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>datalen</name>
-      <anchorfile>struct_lwpa_root_layer_pdu.html</anchorfile>
+      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
       <anchor>a3d12e161726566d24a1d0cf6c6b416bb</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaSockaddr</name>
-    <filename>struct_lwpa_sockaddr.html</filename>
+    <name>EtcPalSockaddr</name>
+    <filename>struct_etc_pal_sockaddr.html</filename>
     <member kind="variable">
       <type>uint16_t</type>
       <name>port</name>
-      <anchorfile>struct_lwpa_sockaddr.html</anchorfile>
+      <anchorfile>struct_etc_pal_sockaddr.html</anchorfile>
       <anchor>a8e0798404bf2cf5dabb84c5ba9a4f236</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>LwpaIpAddr</type>
+      <type>EtcPalIpAddr</type>
       <name>ip</name>
-      <anchorfile>struct_lwpa_sockaddr.html</anchorfile>
-      <anchor>aaafd70d57737ab374198d3d754411129</anchor>
+      <anchorfile>struct_etc_pal_sockaddr.html</anchorfile>
+      <anchor>a19cc8016f534a565f984438cfe911a9e</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaSyslogParams</name>
-    <filename>struct_lwpa_syslog_params.html</filename>
+    <name>EtcPalSyslogParams</name>
+    <filename>struct_etc_pal_syslog_params.html</filename>
     <member kind="variable">
       <type>int</type>
       <name>facility</name>
-      <anchorfile>struct_lwpa_syslog_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_syslog_params.html</anchorfile>
       <anchor>a213afa2e73e0c2102f43d4067e41b90f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>char</type>
       <name>hostname</name>
-      <anchorfile>struct_lwpa_syslog_params.html</anchorfile>
-      <anchor>a101da4fbfd94ee9467e2931768d64488</anchor>
-      <arglist>[LWPA_LOG_HOSTNAME_MAX_LEN]</arglist>
+      <anchorfile>struct_etc_pal_syslog_params.html</anchorfile>
+      <anchor>acf45ed2a37e15e83167bd1edcd9fbbbe</anchor>
+      <arglist>[ETCPAL_LOG_HOSTNAME_MAX_LEN]</arglist>
     </member>
     <member kind="variable">
       <type>char</type>
       <name>app_name</name>
-      <anchorfile>struct_lwpa_syslog_params.html</anchorfile>
-      <anchor>ac56492caa804aa3574dec4e755384200</anchor>
-      <arglist>[LWPA_LOG_APP_NAME_MAX_LEN]</arglist>
+      <anchorfile>struct_etc_pal_syslog_params.html</anchorfile>
+      <anchor>a6d20b2dcf8c2bc4f864b3d719ad00ad0</anchor>
+      <arglist>[ETCPAL_LOG_APP_NAME_MAX_LEN]</arglist>
     </member>
     <member kind="variable">
       <type>char</type>
       <name>procid</name>
-      <anchorfile>struct_lwpa_syslog_params.html</anchorfile>
-      <anchor>a08aa82e27aff5eddbfc578f623f54f4a</anchor>
-      <arglist>[LWPA_LOG_PROCID_MAX_LEN]</arglist>
+      <anchorfile>struct_etc_pal_syslog_params.html</anchorfile>
+      <anchor>aa3d06040894562832d2218511875b444</anchor>
+      <arglist>[ETCPAL_LOG_PROCID_MAX_LEN]</arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaTcpPreamble</name>
-    <filename>struct_lwpa_tcp_preamble.html</filename>
+    <name>EtcPalTcpPreamble</name>
+    <filename>struct_etc_pal_tcp_preamble.html</filename>
     <member kind="variable">
       <type>const uint8_t *</type>
       <name>rlp_block</name>
-      <anchorfile>struct_lwpa_tcp_preamble.html</anchorfile>
+      <anchorfile>struct_etc_pal_tcp_preamble.html</anchorfile>
       <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>rlp_block_len</name>
-      <anchorfile>struct_lwpa_tcp_preamble.html</anchorfile>
+      <anchorfile>struct_etc_pal_tcp_preamble.html</anchorfile>
       <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaThreadParams</name>
-    <filename>struct_lwpa_thread_params.html</filename>
+    <name>EtcPalThreadParams</name>
+    <filename>struct_etc_pal_thread_params.html</filename>
     <member kind="variable">
       <type>unsigned int</type>
       <name>thread_priority</name>
-      <anchorfile>struct_lwpa_thread_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_thread_params.html</anchorfile>
       <anchor>a9cc3e9ae3970c47e150dc77065abd75f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>unsigned int</type>
       <name>stack_size</name>
-      <anchorfile>struct_lwpa_thread_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_thread_params.html</anchorfile>
       <anchor>adde5266300e9cdd7ca1134daba9adf24</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>char *</type>
       <name>thread_name</name>
-      <anchorfile>struct_lwpa_thread_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_thread_params.html</anchorfile>
       <anchor>a9c15c6e0b10239673fa9d8be6ad08128</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>void *</type>
       <name>platform_data</name>
-      <anchorfile>struct_lwpa_thread_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_thread_params.html</anchorfile>
       <anchor>abea5d4a9dc1ef714b423a1ae6afaf4ae</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaTimer</name>
-    <filename>struct_lwpa_timer.html</filename>
+    <name>EtcPalTimer</name>
+    <filename>struct_etc_pal_timer.html</filename>
     <member kind="variable">
       <type>uint32_t</type>
       <name>reset_time</name>
-      <anchorfile>struct_lwpa_timer.html</anchorfile>
+      <anchorfile>struct_etc_pal_timer.html</anchorfile>
       <anchor>a8fb66f63094794fbbdacc69af5cc55fa</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>uint32_t</type>
       <name>interval</name>
-      <anchorfile>struct_lwpa_timer.html</anchorfile>
+      <anchorfile>struct_etc_pal_timer.html</anchorfile>
       <anchor>acd9ed1ccc44de55e1d3eff5569663695</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaUdpPreamble</name>
-    <filename>struct_lwpa_udp_preamble.html</filename>
+    <name>EtcPalUdpPreamble</name>
+    <filename>struct_etc_pal_udp_preamble.html</filename>
     <member kind="variable">
       <type>const uint8_t *</type>
       <name>rlp_block</name>
-      <anchorfile>struct_lwpa_udp_preamble.html</anchorfile>
+      <anchorfile>struct_etc_pal_udp_preamble.html</anchorfile>
       <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>rlp_block_len</name>
-      <anchorfile>struct_lwpa_udp_preamble.html</anchorfile>
+      <anchorfile>struct_etc_pal_udp_preamble.html</anchorfile>
       <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>LwpaUuid</name>
-    <filename>struct_lwpa_uuid.html</filename>
+    <name>EtcPalUuid</name>
+    <filename>struct_etc_pal_uuid.html</filename>
   </compound>
   <compound kind="struct">
     <name>MD5_CTX</name>
     <filename>struct_m_d5___c_t_x.html</filename>
   </compound>
   <compound kind="class">
-    <name>lwpa::MutexGuard</name>
-    <filename>classlwpa_1_1_mutex_guard.html</filename>
+    <name>etcpal::MutexGuard</name>
+    <filename>classetcpal_1_1_mutex_guard.html</filename>
   </compound>
   <compound kind="class">
-    <name>lwpa::ReadGuard</name>
-    <filename>classlwpa_1_1_read_guard.html</filename>
+    <name>etcpal::ReadGuard</name>
+    <filename>classetcpal_1_1_read_guard.html</filename>
   </compound>
   <compound kind="class">
-    <name>lwpa::WriteGuard</name>
-    <filename>classlwpa_1_1_write_guard.html</filename>
+    <name>etcpal::WriteGuard</name>
+    <filename>classetcpal_1_1_write_guard.html</filename>
   </compound>
   <compound kind="namespace">
-    <name>lwpa</name>
-    <filename>namespacelwpa.html</filename>
-    <class kind="class">lwpa::MutexGuard</class>
-    <class kind="class">lwpa::ReadGuard</class>
-    <class kind="class">lwpa::WriteGuard</class>
+    <name>etcpal</name>
+    <filename>namespaceetcpal.html</filename>
+    <class kind="class">etcpal::MutexGuard</class>
+    <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::WriteGuard</class>
   </compound>
   <compound kind="group">
-    <name>lwpa_lock</name>
-    <title>lwpa_lock</title>
-    <filename>group__lwpa__lock.html</filename>
-    <subgroup>lwpa_mutex</subgroup>
-    <subgroup>lwpa_signal</subgroup>
-    <subgroup>lwpa_rwlock</subgroup>
-    <class kind="class">lwpa::MutexGuard</class>
-    <class kind="class">lwpa::ReadGuard</class>
-    <class kind="class">lwpa::WriteGuard</class>
+    <name>etcpal_lock</name>
+    <title>etcpal_lock</title>
+    <filename>group__etcpal__lock.html</filename>
+    <subgroup>etcpal_mutex</subgroup>
+    <subgroup>etcpal_signal</subgroup>
+    <subgroup>etcpal_rwlock</subgroup>
+    <class kind="class">etcpal::MutexGuard</class>
+    <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::WriteGuard</class>
   </compound>
   <compound kind="group">
-    <name>lwpa_mutex</name>
-    <title>lwpa_mutex</title>
-    <filename>group__lwpa__mutex.html</filename>
+    <name>etcpal_mutex</name>
+    <title>etcpal_mutex</title>
+    <filename>group__etcpal__mutex.html</filename>
     <member kind="typedef">
       <type>UNDEFINED</type>
-      <name>lwpa_mutex_t</name>
-      <anchorfile>group__lwpa__mutex.html</anchorfile>
-      <anchor>gadd901205c027cd6c51e26270d34b9a29</anchor>
+      <name>etcpal_mutex_t</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga1e6a1360f61ff249137e3f6757322698</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_mutex_create</name>
-      <anchorfile>group__lwpa__mutex.html</anchorfile>
-      <anchor>ga33eb7f5c98da5276a454e906cafeea87</anchor>
-      <arglist>(lwpa_mutex_t *id)</arglist>
+      <name>etcpal_mutex_create</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga848f261552bf8c981590eb784ee5b3b8</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_mutex_take</name>
-      <anchorfile>group__lwpa__mutex.html</anchorfile>
-      <anchor>gaddfd883159e43fd194fbf3b355411263</anchor>
-      <arglist>(lwpa_mutex_t *id)</arglist>
+      <name>etcpal_mutex_take</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>gac56c0f48e3bfc5e8e0d321a711816f67</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_mutex_try_take</name>
-      <anchorfile>group__lwpa__mutex.html</anchorfile>
-      <anchor>gadc322cce9079e4f7f7ab9e9e685633b0</anchor>
-      <arglist>(lwpa_mutex_t *id)</arglist>
+      <name>etcpal_mutex_try_take</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga26e7c3d33f3ab2dd5a82de3cbc36d39e</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_mutex_give</name>
-      <anchorfile>group__lwpa__mutex.html</anchorfile>
-      <anchor>ga2d9b3e1d0507bc519c6da8cf1c1981f4</anchor>
-      <arglist>(lwpa_mutex_t *id)</arglist>
+      <name>etcpal_mutex_give</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga5a1ceebcbb5856a98dab50a13f894bcf</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_mutex_destroy</name>
-      <anchorfile>group__lwpa__mutex.html</anchorfile>
-      <anchor>gac4684dd66997cab2515ae883b5ac51d8</anchor>
-      <arglist>(lwpa_mutex_t *id)</arglist>
+      <name>etcpal_mutex_destroy</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga4b71ed71a637a07c0fe5cd55222a209c</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_signal</name>
-    <title>lwpa_signal</title>
-    <filename>group__lwpa__signal.html</filename>
+    <name>etcpal_signal</name>
+    <title>etcpal_signal</title>
+    <filename>group__etcpal__signal.html</filename>
     <member kind="typedef">
       <type>UNDEFINED</type>
-      <name>lwpa_signal_t</name>
-      <anchorfile>group__lwpa__signal.html</anchorfile>
-      <anchor>gaad04ad0c8d71e1b5b6a4e363965e43ef</anchor>
+      <name>etcpal_signal_t</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga9dc52b1097114b218c95970c599f01eb</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_signal_create</name>
-      <anchorfile>group__lwpa__signal.html</anchorfile>
-      <anchor>ga7e2c2e183c84b10d80c57fccdd49c9f7</anchor>
-      <arglist>(lwpa_signal_t *id)</arglist>
+      <name>etcpal_signal_create</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga4082ebadfba33b125930d5c5067139f0</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_signal_wait</name>
-      <anchorfile>group__lwpa__signal.html</anchorfile>
-      <anchor>gad1e8c49a266c700a182c907ef7aa29bf</anchor>
-      <arglist>(lwpa_signal_t *id)</arglist>
+      <name>etcpal_signal_wait</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga10e2d2cc15e6a30f38ba65f02c0905d7</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_signal_poll</name>
-      <anchorfile>group__lwpa__signal.html</anchorfile>
-      <anchor>ga704ec739497e224a990037524a9086ab</anchor>
-      <arglist>(lwpa_signal_t *id)</arglist>
+      <name>etcpal_signal_poll</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gad04fbc96ac93defb7ea545c81a880f12</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_signal_post</name>
-      <anchorfile>group__lwpa__signal.html</anchorfile>
-      <anchor>gab967464bd5c6bd05d8d110155777159c</anchor>
-      <arglist>(lwpa_signal_t *id)</arglist>
+      <name>etcpal_signal_post</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gafa2af190375bdb673563e2a029f0a89b</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_signal_destroy</name>
-      <anchorfile>group__lwpa__signal.html</anchorfile>
-      <anchor>ga1e76d7a093cd92f01b15f8a185726399</anchor>
-      <arglist>(lwpa_signal_t *id)</arglist>
+      <name>etcpal_signal_destroy</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga4ecc28a0f67939859d91c8e9e75701e4</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_rwlock</name>
-    <title>lwpa_rwlock</title>
-    <filename>group__lwpa__rwlock.html</filename>
+    <name>etcpal_rwlock</name>
+    <title>etcpal_rwlock</title>
+    <filename>group__etcpal__rwlock.html</filename>
     <member kind="typedef">
       <type>UNDEFINED</type>
-      <name>lwpa_rwlock_t</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>ga74e912ed8c5b1c545139f8cd6568ae45</anchor>
+      <name>etcpal_rwlock_t</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga06eaed70bff366f707fdcae078a0333f</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_rwlock_create</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>ga84a16e1e575e5bef32c0f5d50725b7a1</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_create</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga694477ee8932b83784f2d7a70ac856e3</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_rwlock_readlock</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>gac4f4763199bad441330867f975316393</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_readlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga846b8783133884b5fbce918811568825</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_rwlock_try_readlock</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>ga9f6b8671a52e91200447ad2912c1a6a3</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_try_readlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga473b7cb0a2bae2deb5477bb699e6cf9b</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_rwlock_readunlock</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>gaa2311356e0d51571c0560262468b0089</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_readunlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga3ab0cac4b091255a2694a4a472151160</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_rwlock_writelock</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>gaba4a0078be86e6fc1408cfbe602c0fba</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_writelock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>gac6989af16cb55025d06ee35373739380</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_rwlock_try_writelock</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>ga7f42819fdf2e713b03bf74325e2823f3</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_try_writelock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga05a985e996a37e5a4c8aa7f9c3b1d654</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_rwlock_writeunlock</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>ga33dd48c0866e13f3bccbaffc8d227b9c</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_writeunlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga83fbb82557a70ad86c8a65fd53b0cb8b</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_rwlock_destroy</name>
-      <anchorfile>group__lwpa__rwlock.html</anchorfile>
-      <anchor>ga5422591a8e0f2f3ca52816e531fc9815</anchor>
-      <arglist>(lwpa_rwlock_t *id)</arglist>
+      <name>etcpal_rwlock_destroy</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga2d4feb63613ff8dfb1f106f5ed63dee5</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_thread</name>
-    <title>lwpa_thread</title>
-    <filename>group__lwpa__thread.html</filename>
-    <class kind="struct">LwpaThreadParams</class>
+    <name>etcpal_opts</name>
+    <title>EtcPal config options</title>
+    <filename>group__etcpal__opts.html</filename>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_THREAD_DEFAULT_PRIORITY</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>gabe69c3e7a2ee99bec3517c2afb0c6b76</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LWPA_THREAD_DEFAULT_STACK</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>gade705a86763d0db86eb78ff6c58aed4a</anchor>
+      <name>ETCPAL_INCLUDE_PACK_64</name>
+      <anchorfile>group__etcpal__opts.html</anchorfile>
+      <anchor>ga5ababb448dd9ec260738821bd16d06cd</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_THREAD_DEFAULT_NAME</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>gab11c37b97da30254b66ecaf215062632</anchor>
+      <name>ETCPAL_EMBOS_USE_MALLOC</name>
+      <anchorfile>group__etcpal__opts.html</anchorfile>
+      <anchor>gaab67221f3adba4ea2b638e55341f8074</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_THREAD_NAME_MAX_LENGTH</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>gad7eb7c6d53f153f8e9fed7a35bfd9d95</anchor>
+      <name>ETCPAL_EMBOS_MAX_NETINTS</name>
+      <anchorfile>group__etcpal__opts.html</anchorfile>
+      <anchor>gaf5e80b2cbceca9bbe4e918610021a5ba</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_thread</name>
+    <title>etcpal_thread</title>
+    <filename>group__etcpal__thread.html</filename>
+    <class kind="struct">EtcPalThreadParams</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_DEFAULT_PRIORITY</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga3539233977b6e793b9b5a4c071fd6e78</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_DEFAULT_STACK</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gac4147a48a462f0c5b9758334b41243a9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_DEFAULT_NAME</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga41f1567e754166e758fc1fdda38fc300</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_NAME_MAX_LENGTH</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga5a0a37d186ac57231b94c287a58b54a0</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaThreadParams</type>
-      <name>LwpaThreadParams</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>ga57617a14defb483d477a662044d24f74</anchor>
+      <type>struct EtcPalThreadParams</type>
+      <name>EtcPalThreadParams</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gabb277d1d3fc2b021ca7513d8af038ed4</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>UNDEFINED</type>
-      <name>lwpa_thread_t</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>ga772303b983e1df853a66868f1419257c</anchor>
+      <name>etcpal_thread_t</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gaf5e68040f0d382ecebc46735a8f53c93</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_thread_create</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>gac3533f2da6b083858517fcb2ba660649</anchor>
-      <arglist>(lwpa_thread_t *id, const LwpaThreadParams *params, void(*thread_fn)(void *), void *thread_arg)</arglist>
+      <name>etcpal_thread_create</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga6622ac7af8e6cc018c28ba15cc824de5</anchor>
+      <arglist>(etcpal_thread_t *id, const EtcPalThreadParams *params, void(*thread_fn)(void *), void *thread_arg)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_thread_join</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>gac43cbc0cdfd62e365ad76e1110fe359c</anchor>
-      <arglist>(lwpa_thread_t *id)</arglist>
+      <name>etcpal_thread_join</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga8841872731c92356965eac616aedc2ff</anchor>
+      <arglist>(etcpal_thread_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_thread_sleep</name>
-      <anchorfile>group__lwpa__thread.html</anchorfile>
-      <anchor>ga1b3993fb872deb53b0129d43429b5cb1</anchor>
+      <name>etcpal_thread_sleep</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga8c76ca9a8ebd49dcb4b376f351fb4517</anchor>
       <arglist>(int sleep_ms)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_bool</name>
-    <title>lwpa_bool</title>
-    <filename>group__lwpa__bool.html</filename>
+    <name>etcpal_bool</name>
+    <title>etcpal_bool</title>
+    <filename>group__etcpal__bool.html</filename>
     <member kind="define">
       <type>#define</type>
       <name>bool</name>
-      <anchorfile>group__lwpa__bool.html</anchorfile>
+      <anchorfile>group__etcpal__bool.html</anchorfile>
       <anchor>gabb452686968e48b67397da5f97445f5b</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>false</name>
-      <anchorfile>group__lwpa__bool.html</anchorfile>
+      <anchorfile>group__etcpal__bool.html</anchorfile>
       <anchor>ga65e9886d74aaee76545e83dd09011727</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>true</name>
-      <anchorfile>group__lwpa__bool.html</anchorfile>
+      <anchorfile>group__etcpal__bool.html</anchorfile>
       <anchor>ga41f9c5fb8b08eb5dc3edce4dcb37fee7</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa</name>
-    <title>lwpa</title>
-    <filename>group__lwpa.html</filename>
-    <subgroup>lwpa_lock</subgroup>
-    <subgroup>lwpa_thread</subgroup>
-    <subgroup>lwpa_bool</subgroup>
-    <subgroup>lwpa_error</subgroup>
-    <subgroup>lwpa_inet</subgroup>
-    <subgroup>lwpa_int</subgroup>
-    <subgroup>lwpa_log</subgroup>
-    <subgroup>lwpa_mempool</subgroup>
-    <subgroup>lwpa_netint</subgroup>
-    <subgroup>lwpa_pack</subgroup>
-    <subgroup>lwpa_pdu</subgroup>
-    <subgroup>lwpa_rbtree</subgroup>
-    <subgroup>lwpa_socket</subgroup>
-    <subgroup>lwpa_timer</subgroup>
-    <subgroup>lwpa_uuid</subgroup>
+    <name>etcpal</name>
+    <title>EtcPal</title>
+    <filename>group__etcpal.html</filename>
+    <subgroup>etcpal_lock</subgroup>
+    <subgroup>etcpal_opts</subgroup>
+    <subgroup>etcpal_thread</subgroup>
+    <subgroup>etcpal_bool</subgroup>
+    <subgroup>etcpal_error</subgroup>
+    <subgroup>etcpal_inet</subgroup>
+    <subgroup>etcpal_int</subgroup>
+    <subgroup>etcpal_log</subgroup>
+    <subgroup>etcpal_mempool</subgroup>
+    <subgroup>etcpal_netint</subgroup>
+    <subgroup>etcpal_pack</subgroup>
+    <subgroup>etcpal_pdu</subgroup>
+    <subgroup>etcpal_rbtree</subgroup>
+    <subgroup>etcpal_socket</subgroup>
+    <subgroup>etcpal_timer</subgroup>
+    <subgroup>etcpal_uuid</subgroup>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_WAIT_FOREVER</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>ga1c2b0e972201228ff6c55879bab82861</anchor>
+      <name>ETCPAL_WAIT_FOREVER</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga1cfb33811295439bc08ce2e8b74c1d13</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>uint32_t</type>
-      <name>lwpa_features_t</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>gad114d8d0d8fc2b500bbe5cd815f050c6</anchor>
+      <name>etcpal_features_t</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>gae77772998c26f45618c26de1e1fc8305</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_init</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>gad3f4f0f94eeaede46d9f5f089129446b</anchor>
-      <arglist>(lwpa_features_t features)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_init</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga163b95dfe5ef6c68f2fb4d5b58a63843</anchor>
+      <arglist>(etcpal_features_t features)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_deinit</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>gaa5af7daa1612ac3fc98f49a166a0c669</anchor>
-      <arglist>(lwpa_features_t features)</arglist>
+      <name>etcpal_deinit</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga0792bdcd2f824009584744db01d7a352</anchor>
+      <arglist>(etcpal_features_t features)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_FEATURE_SOCKETS</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>ga51e7968caa7cc29fad18ec872c739cbb</anchor>
+      <name>ETCPAL_FEATURE_SOCKETS</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga09f99422deaa7bb5d2625c317d1a66a6</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_FEATURE_NETINTS</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>ga4830c5a79855564b312b2c12e869702a</anchor>
+      <name>ETCPAL_FEATURE_NETINTS</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>gaf5b3a81b975bbae1f6f54f43bfc0c6a7</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_FEATURE_TIMERS</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>ga14efb0458ae41274fe96f0797d35e1f1</anchor>
+      <name>ETCPAL_FEATURE_TIMERS</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>gaffb285a8108a672c01c33d921ee8be83</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_FEATURE_LOGGING</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>ga20bf4148474b69f45813f818e16ea0d7</anchor>
+      <name>ETCPAL_FEATURE_LOGGING</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga8c7c1f9430362540e56af3a2742a25d4</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_FEATURES_ALL</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>ga1c807b4b9009a27514f7895791ecf49a</anchor>
+      <name>ETCPAL_FEATURES_ALL</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga740dd7c89f16ff20992cf21970d1c521</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_FEATURES_ALL_BUT</name>
-      <anchorfile>group__lwpa.html</anchorfile>
-      <anchor>ga1effd03384104d4edff4ea16a1c26c9b</anchor>
+      <name>ETCPAL_FEATURES_ALL_BUT</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga15560671c4e732ed46dc03a0e522d160</anchor>
       <arglist>(mask)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_error</name>
-    <title>lwpa_error</title>
-    <filename>group__lwpa__error.html</filename>
+    <name>etcpal_error</name>
+    <title>etcpal_error</title>
+    <filename>group__etcpal__error.html</filename>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_strerror</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gadd5acb6baf8584951dd378c7e92ddf54</anchor>
+      <name>etcpal_strerror</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>ga6c57f2a17ae4e5fcdf299b4210331f25</anchor>
       <arglist>(errcode)</arglist>
     </member>
     <member kind="enumeration">
       <type></type>
-      <name>lwpa_error_t</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>ga4de447127cf0baaa9afb0188e1e6afbf</anchor>
+      <name>etcpal_error_t</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>ga743b0648f0ca798ef29c9f69c6e255af</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrOk</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa332c55060c2e36ba406b247364342199</anchor>
+      <name>kEtcPalErrOk</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNotFound</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa41ff891710b19b8613b5db809a124cf4</anchor>
+      <name>kEtcPalErrNotFound</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNoMem</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa8f782e7c6ea448431c50f088147c5c43</anchor>
+      <name>kEtcPalErrNoMem</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrBusy</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa3a8c0926d569091c97b9a74fdb716645</anchor>
+      <name>kEtcPalErrBusy</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa47b93a8acf0aad836afc5dda44551acc</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrExists</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa1af6ff7dc223fe0e0bd551fdabd73b7a</anchor>
+      <name>kEtcPalErrExists</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrInvalid</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa219aa02b173fd0673404cc488c159e82</anchor>
+      <name>kEtcPalErrInvalid</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrWouldBlock</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa52905f0701acbbda2f1774e5c3f02069</anchor>
+      <name>kEtcPalErrWouldBlock</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa735dc55ef30ad08cca792cb41a1dfeb1</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNoData</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa5459cfcb7b0a1139177495e00f094b23</anchor>
+      <name>kEtcPalErrNoData</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa77e50551fc1c569578f0f9dd4d4a5712</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrProtocol</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa9f78328f06545761648fe2d0c9f4036b</anchor>
+      <name>kEtcPalErrProtocol</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa8396c97054393b3faf3849541fc99c43</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrMsgSize</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfadb89f147a1e1e1d28a25c0491acbdf45</anchor>
+      <name>kEtcPalErrMsgSize</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afaa980a5e26cf5086f916d12a485572f12</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrAddrInUse</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfad0dc4f564ab6a3ae12627d5f727c0361</anchor>
+      <name>kEtcPalErrAddrInUse</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afae27e1c52937b3d1c1993f78160a0a778</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrAddrNotAvail</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfafb1d97753ff7441c4525c9696b685196</anchor>
+      <name>kEtcPalErrAddrNotAvail</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa44ede5b2503ce2b1bb4ccd285d676b50</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNetwork</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa9713abfbdabf5e4ec4d47bf983a9c58b</anchor>
+      <name>kEtcPalErrNetwork</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa4c458cd2885e27a726a1d9dedf4b4bec</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrConnReset</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa065fca71d26b2f1c18928057c683975e</anchor>
+      <name>kEtcPalErrConnReset</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa15cf4f4905d98d94910c6cc76ae1218f</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrConnClosed</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfaeec1e1871e67d57971ec53ab9f0256ff</anchor>
+      <name>kEtcPalErrConnClosed</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afafb8046b7504e0e9908654f939e74ee60</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrIsConn</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa77ecfdaace5406dc651a1854b5550799</anchor>
+      <name>kEtcPalErrIsConn</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa9603628c356775915b437e3c15bdef53</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNotConn</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfae2395fe58a3c8e5b2a9961acfb3bc382</anchor>
+      <name>kEtcPalErrNotConn</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa2eb8abeafb170747d185803ad0a2d527</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrShutdown</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfaa207564d0e57b7d7a0a3b8d42ab67321</anchor>
+      <name>kEtcPalErrShutdown</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa28e1dbbb288f3248d64378d83920259a</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrTimedOut</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa5411409d0e04a1291da3130d90c54a66</anchor>
+      <name>kEtcPalErrTimedOut</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrConnAborted</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa6d3e2a994acb0c378ce59660db281084</anchor>
+      <name>kEtcPalErrConnAborted</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrConnRefused</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfae077aadad03eec8faad0c0898ee467ed</anchor>
+      <name>kEtcPalErrConnRefused</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa4b119ec2231eb8bf73535b1375f5f232</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrAlready</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa39b9636ec0941f04c09909fd762abf04</anchor>
+      <name>kEtcPalErrAlready</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afaa9c6c39f7303953a99c50a981f36dff0</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrInProgress</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfabd9b5ff345fe83ebaa753e15f1615649</anchor>
+      <name>kEtcPalErrInProgress</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa99aabe562db1ed9acab67c6a2bc777a1</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrBufSize</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa7397e19c5dc23238112fdcb70610bc71</anchor>
+      <name>kEtcPalErrBufSize</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afaefe61c95876a3a7faba0f5da4ec03f37</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNotInit</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa8800538947262274425437ff11e84b25</anchor>
+      <name>kEtcPalErrNotInit</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNoNetints</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa2c6066ceb92f5c9ca1ad8aa83694d88c</anchor>
+      <name>kEtcPalErrNoNetints</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNoSockets</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfad52bd3d08c7896fc789446dfb635243f</anchor>
+      <name>kEtcPalErrNoSockets</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrNotImpl</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa88c03c75f09818b154ac60720977adcf</anchor>
+      <name>kEtcPalErrNotImpl</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrPerm</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfab2b2faed88fad885e984309f9c6423b7</anchor>
+      <name>kEtcPalErrPerm</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa9fb1e2b91f204d8a01377796bddd867d</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaErrSys</name>
-      <anchorfile>group__lwpa__error.html</anchorfile>
-      <anchor>gga4de447127cf0baaa9afb0188e1e6afbfa43124f55ae7c2e0f869a49f1fc6e21c9</anchor>
+      <name>kEtcPalErrSys</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_inet</name>
-    <title>lwpa_inet</title>
-    <filename>group__lwpa__inet.html</filename>
-    <class kind="struct">LwpaIpAddr</class>
-    <class kind="struct">LwpaSockaddr</class>
-    <class kind="struct">LwpaNetintInfo</class>
+    <name>etcpal_inet</name>
+    <title>etcpal_inet</title>
+    <filename>group__etcpal__inet.html</filename>
+    <class kind="struct">EtcPalIpAddr</class>
+    <class kind="struct">EtcPalSockaddr</class>
+    <class kind="struct">EtcPalNetintInfo</class>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IPV6_BYTES</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gadf510df24e827cbeeeca96a00d6cdd75</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LWPA_INET_ADDRSTRLEN</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gac9a7a8dbe7def9af922af1a99b4c6569</anchor>
+      <name>ETCPAL_IPV6_BYTES</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gad5f18940857b50304b956505fb77df20</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_INET6_ADDRSTRLEN</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga078d3101f67934bce6f13f193a4832ea</anchor>
+      <name>ETCPAL_INET_ADDRSTRLEN</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gab44293e291772ce05ffa42c1ad51e4e0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_INET6_ADDRSTRLEN</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga71fa8216f8c0c7472c8786e793a7b280</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaIpAddr</type>
-      <name>LwpaIpAddr</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga42d5bf98514c41052f6f19d2e0a8691e</anchor>
+      <type>struct EtcPalIpAddr</type>
+      <name>EtcPalIpAddr</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga0f4fa2c5534edc2061c48b7d0a60941f</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaSockaddr</type>
-      <name>LwpaSockaddr</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gae0b2fa6bb6c8a15a8ebb0cd5fffe96c9</anchor>
+      <type>struct EtcPalSockaddr</type>
+      <name>EtcPalSockaddr</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gacd6641e07d027a38b3b275fd97dc948d</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaNetintInfo</type>
-      <name>LwpaNetintInfo</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga329f214bf9d65ca173437e227a1c5bc7</anchor>
+      <type>struct EtcPalNetintInfo</type>
+      <name>EtcPalNetintInfo</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaed988a9502c1d15538ef945b3b5b234b</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
       <type></type>
-      <name>lwpa_iptype_t</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga75918e41a21a5b4511b2b3c797e6f048</anchor>
+      <name>etcpal_iptype_t</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga847282e3fd17bf75ec83292326c455ee</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaIpTypeInvalid</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e</anchor>
+      <name>kEtcPalIpTypeInvalid</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaIpTypeV4</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd</anchor>
+      <name>kEtcPalIpTypeV4</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaIpTypeV6</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da</anchor>
+      <name>kEtcPalIpTypeV6</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_ip_is_link_local</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gace949c44b216e2dd8d81de6b57aafb13</anchor>
-      <arglist>(const LwpaIpAddr *ip)</arglist>
+      <name>etcpal_ip_is_link_local</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaa4b21b32f8776276e582d473e17bf768</anchor>
+      <arglist>(const EtcPalIpAddr *ip)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_ip_is_loopback</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga700cb0526cde413cca61f970231d4806</anchor>
-      <arglist>(const LwpaIpAddr *ip)</arglist>
+      <name>etcpal_ip_is_loopback</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga6f59d1ebf7873649f0812ee1cae171e7</anchor>
+      <arglist>(const EtcPalIpAddr *ip)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_ip_is_multicast</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga3b0cdd32380a0dd44d67fef6800ba95f</anchor>
-      <arglist>(const LwpaIpAddr *ip)</arglist>
+      <name>etcpal_ip_is_multicast</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga71b745e5bdc7c77bba5320241639f450</anchor>
+      <arglist>(const EtcPalIpAddr *ip)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_ip_is_wildcard</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gaaad2d470c8be885c55f8eaf4c89710eb</anchor>
-      <arglist>(const LwpaIpAddr *ip)</arglist>
+      <name>etcpal_ip_is_wildcard</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaef79c0c7eac819d7decf1473246d3b82</anchor>
+      <arglist>(const EtcPalIpAddr *ip)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_ip_set_wildcard</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga8f5ba7636a445882d3bd09e45f97c285</anchor>
-      <arglist>(lwpa_iptype_t type, LwpaIpAddr *ip)</arglist>
+      <name>etcpal_ip_set_wildcard</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga5d91044202026978c99000b6da2d226e</anchor>
+      <arglist>(etcpal_iptype_t type, EtcPalIpAddr *ip)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_ip_equal</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gac1805623603318386ea74815b694f021</anchor>
-      <arglist>(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2)</arglist>
+      <name>etcpal_ip_equal</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaa5de56fa77b6190297ce164910c2eca0</anchor>
+      <arglist>(const EtcPalIpAddr *ip1, const EtcPalIpAddr *ip2)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>lwpa_ip_cmp</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga3aba9897afc056a10b81d4f2d6451d0f</anchor>
-      <arglist>(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2)</arglist>
+      <name>etcpal_ip_cmp</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaf766d207bd3e85c6b3d75768f28a00c6</anchor>
+      <arglist>(const EtcPalIpAddr *ip1, const EtcPalIpAddr *ip2)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_ip_and_port_equal</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gad78b7fcae748568c74ecb2c08bfbace4</anchor>
-      <arglist>(const LwpaSockaddr *sock1, const LwpaSockaddr *sock2)</arglist>
+      <name>etcpal_ip_and_port_equal</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gac3f119aa04305d7cf485d1a86baf74cb</anchor>
+      <arglist>(const EtcPalSockaddr *sock1, const EtcPalSockaddr *sock2)</arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
-      <name>lwpa_ip_mask_length</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga16facd74441deb055bfffaf7c8d7f7ee</anchor>
-      <arglist>(const LwpaIpAddr *netmask)</arglist>
+      <name>etcpal_ip_mask_length</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga9a86a44681bc856e5919578bbf652e38</anchor>
+      <arglist>(const EtcPalIpAddr *netmask)</arglist>
     </member>
     <member kind="function">
-      <type>LwpaIpAddr</type>
-      <name>lwpa_ip_mask_from_length</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga9ef3d4b831b3c9e598f9e568fd17ffe3</anchor>
-      <arglist>(lwpa_iptype_t type, unsigned int mask_length)</arglist>
+      <type>EtcPalIpAddr</type>
+      <name>etcpal_ip_mask_from_length</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga0f8ba14963ce91bfd74626f2a1e957f0</anchor>
+      <arglist>(etcpal_iptype_t type, unsigned int mask_length)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_ip_network_portions_equal</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga5c416c166428a88fc03f4be742ed6e78</anchor>
-      <arglist>(const LwpaIpAddr *ip1, const LwpaIpAddr *ip2, const LwpaIpAddr *netmask)</arglist>
+      <name>etcpal_ip_network_portions_equal</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga2112e37aae54451f5b7b03168183cace</anchor>
+      <arglist>(const EtcPalIpAddr *ip1, const EtcPalIpAddr *ip2, const EtcPalIpAddr *netmask)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_IS_V4</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga0b1e21bccece957bb0a4986c51fd7d3a</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
+      <name>ETCPAL_IP_IS_V4</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga4ed3a313f7503031100bb169ad03bc89</anchor>
+      <arglist>(etcpal_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_IS_V6</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga6e008633fe046017e20ad036175400a4</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
+      <name>ETCPAL_IP_IS_V6</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga85d241eed93be1b271e5dc68a56e9473</anchor>
+      <arglist>(etcpal_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_IS_INVALID</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gae45f4d73820e647d45f4a6c1346fcb0f</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
+      <name>ETCPAL_IP_IS_INVALID</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga56a6933874bc52770eac5865f237e225</anchor>
+      <arglist>(etcpal_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_V4_ADDRESS</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gab58ee5657f5ec2e0a33fe6108d15acfc</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
+      <name>ETCPAL_IP_V4_ADDRESS</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga35262011f1ae20211d8aad5c79ab1b50</anchor>
+      <arglist>(etcpal_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_V6_ADDRESS</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga505ee023d06f2a90976dd50b596ba963</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
+      <name>ETCPAL_IP_V6_ADDRESS</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaaee800da95371923f9375dec1a6c0a5c</anchor>
+      <arglist>(etcpal_ip_ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_SET_V4_ADDRESS</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga7a29e94ac67df250504e56ac9257a8c8</anchor>
-      <arglist>(lwpa_ip_ptr, val)</arglist>
+      <name>ETCPAL_IP_SET_V4_ADDRESS</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga5e36f7ec503aef51829aed6fbd88c889</anchor>
+      <arglist>(etcpal_ip_ptr, val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_SET_V6_ADDRESS</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga4217ea63c7520ea2fe349be430c8cfec</anchor>
-      <arglist>(lwpa_ip_ptr, addr_val)</arglist>
+      <name>ETCPAL_IP_SET_V6_ADDRESS</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gae0d14b2f44b81a6687390839e0aea869</anchor>
+      <arglist>(etcpal_ip_ptr, addr_val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>ga2d1a4c527a80069754dbc3f08b66723b</anchor>
-      <arglist>(lwpa_ip_ptr, addr_val, scope_id_val)</arglist>
+      <name>ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaeb96cdc37b6f57f448b0ac15971380d8</anchor>
+      <arglist>(etcpal_ip_ptr, addr_val, scope_id_val)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_SET_INVALID</name>
-      <anchorfile>group__lwpa__inet.html</anchorfile>
-      <anchor>gaf8587cfa1476afaae1c34081f2b9e061</anchor>
-      <arglist>(lwpa_ip_ptr)</arglist>
+      <name>ETCPAL_IP_SET_INVALID</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gab7df63744affbe2833fcb455e69b6ff5</anchor>
+      <arglist>(etcpal_ip_ptr)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_int</name>
-    <title>lwpa_int</title>
-    <filename>group__lwpa__int.html</filename>
+    <name>etcpal_int</name>
+    <title>etcpal_int</title>
+    <filename>group__etcpal__int.html</filename>
     <member kind="define">
       <type>#define</type>
       <name>HAVE_STDINT_H</name>
-      <anchorfile>group__lwpa__int.html</anchorfile>
+      <anchorfile>group__etcpal__int.html</anchorfile>
       <anchor>gab6cd6d1c63c1e26ea2d4537b77148354</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_log</name>
-    <title>lwpa_log</title>
-    <filename>group__lwpa__log.html</filename>
-    <class kind="struct">LwpaLogTimeParams</class>
-    <class kind="struct">LwpaLogStrings</class>
-    <class kind="struct">LwpaSyslogParams</class>
-    <class kind="struct">LwpaLogParams</class>
+    <name>etcpal_log</name>
+    <title>etcpal_log</title>
+    <filename>group__etcpal__log.html</filename>
+    <class kind="struct">EtcPalLogTimeParams</class>
+    <class kind="struct">EtcPalLogStrings</class>
+    <class kind="struct">EtcPalSyslogParams</class>
+    <class kind="struct">EtcPalLogParams</class>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_NFACILITIES</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga9ddc5e6a9583f9d8d12e9fddd5973461</anchor>
+      <name>ETCPAL_LOG_NFACILITIES</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga9c650b00d427b03b6169b18514627eb7</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_HOSTNAME_MAX_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gac283f15a55e1f885b4a284cdf749a318</anchor>
+      <name>ETCPAL_LOG_HOSTNAME_MAX_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gafc4fcfbaaffb603d10e2b27f54e122d2</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_APP_NAME_MAX_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaea6845af17f90339030b7f1aed4248b6</anchor>
+      <name>ETCPAL_LOG_APP_NAME_MAX_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga2b336b7e2828f1f9c576fb4a6e357b1a</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_PROCID_MAX_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaf444c37d4b37d0d12a01cdd900c54343</anchor>
+      <name>ETCPAL_LOG_PROCID_MAX_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga1786d1616917fb0bf1315504e14060c4</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_MSG_MAX_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga3c6145528eb237caccd1e364ed0574c9</anchor>
+      <name>ETCPAL_LOG_MSG_MAX_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga2ee8e585233bc73a2a299fc94230fed4</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_TIMESTAMP_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gae9a41c527892d020281abfb31f4f01e0</anchor>
+      <name>ETCPAL_LOG_TIMESTAMP_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga589d05713f16b04a0337399d5064e7c3</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SYSLOG_HEADER_MAX_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaef6b15895880ea225057a79bbb120945</anchor>
+      <name>ETCPAL_SYSLOG_HEADER_MAX_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga6463250841fd9f0b87d84574d5ed561f</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SYSLOG_STR_MIN_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga98a9352b7969f965cf4c77af3c462f21</anchor>
+      <name>ETCPAL_SYSLOG_STR_MIN_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga2b86d5334ad5c012a7b81ce1e9c90e33</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_HUMAN_LOG_STR_MIN_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga794bc9c3568fda36ad6e26a790ae6195</anchor>
+      <name>ETCPAL_HUMAN_LOG_STR_MIN_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gac2b8a36af28b78d0060a1d89b9b18211</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SYSLOG_STR_MAX_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga8cd1e1b2619e012f10e62b91f3574e27</anchor>
+      <name>ETCPAL_SYSLOG_STR_MAX_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gae8f0782821bb95f1c2a0122b9819acac</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_HUMAN_LOG_STR_MAX_LEN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga0495001df9d738759753ecb7c9f4772a</anchor>
+      <name>ETCPAL_HUMAN_LOG_STR_MAX_LEN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga0fafd8567d72170461c34b0f4b4cde74</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaLogTimeParams</type>
-      <name>LwpaLogTimeParams</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gad274aa6b5c42d1ff594200232ccbc0ab</anchor>
+      <type>struct EtcPalLogTimeParams</type>
+      <name>EtcPalLogTimeParams</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga3cfc242617ad25826b445fce64b800a0</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaLogStrings</type>
-      <name>LwpaLogStrings</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga25c13b78ecd42cad3de3341f66199974</anchor>
+      <type>struct EtcPalLogStrings</type>
+      <name>EtcPalLogStrings</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaf51673a8ceea21c025198456ac795a12</anchor>
       <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>void(*</type>
-      <name>lwpa_log_callback</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gab5ffbb4d8e2168a0c51b10e5b3099de8</anchor>
-      <arglist>)(void *context, const LwpaLogStrings *strings)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>lwpa_log_time_fn</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga663d6e629850d5957be6634468f04755</anchor>
-      <arglist>)(void *context, LwpaLogTimeParams *time_params)</arglist>
+      <name>etcpal_log_callback</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga2149ec5b6a6311efd2c235358f3c49c7</anchor>
+      <arglist>)(void *context, const EtcPalLogStrings *strings)</arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaSyslogParams</type>
-      <name>LwpaSyslogParams</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga718e6c57e891ccc8b7e46f15cc164a57</anchor>
+      <type>void(*</type>
+      <name>etcpal_log_time_fn</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga738d510e7988bf2364ed059fb193a5ae</anchor>
+      <arglist>)(void *context, EtcPalLogTimeParams *time_params)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct EtcPalSyslogParams</type>
+      <name>EtcPalSyslogParams</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga3961fedc222b8d388ebcb2bbe6e00263</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaLogParams</type>
-      <name>LwpaLogParams</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga4e65f5bb723d9280bfece5770a224f2c</anchor>
+      <type>struct EtcPalLogParams</type>
+      <name>EtcPalLogParams</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gac6a69c52ee1d8dea2aa9d6a90d217050</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
       <type></type>
-      <name>lwpa_log_action_t</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga87102d7ecdab1a3ba919bd750fae0507</anchor>
+      <name>etcpal_log_action_t</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga10855f3c1f3816d0bd5e4687108ea1c5</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaLogCreateSyslog</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gga87102d7ecdab1a3ba919bd750fae0507a408d0b541c1860eb8264be42f2d0d774</anchor>
+      <name>kEtcPalLogCreateSyslog</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5a1631725f7a5f65a9fb15767cecec5290</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaLogCreateHumanReadableLog</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gga87102d7ecdab1a3ba919bd750fae0507a21fba732cbc622fce83415718e1fb8f9</anchor>
+      <name>kEtcPalLogCreateHumanReadableLog</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5ae82eb0e5fc80d2657c033413df36224e</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kLwpaLogCreateBoth</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gga87102d7ecdab1a3ba919bd750fae0507a1c00ba8139d620d17be3b61a498232c5</anchor>
+      <name>kEtcPalLogCreateBoth</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5a8d083dc7d2d4359fd9ce6330b9d4c2bb</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_create_syslog_str</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga2efb597d28fdda5796e410b43f5a631d</anchor>
-      <arglist>(char *buf, size_t buflen, const LwpaLogTimeParams *time, const LwpaSyslogParams *syslog_params, int pri, const char *format,...)</arglist>
+      <name>etcpal_create_syslog_str</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga066f11ddd10e75d38a379a648d2dcba4</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimeParams *time, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_create_human_log_str</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga92091520538853c272084261bbb8bf21</anchor>
-      <arglist>(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format,...)</arglist>
+      <name>etcpal_create_human_log_str</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaeb1f0786f9b553d05991a97db73e3dad</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimeParams *time, const char *format,...)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_sanitize_syslog_params</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga2e1cd052c474bfbb33614a7d10b33bbb</anchor>
-      <arglist>(LwpaSyslogParams *params)</arglist>
+      <name>etcpal_sanitize_syslog_params</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga895ff8dd5230b10b4ab6d955e556d318</anchor>
+      <arglist>(EtcPalSyslogParams *params)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_validate_log_params</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga745327935a6efcc73f2f5048757c6de1</anchor>
-      <arglist>(LwpaLogParams *params)</arglist>
+      <name>etcpal_validate_log_params</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga949455773a4ecdd6a499940a19ec6080</anchor>
+      <arglist>(EtcPalLogParams *params)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_can_log</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gac44c39be61d1bf95239f9bd6fb1f11ad</anchor>
+      <arglist>(const EtcPalLogParams *params, int pri)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_log</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga6584e9d020e7cf99caaca6bf9acf81ef</anchor>
-      <arglist>(const LwpaLogParams *params, int pri, const char *format,...)</arglist>
+      <name>etcpal_log</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gab05a59d52b560561ce33a937f73aae5e</anchor>
+      <arglist>(const EtcPalLogParams *params, int pri, const char *format,...)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_vlog</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga4d3b4176e7d17c30aaa9dd82b6c5c3da</anchor>
-      <arglist>(const LwpaLogParams *params, int pri, const char *format, va_list args)</arglist>
+      <name>etcpal_vlog</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga2f8f5602ed9ad8a869d40c4af8ba8d41</anchor>
+      <arglist>(const EtcPalLogParams *params, int pri, const char *format, va_list args)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_KERN</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaf25b2f84f136f35d7daf3bca75c09b39</anchor>
+      <name>ETCPAL_LOG_KERN</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga6ae744f52d1ee08daa8fd36bf58597b3</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_USER</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga08e3706b92e3aeec1c44769c42fc18b5</anchor>
+      <name>ETCPAL_LOG_USER</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga6fc21fb437c4fa1d90dd8698cfa256f0</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_MAIL</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga04d4892d83f2084956ebe6ca8c479500</anchor>
+      <name>ETCPAL_LOG_MAIL</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga42fd837e598b56123c5d38fff2f5fbeb</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_DAEMON</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaca7e4a2edd294cea9c23ebf18c881f41</anchor>
+      <name>ETCPAL_LOG_DAEMON</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga525978d1bfe16fcd0a4450a7c5dc53ec</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_AUTH</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga0e5d159ba215deea5f706fa33d71738e</anchor>
+      <name>ETCPAL_LOG_AUTH</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gabc74c1a4cef75ebe20e917b68fa23d52</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_SYSLOG</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga2441590d39aaca7c88136145b0eb880b</anchor>
+      <name>ETCPAL_LOG_SYSLOG</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga46bba655f9c87face73f5e2e680f0e6c</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LPR</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gacbf6ea806a67f53e17d265d9f7d8c0e5</anchor>
+      <name>ETCPAL_LOG_LPR</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga185481461d7f07edfd95fa80405b37c1</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_NEWS</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga20f59aff1e3c478dc610c6bb3f1cf30c</anchor>
+      <name>ETCPAL_LOG_NEWS</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga83c2035b9784a9cb0625bc4f33fbdc76</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_UUCP</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga3374f025fafa38717f707a047359fd30</anchor>
+      <name>ETCPAL_LOG_UUCP</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaaa5608f22b53b0de9b6c4b1811d632ba</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_CRON</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga1cce65659ecc6a47c1d5aa7071ae69f4</anchor>
+      <name>ETCPAL_LOG_CRON</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga076221d5039086994c7b2a87963be388</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_AUTHPRIV</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaa50dfd3d27e5f3774232b0271bb58e90</anchor>
+      <name>ETCPAL_LOG_AUTHPRIV</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga0c3bcdd91c9d747dea59430a849556b2</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_FTP</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gadcfd4e54bed9d3ee05b5376822f409a2</anchor>
+      <name>ETCPAL_LOG_FTP</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaa3ad1dbc725353f2cd49cc55b32f3153</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL0</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gae3d1d7327370707be0202b28c26ce4a3</anchor>
+      <name>ETCPAL_LOG_LOCAL0</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga64040cea6d8c1457ef47e65279f8bca2</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL1</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaa99273c70b0d7f39eeb53b1bc6d4280b</anchor>
+      <name>ETCPAL_LOG_LOCAL1</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga2f6c98d265250c28e6102c97a10dee17</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL2</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gac67f31952e97f767d74ec9d2f644759a</anchor>
+      <name>ETCPAL_LOG_LOCAL2</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga752539f8bfef40f0c19dc4ef67a59473</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL3</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gadea7fe8c18631a76bc0badd13c9b8d80</anchor>
+      <name>ETCPAL_LOG_LOCAL3</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga92640deb4a6a2625e4fc36038cd8d45d</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL4</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga8062bd367e9dcfc7e0479bbf07a6f759</anchor>
+      <name>ETCPAL_LOG_LOCAL4</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga25a6a69270ce194f38d3d24e17c1d830</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL5</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga68947f6ab3d2c55c0ecb8bf37d88d9d5</anchor>
+      <name>ETCPAL_LOG_LOCAL5</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gad7d901793d960e58420eb4025cfa51d1</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL6</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gacf65fe6eff3a5b59a345066345572fb2</anchor>
+      <name>ETCPAL_LOG_LOCAL6</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gabcdbdf6cbaeec1b06545372144162a79</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_LOCAL7</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga0c3309dc6bfbe192e61b55ee23e903bf</anchor>
+      <name>ETCPAL_LOG_LOCAL7</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga3b702549e92e23e2918d2fae9af6a84c</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_EMERG</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaa211f156cab5f49438cdfa9e44b63e31</anchor>
+      <name>ETCPAL_LOG_EMERG</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaaba03ada613553b9276df87d7387ae6f</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_ALERT</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga4e4bdf39335b35ef2f878abaea51dfcc</anchor>
+      <name>ETCPAL_LOG_ALERT</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaefbc8eee2db20c20586eaae217faa385</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_CRIT</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga8ff207c1ddab5e2df910cc4fe464c662</anchor>
+      <name>ETCPAL_LOG_CRIT</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga1f5ee8379832669d8cb7d5abc2e93b1f</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_ERR</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga3d042c56486e03eb5b187a335ff5101a</anchor>
+      <name>ETCPAL_LOG_ERR</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga0f39e099c1569ddf03e826eb4e831cf1</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_WARNING</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga68217ab863c4cd43c7ff03ca2219c47b</anchor>
+      <name>ETCPAL_LOG_WARNING</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gac79a4a2a830ae8db541f33093b2d50df</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_NOTICE</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaf6777f9e9a8f38724b151304d1404319</anchor>
+      <name>ETCPAL_LOG_NOTICE</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga2d71e55473353be02c7fd2a785b12b23</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_INFO</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>gaddc8c1082db67e72912a74b669d29c23</anchor>
+      <name>ETCPAL_LOG_INFO</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga9f05a0ad034946dfd20477e11d2923a7</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_LOG_DEBUG</name>
-      <anchorfile>group__lwpa__log.html</anchorfile>
-      <anchor>ga4a8948b531b0cf1c68a1bdc5c84d4ceb</anchor>
+      <name>ETCPAL_LOG_DEBUG</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga4e46d489885b63c38263e35ad5aca8b6</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_mempool</name>
-    <title>lwpa_mempool</title>
-    <filename>group__lwpa__mempool.html</filename>
-    <class kind="struct">LwpaMempool</class>
-    <class kind="struct">LwpaMempoolDesc</class>
+    <name>etcpal_mempool</name>
+    <title>etcpal_mempool</title>
+    <filename>group__etcpal__mempool.html</filename>
+    <class kind="struct">EtcPalMempool</class>
+    <class kind="struct">EtcPalMempoolDesc</class>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_MEMPOOL_DECLARE</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>ga94986ea8060c07cba61c85b2a99ed458</anchor>
+      <name>ETCPAL_MEMPOOL_DECLARE</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>ga1da98d192da467dfb2ec751bad279178</anchor>
       <arglist>(name)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_MEMPOOL_DEFINE</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>gaa0d4858b58e87161808339beba9f4c87</anchor>
+      <name>ETCPAL_MEMPOOL_DEFINE</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>ga0d56307540e32e74ce5a87a52ce447b8</anchor>
       <arglist>(name, type, size)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_MEMPOOL_DEFINE_ARRAY</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>ga40f10bc28b7493a35a86c1cb4c1fd766</anchor>
+      <name>ETCPAL_MEMPOOL_DEFINE_ARRAY</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>ga3a974aa750cca64861b630f0a7776232</anchor>
       <arglist>(name, type, array_size, pool_size)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_mempool_init</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>gaef04cee1ba289720a3a5701248ac6141</anchor>
+      <name>etcpal_mempool_init</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>ga2b7b0144747ea853ea526f283344c047</anchor>
       <arglist>(name)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_mempool_alloc</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>ga974021021787bdc6dd16e5017869a556</anchor>
+      <name>etcpal_mempool_alloc</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>ga3cda8bdb4dc13e12ba5e75ccadb23274</anchor>
       <arglist>(name)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_mempool_free</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>ga1962ba16f32cecfafc8ba4b60765c0de</anchor>
+      <name>etcpal_mempool_free</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>gaf69c62d9c8df5f589fefbaf0283b2435</anchor>
       <arglist>(name, mem)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_mempool_size</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>ga329d6610b1bb2e7ac37fc8f7ce77d7a2</anchor>
+      <name>etcpal_mempool_size</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>ga8b10935dcb7665a6c4418831fd17c9cd</anchor>
       <arglist>(name)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_mempool_used</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>gae4d0c61601e666706baab21642f11742</anchor>
+      <name>etcpal_mempool_used</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>gaa1a695b25f4ea895750e753303eb4f85</anchor>
       <arglist>(name)</arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaMempool</type>
-      <name>LwpaMempool</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>ga61998e19568afbba25a80d83ef22e380</anchor>
+      <type>struct EtcPalMempool</type>
+      <name>EtcPalMempool</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>gacafad538d67632fc0278a608e1c019c7</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaMempoolDesc</type>
-      <name>LwpaMempoolDesc</name>
-      <anchorfile>group__lwpa__mempool.html</anchorfile>
-      <anchor>gabafec40001d48ebd0f6ebfe9fff572d9</anchor>
+      <type>struct EtcPalMempoolDesc</type>
+      <name>EtcPalMempoolDesc</name>
+      <anchorfile>group__etcpal__mempool.html</anchorfile>
+      <anchor>ga4b65b2221f81b94eba323dc3bd827cd4</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_netint</name>
-    <title>lwpa_netint</title>
-    <filename>group__lwpa__netint.html</filename>
+    <name>etcpal_netint</name>
+    <title>etcpal_netint</title>
+    <filename>group__etcpal__netint.html</filename>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_netint_get_num_interfaces</name>
-      <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>gaf5826dbe7cab3ace937a77ca32ecb362</anchor>
+      <name>etcpal_netint_get_num_interfaces</name>
+      <anchorfile>group__etcpal__netint.html</anchorfile>
+      <anchor>ga14c0e51d047bc84b5c4f783c640fc030</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const EtcPalNetintInfo *</type>
+      <name>etcpal_netint_get_interfaces</name>
+      <anchorfile>group__etcpal__netint.html</anchorfile>
+      <anchor>gafc68a9f3fc1342e3d747ab0b17029ee5</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_netint_get_interfaces</name>
-      <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga3e8baf49586da56197583bce01aaaf95</anchor>
-      <arglist>(LwpaNetintInfo *netint_arr, size_t netint_arr_size)</arglist>
+      <name>etcpal_netint_copy_interfaces</name>
+      <anchorfile>group__etcpal__netint.html</anchorfile>
+      <anchor>ga2b88beeb498044aa1c390638346422b4</anchor>
+      <arglist>(EtcPalNetintInfo *netint_arr, size_t netint_arr_size)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_netint_get_default_interface</name>
-      <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga1ef8afff7ab8a6c8f36c4201139afa75</anchor>
-      <arglist>(lwpa_iptype_t type, LwpaNetintInfo *netint)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_netint_get_interfaces_by_index</name>
+      <anchorfile>group__etcpal__netint.html</anchorfile>
+      <anchor>ga78f5df18395e14e959ed0c4dc26580dc</anchor>
+      <arglist>(unsigned int index, const EtcPalNetintInfo **netint_arr, size_t *netint_arr_size)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_netint_get_interface_for_dest</name>
-      <anchorfile>group__lwpa__netint.html</anchorfile>
-      <anchor>ga00eec072ad464f8c19835154ee683cf6</anchor>
-      <arglist>(const LwpaIpAddr *dest, LwpaNetintInfo *netint)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_netint_get_default_interface</name>
+      <anchorfile>group__etcpal__netint.html</anchorfile>
+      <anchor>gae5cfdf3d1aa1edf3b6f3729491241911</anchor>
+      <arglist>(etcpal_iptype_t type, unsigned int *netint_index)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_netint_get_interface_for_dest</name>
+      <anchorfile>group__etcpal__netint.html</anchorfile>
+      <anchor>gae0297aaa85a237ffd910644cb414750a</anchor>
+      <arglist>(const EtcPalIpAddr *dest, unsigned int *netint_index)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_pack</name>
-    <title>lwpa_pack</title>
-    <filename>group__lwpa__pack.html</filename>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_upack_16b</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gaaaf27b0d45b7d9fdae52a4218774ec35</anchor>
-      <arglist>(ptr)</arglist>
+    <name>etcpal_pack</name>
+    <title>etcpal_pack</title>
+    <filename>group__etcpal__pack.html</filename>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>etcpal_upack_16b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga0880292ba3f725fb8085543b2d423be4</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_pack_16b</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga0ff3f85ee64ed231d89baaa57bd13dad</anchor>
-      <arglist>(ptr, val)</arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_16b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga2902019cf1a188b98606319d43ed08a5</anchor>
+      <arglist>(uint8_t *buf, uint16_t val)</arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_upack_16l</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gae7c40446cec9afd5a353956fb19eb2fe</anchor>
-      <arglist>(ptr)</arglist>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>etcpal_upack_16l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga8bfbfc050e6a051ca3462c84948a8fcf</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_pack_16l</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gac839a3e63e3a5d22fbb31c1328927d21</anchor>
-      <arglist>(ptr, val)</arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_16l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gac0fc9d22170eb708008eb09f9bb22ced</anchor>
+      <arglist>(uint8_t *buf, uint16_t val)</arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_upack_32b</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>gaf1954a62e2548d796642ed114db84d5c</anchor>
-      <arglist>(ptr)</arglist>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>etcpal_upack_32b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gaac2718bc037c1fb14fc08aa8976b3e0f</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_pack_32b</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga178005bbc344ef67ee778b6617752a85</anchor>
-      <arglist>(ptr, val)</arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_32b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gab516d6a148228ae6d76de7beb12e60ec</anchor>
+      <arglist>(uint8_t *buf, uint32_t val)</arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_upack_32l</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga752fcacb7a3d901a169174414408b618</anchor>
-      <arglist>(ptr)</arglist>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>etcpal_upack_32l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gab002038413cf6518988bb965c879e265</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_pack_32l</name>
-      <anchorfile>group__lwpa__pack.html</anchorfile>
-      <anchor>ga4293fdfec8c32a7296fca6f3ac28dc91</anchor>
-      <arglist>(ptr, val)</arglist>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_32l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gacc712186e152a6d7c03cc5f8af5a1cf2</anchor>
+      <arglist>(uint8_t *buf, uint32_t val)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_pdu</name>
-    <title>lwpa_pdu</title>
-    <filename>group__lwpa__pdu.html</filename>
-    <subgroup>lwpa_rootlayerpdu</subgroup>
-    <class kind="struct">LwpaPdu</class>
-    <class kind="struct">LwpaPduConstraints</class>
+    <name>etcpal_pdu</name>
+    <title>etcpal_pdu</title>
+    <filename>group__etcpal__pdu.html</filename>
+    <subgroup>etcpal_rootlayerpdu</subgroup>
+    <class kind="struct">EtcPalPdu</class>
+    <class kind="struct">EtcPalPduConstraints</class>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_length</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gadaf3eef17f0630b17283c1e7d5dd6104</anchor>
+      <name>ETCPAL_PDU_LENGTH</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gaa6aa65e575ec892582f10af1a312064e</anchor>
       <arglist>(pdu_buf)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_pack_normal_len</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga93536e776d086b3382f063c6ecd2c39c</anchor>
+      <name>ETCPAL_PDU_PACK_NORMAL_LEN</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>ga6c795b26ea3e1c78b545a54e2599c7f9</anchor>
       <arglist>(pdu_buf, length)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_pack_ext_len</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga38732658618dbe739d909c9cdc71d010</anchor>
+      <name>ETCPAL_PDU_PACK_EXT_LEN</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gabb06693a6eb3ed13c253c8324f3efbb5</anchor>
       <arglist>(pdu_buf, length)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_PDU_INIT</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga1b9332f5d2c84f7679f6d37d7abc9abc</anchor>
+      <name>ETCPAL_PDU_INIT</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gafb7d5c94b80a01d37fa4ec4edcc833c7</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_init_pdu</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gabb885bd8514cdb920910fdc815514e2a</anchor>
+      <name>ETCPAL_INIT_PDU</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>ga0c0d07635b8236c97bb21bbd1eb61c8f</anchor>
       <arglist>(pduptr)</arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaPdu</type>
-      <name>LwpaPdu</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga5a3510706c6ae05236e3ecd19d8a678d</anchor>
+      <type>struct EtcPalPdu</type>
+      <name>EtcPalPdu</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gafd2b4bca589bf922a6458962a1fa1b49</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaPduConstraints</type>
-      <name>LwpaPduConstraints</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga2d5812dccfd313f11566fa7fceb5feea</anchor>
+      <type>struct EtcPalPduConstraints</type>
+      <name>EtcPalPduConstraints</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gaffe297ca0b89d8b738dad159ccae904c</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_parse_pdu</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gacc313a157e7e2b45c67858452512f6c0</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, const LwpaPduConstraints *constraints, LwpaPdu *pdu)</arglist>
+      <name>etcpal_parse_pdu</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>ga9a351fdaedcae30ce8999e4d9fbaf15e</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, const EtcPalPduConstraints *constraints, EtcPalPdu *pdu)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_l_flag_set</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gae5b364603403da45cb766ce7b6511deb</anchor>
+      <name>ETCPAL_PDU_L_FLAG_SET</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gaadfa588e12322808723c598fef9b2509</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_v_flag_set</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga9b9015abbec81a0ce77a9458f81a36ad</anchor>
+      <name>ETCPAL_PDU_V_FLAG_SET</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>ga183303aee9717e2c0e662bbfb98dcc1f</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_h_flag_set</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga33fb4996b8195d16ef3d067a0325728d</anchor>
+      <name>ETCPAL_PDU_H_FLAG_SET</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gac6bd98193bb97a1745a87ef1eddec36e</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_d_flag_set</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga27a123d2b8de5379a9fb58bfa530cfd6</anchor>
+      <name>ETCPAL_PDU_D_FLAG_SET</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>ga8395f03212e738c67fee8f6e458617a2</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_set_l_flag</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gadb9eaf73cb157935232cf5b918bc7de9</anchor>
+      <name>ETCPAL_PDU_SET_L_FLAG</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>ga0aff4c299ef1edd12a62a94791787b05</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_set_v_flag</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gaf5c1d329d7d9784de1ac81950d1aece5</anchor>
+      <name>ETCPAL_PDU_SET_V_FLAG</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gafd5bbef88b8bf08ead91ccf04f44123a</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_set_h_flag</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>gab1ac6bc0f38adfb6bd122df4ad896de5</anchor>
+      <name>ETCPAL_PDU_SET_H_FLAG</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>ga895f3f23d5fc24feeaf6b9222960a7c0</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_pdu_set_d_flag</name>
-      <anchorfile>group__lwpa__pdu.html</anchorfile>
-      <anchor>ga996c5a9416c5c3a17ded724e9e69ad18</anchor>
+      <name>ETCPAL_PDU_SET_D_FLAG</name>
+      <anchorfile>group__etcpal__pdu.html</anchorfile>
+      <anchor>gac7b3e21b8c080aea188a2d577fd31d31</anchor>
       <arglist>(flags_byte)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_rbtree</name>
-    <title>lwpa_rbtree</title>
-    <filename>group__lwpa__rbtree.html</filename>
-    <class kind="struct">LwpaRbNode</class>
-    <class kind="struct">LwpaRbTree</class>
-    <class kind="struct">LwpaRbIter</class>
+    <name>etcpal_rbtree</name>
+    <title>etcpal_rbtree</title>
+    <filename>group__etcpal__rbtree.html</filename>
+    <class kind="struct">EtcPalRbNode</class>
+    <class kind="struct">EtcPalRbTree</class>
+    <class kind="struct">EtcPalRbIter</class>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_RB_ITER_MAX_HEIGHT</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gaa24d5568b0d6e32ebf26911d1d0ab31a</anchor>
+      <name>ETCPAL_RB_ITER_MAX_HEIGHT</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga347976360fdafc669aab59abc1ff7d73</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaRbIter</type>
-      <name>LwpaRbIter</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gaf6c8c65eb7d2d3ffd78c2d692ccfd9f0</anchor>
+      <type>struct EtcPalRbIter</type>
+      <name>EtcPalRbIter</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gaca406625e86f809e1d5b8e52ca3d3e40</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>lwpa_rbtree_node_cmp_ptr_cb</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga73fa4fa4c22fb8c6fb9a07235035bfcb</anchor>
-      <arglist>(const LwpaRbTree *self, const LwpaRbNode *a, const LwpaRbNode *b)</arglist>
+      <name>etcpal_rbtree_node_cmp_ptr_cb</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga2c7b10e007e2221402426393cbbc3461</anchor>
+      <arglist>(const EtcPalRbTree *self, const EtcPalRbNode *a, const EtcPalRbNode *b)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_rbtree_node_dealloc_cb</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga7ce658fe81d10f1d6fb5e2b2eb431885</anchor>
-      <arglist>(const LwpaRbTree *self, LwpaRbNode *node)</arglist>
+      <name>etcpal_rbtree_node_dealloc_cb</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga2041c16a4a4e745ccadd180cbb8bc93f</anchor>
+      <arglist>(const EtcPalRbTree *self, EtcPalRbNode *node)</arglist>
     </member>
     <member kind="function">
-      <type>LwpaRbNode *</type>
-      <name>lwpa_rbnode_init</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga1ab2558f54d713524267465e09c68759</anchor>
-      <arglist>(LwpaRbNode *self, void *value)</arglist>
+      <type>EtcPalRbNode *</type>
+      <name>etcpal_rbnode_init</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gaf901899ba23ab79070d5ed1440440eb2</anchor>
+      <arglist>(EtcPalRbNode *self, void *value)</arglist>
     </member>
     <member kind="function">
-      <type>LwpaRbTree *</type>
-      <name>lwpa_rbtree_init</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga0672dba7fbba4e6d1f6d7132bff40478</anchor>
-      <arglist>(LwpaRbTree *self, lwpa_rbtree_node_cmp_f cmp, lwpa_rbnode_alloc_f alloc_f, lwpa_rbnode_dealloc_f dealloc_f)</arglist>
+      <type>EtcPalRbTree *</type>
+      <name>etcpal_rbtree_init</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gaf7b76e69622bca24f161d0998d6625b0</anchor>
+      <arglist>(EtcPalRbTree *self, etcpal_rbtree_node_cmp_f cmp, etcpal_rbnode_alloc_f alloc_f, etcpal_rbnode_dealloc_f dealloc_f)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>lwpa_rbtree_find</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga900128f36dacd99eb073a0b5839c6dd8</anchor>
-      <arglist>(LwpaRbTree *self, void *value)</arglist>
+      <name>etcpal_rbtree_find</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga4e42141273a433aad5e854780e321004</anchor>
+      <arglist>(EtcPalRbTree *self, void *value)</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
-      <name>lwpa_rbtree_insert</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gace26e2ddd0124db8ed9d8fa6addc9099</anchor>
-      <arglist>(LwpaRbTree *self, void *value)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_rbtree_insert</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gae87df653a152c3942b54a8f8e7c235c6</anchor>
+      <arglist>(EtcPalRbTree *self, void *value)</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
-      <name>lwpa_rbtree_remove</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gadd7548756edcae39dec8c9ca9a24f32e</anchor>
-      <arglist>(LwpaRbTree *self, void *value)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_rbtree_remove</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga948b09a65cbe24eefcfb5823641f39f1</anchor>
+      <arglist>(EtcPalRbTree *self, void *value)</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
-      <name>lwpa_rbtree_clear</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gaa26f51f6939eff6a7c5bf5aebc064006</anchor>
-      <arglist>(LwpaRbTree *self)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_rbtree_clear</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga1347a53b2f8505e22707702f490949e8</anchor>
+      <arglist>(EtcPalRbTree *self)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_rbtree_size</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga4134368aed440effbdc9c00db986bda6</anchor>
-      <arglist>(LwpaRbTree *self)</arglist>
+      <name>etcpal_rbtree_size</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gae0aa64287211d3858cef5d0a7cffb033</anchor>
+      <arglist>(EtcPalRbTree *self)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_rbtree_insert_node</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga036f8c0aea4ac2050bd2deb904affed6</anchor>
+      <arglist>(EtcPalRbTree *self, EtcPalRbNode *node)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_rbtree_remove_with_cb</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga71a4587a7746d0e43beb9687de446723</anchor>
+      <arglist>(EtcPalRbTree *self, void *value, etcpal_rbtree_node_f node_cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_rbtree_clear_with_cb</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga8b115911ba175651df1c73bdb1c0a773</anchor>
+      <arglist>(EtcPalRbTree *self, etcpal_rbtree_node_f node_cb)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>lwpa_rbtree_insert_node</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gab0ae8911b04de195b3e1dfc45b96f4c4</anchor>
-      <arglist>(LwpaRbTree *self, LwpaRbNode *node)</arglist>
+      <name>etcpal_rbtree_test</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga3b194e280069ff3fbd105d9799dbea05</anchor>
+      <arglist>(EtcPalRbTree *self, EtcPalRbNode *root)</arglist>
     </member>
     <member kind="function">
-      <type>int</type>
-      <name>lwpa_rbtree_remove_with_cb</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga996e8bddf815b66a84fd8cf157520ed1</anchor>
-      <arglist>(LwpaRbTree *self, void *value, lwpa_rbtree_node_f node_cb)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>lwpa_rbtree_clear_with_cb</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga51c0b8012054964179660d156c1f7ccc</anchor>
-      <arglist>(LwpaRbTree *self, lwpa_rbtree_node_f node_cb)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>lwpa_rbtree_test</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga58bc2511d88a45dc21f686a6ecb12326</anchor>
-      <arglist>(LwpaRbTree *self, LwpaRbNode *root)</arglist>
-    </member>
-    <member kind="function">
-      <type>LwpaRbIter *</type>
-      <name>lwpa_rbiter_init</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gad9bc2263f7d1d6d8123b2bd5f4819f37</anchor>
-      <arglist>(LwpaRbIter *self)</arglist>
+      <type>EtcPalRbIter *</type>
+      <name>etcpal_rbiter_init</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gae7d2f565a40d1ab86873e7bc9c5c5c02</anchor>
+      <arglist>(EtcPalRbIter *self)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>lwpa_rbiter_first</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga2b42b70a765f47531dd9fa29ecba0fc8</anchor>
-      <arglist>(LwpaRbIter *self, LwpaRbTree *tree)</arglist>
+      <name>etcpal_rbiter_first</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga1cd77fc10e7c983be2c12c5f14bc3721</anchor>
+      <arglist>(EtcPalRbIter *self, EtcPalRbTree *tree)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>lwpa_rbiter_last</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga9ecf1b3abcc0fe0a093d849fa98d3c1a</anchor>
-      <arglist>(LwpaRbIter *self, LwpaRbTree *tree)</arglist>
+      <name>etcpal_rbiter_last</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga6f1279b41c60d92a808cc9b364f9eac9</anchor>
+      <arglist>(EtcPalRbIter *self, EtcPalRbTree *tree)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>lwpa_rbiter_next</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga36bdc60c9ae6b2ac95afa10c9f21d766</anchor>
-      <arglist>(LwpaRbIter *self)</arglist>
+      <name>etcpal_rbiter_next</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gaa3804b7146d1e8a72e4139a0f4d6507e</anchor>
+      <arglist>(EtcPalRbIter *self)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
-      <name>lwpa_rbiter_prev</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gae6350ed5b8ba7a39476bf7e3d582d5c1</anchor>
-      <arglist>(LwpaRbIter *self)</arglist>
+      <name>etcpal_rbiter_prev</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gad093318703094fd4bdb9ecb09443241d</anchor>
+      <arglist>(EtcPalRbIter *self)</arglist>
     </member>
     <member kind="typedef">
       <type>int(*</type>
-      <name>lwpa_rbtree_node_cmp_f</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga5bf67caf3af12bd3dfd679a9886190cd</anchor>
-      <arglist>)(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node_b)</arglist>
+      <name>etcpal_rbtree_node_cmp_f</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gaa8464a406583530043f66b63955ebb1c</anchor>
+      <arglist>)(const EtcPalRbTree *self, const EtcPalRbNode *node_a, const EtcPalRbNode *node_b)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>lwpa_rbtree_node_f</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga0e25492a71fdf4f04c1970df5224aaa9</anchor>
-      <arglist>)(const LwpaRbTree *self, LwpaRbNode *node)</arglist>
+      <name>etcpal_rbtree_node_f</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gac3929405ade6133edb8cf06d7fa6271b</anchor>
+      <arglist>)(const EtcPalRbTree *self, EtcPalRbNode *node)</arglist>
     </member>
     <member kind="typedef">
-      <type>LwpaRbNode *(*</type>
-      <name>lwpa_rbnode_alloc_f</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>gac9b02f8c0316ca42a5da18ff908319d6</anchor>
+      <type>EtcPalRbNode *(*</type>
+      <name>etcpal_rbnode_alloc_f</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>gadb6dac2a828f26ba2ae35656a738d685</anchor>
       <arglist>)()</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>lwpa_rbnode_dealloc_f</name>
-      <anchorfile>group__lwpa__rbtree.html</anchorfile>
-      <anchor>ga8bd35866203b0c357afa7969474bbdcd</anchor>
-      <arglist>)(LwpaRbNode *node)</arglist>
+      <name>etcpal_rbnode_dealloc_f</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga94fa4793990e233cddc87d1606b38f79</anchor>
+      <arglist>)(EtcPalRbNode *node)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_rootlayerpdu</name>
-    <title>lwpa_rootlayerpdu</title>
-    <filename>group__lwpa__rootlayerpdu.html</filename>
-    <class kind="struct">LwpaTcpPreamble</class>
-    <class kind="struct">LwpaUdpPreamble</class>
-    <class kind="struct">LwpaRootLayerPdu</class>
+    <name>etcpal_rootlayerpdu</name>
+    <title>etcpal_rootlayerpdu</title>
+    <filename>group__etcpal__rootlayerpdu.html</filename>
+    <class kind="struct">EtcPalTcpPreamble</class>
+    <class kind="struct">EtcPalUdpPreamble</class>
+    <class kind="struct">EtcPalRootLayerPdu</class>
     <member kind="define">
       <type>#define</type>
       <name>ACN_TCP_PREAMBLE_SIZE</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
       <anchor>gab879b13847509e3bbd4b12a5e2cda0e7</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>ACN_UDP_PREAMBLE_SIZE</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
       <anchor>ga86207e41512354a1a6e321d95afe8ab0</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>ACN_RLP_HEADER_SIZE_NORMAL_LEN</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
       <anchor>ga29ae7e116cd77cc00366461415bf54a7</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>ACN_RLP_HEADER_SIZE_EXT_LEN</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
       <anchor>ga9d9a7bd4498a28d5b0de8ed598141c66</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaTcpPreamble</type>
-      <name>LwpaTcpPreamble</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga07007c5d21574fd00d811c65f3503acb</anchor>
+      <type>struct EtcPalTcpPreamble</type>
+      <name>EtcPalTcpPreamble</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>ga479d29909ff291c75531e5e45de4af11</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaUdpPreamble</type>
-      <name>LwpaUdpPreamble</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga5721d124b0a48d536543434c40e6fe60</anchor>
+      <type>struct EtcPalUdpPreamble</type>
+      <name>EtcPalUdpPreamble</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>gabceea25a6773878d73d5c73cff3413db</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaRootLayerPdu</type>
-      <name>LwpaRootLayerPdu</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga1f9d4d412ce818c9a96790ed912c5cc9</anchor>
+      <type>struct EtcPalRootLayerPdu</type>
+      <name>EtcPalRootLayerPdu</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>gafcee66c76b1dec0bbaf93f9589c0a8dd</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_parse_tcp_preamble</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga349964e773a8e7ecc255cf9a6386f9e8</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, LwpaTcpPreamble *preamble)</arglist>
+      <name>etcpal_parse_tcp_preamble</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>ga9d42879935ab912ec15d30e9415f5c4b</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, EtcPalTcpPreamble *preamble)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_parse_udp_preamble</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga7cdabf9c84ccb70db5be32237b5387b7</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, LwpaUdpPreamble *preamble)</arglist>
+      <name>etcpal_parse_udp_preamble</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>ga9c5fe31670c57a02311d3d23f6b96904</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, EtcPalUdpPreamble *preamble)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_parse_root_layer_header</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga43752f0807b577d98c74f1217ec6508f</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, LwpaRootLayerPdu *pdu, LwpaRootLayerPdu *last_pdu)</arglist>
+      <name>etcpal_parse_root_layer_header</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>gaa454f9d1af3e45a1eefb61c3d4fd9496</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, EtcPalRootLayerPdu *pdu, EtcPalRootLayerPdu *last_pdu)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_parse_root_layer_pdu</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga803a00da49042e85f9b6948ce2cee909</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, LwpaRootLayerPdu *pdu, LwpaPdu *last_pdu)</arglist>
+      <name>etcpal_parse_root_layer_pdu</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>gac604ba1761a3126ddf9095338ec2d4a4</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, EtcPalRootLayerPdu *pdu, EtcPalPdu *last_pdu)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_pack_tcp_preamble</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga2ead8338b16270f2c835db088786c227</anchor>
+      <name>etcpal_pack_tcp_preamble</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>ga83602488410ff9d31fb781afd5898463</anchor>
       <arglist>(uint8_t *buf, size_t buflen, size_t rlp_block_len)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_pack_udp_preamble</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gacaae6efceceeb2a2d5850b60b1dd06f8</anchor>
+      <name>etcpal_pack_udp_preamble</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>ga205a77f2284495f4b9a16f07dcd43f83</anchor>
       <arglist>(uint8_t *buf, size_t buflen)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_root_layer_buf_size</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gae1223dfe5d9ebbe99f457a46582e7178</anchor>
-      <arglist>(const LwpaRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
+      <name>etcpal_root_layer_buf_size</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>ga0d9d71dfeb84b94149e146292144615b</anchor>
+      <arglist>(const EtcPalRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_pack_root_layer_header</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>gaffc1246bd07dc0e4a884e94f558eae34</anchor>
-      <arglist>(uint8_t *buf, size_t buflen, const LwpaRootLayerPdu *pdu)</arglist>
+      <name>etcpal_pack_root_layer_header</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>ga8d5021cdeed9c03dcc28d7f29fbac7d9</anchor>
+      <arglist>(uint8_t *buf, size_t buflen, const EtcPalRootLayerPdu *pdu)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
-      <name>lwpa_pack_root_layer_block</name>
-      <anchorfile>group__lwpa__rootlayerpdu.html</anchorfile>
-      <anchor>ga75b8ed10289f7085dddb00c44f0bd132</anchor>
-      <arglist>(uint8_t *buf, size_t buflen, const LwpaRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
+      <name>etcpal_pack_root_layer_block</name>
+      <anchorfile>group__etcpal__rootlayerpdu.html</anchorfile>
+      <anchor>gabdadb9de2e41045c2010e6085f6ff456</anchor>
+      <arglist>(uint8_t *buf, size_t buflen, const EtcPalRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_socket</name>
-    <title>lwpa_socket</title>
-    <filename>group__lwpa__socket.html</filename>
-    <class kind="struct">LwpaLinger</class>
-    <class kind="struct">LwpaMreq</class>
-    <class kind="struct">LwpaGroupReq</class>
-    <class kind="struct">LwpaPollEvent</class>
-    <class kind="struct">LwpaAddrinfo</class>
+    <name>etcpal_socket</name>
+    <title>etcpal_socket</title>
+    <filename>group__etcpal__socket.html</filename>
+    <class kind="struct">EtcPalLinger</class>
+    <class kind="struct">EtcPalMreq</class>
+    <class kind="struct">EtcPalGroupReq</class>
+    <class kind="struct">EtcPalPollEvent</class>
+    <class kind="struct">EtcPalAddrinfo</class>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SOCKET_INVALID</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gabee47ca508b8e9b7b15ae6e7729cc087</anchor>
+      <name>ETCPAL_SOCKET_INVALID</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga304e26b30c36b6c33319b9602c9fe276</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SOCKET_MAX_POLL_SIZE</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gab36e47297a2a48f28c080608c5643c25</anchor>
+      <name>ETCPAL_SOCKET_MAX_POLL_SIZE</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga06b68eaa9d0e50e624659ed1b9c7f05a</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
-      <name>lwpa_socket_t</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga0fea2946114e0a2617a086c2139fb9f6</anchor>
+      <name>etcpal_socket_t</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf08a63353f05072ee3b28fd754985b66</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>uint32_t</type>
-      <name>lwpa_poll_events_t</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaed05e6a48385343f315c4f1899530a8f</anchor>
+      <name>etcpal_poll_events_t</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga625b9f37c09cda6d3f13330094fa97d9</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaLinger</type>
-      <name>LwpaLinger</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga9976c8ca91c28be5e163945e1e1df0eb</anchor>
+      <type>struct EtcPalLinger</type>
+      <name>EtcPalLinger</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf5335aecd65e931fa0c9dc0ead350978</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaMreq</type>
-      <name>LwpaMreq</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaf4b1e36ceb83d78b0e4aa513d9fc7af1</anchor>
+      <type>struct EtcPalMreq</type>
+      <name>EtcPalMreq</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga3ca1dc73415b552ebca00df10e53a5e1</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaGroupReq</type>
-      <name>LwpaGroupReq</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaf497966f431d877d7219574b42e94f4c</anchor>
+      <type>struct EtcPalGroupReq</type>
+      <name>EtcPalGroupReq</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga21df9f214a53c2f6b06b15496edfeca8</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaPollEvent</type>
-      <name>LwpaPollEvent</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga01f60de71f46a394a6421a702475fe2a</anchor>
+      <type>struct EtcPalPollEvent</type>
+      <name>EtcPalPollEvent</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga7b84da8c4de1182c5b7769a5f5b8034c</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaAddrinfo</type>
-      <name>LwpaAddrinfo</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga10d0c83dc2a02b3b4fec265f769c4b13</anchor>
+      <type>struct EtcPalAddrinfo</type>
+      <name>EtcPalAddrinfo</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga83e2e233e87a88a7edf037928d203550</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_accept</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac258071ec7b4f5203764ffba0c0d92a7</anchor>
-      <arglist>(lwpa_socket_t id, LwpaSockaddr *address, lwpa_socket_t *conn_sock)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_accept</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga135bc72cd29f02fec9e610397d1d212a</anchor>
+      <arglist>(etcpal_socket_t id, EtcPalSockaddr *address, etcpal_socket_t *conn_sock)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_bind</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga826977bc6733ed0c4f34a5746fa05543</anchor>
-      <arglist>(lwpa_socket_t id, const LwpaSockaddr *address)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_bind</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga408d5b56a68e54697dfa3c5febd82c99</anchor>
+      <arglist>(etcpal_socket_t id, const EtcPalSockaddr *address)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_close</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gab2a3f2980a490bb439f200921074d01f</anchor>
-      <arglist>(lwpa_socket_t id)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_close</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaccdfd06b91ca1632a59c68e819270825</anchor>
+      <arglist>(etcpal_socket_t id)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_connect</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga7ce51adfd80ae9625f3c6c32a6dc66f4</anchor>
-      <arglist>(lwpa_socket_t id, const LwpaSockaddr *address)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_connect</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gac0a61cfe25dfa9691cc8064f5cc57341</anchor>
+      <arglist>(etcpal_socket_t id, const EtcPalSockaddr *address)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_getpeername</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga601cc36855c662b79f662ae5c42595f1</anchor>
-      <arglist>(lwpa_socket_t id, LwpaSockaddr *address)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_getpeername</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga27daad6bd01f29e7cb9731783b4655e4</anchor>
+      <arglist>(etcpal_socket_t id, EtcPalSockaddr *address)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_getsockname</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga1268a36d23336543beba21b086af9f4e</anchor>
-      <arglist>(lwpa_socket_t id, LwpaSockaddr *address)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_getsockname</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga5097372bea204f9469f426a54cfab6af</anchor>
+      <arglist>(etcpal_socket_t id, EtcPalSockaddr *address)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_getsockopt</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga76b8fb450bb999d48e6a21f132d75e03</anchor>
-      <arglist>(lwpa_socket_t id, int level, int option_name, void *option_value, size_t *option_len)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_getsockopt</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga653ed9405ec4cb21d958faab8b1c783e</anchor>
+      <arglist>(etcpal_socket_t id, int level, int option_name, void *option_value, size_t *option_len)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_listen</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gab5c6cf7dbbff0ebd338e9ef6de183890</anchor>
-      <arglist>(lwpa_socket_t id, int backlog)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_listen</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga39e660822d93588ea8723414567a2415</anchor>
+      <arglist>(etcpal_socket_t id, int backlog)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>lwpa_recv</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga8a597ac866a5b3951f3b7543e0f96da5</anchor>
-      <arglist>(lwpa_socket_t id, void *buffer, size_t length, int flags)</arglist>
+      <name>etcpal_recv</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gace688545de41aecba767639fa0c8f7b6</anchor>
+      <arglist>(etcpal_socket_t id, void *buffer, size_t length, int flags)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>lwpa_recvfrom</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gab170a859b1992216dac42722d5773518</anchor>
-      <arglist>(lwpa_socket_t id, void *buffer, size_t length, int flags, LwpaSockaddr *address)</arglist>
+      <name>etcpal_recvfrom</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf3007bbae16c9cb60635fae38410b1e5</anchor>
+      <arglist>(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockaddr *address)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>lwpa_send</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gae22d1b7fe2534cb4a57991a62397faf6</anchor>
-      <arglist>(lwpa_socket_t id, const void *message, size_t length, int flags)</arglist>
+      <name>etcpal_send</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga52ba67993412de6dc69a582ca07f50d5</anchor>
+      <arglist>(etcpal_socket_t id, const void *message, size_t length, int flags)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>lwpa_sendto</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gacab7bbbb36484aa2b574ee23652ddc8b</anchor>
-      <arglist>(lwpa_socket_t id, const void *message, size_t length, int flags, const LwpaSockaddr *dest_addr)</arglist>
+      <name>etcpal_sendto</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gac3b8ee613e51b01a420ee6b820c8da63</anchor>
+      <arglist>(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockaddr *dest_addr)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_setsockopt</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac74221647c7888f04191a50557c44ec6</anchor>
-      <arglist>(lwpa_socket_t id, int level, int option_name, const void *option_value, size_t option_len)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_setsockopt</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga0cc965b67084fb27214825cb893d2041</anchor>
+      <arglist>(etcpal_socket_t id, int level, int option_name, const void *option_value, size_t option_len)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_shutdown</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gae9d6a2363a94d98ee50cdfe359f3715e</anchor>
-      <arglist>(lwpa_socket_t id, int how)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_shutdown</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga3c51a1d50368f372ecd2c44c93f85cac</anchor>
+      <arglist>(etcpal_socket_t id, int how)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_socket</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga00c14a0982e98d8bf1c1aaf8ceaeb64d</anchor>
-      <arglist>(unsigned int family, unsigned int type, lwpa_socket_t *id)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_socket</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gae0c8d9e036be592eba7db8736c7e1e0f</anchor>
+      <arglist>(unsigned int family, unsigned int type, etcpal_socket_t *id)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_setblocking</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga846cd48d4882273a10d6f781128f03ea</anchor>
-      <arglist>(lwpa_socket_t id, bool blocking)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_setblocking</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga72f16eec0ea5416ac4a553e1e78d7c77</anchor>
+      <arglist>(etcpal_socket_t id, bool blocking)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_getaddrinfo</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga7c1c76581b63ab7c5b383e25dc200990</anchor>
-      <arglist>(const char *hostname, const char *service, const LwpaAddrinfo *hints, LwpaAddrinfo *result)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_getblocking</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga7134eafebb4ee73d160cd38d96ddeb9e</anchor>
+      <arglist>(etcpal_socket_t id, bool *blocking)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_getaddrinfo</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga5e63f5fa7b1b4310a4bb317aa4873997</anchor>
+      <arglist>(const char *hostname, const char *service, const EtcPalAddrinfo *hints, EtcPalAddrinfo *result)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_nextaddr</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gafe366acfdbaa9d98d9459660798c73fd</anchor>
-      <arglist>(LwpaAddrinfo *ai)</arglist>
+      <name>etcpal_nextaddr</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga669185d01901034d700f167fa23f3eb1</anchor>
+      <arglist>(EtcPalAddrinfo *ai)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_freeaddrinfo</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga85eeba64809a88e6a246e9471d5e2cd6</anchor>
-      <arglist>(LwpaAddrinfo *ai)</arglist>
+      <name>etcpal_freeaddrinfo</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga8cc1d9b7b5e8e2b88a337fc727b44535</anchor>
+      <arglist>(EtcPalAddrinfo *ai)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_inet_ntop</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac6b5fcff898be3bbf7789a8c480082b1</anchor>
-      <arglist>(const LwpaIpAddr *src, char *dest, size_t size)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_inet_ntop</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga8f8b3a64cec296d5d896e10bf7a60ac3</anchor>
+      <arglist>(const EtcPalIpAddr *src, char *dest, size_t size)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_inet_pton</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga4110e753475f9505e87b88e0097befb4</anchor>
-      <arglist>(lwpa_iptype_t type, const char *src, LwpaIpAddr *dest)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_inet_pton</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gacc09a02c09d9798f46d1fb6e9e84b900</anchor>
+      <arglist>(etcpal_iptype_t type, const char *src, EtcPalIpAddr *dest)</arglist>
     </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
-      <name>LwpaPollContext</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga78118eb52c46ee1c731ac66c443a4690</anchor>
+      <name>EtcPalPollContext</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga906fd2bcb17663f4de3fefd0b335656e</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_poll_context_init</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac75213ffc31b40209d7190dc2237e37a</anchor>
-      <arglist>(LwpaPollContext *context)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>lwpa_poll_context_deinit</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga3f5214a5a60d0727cd87509331ac31c7</anchor>
-      <arglist>(LwpaPollContext *context)</arglist>
-    </member>
-    <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_poll_add_socket</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga4659720223c84abac2541a05b11eb371</anchor>
-      <arglist>(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t events, void *user_data)</arglist>
-    </member>
-    <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_poll_modify_socket</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga1961577a68ff72d7d5924928202712fc</anchor>
-      <arglist>(LwpaPollContext *context, lwpa_socket_t socket, lwpa_poll_events_t new_events, void *new_user_data)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_context_init</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf566500c673f2e7941f9a399c61c1b68</anchor>
+      <arglist>(EtcPalPollContext *context)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_poll_remove_socket</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaccbbb8445bb7a6c467807e4f7b8d2605</anchor>
-      <arglist>(LwpaPollContext *context, lwpa_socket_t socket)</arglist>
+      <name>etcpal_poll_context_deinit</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga08a886e98949a8c0ba7f162e54cd1a72</anchor>
+      <arglist>(EtcPalPollContext *context)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_poll_wait</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga24182f58155e7894da11e4f621ad42c8</anchor>
-      <arglist>(LwpaPollContext *context, LwpaPollEvent *event, int timeout_ms)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_add_socket</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gab901f9cf32e98e0d99369366f2e1ffa4</anchor>
+      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_modify_socket</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga396b218eda2c3e52b4b917b73e18dab7</anchor>
+      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t new_events, void *new_user_data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_poll_remove_socket</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga8233886a08aff8ba010dfa7384c76408</anchor>
+      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_wait</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gae5017e2346be12e91c6450fe9860614b</anchor>
+      <arglist>(EtcPalPollContext *context, EtcPalPollEvent *event, int timeout_ms)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SOL_SOCKET</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga3f1556c87ab3fbc847768f2fdcab4e9e</anchor>
+      <name>ETCPAL_SOL_SOCKET</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga30a8a29b624b2bef32f68b1fe2aa9e83</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IPPROTO_IP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga774542431c261471aaab85da5e18d991</anchor>
+      <name>ETCPAL_IPPROTO_IP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaba74f8fca47e034d676049bd8eb61488</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IPPROTO_ICMPV6</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaa5f6bba669bdcebac15dab57b5081628</anchor>
+      <name>ETCPAL_IPPROTO_ICMPV6</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga66aa3d038609a999ad33370a6c0c3284</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IPPROTO_IPV6</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga60e65b01d77733f64ed2e0f119f8181f</anchor>
+      <name>ETCPAL_IPPROTO_IPV6</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga7db66bcfc3f239baf6a5fef9058192de</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IPPROTO_TCP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga95f2416441dfe283fa14b64baa9a4523</anchor>
+      <name>ETCPAL_IPPROTO_TCP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaa885355b90b8e92d7f9965b63790810f</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IPPROTO_UDP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga8b2221240e9f6dc96f115d7271d4fc5b</anchor>
+      <name>ETCPAL_IPPROTO_UDP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga19bf0e5a8ce939ea6c4ea034f4839bcc</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_BROADCAST</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga8254e203b0290da5bfb8975f670f4507</anchor>
+      <name>ETCPAL_SO_BROADCAST</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gab90f6d9eeabe39a57db6b808d24d9bd2</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_ERROR</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaf732095d54985fabfde60f464aad4db7</anchor>
+      <name>ETCPAL_SO_ERROR</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga20fe86808f28b9a96ee808626e4e3293</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_KEEPALIVE</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga5f1f963886bbe0d32700e86f3bf22632</anchor>
+      <name>ETCPAL_SO_KEEPALIVE</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga085124fd101ed8c2feb6c224d54d0b39</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_LINGER</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga55a81e9ec4a9aba857524b726ec75256</anchor>
+      <name>ETCPAL_SO_LINGER</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf47bd53da2c92535aa6edcd8cc820259</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_RCVBUF</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga4391e79e13fa481add7709ec5b5cf563</anchor>
+      <name>ETCPAL_SO_RCVBUF</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gab07c26f5ae3d4786c824461a65ba0dcc</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_SNDBUF</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga03acc4ad773d79b5c22644c28d27396f</anchor>
+      <name>ETCPAL_SO_SNDBUF</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga7e246a346418dcd9b4318fd673d4b622</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_RCVTIMEO</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga068077e81f7e9a8613d856b6ca6d9166</anchor>
+      <name>ETCPAL_SO_RCVTIMEO</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga068a8f93c435a18f79b13e21ff30cfd0</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_SNDTIMEO</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga70fe9d6049c2d57443614b8c1cfd84c5</anchor>
+      <name>ETCPAL_SO_SNDTIMEO</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf74d842c762e41c9a7e5a5a3404905ef</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_REUSEADDR</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaf90682239698ff4ffa860e2ada12ec28</anchor>
+      <name>ETCPAL_SO_REUSEADDR</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gac2fc9cd09dce99bb5681df96f65c31b8</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_REUSEPORT</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga8d68ac126619d3327e3f6fc893c7e488</anchor>
+      <name>ETCPAL_SO_REUSEPORT</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga9fb28d8ce3fc93272b41ebe7b5d87989</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_SO_TYPE</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gacad2c1797aca1d5a3c20c272328789c0</anchor>
+      <name>ETCPAL_SO_TYPE</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gad8abc2b8b8d29d17c94b3493bbf30816</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_TTL</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga2711703676dc5940b484b4831619c23d</anchor>
+      <name>ETCPAL_IP_TTL</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaa8067f3bea534148c077f2dd720a6d51</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_MULTICAST_IF</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga33867e9f8eeb3cbdd8513483026935f8</anchor>
+      <name>ETCPAL_IP_MULTICAST_IF</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga972636e83a7c9cbc9bb0e5a950c9c241</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_MULTICAST_TTL</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga2e184196155e7aba01e9f7bc315003b1</anchor>
+      <name>ETCPAL_IP_MULTICAST_TTL</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga53c1ba7904c7917177dea985809b12c4</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_MULTICAST_LOOP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gad0175e8affc43157d2487763ef6660fc</anchor>
+      <name>ETCPAL_IP_MULTICAST_LOOP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga0adba5365cbc8344c77ba5a47b43590e</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_ADD_MEMBERSHIP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga5c54cc7bb91aa5d1d06491b74515fb45</anchor>
+      <name>ETCPAL_IP_ADD_MEMBERSHIP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga19b3047fe621a06b5cedc8043bb823cf</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IP_DROP_MEMBERSHIP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gaffd798a26996201a08ae7489f69adb57</anchor>
+      <name>ETCPAL_IP_DROP_MEMBERSHIP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gacbe3547d777f101aaa432e602c4b8e69</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_MCAST_JOIN_GROUP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gab43a3e2b335d9bd16dd775829d259283</anchor>
+      <name>ETCPAL_MCAST_JOIN_GROUP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gacde51cd51d94c43625b96196d7b80f50</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_MCAST_LEAVE_GROUP</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga30d044b29e2f4a000f282ab64a0d74fb</anchor>
+      <name>ETCPAL_MCAST_LEAVE_GROUP</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga747194309fa23fa0e092e8bd010f1a2c</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_IPV6_V6ONLY</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gad688a623a81aca19cbba492bf263da69</anchor>
+      <name>ETCPAL_IPV6_V6ONLY</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga6a502de1f396117da63bde901d88e434</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_POLL_IN</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gacb4d3326a52b6206680a0974175e28fa</anchor>
+      <name>ETCPAL_POLL_IN</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga4e4bec5c7c2860538445ebdba2dd4283</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_POLL_OUT</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>gac556bc598d758c14d2caa9008314b6d5</anchor>
+      <name>ETCPAL_POLL_OUT</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga04ebfb989375a6cf612d69f229a74954</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_POLL_CONNECT</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga29f8b3e0d9b10946134619cc07a42431</anchor>
+      <name>ETCPAL_POLL_CONNECT</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gabbd670e11bf27a8a815b2d7985b9a364</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_POLL_OOB</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga9d90f591ffb8078fa05691fa34beb9f8</anchor>
+      <name>ETCPAL_POLL_OOB</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga1da970a4c0bd353ec963e4bb70c0f8b8</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_POLL_ERR</name>
-      <anchorfile>group__lwpa__socket.html</anchorfile>
-      <anchor>ga86b657b569c5d559cca87ee04773a3a4</anchor>
+      <name>ETCPAL_POLL_ERR</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga837082b33f4ca260e78373ee40bd25ec</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_timer</name>
-    <title>lwpa_timer</title>
-    <filename>group__lwpa__timer.html</filename>
-    <class kind="struct">LwpaTimer</class>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_timer_start</name>
-      <anchorfile>group__lwpa__timer.html</anchorfile>
-      <anchor>ga9e74e82337cba365573f1dfc98cbb0b1</anchor>
-      <arglist>(lwpatimerptr, intval)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_timer_reset</name>
-      <anchorfile>group__lwpa__timer.html</anchorfile>
-      <anchor>gae39b1a3c9ca6d1efc5b7feef9505f571</anchor>
-      <arglist>(lwpatimerptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_timer_elapsed</name>
-      <anchorfile>group__lwpa__timer.html</anchorfile>
-      <anchor>ga29e6dbbde02e98837f215dd3ee54b551</anchor>
-      <arglist>(lwpatimerptr)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>lwpa_timer_isexpired</name>
-      <anchorfile>group__lwpa__timer.html</anchorfile>
-      <anchor>gaee6a48b36dbac8a15ee44195aca894d0</anchor>
-      <arglist>(lwpatimerptr)</arglist>
-    </member>
+    <name>etcpal_timer</name>
+    <title>etcpal_timer</title>
+    <filename>group__etcpal__timer.html</filename>
+    <class kind="struct">EtcPalTimer</class>
     <member kind="typedef">
-      <type>struct LwpaTimer</type>
-      <name>LwpaTimer</name>
-      <anchorfile>group__lwpa__timer.html</anchorfile>
-      <anchor>ga609d679562ce78f14e508a6914abbf3a</anchor>
+      <type>struct EtcPalTimer</type>
+      <name>EtcPalTimer</name>
+      <anchorfile>group__etcpal__timer.html</anchorfile>
+      <anchor>gaa8f82d792cb262d907daa7b9586220ad</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>uint32_t</type>
-      <name>lwpa_getms</name>
-      <anchorfile>group__lwpa__timer.html</anchorfile>
-      <anchor>ga94380c14c93286f6a7f1580fd4907d53</anchor>
+      <name>etcpal_getms</name>
+      <anchorfile>group__etcpal__timer.html</anchorfile>
+      <anchor>ga9d277421b68caa9f0ad6f23bd775d5d6</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>etcpal_timer_start</name>
+      <anchorfile>group__etcpal__timer.html</anchorfile>
+      <anchor>ga6e34d82478d4ad222a22df781b5f2f44</anchor>
+      <arglist>(EtcPalTimer *timer, uint32_t interval)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_timer_reset</name>
+      <anchorfile>group__etcpal__timer.html</anchorfile>
+      <anchor>gae3f2a33d174900c2a2a67e2eef842069</anchor>
+      <arglist>(EtcPalTimer *timer)</arglist>
+    </member>
+    <member kind="function">
       <type>uint32_t</type>
-      <name>lwpa_timer_remaining</name>
-      <anchorfile>group__lwpa__timer.html</anchorfile>
-      <anchor>ga15345971dcc9b6b5e705abe2ac2f24b0</anchor>
-      <arglist>(const LwpaTimer *timer)</arglist>
+      <name>etcpal_timer_elapsed</name>
+      <anchorfile>group__etcpal__timer.html</anchorfile>
+      <anchor>ga5d73c9f8144f65719e8b319cdfdc05bb</anchor>
+      <arglist>(const EtcPalTimer *timer)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_timer_is_expired</name>
+      <anchorfile>group__etcpal__timer.html</anchorfile>
+      <anchor>gaccc47c2970648c782918f8ab21d10ae9</anchor>
+      <arglist>(const EtcPalTimer *timer)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>etcpal_timer_remaining</name>
+      <anchorfile>group__etcpal__timer.html</anchorfile>
+      <anchor>ga8f0822e6e65f8e63b3776533ce1ff531</anchor>
+      <arglist>(const EtcPalTimer *timer)</arglist>
     </member>
   </compound>
   <compound kind="group">
-    <name>lwpa_uuid</name>
-    <title>lwpa_uuid</title>
-    <filename>group__lwpa__uuid.html</filename>
-    <class kind="struct">LwpaUuid</class>
+    <name>etcpal_uuid</name>
+    <title>etcpal_uuid</title>
+    <filename>group__etcpal__uuid.html</filename>
+    <class kind="struct">EtcPalUuid</class>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_UUID_BYTES</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga8c2c0266da7a921d450de0c97ba380ae</anchor>
+      <name>ETCPAL_UUID_BYTES</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>gadfd6e6a51b681c03b6422d1454ddc954</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_uuid_cmp</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga0a76d940787138f930fc119abbee791d</anchor>
+      <name>ETCPAL_UUID_CMP</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>ga6f2cff87ab29b0b26d0f641b065c998d</anchor>
       <arglist>(uuid1ptr, uuid2ptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>lwpa_uuid_is_null</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga11fe0eb25265c769b4a0abb729b41523</anchor>
+      <name>ETCPAL_UUID_IS_NULL</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>ga3f7c7f1f596e00536adbefb78899ebd1</anchor>
       <arglist>(uuidptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>LWPA_UUID_STRING_BYTES</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga1eaab61ad5262363f3ff5739c27f8be5</anchor>
+      <name>ETCPAL_UUID_STRING_BYTES</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>gabab14207e273082491f7be2a21275092</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct LwpaUuid</type>
-      <name>LwpaUuid</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga176bfe391ccacc68bd4c7c4e01b93384</anchor>
+      <type>struct EtcPalUuid</type>
+      <name>EtcPalUuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>ga472e79f55f51afda28c54c6967018922</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>lwpa_uuid_to_string</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga913c775ec9337470909a993287f9a7e0</anchor>
-      <arglist>(char *buf, const LwpaUuid *uuid)</arglist>
+      <name>etcpal_uuid_to_string</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>ga6a5dcd27e638a9f7ed8c0953708363d4</anchor>
+      <arglist>(char *buf, const EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>lwpa_string_to_uuid</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>gac0dfc2593ae51c5fc3dbc28d73ce1bd1</anchor>
-      <arglist>(LwpaUuid *uuid, const char *buf, size_t buflen)</arglist>
+      <name>etcpal_string_to_uuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>gaf0b1aeb14ab6cac80eac90066af53c8e</anchor>
+      <arglist>(EtcPalUuid *uuid, const char *buf, size_t buflen)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_generate_v1_uuid</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga98aaae9b8d23b7a57fac6f1974ed8bd0</anchor>
-      <arglist>(LwpaUuid *uuid)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_generate_v1_uuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>ga7a2029b259cc4270fb721b976f21972a</anchor>
+      <arglist>(EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_generate_v3_uuid</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>ga19d9fbaf6f594ac9ba7e576eaea91201</anchor>
-      <arglist>(LwpaUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_generate_v3_uuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>ga7f16be65a1af810d045536230750604b</anchor>
+      <arglist>(EtcPalUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)</arglist>
     </member>
     <member kind="function">
-      <type>lwpa_error_t</type>
-      <name>lwpa_generate_v4_uuid</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>gad5a92c6e824c30a75fb7f5abda8dec7f</anchor>
-      <arglist>(LwpaUuid *uuid)</arglist>
+      <type>etcpal_error_t</type>
+      <name>etcpal_generate_v4_uuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>ga1cabb8b6f72752b1a2ae72f776301242</anchor>
+      <arglist>(EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="variable">
-      <type>const LwpaUuid</type>
-      <name>kLwpaNullUuid</name>
-      <anchorfile>group__lwpa__uuid.html</anchorfile>
-      <anchor>gab75cca7a42a1cdc1bb901ed24fc095ee</anchor>
+      <type>const EtcPalUuid</type>
+      <name>kEtcPalNullUuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>gae518c32bbc7d2266568ee9a703bb4f5e</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -3129,7 +3191,7 @@
   </compound>
   <compound kind="page">
     <name>index</name>
-    <title>LightWeight Platform Abstraction</title>
+    <title>ETC Platform Abstraction Layer</title>
     <filename>index</filename>
   </compound>
 </tagfile>
