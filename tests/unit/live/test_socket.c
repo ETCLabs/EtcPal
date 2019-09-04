@@ -16,10 +16,10 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/socket.h"
+#include "etcpal/socket.h"
 #include "unity_fixture.h"
 
-#include "lwpa/netint.h"
+#include "etcpal/netint.h"
 #include <stddef.h>
 
 // For getaddrinfo

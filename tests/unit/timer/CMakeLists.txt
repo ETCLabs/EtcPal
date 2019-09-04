@@ -2,6 +2,6 @@
 
 etcpal_add_custom_test(test_timer_wraparound
   test_timer_wraparound.c
-  ${ETCPAL_SRC}/lwpa/timer.c
+  ${ETCPAL_SRC}/etcpal/timer.c
 )
 target_include_directories(test_timer_wraparound PRIVATE ${ETCPAL_INCLUDE})

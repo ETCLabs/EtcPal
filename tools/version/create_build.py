@@ -1,6 +1,6 @@
 """Script to create a new versioned build of lwpa.
 
-Updates the lwpa/version.h file
+Updates the etcpal/version.h file
 Prompts the user to review before committing and tagging
 
 This script is meant to be run by an lwpa developer on a development workstation. It assumes that
@@ -47,7 +47,7 @@ def parse_version(vers_string):
 
 
 def update_version_files(repo_root, version):
-    """Update the version header lwpa/version.h and the current_version.txt file with the new
+    """Update the version header etcpal/version.h and the current_version.txt file with .he new
     version information. Returns True on success, false otherwise."""
 
     version_h_in_file_path = os.path.join(repo_root, VERSION_H_IN_FILE_REL_PATH)

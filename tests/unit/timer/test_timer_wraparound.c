@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
 
-#include "lwpa/timer.h"
+#include "etcpal/timer.h"
 #include "unity_fixture.h"
 #include "fff.h"
 

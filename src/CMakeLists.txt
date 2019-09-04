@@ -10,53 +10,53 @@ endif()
 
 add_library(EtcPal
   # EtcPal headers
-  ${ETCPAL_ROOT}/include/lwpa/acn_prot.h
-  ${ETCPAL_ROOT}/include/lwpa/bool.h
-  ${ETCPAL_ROOT}/include/lwpa/uuid.h
-  ${ETCPAL_ROOT}/include/lwpa/common.h
-  ${ETCPAL_ROOT}/include/lwpa/error.h
-  ${ETCPAL_ROOT}/include/lwpa/inet.h
-  ${ETCPAL_ROOT}/include/lwpa/int.h
-  ${ETCPAL_ROOT}/include/lwpa/log.h
-  ${ETCPAL_ROOT}/include/lwpa/mempool.h
-  ${ETCPAL_ROOT}/include/lwpa/netint.h
-  ${ETCPAL_ROOT}/include/lwpa/pack.h
-  ${ETCPAL_ROOT}/include/lwpa/pdu.h
-  ${ETCPAL_ROOT}/include/lwpa/rbtree.h
-  ${ETCPAL_ROOT}/include/lwpa/root_layer_pdu.h
-  ${ETCPAL_ROOT}/include/lwpa/socket.h
-  ${ETCPAL_ROOT}/include/lwpa/timer.h
+  ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
+  ${ETCPAL_ROOT}/include/etcpal/bool.h
+  ${ETCPAL_ROOT}/include/etcpal/uuid.h
+  ${ETCPAL_ROOT}/include/etcpal/common.h
+  ${ETCPAL_ROOT}/include/etcpal/error.h
+  ${ETCPAL_ROOT}/include/etcpal/inet.h
+  ${ETCPAL_ROOT}/include/etcpal/int.h
+  ${ETCPAL_ROOT}/include/etcpal/log.h
+  ${ETCPAL_ROOT}/include/etcpal/mempool.h
+  ${ETCPAL_ROOT}/include/etcpal/netint.h
+  ${ETCPAL_ROOT}/include/etcpal/pack.h
+  ${ETCPAL_ROOT}/include/etcpal/pdu.h
+  ${ETCPAL_ROOT}/include/etcpal/rbtree.h
+  ${ETCPAL_ROOT}/include/etcpal/root_layer_pdu.h
+  ${ETCPAL_ROOT}/include/etcpal/socket.h
+  ${ETCPAL_ROOT}/include/etcpal/timer.h
 
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/lwpa/os_lock.h
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/lwpa/os_thread.h
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.h
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.h
 
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/lwpa/os_socket.h
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/lwpa/os_inet.h
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.h
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.h
 
   # EtcPal sources
-  ${ETCPAL_ROOT}/src/lwpa/common.c
-  ${ETCPAL_ROOT}/src/lwpa/error.c
-  ${ETCPAL_ROOT}/src/lwpa/inet.c
-  ${ETCPAL_ROOT}/src/lwpa/log.c
-  ${ETCPAL_ROOT}/src/lwpa/md5.h
-  ${ETCPAL_ROOT}/src/lwpa/md5.c
-  ${ETCPAL_ROOT}/src/lwpa/mempool.c
-  ${ETCPAL_ROOT}/src/lwpa/netint.c
-  ${ETCPAL_ROOT}/src/lwpa/pack.c
-  ${ETCPAL_ROOT}/src/lwpa/pdu.c
-  ${ETCPAL_ROOT}/src/lwpa/rbtree.c
-  ${ETCPAL_ROOT}/src/lwpa/root_layer_pdu.c
-  ${ETCPAL_ROOT}/src/lwpa/timer.c
-  ${ETCPAL_ROOT}/src/lwpa/uuid.c
+  ${ETCPAL_ROOT}/src/etcpal/common.c
+  ${ETCPAL_ROOT}/src/etcpal/error.c
+  ${ETCPAL_ROOT}/src/etcpal/inet.c
+  ${ETCPAL_ROOT}/src/etcpal/log.c
+  ${ETCPAL_ROOT}/src/etcpal/md5.h
+  ${ETCPAL_ROOT}/src/etcpal/md5.c
+  ${ETCPAL_ROOT}/src/etcpal/mempool.c
+  ${ETCPAL_ROOT}/src/etcpal/netint.c
+  ${ETCPAL_ROOT}/src/etcpal/pack.c
+  ${ETCPAL_ROOT}/src/etcpal/pdu.c
+  ${ETCPAL_ROOT}/src/etcpal/rbtree.c
+  ${ETCPAL_ROOT}/src/etcpal/root_layer_pdu.c
+  ${ETCPAL_ROOT}/src/etcpal/timer.c
+  ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_lock.c
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_thread.c
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_timer.c
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_uuid.c
+  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.c
+  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.c
+  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_timer.c
+  ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_uuid.c
 
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/lwpa/os_inet.c
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/lwpa/os_netint.c
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/lwpa/os_socket.c
+  ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.c
+  ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
+  ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.c
   
   ${ETCPAL_OS_ADDITIONAL_SOURCES}
   ${ETCPAL_NET_ADDITIONAL_SOURCES}
@@ -96,56 +96,56 @@ install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/lwpa DESTINATIO
 if(ETCPAL_BUILD_MOCK_LIB)
   add_library(EtcPalMock
     # EtcPal headers
-    ${ETCPAL_ROOT}/include/lwpa/acn_prot.h
-    ${ETCPAL_ROOT}/include/lwpa/bool.h
-    ${ETCPAL_ROOT}/include/lwpa/uuid.h
-    ${ETCPAL_ROOT}/include/lwpa/common.h
-    ${ETCPAL_ROOT}/include/lwpa/error.h
-    ${ETCPAL_ROOT}/include/lwpa/inet.h
-    ${ETCPAL_ROOT}/include/lwpa/int.h
-    ${ETCPAL_ROOT}/include/lwpa/log.h
-    ${ETCPAL_ROOT}/include/lwpa/mempool.h
-    ${ETCPAL_ROOT}/include/lwpa/netint.h
-    ${ETCPAL_ROOT}/include/lwpa/pack.h
-    ${ETCPAL_ROOT}/include/lwpa/pdu.h
-    ${ETCPAL_ROOT}/include/lwpa/rbtree.h
-    ${ETCPAL_ROOT}/include/lwpa/root_layer_pdu.h
-    ${ETCPAL_ROOT}/include/lwpa/socket.h
-    ${ETCPAL_ROOT}/include/lwpa/timer.h
+    ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
+    ${ETCPAL_ROOT}/include/etcpal/bool.h
+    ${ETCPAL_ROOT}/include/etcpal/uuid.h
+    ${ETCPAL_ROOT}/include/etcpal/common.h
+    ${ETCPAL_ROOT}/include/etcpal/error.h
+    ${ETCPAL_ROOT}/include/etcpal/inet.h
+    ${ETCPAL_ROOT}/include/etcpal/int.h
+    ${ETCPAL_ROOT}/include/etcpal/log.h
+    ${ETCPAL_ROOT}/include/etcpal/mempool.h
+    ${ETCPAL_ROOT}/include/etcpal/netint.h
+    ${ETCPAL_ROOT}/include/etcpal/pack.h
+    ${ETCPAL_ROOT}/include/etcpal/pdu.h
+    ${ETCPAL_ROOT}/include/etcpal/rbtree.h
+    ${ETCPAL_ROOT}/include/etcpal/root_layer_pdu.h
+    ${ETCPAL_ROOT}/include/etcpal/socket.h
+    ${ETCPAL_ROOT}/include/etcpal/timer.h
 
-    ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/lwpa/os_lock.h
-    ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/lwpa/os_thread.h
+    ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.h
+    ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.h
 
-    ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/lwpa/os_socket.h
-    ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/lwpa/os_inet.h
+    ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.h
+    ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.h
 
     ${ETCPAL_ROOT}/include/lwpa_mock/socket.h
 
     # EtcPal sources
     # We will gradually substitute these with mocks as needed
-    ${ETCPAL_ROOT}/src/lwpa/common.c
-    ${ETCPAL_ROOT}/src/lwpa/error.c
-    ${ETCPAL_ROOT}/src/lwpa/inet.c
-    ${ETCPAL_ROOT}/src/lwpa/log.c
-    ${ETCPAL_ROOT}/src/lwpa/md5.h
-    ${ETCPAL_ROOT}/src/lwpa/md5.c
-    ${ETCPAL_ROOT}/src/lwpa/mempool.c
-    ${ETCPAL_ROOT}/src/lwpa/netint.c
-    ${ETCPAL_ROOT}/src/lwpa/pack.c
-    ${ETCPAL_ROOT}/src/lwpa/pdu.c
-    ${ETCPAL_ROOT}/src/lwpa/rbtree.c
-    ${ETCPAL_ROOT}/src/lwpa/root_layer_pdu.c
-    ${ETCPAL_ROOT}/src/lwpa/timer.c
-    ${ETCPAL_ROOT}/src/lwpa/uuid.c
+    ${ETCPAL_ROOT}/src/etcpal/common.c
+    ${ETCPAL_ROOT}/src/etcpal/error.c
+    ${ETCPAL_ROOT}/src/etcpal/inet.c
+    ${ETCPAL_ROOT}/src/etcpal/log.c
+    ${ETCPAL_ROOT}/src/etcpal/md5.h
+    ${ETCPAL_ROOT}/src/etcpal/md5.c
+    ${ETCPAL_ROOT}/src/etcpal/mempool.c
+    ${ETCPAL_ROOT}/src/etcpal/netint.c
+    ${ETCPAL_ROOT}/src/etcpal/pack.c
+    ${ETCPAL_ROOT}/src/etcpal/pdu.c
+    ${ETCPAL_ROOT}/src/etcpal/rbtree.c
+    ${ETCPAL_ROOT}/src/etcpal/root_layer_pdu.c
+    ${ETCPAL_ROOT}/src/etcpal/timer.c
+    ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_lock.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_thread.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_timer.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/lwpa/os_uuid.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_.hread.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_timer.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_uuid.c
 
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/lwpa/os_inet.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/lwpa/os_netint.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/lwpa/os_socket.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.c
 
     ${ETCPAL_ROOT}/src/lwpa_mock/socket.c
   )

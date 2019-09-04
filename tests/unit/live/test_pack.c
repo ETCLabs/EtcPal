@@ -16,13 +16,13 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/pack.h"
-#include "lwpa/pack64.h"
+#include "etcpal/pack.h"
+#include "etcpal/pack64.h"
 #include "unity_fixture.h"
 
 #include <stddef.h>
 #include <string.h>
-#include "lwpa/bool.h"
+#include "etcpal/bool.h"
 
 // What we pack and unpack from
 uint8_t test_buf[100];

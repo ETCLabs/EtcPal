@@ -16,10 +16,10 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/thread.h"
+#include "etcpal/thread.h"
 #include "unity_fixture.h"
 
-#include "lwpa/bool.h"
+#include "etcpal/bool.h"
 
 TEST_GROUP(lwpa_thread);
 

@@ -16,11 +16,11 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/lock.h"
+#include "etcpal/lock.h"
 #include "unity_fixture.h"
 
 #include <stdio.h>
-#include "lwpa/thread.h"
+#include "etcpal/thread.h"
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER

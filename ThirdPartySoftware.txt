@@ -24,7 +24,7 @@ Public domain, under the Unlicense (http://unlicense.org)
 The following sources in this repository are based on sources obtained from
 mirek/rb_tree:
 
-include/lwpa/rbtree.h
+include/etcpal/rbtree.h
 src/lwpa_rbtree.c
 
 See the license information at the top of those source files for more details.

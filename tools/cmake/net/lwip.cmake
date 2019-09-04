@@ -7,7 +7,7 @@ if(NOT ETCPAL_LWIP_INCLUDE_DIRS OR NOT ETCPAL_LWIPOPTS_DIR)
 endif()
 
 set(ETCPAL_NET_ADDITIONAL_SOURCES
-  ${ETCPAL_ROOT}/src/os/lwip/lwpa/os_error.h
-  ${ETCPAL_ROOT}/src/os/lwip/lwpa/os_error.c
+  ${ETCPAL_ROOT}/src/os/lwip/etcpal/os_error.h
+  ${ETCPAL_ROOT}/src/os/lwip/etcpal/os_error.c
 )
 set(ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS ${ETCPAL_LWIP_INCLUDE_DIRS} ${ETCPAL_LWIPOPTS_DIR})

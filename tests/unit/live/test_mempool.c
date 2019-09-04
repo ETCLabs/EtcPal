@@ -16,7 +16,7 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/mempool.h"
+#include "etcpal/mempool.h"
 #include "unity_fixture.h"
 
 #include <stddef.h>

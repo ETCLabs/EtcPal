@@ -24,8 +24,8 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include "lwpa/netint.h"
-#include "lwpa/socket.h"
+#include "etcpal/netint.h"
+#include "etcpal/socket.h"
 
 #define FORMAT_BUF_SIZE 50
 

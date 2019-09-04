@@ -16,12 +16,12 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/timer.h"
+#include "etcpal/timer.h"
 #include "unity_fixture.h"
 
 // Interdependency is unavoidable here, we need a platform-neutral sleep
-#include "lwpa/common.h"
-#include "lwpa/thread.h"
+#include "etcpal/common.h"
+#include "etcpal/thread.h"
 
 TEST_GROUP(lwpa_timer);
 

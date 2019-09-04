@@ -16,7 +16,7 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/netint.h"
+#include "etcpal/netint.h"
 #include "unity_fixture.h"
 
 #include <string.h>

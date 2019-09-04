@@ -16,12 +16,12 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/common.h"
+#include "etcpal/common.h"
 #include "unity_fixture.h"
 #include "fff.h"
 
-#include "lwpa/netint.h"
-#include "lwpa/log.h"
+#include "etcpal/netint.h"
+#include "etcpal/log.h"
 
 TEST_GROUP(lwpa_common);
 

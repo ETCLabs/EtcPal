@@ -16,13 +16,13 @@
  * This file is a part of lwpa. For more information, go to:
  * https://github.com/ETCLabs/lwpa
  ******************************************************************************/
-#include "lwpa/socket.h"
+#include "etcpal/socket.h"
 #include "unity_fixture.h"
 
 #include <string.h>
 #include <stdio.h>
-#include "lwpa/netint.h"
-#include "lwpa/thread.h"
+#include "etcpal/netint.h"
+#include "etcpal/thread.h"
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
