@@ -20,7 +20,7 @@
 #include "os_error.h"
 #include <errno.h>
 
-lwpa_error_t errno_os_to_lwpa(int os_errno)
+etcpal_error_t errno_os_to_lwpa(int os_errno)
 {
   switch (os_errno)
   {

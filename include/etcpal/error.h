@@ -23,7 +23,7 @@
 
 #include <stdlib.h>
 
-/*! \defgroup lwpa_error lwpa_error
+/*! \defgroup etcpal_error etcpal_error
  *  \ingroup lwpa
  *  \brief Platform-neutral error codes.
  *
@@ -100,7 +100,7 @@ typedef enum
   kLwpaErrPerm = -28,
   /*! A system call or C library call failed in a way not covered by other errors. */
   kLwpaErrSys = -29,
-} lwpa_error_t;
+} etcpal_error_t;
 
 #define LWPA_NUM_ERROR_CODES 30
 
@@ -108,14 +108,14 @@ typedef enum
 extern "C" {
 #endif
 
-extern const char* lwpa_error_strings[LWPA_NUM_ERROR_CODES];
+extern const char* etcpal_error_strings[LWPA_NUM_ERROR_CODES];
 
 /*! \brief Get a string representation of an error code.
  *  \param errcode lwpa error code.
  *  \return Error string (char *) (valid error code) or NULL (invalid error code).
  */
-#define lwpa_strerror(errcode) \
-  (((int)errcode <= 0 && (int)errcode > -LWPA_NUM_ERROR_CODES) ? lwpa_error_strings[-((int)errcode)] : NULL)
+#define etcpal_strerror(errcode) \
+  (((int)errcode <= 0 && (int)errcode > -LWPA_NUM_ERROR_CODES) ? etcpal_error_strings[-((int)errcode)] : NULL)
 
 #ifdef __cplusplus
 }

@@ -36,7 +36,7 @@ typedef struct LwpaThreadParamsMqx
 
 #define LWPA_THREAD_DEFAULT_PRIORITY 11
 #define LWPA_THREAD_DEFAULT_STACK 8000
-#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
+#define LWPA_THREAD_DEFAULT_NAME "etcpal_thread"
 #define LWPA_THREAD_MQX_DEFAULT_ATTRIBUTES NULL
 #define LWPA_THREAD_MQX_DEFAULT_TIME_SLICE 0
 
@@ -46,9 +46,9 @@ typedef struct
   void* arg;
   LWSEM_STRUCT sig;
   _task_id tid;
-} lwpa_thread_t;
+} etcpal_thread_t;
 
-#define lwpa_thread_sleep(sleep_ms) _time_delay(sleep_ms)
+#define etcpal_thread_sleep(sleep_ms) _time_delay(sleep_ms)
 
 #ifdef __cplusplus
 }

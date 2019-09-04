@@ -1,13 +1,13 @@
-/* lwpa_rbtree.c: C-language red-black tree implementation. This module is
+/* etcpal_rbtree.c: C-language red-black tree implementation. This module is
  * based heavily on a public-domain red-black tree implementation. The license
  * of that implementation follows as it was when retrieved from Github on
  * 2018-02-28.
  *
  ******************************************************************************
- * Based on Julienne Walker's <http://eternallyconfuzzled.com/> lwpa_rbtree
+ * Based on Julienne Walker's <http://eternallyconfuzzled.com/> etcpal_rbtree
  * implementation.
  *
- * Modified by Mirek Rusin <http://github.com/mirek/lwpa_rbtree>.
+ * Modified by Mirek Rusin <http://github.com/mirek/etcpal_rbtree>.
  *
  * This is free and unencumbered software released into the public domain.
  *
@@ -39,9 +39,9 @@
 
 #include "etcpal/bool.h"
 
-/* lwpa_rbnode */
+/* etcpal_rbnode */
 
-static LwpaRbNode* lwpa_rbnode_alloc(LwpaRbTree* tree)
+static LwpaRbNode* etcpal_rbnode_alloc(LwpaRbTree* tree)
 {
   if (tree && tree->alloc_f)
     return tree->alloc_f();
@@ -51,14 +51,14 @@ static LwpaRbNode* lwpa_rbnode_alloc(LwpaRbTree* tree)
 /*! \brief Initialize a red-black tree node.
  *
  *  This function must be called on a new node before inserting it manually using
- *  lwpa_rbtree_insert_node(). When using lwpa_rbtree_insert(), this function is called on the new
+ *  etcpal_rbtree_insert_node(). When using etcpal_rbtree_insert(), this function is called on the new
  *  node automatically.
  *
  *  \param[in] self The node to be initialized.
  *  \param[in] value Pointer to the value to assign to the node.
  *  \return Pointer to the node that was initialized.
  */
-LwpaRbNode* lwpa_rbnode_init(LwpaRbNode* self, void* value)
+LwpaRbNode* etcpal_rbnode_init(LwpaRbNode* self, void* value)
 {
   if (self)
   {
@@ -71,7 +71,7 @@ LwpaRbNode* lwpa_rbnode_init(LwpaRbNode* self, void* value)
 
 static LwpaRbNode* rb_node_create(LwpaRbTree* tree, void* value)
 {
-  return lwpa_rbnode_init(lwpa_rbnode_alloc(tree), value);
+  return etcpal_rbnode_init(etcpal_rbnode_alloc(tree), value);
 }
 
 static void rb_node_dealloc(LwpaRbNode* self, const LwpaRbTree* tree)
@@ -112,14 +112,14 @@ static LwpaRbNode* rb_node_rotate2(LwpaRbNode* self, int dir)
   return result;
 }
 
-/* lwpa_rbtree - default callbacks */
+/* etcpal_rbtree - default callbacks */
 
 /*! \brief The default node comparison callback.
  *
  *  This function can be supplied as an argument to any function that takes a
- *  #lwpa_rbtree_node_cmp_f. Simply compares the pointer addresses of the two node values.
+ *  #etcpal_rbtree_node_cmp_f. Simply compares the pointer addresses of the two node values.
  */
-int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b)
+int etcpal_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b)
 {
   (void)self;
   return (a->value > b->value) - (a->value < b->value);
@@ -127,15 +127,15 @@ int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, con
 
 /*! \brief The default node deallocation callback.
  *
- *  This function can be supplied as an argument to any function that takes a #lwpa_rbtree_node_f.
+ *  This function can be supplied as an argument to any function that takes a #etcpal_rbtree_node_f.
  *  Simply deallocates the node using the tree's dealloc_f.
  */
-void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node)
+void etcpal_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node)
 {
   rb_node_dealloc(node, self);
 }
 
-/* lwpa_rbtree */
+/* etcpal_rbtree */
 
 /*! \brief Initialize a red-black tree node.
  *
@@ -148,14 +148,14 @@ void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node)
  *  \param[in] dealloc_f A function to use for deallocating node structures.
  *  \return Pointer to the tree that was initialized.
  */
-LwpaRbTree* lwpa_rbtree_init(LwpaRbTree* self, lwpa_rbtree_node_cmp_f node_cmp_cb, lwpa_rbnode_alloc_f alloc_f,
-                             lwpa_rbnode_dealloc_f dealloc_f)
+LwpaRbTree* etcpal_rbtree_init(LwpaRbTree* self, etcpal_rbtree_node_cmp_f node_cmp_cb, etcpal_rbnode_alloc_f alloc_f,
+                             etcpal_rbnode_dealloc_f dealloc_f)
 {
   if (self)
   {
     self->root = NULL;
     self->size = 0;
-    self->cmp = node_cmp_cb ? node_cmp_cb : lwpa_rbtree_node_cmp_ptr_cb;
+    self->cmp = node_cmp_cb ? node_cmp_cb : etcpal_rbtree_node_cmp_ptr_cb;
     self->alloc_f = alloc_f;
     self->dealloc_f = dealloc_f;
   }
@@ -164,14 +164,14 @@ LwpaRbTree* lwpa_rbtree_init(LwpaRbTree* self, lwpa_rbtree_node_cmp_f node_cmp_c
 
 /*! \brief Find a value in a red-black tree.
  *
- *  Uses the #lwpa_rbtree_node_cmp_f provided in lwpa_rbtree_init() to compare values. Lookup
+ *  Uses the #etcpal_rbtree_node_cmp_f provided in etcpal_rbtree_init() to compare values. Lookup
  *  guaranteed in log(n) time.
  *
  *  \param[in] self Tree in which to find the value.
  *  \param[in] value Value to find.
  *  \return Pointer to the value (value found) or NULL (value not found).
  */
-void* lwpa_rbtree_find(LwpaRbTree* self, void* value)
+void* etcpal_rbtree_find(LwpaRbTree* self, void* value)
 {
   void* result = NULL;
   if (self)
@@ -202,8 +202,8 @@ void* lwpa_rbtree_find(LwpaRbTree* self, void* value)
 /*! \brief Insert a new value into a red-black tree.
  *
  *  If the value did not already exist in the tree, a new node is allocated using the
- *  #lwpa_rbnode_alloc_f provided in lwpa_rbtree_init(). Uses the #lwpa_rbtree_node_cmp_f provided
- *  in lwpa_rbtree_init() to compare values. Insertion guaranteed in log(n) time.
+ *  #etcpal_rbnode_alloc_f provided in etcpal_rbtree_init(). Uses the #etcpal_rbtree_node_cmp_f provided
+ *  in etcpal_rbtree_init() to compare values. Insertion guaranteed in log(n) time.
  *
  *  \param[in] self Tree in which to insert the value.
  *  \param[in] value Value to insert.
@@ -212,12 +212,12 @@ void* lwpa_rbtree_find(LwpaRbTree* self, void* value)
  *  \return #kLwpaErrNoMem: Couldn't allocate new node.
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-lwpa_error_t lwpa_rbtree_insert(LwpaRbTree* self, void* value)
+etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value)
 {
   LwpaRbNode* new_node = rb_node_create(self, value);
   if (new_node)
   {
-    lwpa_error_t insert_res = lwpa_rbtree_insert_node(self, new_node);
+    etcpal_error_t insert_res = etcpal_rbtree_insert_node(self, new_node);
     if (insert_res == kLwpaErrOk)
     {
       return kLwpaErrOk;
@@ -237,19 +237,19 @@ lwpa_error_t lwpa_rbtree_insert(LwpaRbTree* self, void* value)
 /*! \brief Insert a node containing a new value into a red-black tree.
  *
  *  The node is supplied by the caller and its memory must remain valid as long as it remains in the
- *  tree. Uses the #lwpa_rbtree_node_cmp_f provided in lwpa_rbtree_init() to compare values.
+ *  tree. Uses the #etcpal_rbtree_node_cmp_f provided in etcpal_rbtree_init() to compare values.
  *  Insertion guaranteed in log(n) time.
  *
  *  \param[in] self Tree in which to insert the value.
  *  \param[in] node Node containing value to insert. Must have been previously initialized using
- *                  lwpa_rbnode_init().
+ *                  etcpal_rbnode_init().
  *  \return #kLwpaErrOk: The value was inserted.
  *  \return #kLwpaErrExists: The value already existed in the tree.
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-lwpa_error_t lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
+etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
 {
-  lwpa_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kLwpaErrInvalid;
   if (self && node)
   {
     if (self->root == NULL)
@@ -330,9 +330,9 @@ lwpa_error_t lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
 
 /*! \brief Remove a value from a red-black tree.
  *
- *  The node memory is deallocated using the #lwpa_rbnode_dealloc_f provided in lwpa_rbtree_init();
- *  the user is responsible for deallocating the value memory. Uses the #lwpa_rbtree_node_cmp_f
- *  provided in lwpa_rbtree_init() to compare values. Removal guaranteed in log(n) time.
+ *  The node memory is deallocated using the #etcpal_rbnode_dealloc_f provided in etcpal_rbtree_init();
+ *  the user is responsible for deallocating the value memory. Uses the #etcpal_rbtree_node_cmp_f
+ *  provided in etcpal_rbtree_init() to compare values. Removal guaranteed in log(n) time.
  *
  *  \param[in] self Tree from which to remove the value.
  *  \param[in] value Value to remove.
@@ -340,19 +340,19 @@ lwpa_error_t lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node)
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  *  \return #kLwpaErrNotFound: The value did not exist in the tree.
  */
-lwpa_error_t lwpa_rbtree_remove(LwpaRbTree* self, void* value)
+etcpal_error_t etcpal_rbtree_remove(LwpaRbTree* self, void* value)
 {
-  lwpa_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kLwpaErrInvalid;
   if (self)
-    result = lwpa_rbtree_remove_with_cb(self, value, lwpa_rbtree_node_dealloc_cb);
+    result = etcpal_rbtree_remove_with_cb(self, value, etcpal_rbtree_node_dealloc_cb);
   return result;
 }
 
 /*! \brief Remove a value from a red-black tree, calling back into the application with the node and
  *         value being removed.
  *
- *  The user provides a #lwpa_rbtree_node_f callback function and is responsible for deallocating
- *  both the node and value memory. Uses the #lwpa_rbtree_node_cmp_f provided in lwpa_rbtree_init()
+ *  The user provides a #etcpal_rbtree_node_f callback function and is responsible for deallocating
+ *  both the node and value memory. Uses the #etcpal_rbtree_node_cmp_f provided in etcpal_rbtree_init()
  *  to compare values. Removal guaranteed in log(n) time.
  *
  *  \param[in] self Tree from which to remove the value.
@@ -362,7 +362,7 @@ lwpa_error_t lwpa_rbtree_remove(LwpaRbTree* self, void* value)
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  *  \return #kLwpaErrNotFound: The value did not exist in the tree.
  */
-lwpa_error_t lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb)
+etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpal_rbtree_node_f node_cb)
 {
   LwpaRbNode head = {0}; /* False tree root */
   LwpaRbNode node;       /* Value wrapper node */
@@ -377,7 +377,7 @@ lwpa_error_t lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtr
 
   /* SMK added this check, because the removal code seems to fail badly in the case where the node
    * being removed didn't previously exist in the tree. */
-  if (NULL == lwpa_rbtree_find(self, value))
+  if (NULL == etcpal_rbtree_find(self, value))
     return kLwpaErrNotFound;
 
   /* Set up our helpers */
@@ -464,25 +464,25 @@ lwpa_error_t lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtr
 
 /*! \brief Clear all values from a red-black tree.
  *
- *  The node memory is deallocated using the #lwpa_rbnode_dealloc_f provided in lwpa_rbtree_init();
+ *  The node memory is deallocated using the #etcpal_rbnode_dealloc_f provided in etcpal_rbtree_init();
  *  the user is responsible for deallocating the value memory.
  *
  *  \param[in] self Tree to clear.
  *  \return #kLwpaErrOk: The tree was cleared.
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-lwpa_error_t lwpa_rbtree_clear(LwpaRbTree* self)
+etcpal_error_t etcpal_rbtree_clear(LwpaRbTree* self)
 {
-  lwpa_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kLwpaErrInvalid;
   if (self)
-    result = lwpa_rbtree_clear_with_cb(self, lwpa_rbtree_node_dealloc_cb);
+    result = etcpal_rbtree_clear_with_cb(self, etcpal_rbtree_node_dealloc_cb);
   return result;
 }
 
 /*! \brief Clear all values from a red-black tree, calling back into the application for each node
  *         and value being removed.
  *
- *  The user provides a #lwpa_rbtree_node_f callback function which is called for each node in the
+ *  The user provides a #etcpal_rbtree_node_f callback function which is called for each node in the
  *  tree. The user is responsible for deallocating both the node and value memory.
  *
  *  \param[in] self Tree to clear.
@@ -490,9 +490,9 @@ lwpa_error_t lwpa_rbtree_clear(LwpaRbTree* self)
  *  \return #kLwpaErrOk: The tree was cleared.
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-lwpa_error_t lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb)
+etcpal_error_t etcpal_rbtree_clear_with_cb(LwpaRbTree* self, etcpal_rbtree_node_f node_cb)
 {
-  lwpa_error_t result = kLwpaErrInvalid;
+  etcpal_error_t result = kLwpaErrInvalid;
   if (self && node_cb)
   {
     LwpaRbNode* node = self->root;
@@ -528,7 +528,7 @@ lwpa_error_t lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node
  *  \param[in] self The tree of which to get the size.
  *  \return The number of values currently in the tree.
  */
-size_t lwpa_rbtree_size(LwpaRbTree* self)
+size_t etcpal_rbtree_size(LwpaRbTree* self)
 {
   size_t result = 0;
   if (self)
@@ -548,7 +548,7 @@ size_t lwpa_rbtree_size(LwpaRbTree* self)
  *          for every possible traversal.
  *  \return 0: Invalid tree.
  */
-int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
+int etcpal_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
 {
   int lh, rh;
 
@@ -570,8 +570,8 @@ int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
       }
     }
 
-    lh = lwpa_rbtree_test(self, ln);
-    rh = lwpa_rbtree_test(self, rn);
+    lh = etcpal_rbtree_test(self, ln);
+    rh = etcpal_rbtree_test(self, rn);
 
     /* Invalid binary search tree */
     if ((ln != NULL && self->cmp(self, ln, root) >= 0) || (rn != NULL && self->cmp(self, rn, root) <= 0))
@@ -593,17 +593,17 @@ int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root)
   }
 }
 
-/* lwpa_rbiter */
+/* etcpal_rbiter */
 
 /*! \brief Initialize a red-black tree iterator.
  *
- *  This function must be called on a new iterator before using any of the other lwpa_rbiter_*
+ *  This function must be called on a new iterator before using any of the other etcpal_rbiter_*
  *  functions on it.
  *
  *  \param[in] self The iterator to be initialized.
  *  \return Pointer to the iterator that was initialized.
  */
-LwpaRbIter* lwpa_rbiter_init(LwpaRbIter* self)
+LwpaRbIter* etcpal_rbiter_init(LwpaRbIter* self)
 {
   if (self)
   {
@@ -674,54 +674,54 @@ static void* rb_iter_move(LwpaRbIter* self, int dir)
 
 /*! \brief Point a red-black tree iterator at the first value in the tree.
  *
- *  The first value is the lowest, as determined by the #lwpa_rbtree_node_cmp_f provided in
- *  lwpa_rbtree_init(). Use lwpa_rbiter_next() to get the next higher value.
+ *  The first value is the lowest, as determined by the #etcpal_rbtree_node_cmp_f provided in
+ *  etcpal_rbtree_init(). Use etcpal_rbiter_next() to get the next higher value.
  *
  *  \param[in] self Iterator to point at the first value.
  *  \param[in] tree Tree of which to get the first value.
  *  \return Pointer to the first value or NULL (the tree was empty or invalid).
  */
-void* lwpa_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree)
+void* etcpal_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree)
 {
   return rb_iter_start(self, tree, 0);
 }
 
 /*! \brief Point a red-black tree iterator at the last value in the tree.
  *
- *  The last value is the highest, as determined by the #lwpa_rbtree_node_cmp_f provided in
- *  lwpa_rbtree_init(). Use lwpa_rbiter_prev() to get the next lower value.
+ *  The last value is the highest, as determined by the #etcpal_rbtree_node_cmp_f provided in
+ *  etcpal_rbtree_init(). Use etcpal_rbiter_prev() to get the next lower value.
  *
  *  \param[in] self Iterator to point at the last value.
  *  \param[in] tree Tree of which to get the last value.
  *  \return Pointer to the last value or NULL (the tree was empty or invalid).
  */
-void* lwpa_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree)
+void* etcpal_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree)
 {
   return rb_iter_start(self, tree, 1);
 }
 
 /*! \brief Advance a red-black tree iterator.
  *
- *  Gets the next higher value in the tree as determined by the #lwpa_rbtree_node_cmp_f provided in
- *  lwpa_rbtree_init().
+ *  Gets the next higher value in the tree as determined by the #etcpal_rbtree_node_cmp_f provided in
+ *  etcpal_rbtree_init().
  *
  *  \param[in] self Iterator to advance.
  *  \return Pointer to next higher value, or NULL (the end of the tree has been reached).
  */
-void* lwpa_rbiter_next(LwpaRbIter* self)
+void* etcpal_rbiter_next(LwpaRbIter* self)
 {
   return rb_iter_move(self, 1);
 }
 
 /*! \brief Reverse-advance a red-black tree iterator.
  *
- *  Gets the next lower value in the tree as determined by the #lwpa_rbtree_node_cmp_f provided in
- *  lwpa_rbtree_init().
+ *  Gets the next lower value in the tree as determined by the #etcpal_rbtree_node_cmp_f provided in
+ *  etcpal_rbtree_init().
  *
  *  \param[in] self Iterator to reverse-advance.
  *  \return Pointer to next lower value, or NULL (the beginning of the tree has been reached).
  */
-void* lwpa_rbiter_prev(LwpaRbIter* self)
+void* etcpal_rbiter_prev(LwpaRbIter* self)
 {
   return rb_iter_move(self, 0);
 }

@@ -21,7 +21,7 @@
 #ifndef _LWPA_BOOL_H_
 #define _LWPA_BOOL_H_
 
-/*! \defgroup lwpa_bool lwpa_bool
+/*! \defgroup etcpal_bool etcpal_bool
  *  \ingroup lwpa
  *  \brief A C boolean type.
  *

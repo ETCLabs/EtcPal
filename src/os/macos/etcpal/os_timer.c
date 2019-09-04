@@ -24,7 +24,7 @@
 
 double ticks_to_ms = 0;
 
-lwpa_error_t lwpa_timer_init()
+etcpal_error_t etcpal_timer_init()
 {
   mach_timebase_info_data_t timebase;
   mach_timebase_info(&timebase);
@@ -33,12 +33,12 @@ lwpa_error_t lwpa_timer_init()
   return kLwpaErrOk;
 }
 
-void lwpa_timer_deinit()
+void etcpal_timer_deinit()
 {
   // No deinitialization necessary on this platform.
 }
 
-uint32_t lwpa_getms()
+uint32_t etcpal_getms()
 {
   uint64_t ticks = mach_absolute_time();
   return ((uint32_t)(ticks * ticks_to_ms));

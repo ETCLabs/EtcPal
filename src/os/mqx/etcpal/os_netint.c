@@ -53,7 +53,7 @@ static void copy_interface_info(uint32_t mqx_index, LwpaNetintInfo* netint)
     netint->is_default = false;
 }
 
-lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
+etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   for (uint32_t i = 0; i < BSP_ENET_DEVICE_COUNT; ++i)
   {
@@ -74,7 +74,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
   cache->netints = NULL;
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   (void)cache;  // unused
 
@@ -82,7 +82,7 @@ lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* ca
 
   for (const LwpaNetintInfo* netint = netints; netint < netints + BSP_ENET_DEVICE_COUNT; ++netint)
   {
-    if (!lwpa_ip_is_wildcard(&netint->mask) && lwpa_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
+    if (!etcpal_ip_is_wildcard(&netint->mask) && etcpal_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {
       index_found = netint->index;
       break;

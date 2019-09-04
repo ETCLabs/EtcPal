@@ -21,7 +21,7 @@
 
 static void thread_func_internal(void* pvParameters)
 {
-  lwpa_thread_t* thread_data = (lwpa_thread_t*)pvParameters;
+  etcpal_thread_t* thread_data = (etcpal_thread_t*)pvParameters;
   if (thread_data)
   {
     thread_data->fn(thread_data->arg);
@@ -30,7 +30,7 @@ static void thread_func_internal(void* pvParameters)
   vTaskDelete(NULL);
 }
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;
@@ -41,7 +41,7 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
 
   id->fn = thread_fn;
   id->arg = thread_arg;
-  if (pdPASS == xTaskCreate(thread_func_internal, params->thread_name ? params->thread_name : "lwpa_thread",
+  if (pdPASS == xTaskCreate(thread_func_internal, params->thread_name ? params->thread_name : "etcpal_thread",
                             (uint16_t)params->stack_size, id, params->thread_priority, &id->tid))
   {
     return true;
@@ -49,7 +49,7 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
   return false;
 }
 
-bool lwpa_thread_join(lwpa_thread_t* id)
+bool etcpal_thread_join(etcpal_thread_t* id)
 {
   bool res;
 

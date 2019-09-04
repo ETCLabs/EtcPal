@@ -76,7 +76,7 @@ static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
 #else
     LWPA_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
     // TODO revisit
-    netint->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, 128);
+    netint->mask = etcpal_ip_mask_from_length(kLwpaIpTypeV6, 128);
 #endif
 
     if (lwip_netif == netif_default)
@@ -89,7 +89,7 @@ static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
   return false;
 }
 
-lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
+etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   struct netif* lwip_netif;
 
@@ -183,13 +183,13 @@ void os_free_interfaces(CachedNetintInfo* cache)
 #endif
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   unsigned int index_found = 0;
 
   for (const LwpaNetintInfo* netint = static_netints; netint < static_netints + num_static_netints; ++netint)
   {
-    if (!lwpa_ip_is_wildcard(&netint->mask) && lwpa_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
+    if (!etcpal_ip_is_wildcard(&netint->mask) && etcpal_ip_network_portions_equal(&netint->addr, dest, &netint->mask))
     {
       index_found = netint->index;
       break;

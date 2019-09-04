@@ -58,7 +58,7 @@
 /**************************** Private variables ******************************/
 
 static unsigned int init_count;
-static lwpa_mutex_t buf_lock;
+static etcpal_mutex_t buf_lock;
 
 /*********************** Private function prototypes *************************/
 
@@ -66,13 +66,13 @@ static void sanitize_str(char* str);
 
 /*************************** Function definitions ****************************/
 
-/* Initialize the lwpa_log module. Creates the mutex which locks the static buffers that log
+/* Initialize the etcpal_log module. Creates the mutex which locks the static buffers that log
  * messages are written into. */
-lwpa_error_t lwpa_log_init()
+etcpal_error_t etcpal_log_init()
 {
   if (init_count == 0)
   {
-    if (!lwpa_mutex_create(&buf_lock))
+    if (!etcpal_mutex_create(&buf_lock))
     {
       return kLwpaErrSys;
     }
@@ -81,12 +81,12 @@ lwpa_error_t lwpa_log_init()
   return kLwpaErrOk;
 }
 
-/* Deinitialize the lwpa_log module. */
-void lwpa_log_deinit()
+/* Deinitialize the etcpal_log module. */
+void etcpal_log_deinit()
 {
   if (--init_count == 0)
   {
-    lwpa_mutex_destroy(&buf_lock);
+    etcpal_mutex_destroy(&buf_lock);
   }
 }
 
@@ -114,7 +114,7 @@ void sanitize_str(char* str)
  *
  *  \param[in,out] params Syslog params to sanitize.
  */
-void lwpa_sanitize_syslog_params(LwpaSyslogParams* params)
+void etcpal_sanitize_syslog_params(LwpaSyslogParams* params)
 {
   if (LWPA_LOG_FAC(params->facility) >= LWPA_LOG_NFACILITIES)
     params->facility = DEFAULT_FACILITY;
@@ -124,15 +124,15 @@ void lwpa_sanitize_syslog_params(LwpaSyslogParams* params)
   sanitize_str(params->procid);
 }
 
-/*! \brief Ensure that the given lwpa_log_params are valid.
+/*! \brief Ensure that the given etcpal_log_params are valid.
  *
- *  This also sanitizes the syslog params using lwpa_sanitize_syslog_params() if action is set to
+ *  This also sanitizes the syslog params using etcpal_sanitize_syslog_params() if action is set to
  *  kLwpaLogCreateSyslog or kLwpaLogCreateBoth.
  *
- *  \param[in,out] params lwpa_log_params to validate.
+ *  \param[in,out] params etcpal_log_params to validate.
  *  \return true (params are valid) or false (params are invalid).
  */
-bool lwpa_validate_log_params(LwpaLogParams* params)
+bool etcpal_validate_log_params(LwpaLogParams* params)
 {
   if (!params || !params->log_fn)
   {
@@ -141,7 +141,7 @@ bool lwpa_validate_log_params(LwpaLogParams* params)
 
   if (params->action == kLwpaLogCreateSyslog || params->action == kLwpaLogCreateBoth)
   {
-    lwpa_sanitize_syslog_params(&params->syslog_params);
+    etcpal_sanitize_syslog_params(&params->syslog_params);
   }
   return true;
 }
@@ -212,7 +212,7 @@ static bool get_time(const LwpaLogParams* params, LwpaLogTimeParams* time_params
 
 /* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
  * original message within the syslog message, or NULL on failure. */
-static char* lwpa_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* tparams,
+static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* tparams,
                                      const LwpaSyslogParams* syslog_params, int pri, const char* format, va_list args)
 {
   if (!buf || buflen < LWPA_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
@@ -254,20 +254,20 @@ static char* lwpa_vcreate_syslog_str(char* buf, size_t buflen, const LwpaLogTime
  *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                    as appropriate for format specifiers.
  */
-bool lwpa_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* time,
+bool etcpal_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* time,
                             const LwpaSyslogParams* syslog_params, int pri, const char* format, ...)
 {
   va_list args;
   bool res;
   va_start(args, format);
-  res = (NULL != lwpa_vcreate_syslog_str(buf, buflen, time, syslog_params, pri, format, args));
+  res = (NULL != etcpal_vcreate_syslog_str(buf, buflen, time, syslog_params, pri, format, args));
   va_end(args);
   return res;
 }
 
 /* Create a log message with a human-readable header given the appropriate va_list. Returns a
  * pointer to the original message within the log message, or NULL on failure. */
-static char* lwpa_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format,
+static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format,
                                         va_list args)
 {
   if (!buf || buflen < LWPA_LOG_TIMESTAMP_LEN + 1 || !format)
@@ -307,12 +307,12 @@ static char* lwpa_vcreate_human_log_str(char* buf, size_t buflen, const LwpaLogT
  *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                    as appropriate for format specifiers.
  */
-bool lwpa_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format, ...)
+bool etcpal_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format, ...)
 {
   va_list args;
   bool res;
   va_start(args, format);
-  res = (NULL != lwpa_vcreate_human_log_str(buf, buflen, time, format, args));
+  res = (NULL != etcpal_vcreate_human_log_str(buf, buflen, time, format, args));
   va_end(args);
   return res;
 }
@@ -328,7 +328,7 @@ bool lwpa_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams
  *  \param[in] pri Priority to check.
  *  \return Whether this priority will be logged with the current mask setting.
  */
-bool lwpa_can_log(const LwpaLogParams* params, int pri)
+bool etcpal_can_log(const LwpaLogParams* params, int pri)
 {
   if (params)
     return ((LWPA_LOG_MASK(pri) & params->log_mask) != 0);
@@ -344,25 +344,25 @@ bool lwpa_can_log(const LwpaLogParams* params, int pri)
  *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                    as appropriate for format specifiers.
  */
-void lwpa_log(const LwpaLogParams* params, int pri, const char* format, ...)
+void etcpal_log(const LwpaLogParams* params, int pri, const char* format, ...)
 {
   va_list args;
   va_start(args, format);
-  lwpa_vlog(params, pri, format, args);
+  etcpal_vlog(params, pri, format, args);
   va_end(args);
 }
 
 /*! \brief Log a message from a library module with the list of format arguments already generated.
  *
- *  For normal usage, just use lwpa_log(). However, this function is useful if you want to create a
- *  wrapper function around lwpa_log() which also takes variable format arguments.
+ *  For normal usage, just use etcpal_log(). However, this function is useful if you want to create a
+ *  wrapper function around etcpal_log() which also takes variable format arguments.
  *
  *  \param[in] params The log parameters to be used for this message.
  *  \param[in] pri Priority of this log message.
  *  \param[in] format Log message with printf-style format specifiers.
  *  \param[in] args Argument list for the format specifiers in format.
  */
-void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args)
+void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args)
 {
   if (!init_count || !params || !params->log_fn || !format || !(LWPA_LOG_MASK(pri) & params->log_mask))
     return;
@@ -370,7 +370,7 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
   LwpaLogTimeParams time_params;
   bool have_time = get_time(params, &time_params);
 
-  if (lwpa_mutex_take(&buf_lock))
+  if (etcpal_mutex_take(&buf_lock))
   {
     static char syslogmsg[LWPA_SYSLOG_STR_MAX_LEN + 1];
     static char humanlogmsg[LWPA_HUMAN_LOG_STR_MAX_LEN + 1];
@@ -386,13 +386,13 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
       {
         va_list args_copy;
         va_copy(args_copy, args);
-        strings.raw = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
                                               &params->syslog_params, pri, format, args_copy);
         va_end(args_copy);
       }
       else
       {
-        strings.raw = lwpa_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, LWPA_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
                                               &params->syslog_params, pri, format, args);
       }
       if (strings.raw)
@@ -403,7 +403,7 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
 
     if (params->action == kLwpaLogCreateBoth || params->action == kLwpaLogCreateHumanReadableLog)
     {
-      strings.raw = lwpa_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
+      strings.raw = etcpal_vcreate_human_log_str(humanlogmsg, LWPA_HUMAN_LOG_STR_MAX_LEN + 1,
                                                have_time ? &time_params : NULL, format, args);
       if (strings.raw)
       {
@@ -413,6 +413,6 @@ void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list
 
     params->log_fn(params->context, &strings);
 
-    lwpa_mutex_give(&buf_lock);
+    etcpal_mutex_give(&buf_lock);
   }
 }

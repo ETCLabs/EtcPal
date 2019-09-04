@@ -25,7 +25,7 @@
 #include "etcpal/int.h"
 #include "etcpal/bool.h"
 
-/*! \defgroup lwpa_pdu lwpa_pdu
+/*! \defgroup etcpal_pdu etcpal_pdu
  *  \ingroup lwpa
  *  \brief Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN).
  *
@@ -150,7 +150,7 @@ typedef struct LwpaPduConstraints
 extern "C" {
 #endif
 
-bool lwpa_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints* constraints, LwpaPdu* pdu);
+bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints* constraints, LwpaPdu* pdu);
 
 #ifdef __cplusplus
 }

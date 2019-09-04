@@ -30,14 +30,14 @@
 /// The C++ namespace for lwpa.
 namespace lwpa
 {
-/// \addtogroup lwpa_lock
+/// \addtogroup etcpal_lock
 /// @{
 
 /// \name Lock guard classes
-/// RAII-style wrapper classes for \ref lwpa_mutex and \ref lwpa_rwlock.
+/// RAII-style wrapper classes for \ref etcpal_mutex and \ref etcpal_rwlock.
 /// @{
 
-/// \brief Lock guard around an \ref lwpa_mutex.
+/// \brief Lock guard around an \ref etcpal_mutex.
 /// Lock is taken when this class is instantiated, and released when it goes out of scope.
 /// Example usage:
 ///
@@ -53,18 +53,18 @@ namespace lwpa
 class MutexGuard
 {
 public:
-  explicit MutexGuard(lwpa_mutex_t& mutex) : mutex_(mutex)
+  explicit MutexGuard(etcpal_mutex_t& mutex) : mutex_(mutex)
   {
-    if (!lwpa_mutex_take(&mutex_))
-      throw std::runtime_error("lwpa_mutex_take failed.");
+    if (!etcpal_mutex_take(&mutex_))
+      throw std::runtime_error("etcpal_mutex_take failed.");
   }
-  ~MutexGuard() { lwpa_mutex_give(&mutex_); }
+  ~MutexGuard() { etcpal_mutex_give(&mutex_); }
 
 private:
-  lwpa_mutex_t& mutex_;
+  etcpal_mutex_t& mutex_;
 };
 
-/// \brief Read lock guard around an \ref lwpa_rwlock.
+/// \brief Read lock guard around an \ref etcpal_rwlock.
 /// Read lock is taken when this class is instantiated, and released when it goes out of scope.
 /// Example usage:
 ///
@@ -80,18 +80,18 @@ private:
 class ReadGuard
 {
 public:
-  explicit ReadGuard(lwpa_rwlock_t& rwlock) : rwlock_(rwlock)
+  explicit ReadGuard(etcpal_rwlock_t& rwlock) : rwlock_(rwlock)
   {
-    if (!lwpa_rwlock_readlock(&rwlock_))
-      throw std::runtime_error("lwpa_rwlock_readlock failed.");
+    if (!etcpal_rwlock_readlock(&rwlock_))
+      throw std::runtime_error("etcpal_rwlock_readlock failed.");
   }
-  ~ReadGuard() { lwpa_rwlock_readunlock(&rwlock_); }
+  ~ReadGuard() { etcpal_rwlock_readunlock(&rwlock_); }
 
 private:
-  lwpa_rwlock_t& rwlock_;
+  etcpal_rwlock_t& rwlock_;
 };
 
-/// \brief Write lock guard around an \ref lwpa_rwlock.
+/// \brief Write lock guard around an \ref etcpal_rwlock.
 /// Write lock is taken when this class is instantiated, and released when it goes out of scope.
 /// Example usage:
 ///
@@ -107,15 +107,15 @@ private:
 class WriteGuard
 {
 public:
-  explicit WriteGuard(lwpa_rwlock_t& rwlock) : rwlock_(rwlock)
+  explicit WriteGuard(etcpal_rwlock_t& rwlock) : rwlock_(rwlock)
   {
-    if (!lwpa_rwlock_writelock(&rwlock_))
-      throw std::runtime_error("lwpa_rwlock_writelock failed.");
+    if (!etcpal_rwlock_writelock(&rwlock_))
+      throw std::runtime_error("etcpal_rwlock_writelock failed.");
   }
-  ~WriteGuard() { lwpa_rwlock_writeunlock(&rwlock_); }
+  ~WriteGuard() { etcpal_rwlock_writeunlock(&rwlock_); }
 
 private:
-  lwpa_rwlock_t& rwlock_;
+  etcpal_rwlock_t& rwlock_;
 };
 
 /// @}

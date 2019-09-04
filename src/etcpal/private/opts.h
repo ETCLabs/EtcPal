@@ -21,22 +21,22 @@
 #define _LWPA_PRIVATE_OPTS_H_
 
 #if LWPA_HAVE_CONFIG_H
-#include "lwpa_config.h"
+#include "etcpal_config.h"
 #endif
 
-/*! \defgroup lwpa_opts lwpa config options
+/*! \defgroup etcpal_opts lwpa config options
  *  \ingroup lwpa
  *  \brief Compile-time configuration options for lwpa
  *
  *  Options starting with "LWPA_EMBOS_" (currently all of them) are ignored on Windows, macOS and
  *  Linux.
  *
- *  To override any of these options, provide a file called lwpa_config.h and:
+ *  To override any of these options, provide a file called etcpal_config.h and:
  *    * If not building lwpa with CMake: add LWPA_HAVE_CONFIG_H to your preprocessor definitions,
- *      and add the path to lwpa_config.h as an include path
+ *      and add the path to etcpal_config.h as an include path
  *    * If building with CMake: use the CMake option LWPA_CONFIG_FILE_LOC
  *
- *  In the lwpa_config.h file, simply #define any overridden options to the desired value.
+ *  In the etcpal_config.h file, simply #define any overridden options to the desired value.
  *
  *  @{
  */
@@ -57,7 +57,7 @@
 #define LWPA_EMBOS_USE_MALLOC 0
 #endif
 
-/*! \brief The maximum number of network interfaces that can be tracked by the \ref lwpa_netint module.
+/*! \brief The maximum number of network interfaces that can be tracked by the \ref etcpal_netint module.
  *
  *  Currently this limit is not necessary and therefore ignored on all targets except lwIP.
  */

@@ -59,7 +59,7 @@ void SetThreadName(DWORD dwThreadID, const char* threadName)
 
 unsigned __stdcall thread_func_internal(void* pthread)
 {
-  lwpa_thread_t* thread_data = (lwpa_thread_t*)pthread;
+  etcpal_thread_t* thread_data = (etcpal_thread_t*)pthread;
   if (thread_data)
   {
     SetThreadName((DWORD)-1, thread_data->name);
@@ -70,7 +70,7 @@ unsigned __stdcall thread_func_internal(void* pthread)
   return 1;
 }
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;
@@ -87,7 +87,7 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
   return true;
 }
 
-bool lwpa_thread_join(lwpa_thread_t* id)
+bool etcpal_thread_join(etcpal_thread_t* id)
 {
   if (id)
   {

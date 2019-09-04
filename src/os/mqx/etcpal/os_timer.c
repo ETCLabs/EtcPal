@@ -22,18 +22,18 @@
 
 #include <mqx.h>
 
-lwpa_error_t lwpa_timer_init()
+etcpal_error_t etcpal_timer_init()
 {
   // No initialization necessary on this platform
   return kLwpaErrOk;
 }
 
-void lwpa_timer_deinit()
+void etcpal_timer_deinit()
 {
   // No deinitialization necessary on this platform
 }
 
-uint32_t lwpa_getms()
+uint32_t etcpal_getms()
 {
   TIME_STRUCT ts;
   _time_get_elapsed(&ts);

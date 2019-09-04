@@ -26,7 +26,7 @@
 #include "etcpal/bool.h"
 #include "etcpal/error.h"
 
-/*! \defgroup lwpa_uuid lwpa_uuid
+/*! \defgroup etcpal_uuid etcpal_uuid
  *  \ingroup lwpa
  *  \brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
@@ -75,15 +75,15 @@ extern const LwpaUuid kLwpaNullUuid;
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
 #define LWPA_UUID_STRING_BYTES 37
 
-void lwpa_uuid_to_string(char* buf, const LwpaUuid* uuid);
-bool lwpa_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen);
+void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid);
+bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen);
 
 /************************ UUID Generation Functions **************************/
 
-lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid);
-lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum);
-lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid);
-lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid);
+etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid);
+etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum);
+etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid);
+etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid);
 
 #ifdef __cplusplus
 }

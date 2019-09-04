@@ -24,7 +24,7 @@
 
 #define LWPA_WINDOWS_TIMER_RESOLUTION 1  // ms
 
-lwpa_error_t lwpa_timer_init()
+etcpal_error_t etcpal_timer_init()
 {
   if (TIMERR_NOERROR == timeBeginPeriod(LWPA_WINDOWS_TIMER_RESOLUTION))
     return kLwpaErrOk;
@@ -32,12 +32,12 @@ lwpa_error_t lwpa_timer_init()
     return kLwpaErrSys;
 }
 
-void lwpa_timer_deinit()
+void etcpal_timer_deinit()
 {
   timeEndPeriod(LWPA_WINDOWS_TIMER_RESOLUTION);
 }
 
-uint32_t lwpa_getms()
+uint32_t etcpal_getms()
 {
   return timeGetTime();
 }

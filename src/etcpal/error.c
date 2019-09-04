@@ -21,8 +21,8 @@
 
 /* clang-format off */
 
-/* The lwpa_error string array, for use by lwpa_strerror(). */
-const char *lwpa_error_strings[LWPA_NUM_ERROR_CODES] =
+/* The etcpal_error string array, for use by etcpal_strerror(). */
+const char *etcpal_error_strings[LWPA_NUM_ERROR_CODES] =
 {
   "No error",                         /* kLwpaErrOk */
   "Handle not found",                 /* kLwpaErrNotFound */

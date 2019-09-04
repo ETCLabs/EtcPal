@@ -24,7 +24,7 @@
 // Use the native UUID functionality in the macOS SDK to generate UUIDs.
 // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/uuid.3.html
 
-lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -35,7 +35,7 @@ lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
   return kLwpaErrOk;
 }
 
-lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -46,7 +46,7 @@ lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
   return kLwpaErrOk;
 }
 
-lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;

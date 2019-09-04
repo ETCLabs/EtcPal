@@ -39,9 +39,9 @@ typedef struct
   void (*fn)(void*);
   void* arg;
   pthread_t handle;
-} lwpa_thread_t;
+} etcpal_thread_t;
 
-#define lwpa_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
+#define etcpal_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
 
 #ifdef __cplusplus
 }

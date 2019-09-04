@@ -40,7 +40,7 @@ extern "C" {
 
 /* Definitions for the lwpa socket type */
 
-typedef SOCKET lwpa_socket_t;
+typedef SOCKET etcpal_socket_t;
 
 #if defined(_WIN64)
 #define PRIlwpasockt "I64u"
@@ -52,7 +52,7 @@ typedef SOCKET lwpa_socket_t;
 
 #define LWPA_SOCKET_MAX_POLL_SIZE FD_SETSIZE
 
-/* Definitions for the lwpa_poll API */
+/* Definitions for the etcpal_poll API */
 
 typedef struct LwpaPollFdSet
 {
@@ -63,7 +63,7 @@ typedef struct LwpaPollFdSet
 typedef struct LwpaPollContext
 {
   bool valid;
-  lwpa_mutex_t lock;
+  etcpal_mutex_t lock;
 
   LwpaRbTree sockets;
 

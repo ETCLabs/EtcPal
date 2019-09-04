@@ -17,13 +17,13 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* etcpal/pack64.h: Optional extensions to lwpa_pack for 64-bit types. */
+/* etcpal/pack64.h: Optional extensions to etcpal_pack for 64-bit types. */
 #ifndef _LWPA_PACK64_H_
 #define _LWPA_PACK64_H_
 
 #include "etcpal/int.h"
 
-/*! \addtogroup lwpa_pack
+/*! \addtogroup etcpal_pack
  *  @{
  */
 
@@ -31,10 +31,10 @@
 extern "C" {
 #endif
 
-uint64_t lwpa_upack_64b(const uint8_t* buf);
-void lwpa_pack_64b(uint8_t* buf, uint64_t val);
-uint64_t lwpa_upack_64l(const uint8_t* buf);
-void lwpa_pack_64l(uint8_t* buf, uint64_t val);
+uint64_t etcpal_upack_64b(const uint8_t* buf);
+void etcpal_pack_64b(uint8_t* buf, uint64_t val);
+uint64_t etcpal_upack_64l(const uint8_t* buf);
+void etcpal_pack_64l(uint8_t* buf, uint64_t val);
 
 #ifdef __cplusplus
 }

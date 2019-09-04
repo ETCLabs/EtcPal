@@ -38,11 +38,11 @@
  * @{
  */
 
-/*! For lwpa_ functions that take a millisecond timeout, this means to wait indefinitely. */
+/*! For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely. */
 #define LWPA_WAIT_FOREVER -1
 
 /*! A mask of desired lwpa features. See "lwpa feature masks". */
-typedef uint32_t lwpa_features_t;
+typedef uint32_t etcpal_features_t;
 
 #define LWPA_FEATURE_SOCKETS_OFFSET 0
 #define LWPA_FEATURE_NETINTS_OFFSET 1
@@ -51,22 +51,22 @@ typedef uint32_t lwpa_features_t;
 #define LWPA_NUM_FEATURES 4
 
 /*! \name lwpa feature masks
- *  Pass one or more of these to lwpa_init() to initialize the relevant lwpa feature. Multiple
+ *  Pass one or more of these to etcpal_init() to initialize the relevant lwpa feature. Multiple
  *  features can be requested using logical OR.
  *
  *  lwpa modules not represented here require no initialization and are enabled by default.
  *
  *  @{
  */
-#define LWPA_FEATURE_SOCKETS ((lwpa_features_t)(1u << LWPA_FEATURE_SOCKETS_OFFSET)) /*!< Use the lwpa_socket module. */
-#define LWPA_FEATURE_NETINTS ((lwpa_features_t)(1u << LWPA_FEATURE_NETINTS_OFFSET)) /*!< Use the lwpa_netint module. */
-#define LWPA_FEATURE_TIMERS ((lwpa_features_t)(1u << LWPA_FEATURE_TIMERS_OFFSET))   /*!< Use the lwpa_timer module. */
-#define LWPA_FEATURE_LOGGING ((lwpa_features_t)(1u << LWPA_FEATURE_LOGGING_OFFSET)) /*!< Use the lwpa_log module. */
+#define LWPA_FEATURE_SOCKETS ((etcpal_features_t)(1u << LWPA_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal_socket module. */
+#define LWPA_FEATURE_NETINTS ((etcpal_features_t)(1u << LWPA_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal_netint module. */
+#define LWPA_FEATURE_TIMERS ((etcpal_features_t)(1u << LWPA_FEATURE_TIMERS_OFFSET))   /*!< Use the etcpal_timer module. */
+#define LWPA_FEATURE_LOGGING ((etcpal_features_t)(1u << LWPA_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal_log module. */
 #define LWPA_FEATURES_ALL 0xffffffffu                                               /*!< Use every available module. */
 
 /*! \brief Use every available module except the ones passed in mask.
  *  \param mask Mask of LWPA_FEATURE_* macros to not include in the feature mask.
- *  \return Resulting lwpa feature mask to pass to lwpa_init().
+ *  \return Resulting lwpa feature mask to pass to etcpal_init().
  */
 #define LWPA_FEATURES_ALL_BUT(mask) (((uint32_t)LWPA_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
 /*! @} */
@@ -75,8 +75,8 @@ typedef uint32_t lwpa_features_t;
 extern "C" {
 #endif
 
-lwpa_error_t lwpa_init(lwpa_features_t features);
-void lwpa_deinit(lwpa_features_t features);
+etcpal_error_t etcpal_init(etcpal_features_t features);
+void etcpal_deinit(etcpal_features_t features);
 
 #ifdef __cplusplus
 }

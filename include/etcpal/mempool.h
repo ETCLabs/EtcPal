@@ -24,7 +24,7 @@
 #include <stddef.h>
 #include "etcpal/error.h"
 
-/*! \defgroup lwpa_mempool lwpa_mempool
+/*! \defgroup etcpal_mempool etcpal_mempool
  *  \ingroup lwpa
  *  \brief Memory pools with fixed-size elements.
  *
@@ -34,7 +34,7 @@
  *  arbitrary type. Only elements of that type can be allocated from the pool or freed back into it.
  *  A pool element can be a single object (e.g. int) or a fixed-size array of objects
  *  (e.g. int[60]). Allocations and deallocations are ensured to be thread_safe by an
- *  \ref lwpa_mutex internally.
+ *  \ref etcpal_mutex internally.
  *
  *  @{
  */
@@ -48,7 +48,7 @@ struct LwpaMempool
 
 /*! (Not for direct usage) A memory pool description structure. Do not declare or use this structure
  *  directly; instead, use LWPA_MEMPOOL_DECLARE(), LWPA_MEMPOOL_DEFINE(),
- *  LWPA_MEMPOOL_DEFINE_ARRAY(), and the lwpa_mempool_* macros to interact with it. */
+ *  LWPA_MEMPOOL_DEFINE_ARRAY(), and the etcpal_mempool_* macros to interact with it. */
 typedef struct LwpaMempoolDesc
 {
   const size_t elem_size;  /*!< The size of each element. */
@@ -110,7 +110,7 @@ typedef struct LwpaMempoolDesc
 
 /*! \brief Initialize a memory pool.
  *
- *  Must be called on a pool before using lwpa_mempool_alloc() or lwpa_mempool_free() on it. There
+ *  Must be called on a pool before using etcpal_mempool_alloc() or etcpal_mempool_free() on it. There
  *  is no deinitialization function because there is no cleanup necessary; to reset a pool, simply
  *  call this function again.
  *
@@ -118,13 +118,13 @@ typedef struct LwpaMempoolDesc
  *  \return #kLwpaErrOk: The memory pool was initialized successfully.\n
  *          #kLwpaErrSys: An internal system call error occurred.
  */
-#define lwpa_mempool_init(name) lwpa_mempool_init_priv(&name##_pool_desc)
+#define etcpal_mempool_init(name) etcpal_mempool_init_priv(&name##_pool_desc)
 
 /*! \brief Allocate a new element from a memory pool.
  *  \param name The name of the memory pool from which to allocate a new element.
  *  \return Pointer to the newly-allocated element (success) or NULL (pool is out of memory).
  */
-#define lwpa_mempool_alloc(name) lwpa_mempool_alloc_priv(&name##_pool_desc)
+#define etcpal_mempool_alloc(name) etcpal_mempool_alloc_priv(&name##_pool_desc)
 
 /*! \brief Free an element back to a memory pool.
  *
@@ -135,7 +135,7 @@ typedef struct LwpaMempoolDesc
  *  \param name The name of the memory pool to which to free an element.
  *  \param mem Pointer to the element to free.
  */
-#define lwpa_mempool_free(name, mem) lwpa_mempool_free_priv(&name##_pool_desc, mem)
+#define etcpal_mempool_free(name, mem) etcpal_mempool_free_priv(&name##_pool_desc, mem)
 
 /*! \brief Get the total size of a memory pool.
  *
@@ -144,22 +144,22 @@ typedef struct LwpaMempoolDesc
  *  \param name The name of the memory pool of which to get the size.
  *  \return The size of the memory pool.
  */
-#define lwpa_mempool_size(name) (name##_pool_desc.pool_size)
+#define etcpal_mempool_size(name) (name##_pool_desc.pool_size)
 
 /*! \brief Get the number of elements currently allocated from a memory pool.
  *  \param name The name of the memory pool for which to get the current usage.
  *  \return The number of elements currently allocated.
  */
-#define lwpa_mempool_used(name) lwpa_mempool_used_priv(&name##_pool_desc)
+#define etcpal_mempool_used(name) etcpal_mempool_used_priv(&name##_pool_desc)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc* desc);
-void* lwpa_mempool_alloc_priv(LwpaMempoolDesc* desc);
-void lwpa_mempool_free_priv(LwpaMempoolDesc* desc, void* elem);
-size_t lwpa_mempool_used_priv(LwpaMempoolDesc* desc);
+etcpal_error_t etcpal_mempool_init_priv(LwpaMempoolDesc* desc);
+void* etcpal_mempool_alloc_priv(LwpaMempoolDesc* desc);
+void etcpal_mempool_free_priv(LwpaMempoolDesc* desc, void* elem);
+size_t etcpal_mempool_used_priv(LwpaMempoolDesc* desc);
 
 #ifdef __cplusplus
 }

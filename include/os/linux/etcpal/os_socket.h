@@ -29,7 +29,7 @@ extern "C" {
 
 /* Definitions for the lwpa socket type */
 
-typedef int lwpa_socket_t;
+typedef int etcpal_socket_t;
 
 #define PRIlwpasockt "d"
 
@@ -37,7 +37,7 @@ typedef int lwpa_socket_t;
 
 #define LWPA_SOCKET_MAX_POLL_SIZE -1
 
-/* Definitions for lwpa_poll API */
+/* Definitions for etcpal_poll API */
 
 typedef struct LwpaPollContext
 {

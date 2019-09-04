@@ -26,7 +26,7 @@
 // Use Windows APIs to generate UUIDs.
 // https://docs.microsoft.com/en-us/windows/desktop/api/rpcdce/nf-rpcdce-uuidcreate
 
-lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -34,9 +34,9 @@ lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
   UUID os_uuid;
   if (RPC_S_OK == UuidCreateSequential(&os_uuid))
   {
-    lwpa_pack_32b(&uuid->data[0], os_uuid.Data1);
-    lwpa_pack_16b(&uuid->data[4], os_uuid.Data2);
-    lwpa_pack_16b(&uuid->data[6], os_uuid.Data3);
+    etcpal_pack_32b(&uuid->data[0], os_uuid.Data1);
+    etcpal_pack_16b(&uuid->data[4], os_uuid.Data2);
+    etcpal_pack_16b(&uuid->data[6], os_uuid.Data3);
     memcpy(&uuid->data[8], os_uuid.Data4, 8);
     return kLwpaErrOk;
   }
@@ -46,7 +46,7 @@ lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
   }
 }
 
-lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
 {
   if (!uuid)
     return kLwpaErrInvalid;
@@ -54,9 +54,9 @@ lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
   UUID os_uuid;
   if (RPC_S_OK == UuidCreate(&os_uuid))
   {
-    lwpa_pack_32b(&uuid->data[0], os_uuid.Data1);
-    lwpa_pack_16b(&uuid->data[4], os_uuid.Data2);
-    lwpa_pack_16b(&uuid->data[6], os_uuid.Data3);
+    etcpal_pack_32b(&uuid->data[0], os_uuid.Data1);
+    etcpal_pack_16b(&uuid->data[4], os_uuid.Data2);
+    etcpal_pack_16b(&uuid->data[6], os_uuid.Data3);
     memcpy(&uuid->data[8], os_uuid.Data4, 8);
     return kLwpaErrOk;
   }
@@ -66,7 +66,7 @@ lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
   }
 }
 
-lwpa_error_t lwpa_generate_os_preferred_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_os_preferred_uuid(LwpaUuid* uuid)
 {
-  return lwpa_generate_v4_uuid(uuid);
+  return etcpal_generate_v4_uuid(uuid);
 }

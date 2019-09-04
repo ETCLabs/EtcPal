@@ -20,12 +20,12 @@
 #include "etcpal/uuid.h"
 
 /* We don't have the capability to generate V1 or V4 UUIDs on FreeRTOS. */
-lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid* uuid)
 {
   return kLwpaErrNotImpl;
 }
 
-lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid* uuid)
+etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid* uuid)
 {
   return kLwpaErrNotImpl;
 }

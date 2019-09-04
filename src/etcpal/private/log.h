@@ -22,7 +22,7 @@
 
 #include "etcpal/error.h"
 
-lwpa_error_t lwpa_log_init();
-void lwpa_log_deinit();
+etcpal_error_t etcpal_log_init();
+void etcpal_log_deinit();
 
 #endif /* _LWPA_PRIVATE_LOG_H_ */

@@ -30,7 +30,7 @@ extern "C" {
 
 /* Definitions for the lwpa socket type */
 
-typedef uint32_t lwpa_socket_t;
+typedef uint32_t etcpal_socket_t;
 
 #ifdef PRIu32
 #define PRIlwpasockt PRIu32
@@ -44,8 +44,8 @@ typedef uint32_t lwpa_socket_t;
 
 typedef struct LwpaPollCtxSocket
 {
-  lwpa_socket_t socket;
-  lwpa_poll_events_t events;
+  etcpal_socket_t socket;
+  etcpal_poll_events_t events;
   void* user_data;
 } LwpaPollCtxSocket;
 

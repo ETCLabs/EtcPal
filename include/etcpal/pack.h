@@ -23,7 +23,7 @@
 
 #include "etcpal/int.h"
 
-/*! \defgroup lwpa_pack lwpa_pack
+/*! \defgroup etcpal_pack etcpal_pack
  *  \ingroup lwpa
  *  \brief Platform- and endianness-independent buffer packing and unpacking.
  *
@@ -43,14 +43,14 @@
 extern "C" {
 #endif
 
-uint16_t lwpa_upack_16b(const uint8_t* buf);
-void lwpa_pack_16b(uint8_t* buf, uint16_t val);
-uint16_t lwpa_upack_16l(const uint8_t* buf);
-void lwpa_pack_16l(uint8_t* buf, uint16_t val);
-uint32_t lwpa_upack_32b(const uint8_t* buf);
-void lwpa_pack_32b(uint8_t* buf, uint32_t val);
-uint32_t lwpa_upack_32l(const uint8_t* buf);
-void lwpa_pack_32l(uint8_t* buf, uint32_t val);
+uint16_t etcpal_upack_16b(const uint8_t* buf);
+void etcpal_pack_16b(uint8_t* buf, uint16_t val);
+uint16_t etcpal_upack_16l(const uint8_t* buf);
+void etcpal_pack_16l(uint8_t* buf, uint16_t val);
+uint32_t etcpal_upack_32b(const uint8_t* buf);
+void etcpal_pack_32b(uint8_t* buf, uint32_t val);
+uint32_t etcpal_upack_32l(const uint8_t* buf);
+void etcpal_pack_32l(uint8_t* buf, uint32_t val);
 
 #ifdef __cplusplus
 }

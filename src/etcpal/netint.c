@@ -33,9 +33,9 @@ static int compare_netints(const void* a, const void* b);
 
 /*************************** Function definitions ****************************/
 
-lwpa_error_t lwpa_netint_init()
+etcpal_error_t etcpal_netint_init()
 {
-  lwpa_error_t res = kLwpaErrOk;
+  etcpal_error_t res = kLwpaErrOk;
   if (init_count == 0)
   {
     res = os_enumerate_interfaces(&netint_cache);
@@ -52,7 +52,7 @@ lwpa_error_t lwpa_netint_init()
   return res;
 }
 
-void lwpa_netint_deinit()
+void etcpal_netint_deinit()
 {
   if (--init_count == 0)
   {
@@ -64,7 +64,7 @@ void lwpa_netint_deinit()
 /*! \brief Get the number of network interfaces present on the system.
  *  \return Number of interfaces present.
  */
-size_t lwpa_netint_get_num_interfaces()
+size_t etcpal_netint_get_num_interfaces()
 {
   return (init_count ? netint_cache.num_netints : 0);
 }
@@ -75,10 +75,10 @@ size_t lwpa_netint_get_num_interfaces()
  *  entry in the netint array. Because of this, multiple array entries could have the same value
  *  for the index, mac and name parameters.
  *
- *  \return Pointer to an array of network interfaces of length lwpa_netint_get_num_interfaces(),
+ *  \return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
  *          or NULL if there are no interfaces present or the module is not initialized.
  */
-const LwpaNetintInfo* lwpa_netint_get_interfaces()
+const LwpaNetintInfo* etcpal_netint_get_interfaces()
 {
   return (init_count ? netint_cache.netints : NULL);
 }
@@ -95,7 +95,7 @@ const LwpaNetintInfo* lwpa_netint_get_interfaces()
  *  \return Number of network interfaces that were copied, up to a maximum of netint_arr_size,
  *          or 0 if there are no interfaces present or the module is not initialized.
  */
-size_t lwpa_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
+size_t etcpal_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr_size)
 {
   if (!init_count || !netint_arr || netint_arr_size == 0)
     return 0;
@@ -116,7 +116,7 @@ size_t lwpa_netint_copy_interfaces(LwpaNetintInfo* netint_arr, size_t netint_arr
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  *  \return #kLwpaErrNotFound: No interfaces found for this index.
  */
-lwpa_error_t lwpa_netint_get_interfaces_by_index(unsigned int index, const LwpaNetintInfo** netint_arr,
+etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const LwpaNetintInfo** netint_arr,
                                                  size_t* netint_arr_size)
 {
   if (index == 0 || !netint_arr || !netint_arr_size)
@@ -160,7 +160,7 @@ lwpa_error_t lwpa_netint_get_interfaces_by_index(unsigned int index, const LwpaN
  *  for the default IP route. The default interface is given as an OS network interface index - see
  *  \ref interface_indexes for more information. Note that since network interfaces can have
  *  multiple IP addresses assigned, this index may be shared by many entries returned by
- *  lwpa_netint_get_interfaces().
+ *  etcpal_netint_get_interfaces().
  *
  *  \param[in] type The IP protocol for which to get the default network interface, either
  *                  #kLwpaIpTypeV4 or #kLwpaIpTypeV6. A separate default interface is maintained for
@@ -170,7 +170,7 @@ lwpa_error_t lwpa_netint_get_interfaces_by_index(unsigned int index, const LwpaN
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  *  \return #kLwpaErrNotFound: No default interface found for this type.
  */
-lwpa_error_t lwpa_netint_get_default_interface(lwpa_iptype_t type, unsigned int* netint_index)
+etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index)
 {
   if (init_count && netint_index)
   {
@@ -214,7 +214,7 @@ lwpa_error_t lwpa_netint_get_default_interface(lwpa_iptype_t type, unsigned int*
  *  \return #kLwpaErrNoNetints: No network interfaces found on system.
  *  \return #kLwpaErrNotFound: No route was able to be resolved to the destination.
  */
-lwpa_error_t lwpa_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsigned int* netint_index)
+etcpal_error_t etcpal_netint_get_interface_for_dest(const LwpaIpAddr* dest, unsigned int* netint_index)
 {
   if (!dest || !netint_index)
     return kLwpaErrInvalid;

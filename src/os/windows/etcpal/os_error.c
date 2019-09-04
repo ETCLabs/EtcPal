@@ -24,8 +24,8 @@
 
 #include "etcpal/int.h"
 
-// Convert Windows sockets errors to lwpa_error_t values.
-lwpa_error_t err_winsock_to_lwpa(int wsaerror)
+// Convert Windows sockets errors to etcpal_error_t values.
+etcpal_error_t err_winsock_to_lwpa(int wsaerror)
 {
   // The Winsock error codes are not even close to contiguous in defined value, so a giant switch
   // statement is the only solution here...

@@ -23,19 +23,19 @@
 #include <time.h>
 #include <unistd.h>
 
-lwpa_error_t lwpa_timer_init()
+etcpal_error_t etcpal_timer_init()
 {
   if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
     return kLwpaErrSys;
   return kLwpaErrOk;
 }
 
-void lwpa_timer_deinit()
+void etcpal_timer_deinit()
 {
   // No deinitialization necessary on this platform.
 }
 
-uint32_t lwpa_getms()
+uint32_t etcpal_getms()
 {
   struct timespec os_time;
   if (0 == clock_gettime(CLOCK_MONOTONIC, &os_time))

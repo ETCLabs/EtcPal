@@ -24,21 +24,21 @@
 #include "etcpal/lock.h"
 
 static bool mempool_lock_initted = false;
-static lwpa_mutex_t mempool_lock;
+static etcpal_mutex_t mempool_lock;
 
-lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc* desc)
+etcpal_error_t etcpal_mempool_init_priv(LwpaMempoolDesc* desc)
 {
-  lwpa_error_t res = kLwpaErrSys;
+  etcpal_error_t res = kLwpaErrSys;
 
   if (!mempool_lock_initted)
   {
-    if (lwpa_mutex_create(&mempool_lock))
+    if (etcpal_mutex_create(&mempool_lock))
       mempool_lock_initted = true;
     else
       return res;
   }
 
-  if (lwpa_mutex_take(&mempool_lock))
+  if (etcpal_mutex_take(&mempool_lock))
   {
     size_t i;
     for (i = 0; i < desc->pool_size - 1; ++i)
@@ -47,16 +47,16 @@ lwpa_error_t lwpa_mempool_init_priv(LwpaMempoolDesc* desc)
     desc->freelist = desc->list;
     desc->current_used = 0;
     res = kLwpaErrOk;
-    lwpa_mutex_give(&mempool_lock);
+    etcpal_mutex_give(&mempool_lock);
   }
   return res;
 }
 
-void* lwpa_mempool_alloc_priv(LwpaMempoolDesc* desc)
+void* etcpal_mempool_alloc_priv(LwpaMempoolDesc* desc)
 {
   void* elem = NULL;
 
-  if (lwpa_mutex_take(&mempool_lock))
+  if (etcpal_mutex_take(&mempool_lock))
   {
     char* c_pool = (char*)desc->pool;
     LwpaMempool* elem_desc = desc->freelist;
@@ -70,38 +70,38 @@ void* lwpa_mempool_alloc_priv(LwpaMempoolDesc* desc)
         ++desc->current_used;
       }
     }
-    lwpa_mutex_give(&mempool_lock);
+    etcpal_mutex_give(&mempool_lock);
   }
 
   return elem;
 }
 
-void lwpa_mempool_free_priv(LwpaMempoolDesc* desc, void* elem)
+void etcpal_mempool_free_priv(LwpaMempoolDesc* desc, void* elem)
 {
   char* c_pool = (char*)desc->pool;
 
   ptrdiff_t offset = (char*)elem - c_pool;
   if (offset >= 0)
   {
-    if (((size_t)offset % desc->elem_size == 0) && lwpa_mutex_take(&mempool_lock))
+    if (((size_t)offset % desc->elem_size == 0) && etcpal_mutex_take(&mempool_lock))
     {
       size_t index = (size_t)offset / desc->elem_size;
       LwpaMempool* elem_desc = &desc->list[index];
       elem_desc->next = desc->freelist;
       desc->freelist = elem_desc;
       --desc->current_used;
-      lwpa_mutex_give(&mempool_lock);
+      etcpal_mutex_give(&mempool_lock);
     }
   }
 }
 
-size_t lwpa_mempool_used_priv(LwpaMempoolDesc* desc)
+size_t etcpal_mempool_used_priv(LwpaMempoolDesc* desc)
 {
   size_t res = 0;
-  if (lwpa_mutex_take(&mempool_lock))
+  if (etcpal_mutex_take(&mempool_lock))
   {
     res = desc->current_used;
-    lwpa_mutex_give(&mempool_lock);
+    etcpal_mutex_give(&mempool_lock);
   }
   return res;
 }

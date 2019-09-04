@@ -23,61 +23,61 @@
 #include "etcpal/common.h"
 #include "etcpal/thread.h"
 
-TEST_GROUP(lwpa_timer);
+TEST_GROUP(etcpal_timer);
 
-TEST_SETUP(lwpa_timer)
+TEST_SETUP(etcpal_timer)
 {
-  TEST_ASSERT_EQUAL(kLwpaErrOk, lwpa_init(LWPA_FEATURE_TIMERS));
+  TEST_ASSERT_EQUAL(kLwpaErrOk, etcpal_init(LWPA_FEATURE_TIMERS));
 }
 
-TEST_TEAR_DOWN(lwpa_timer)
+TEST_TEAR_DOWN(etcpal_timer)
 {
-  lwpa_deinit(LWPA_FEATURE_TIMERS);
+  etcpal_deinit(LWPA_FEATURE_TIMERS);
 }
 
-TEST(lwpa_timer, getms_gets_increasing_values)
+TEST(etcpal_timer, getms_gets_increasing_values)
 {
   uint32_t t1, t2;
-  t1 = lwpa_getms();
-  lwpa_thread_sleep(10);
-  t2 = lwpa_getms();
+  t1 = etcpal_getms();
+  etcpal_thread_sleep(10);
+  t2 = etcpal_getms();
 
   TEST_ASSERT_NOT_EQUAL(t1, 0u);
   TEST_ASSERT_NOT_EQUAL(t2, 0u);
   TEST_ASSERT_GREATER_OR_EQUAL_INT32(0, (int32_t)t2 - (int32_t)t1);
 }
 
-TEST(lwpa_timer, timers_report_expired_properly)
+TEST(etcpal_timer, timers_report_expired_properly)
 {
   LwpaTimer t1, t2;
 
-  lwpa_timer_start(&t1, 0);
-  lwpa_timer_start(&t2, 100);
+  etcpal_timer_start(&t1, 0);
+  etcpal_timer_start(&t2, 100);
 
   // A timer with a timeout of 0 should start expired.
-  TEST_ASSERT(lwpa_timer_is_expired(&t1));
+  TEST_ASSERT(etcpal_timer_is_expired(&t1));
 
   // The nonzero timeout should not be expired yet.
-  TEST_ASSERT_UNLESS(lwpa_timer_is_expired(&t2));
+  TEST_ASSERT_UNLESS(etcpal_timer_is_expired(&t2));
 
-  lwpa_thread_sleep(110);
+  etcpal_thread_sleep(110);
 
   // Now it should.
-  TEST_ASSERT(lwpa_timer_is_expired(&t2));
-  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(100u, lwpa_timer_elapsed(&t2));
+  TEST_ASSERT(etcpal_timer_is_expired(&t2));
+  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(100u, etcpal_timer_elapsed(&t2));
 
   // Test resetting the timer.
-  lwpa_timer_reset(&t2);
-  TEST_ASSERT_UNLESS(lwpa_timer_is_expired(&t2));
+  etcpal_timer_reset(&t2);
+  TEST_ASSERT_UNLESS(etcpal_timer_is_expired(&t2));
 
   // And test the timeout one more time.
-  lwpa_thread_sleep(110);
-  TEST_ASSERT(lwpa_timer_is_expired(&t2));
-  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(100u, lwpa_timer_elapsed(&t2));
+  etcpal_thread_sleep(110);
+  TEST_ASSERT(etcpal_timer_is_expired(&t2));
+  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(100u, etcpal_timer_elapsed(&t2));
 }
 
-TEST_GROUP_RUNNER(lwpa_timer)
+TEST_GROUP_RUNNER(etcpal_timer)
 {
-  RUN_TEST_CASE(lwpa_timer, getms_gets_increasing_values);
-  RUN_TEST_CASE(lwpa_timer, timers_report_expired_properly);
+  RUN_TEST_CASE(etcpal_timer, getms_gets_increasing_values);
+  RUN_TEST_CASE(etcpal_timer, timers_report_expired_properly);
 }

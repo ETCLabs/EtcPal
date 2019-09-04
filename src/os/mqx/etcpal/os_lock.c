@@ -26,12 +26,12 @@
 
 /*********************** Private function prototypes *************************/
 
-static void reader_atomic_increment(lwpa_rwlock_t* id);
-static void reader_atomic_decrement(lwpa_rwlock_t* id);
+static void reader_atomic_increment(etcpal_rwlock_t* id);
+static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
 
-bool lwpa_rwlock_create(lwpa_rwlock_t* id)
+bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
   if (id && (MQX_OK == _lwsem_create(&id->sem, 1)))
   {
@@ -42,7 +42,7 @@ bool lwpa_rwlock_create(lwpa_rwlock_t* id)
   return false;
 }
 
-bool lwpa_rwlock_readlock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_readlock(etcpal_rwlock_t* id)
 {
   bool res = false;
   if (id && id->valid)
@@ -62,7 +62,7 @@ bool lwpa_rwlock_readlock(lwpa_rwlock_t* id)
   return res;
 }
 
-bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
 {
   bool res = false;
   if (id && id->valid)
@@ -80,13 +80,13 @@ bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
   return res;
 }
 
-void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
     reader_atomic_decrement(id);
 }
 
-bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_writelock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
@@ -104,7 +104,7 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
   return false;
 }
 
-bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
@@ -126,13 +126,13 @@ bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id)
   return false;
 }
 
-void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id)
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
     _lwsem_post(&id->sem);
 }
 
-void lwpa_rwlock_destroy(lwpa_rwlock_t* id)
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
@@ -141,14 +141,14 @@ void lwpa_rwlock_destroy(lwpa_rwlock_t* id)
   }
 }
 
-void reader_atomic_increment(lwpa_rwlock_t* id)
+void reader_atomic_increment(etcpal_rwlock_t* id)
 {
   _int_disable();
   ++id->reader_count;
   _int_enable();
 }
 
-void reader_atomic_decrement(lwpa_rwlock_t* id)
+void reader_atomic_decrement(etcpal_rwlock_t* id)
 {
   _int_disable();
   --id->reader_count;

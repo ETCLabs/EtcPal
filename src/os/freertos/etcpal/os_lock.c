@@ -22,17 +22,17 @@
 
 /*********************** Private function prototypes *************************/
 
-static void reader_atomic_increment(lwpa_rwlock_t* id);
-static void reader_atomic_decrement(lwpa_rwlock_t* id);
+static void reader_atomic_increment(etcpal_rwlock_t* id);
+static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
 
-bool lwpa_mutex_create(lwpa_mutex_t* id)
+bool etcpal_mutex_create(etcpal_mutex_t* id)
 {
-  return id ? ((*id = (lwpa_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
+  return id ? ((*id = (etcpal_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
 }
 
-bool lwpa_mutex_take(lwpa_mutex_t* id)
+bool etcpal_mutex_take(etcpal_mutex_t* id)
 {
   if (id && *id)
   {
@@ -41,7 +41,7 @@ bool lwpa_mutex_take(lwpa_mutex_t* id)
   return false;
 }
 
-bool lwpa_mutex_try_take(lwpa_mutex_t* id)
+bool etcpal_mutex_try_take(etcpal_mutex_t* id)
 {
   if (id && *id)
   {
@@ -50,52 +50,52 @@ bool lwpa_mutex_try_take(lwpa_mutex_t* id)
   return false;
 }
 
-void lwpa_mutex_give(lwpa_mutex_t* id)
+void etcpal_mutex_give(etcpal_mutex_t* id)
 {
   if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
-void lwpa_mutex_destroy(lwpa_mutex_t* id)
+void etcpal_mutex_destroy(etcpal_mutex_t* id)
 {
   if (id && *id)
   {
     vSemaphoreDelete((SemaphoreHandle_t)*id);
-    *id = (lwpa_mutex_t)NULL;
+    *id = (etcpal_mutex_t)NULL;
   }
 }
 
-bool lwpa_signal_create(lwpa_signal_t* id)
+bool etcpal_signal_create(etcpal_signal_t* id)
 {
-  return id ? ((*id = (lwpa_signal_t)xSemaphoreCreateBinary()) != NULL) : false;
+  return id ? ((*id = (etcpal_signal_t)xSemaphoreCreateBinary()) != NULL) : false;
 }
 
-bool lwpa_signal_wait(lwpa_signal_t* id)
+bool etcpal_signal_wait(etcpal_signal_t* id)
 {
   return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY)) : false;
 }
 
-bool lwpa_signal_poll(lwpa_signal_t* id)
+bool etcpal_signal_poll(etcpal_signal_t* id)
 {
   return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0)) : false;
 }
 
-void lwpa_signal_post(lwpa_signal_t* id)
+void etcpal_signal_post(etcpal_signal_t* id)
 {
   if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
-void lwpa_signal_destroy(lwpa_signal_t* id)
+void etcpal_signal_destroy(etcpal_signal_t* id)
 {
   if (id && *id)
   {
     vSemaphoreDelete((SemaphoreHandle_t)*id);
-    *id = (lwpa_signal_t)NULL;
+    *id = (etcpal_signal_t)NULL;
   }
 }
 
-bool lwpa_rwlock_create(lwpa_rwlock_t* id)
+bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
   if (id && (NULL != (id->sem = xSemaphoreCreateMutex())))
   {
@@ -106,7 +106,7 @@ bool lwpa_rwlock_create(lwpa_rwlock_t* id)
   return false;
 }
 
-bool lwpa_rwlock_readlock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_readlock(etcpal_rwlock_t* id)
 {
   if (!id || !id->valid)
     return false;
@@ -122,7 +122,7 @@ bool lwpa_rwlock_readlock(lwpa_rwlock_t* id)
   return false;
 }
 
-bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
 {
   if (!id || !id->valid)
     return false;
@@ -139,13 +139,13 @@ bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id)
   return false;
 }
 
-void lwpa_rwlock_readunlock(lwpa_rwlock_t* id)
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
     reader_atomic_decrement(id);
 }
 
-bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_writelock(etcpal_rwlock_t* id)
 {
   if (!id || !id->valid)
     return false;
@@ -163,7 +163,7 @@ bool lwpa_rwlock_writelock(lwpa_rwlock_t* id)
   return false;
 }
 
-bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id)
+bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
 {
   if (!id || !id->valid)
     return false;
@@ -185,13 +185,13 @@ bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id)
   return false;
 }
 
-void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id)
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
     xSemaphoreGive(id->sem);
 }
 
-void lwpa_rwlock_destroy(lwpa_rwlock_t* id)
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
@@ -201,14 +201,14 @@ void lwpa_rwlock_destroy(lwpa_rwlock_t* id)
   }
 }
 
-void reader_atomic_increment(lwpa_rwlock_t* id)
+void reader_atomic_increment(etcpal_rwlock_t* id)
 {
   portENTER_CRITICAL();
   ++id->reader_count;
   portEXIT_CRITICAL();
 }
 
-void reader_atomic_decrement(lwpa_rwlock_t* id)
+void reader_atomic_decrement(etcpal_rwlock_t* id)
 {
   portENTER_CRITICAL();
   --id->reader_count;

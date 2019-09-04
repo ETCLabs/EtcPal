@@ -89,15 +89,15 @@ RoutingTable routing_table_v6;
 /*********************** Private function prototypes *************************/
 
 // Functions for building the routing tables
-static lwpa_error_t build_routing_tables();
-static lwpa_error_t build_routing_table(int family, RoutingTable* table);
+static etcpal_error_t build_routing_tables();
+static etcpal_error_t build_routing_table(int family, RoutingTable* table);
 static void free_routing_tables();
 static void free_routing_table(RoutingTable* table);
 
 // Interacting with RTNETLINK
-static lwpa_error_t send_netlink_route_request(int socket, int family);
-static lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
-static lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table);
+static etcpal_error_t send_netlink_route_request(int socket, int family);
+static etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
+static etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table);
 
 // Manipulating routing table entries
 static void init_routing_table_entry(RoutingTableEntry* entry);
@@ -116,9 +116,9 @@ static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
   return (!ifaddr->ifa_addr || (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
 }
 
-lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
+etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
-  lwpa_error_t res = build_routing_tables();
+  etcpal_error_t res = build_routing_tables();
   if (res != kLwpaErrOk)
     return res;
 
@@ -173,13 +173,13 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
 
   // Pass 2: Fill in all the info about each address
-  size_t current_lwpa_index = 0;
+  size_t current_etcpal_index = 0;
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
     if (should_skip_ifaddr(ifaddr))
       continue;
 
-    LwpaNetintInfo* current_info = &cache->netints[current_lwpa_index];
+    LwpaNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
     strncpy(current_info->name, ifaddr->ifa_name, LWPA_NETINTINFO_NAME_LEN);
@@ -223,7 +223,7 @@ lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
       current_info->is_default = true;
     }
 
-    current_lwpa_index++;
+    current_etcpal_index++;
   }
 
   freeifaddrs(os_addrs);
@@ -242,7 +242,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
   free_routing_tables();
 }
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   (void)cache;  // unused
 
@@ -255,7 +255,7 @@ lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* ca
       continue;
 
     // Check each route to see if it matches the destination address explicitly
-    if (lwpa_ip_network_portions_equal(&entry->addr, dest, &entry->mask))
+    if (etcpal_ip_network_portions_equal(&entry->addr, dest, &entry->mask))
     {
       index_found = (unsigned int)entry->interface_index;
       break;
@@ -277,9 +277,9 @@ lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* ca
   }
 }
 
-lwpa_error_t build_routing_tables()
+etcpal_error_t build_routing_tables()
 {
-  lwpa_error_t res = build_routing_table(AF_INET, &routing_table_v4);
+  etcpal_error_t res = build_routing_table(AF_INET, &routing_table_v4);
   if (res == kLwpaErrOk)
   {
     res = build_routing_table(AF_INET6, &routing_table_v6);
@@ -296,13 +296,13 @@ lwpa_error_t build_routing_tables()
   return res;
 }
 
-lwpa_error_t build_routing_table(int family, RoutingTable* table)
+etcpal_error_t build_routing_table(int family, RoutingTable* table)
 {
   // Create a netlink socket, send a netlink request to get the routing table, and receive the
   // reply. If the buffer was not big enough, repeat (cannot reuse the same socket because we've
   // often received partial messages that must be discarded)
 
-  lwpa_error_t result = kLwpaErrOk;
+  etcpal_error_t result = kLwpaErrOk;
   bool done = false;
   size_t recv_buf_size = 2048;  // Tests show this is usually enough for small routing tables
   while (result == kLwpaErrOk && !done)
@@ -346,7 +346,7 @@ lwpa_error_t build_routing_table(int family, RoutingTable* table)
   return result;
 }
 
-lwpa_error_t send_netlink_route_request(int socket, int family)
+etcpal_error_t send_netlink_route_request(int socket, int family)
 {
   // Build the request
   RtNetlinkRequest req;
@@ -369,7 +369,7 @@ lwpa_error_t send_netlink_route_request(int socket, int family)
     return errno_os_to_lwpa(errno);
 }
 
-lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
+etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
 {
   // Allocate slightly larger than buf_size, so we can detect when more room is needed
   size_t real_size = buf_size + 20;
@@ -409,13 +409,13 @@ lwpa_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, 
     nl_msg_size += (size_t)recv_res;
   }
 
-  lwpa_error_t parse_res = parse_netlink_route_reply(family, buffer, nl_msg_size, table);
+  etcpal_error_t parse_res = parse_netlink_route_reply(family, buffer, nl_msg_size, table);
 
   free(buffer);
   return parse_res;
 }
 
-lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table)
+etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table)
 {
   table->size = 0;
   table->entries = NULL;
@@ -476,7 +476,7 @@ lwpa_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl
 
     if (!LWPA_IP_IS_INVALID(&new_entry.addr))
     {
-      new_entry.mask = lwpa_ip_mask_from_length(new_entry.addr.type, rt_message->rtm_dst_len);
+      new_entry.mask = etcpal_ip_mask_from_length(new_entry.addr.type, rt_message->rtm_dst_len);
     }
 
     // Insert the new entry into the list
@@ -527,8 +527,8 @@ int compare_routing_table_entries(const void* a, const void* b)
   RoutingTableEntry* e1 = (RoutingTableEntry*)a;
   RoutingTableEntry* e2 = (RoutingTableEntry*)b;
 
-  unsigned int mask_length_1 = lwpa_ip_mask_length(&e1->mask);
-  unsigned int mask_length_2 = lwpa_ip_mask_length(&e2->mask);
+  unsigned int mask_length_1 = etcpal_ip_mask_length(&e1->mask);
+  unsigned int mask_length_2 = etcpal_ip_mask_length(&e2->mask);
 
   // Sort by mask length in descending order - within the same mask length, sort by metric in
   // ascending order.
@@ -569,17 +569,17 @@ void debug_print_routing_table(RoutingTable* table)
     char gw_str[LWPA_INET6_ADDRSTRLEN];
 
     if (!LWPA_IP_IS_INVALID(&entry->addr))
-      lwpa_inet_ntop(&entry->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
+      etcpal_inet_ntop(&entry->addr, addr_str, LWPA_INET6_ADDRSTRLEN);
     else
       strcpy(addr_str, "0.0.0.0");
 
     if (!LWPA_IP_IS_INVALID(&entry->mask))
-      lwpa_inet_ntop(&entry->mask, mask_str, LWPA_INET6_ADDRSTRLEN);
+      etcpal_inet_ntop(&entry->mask, mask_str, LWPA_INET6_ADDRSTRLEN);
     else
       strcpy(mask_str, "0.0.0.0");
 
     if (!LWPA_IP_IS_INVALID(&entry->gateway))
-      lwpa_inet_ntop(&entry->gateway, gw_str, LWPA_INET6_ADDRSTRLEN);
+      etcpal_inet_ntop(&entry->gateway, gw_str, LWPA_INET6_ADDRSTRLEN);
     else
       strcpy(gw_str, "0.0.0.0");
 

@@ -26,7 +26,7 @@
 #include "etcpal/bool.h"
 #include "etcpal/common.h"
 
-/*! \defgroup lwpa_log lwpa_log
+/*! \defgroup etcpal_log etcpal_log
  *  \ingroup lwpa
  *  \brief A platform-neutral module enabling applications and libraries to log messages in either
  *         or both of syslog-compliant and human-readable format.
@@ -34,12 +34,12 @@
  *  \#include "etcpal/log.h"
  *
  *  This module can be used in two ways. Applications can use the lightweight
- *  lwpa_create_syslog_str() and lwpa_create_human_log_str() to create log messages with a header
+ *  etcpal_create_syslog_str() and etcpal_create_human_log_str() to create log messages with a header
  *  defined by the Syslog protocol or with a human-readable header defined by ETC.
  *
  *  This module can also be used to enable other libraries to log messages via a callback function.
- *  Library functions can take a set of parameters (lwpa_log_params) on initialization. They use
- *  these parameters and the lwpa_log() or lwpa_vlog() functions to call back to the application to
+ *  Library functions can take a set of parameters (etcpal_log_params) on initialization. They use
+ *  these parameters and the etcpal_log() or etcpal_vlog() functions to call back to the application to
  *  log messages. The application can then decide what to do with these log messages (print to
  *  console, syslog, etc.)
  *
@@ -102,7 +102,7 @@
 #define LWPA_LOG_APP_NAME_MAX_LEN 49u  /*!< Max length of the app_name param. */
 #define LWPA_LOG_PROCID_MAX_LEN 129u   /*!< Max length of the procid param. */
 
-/*! Max length of a log message string passed to lwpa_log() or lwpa_vlog(). */
+/*! Max length of a log message string passed to etcpal_log() or etcpal_vlog(). */
 #define LWPA_LOG_MSG_MAX_LEN 480u
 
 /* clang-format on */
@@ -116,15 +116,15 @@
    (LWPA_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (LWPA_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +          \
    (LWPA_LOG_PROCID_MAX_LEN - 1u) + 1u /*SP*/ + 1u /*MSGID*/ + 1u /*SP*/ + 1u /*STRUCTURED-DATA*/ + 1u /*SP*/)
 
-/*! The minimum length of a buffer passed to lwpa_create_syslog_str(). */
+/*! The minimum length of a buffer passed to etcpal_create_syslog_str(). */
 #define LWPA_SYSLOG_STR_MIN_LEN LWPA_SYSLOG_HEADER_MAX_LEN
-/*! The minimum length of a buffer passed to lwpa_create_human_log_str(). */
+/*! The minimum length of a buffer passed to etcpal_create_human_log_str(). */
 #define LWPA_HUMAN_LOG_STR_MIN_LEN LWPA_LOG_TIMESTAMP_LEN
 
-/*! The maximum length of a syslog string that will be passed to an lwpa_log_callback function. */
+/*! The maximum length of a syslog string that will be passed to an etcpal_log_callback function. */
 #define LWPA_SYSLOG_STR_MAX_LEN (LWPA_SYSLOG_HEADER_MAX_LEN + LWPA_LOG_MSG_MAX_LEN)
 
-/*! The maximum length of a human-readable string that will be passed to an lwpa_log_callback
+/*! The maximum length of a human-readable string that will be passed to an etcpal_log_callback
  *  function.  */
 #define LWPA_HUMAN_LOG_STR_MAX_LEN ((LWPA_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + LWPA_LOG_MSG_MAX_LEN)
 
@@ -141,7 +141,7 @@ typedef struct LwpaLogTimeParams
   int utc_offset; /*!< The local offset from UTC in minutes. */
 } LwpaLogTimeParams;
 
-/*! The set of log strings passed with a call to an lwpa_log_callback function. Any members not
+/*! The set of log strings passed with a call to an etcpal_log_callback function. Any members not
  *  requested in the corresponding LwpaLogParams struct will be NULL.
  */
 typedef struct LwpaLogStrings
@@ -150,7 +150,7 @@ typedef struct LwpaLogStrings
   const char* syslog;
   /*! Log string formatted for readability per ETC convention. */
   const char* human_readable;
-  /*! The original log string that was passed to lwpa_log() or lwpa_vlog(). Will overlap with one of
+  /*! The original log string that was passed to etcpal_log() or etcpal_vlog(). Will overlap with one of
    * syslog_str or human_str. */
   const char* raw;
 } LwpaLogStrings;
@@ -160,7 +160,7 @@ typedef struct LwpaLogStrings
  *  The function that library modules use to log messages. The application developer defines the
  *  function and determines where the messages go.
  *
- *  <b>Do not call lwpa_log() or lwpa_vlog() from this function; a deadlock will result.</b>
+ *  <b>Do not call etcpal_log() or etcpal_vlog() from this function; a deadlock will result.</b>
  *
  *  \param[in] context Optional application-provided value that was previously passed to the library
  *                     module.
@@ -168,7 +168,7 @@ typedef struct LwpaLogStrings
  *                     corresponding to the log actions requested in the corresponding LwpaLogParams
  *                     struct.
  */
-typedef void (*lwpa_log_callback)(void* context, const LwpaLogStrings* strings);
+typedef void (*etcpal_log_callback)(void* context, const LwpaLogStrings* strings);
 
 /*! \brief Time callback function.
  *
@@ -178,21 +178,21 @@ typedef void (*lwpa_log_callback)(void* context, const LwpaLogStrings* strings);
  *                     module.
  *  \param[out] time_params Fill this in with the current local time.
  */
-typedef void (*lwpa_log_time_fn)(void* context, LwpaLogTimeParams* time_params);
+typedef void (*etcpal_log_time_fn)(void* context, LwpaLogTimeParams* time_params);
 
-/*! Which types of log message(s) the lwpa_log() and lwpa_vlog() functions create. */
+/*! Which types of log message(s) the etcpal_log() and etcpal_vlog() functions create. */
 typedef enum
 {
-  /*! lwpa_log() and lwpa_vlog() create a syslog message and pass it back in the syslog_str
+  /*! etcpal_log() and etcpal_vlog() create a syslog message and pass it back in the syslog_str
    *  parameter of the log callback. */
   kLwpaLogCreateSyslog,
-  /*! lwpa_log() and lwpa_vlog() create a human-readable log message and pass it back in the
+  /*! etcpal_log() and etcpal_vlog() create a human-readable log message and pass it back in the
    *  human_str parameter of the log callback. */
   kLwpaLogCreateHumanReadableLog,
-  /*! lwpa_log() and lwpa_vlog() create both a syslog message and a human-readable log message and
+  /*! etcpal_log() and etcpal_vlog() create both a syslog message and a human-readable log message and
    *  pass them back in the syslog_str and human_str parameters of the log callback. */
   kLwpaLogCreateBoth
-} lwpa_log_action_t;
+} etcpal_log_action_t;
 
 /*! A set of parameters for the syslog header. */
 typedef struct LwpaSyslogParams
@@ -207,20 +207,20 @@ typedef struct LwpaSyslogParams
   char procid[LWPA_LOG_PROCID_MAX_LEN];
 } LwpaSyslogParams;
 
-/*! A set of parameters used for the lwpa_*log() functions. */
+/*! A set of parameters used for the etcpal_*log() functions. */
 typedef struct LwpaLogParams
 {
-  /*! What should be done when lwpa_log() or lwpa_vlog() is called. */
-  lwpa_log_action_t action;
+  /*! What should be done when etcpal_log() or etcpal_vlog() is called. */
+  etcpal_log_action_t action;
   /*! A callback function for the finished log string(s). */
-  lwpa_log_callback log_fn;
+  etcpal_log_callback log_fn;
   /*! The syslog header parameters. */
   LwpaSyslogParams syslog_params;
   /*! A mask value that determines which priority messages can be logged. */
   int log_mask;
-  /*! A callback function for the lwpa_log() and lwpa_vlog() functions to obtain the time from the
+  /*! A callback function for the etcpal_log() and etcpal_vlog() functions to obtain the time from the
    *  application. If NULL, no timestamp will be added to log messages. */
-  lwpa_log_time_fn time_fn;
+  etcpal_log_time_fn time_fn;
   /*! Application context that will be passed back with the log callback function. */
   void* context;
 } LwpaLogParams;
@@ -235,7 +235,7 @@ extern "C" {
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool lwpa_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* time,
+bool etcpal_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* time,
                             const LwpaSyslogParams* syslog_params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 6, 7)))
@@ -245,27 +245,27 @@ bool lwpa_create_syslog_str(char* buf, size_t buflen, const LwpaLogTimeParams* t
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool lwpa_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format, ...)
+bool etcpal_create_human_log_str(char* buf, size_t buflen, const LwpaLogTimeParams* time, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 4, 5)))
 #endif
     ;
 
-void lwpa_sanitize_syslog_params(LwpaSyslogParams* params);
-bool lwpa_validate_log_params(LwpaLogParams* params);
+void etcpal_sanitize_syslog_params(LwpaSyslogParams* params);
+bool etcpal_validate_log_params(LwpaLogParams* params);
 
-bool lwpa_can_log(const LwpaLogParams* params, int pri);
+bool etcpal_can_log(const LwpaLogParams* params, int pri);
 
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-void lwpa_log(const LwpaLogParams* params, int pri, const char* format, ...)
+void etcpal_log(const LwpaLogParams* params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 3, 4)))
 #endif
     ;
 
-void lwpa_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args);
+void etcpal_vlog(const LwpaLogParams* params, int pri, const char* format, va_list args);
 
 #ifdef __cplusplus
 }

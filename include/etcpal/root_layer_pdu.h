@@ -29,8 +29,8 @@
 #include "etcpal/acn_prot.h"
 #include "etcpal/pdu.h"
 
-/*! \defgroup lwpa_rootlayerpdu lwpa_rootlayerpdu
- *  \ingroup lwpa_pdu
+/*! \defgroup etcpal_rootlayerpdu etcpal_rootlayerpdu
+ *  \ingroup etcpal_pdu
  *  \brief Parse or pack a Root Layer PDU block.
  *
  *  \#include "etcpal/root_layer_pdu.h"
@@ -97,16 +97,16 @@ typedef struct LwpaRootLayerPdu
 extern "C" {
 #endif
 
-bool lwpa_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble* preamble);
-bool lwpa_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble* preamble);
-bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaRootLayerPdu* last_pdu);
-bool lwpa_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaPdu* last_pdu);
+bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble* preamble);
+bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble* preamble);
+bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaRootLayerPdu* last_pdu);
+bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaPdu* last_pdu);
 
-size_t lwpa_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len);
-size_t lwpa_pack_udp_preamble(uint8_t* buf, size_t buflen);
-size_t lwpa_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
-size_t lwpa_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu);
-size_t lwpa_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
+size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len);
+size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen);
+size_t etcpal_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
+size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu);
+size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu_block, size_t num_pdus);
 
 #ifdef __cplusplus
 }

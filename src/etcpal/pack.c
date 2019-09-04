@@ -26,7 +26,7 @@
  *  \param buf Pointer to the buffer from which to unpack a uint16_t.
  *  \return Unpacked uint16_t.
  */
-uint16_t lwpa_upack_16b(const uint8_t* buf)
+uint16_t etcpal_upack_16b(const uint8_t* buf)
 {
   uint16_t val = 0;
   if (buf)
@@ -41,7 +41,7 @@ uint16_t lwpa_upack_16b(const uint8_t* buf)
  *  \param buf Pointer to the buffer into which to pack a uint16_t.
  *  \param val uint16_t value to pack into the buffer.
  */
-void lwpa_pack_16b(uint8_t* buf, uint16_t val)
+void etcpal_pack_16b(uint8_t* buf, uint16_t val)
 {
   if (buf)
   {
@@ -54,7 +54,7 @@ void lwpa_pack_16b(uint8_t* buf, uint16_t val)
  *  \param buf Pointer to the buffer from which to unpack a uint16_t.
  *  \return Unpacked uint16_t.
  */
-uint16_t lwpa_upack_16l(const uint8_t* buf)
+uint16_t etcpal_upack_16l(const uint8_t* buf)
 {
   uint16_t val = 0;
   if (buf)
@@ -69,7 +69,7 @@ uint16_t lwpa_upack_16l(const uint8_t* buf)
  *  \param buf Pointer to the buffer into which to pack a uint16_t.
  *  \param val uint16_t value to pack into the buffer.
  */
-void lwpa_pack_16l(uint8_t* buf, uint16_t val)
+void etcpal_pack_16l(uint8_t* buf, uint16_t val)
 {
   if (buf)
   {
@@ -82,7 +82,7 @@ void lwpa_pack_16l(uint8_t* buf, uint16_t val)
  *  \param buf Pointer to the buffer from which to unpack a uint32_t.
  *  \return Unpacked uint32_t.
  */
-uint32_t lwpa_upack_32b(const uint8_t* buf)
+uint32_t etcpal_upack_32b(const uint8_t* buf)
 {
   uint32_t val = 0;
   if (buf)
@@ -99,7 +99,7 @@ uint32_t lwpa_upack_32b(const uint8_t* buf)
  *  \param buf Pointer to the buffer into which to pack a uint32_t.
  *  \param val uint32_t value to pack into the buffer.
  */
-void lwpa_pack_32b(uint8_t* buf, uint32_t val)
+void etcpal_pack_32b(uint8_t* buf, uint32_t val)
 {
   if (buf)
   {
@@ -114,7 +114,7 @@ void lwpa_pack_32b(uint8_t* buf, uint32_t val)
  *  \param buf Pointer to the buffer from which to unpack a uint32_t.
  *  \return Unpacked uint32_t.
  */
-uint32_t lwpa_upack_32l(const uint8_t* buf)
+uint32_t etcpal_upack_32l(const uint8_t* buf)
 {
   uint32_t val = 0;
   if (buf)
@@ -131,7 +131,7 @@ uint32_t lwpa_upack_32l(const uint8_t* buf)
  *  \param buf Pointer to the buffer into which to pack a uint32_t.
  *  \param val uint32_t value to pack into the buffer.
  */
-void lwpa_pack_32l(uint8_t* buf, uint32_t val)
+void etcpal_pack_32l(uint8_t* buf, uint32_t val)
 {
   if (buf)
   {
@@ -148,7 +148,7 @@ void lwpa_pack_32l(uint8_t* buf, uint32_t val)
  *  \param buf Pointer to the buffer from which to unpack a uint64_t.
  *  \return Unpacked uint64_t.
  */
-uint64_t lwpa_upack_64b(const uint8_t* buf)
+uint64_t etcpal_upack_64b(const uint8_t* buf)
 {
   uint64_t val = 0;
   if (buf)
@@ -169,7 +169,7 @@ uint64_t lwpa_upack_64b(const uint8_t* buf)
  *  \param buf Pointer to the buffer into which to pack a uint64_t.
  *  \param val uint64_t value to pack into the buffer.
  */
-void lwpa_pack_64b(uint8_t* buf, uint64_t val)
+void etcpal_pack_64b(uint8_t* buf, uint64_t val)
 {
   if (buf)
   {
@@ -188,7 +188,7 @@ void lwpa_pack_64b(uint8_t* buf, uint64_t val)
  *  \param buf Pointer to the buffer from which to unpack a uint64_t.
  *  \return Unpacked uint64_t.
  */
-uint64_t lwpa_upack_64l(const uint8_t* buf)
+uint64_t etcpal_upack_64l(const uint8_t* buf)
 {
   uint64_t val = 0;
   if (buf)
@@ -209,7 +209,7 @@ uint64_t lwpa_upack_64l(const uint8_t* buf)
  *  \param buf Pointer to the buffer into which to pack a uint64_t.
  *  \param val uint64_t value to pack into the buffer.
  */
-void lwpa_pack_64l(uint8_t* buf, uint64_t val)
+void etcpal_pack_64l(uint8_t* buf, uint64_t val)
 {
   if (buf)
   {

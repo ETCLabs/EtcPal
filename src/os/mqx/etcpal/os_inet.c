@@ -22,7 +22,7 @@
 #include <mqx.h>
 #include <rtcs.h>
 
-bool ip_os_to_lwpa(const lwpa_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
+bool ip_os_to_lwpa(const etcpal_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
 {
   if (os_ip->sa_family == AF_INET)
   {
@@ -55,7 +55,7 @@ bool ip_os_to_lwpa(const lwpa_os_ipaddr_t* os_ip, LwpaIpAddr* ip)
   return false;
 }
 
-size_t ip_lwpa_to_os(const LwpaIpAddr* ip, lwpa_os_ipaddr_t* os_ip)
+size_t ip_etcpal_to_os(const LwpaIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
 {
   size_t ret = 0;
   if (LWPA_IP_IS_V4(ip))
@@ -96,9 +96,9 @@ bool sockaddr_os_to_lwpa(const struct sockaddr* os_sa, LwpaSockaddr* sa)
   return false;
 }
 
-size_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, struct sockaddr* os_sa)
+size_t sockaddr_etcpal_to_os(const LwpaSockaddr* sa, struct sockaddr* os_sa)
 {
-  size_t ret = ip_lwpa_to_os(&sa->ip, os_sa);
+  size_t ret = ip_etcpal_to_os(&sa->ip, os_sa);
   if (ret != 0)
   {
     if (LWPA_IP_IS_V4(&sa->ip))
@@ -109,7 +109,7 @@ size_t sockaddr_lwpa_to_os(const LwpaSockaddr* sa, struct sockaddr* os_sa)
   return ret;
 }
 
-lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
+etcpal_error_t etcpal_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
 {
   if (!src || !dest)
     return kLwpaErrInvalid;
@@ -138,7 +138,7 @@ lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr* src, char* dest, size_t size)
   }
 }
 
-lwpa_error_t lwpa_inet_pton(lwpa_iptype_t type, const char* src, LwpaIpAddr* dest)
+etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, LwpaIpAddr* dest)
 {
   if (!src || !dest)
     return kLwpaErrInvalid;

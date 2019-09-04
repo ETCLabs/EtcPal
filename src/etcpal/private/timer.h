@@ -22,7 +22,7 @@
 
 #include "etcpal/error.h"
 
-lwpa_error_t lwpa_timer_init();
-void lwpa_timer_deinit();
+etcpal_error_t etcpal_timer_init();
+void etcpal_timer_deinit();
 
 #endif /* _LWPA_PRIVATE_TIMER_H_ */

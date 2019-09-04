@@ -29,37 +29,37 @@
 extern "C" {
 #endif
 
-typedef LWSEM_STRUCT lwpa_mutex_t;
+typedef LWSEM_STRUCT etcpal_mutex_t;
 
-#define lwpa_mutex_create(idptr) (MQX_OK == _lwsem_create((idptr), 1))
-#define lwpa_mutex_take(idptr) (MQX_OK == _lwsem_wait(idptr))
-#define lwpa_mutex_try_take(idptr) (MQX_OK == _lwsem_wait_ticks((idptr), 1u))
-#define lwpa_mutex_give(idptr) ((void)_lwsem_post(idptr))
-#define lwpa_mutex_destroy(idptr) ((void)_lwsem_destroy(idptr))
+#define etcpal_mutex_create(idptr) (MQX_OK == _lwsem_create((idptr), 1))
+#define etcpal_mutex_take(idptr) (MQX_OK == _lwsem_wait(idptr))
+#define etcpal_mutex_try_take(idptr) (MQX_OK == _lwsem_wait_ticks((idptr), 1u))
+#define etcpal_mutex_give(idptr) ((void)_lwsem_post(idptr))
+#define etcpal_mutex_destroy(idptr) ((void)_lwsem_destroy(idptr))
 
-typedef LWEVENT_STRUCT lwpa_signal_t;
+typedef LWEVENT_STRUCT etcpal_signal_t;
 
-#define lwpa_signal_create(idptr) (MQX_OK == _lwevent_create((idptr), LWEVENT_AUTO_CLEAR))
-#define lwpa_signal_wait(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 0u))
-#define lwpa_signal_poll(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 1u))
-#define lwpa_signal_post(idptr) ((void)_lwevent_set((idptr), 1u))
-#define lwpa_signal_destroy(idptr) ((void)_lwevent_destroy(idptr))
+#define etcpal_signal_create(idptr) (MQX_OK == _lwevent_create((idptr), LWEVENT_AUTO_CLEAR))
+#define etcpal_signal_wait(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 0u))
+#define etcpal_signal_poll(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 1u))
+#define etcpal_signal_post(idptr) ((void)_lwevent_set((idptr), 1u))
+#define etcpal_signal_destroy(idptr) ((void)_lwevent_destroy(idptr))
 
 typedef struct
 {
   bool valid;
   LWSEM_STRUCT sem;
   unsigned int reader_count;
-} lwpa_rwlock_t;
+} etcpal_rwlock_t;
 
-bool lwpa_rwlock_create(lwpa_rwlock_t* id);
-bool lwpa_rwlock_readlock(lwpa_rwlock_t* id);
-bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id);
-void lwpa_rwlock_readunlock(lwpa_rwlock_t* id);
-bool lwpa_rwlock_writelock(lwpa_rwlock_t* id);
-bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id);
-void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id);
-void lwpa_rwlock_destroy(lwpa_rwlock_t* id);
+bool etcpal_rwlock_create(etcpal_rwlock_t* id);
+bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 #ifdef __cplusplus
 }

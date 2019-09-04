@@ -23,7 +23,7 @@
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
 
-typedef struct sockaddr lwpa_os_sockaddr_t;
-typedef struct sockaddr lwpa_os_ipaddr_t;
+typedef struct sockaddr etcpal_os_sockaddr_t;
+typedef struct sockaddr etcpal_os_ipaddr_t;
 
 #endif /* _LWPA_OS_INET_H_ */

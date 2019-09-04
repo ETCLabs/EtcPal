@@ -23,16 +23,16 @@ DEFINE_FFF_GLOBALS;
 
 void run_all_tests(void)
 {
-  RUN_TEST_GROUP(lwpa_common);
-  RUN_TEST_GROUP(lwpa_inet);
-  RUN_TEST_GROUP(lwpa_lock);
-  RUN_TEST_GROUP(lwpa_log);
-  RUN_TEST_GROUP(lwpa_mempool);
-  RUN_TEST_GROUP(lwpa_netint);
-  RUN_TEST_GROUP(lwpa_pack);
-  RUN_TEST_GROUP(lwpa_rbtree);
-  RUN_TEST_GROUP(lwpa_socket);
-  RUN_TEST_GROUP(lwpa_thread);
-  RUN_TEST_GROUP(lwpa_timer);
-  RUN_TEST_GROUP(lwpa_uuid);
+  RUN_TEST_GROUP(etcpal_common);
+  RUN_TEST_GROUP(etcpal_inet);
+  RUN_TEST_GROUP(etcpal_lock);
+  RUN_TEST_GROUP(etcpal_log);
+  RUN_TEST_GROUP(etcpal_mempool);
+  RUN_TEST_GROUP(etcpal_netint);
+  RUN_TEST_GROUP(etcpal_pack);
+  RUN_TEST_GROUP(etcpal_rbtree);
+  RUN_TEST_GROUP(etcpal_socket);
+  RUN_TEST_GROUP(etcpal_thread);
+  RUN_TEST_GROUP(etcpal_timer);
+  RUN_TEST_GROUP(etcpal_uuid);
 }

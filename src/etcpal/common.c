@@ -31,7 +31,7 @@
 typedef struct LwpaModuleInit
 {
   bool initted;
-  lwpa_error_t (*init_fn)();
+  etcpal_error_t (*init_fn)();
   void (*deinit_fn)();
 } LwpaModuleInit;
 
@@ -41,10 +41,10 @@ typedef struct LwpaModuleInit
 
 #define LWPA_MODULE_INIT_ARRAY     \
   {                                \
-    LWPA_MODULE_INIT(lwpa_socket), \
-    LWPA_MODULE_INIT(lwpa_netint), \
-    LWPA_MODULE_INIT(lwpa_timer),  \
-    LWPA_MODULE_INIT(lwpa_log)     \
+    LWPA_MODULE_INIT(etcpal_socket), \
+    LWPA_MODULE_INIT(etcpal_netint), \
+    LWPA_MODULE_INIT(etcpal_timer),  \
+    LWPA_MODULE_INIT(etcpal_log)     \
   }
 
 /* clang-format on */
@@ -53,20 +53,20 @@ typedef struct LwpaModuleInit
 
 /*! \brief Initialize the lwpa library.
  *
- *  This function can be called multiple times from the same application. Each call to lwpa_init()
- *  must be paired with a call to lwpa_deinit() with the same argument for features.
+ *  This function can be called multiple times from the same application. Each call to etcpal_init()
+ *  must be paired with a call to etcpal_deinit() with the same argument for features.
  *
  *  If you are using a library that depends on lwpa, and not using lwpa directly, that library will
  *  call this function for you with the features it needs; you do not need to call it explicitly.
  *
- *  lwpa_init() and lwpa_deinit() are not thread-safe; you should make sure your init-time and
+ *  etcpal_init() and etcpal_deinit() are not thread-safe; you should make sure your init-time and
  *  deinit-time code is serialized.
  *
  *  \param[in] features Mask of lwpa features required.
  *  \return #kLwpaErrOk: lwpa library initialized successfully.
  *  \return Various error codes possible from initialization of feature modules.
  */
-lwpa_error_t lwpa_init(lwpa_features_t features)
+etcpal_error_t etcpal_init(etcpal_features_t features)
 {
   // In this function and the deinit() function below, we create an array of structs for each lwpa
   // module that must be initialized, using the macros defined in etcpal/common.h and above in .his
@@ -78,8 +78,8 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
 
   LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
 
-  lwpa_error_t init_res = kLwpaErrOk;
-  lwpa_features_t feature_mask = 1u;
+  etcpal_error_t init_res = kLwpaErrOk;
+  etcpal_features_t feature_mask = 1u;
 
   // Initialize each module in turn.
   for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)
@@ -110,16 +110,16 @@ lwpa_error_t lwpa_init(lwpa_features_t features)
 
 /*! \brief Deinitialize the lwpa library.
  *
- *  This must be called with the same argument as the corresponding call to lwpa_init() to clean up
+ *  This must be called with the same argument as the corresponding call to etcpal_init() to clean up
  *  resources held by the feature modules.
  *
- *  \param[in] features Feature mask that was previously passed to lwpa_init().
+ *  \param[in] features Feature mask that was previously passed to etcpal_init().
  */
-void lwpa_deinit(lwpa_features_t features)
+void etcpal_deinit(etcpal_features_t features)
 {
   LwpaModuleInit init_array[LWPA_NUM_FEATURES] = LWPA_MODULE_INIT_ARRAY;
 
-  lwpa_features_t feature_mask = 1u;
+  etcpal_features_t feature_mask = 1u;
 
   // Deinitialize each module in turn.
   for (LwpaModuleInit* init_struct = init_array; init_struct < init_array + LWPA_NUM_FEATURES; ++init_struct)

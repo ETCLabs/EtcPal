@@ -17,14 +17,14 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* lwpa_timer.h: Platform-neutral implementation of system timers. */
+/* etcpal_timer.h: Platform-neutral implementation of system timers. */
 #ifndef _LWPA_TIMER_H_
 #define _LWPA_TIMER_H_
 
 #include "etcpal/int.h"
 #include "etcpal/bool.h"
 
-/*! \defgroup lwpa_timer lwpa_timer
+/*! \defgroup etcpal_timer etcpal_timer
  *  \ingroup lwpa
  *  \brief Platform-neutral system timers.
  *
@@ -54,15 +54,15 @@ extern "C" {
 /*! \brief Get a monotonically-increasing millisecond value
  *  \return The current timestamp in milliseconds.
  */
-uint32_t lwpa_getms();
+uint32_t etcpal_getms();
 
 /* Functions with platform-neutral definitions */
 
-void lwpa_timer_start(LwpaTimer* timer, uint32_t interval);
-void lwpa_timer_reset(LwpaTimer* timer);
-uint32_t lwpa_timer_elapsed(const LwpaTimer* timer);
-bool lwpa_timer_is_expired(const LwpaTimer* timer);
-uint32_t lwpa_timer_remaining(const LwpaTimer* timer);
+void etcpal_timer_start(LwpaTimer* timer, uint32_t interval);
+void etcpal_timer_reset(LwpaTimer* timer);
+uint32_t etcpal_timer_elapsed(const LwpaTimer* timer);
+bool etcpal_timer_is_expired(const LwpaTimer* timer);
+uint32_t etcpal_timer_remaining(const LwpaTimer* timer);
 
 #ifdef __cplusplus
 }

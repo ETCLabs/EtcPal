@@ -40,7 +40,7 @@
 #include <stddef.h>
 #include "etcpal/error.h"
 
-/*! \defgroup lwpa_rbtree lwpa_rbtree
+/*! \defgroup etcpal_rbtree etcpal_rbtree
  *  \ingroup lwpa
  *  \brief A red-black tree implementation.
  *
@@ -66,7 +66,7 @@ typedef struct LwpaRbTree LwpaRbTree;
 
 /*! \brief A function type that compares two nodes in a tree.
  *
- *  A default, lwpa_rbtree_node_cmp_ptr_cb(), is provided which simply compares the pointer (address) of
+ *  A default, etcpal_rbtree_node_cmp_ptr_cb(), is provided which simply compares the pointer (address) of
  *  the value member of each node.
  *
  *  \param[in] self The tree in which two nodes are being compared.
@@ -76,39 +76,39 @@ typedef struct LwpaRbTree LwpaRbTree;
  *            0 (node_a's value is equal to node_b's value)\n
  *          > 0 (node_a's value is greater than node_b's value)
  */
-typedef int (*lwpa_rbtree_node_cmp_f)(const LwpaRbTree* self, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
+typedef int (*etcpal_rbtree_node_cmp_f)(const LwpaRbTree* self, const LwpaRbNode* node_a, const LwpaRbNode* node_b);
 
 /*! \brief A function type to be called for each node in a tree.
  *
  *  Usually provided on a tree-wide clear or destroy operation; in this case, it should provide any
  *  deallocation necessary for the node structure and its value. A default,
- *  lwpa_rbtree_node_dealloc_cb(), is provided which simply calls the tree's #lwpa_rbnode_dealloc_f on the
+ *  etcpal_rbtree_node_dealloc_cb(), is provided which simply calls the tree's #etcpal_rbnode_dealloc_f on the
  *  node.
  *
  *  \param[in] self The tree in which the node resides.
  *  \param[in] node The node for which an action should be performed.
  */
-typedef void (*lwpa_rbtree_node_f)(const LwpaRbTree* self, LwpaRbNode* node);
+typedef void (*etcpal_rbtree_node_f)(const LwpaRbTree* self, LwpaRbNode* node);
 
 /*! \brief A function type to allocate a new node.
  *
  *  The user provides the allocation method for new nodes, whether this be malloc() or some more
  *  static method. A function of this type is saved by the tree struct and called on a call to
- *  lwpa_rbtree_insert().
+ *  etcpal_rbtree_insert().
  *
  *  \return Pointer to the newly allocated node.
  */
-typedef LwpaRbNode* (*lwpa_rbnode_alloc_f)();
+typedef LwpaRbNode* (*etcpal_rbnode_alloc_f)();
 
 /*! \brief A function type to deallocate a node.
  *
  *  The user provides the deallocation method for nodes, whether this be free() or some more static
  *  method. A function of this type is saved by the tree struct and called on calls to
- *  lwpa_rbtree_remove() and lwpa_rbtree_clear().
+ *  etcpal_rbtree_remove() and etcpal_rbtree_clear().
  *
  *  \param[in] node Pointer to node to deallocate.
  */
-typedef void (*lwpa_rbnode_dealloc_f)(LwpaRbNode* node);
+typedef void (*etcpal_rbnode_dealloc_f)(LwpaRbNode* node);
 
 /*! @} */
 
@@ -122,21 +122,21 @@ struct LwpaRbNode
 
 /*! \brief A red-black tree.
  *
- *  Initialize using lwpa_rbtree_init() before carrying out any other operation on the tree.
+ *  Initialize using etcpal_rbtree_init() before carrying out any other operation on the tree.
  */
 struct LwpaRbTree
 {
   LwpaRbNode* root;                /*!< The root node of the tree. */
-  lwpa_rbtree_node_cmp_f cmp;      /*!< A function to use for comparing two nodes. */
+  etcpal_rbtree_node_cmp_f cmp;      /*!< A function to use for comparing two nodes. */
   size_t size;                     /*!< The current count of nodes in the tree. */
-  lwpa_rbnode_alloc_f alloc_f;     /*!< A function to use for allocating a new node.*/
-  lwpa_rbnode_dealloc_f dealloc_f; /*!< A function to use for deallocating a node. */
-  void* info;                      /*!< User provided, not used by lwpa_rbtree. */
+  etcpal_rbnode_alloc_f alloc_f;     /*!< A function to use for allocating a new node.*/
+  etcpal_rbnode_dealloc_f dealloc_f; /*!< A function to use for deallocating a node. */
+  void* info;                      /*!< User provided, not used by etcpal_rbtree. */
 };
 
 /*! \brief A red-black tree iterator.
  *
- *  Initialize using lwpa_rbiter_init() before carrying out any other operation on the iterator.
+ *  Initialize using etcpal_rbiter_init() before carrying out any other operation on the iterator.
  */
 typedef struct LwpaRbIter
 {
@@ -144,37 +144,37 @@ typedef struct LwpaRbIter
   LwpaRbNode* node;                          /*!< The current node. */
   LwpaRbNode* path[LWPA_RB_ITER_MAX_HEIGHT]; /*!< The traversal path to the current node. */
   size_t top;                                /*!< Top of the traversal stack. */
-  void* info;                                /*!< User provided, not used by lwpa_rbiter. */
+  void* info;                                /*!< User provided, not used by etcpal_rbiter. */
 } LwpaRbIter;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int lwpa_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b);
-void lwpa_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node);
+int etcpal_rbtree_node_cmp_ptr_cb(const LwpaRbTree* self, const LwpaRbNode* a, const LwpaRbNode* b);
+void etcpal_rbtree_node_dealloc_cb(const LwpaRbTree* self, LwpaRbNode* node);
 
-LwpaRbNode* lwpa_rbnode_init(LwpaRbNode* self, void* value);
+LwpaRbNode* etcpal_rbnode_init(LwpaRbNode* self, void* value);
 
-LwpaRbTree* lwpa_rbtree_init(LwpaRbTree* self, lwpa_rbtree_node_cmp_f cmp, lwpa_rbnode_alloc_f alloc_f,
-                             lwpa_rbnode_dealloc_f dealloc_f);
-void* lwpa_rbtree_find(LwpaRbTree* self, void* value);
-lwpa_error_t lwpa_rbtree_insert(LwpaRbTree* self, void* value);
-lwpa_error_t lwpa_rbtree_remove(LwpaRbTree* self, void* value);
-lwpa_error_t lwpa_rbtree_clear(LwpaRbTree* self);
-size_t lwpa_rbtree_size(LwpaRbTree* self);
+LwpaRbTree* etcpal_rbtree_init(LwpaRbTree* self, etcpal_rbtree_node_cmp_f cmp, etcpal_rbnode_alloc_f alloc_f,
+                             etcpal_rbnode_dealloc_f dealloc_f);
+void* etcpal_rbtree_find(LwpaRbTree* self, void* value);
+etcpal_error_t etcpal_rbtree_insert(LwpaRbTree* self, void* value);
+etcpal_error_t etcpal_rbtree_remove(LwpaRbTree* self, void* value);
+etcpal_error_t etcpal_rbtree_clear(LwpaRbTree* self);
+size_t etcpal_rbtree_size(LwpaRbTree* self);
 
-lwpa_error_t lwpa_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node);
-lwpa_error_t lwpa_rbtree_remove_with_cb(LwpaRbTree* self, void* value, lwpa_rbtree_node_f node_cb);
-lwpa_error_t lwpa_rbtree_clear_with_cb(LwpaRbTree* self, lwpa_rbtree_node_f node_cb);
+etcpal_error_t etcpal_rbtree_insert_node(LwpaRbTree* self, LwpaRbNode* node);
+etcpal_error_t etcpal_rbtree_remove_with_cb(LwpaRbTree* self, void* value, etcpal_rbtree_node_f node_cb);
+etcpal_error_t etcpal_rbtree_clear_with_cb(LwpaRbTree* self, etcpal_rbtree_node_f node_cb);
 
-int lwpa_rbtree_test(LwpaRbTree* self, LwpaRbNode* root);
+int etcpal_rbtree_test(LwpaRbTree* self, LwpaRbNode* root);
 
-LwpaRbIter* lwpa_rbiter_init(LwpaRbIter* self);
-void* lwpa_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree);
-void* lwpa_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree);
-void* lwpa_rbiter_next(LwpaRbIter* self);
-void* lwpa_rbiter_prev(LwpaRbIter* self);
+LwpaRbIter* etcpal_rbiter_init(LwpaRbIter* self);
+void* etcpal_rbiter_first(LwpaRbIter* self, LwpaRbTree* tree);
+void* etcpal_rbiter_last(LwpaRbIter* self, LwpaRbTree* tree);
+void* etcpal_rbiter_next(LwpaRbIter* self);
+void* etcpal_rbiter_prev(LwpaRbIter* self);
 
 #ifdef __cplusplus
 }

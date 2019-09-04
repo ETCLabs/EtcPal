@@ -40,12 +40,12 @@ static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNet
 
 /*************************** Function definitions ****************************/
 
-lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   (void)cache;  // unused
 
   struct sockaddr_storage os_addr;
-  if (ip_lwpa_to_os(dest, (lwpa_os_ipaddr_t*)&os_addr))
+  if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
   {
     DWORD resolved_index;
     DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
@@ -69,7 +69,7 @@ lwpa_error_t os_resolve_route(const LwpaIpAddr* dest, const CachedNetintInfo* ca
   }
 }
 
-lwpa_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
+etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   IP_ADAPTER_ADDRESSES *padapters, *pcur;
 
@@ -155,7 +155,7 @@ void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
   const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
 
   LWPA_IP_SET_V4_ADDRESS(&info->addr, ntohl(sin->sin_addr.s_addr));
-  info->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV4, pip->OnLinkPrefixLength);
+  info->mask = etcpal_ip_mask_from_length(kLwpaIpTypeV4, pip->OnLinkPrefixLength);
 }
 
 void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
@@ -163,7 +163,7 @@ void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, LwpaNetintInfo* info)
   const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;
 
   LWPA_IP_SET_V6_ADDRESS(&info->addr, sin6->sin6_addr.s6_addr);
-  info->mask = lwpa_ip_mask_from_length(kLwpaIpTypeV6, pip->OnLinkPrefixLength);
+  info->mask = etcpal_ip_mask_from_length(kLwpaIpTypeV6, pip->OnLinkPrefixLength);
 }
 
 void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache)

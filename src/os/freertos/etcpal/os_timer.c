@@ -23,18 +23,18 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
-lwpa_error_t lwpa_timer_init()
+etcpal_error_t etcpal_timer_init()
 {
   // No initialization necessary on this platform
   return kLwpaErrOk;
 }
 
-void lwpa_timer_deinit()
+void etcpal_timer_deinit()
 {
   // No deinitialization necessary on this platform
 }
 
-uint32_t lwpa_getms()
+uint32_t etcpal_getms()
 {
   return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
 }

@@ -127,7 +127,7 @@ def main():
         sys.exit(1)
 
     repo_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
-    lwpa_repo = git.Repo(repo_root)
+    etcpal_repo = git.Repo(repo_root)
 
     if not update_version_files(repo_root, new_version):
         sys.exit(1)
@@ -135,7 +135,7 @@ def main():
     if not prompt_to_continue():
         sys.exit(0)
 
-    commit_and_tag(lwpa_repo, new_version, args.release)
+    commit_and_tag(etcpal_repo, new_version, args.release)
 
     print("Done - now push using 'git push origin [branch] --tags'.")
 

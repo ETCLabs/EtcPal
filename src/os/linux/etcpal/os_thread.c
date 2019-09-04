@@ -25,7 +25,7 @@ static void* thread_func_internal(void* arg);
 
 /*************************** Function definitions ****************************/
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;
@@ -50,7 +50,7 @@ bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void 
   return res;
 }
 
-bool lwpa_thread_join(lwpa_thread_t* id)
+bool etcpal_thread_join(etcpal_thread_t* id)
 {
   if (id)
   {
@@ -61,7 +61,7 @@ bool lwpa_thread_join(lwpa_thread_t* id)
 
 void* thread_func_internal(void* arg)
 {
-  lwpa_thread_t* thread_data = (lwpa_thread_t*)arg;
+  etcpal_thread_t* thread_data = (etcpal_thread_t*)arg;
   if (thread_data && thread_data->fn)
   {
     thread_data->fn(thread_data->arg);

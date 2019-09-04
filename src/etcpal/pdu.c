@@ -31,7 +31,7 @@
  *                     with data from this PDU.
  *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool lwpa_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints* constraints, LwpaPdu* pdu)
+bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const LwpaPduConstraints* constraints, LwpaPdu* pdu)
 {
   const uint8_t *this_pdu, *buf_end, *prev_vect, *prev_head, *prev_data, *cur_ptr;
   uint8_t flags_byte;

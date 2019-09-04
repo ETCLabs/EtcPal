@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* lwpa_mock/socket.h: Mock functions for the lwpa_socket API. */
+/* etcpal_mock/socket.h: Mock functions for the etcpal_socket API. */
 #ifndef _LWPA_MOCK_SOCKET_H_
 #define _LWPA_MOCK_SOCKET_H_
 
@@ -25,71 +25,71 @@
 #include "fff.h"
 
 // We don't mock:
-// lwpa_inet_pton()
-// lwpa_inet_ntop()
+// etcpal_inet_pton()
+// etcpal_inet_ntop()
 // sockaddr_os_to_lwpa()
-// sockaddr_lwpa_to_os()
+// sockaddr_etcpal_to_os()
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_accept, lwpa_socket_t, LwpaSockaddr*, lwpa_socket_t*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_bind, lwpa_socket_t, const LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_close, lwpa_socket_t);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_connect, lwpa_socket_t, const LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getpeername, lwpa_socket_t, LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockname, lwpa_socket_t, LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockopt, lwpa_socket_t, int, int, void*, size_t*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_listen, lwpa_socket_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_recv, lwpa_socket_t, void*, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_recvfrom, lwpa_socket_t, void*, size_t, int, LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_send, lwpa_socket_t, const void*, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, lwpa_sendto, lwpa_socket_t, const void*, size_t, int, const LwpaSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setsockopt, lwpa_socket_t, int, int, const void*, size_t);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_shutdown, lwpa_socket_t, int);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket, unsigned int, unsigned int, lwpa_socket_t*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_accept, etcpal_socket_t, LwpaSockaddr*, etcpal_socket_t*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_bind, etcpal_socket_t, const LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_close, etcpal_socket_t);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_connect, etcpal_socket_t, const LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getpeername, etcpal_socket_t, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockname, etcpal_socket_t, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockopt, etcpal_socket_t, int, int, void*, size_t*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_listen, etcpal_socket_t, int);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_recv, etcpal_socket_t, void*, size_t, int);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_recvfrom, etcpal_socket_t, void*, size_t, int, LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_send, etcpal_socket_t, const void*, size_t, int);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_sendto, etcpal_socket_t, const void*, size_t, int, const LwpaSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setsockopt, etcpal_socket_t, int, int, const void*, size_t);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_shutdown, etcpal_socket_t, int);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_socket, unsigned int, unsigned int, etcpal_socket_t*);
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setblocking, lwpa_socket_t, bool);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setblocking, etcpal_socket_t, bool);
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_context_init, LwpaPollContext*);
-DECLARE_FAKE_VOID_FUNC(lwpa_poll_context_deinit, LwpaPollContext*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_add_socket, LwpaPollContext*, lwpa_socket_t, lwpa_poll_events_t, void*);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_modify_socket, LwpaPollContext*, lwpa_socket_t, lwpa_poll_events_t,
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_context_init, LwpaPollContext*);
+DECLARE_FAKE_VOID_FUNC(etcpal_poll_context_deinit, LwpaPollContext*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_add_socket, LwpaPollContext*, etcpal_socket_t, etcpal_poll_events_t, void*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_modify_socket, LwpaPollContext*, etcpal_socket_t, etcpal_poll_events_t,
                         void*);
-DECLARE_FAKE_VOID_FUNC(lwpa_poll_remove_socket, LwpaPollContext*, lwpa_socket_t);
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_wait, LwpaPollContext*, LwpaPollEvent*, int);
+DECLARE_FAKE_VOID_FUNC(etcpal_poll_remove_socket, LwpaPollContext*, etcpal_socket_t);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_wait, LwpaPollContext*, LwpaPollEvent*, int);
 
-DECLARE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getaddrinfo, const char*, const char*, const LwpaAddrinfo*, LwpaAddrinfo*);
-DECLARE_FAKE_VALUE_FUNC(bool, lwpa_nextaddr, LwpaAddrinfo*);
-DECLARE_FAKE_VOID_FUNC(lwpa_freeaddrinfo, LwpaAddrinfo*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getaddrinfo, const char*, const char*, const LwpaAddrinfo*, LwpaAddrinfo*);
+DECLARE_FAKE_VALUE_FUNC(bool, etcpal_nextaddr, LwpaAddrinfo*);
+DECLARE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, LwpaAddrinfo*);
 
 #define LWPA_SOCKET_DO_FOR_ALL_FAKES(operation) \
-  operation(lwpa_accept);                       \
-  operation(lwpa_bind);                         \
-  operation(lwpa_close);                        \
-  operation(lwpa_connect);                      \
-  operation(lwpa_getpeername);                  \
-  operation(lwpa_getsockname);                  \
-  operation(lwpa_getsockopt);                   \
-  operation(lwpa_listen);                       \
-  operation(lwpa_recv);                         \
-  operation(lwpa_recvfrom);                     \
-  operation(lwpa_send);                         \
-  operation(lwpa_sendto);                       \
-  operation(lwpa_setsockopt);                   \
-  operation(lwpa_shutdown);                     \
-  operation(lwpa_socket);                       \
-  operation(lwpa_setblocking);                  \
-  operation(lwpa_poll_context_init);            \
-  operation(lwpa_poll_context_deinit);          \
-  operation(lwpa_poll_add_socket);              \
-  operation(lwpa_poll_modify_socket);           \
-  operation(lwpa_poll_remove_socket);           \
-  operation(lwpa_poll_wait);                    \
-  operation(lwpa_getaddrinfo);                  \
-  operation(lwpa_nextaddr);                     \
-  operation(lwpa_freeaddrinfo);
+  operation(etcpal_accept);                       \
+  operation(etcpal_bind);                         \
+  operation(etcpal_close);                        \
+  operation(etcpal_connect);                      \
+  operation(etcpal_getpeername);                  \
+  operation(etcpal_getsockname);                  \
+  operation(etcpal_getsockopt);                   \
+  operation(etcpal_listen);                       \
+  operation(etcpal_recv);                         \
+  operation(etcpal_recvfrom);                     \
+  operation(etcpal_send);                         \
+  operation(etcpal_sendto);                       \
+  operation(etcpal_setsockopt);                   \
+  operation(etcpal_shutdown);                     \
+  operation(etcpal_socket);                       \
+  operation(etcpal_setblocking);                  \
+  operation(etcpal_poll_context_init);            \
+  operation(etcpal_poll_context_deinit);          \
+  operation(etcpal_poll_add_socket);              \
+  operation(etcpal_poll_modify_socket);           \
+  operation(etcpal_poll_remove_socket);           \
+  operation(etcpal_poll_wait);                    \
+  operation(etcpal_getaddrinfo);                  \
+  operation(etcpal_nextaddr);                     \
+  operation(etcpal_freeaddrinfo);
 
 #ifdef __cplusplus
 }

@@ -32,7 +32,7 @@
 #define NUM_ITERATIONS 10000
 
 static int shared_var;
-static lwpa_mutex_t mutex;
+static etcpal_mutex_t mutex;
 
 static void mutex_test_thread(void* arg)
 {
@@ -40,9 +40,9 @@ static void mutex_test_thread(void* arg)
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    lwpa_mutex_take(&mutex);
+    etcpal_mutex_take(&mutex);
     ++shared_var;
-    lwpa_mutex_give(&mutex);
+    etcpal_mutex_give(&mutex);
     // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
     // This ensures that each thread runs for long enough to get time-sliced multiple times.
     for (volatile size_t j = 0; j < 100; ++j)
@@ -55,12 +55,12 @@ TEST_GROUP(mutex_integration);
 TEST_SETUP(mutex_integration)
 {
   shared_var = 0;
-  TEST_ASSERT(lwpa_mutex_create(&mutex));
+  TEST_ASSERT(etcpal_mutex_create(&mutex));
 }
 
 TEST_TEAR_DOWN(mutex_integration)
 {
-  lwpa_mutex_destroy(&mutex);
+  etcpal_mutex_destroy(&mutex);
 }
 
 // Test the actual mutex functionality. Start a number of threads and have them all increment the
@@ -71,7 +71,7 @@ TEST_TEAR_DOWN(mutex_integration)
 // run. Tests on several platforms where the mutex lines were commented showed failure very reliably.
 TEST(mutex_integration, mutex_thread_test)
 {
-  lwpa_thread_t threads[NUM_THREADS];
+  etcpal_thread_t threads[NUM_THREADS];
 
   LwpaThreadParams params;
   LWPA_THREAD_SET_DEFAULT_PARAMS(&params);
@@ -80,11 +80,11 @@ TEST(mutex_integration, mutex_thread_test)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
-    TEST_ASSERT_TRUE_MESSAGE(lwpa_thread_create(&threads[i], &params, mutex_test_thread, NULL), error_msg);
+    TEST_ASSERT_TRUE_MESSAGE(etcpal_thread_create(&threads[i], &params, mutex_test_thread, NULL), error_msg);
   }
 
   for (size_t i = 0; i < NUM_THREADS; ++i)
-    TEST_ASSERT_TRUE(lwpa_thread_join(&threads[i]));
+    TEST_ASSERT_TRUE(etcpal_thread_join(&threads[i]));
 
   TEST_ASSERT_EQUAL(shared_var, (NUM_THREADS * NUM_ITERATIONS));
 }

@@ -17,34 +17,34 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "lwpa_mock/socket.h"
+#include "etcpal_mock/socket.h"
 
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_accept, lwpa_socket_t, LwpaSockaddr*, lwpa_socket_t*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_bind, lwpa_socket_t, const LwpaSockaddr*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_close, lwpa_socket_t);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_connect, lwpa_socket_t, const LwpaSockaddr*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getpeername, lwpa_socket_t, LwpaSockaddr*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockname, lwpa_socket_t, LwpaSockaddr*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getsockopt, lwpa_socket_t, int, int, void*, size_t*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_listen, lwpa_socket_t, int);
-DEFINE_FAKE_VALUE_FUNC(int, lwpa_recv, lwpa_socket_t, void*, size_t, int);
-DEFINE_FAKE_VALUE_FUNC(int, lwpa_recvfrom, lwpa_socket_t, void*, size_t, int, LwpaSockaddr*);
-DEFINE_FAKE_VALUE_FUNC(int, lwpa_send, lwpa_socket_t, const void*, size_t, int);
-DEFINE_FAKE_VALUE_FUNC(int, lwpa_sendto, lwpa_socket_t, const void*, size_t, int, const LwpaSockaddr*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setsockopt, lwpa_socket_t, int, int, const void*, size_t);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_shutdown, lwpa_socket_t, int);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_socket, unsigned int, unsigned int, lwpa_socket_t*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_accept, etcpal_socket_t, LwpaSockaddr*, etcpal_socket_t*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_bind, etcpal_socket_t, const LwpaSockaddr*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_close, etcpal_socket_t);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_connect, etcpal_socket_t, const LwpaSockaddr*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getpeername, etcpal_socket_t, LwpaSockaddr*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockname, etcpal_socket_t, LwpaSockaddr*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockopt, etcpal_socket_t, int, int, void*, size_t*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_listen, etcpal_socket_t, int);
+DEFINE_FAKE_VALUE_FUNC(int, etcpal_recv, etcpal_socket_t, void*, size_t, int);
+DEFINE_FAKE_VALUE_FUNC(int, etcpal_recvfrom, etcpal_socket_t, void*, size_t, int, LwpaSockaddr*);
+DEFINE_FAKE_VALUE_FUNC(int, etcpal_send, etcpal_socket_t, const void*, size_t, int);
+DEFINE_FAKE_VALUE_FUNC(int, etcpal_sendto, etcpal_socket_t, const void*, size_t, int, const LwpaSockaddr*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setsockopt, etcpal_socket_t, int, int, const void*, size_t);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_shutdown, etcpal_socket_t, int);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_socket, unsigned int, unsigned int, etcpal_socket_t*);
 
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_setblocking, lwpa_socket_t, bool);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setblocking, etcpal_socket_t, bool);
 
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_context_init, LwpaPollContext*);
-DEFINE_FAKE_VOID_FUNC(lwpa_poll_context_deinit, LwpaPollContext*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_add_socket, LwpaPollContext*, lwpa_socket_t, lwpa_poll_events_t, void*);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_modify_socket, LwpaPollContext*, lwpa_socket_t, lwpa_poll_events_t,
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_context_init, LwpaPollContext*);
+DEFINE_FAKE_VOID_FUNC(etcpal_poll_context_deinit, LwpaPollContext*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_add_socket, LwpaPollContext*, etcpal_socket_t, etcpal_poll_events_t, void*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_modify_socket, LwpaPollContext*, etcpal_socket_t, etcpal_poll_events_t,
                        void*);
-DEFINE_FAKE_VOID_FUNC(lwpa_poll_remove_socket, LwpaPollContext*, lwpa_socket_t);
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_poll_wait, LwpaPollContext*, LwpaPollEvent*, int);
+DEFINE_FAKE_VOID_FUNC(etcpal_poll_remove_socket, LwpaPollContext*, etcpal_socket_t);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_wait, LwpaPollContext*, LwpaPollEvent*, int);
 
-DEFINE_FAKE_VALUE_FUNC(lwpa_error_t, lwpa_getaddrinfo, const char*, const char*, const LwpaAddrinfo*, LwpaAddrinfo*);
-DEFINE_FAKE_VALUE_FUNC(bool, lwpa_nextaddr, LwpaAddrinfo*);
-DEFINE_FAKE_VOID_FUNC(lwpa_freeaddrinfo, LwpaAddrinfo*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getaddrinfo, const char*, const char*, const LwpaAddrinfo*, LwpaAddrinfo*);
+DEFINE_FAKE_VALUE_FUNC(bool, etcpal_nextaddr, LwpaAddrinfo*);
+DEFINE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, LwpaAddrinfo*);

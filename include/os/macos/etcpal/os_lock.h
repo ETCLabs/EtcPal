@@ -27,13 +27,13 @@
 extern "C" {
 #endif
 
-typedef pthread_mutex_t lwpa_mutex_t;
+typedef pthread_mutex_t etcpal_mutex_t;
 
-#define lwpa_mutex_create(idptr) ((pthread_mutex_init((idptr), NULL) == 0) ? true : false)
-#define lwpa_mutex_take(idptr) ((pthread_mutex_lock(idptr) == 0) ? true : false)
-#define lwpa_mutex_try_take(idptr) ((pthread_mutex_trylock(idptr) == 0) ? true : false)
-#define lwpa_mutex_give(idptr) ((void)pthread_mutex_unlock(idptr))
-#define lwpa_mutex_destroy(idptr) ((void)pthread_mutex_destroy(idptr))
+#define etcpal_mutex_create(idptr) ((pthread_mutex_init((idptr), NULL) == 0) ? true : false)
+#define etcpal_mutex_take(idptr) ((pthread_mutex_lock(idptr) == 0) ? true : false)
+#define etcpal_mutex_try_take(idptr) ((pthread_mutex_trylock(idptr) == 0) ? true : false)
+#define etcpal_mutex_give(idptr) ((void)pthread_mutex_unlock(idptr))
+#define etcpal_mutex_destroy(idptr) ((void)pthread_mutex_destroy(idptr))
 
 typedef struct
 {
@@ -41,13 +41,13 @@ typedef struct
   bool signaled;
   pthread_cond_t cond;
   pthread_mutex_t mutex;
-} lwpa_signal_t;
+} etcpal_signal_t;
 
-bool lwpa_signal_create(lwpa_signal_t* id);
-bool lwpa_signal_wait(lwpa_signal_t* id);
-bool lwpa_signal_poll(lwpa_signal_t* id);
-void lwpa_signal_post(lwpa_signal_t* id);
-void lwpa_signal_destroy(lwpa_signal_t* id);
+bool etcpal_signal_create(etcpal_signal_t* id);
+bool etcpal_signal_wait(etcpal_signal_t* id);
+bool etcpal_signal_poll(etcpal_signal_t* id);
+void etcpal_signal_post(etcpal_signal_t* id);
+void etcpal_signal_destroy(etcpal_signal_t* id);
 
 typedef struct
 {
@@ -55,16 +55,16 @@ typedef struct
   unsigned int reader_count;
   pthread_mutex_t readcount_mutex;
   pthread_mutex_t mutex;
-} lwpa_rwlock_t;
+} etcpal_rwlock_t;
 
-bool lwpa_rwlock_create(lwpa_rwlock_t* id);
-bool lwpa_rwlock_readlock(lwpa_rwlock_t* id);
-bool lwpa_rwlock_try_readlock(lwpa_rwlock_t* id);
-void lwpa_rwlock_readunlock(lwpa_rwlock_t* id);
-bool lwpa_rwlock_writelock(lwpa_rwlock_t* id);
-bool lwpa_rwlock_try_writelock(lwpa_rwlock_t* id);
-void lwpa_rwlock_writeunlock(lwpa_rwlock_t* id);
-void lwpa_rwlock_destroy(lwpa_rwlock_t* id);
+bool etcpal_rwlock_create(etcpal_rwlock_t* id);
+bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 #ifdef __cplusplus
 }

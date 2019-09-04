@@ -40,7 +40,7 @@ const LwpaUuid kLwpaNullUuid = {{0}};
  *                  behavior, this buffer should be at least of size #LWPA_UUID_STRING_BYTES.
  *  \param[in] uuid UUID to convert to a string.
  */
-void lwpa_uuid_to_string(char* buf, const LwpaUuid* uuid)
+void etcpal_uuid_to_string(char* buf, const LwpaUuid* uuid)
 {
   const uint8_t* c = uuid->data;
 
@@ -61,7 +61,7 @@ void lwpa_uuid_to_string(char* buf, const LwpaUuid* uuid)
  *  \param[in] buflen Size in bytes of buf.
  *  \return true (parse successful) or false (parse failure).
  */
-bool lwpa_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
+bool etcpal_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
 {
   const char* from_ptr = buf;
   uint8_t to_buf[LWPA_UUID_BYTES];
@@ -108,15 +108,15 @@ bool lwpa_string_to_uuid(LwpaUuid* uuid, const char* buf, size_t buflen)
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
-/*! \fn lwpa_error_t lwpa_generate_v1_uuid(LwpaUuid *uuid)
+/*! \fn etcpal_error_t etcpal_generate_v1_uuid(LwpaUuid *uuid)
  *  \brief Generate a Version 1 UUID.
  *
  *  This function uses the underlying OS API to create a UUID that is based on a combination of a
  *  local MAC address and the current system time. This method guarantees UUID uniqueness across
  *  space and time. Some OSes have deprecated this method because it creates a UUID that is
  *  traceable to the MAC address of the machine on which it was generated. If this type of security
- *  is a concern, lwpa_generate_v4_uuid() should be preferred. If you want to generate UUIDs that
- *  are deterministic for a combination of inputs you provide, see lwpa_generate_v3_uuid().
+ *  is a concern, etcpal_generate_v4_uuid() should be preferred. If you want to generate UUIDs that
+ *  are deterministic for a combination of inputs you provide, see etcpal_generate_v3_uuid().
  *
  *  This function may return #kLwpaErrNotImpl on platforms that do not have this functionality
  *  available (this is mostly a concern for RTOS-level embedded platforms).
@@ -162,7 +162,7 @@ static void generate_from_hash(LwpaUuid* uuid_out, MD5_CTX* pmd5)
  *  \return #kLwpaErrOk: UUID generated successfully.
  *  \return #kLwpaErrInvalid: Invalid argument provided.
  */
-lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
+etcpal_error_t etcpal_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
 {
   MD5_CTX md5;
   uint8_t num[4];
@@ -193,12 +193,12 @@ lwpa_error_t lwpa_generate_v3_uuid(LwpaUuid* uuid, const char* devstr, const uin
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
-/*! \fn lwpa_error_t lwpa_generate_v4_uuid(LwpaUuid *uuid)
+/*! \fn etcpal_error_t etcpal_generate_v4_uuid(LwpaUuid *uuid)
  *  \brief Generate a Version 4 UUID.
  *
  *  This function uses the underlying OS API to create a UUID that is based on random data. The
  *  quality of the random data used may differ across platforms. If you want to generate UUIDs that
- *  are deterministic for a combination of inputs you provide, see lwpa_generate_v3_uuid().
+ *  are deterministic for a combination of inputs you provide, see etcpal_generate_v3_uuid().
  *
  *  This function may return #kLwpaErrNotImpl on platforms that do not have this functionality
  *  available (this is mostly a concern for RTOS-level embedded platforms).

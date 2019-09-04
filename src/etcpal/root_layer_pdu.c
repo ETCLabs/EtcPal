@@ -48,7 +48,7 @@
  *  \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
  *          contain a valid TCP preamble).
  */
-bool lwpa_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble* preamble)
+bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble* preamble)
 {
   if (!preamble || !buf || (buflen < ACN_TCP_PREAMBLE_SIZE))
     return false;
@@ -56,7 +56,7 @@ bool lwpa_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble*
   if (memcmp(buf, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE) == 0)
   {
     preamble->rlp_block = buf + ACN_TCP_PREAMBLE_SIZE;
-    preamble->rlp_block_len = lwpa_upack_32b(buf + ACN_PACKET_IDENT_SIZE);
+    preamble->rlp_block_len = etcpal_upack_32b(buf + ACN_PACKET_IDENT_SIZE);
     return true;
   }
   return false;
@@ -73,7 +73,7 @@ bool lwpa_parse_tcp_preamble(const uint8_t* buf, size_t buflen, LwpaTcpPreamble*
  *  \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
  *          contain a valid UDP preamble).
  */
-bool lwpa_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble* preamble)
+bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble* preamble)
 {
   const uint8_t* pcur;
   uint16_t preamble_len, postamble_len;
@@ -82,9 +82,9 @@ bool lwpa_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble*
     return false;
 
   pcur = buf;
-  preamble_len = lwpa_upack_16b(pcur);
+  preamble_len = etcpal_upack_16b(pcur);
   pcur += 2;
-  postamble_len = lwpa_upack_16b(pcur);
+  postamble_len = etcpal_upack_16b(pcur);
   pcur += 2;
   if ((preamble_len == ACN_UDP_PREAMBLE_SIZE) && (memcmp(pcur, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE) == 0) &&
       (buflen > (unsigned)(preamble_len + postamble_len)))
@@ -107,7 +107,7 @@ bool lwpa_parse_udp_preamble(const uint8_t* buf, size_t buflen, LwpaUdpPreamble*
  *                      first PDU in the block.
  *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaRootLayerPdu* last_pdu)
+bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaRootLayerPdu* last_pdu)
 {
   uint32_t min_pdu_len, pdu_len;
   bool extlength, inheritvect, inherithead, inheritdata;
@@ -144,7 +144,7 @@ bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLay
     pdu->vector = last_pdu->vector;
   else
   {
-    pdu->vector = lwpa_upack_32b(cur_ptr);
+    pdu->vector = etcpal_upack_32b(cur_ptr);
     cur_ptr += 4;
     if (PROT_MANDATES_L_FLAG(pdu->vector) && !extlength)
       return false;
@@ -179,8 +179,8 @@ bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLay
  *
  *  Example usage:
  *
- *  After parsing an ACN protocol family preamble (perhaps by using lwpa_parse_udp_preamble() or
- *  lwpa_parse_tcp_preamble()), buf points to the data starting after the preamble and buflen is the
+ *  After parsing an ACN protocol family preamble (perhaps by using etcpal_parse_udp_preamble() or
+ *  etcpal_parse_tcp_preamble()), buf points to the data starting after the preamble and buflen is the
  *  length parsed from the preamble...
  *
  *  \code
@@ -189,7 +189,7 @@ bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLay
  *  do
  *  {
  *      LwpaRootLayerPdu cur;
- *      res = lwpa_parse_root_layer_pdu(buf, buflen, &cur, &pdu);
+ *      res = etcpal_parse_root_layer_pdu(buf, buflen, &cur, &pdu);
  *      if (res)
  *      {
  *          // Example application handler function that forwards the pdu appropriately based on
@@ -205,7 +205,7 @@ bool lwpa_parse_root_layer_header(const uint8_t* buf, size_t buflen, LwpaRootLay
  *  \param[in,out] last_pdu State data for future calls.
  *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool lwpa_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaPdu* last_pdu)
+bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerPdu* pdu, LwpaPdu* last_pdu)
 {
   LwpaPduConstraints rlp_constraints = {/* vector_size */ 4,
                                         /* header_size */ 16};
@@ -213,9 +213,9 @@ bool lwpa_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerP
   if (!buf || !pdu || !last_pdu)
     return false;
 
-  if (lwpa_parse_pdu(buf, buflen, &rlp_constraints, last_pdu))
+  if (etcpal_parse_pdu(buf, buflen, &rlp_constraints, last_pdu))
   {
-    pdu->vector = lwpa_upack_32b(last_pdu->pvector);
+    pdu->vector = etcpal_upack_32b(last_pdu->pvector);
     memcpy(pdu->sender_cid.data, last_pdu->pheader, LWPA_UUID_BYTES);
     pdu->pdata = last_pdu->pdata;
     pdu->datalen = last_pdu->datalen;
@@ -233,7 +233,7 @@ bool lwpa_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, LwpaRootLayerP
  *                    #ACN_UDP_PREAMBLE_SIZE.
  *  \return Number of bytes packed (success) or 0 (failure).
  */
-size_t lwpa_pack_udp_preamble(uint8_t* buf, size_t buflen)
+size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen)
 {
   uint8_t* cur_ptr;
 
@@ -241,9 +241,9 @@ size_t lwpa_pack_udp_preamble(uint8_t* buf, size_t buflen)
     return 0;
 
   cur_ptr = buf;
-  lwpa_pack_16b(cur_ptr, ACN_UDP_PREAMBLE_SIZE);
+  etcpal_pack_16b(cur_ptr, ACN_UDP_PREAMBLE_SIZE);
   cur_ptr += 2;
-  lwpa_pack_16b(cur_ptr, 0);
+  etcpal_pack_16b(cur_ptr, 0);
   cur_ptr += 2;
   memcpy(cur_ptr, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE);
   cur_ptr += ACN_PACKET_IDENT_SIZE;
@@ -261,7 +261,7 @@ size_t lwpa_pack_udp_preamble(uint8_t* buf, size_t buflen)
  *                           this TCP preamble.
  *  \return Number of bytes packed (success) or 0 (failure).
  */
-size_t lwpa_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
+size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
 {
   uint8_t* cur_ptr;
 
@@ -271,21 +271,21 @@ size_t lwpa_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
   cur_ptr = buf;
   memcpy(cur_ptr, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE);
   cur_ptr += ACN_PACKET_IDENT_SIZE;
-  lwpa_pack_32b(cur_ptr, (uint32_t)rlp_block_len);
+  etcpal_pack_32b(cur_ptr, (uint32_t)rlp_block_len);
   cur_ptr += 4;
   return (size_t)(cur_ptr - buf);
 }
 
 /*! \brief Get the buffer size to allocate for a Root Layer PDU block.
  *
- *  Calculate the buffer size to allocate for a future call to lwpa_pack_root_layer_block(), given
+ *  Calculate the buffer size to allocate for a future call to etcpal_pack_root_layer_block(), given
  *  an array of LwpaRootLayerPdu.
  *
  *  \param[in] pdu_block Array of structs representing a Root Layer PDU block.
  *  \param[in] num_pdus Size of the pdu_block array.
  *  \return Buffer size to allocate.
  */
-size_t lwpa_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pdus)
+size_t etcpal_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pdus)
 {
   const LwpaRootLayerPdu* pdu;
   size_t block_size = 0;
@@ -311,7 +311,7 @@ size_t lwpa_root_layer_buf_size(const LwpaRootLayerPdu* pdu_block, size_t num_pd
  * \param[in] pdu PDU for which to pack the header into a buffer.
  * \return Number of bytes packed (success) or 0 (failure).
  */
-size_t lwpa_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu)
+size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu)
 {
   uint8_t* cur_ptr = buf;
 
@@ -330,7 +330,7 @@ size_t lwpa_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLa
     LWPA_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->datalen);
     cur_ptr += 2;
   }
-  lwpa_pack_32b(cur_ptr, pdu->vector);
+  etcpal_pack_32b(cur_ptr, pdu->vector);
   cur_ptr += 4;
   memcpy(cur_ptr, pdu->sender_cid.data, LWPA_UUID_BYTES);
   cur_ptr += LWPA_UUID_BYTES;
@@ -339,23 +339,23 @@ size_t lwpa_pack_root_layer_header(uint8_t* buf, size_t buflen, const LwpaRootLa
 
 /*! \brief Pack a Root Layer PDU block into a buffer.
  *
- *  The required buffer size can be calculated in advance using lwpa_root_layer_buf_size().
+ *  The required buffer size can be calculated in advance using etcpal_root_layer_buf_size().
  *
  *  \param[out] buf Buffer into which to pack the Root Layer PDU block.
  *  \param[in] buflen Size in bytes of buf.
  *  \param[in] pdu_block Array of LwpaRootLayerPdu representing the PDU block to pack.
  *  \param[in] num_pdus Number of LwpaRootLayerPdu that make up the pdu_block array.
  *  \return Number of bytes packed (success) or 0 (failure). Note that this might be less than the
- *          value returned by lwpa_root_layer_buf_size(); this is because this function performs
+ *          value returned by etcpal_root_layer_buf_size(); this is because this function performs
  *          more optimizations related to PDU inheritance.
  */
-size_t lwpa_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu_block, size_t num_pdus)
+size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLayerPdu* pdu_block, size_t num_pdus)
 {
   uint8_t* cur_ptr = buf;
   const LwpaRootLayerPdu* pdu;
   LwpaRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
 
-  if (!buf || !pdu_block || (lwpa_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
+  if (!buf || !pdu_block || (etcpal_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
   {
     return 0;
   }
@@ -428,7 +428,7 @@ size_t lwpa_pack_root_layer_block(uint8_t* buf, size_t buflen, const LwpaRootLay
 
     if (!inheritvec)
     {
-      lwpa_pack_32b(cur_ptr, pdu->vector);
+      etcpal_pack_32b(cur_ptr, pdu->vector);
       cur_ptr += 4;
     }
     if (!inherithead)

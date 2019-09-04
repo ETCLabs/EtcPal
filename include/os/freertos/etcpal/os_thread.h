@@ -32,7 +32,7 @@ extern "C" {
 
 #define LWPA_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
 #define LWPA_THREAD_DEFAULT_STACK 500
-#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
+#define LWPA_THREAD_DEFAULT_NAME "etcpal_thread"
 
 typedef struct
 {
@@ -40,9 +40,9 @@ typedef struct
   void* arg;
   SemaphoreHandle_t sig;
   TaskHandle_t tid;
-} lwpa_thread_t;
+} etcpal_thread_t;
 
-#define lwpa_thread_sleep(sleep_ms) vTaskDelay(pdMS_TO_TICKS(sleep_ms))
+#define etcpal_thread_sleep(sleep_ms) vTaskDelay(pdMS_TO_TICKS(sleep_ms))
 
 #ifdef __cplusplus
 }

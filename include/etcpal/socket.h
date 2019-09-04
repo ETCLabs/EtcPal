@@ -27,7 +27,7 @@
 #include "etcpal/error.h"
 #include "etcpal/inet.h"
 
-/*! \defgroup lwpa_socket lwpa_socket
+/*! \defgroup etcpal_socket etcpal_socket
  *  \ingroup lwpa
  *  \brief Platform-neutral BSD-modeled network socket implementation.
  *
@@ -41,24 +41,24 @@
  *  @{
  */
 
-/*! Event flags for the lwpa_poll_*() API functions. */
-typedef uint32_t lwpa_poll_events_t;
+/*! Event flags for the etcpal_poll_*() API functions. */
+typedef uint32_t etcpal_poll_events_t;
 
 #include "etcpal/os_socket.h" /* .he os-specific socket definitions */
 
 /* clang-format off */
 
-/*! \name Flags for lwpa_recvfrom()
+/*! \name Flags for etcpal_recvfrom()
  *  @{ */
 #define LWPA_MSG_PEEK 0x1
 /*! @} */
 
-/* Note: no flags are currently implemented for lwpa_sendto() */
+/* Note: no flags are currently implemented for etcpal_sendto() */
 
-/*! \name Level values for lwpa_setsockopt() and lwpa_getsockopt()
+/*! \name Level values for etcpal_setsockopt() and etcpal_getsockopt()
  *  Refer to the group of option names for each level.
  *  @{ */
-#define LWPA_SOL_SOCKET     0 /*!< lwpa_socket API level. */
+#define LWPA_SOL_SOCKET     0 /*!< etcpal_socket API level. */
 #define LWPA_IPPROTO_IP     1 /*!< IPv4 protocol level. */
 #define LWPA_IPPROTO_ICMPV6 2 /*!< ICMPv6 protocol level. */
 #define LWPA_IPPROTO_IPV6   3 /*!< IPv6 protocol level. */
@@ -67,7 +67,7 @@ typedef uint32_t lwpa_poll_events_t;
 /*! @} */
 
 /*! \name Options for level LWPA_SOL_SOCKET
- *  Used in the option parameter to lwpa_setsockopt() and lwpa_getsockopt().
+ *  Used in the option parameter to etcpal_setsockopt() and etcpal_getsockopt().
  *  Refer to the similarly-named option on your favorite man page for more details.
  *  @{ */
 #define LWPA_SO_BROADCAST 0  /*!< Get/Set, value is boolean int */
@@ -84,7 +84,7 @@ typedef uint32_t lwpa_poll_events_t;
 /*! @} */
 
 /*! \name Options for level LWPA_IPPROTO_IP or LWPA_IPPROTO_IPV6
- *  Used in the option parameter to lwpa_setsockopt() and lwpa_getsockopt().
+ *  Used in the option parameter to etcpal_setsockopt() and etcpal_getsockopt().
  *  Refer to the similarly-named option on your favorite man page for more details.
  *  @{ */
 /*! Get/Set, value is int. Value indicates TTL for IPv4 or hop limit for IPv6. */
@@ -135,21 +135,21 @@ typedef struct LwpaGroupReq
   LwpaIpAddr group;
 } LwpaGroupReq;
 
-/*! \name 'how' values for lwpa_shutdown()
+/*! \name 'how' values for etcpal_shutdown()
  *  @{ */
 #define LWPA_SHUT_RD 0
 #define LWPA_SHUT_WR 1
 #define LWPA_SHUT_RDWR 2
 /*! @} */
 
-/*! \name 'family' values for lwpa_socket() and LwpaAddrinfo
+/*! \name 'family' values for etcpal_socket() and LwpaAddrinfo
  *  @{ */
 #define LWPA_AF_UNSPEC 0
 #define LWPA_AF_INET 1
 #define LWPA_AF_INET6 2
 /*! @} */
 
-/*! \name 'type' values for lwpa_socket() and lwpa_getsockopt()
+/*! \name 'type' values for etcpal_socket() and etcpal_getsockopt()
  *  @{ */
 #define LWPA_STREAM 0
 #define LWPA_DGRAM 1
@@ -161,33 +161,33 @@ typedef struct LwpaGroupReq
 extern "C" {
 #endif
 
-lwpa_error_t lwpa_accept(lwpa_socket_t id, LwpaSockaddr* address, lwpa_socket_t* conn_sock);
-lwpa_error_t lwpa_bind(lwpa_socket_t id, const LwpaSockaddr* address);
-lwpa_error_t lwpa_close(lwpa_socket_t id);
-lwpa_error_t lwpa_connect(lwpa_socket_t id, const LwpaSockaddr* address);
-lwpa_error_t lwpa_getpeername(lwpa_socket_t id, LwpaSockaddr* address);
-lwpa_error_t lwpa_getsockname(lwpa_socket_t id, LwpaSockaddr* address);
-lwpa_error_t lwpa_getsockopt(lwpa_socket_t id, int level, int option_name, void* option_value, size_t* option_len);
-lwpa_error_t lwpa_listen(lwpa_socket_t id, int backlog);
-int lwpa_recv(lwpa_socket_t id, void* buffer, size_t length, int flags);
-int lwpa_recvfrom(lwpa_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address);
+etcpal_error_t etcpal_accept(etcpal_socket_t id, LwpaSockaddr* address, etcpal_socket_t* conn_sock);
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const LwpaSockaddr* address);
+etcpal_error_t etcpal_close(etcpal_socket_t id);
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const LwpaSockaddr* address);
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, LwpaSockaddr* address);
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, LwpaSockaddr* address);
+etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len);
+etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog);
+int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags);
+int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, LwpaSockaddr* address);
 /* recvmsg - not implemented */
-int lwpa_send(lwpa_socket_t id, const void* message, size_t length, int flags);
+int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags);
 /* sendmsg - not implemented */
-int lwpa_sendto(lwpa_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr);
-lwpa_error_t lwpa_setsockopt(lwpa_socket_t id, int level, int option_name, const void* option_value, size_t option_len);
-lwpa_error_t lwpa_shutdown(lwpa_socket_t id, int how);
-lwpa_error_t lwpa_socket(unsigned int family, unsigned int type, lwpa_socket_t* id);
+int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const LwpaSockaddr* dest_addr);
+etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value, size_t option_len);
+etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
+etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t* id);
 /* socketpair - not implemented */
 
 /**************************** Mimic fcntl() API ******************************/
 
-lwpa_error_t lwpa_setblocking(lwpa_socket_t id, bool blocking);
-lwpa_error_t lwpa_getblocking(lwpa_socket_t id, bool* blocking);
+etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking);
+etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
 
 /**************************** Mimic poll() API *******************************/
 
-/*! \name Flag values to use with lwpa_poll_events_t.
+/*! \name Flag values to use with etcpal_poll_events_t.
  *
  *  @{ */
 #define LWPA_POLL_IN 0x1u      /*!< Notify when data is available for reading on the socket. */
@@ -197,26 +197,26 @@ lwpa_error_t lwpa_getblocking(lwpa_socket_t id, bool* blocking);
 #define LWPA_POLL_ERR 0x10u    /*!< An error has occurred on the socket (output only). */
 /*! @} */
 
-/* Mask of valid events for use with lwpa_poll_add_socket(). */
+/* Mask of valid events for use with etcpal_poll_add_socket(). */
 #define LWPA_POLL_VALID_INPUT_EVENT_MASK 0x0fu
 
-/*! A description of an event that occurred on a socket, for usage with lwpa_poll_wait(). */
+/*! A description of an event that occurred on a socket, for usage with etcpal_poll_wait(). */
 typedef struct LwpaPollEvent
 {
-  lwpa_socket_t socket;      /*!< Socket which had activity. */
-  lwpa_poll_events_t events; /*!< Event(s) that occurred on the socket. */
-  lwpa_error_t err;          /*!< More information about an error that occurred on the socket. */
+  etcpal_socket_t socket;      /*!< Socket which had activity. */
+  etcpal_poll_events_t events; /*!< Event(s) that occurred on the socket. */
+  etcpal_error_t err;          /*!< More information about an error that occurred on the socket. */
   void* user_data;           /*!< The user data that was given when this socket was added. */
 } LwpaPollEvent;
 
-lwpa_error_t lwpa_poll_context_init(LwpaPollContext* context);
-void lwpa_poll_context_deinit(LwpaPollContext* context);
-lwpa_error_t lwpa_poll_add_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t events,
+etcpal_error_t etcpal_poll_context_init(LwpaPollContext* context);
+void etcpal_poll_context_deinit(LwpaPollContext* context);
+etcpal_error_t etcpal_poll_add_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
                                   void* user_data);
-lwpa_error_t lwpa_poll_modify_socket(LwpaPollContext* context, lwpa_socket_t socket, lwpa_poll_events_t new_events,
+etcpal_error_t etcpal_poll_modify_socket(LwpaPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
                                      void* new_user_data);
-void lwpa_poll_remove_socket(LwpaPollContext* context, lwpa_socket_t socket);
-lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms);
+void etcpal_poll_remove_socket(LwpaPollContext* context, etcpal_socket_t socket);
+etcpal_error_t etcpal_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int timeout_ms);
 
 /************************ Mimic getaddrinfo() API ****************************/
 
@@ -230,7 +230,7 @@ lwpa_error_t lwpa_poll_wait(LwpaPollContext* context, LwpaPollEvent* event, int 
 /*! @} */
 
 /*! A structure containing name and address information about an internet host. Returned by
- *  lwpa_getaddrinfo(). */
+ *  etcpal_getaddrinfo(). */
 typedef struct LwpaAddrinfo
 {
   int ai_flags;         /*!< i.e. LWPA_AI_xxx */
@@ -242,13 +242,13 @@ typedef struct LwpaAddrinfo
   void* pd[2];          /*!< Used by internal platform logic; don't touch */
 } LwpaAddrinfo;
 
-lwpa_error_t lwpa_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
+etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const LwpaAddrinfo* hints,
                               LwpaAddrinfo* result);
 
-bool lwpa_nextaddr(LwpaAddrinfo* ai);
+bool etcpal_nextaddr(LwpaAddrinfo* ai);
 
 /* Call with any of the LwpaAddrinfos in the list to free the whole list */
-void lwpa_freeaddrinfo(LwpaAddrinfo* ai);
+void etcpal_freeaddrinfo(LwpaAddrinfo* ai);
 
 #ifdef __cplusplus
 }

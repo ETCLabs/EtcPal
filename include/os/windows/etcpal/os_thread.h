@@ -42,7 +42,7 @@ extern "C" {
 
 #define LWPA_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL
 #define LWPA_THREAD_DEFAULT_STACK 0
-#define LWPA_THREAD_DEFAULT_NAME "lwpa_thread"
+#define LWPA_THREAD_DEFAULT_NAME "etcpal_thread"
 
 #define LWPA_THREAD_NAME_MAX_LENGTH 32
 
@@ -52,9 +52,9 @@ typedef struct
   void* arg;
   HANDLE tid;
   char name[LWPA_THREAD_NAME_MAX_LENGTH];
-} lwpa_thread_t;
+} etcpal_thread_t;
 
-#define lwpa_thread_sleep(sleep_ms) Sleep(sleep_ms)
+#define etcpal_thread_sleep(sleep_ms) Sleep(sleep_ms)
 
 #ifdef __cplusplus
 }

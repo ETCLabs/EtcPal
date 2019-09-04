@@ -22,7 +22,7 @@
 #ifndef _LWPA_INT_H_
 #define _LWPA_INT_H_
 
-/*! \defgroup lwpa_int lwpa_int
+/*! \defgroup etcpal_int etcpal_int
  *  \ingroup lwpa
  *  \brief Fixed-width integer types.
  *
@@ -44,7 +44,7 @@
  *  \brief Define this value in your compiler settings if your toolchain provides a <stdint.h>.
  *
  *  Some compilers are non-C99 (or non-C++11) and nevertheless provide fixed-width types in
- *  <stdint.h>. In that situation, the user can define HAVE_STDINT_H to force lwpa_int to include
+ *  <stdint.h>. In that situation, the user can define HAVE_STDINT_H to force etcpal_int to include
  *  <stdint.h>.
  */
 #if DOXYGEN

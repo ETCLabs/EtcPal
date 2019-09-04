@@ -26,11 +26,11 @@
  *  \param interval Timer interval in milliseconds. An interval of 0 will result in a timer that is
  *                  always expired.
  */
-void lwpa_timer_start(LwpaTimer* timer, uint32_t interval)
+void etcpal_timer_start(LwpaTimer* timer, uint32_t interval)
 {
   if (timer)
   {
-    timer->reset_time = lwpa_getms();
+    timer->reset_time = etcpal_getms();
     timer->interval = interval;
   }
 }
@@ -38,11 +38,11 @@ void lwpa_timer_start(LwpaTimer* timer, uint32_t interval)
 /*! \brief Reset a timer while keeping the same interval.
  *  \param timer Pointer to the LwpaTimer to reset.
  */
-void lwpa_timer_reset(LwpaTimer* timer)
+void etcpal_timer_reset(LwpaTimer* timer)
 {
   if (timer)
   {
-    timer->reset_time = lwpa_getms();
+    timer->reset_time = etcpal_getms();
   }
 }
 
@@ -50,11 +50,11 @@ void lwpa_timer_reset(LwpaTimer* timer)
  *  \param timer Pointer to the LwpaTimer of which to get the elapsed time.
  *  \return Number of milliseconds since the timer was reset.
  */
-uint32_t lwpa_timer_elapsed(const LwpaTimer* timer)
+uint32_t etcpal_timer_elapsed(const LwpaTimer* timer)
 {
   if (timer)
   {
-    return lwpa_getms() - timer->reset_time;
+    return etcpal_getms() - timer->reset_time;
   }
   return 0;
 }
@@ -66,11 +66,11 @@ uint32_t lwpa_timer_elapsed(const LwpaTimer* timer)
  *  \return false: Less than or equal to \link LwpaTimer::interval interval \endlink milliseconds
  *          have passed since the timer was started/reset)
  */
-bool lwpa_timer_is_expired(const LwpaTimer* timer)
+bool etcpal_timer_is_expired(const LwpaTimer* timer)
 {
   if (timer)
   {
-    return ((timer->interval == 0) || ((lwpa_getms() - timer->reset_time) > timer->interval));
+    return ((timer->interval == 0) || ((etcpal_getms() - timer->reset_time) > timer->interval));
   }
   return true;
 }
@@ -79,12 +79,12 @@ bool lwpa_timer_is_expired(const LwpaTimer* timer)
  *  \param timer Pointer to the LwpaTimer of which to get the remaining time.
  *  \return Remaining time in milliseconds or 0 (timer is expired).
  */
-uint32_t lwpa_timer_remaining(const LwpaTimer* timer)
+uint32_t etcpal_timer_remaining(const LwpaTimer* timer)
 {
   uint32_t res = 0;
   if (timer->interval != 0)
   {
-    uint32_t cur_ms = lwpa_getms();
+    uint32_t cur_ms = etcpal_getms();
     if (cur_ms - timer->reset_time < timer->interval)
       res = timer->reset_time + timer->interval - cur_ms;
   }

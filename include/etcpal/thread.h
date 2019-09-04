@@ -43,11 +43,11 @@ typedef struct LwpaThreadParams
     (threadparamsptr)->platform_data = NULL;                           \
   } while (0)
 
-bool lwpa_thread_create(lwpa_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
-bool lwpa_thread_join(lwpa_thread_t* id);
+bool etcpal_thread_create(etcpal_thread_t* id, const LwpaThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
+bool etcpal_thread_join(etcpal_thread_t* id);
 
-#ifndef lwpa_thread_sleep
-void lwpa_thread_sleep(int sleep_ms);
+#ifndef etcpal_thread_sleep
+void etcpal_thread_sleep(int sleep_ms);
 #endif
 
 #ifdef __cplusplus
