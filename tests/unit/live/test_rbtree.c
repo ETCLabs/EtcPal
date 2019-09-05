@@ -201,11 +201,15 @@ TEST(etcpal_rbtree, insert_failure_should_not_leak_memory)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(&tree, &val));
   TEST_ASSERT_EQUAL(kEtcPalErrExists, etcpal_rbtree_insert(&tree, &val));
 
+  // Alloc should only have been called once - failed insert should not alloc or dealloc
+  TEST_ASSERT_EQUAL_UINT(node_alloc_fake.call_count, 1u);
+  TEST_ASSERT_EQUAL_UINT(node_dealloc_fake.call_count, 0u);
+
   // Now clear the tree
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_clear(&tree));
 
   // The alloc and dealloc count should be equal - no memory should be leaked
-  TEST_ASSERT_EQUAL(node_alloc_fake.call_count, node_dealloc_fake.call_count);
+  TEST_ASSERT_EQUAL_UINT(node_alloc_fake.call_count, node_dealloc_fake.call_count);
 }
 
 TEST(etcpal_rbtree, iterators_work_as_expected)

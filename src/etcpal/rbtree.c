@@ -214,6 +214,10 @@ void* etcpal_rbtree_find(EtcPalRbTree* self, void* value)
  */
 etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
 {
+  void* found_val = etcpal_rbtree_find(self, value);
+  if (found_val)
+    return kEtcPalErrExists;
+
   EtcPalRbNode* new_node = rb_node_create(self, value);
   if (new_node)
   {
