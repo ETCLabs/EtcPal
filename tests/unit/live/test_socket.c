@@ -142,6 +142,26 @@ TEST(etcpal_socket, poll_invalid_calls_fail)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock));
 }
 
+// Test that we can add and remove sockets using etcpal_poll_add_socket() and
+// etcpal_poll_remove_socket() with predictable behavior resulting
+TEST(etcpal_socket, poll_add_remove_socket_works)
+{
+  EtcPalPollContext context;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
+
+  etcpal_socket_t sock;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &sock));
+  TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_IN, NULL));
+  etcpal_poll_remove_socket(&context, sock);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_OUT, NULL));
+  etcpal_poll_remove_socket(&context, sock);
+
+  etcpal_poll_context_deinit(&context);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock));
+}
+
 TEST(etcpal_socket, poll_user_data_works)
 {
   etcpal_socket_t sock_1, sock_2;
@@ -379,6 +399,7 @@ TEST_GROUP_RUNNER(etcpal_socket)
   RUN_TEST_CASE(etcpal_socket, sockopts);
   RUN_TEST_CASE(etcpal_socket, blocking_state_is_consistent);
   RUN_TEST_CASE(etcpal_socket, poll_invalid_calls_fail);
+  RUN_TEST_CASE(etcpal_socket, poll_add_remove_socket_works);
   RUN_TEST_CASE(etcpal_socket, poll_user_data_works);
   RUN_TEST_CASE(etcpal_socket, poll_modify_socket_works);
   RUN_TEST_CASE(etcpal_socket, poll_for_readability_on_udp_sockets_works);

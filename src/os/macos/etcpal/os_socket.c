@@ -712,7 +712,7 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
       int num_events = events_etcpal_to_kqueue(socket, sock_desc->events, 0, NULL, os_events);
 
       kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
-      etcpal_rbtree_remove(&context->sockets, &sock_desc);
+      etcpal_rbtree_remove(&context->sockets, sock_desc);
     }
   }
 }
