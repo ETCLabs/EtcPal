@@ -44,7 +44,6 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
   {
     struct sockaddr_in* sin = (struct sockaddr_in*)os_ip;
     memset(sin, 0, sizeof(struct sockaddr_in));
-    sin->sin_len = sizeof(struct sockaddr_in);
     sin->sin_family = AF_INET;
     sin->sin_addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(ip));
     ret = sizeof(struct sockaddr_in);
@@ -53,7 +52,6 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
   {
     struct sockaddr_in6* sin6 = (struct sockaddr_in6*)os_ip;
     memset(sin6, 0, sizeof(struct sockaddr_in6));
-    sin6->sin6_len = sizeof(struct sockaddr_in6);
     sin6->sin6_family = AF_INET6;
     memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(ip), ETCPAL_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
