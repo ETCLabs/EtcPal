@@ -2,7 +2,7 @@
 # These are "live" tests which use multiple parts of the EtcPal library. Most of what is tested
 # here are the locking, threading and synchronization functions.
 
-etcpal_add_live_test(etcpal_integration_tests
+etcpal_add_live_test(etcpal_integration_tests C
   mutex_integration_test.c
   rwlock_integration_test.c
   signal_integration_test.c
