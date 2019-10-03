@@ -39,13 +39,22 @@ typedef struct EtcPalModuleInit
 
 #define ETCPAL_MODULE_INIT(module_name) { false, module_name##_init, module_name##_deinit }
 
-#define ETCPAL_MODULE_INIT_ARRAY     \
-  {                                \
+#if ETCPAL_NO_NETINTS
+#define ETCPAL_MODULE_INIT_ARRAY       \
+  {                                    \
+    ETCPAL_MODULE_INIT(etcpal_socket), \
+    ETCPAL_MODULE_INIT(etcpal_timer),  \
+    ETCPAL_MODULE_INIT(etcpal_log)     \
+  }
+#else
+#define ETCPAL_MODULE_INIT_ARRAY       \
+  {                                    \
     ETCPAL_MODULE_INIT(etcpal_socket), \
     ETCPAL_MODULE_INIT(etcpal_netint), \
     ETCPAL_MODULE_INIT(etcpal_timer),  \
     ETCPAL_MODULE_INIT(etcpal_log)     \
   }
+#endif
 
 /* clang-format on */
 

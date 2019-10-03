@@ -19,7 +19,6 @@ add_library(EtcPal
   ${ETCPAL_ROOT}/include/etcpal/int.h
   ${ETCPAL_ROOT}/include/etcpal/log.h
   ${ETCPAL_ROOT}/include/etcpal/mempool.h
-  ${ETCPAL_ROOT}/include/etcpal/netint.h
   ${ETCPAL_ROOT}/include/etcpal/pack.h
   ${ETCPAL_ROOT}/include/etcpal/pdu.h
   ${ETCPAL_ROOT}/include/etcpal/rbtree.h
@@ -41,7 +40,6 @@ add_library(EtcPal
   ${ETCPAL_ROOT}/src/etcpal/md5.h
   ${ETCPAL_ROOT}/src/etcpal/md5.c
   ${ETCPAL_ROOT}/src/etcpal/mempool.c
-  ${ETCPAL_ROOT}/src/etcpal/netint.c
   ${ETCPAL_ROOT}/src/etcpal/pack.c
   ${ETCPAL_ROOT}/src/etcpal/pdu.c
   ${ETCPAL_ROOT}/src/etcpal/rbtree.c
@@ -55,12 +53,22 @@ add_library(EtcPal
   ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_uuid.c
 
   ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.c
-  ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
   ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.c
   
   ${ETCPAL_OS_ADDITIONAL_SOURCES}
   ${ETCPAL_NET_ADDITIONAL_SOURCES}
 )
+
+# Temporary - TODO fix netints on iOS
+if(IOS)
+  target_compile_definitions(EtcPal PRIVATE ETCPAL_NO_NETINTS)
+else()
+  target_sources(EtcPal PRIVATE
+    ${ETCPAL_ROOT}/include/etcpal/netint.h
+    ${ETCPAL_ROOT}/src/etcpal/netint.c
+    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
+  )
+endif()
 
 # EtcPal public include directories and library dependencies
 target_include_directories(EtcPal PUBLIC

@@ -49,6 +49,7 @@ TEST(etcpal_common, features_all_but_macro_works)
   TEST_ASSERT_UNLESS(mask & ETCPAL_FEATURE_LOGGING);
 }
 
+#if !DISABLE_SOCKET_TESTS
 // Test multiple calls of etcpal_init() for the netint module.
 TEST(etcpal_common, netint_double_init_works)
 {
@@ -63,6 +64,7 @@ TEST(etcpal_common, netint_double_init_works)
 
   etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 }
+#endif
 
 // A shim from the etcpal_log module to fff.
 FAKE_VOID_FUNC(common_test_log_callback, void*, const EtcPalLogStrings*);
@@ -98,6 +100,8 @@ TEST(etcpal_common, log_double_init_works)
 TEST_GROUP_RUNNER(etcpal_common)
 {
   RUN_TEST_CASE(etcpal_common, features_all_but_macro_works);
+#if !DISABLE_SOCKET_TESTS
   RUN_TEST_CASE(etcpal_common, netint_double_init_works);
+#endif
   RUN_TEST_CASE(etcpal_common, log_double_init_works);
 }
