@@ -144,15 +144,15 @@ typedef struct EtcPalGroupReq
 
 /*! \name 'family' values for etcpal_socket() and EtcPalAddrinfo
  *  @{ */
-#define ETCPAL_AF_UNSPEC 0
-#define ETCPAL_AF_INET 1
-#define ETCPAL_AF_INET6 2
+#define ETCPAL_AF_UNSPEC 0u
+#define ETCPAL_AF_INET 1u
+#define ETCPAL_AF_INET6 2u
 /*! @} */
 
 /*! \name 'type' values for etcpal_socket() and etcpal_getsockopt()
  *  @{ */
-#define ETCPAL_STREAM 0
-#define ETCPAL_DGRAM 1
+#define ETCPAL_STREAM 0u
+#define ETCPAL_DGRAM 1u
 /*! @} */
 
 /********************** Mimic sys/socket.h functions *************************/
