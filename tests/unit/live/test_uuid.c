@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/uuid.h"
 #include "unity_fixture.h"
 
@@ -40,6 +41,30 @@ TEST_TEAR_DOWN(etcpal_uuid)
 {
 }
 
+TEST(etcpal_uuid, invalid_calls_fail)
+{
+  EtcPalUuid uuid;
+
+  TEST_ASSERT_UNLESS(etcpal_string_to_uuid("cbeaf15d-8197-4ace-903a-8e943c388fc6", NULL));
+  TEST_ASSERT_UNLESS(etcpal_string_to_uuid(NULL, &uuid));
+  TEST_ASSERT_UNLESS(etcpal_string_to_uuid(NULL, NULL));
+
+  char str_buf[ETCPAL_UUID_STRING_BYTES];
+  TEST_ASSERT_UNLESS(etcpal_uuid_to_string(&uuid, NULL));
+  TEST_ASSERT_UNLESS(etcpal_uuid_to_string(NULL, str_buf));
+  TEST_ASSERT_UNLESS(etcpal_uuid_to_string(NULL, NULL));
+
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v1_uuid(NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v4_uuid(NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_os_preferred_uuid(NULL));
+
+  const uint8_t mac[6] = {0, 1, 2, 3, 4, 5};
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac, 0, NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", NULL, 0, &uuid));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(NULL, mac, 0, &uuid));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(NULL, NULL, 0, NULL));
+}
+
 TEST(etcpal_uuid, uuid_is_null_works)
 {
   EtcPalUuid uuid = {{0}};
@@ -53,9 +78,9 @@ TEST(etcpal_uuid, uuid_is_null_works)
 
 TEST(etcpal_uuid, uuid_compare_works)
 {
-  EtcPalUuid uuid1 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
-  EtcPalUuid uuid1_dup = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
-  EtcPalUuid uuid2 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17}};
+  const EtcPalUuid uuid1 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
+  const EtcPalUuid uuid1_dup = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
+  const EtcPalUuid uuid2 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17}};
 
   TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid1_dup));
   TEST_ASSERT_GREATER_THAN(0, ETCPAL_UUID_CMP(&uuid2, &uuid1));
@@ -67,28 +92,40 @@ TEST(etcpal_uuid, uuid_to_string_conversion_works)
   char str_buf[ETCPAL_UUID_STRING_BYTES];
   EtcPalUuid uuid = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
 
-  etcpal_uuid_to_string(str_buf, &uuid);
+  etcpal_uuid_to_string(&uuid, str_buf);
   TEST_ASSERT_EQUAL_STRING(str_buf, "01020304-0506-0708-090a-0b0c0d0e0f10");
 
   uuid = kEtcPalNullUuid;
-  etcpal_uuid_to_string(str_buf, &uuid);
+  etcpal_uuid_to_string(&uuid, str_buf);
   TEST_ASSERT_EQUAL_STRING(str_buf, "00000000-0000-0000-0000-000000000000");
 }
 
 TEST(etcpal_uuid, string_to_uuid_conversion_works)
 {
   EtcPalUuid uuid;
-  const char good_str[] = "08090a0b-0C0D-0e0f-1011-121314151617";
-  const char short_str[] = "08090a0b-0c0d-0e0f-1011-1213141516";
-  const char bad_str[] = "This isn't a UUID";
+  const char* good_str = "08090a0b-0C0D-0e0f-1011-121314151617";
+  const EtcPalUuid good_str_uuid = {{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}};
+  // clang-format off
+  const char* bad_strings[] = {
+    "08090a0b-0c0d-0e0f-1011-1213141516", // Short by one character
+    "08090a0b-0c0d-0e0f-1011-12131415161g", // Bad character at the end
+    "g8090a0b-0c0d-0e0f-1011-121314151617", // Bad character at the beginning
+    "This isn't a UUID", // Short random string
+    "This isn't a UUID but it is a very long string" // Long random string
+  };
+  // clang-format on
 
-  TEST_ASSERT(etcpal_string_to_uuid(&uuid, good_str, strlen(good_str)));
-  EtcPalUuid uuid_cmp = {{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}};
-  TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid, &uuid_cmp));
+  TEST_ASSERT(etcpal_string_to_uuid(good_str, &uuid));
+  TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid, &good_str_uuid));
 
   uuid = kEtcPalNullUuid;
-  TEST_ASSERT_UNLESS(etcpal_string_to_uuid(&uuid, short_str, strlen(short_str)));
-  TEST_ASSERT_UNLESS(etcpal_string_to_uuid(&uuid, bad_str, strlen(bad_str)));
+
+  for (size_t i = 0; i < (sizeof(bad_strings) / sizeof(const char*)); ++i)
+  {
+    char msg_buf[100];
+    sprintf(msg_buf, "Failed on input: %s", bad_strings[i]);
+    TEST_ASSERT_UNLESS_MESSAGE(etcpal_string_to_uuid(bad_strings[i], &uuid), msg_buf);
+  }
 }
 
 TEST(etcpal_uuid, generates_correct_v1_uuids)
@@ -129,17 +166,17 @@ TEST(etcpal_uuid, generates_correct_v1_uuids)
 
 TEST(etcpal_uuid, generates_correct_v3_uuids)
 {
-  uint8_t mac1[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x12};
-  uint8_t mac2[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x13};
+  const uint8_t mac1[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x12};
+  const uint8_t mac2[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x13};
   EtcPalUuid uuid1, uuid2, uuid3, uuid4, uuid1_dup;
 
   // Version 3 UUIDs should be deterministic for the same combination of the three possible input
   // arguments. If any of the arguments is different, a different UUID should result.
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid1, "Test Device", mac1, 0));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid2, "Test Device", mac1, 1));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid3, "Tst Device", mac1, 0));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid4, "Test Device", mac2, 0));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&uuid1_dup, "Test Device", mac1, 0));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac1, 0, &uuid1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac1, 1, &uuid2));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Tst Device", mac1, 0, &uuid3));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac2, 0, &uuid4));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac1, 0, &uuid1_dup));
 
   TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid2));
   TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid3));
@@ -201,6 +238,7 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
 
 TEST_GROUP_RUNNER(etcpal_uuid)
 {
+  RUN_TEST_CASE(etcpal_uuid, invalid_calls_fail);
   RUN_TEST_CASE(etcpal_uuid, uuid_is_null_works);
   RUN_TEST_CASE(etcpal_uuid, uuid_compare_works);
   RUN_TEST_CASE(etcpal_uuid, uuid_to_string_conversion_works);

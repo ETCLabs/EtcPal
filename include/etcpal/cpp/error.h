@@ -16,10 +16,12 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 /// \file etcpal/cpp/error.h
 /// \brief C++ wrapper and utilities for etcpal/error.h
-#ifndef ETCPAL_CPP_ERROR_H
-#define ETCPAL_CPP_ERROR_H
+
+#ifndef ETCPAL_CPP_ERROR_H_
+#define ETCPAL_CPP_ERROR_H_
 
 #include <string>
 #include "etcpal/error.h"
@@ -168,4 +170,4 @@ inline bool operator==(const Result& result_a, const Result& result_b)
 
 };  // namespace etcpal
 
-#endif  // ETCPAL_CPP_ERROR_H
+#endif  // ETCPAL_CPP_ERROR_H_

@@ -36,18 +36,23 @@ const EtcPalUuid kEtcPalNullUuid = {{0}};
  *  The resulting string will be of the form: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (lowercase is
  *  used for hexadecimal letters per RFC 4122 and common convention).
  *
+ *  \param[in] uuid UUID to convert to a string.
  *  \param[out] buf Character buffer to which to write the resulting string. To avoid undefined
  *                  behavior, this buffer should be at least of size #ETCPAL_UUID_STRING_BYTES.
- *  \param[in] uuid UUID to convert to a string.
+ *  \return true (conversion successful) or false (invalid argument).
  */
-void etcpal_uuid_to_string(char* buf, const EtcPalUuid* uuid)
+bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf)
 {
+  if (!uuid || !buf)
+    return false;
+
   const uint8_t* c = uuid->data;
 
   /* Automatically suppresses MSVC warning - minimum buffer size is well documented and cannot be
    * exceeded by this format string. */
   ETCPAL_SPRINTF(buf, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0], c[1], c[2], c[3],
                  c[4], c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
+  return true;
 }
 
 /*! \brief Create a UUID from a string representation.
@@ -56,22 +61,21 @@ void etcpal_uuid_to_string(char* buf, const EtcPalUuid* uuid)
  *  should be of the form: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (hexadecimal letters can be upper-
  *  or lowercase).
  *
+ *  \param[in] str The null-terminated string to convert.
  *  \param[out] uuid UUID to fill in with the parse result.
- *  \param[in] buf Character buffer containing the string to convert.
- *  \param[in] buflen Size in bytes of buf.
  *  \return true (parse successful) or false (parse failure).
  */
-bool etcpal_string_to_uuid(EtcPalUuid* uuid, const char* buf, size_t buflen)
+bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
 {
-  const char* from_ptr = buf;
+  if (!str || !uuid)
+    return false;
+
+  const char* from_ptr = str;
   uint8_t to_buf[ETCPAL_UUID_BYTES];
   uint8_t* to_ptr = to_buf;
   bool first = true; /* Whether we are doing the first or second nibble of the byte */
 
-  if (!uuid || !buf || buflen == 0)
-    return false;
-
-  while ((to_ptr - to_buf < ETCPAL_UUID_BYTES) && (from_ptr - buf < (ptrdiff_t)buflen))
+  while ((to_ptr - to_buf < ETCPAL_UUID_BYTES) && (*from_ptr != '\0'))
   {
     uint8_t offset = 0;
     if ((*from_ptr >= '0') && (*from_ptr <= '9'))
@@ -152,25 +156,24 @@ static void generate_from_hash(EtcPalUuid* uuid_out, MD5_CTX* pmd5)
  *
  *  The namespace UUID used is: 57323103-db01-44b3-bafa-abdee3f37c1a
  *
- *  \param[out] uuid UUID to fill in with the generation result.
  *  \param[in] devstr The device-specific string, such as the model name. This should never change
  *                    on the device. It also allows different programs running on the device to
  *                    generate different UUID sets.
  *  \param[in] macaddr The device's MAC address as an array of 6 bytes.
  *  \param[in] uuidnum Component number. By changing this number, multiple unique UUIDs can be
  *                     generated for the same device string-MAC address combination.
+ *  \param[out] uuid UUID to fill in with the generation result.
  *  \return #kEtcPalErrOk: UUID generated successfully.
  *  \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_generate_v3_uuid(EtcPalUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum)
+etcpal_error_t etcpal_generate_v3_uuid(const char* devstr, const uint8_t* macaddr, uint32_t uuidnum, EtcPalUuid* uuid)
 {
+  if (!devstr || !macaddr || !uuid)
+    return kEtcPalErrInvalid;
+
   MD5_CTX md5;
-  uint8_t num[4];
   /* RFC4122 requires that we use a name space UUID before the string */
   uint8_t ns[16] = {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a};
-
-  if (!uuid || !devstr || !macaddr)
-    return kEtcPalErrInvalid;
 
   MD5Init(&md5);
   MD5Update(&md5, ns, 16);
@@ -182,6 +185,7 @@ etcpal_error_t etcpal_generate_v3_uuid(EtcPalUuid* uuid, const char* devstr, con
 
   MD5Update(&md5, macaddr, 6);
 
+  uint8_t num[4];
   num[0] = (uint8_t)(uuidnum & 0xFF);
   num[1] = (uint8_t)((uuidnum >> 8) & 0xFF);
   num[2] = (uint8_t)((uuidnum >> 16) & 0xFF);

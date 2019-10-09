@@ -16,10 +16,27 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
+#include "etcpal/cpp/uuid.h"
 #include "unity_fixture.h"
 
-void run_all_tests(void)
+TEST_GROUP(etcpal_cpp_uuid);
+
+TEST_SETUP(etcpal_cpp_uuid)
 {
-  RUN_TEST_GROUP(etcpal_cpp_error);
-  RUN_TEST_GROUP(etcpal_cpp_uuid);
+}
+
+TEST_TEAR_DOWN(etcpal_cpp_uuid)
+{
+}
+
+TEST(etcpal_cpp_uuid, move_constructor)
+{
+  etcpal::Uuid uuid_1;
+  etcpal::Uuid uuid_2(std::move(uuid_1));
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_uuid)
+{
+  RUN_TEST_CASE(etcpal_cpp_uuid, move_constructor);
 }
