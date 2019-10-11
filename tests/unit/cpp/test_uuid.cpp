@@ -30,13 +30,23 @@ TEST_TEAR_DOWN(etcpal_cpp_uuid)
 {
 }
 
-TEST(etcpal_cpp_uuid, move_constructor)
+TEST(etcpal_cpp_uuid, default_constructor_works)
 {
-  etcpal::Uuid uuid_1;
-  etcpal::Uuid uuid_2(std::move(uuid_1));
+  etcpal::Uuid uuid;
+  TEST_ASSERT_TRUE(uuid.IsNull());
+}
+
+#define UUID_ARRAY                                       \
+  {                                                      \
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 \
+  }
+
+TEST(etcpal_cpp_uuid, array_constructor_works)
+{
+  etcpal::Uuid uuid(UUID_ARRAY);
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_uuid)
 {
-  RUN_TEST_CASE(etcpal_cpp_uuid, move_constructor);
+  RUN_TEST_CASE(etcpal_cpp_uuid, default_constructor_works);
 }

@@ -23,6 +23,10 @@
 #ifndef ETCPAL_CPP_UUID_H_
 #define ETCPAL_CPP_UUID_H_
 
+#include <cstdint>
+#include <cstring>
+#include <array>
+#include <initializer_list>
 #include <string>
 #include "etcpal/uuid.h"
 
@@ -40,17 +44,16 @@ class Uuid
 public:
   Uuid() = default;
   Uuid(const EtcPalUuid& c_uuid);
-  Uuid(EtcPalUuid&& c_uuid);
+  Uuid(const std::array<uint8_t, ETCPAL_UUID_BYTES>& bytes);
   Uuid& operator=(const EtcPalUuid& c_uuid);
-  Uuid& operator=(EtcPalUuid&& c_uuid);
 
-  EtcPalUuid get() const;
+  const EtcPalUuid& get() const;
   std::string ToString() const;
   bool IsNull() const;
 
   static Uuid FromString(const std::string& uuid_str);
   static Uuid V1();
-  static Uuid V3();
+  static Uuid V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num);
   static Uuid V4();
   static Uuid OsPreferred();
 
@@ -62,8 +65,9 @@ inline Uuid::Uuid(const EtcPalUuid& c_uuid) : uuid_(c_uuid)
 {
 }
 
-inline Uuid::Uuid(EtcPalUuid&& c_uuid) : uuid_(c_uuid)
+inline Uuid::Uuid(const std::array<uint8_t, ETCPAL_UUID_BYTES>& bytes)
 {
+  std::memcpy(uuid_.data, bytes.data(), ETCPAL_UUID_BYTES);
 }
 
 inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid)
@@ -72,15 +76,7 @@ inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid)
   return *this;
 }
 
-// TODO evaluate/measure, I actually think the rvalue-reference overloads might not be necessary or
-// help
-inline Uuid& Uuid::operator=(EtcPalUuid&& c_uuid)
-{
-  uuid_ = c_uuid;
-  return *this;
-}
-
-inline EtcPalUuid Uuid::get() const
+inline const EtcPalUuid& Uuid::get() const
 {
   return uuid_;
 }
@@ -101,9 +97,58 @@ inline bool Uuid::IsNull() const
 
 inline Uuid Uuid::FromString(const std::string& uuid_str)
 {
-  EtcPalUuid uuid;
-  etcpal_string_to_uuid(uuid_str.c_str(), &uuid);
-  return Uuid(std::move(uuid));
+  Uuid uuid;
+  etcpal_string_to_uuid(uuid_str.c_str(), &uuid.uuid_);
+  return uuid;
+}
+
+Uuid Uuid::V1()
+{
+  Uuid uuid;
+  etcpal_generate_v1_uuid(&uuid.uuid_);
+  return uuid;
+}
+
+Uuid Uuid::V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num)
+{
+  Uuid uuid;
+  etcpal_generate_v3_uuid(device_str.c_str(), mac_addr.data(), uuid_num, &uuid.uuid_);
+  return uuid;
+}
+
+Uuid Uuid::V4()
+{
+  Uuid uuid;
+  etcpal_generate_v4_uuid(&uuid.uuid_);
+  return uuid;
+}
+
+Uuid Uuid::OsPreferred()
+{
+  Uuid uuid;
+  etcpal_generate_os_preferred_uuid(&uuid.uuid_);
+  return uuid;
+}
+
+// operators
+inline bool operator==(const EtcPalUuid& c_uuid, const Uuid& uuid) noexcept
+{
+  return c_uuid == uuid.get();
+}
+
+inline bool operator==(const Uuid& uuid, const EtcPalUuid& c_uuid) noexcept
+{
+  return uuid.get() == c_uuid;
+}
+
+inline bool operator==(const Uuid& a, const Uuid& b) noexcept
+{
+  return a.get() == b.get();
+}
+
+inline bool operator<(const Uuid& a, const Uuid& b) noexcept
+{
+  return a.get() < b.get();
 }
 
 };  // namespace etcpal
