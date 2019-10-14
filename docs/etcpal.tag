@@ -1506,6 +1506,14 @@
     <class kind="class">etcpal::Result</class>
   </compound>
   <compound kind="group">
+    <name>etcpal_cpp</name>
+    <title>EtcPal C++ Wrappers</title>
+    <filename>group__etcpal__cpp.html</filename>
+    <subgroup>etcpal_cpp_error</subgroup>
+    <subgroup>etcpal_cpp_lock</subgroup>
+    <subgroup>etcpal_cpp_uuid</subgroup>
+  </compound>
+  <compound kind="group">
     <name>etcpal_cpp_lock</name>
     <title>etcpal_cpp_lock</title>
     <filename>group__etcpal__cpp__lock.html</filename>
