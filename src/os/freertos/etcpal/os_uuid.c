@@ -29,3 +29,8 @@ etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
 {
   return kEtcPalErrNotImpl;
 }
+
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
+{
+  return kEtcPalErrNotImpl;
+}
