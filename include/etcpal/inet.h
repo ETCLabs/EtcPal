@@ -231,7 +231,7 @@ inline bool operator<(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
   return (etcpal_ip_cmp(&a, &b) < 0);
 }
 
-inline bool operator==(const EtcpalIpAddr& a, const EtcPalIpAddr& b)
+inline bool operator==(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
 {
   return (etcpal_ip_cmp(&a, &b) == 0);
 }
