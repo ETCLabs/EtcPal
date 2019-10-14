@@ -108,7 +108,7 @@ inline Uuid Uuid::FromString(const std::string& uuid_str)
 /// \brief Generate and return a Version 1 UUID.
 ///
 /// If not implemented, returns a null UUID. See etcpal_generate_v1_uuid() for more information.
-Uuid Uuid::V1()
+inline Uuid Uuid::V1()
 {
   Uuid uuid;
   etcpal_generate_v1_uuid(&uuid.uuid_);
@@ -118,7 +118,7 @@ Uuid Uuid::V1()
 /// \brief Generate and return a Version 3 UUID.
 ///
 /// See etcpal_generate_v3_uuid() for more information.
-Uuid Uuid::V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num)
+inline Uuid Uuid::V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num)
 {
   Uuid uuid;
   etcpal_generate_v3_uuid(device_str.c_str(), mac_addr.data(), uuid_num, &uuid.uuid_);
@@ -128,7 +128,7 @@ Uuid Uuid::V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_a
 /// \brief Generate and return a Version 4 UUID.
 ///
 /// If not implemented, returns a null UUID. See etcpal_generate_v4_uuid() for more information.
-Uuid Uuid::V4()
+inline Uuid Uuid::V4()
 {
   Uuid uuid;
   etcpal_generate_v4_uuid(&uuid.uuid_);
@@ -139,7 +139,7 @@ Uuid Uuid::V4()
 ///
 /// If not implemented, returns a null UUID. See etcpal_generate_os_preferred_uuid() for more
 /// information.
-Uuid Uuid::OsPreferred()
+inline Uuid Uuid::OsPreferred()
 {
   Uuid uuid;
   etcpal_generate_os_preferred_uuid(&uuid.uuid_);
