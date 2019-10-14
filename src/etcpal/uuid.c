@@ -213,3 +213,20 @@ etcpal_error_t etcpal_generate_v3_uuid(const char* devstr, const uint8_t* macadd
  *  \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
  *  \return #kEtcPalErrSys: An internal library of system call error occurred.
  */
+
+/* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
+/*! \fn etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid *uuid)
+ *  \brief Generate the preferred UUID version of the underlying OS.
+ *
+ *  This function uses the underlying OS API to create a UUID of the recommended type per the
+ *  underlying OS API. In practice, this is often a V4 UUID, although this is not guaranteed.
+ *
+ *  This function may return #kEtcPalErrNotImpl on platforms that do not have this functionality
+ *  available (this is mostly a concern for RTOS-level embedded platforms).
+ *
+ *  \param[out] uuid UUID to fill in with the generation result.
+ *  \return #kEtcPalErrOk: UUID generated successfully.
+ *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ *  \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
+ *  \return #kEtcPalErrSys: An internal library of system call error occurred.
+ */

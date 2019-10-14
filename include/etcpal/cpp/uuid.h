@@ -26,7 +26,6 @@
 #include <cstdint>
 #include <cstring>
 #include <array>
-#include <initializer_list>
 #include <string>
 #include "etcpal/uuid.h"
 
@@ -36,15 +35,17 @@ namespace etcpal
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_uuid module.
 
-/// \brief A wrapper class for the EtcPal UUID type.
 /// \ingroup etcpal_cpp_uuid
+/// \brief A wrapper class for the EtcPal UUID type.
 ///
+/// Provides C++ syntactic sugar for working with UUIDs. UUIDs are considered immutable after they
+/// are created, so there is no non-const access to the underlying data as of now.
 class Uuid
 {
 public:
+  /// \brief Constructs a null UUID by default.
   Uuid() = default;
   Uuid(const EtcPalUuid& c_uuid);
-  Uuid(const std::array<uint8_t, ETCPAL_UUID_BYTES>& bytes);
   Uuid& operator=(const EtcPalUuid& c_uuid);
 
   const EtcPalUuid& get() const;
@@ -61,26 +62,25 @@ private:
   EtcPalUuid uuid_{kEtcPalNullUuid};
 };
 
+/// \brief Construct a UUID copied from an instance of the C EtcPalUuid type.
 inline Uuid::Uuid(const EtcPalUuid& c_uuid) : uuid_(c_uuid)
 {
 }
 
-inline Uuid::Uuid(const std::array<uint8_t, ETCPAL_UUID_BYTES>& bytes)
-{
-  std::memcpy(uuid_.data, bytes.data(), ETCPAL_UUID_BYTES);
-}
-
+/// \brief Assign an instance of the C EtcPalUuid type to an instance of this class.
 inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid)
 {
   uuid_ = c_uuid;
   return *this;
 }
 
+/// \brief Get a reference to the underlying C type.
 inline const EtcPalUuid& Uuid::get() const
 {
   return uuid_;
 }
 
+/// \brief Convert the UUID to a string representation formatted per RFC 4122.
 inline std::string Uuid::ToString() const
 {
   char str_buf[ETCPAL_UUID_STRING_BYTES];
@@ -90,11 +90,14 @@ inline std::string Uuid::ToString() const
     return std::string();
 }
 
+/// \brief Check if a UUID is null (all 0's).
 inline bool Uuid::IsNull() const
 {
   return ETCPAL_UUID_IS_NULL(&uuid_);
 }
 
+/// \brief Create a UUID from a string representation.
+/// \return A valid UUID on successful parse, or a null UUID on failure.
 inline Uuid Uuid::FromString(const std::string& uuid_str)
 {
   Uuid uuid;
@@ -102,6 +105,9 @@ inline Uuid Uuid::FromString(const std::string& uuid_str)
   return uuid;
 }
 
+/// \brief Generate and return a Version 1 UUID.
+///
+/// If not implemented, returns a null UUID. See etcpal_generate_v1_uuid() for more information.
 Uuid Uuid::V1()
 {
   Uuid uuid;
@@ -109,6 +115,9 @@ Uuid Uuid::V1()
   return uuid;
 }
 
+/// \brief Generate and return a Version 3 UUID.
+///
+/// See etcpal_generate_v3_uuid() for more information.
 Uuid Uuid::V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num)
 {
   Uuid uuid;
@@ -116,6 +125,9 @@ Uuid Uuid::V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_a
   return uuid;
 }
 
+/// \brief Generate and return a Version 4 UUID.
+///
+/// If not implemented, returns a null UUID. See etcpal_generate_v4_uuid() for more information.
 Uuid Uuid::V4()
 {
   Uuid uuid;
@@ -123,6 +135,10 @@ Uuid Uuid::V4()
   return uuid;
 }
 
+/// \brief Generate and return a UUID of the version preferred by the underlying OS.
+///
+/// If not implemented, returns a null UUID. See etcpal_generate_os_preferred_uuid() for more
+/// information.
 Uuid Uuid::OsPreferred()
 {
   Uuid uuid;
@@ -130,10 +146,19 @@ Uuid Uuid::OsPreferred()
   return uuid;
 }
 
-// operators
+/// \addtogroup etcpal_cpp_uuid
+/// @{
+
+// Special operators for comparing with EtcPalUuids
+
 inline bool operator==(const EtcPalUuid& c_uuid, const Uuid& uuid) noexcept
 {
   return c_uuid == uuid.get();
+}
+
+inline bool operator!=(const EtcPalUuid& c_uuid, const Uuid& uuid) noexcept
+{
+  return !(c_uuid == uuid);
 }
 
 inline bool operator==(const Uuid& uuid, const EtcPalUuid& c_uuid) noexcept
@@ -141,15 +166,44 @@ inline bool operator==(const Uuid& uuid, const EtcPalUuid& c_uuid) noexcept
   return uuid.get() == c_uuid;
 }
 
+inline bool operator!=(const Uuid& uuid, const EtcPalUuid& c_uuid) noexcept
+{
+  return !(uuid == c_uuid);
+}
+
+// Standard operators
+
 inline bool operator==(const Uuid& a, const Uuid& b) noexcept
 {
   return a.get() == b.get();
+}
+
+inline bool operator!=(const Uuid& a, const Uuid& b) noexcept
+{
+  return !(a == b);
 }
 
 inline bool operator<(const Uuid& a, const Uuid& b) noexcept
 {
   return a.get() < b.get();
 }
+
+inline bool operator>(const Uuid& a, const Uuid& b) noexcept
+{
+  return b < a;
+}
+
+inline bool operator<=(const Uuid& a, const Uuid& b) noexcept
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const Uuid& a, const Uuid& b) noexcept
+{
+  return !(a < b);
+}
+
+/// @}
 
 };  // namespace etcpal
 

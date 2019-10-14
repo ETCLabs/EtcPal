@@ -1,6 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
   <compound kind="file">
+    <name>error.h</name>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2error_8h</filename>
+    <class kind="class">etcpal::Result</class>
+    <namespace>etcpal</namespace>
+  </compound>
+  <compound kind="file">
+    <name>uuid.h</name>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2uuid_8h</filename>
+    <class kind="class">etcpal::Uuid</class>
+    <namespace>etcpal</namespace>
+  </compound>
+  <compound kind="file">
     <name>version.h</name>
     <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
@@ -728,6 +742,147 @@
     <filename>classetcpal_1_1_read_guard.html</filename>
   </compound>
   <compound kind="class">
+    <name>etcpal::Result</name>
+    <filename>classetcpal_1_1_result.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Result</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a586e35c43a3c745bd69d9b8546acd2e9</anchor>
+      <arglist>(etcpal_error_t code)</arglist>
+    </member>
+    <member kind="function">
+      <type>Result &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>ac73855e615ce6a49c8b3042ca7868d72</anchor>
+      <arglist>(etcpal_error_t code)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsOk</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a955b65059e7f9429a5d6041136bc1487</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>code</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a911ed787decfceb8f34de72e8b534240</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>ToCString</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a7e6504273039529f1d50576cd22c991e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>operator bool</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a67b76affb3b5d35fa419ac234144038b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Result</type>
+      <name>Ok</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a86e2ff3aef5c292f81528060905b8967</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::Uuid</name>
+    <filename>classetcpal_1_1_uuid.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Uuid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>abc4f198636744d10b7c5e28a1ddde4b8</anchor>
+      <arglist>()=default</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Uuid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a4c60e6639ac1d1a2937013511f409198</anchor>
+      <arglist>(const EtcPalUuid &amp;c_uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>Uuid &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a7e35f2362ce4dd50ce9ce390dc28b48e</anchor>
+      <arglist>(const EtcPalUuid &amp;c_uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>const EtcPalUuid &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a6f9078659deb922d762d311a9f558dae</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsNull</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>ac4d637a0dec45d546495c1660c9f6047</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>FromString</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a348be5fbf7a863c74485b6df0e029fdc</anchor>
+      <arglist>(const std::string &amp;uuid_str)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V1</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a81948e83f4876fd61bb771433ec0cfc3</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V3</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a71d95c31678e670a44669651a2527695</anchor>
+      <arglist>(const std::string &amp;device_str, const std::array&lt; uint8_t, 6 &gt; &amp;mac_addr, uint32_t uuid_num)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V4</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a6c0e58d9c0173c62f95571e65b2ec484</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>OsPreferred</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a99ed3b8b32434cff4b17cb1acb03c9ce</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>etcpal::WriteGuard</name>
     <filename>classetcpal_1_1_write_guard.html</filename>
   </compound>
@@ -736,6 +891,8 @@
     <filename>namespaceetcpal.html</filename>
     <class kind="class">etcpal::MutexGuard</class>
     <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::Result</class>
+    <class kind="class">etcpal::Uuid</class>
     <class kind="class">etcpal::WriteGuard</class>
   </compound>
   <compound kind="group">
@@ -1122,6 +1279,18 @@
       <anchor>ga15560671c4e732ed46dc03a0e522d160</anchor>
       <arglist>(mask)</arglist>
     </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_error</name>
+    <title>etcpal_cpp_error</title>
+    <filename>group__etcpal__cpp__error.html</filename>
+    <class kind="class">etcpal::Result</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_uuid</name>
+    <title>etcpal_cpp_uuid</title>
+    <filename>group__etcpal__cpp__uuid.html</filename>
+    <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="group">
     <name>etcpal_error</name>
@@ -3137,18 +3306,18 @@
       <arglist></arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>bool</type>
       <name>etcpal_uuid_to_string</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
-      <anchor>ga6a5dcd27e638a9f7ed8c0953708363d4</anchor>
-      <arglist>(char *buf, const EtcPalUuid *uuid)</arglist>
+      <anchor>ga479b00b02ab33cf757e9476ad3286336</anchor>
+      <arglist>(const EtcPalUuid *uuid, char *buf)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>etcpal_string_to_uuid</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
-      <anchor>gaf0b1aeb14ab6cac80eac90066af53c8e</anchor>
-      <arglist>(EtcPalUuid *uuid, const char *buf, size_t buflen)</arglist>
+      <anchor>ga20f693409bf6b604b0695f811f897cbf</anchor>
+      <arglist>(const char *buf, EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -3161,14 +3330,21 @@
       <type>etcpal_error_t</type>
       <name>etcpal_generate_v3_uuid</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
-      <anchor>ga7f16be65a1af810d045536230750604b</anchor>
-      <arglist>(EtcPalUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)</arglist>
+      <anchor>gadcc004a0b747d06ab79ccc2567a526e1</anchor>
+      <arglist>(const char *devstr, const uint8_t *macaddr, uint32_t uuidnum, EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
       <name>etcpal_generate_v4_uuid</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
       <anchor>ga1cabb8b6f72752b1a2ae72f776301242</anchor>
+      <arglist>(EtcPalUuid *uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_generate_os_preferred_uuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>gabb977b5a218b4b62224c016bf3932f10</anchor>
       <arglist>(EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="variable">

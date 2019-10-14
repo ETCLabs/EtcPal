@@ -28,8 +28,9 @@
 #pragma warning(disable : 4996)
 #endif
 
-#define NUM_V1_UUID_GENERATIONS 10000
-#define NUM_V4_UUID_GENERATIONS 10000
+#define NUM_V1_UUID_GENERATIONS 1000
+#define NUM_V4_UUID_GENERATIONS 1000
+#define NUM_OS_PREFERRED_UUID_GENERATIONS 1000
 
 TEST_GROUP(etcpal_uuid);
 
@@ -236,6 +237,38 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
   }
 }
 
+TEST(etcpal_uuid, generates_os_preferred_uuids)
+{
+  // Generate a bunch of OS-preferred UUIDs. They should all be unique from each other -- but we
+  // don't know the version and variant information so we won't test it. We will cheat a little and
+  // just make sure that each one is unique from the last one generated.
+  EtcPalUuid last_uuid = kEtcPalNullUuid;
+
+  for (int i = 0; i < NUM_OS_PREFERRED_UUID_GENERATIONS; ++i)
+  {
+    EtcPalUuid uuid;
+    char error_msg[100];
+    sprintf(error_msg, "This failure occurred on UUID attempt %d of %d", i + 1, NUM_OS_PREFERRED_UUID_GENERATIONS);
+
+    etcpal_error_t generate_result = etcpal_generate_os_preferred_uuid(&uuid);
+
+    // Special case - this function isn't implemented on all platforms, so we abort this test
+    // prematurely if that's the case.
+    if (generate_result == kEtcPalErrNotImpl)
+    {
+      TEST_PASS_MESSAGE(
+          "etcpal_generate_os_preferred_uuid() not implemented on this platform. Skipping the remainder of the test.");
+    }
+
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, generate_result, error_msg);
+
+    // Should be unique from the last one generated.
+    TEST_ASSERT_NOT_EQUAL_MESSAGE(0, ETCPAL_UUID_CMP(&uuid, &last_uuid), error_msg);
+
+    last_uuid = uuid;
+  }
+}
+
 TEST_GROUP_RUNNER(etcpal_uuid)
 {
   RUN_TEST_CASE(etcpal_uuid, invalid_calls_fail);
@@ -246,4 +279,5 @@ TEST_GROUP_RUNNER(etcpal_uuid)
   RUN_TEST_CASE(etcpal_uuid, generates_correct_v1_uuids);
   RUN_TEST_CASE(etcpal_uuid, generates_correct_v3_uuids);
   RUN_TEST_CASE(etcpal_uuid, generates_correct_v4_uuids);
+  RUN_TEST_CASE(etcpal_uuid, generates_os_preferred_uuids);
 }
