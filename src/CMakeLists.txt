@@ -117,8 +117,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/etcpal/pdu.h
     ${ETCPAL_ROOT}/include/etcpal/rbtree.h
     ${ETCPAL_ROOT}/include/etcpal/root_layer_pdu.h
-    ${ETCPAL_ROOT}/include/etcpal/socket.h
-    ${ETCPAL_ROOT}/include/etcpal/timer.h
 
     ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.h
     ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.h
@@ -127,6 +125,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.h
 
     ${ETCPAL_ROOT}/include/etcpal_mock/socket.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/timer.h
 
     # EtcPal sources
     # We will gradually substitute these with mocks as needed
@@ -147,7 +146,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
 
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_timer.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_uuid.c
 
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.c
@@ -155,6 +153,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.c
 
     ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/timer.c
   )
   target_include_directories(EtcPalMock PUBLIC
     ${ETCPAL_ROOT}/include
