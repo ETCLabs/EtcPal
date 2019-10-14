@@ -1,1 +1,3 @@
-add_subdirectory(netint)
+if(NOT IOS)
+  add_subdirectory(netint)
+endif()

@@ -19,7 +19,14 @@ set(ETCPAL_OS_TARGET "" CACHE STRING "OS provider for EtcPal. See tools/cmake/et
 set(ETCPAL_NET_TARGET "" CACHE STRING "Network stack provider for EtcPal. Often (but not always) the same as ETCPAL_OS_TARGET. See src/CMakeLists.txt for valid values.")
 
 if(NOT ETCPAL_OS_TARGET)
-  message(STATUS "ETCPAL_OS_TARGET not supplied, assuming native compile by default...")
+  message(STATUS "ETCPAL_OS_TARGET not supplied.")
+  
+  if(APPLE AND IOS)
+    message(STATUS "Assuming cross-compile for iOS and similar based on CMAKE_SYSTEM_NAME...")
+  else()
+   message(STATUS "Assuming native compile by default...")
+  endif()
+
   if(WIN32)
     set(ETCPAL_OS_TARGET windows)
   elseif(APPLE)
