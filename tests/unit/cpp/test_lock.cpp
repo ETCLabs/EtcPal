@@ -37,7 +37,7 @@ TEST(etcpal_cpp_lock, mutex_create_and_destroy_works)
   // Take ownership
   TEST_ASSERT_TRUE(mutex.Lock());
 
-  // TODO fix: locks shouldn't be recursive on any platform but they are on Windows.
+  // TODO remove ifdef when ETCPAL-32 is fixed
 #ifdef WIN32
   TEST_ASSERT_TRUE(mutex.TryLock());
   mutex.Unlock();
@@ -56,7 +56,7 @@ TEST(etcpal_cpp_lock, mutex_guard_works)
     // Take ownership via a mutex guard
     etcpal::MutexGuard guard(mutex);
 
-    // TODO fix: locks shouldn't be recursive on any platform but they are on Windows.
+    // TODO remove ifdef when ETCPAL-32 is fixed
 #ifdef WIN32
     TEST_ASSERT_TRUE(mutex.TryLock());
     mutex.Unlock();
@@ -97,7 +97,7 @@ TEST(etcpal_cpp_lock, rwlock_create_and_destroy_works)
     rwlock.ReadUnlock();
   TEST_ASSERT_TRUE(rwlock.WriteLock());
 
-  // TODO fix, write locks shouldn't be recursive on any platform but they are on Windows.
+  // TODO remove ifdef when ETCPAL-32 is fixed
 #ifdef WIN32
   TEST_ASSERT_TRUE(rwlock.TryWriteLock());
   rwlock.WriteUnlock();
@@ -138,7 +138,7 @@ TEST(etcpal_cpp_lock, write_guard_works)
     // Take a write lock via guard
     etcpal::WriteGuard write(rwlock);
 
-    // TODO fix: locks shouldn't be recursive on any platform but they are on Windows.
+    // TODO remove ifdef when ETCPAL-32 is fixed
 #ifdef WIN32
     TEST_ASSERT_TRUE(rwlock.TryReadLock());
     rwlock.ReadUnlock();

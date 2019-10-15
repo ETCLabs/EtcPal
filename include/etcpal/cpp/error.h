@@ -158,14 +158,29 @@ inline bool operator==(etcpal_error_t code, const Result& result)
   return code == result.code();
 }
 
+inline bool operator!=(etcpal_error_t code, const Result& result)
+{
+  return !(code == result);
+}
+
 inline bool operator==(const Result& result, etcpal_error_t code)
 {
   return result.code() == code;
 }
 
-inline bool operator==(const Result& result_a, const Result& result_b)
+inline bool operator!=(const Result& result, etcpal_error_t code)
 {
-  return result_a.code() == result_b.code();
+  return !(result == code);
+}
+
+inline bool operator==(const Result& a, const Result& b)
+{
+  return a.code() == b.code();
+}
+
+inline bool operator!=(const Result& a, const Result& b)
+{
+  return !(a == b);
 }
 
 };  // namespace etcpal

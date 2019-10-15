@@ -35,6 +35,9 @@ namespace etcpal
 /// \ingroup etcpal_cpp_lock
 /// \brief A wrapper class for the EtcPal mutex type.
 ///
+/// Note: The etcpal::Mutex functions are not normally used directly - prefer usage of the RAII
+/// type etcpal::MutexGuard to manage locking and unlocking of an etcpal::Mutex.
+///
 /// See \ref etcpal_mutex for more information.
 class Mutex
 {
@@ -160,6 +163,10 @@ inline etcpal_signal_t& Signal::get()
 
 /// \ingroup etcpal_cpp_lock
 /// \brief A wrapper class for the EtcPal read-write lock type.
+///
+/// Note: The etcpal::RwLock functions are not normally used directly - prefer usage of the RAII
+/// types etcpal::ReadGuard and etcpal::WriteGuard to manage locking and unlocking of an
+/// etcpal::RwLock.
 ///
 /// See \ref etcpal_rwlock for more information.
 class RwLock
