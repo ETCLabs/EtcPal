@@ -47,6 +47,8 @@ public:
 
   Mutex(const Mutex& other) = delete;
   Mutex& operator=(const Mutex& other) = delete;
+  Mutex(Mutex&& other) = delete;
+  Mutex& operator=(Mutex&& other) = delete;
 
   bool Lock();
   bool TryLock();
@@ -110,6 +112,8 @@ public:
 
   Signal(const Signal& other) = delete;
   Signal& operator=(const Signal& other) = delete;
+  Signal(Signal&& other) = delete;
+  Signal& operator=(Signal&& other) = delete;
 
   bool Wait();
   bool Poll();
@@ -177,6 +181,8 @@ public:
 
   RwLock(const RwLock& other) = delete;
   RwLock& operator=(const RwLock& other) = delete;
+  RwLock(RwLock&& other) = delete;
+  RwLock& operator=(RwLock&& other) = delete;
 
   bool ReadLock();
   bool TryReadLock();
@@ -282,6 +288,8 @@ public:
 
   MutexGuard(const MutexGuard& other) = delete;
   MutexGuard& operator=(const MutexGuard& other) = delete;
+  MutexGuard(MutexGuard&& other) = delete;
+  MutexGuard& operator=(MutexGuard&& other) = delete;
 
 private:
   etcpal_mutex_t& mutex_;
@@ -339,6 +347,8 @@ public:
 
   ReadGuard(const ReadGuard& other) = delete;
   ReadGuard& operator=(const ReadGuard& other) = delete;
+  ReadGuard(ReadGuard&& other) = delete;
+  ReadGuard& operator=(ReadGuard&& other) = delete;
 
 private:
   etcpal_rwlock_t& rwlock_;
@@ -396,6 +406,8 @@ public:
 
   WriteGuard(const WriteGuard& other) = delete;
   WriteGuard& operator=(const WriteGuard& other) = delete;
+  WriteGuard(WriteGuard&& other) = delete;
+  WriteGuard& operator=(WriteGuard&& other) = delete;
 
 private:
   etcpal_rwlock_t& rwlock_;
