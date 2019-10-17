@@ -75,13 +75,13 @@ extern const EtcPalUuid kEtcPalNullUuid;
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
 #define ETCPAL_UUID_STRING_BYTES 37
 
-void etcpal_uuid_to_string(char* buf, const EtcPalUuid* uuid);
-bool etcpal_string_to_uuid(EtcPalUuid* uuid, const char* buf, size_t buflen);
+bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf);
+bool etcpal_string_to_uuid(const char* buf, EtcPalUuid* uuid);
 
 /************************ UUID Generation Functions **************************/
 
 etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid);
-etcpal_error_t etcpal_generate_v3_uuid(EtcPalUuid* uuid, const char* devstr, const uint8_t* macaddr, uint32_t uuidnum);
+etcpal_error_t etcpal_generate_v3_uuid(const char* devstr, const uint8_t* macaddr, uint32_t uuidnum, EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid);
 

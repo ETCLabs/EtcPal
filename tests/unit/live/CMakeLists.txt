@@ -1,6 +1,6 @@
 # The "live" EtcPal tests, all built as one executable or library for now.
 
-etcpal_add_live_test(etcpal_live_unit_tests
+etcpal_add_live_test(etcpal_live_unit_tests C
   test_common.c
   test_inet.c
   test_lock.c

@@ -16,21 +16,11 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+#include "unity_fixture.h"
 
-#include "etcpal/uuid.h"
-
-/* We don't have the capability to generate V1 or V4 UUIDs on FreeRTOS. */
-etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
+void run_all_tests(void)
 {
-  return kEtcPalErrNotImpl;
-}
-
-etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
-{
-  return kEtcPalErrNotImpl;
-}
-
-etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
-{
-  return kEtcPalErrNotImpl;
+  RUN_TEST_GROUP(etcpal_cpp_error);
+  RUN_TEST_GROUP(etcpal_cpp_lock);
+  RUN_TEST_GROUP(etcpal_cpp_uuid);
 }

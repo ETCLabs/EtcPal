@@ -17,20 +17,16 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/uuid.h"
-
-/* We don't have the capability to generate V1 or V4 UUIDs on FreeRTOS. */
-etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
-{
-  return kEtcPalErrNotImpl;
+#include <stdlib.h>
+#include <time.h>
+extern "C" {
+#include "unity_fixture.h"
 }
 
-etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
-{
-  return kEtcPalErrNotImpl;
-}
+extern void run_all_tests(void);
 
-etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
+int main(int argc, char* argv[])
 {
-  return kEtcPalErrNotImpl;
+  srand((unsigned int)time(NULL));
+  return UnityMain(argc, (const char**)argv, run_all_tests);
 }

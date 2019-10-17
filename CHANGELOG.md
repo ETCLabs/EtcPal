@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New function etcpal_netint_copy_interfaces() to perform the old behavior of
   etcpal_netint_get_interfaces() (see Changed below)
 - New function etcpal_netint_get_interfaces_by_index()
+- The beginning of a C++ wrapper layer over EtcPal. Added wrapper classes for
+  etcpal_error, etcpal_uuid, and etcpal_lock.
 
 ### Changed
 - Naming: Library name changed from lwpa to EtcPal. All API names updated

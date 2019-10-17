@@ -1,6 +1,29 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile>
   <compound kind="file">
+    <name>error.h</name>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2error_8h</filename>
+    <class kind="class">etcpal::Result</class>
+  </compound>
+  <compound kind="file">
+    <name>lock.h</name>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2lock_8h</filename>
+    <class kind="class">etcpal::Mutex</class>
+    <class kind="class">etcpal::Signal</class>
+    <class kind="class">etcpal::RwLock</class>
+    <class kind="class">etcpal::MutexGuard</class>
+    <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::WriteGuard</class>
+  </compound>
+  <compound kind="file">
+    <name>uuid.h</name>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2uuid_8h</filename>
+    <class kind="class">etcpal::Uuid</class>
+  </compound>
+  <compound kind="file">
     <name>version.h</name>
     <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
@@ -720,23 +743,379 @@
     <filename>struct_m_d5___c_t_x.html</filename>
   </compound>
   <compound kind="class">
+    <name>etcpal::Mutex</name>
+    <filename>classetcpal_1_1_mutex.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Mutex</name>
+      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
+      <anchor>a4b5dfbd24f5bc4c03b24b2da362f66d5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~Mutex</name>
+      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
+      <anchor>a205e2c334b25cb96e4f1303a4fde6b0c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>Lock</name>
+      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
+      <anchor>a747fd95916e116a6ed37cc641e394c69</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>TryLock</name>
+      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
+      <anchor>a0fc3000efb073879e1c437d9e3d4e7f6</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>Unlock</name>
+      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
+      <anchor>a91b88a5d5517cb042431c4ea24d8ecb7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_mutex_t &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
+      <anchor>a969165b5fad27bd7ae7a693703124645</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>etcpal::MutexGuard</name>
     <filename>classetcpal_1_1_mutex_guard.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>MutexGuard</name>
+      <anchorfile>classetcpal_1_1_mutex_guard.html</anchorfile>
+      <anchor>a72577d0ea01f7607a671de23cc54eb06</anchor>
+      <arglist>(Mutex &amp;mutex)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>MutexGuard</name>
+      <anchorfile>classetcpal_1_1_mutex_guard.html</anchorfile>
+      <anchor>a057d36a0206d67c6b8b9c5d8186c2e9e</anchor>
+      <arglist>(etcpal_mutex_t &amp;mutex)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~MutexGuard</name>
+      <anchorfile>classetcpal_1_1_mutex_guard.html</anchorfile>
+      <anchor>a310e9063e3e9794762a2cf28c6148334</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>etcpal::ReadGuard</name>
     <filename>classetcpal_1_1_read_guard.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>ReadGuard</name>
+      <anchorfile>classetcpal_1_1_read_guard.html</anchorfile>
+      <anchor>a4bbe0587143829b91a5169449360eaa4</anchor>
+      <arglist>(RwLock &amp;rwlock)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ReadGuard</name>
+      <anchorfile>classetcpal_1_1_read_guard.html</anchorfile>
+      <anchor>a972ca1d800d0b9f661de63a8764b74ae</anchor>
+      <arglist>(etcpal_rwlock_t &amp;rwlock)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~ReadGuard</name>
+      <anchorfile>classetcpal_1_1_read_guard.html</anchorfile>
+      <anchor>af40fbc4ea83eb91ffa11e2e0a17e5e22</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::Result</name>
+    <filename>classetcpal_1_1_result.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Result</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a586e35c43a3c745bd69d9b8546acd2e9</anchor>
+      <arglist>(etcpal_error_t code)</arglist>
+    </member>
+    <member kind="function">
+      <type>Result &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>ac73855e615ce6a49c8b3042ca7868d72</anchor>
+      <arglist>(etcpal_error_t code)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsOk</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a955b65059e7f9429a5d6041136bc1487</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>code</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a911ed787decfceb8f34de72e8b534240</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>ToCString</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a7e6504273039529f1d50576cd22c991e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>operator bool</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a67b76affb3b5d35fa419ac234144038b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Result</type>
+      <name>Ok</name>
+      <anchorfile>classetcpal_1_1_result.html</anchorfile>
+      <anchor>a86e2ff3aef5c292f81528060905b8967</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::RwLock</name>
+    <filename>classetcpal_1_1_rw_lock.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>RwLock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>ad5ce7091375083d76ae798cabac53a21</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~RwLock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>a31fcfa6d9b8bcf5a64823de7c0b1313a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>ReadLock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>af760aebc292f4430c5d554b1fb239284</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>TryReadLock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>a409d488d3b55cffa68f081ee05611764</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ReadUnlock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>a1860d89c46fea6b62da4c7c39756fc4e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>WriteLock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>a062052c7ab44662cc7d5a2bf81f4a87c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>TryWriteLock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>a6c1151df4aab7df16590bee65e504873</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>WriteUnlock</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>abfc3bd44b6252464c577c5ed8389dbd4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_rwlock_t &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>a16634332a0b44a7bedfcc491383c4fe5</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::Signal</name>
+    <filename>classetcpal_1_1_signal.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Signal</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>a44146dfdbec17a8ab7207e52ffae152c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~Signal</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>a20038cb30942f02ef70185cdaed0227a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>Wait</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>ae5ccc0d2886026ce37e12604173a131d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>Poll</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>a86acd23bf483d12b47cedfe52333e643</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>Notify</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>a6b945888ffd146338605d77f0366141b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_signal_t &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>a57e433d2fa16d80ff2f02992c74d480c</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::Uuid</name>
+    <filename>classetcpal_1_1_uuid.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Uuid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>abc4f198636744d10b7c5e28a1ddde4b8</anchor>
+      <arglist>()=default</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Uuid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a4c60e6639ac1d1a2937013511f409198</anchor>
+      <arglist>(const EtcPalUuid &amp;c_uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>Uuid &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a7e35f2362ce4dd50ce9ce390dc28b48e</anchor>
+      <arglist>(const EtcPalUuid &amp;c_uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>const EtcPalUuid &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a6f9078659deb922d762d311a9f558dae</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsNull</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>ac4d637a0dec45d546495c1660c9f6047</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>FromString</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a348be5fbf7a863c74485b6df0e029fdc</anchor>
+      <arglist>(const std::string &amp;uuid_str)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V1</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a81948e83f4876fd61bb771433ec0cfc3</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V3</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a71d95c31678e670a44669651a2527695</anchor>
+      <arglist>(const std::string &amp;device_str, const std::array&lt; uint8_t, 6 &gt; &amp;mac_addr, uint32_t uuid_num)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V4</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a6c0e58d9c0173c62f95571e65b2ec484</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>OsPreferred</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a99ed3b8b32434cff4b17cb1acb03c9ce</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>etcpal::WriteGuard</name>
     <filename>classetcpal_1_1_write_guard.html</filename>
-  </compound>
-  <compound kind="namespace">
-    <name>etcpal</name>
-    <filename>namespaceetcpal.html</filename>
-    <class kind="class">etcpal::MutexGuard</class>
-    <class kind="class">etcpal::ReadGuard</class>
-    <class kind="class">etcpal::WriteGuard</class>
+    <member kind="function">
+      <type></type>
+      <name>WriteGuard</name>
+      <anchorfile>classetcpal_1_1_write_guard.html</anchorfile>
+      <anchor>a0c3e55817a2955c086af3a033db5105a</anchor>
+      <arglist>(RwLock &amp;rwlock)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>WriteGuard</name>
+      <anchorfile>classetcpal_1_1_write_guard.html</anchorfile>
+      <anchor>a94731b7b53c630d8781f78807ca35dd2</anchor>
+      <arglist>(etcpal_rwlock_t &amp;rwlock)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~WriteGuard</name>
+      <anchorfile>classetcpal_1_1_write_guard.html</anchorfile>
+      <anchor>afa219384bacf93a154fdb6bf71941d57</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>etcpal_lock</name>
@@ -745,9 +1124,6 @@
     <subgroup>etcpal_mutex</subgroup>
     <subgroup>etcpal_signal</subgroup>
     <subgroup>etcpal_rwlock</subgroup>
-    <class kind="class">etcpal::MutexGuard</class>
-    <class kind="class">etcpal::ReadGuard</class>
-    <class kind="class">etcpal::WriteGuard</class>
   </compound>
   <compound kind="group">
     <name>etcpal_mutex</name>
@@ -1122,6 +1498,37 @@
       <anchor>ga15560671c4e732ed46dc03a0e522d160</anchor>
       <arglist>(mask)</arglist>
     </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_error</name>
+    <title>etcpal_cpp_error</title>
+    <filename>group__etcpal__cpp__error.html</filename>
+    <class kind="class">etcpal::Result</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp</name>
+    <title>EtcPal C++ Wrappers</title>
+    <filename>group__etcpal__cpp.html</filename>
+    <subgroup>etcpal_cpp_error</subgroup>
+    <subgroup>etcpal_cpp_lock</subgroup>
+    <subgroup>etcpal_cpp_uuid</subgroup>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_lock</name>
+    <title>etcpal_cpp_lock</title>
+    <filename>group__etcpal__cpp__lock.html</filename>
+    <class kind="class">etcpal::Mutex</class>
+    <class kind="class">etcpal::Signal</class>
+    <class kind="class">etcpal::RwLock</class>
+    <class kind="class">etcpal::MutexGuard</class>
+    <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::WriteGuard</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_uuid</name>
+    <title>etcpal_cpp_uuid</title>
+    <filename>group__etcpal__cpp__uuid.html</filename>
+    <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="group">
     <name>etcpal_error</name>
@@ -3137,18 +3544,18 @@
       <arglist></arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>bool</type>
       <name>etcpal_uuid_to_string</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
-      <anchor>ga6a5dcd27e638a9f7ed8c0953708363d4</anchor>
-      <arglist>(char *buf, const EtcPalUuid *uuid)</arglist>
+      <anchor>ga479b00b02ab33cf757e9476ad3286336</anchor>
+      <arglist>(const EtcPalUuid *uuid, char *buf)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>etcpal_string_to_uuid</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
-      <anchor>gaf0b1aeb14ab6cac80eac90066af53c8e</anchor>
-      <arglist>(EtcPalUuid *uuid, const char *buf, size_t buflen)</arglist>
+      <anchor>ga20f693409bf6b604b0695f811f897cbf</anchor>
+      <arglist>(const char *buf, EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -3161,14 +3568,21 @@
       <type>etcpal_error_t</type>
       <name>etcpal_generate_v3_uuid</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
-      <anchor>ga7f16be65a1af810d045536230750604b</anchor>
-      <arglist>(EtcPalUuid *uuid, const char *devstr, const uint8_t *macaddr, uint32_t uuidnum)</arglist>
+      <anchor>gadcc004a0b747d06ab79ccc2567a526e1</anchor>
+      <arglist>(const char *devstr, const uint8_t *macaddr, uint32_t uuidnum, EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
       <name>etcpal_generate_v4_uuid</name>
       <anchorfile>group__etcpal__uuid.html</anchorfile>
       <anchor>ga1cabb8b6f72752b1a2ae72f776301242</anchor>
+      <arglist>(EtcPalUuid *uuid)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_generate_os_preferred_uuid</name>
+      <anchorfile>group__etcpal__uuid.html</anchorfile>
+      <anchor>gabb977b5a218b4b62224c016bf3932f10</anchor>
       <arglist>(EtcPalUuid *uuid)</arglist>
     </member>
     <member kind="variable">

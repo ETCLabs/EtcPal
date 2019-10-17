@@ -221,6 +221,23 @@ etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpA
 }
 #endif
 
+#ifdef __cplusplus
+/* C++ utilities */
+
+/* Comparison operators for IpAddrs */
+
+inline bool operator<(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
+{
+  return (etcpal_ip_cmp(&a, &b) < 0);
+}
+
+inline bool operator==(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
+{
+  return (etcpal_ip_cmp(&a, &b) == 0);
+}
+
+#endif
+
 /*! @} */
 
 #endif /* _ETCPAL_INET_H_ */
