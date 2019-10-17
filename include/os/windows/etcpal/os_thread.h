@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_OS_THREAD_H_
-#define _ETCPAL_OS_THREAD_H_
+#ifndef ETCPAL_OS_THREAD_H_
+#define ETCPAL_OS_THREAD_H_
 
 #ifndef NOMINMAX
 #define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
@@ -54,10 +54,14 @@ typedef struct
   char name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
 
+typedef HANDLE etcpal_thread_id_t;
+#define ETCPAL_THREAD_ID_INVALID NULL
+#define ETCPAL_THREAD_GET_ID(threadptr) ((threadptr)->tid)
+
 #define etcpal_thread_sleep(sleep_ms) Sleep(sleep_ms)
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ETCPAL_OS_THREAD_H_ */
+#endif /* ETCPAL_OS_THREAD_H_ */

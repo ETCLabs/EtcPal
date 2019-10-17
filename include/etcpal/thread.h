@@ -35,15 +35,21 @@ typedef struct EtcPalThreadParams
 } EtcPalThreadParams;
 
 #define ETCPAL_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)                \
-  do                                                                   \
-  {                                                                    \
+  do                                                                     \
+  {                                                                      \
     (threadparamsptr)->thread_priority = ETCPAL_THREAD_DEFAULT_PRIORITY; \
     (threadparamsptr)->stack_size = ETCPAL_THREAD_DEFAULT_STACK;         \
     (threadparamsptr)->thread_name = ETCPAL_THREAD_DEFAULT_NAME;         \
-    (threadparamsptr)->platform_data = NULL;                           \
+    (threadparamsptr)->platform_data = NULL;                             \
   } while (0)
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
+#define ETCPAL_THREAD_DEFAULT_PARAMS_INIT                                                         \
+  {                                                                                               \
+    ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, ETCPAL_THREAD_DEFAULT_NAME, NULL \
+  }
+
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+                          void* thread_arg);
 bool etcpal_thread_join(etcpal_thread_t* id);
 
 #ifndef etcpal_thread_sleep

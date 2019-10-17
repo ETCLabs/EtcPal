@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_OS_THREAD_H_
-#define _ETCPAL_OS_THREAD_H_
+#ifndef ETCPAL_OS_THREAD_H_
+#define ETCPAL_OS_THREAD_H_
 
 #include <pthread.h>
 #include <unistd.h>
@@ -34,6 +34,8 @@ extern "C" {
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 0
 
+typedef pthread_t etcpal_thread_id_t;
+
 typedef struct
 {
   void (*fn)(void*);
@@ -47,4 +49,4 @@ typedef struct
 }
 #endif
 
-#endif /* _ETCPAL_OS_THREAD_H_ */
+#endif /* ETCPAL_OS_THREAD_H_ */
