@@ -8,6 +8,15 @@ endif()
 # Core EtcPal library
 ###############################################################################
 
+add_library(EtcPalInterface INTERFACE)
+target_include_directories(EtcPalInterface INTERFACE 
+  ${ETCPAL_ROOT}/include
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}
+  ${ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS}
+  ${ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS}
+)
+
 add_library(EtcPal
   # EtcPal headers
   ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
@@ -71,20 +80,13 @@ else()
 endif()
 
 # EtcPal public include directories and library dependencies
-target_include_directories(EtcPal PUBLIC
-  ${ETCPAL_ROOT}/include
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}
-  ${ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS}
-  ${ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS}
-  ${ETCPAL_CONFIG_FILE_DIR}
-)
+target_include_directories(EtcPal PUBLIC ${ETCPAL_CONFIG_FILE_DIR})
 target_include_directories(EtcPal PRIVATE ${ETCPAL_ROOT}/src)
 target_compile_definitions(EtcPal PRIVATE ${ETCPAL_HAVE_CONFIG_H})
 if(ETCPAL_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(EtcPal PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
 endif()
-target_link_libraries(EtcPal PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
+target_link_libraries(EtcPal PUBLIC EtcPalInterface ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
 
 if(NOT MSVC)
   set_target_properties(EtcPal PROPERTIES C_STANDARD 99)
@@ -126,6 +128,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
 
     ${ETCPAL_ROOT}/include/etcpal_mock/socket.h
     ${ETCPAL_ROOT}/include/etcpal_mock/timer.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/thread.h
 
     # EtcPal sources
     # We will gradually substitute these with mocks as needed
@@ -145,7 +148,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_uuid.c
 
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.c
@@ -154,6 +156,10 @@ if(ETCPAL_BUILD_MOCK_LIB)
 
     ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
     ${ETCPAL_ROOT}/src/etcpal_mock/timer.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/thread.c
+
+    ${ETCPAL_OS_ADDITIONAL_SOURCES}
+    ${ETCPAL_NET_ADDITIONAL_SOURCES}
   )
   target_include_directories(EtcPalMock PUBLIC
     ${ETCPAL_ROOT}/include

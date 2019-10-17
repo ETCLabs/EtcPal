@@ -17,24 +17,29 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* etcpal_mock/timer.h: Mock functions for the etcpal_timer API. */
+/* etcpal_mock/thread.h: Mock functions for the etcpal_thread API. */
 
-#ifndef ETCPAL_MOCK_TIMER_H_
-#define ETCPAL_MOCK_TIMER_H_
+#ifndef ETCPAL_MOCK_THREAD_H_
+#define ETCPAL_MOCK_THREAD_H_
 
-#include "etcpal/timer.h"
+#include "etcpal/thread.h"
 #include "fff.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-DECLARE_FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
+typedef void (*EtcPalThreadFunc)(void*);
 
-void etcpal_timer_reset_all_fakes(void);
+DECLARE_FAKE_VALUE_FUNC(bool, etcpal_thread_create, etcpal_thread_t*, const EtcPalThreadParams*, EtcPalThreadFunc,
+                        void*);
+DECLARE_FAKE_VALUE_FUNC(bool, etcpal_thread_join, etcpal_thread_t*);
+// Not mocked: etcpal_thread_sleep()
+
+void etcpal_thread_reset_all_fakes(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_MOCK_TIMER_H_ */
+#endif /* ETCPAL_MOCK_THREAD_H_ */

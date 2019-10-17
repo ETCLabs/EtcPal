@@ -18,8 +18,9 @@
  ******************************************************************************/
 
 /* etcpal_mock/socket.h: Mock functions for the etcpal_socket API. */
-#ifndef _ETCPAL_MOCK_SOCKET_H_
-#define _ETCPAL_MOCK_SOCKET_H_
+
+#ifndef ETCPAL_MOCK_SOCKET_H_
+#define ETCPAL_MOCK_SOCKET_H_
 
 #include "etcpal/socket.h"
 #include "fff.h"
@@ -66,35 +67,10 @@ DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getaddrinfo, const char*, const c
 DECLARE_FAKE_VALUE_FUNC(bool, etcpal_nextaddr, EtcPalAddrinfo*);
 DECLARE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, EtcPalAddrinfo*);
 
-#define ETCPAL_SOCKET_DO_FOR_ALL_FAKES(operation) \
-  operation(etcpal_accept);                       \
-  operation(etcpal_bind);                         \
-  operation(etcpal_close);                        \
-  operation(etcpal_connect);                      \
-  operation(etcpal_getpeername);                  \
-  operation(etcpal_getsockname);                  \
-  operation(etcpal_getsockopt);                   \
-  operation(etcpal_listen);                       \
-  operation(etcpal_recv);                         \
-  operation(etcpal_recvfrom);                     \
-  operation(etcpal_send);                         \
-  operation(etcpal_sendto);                       \
-  operation(etcpal_setsockopt);                   \
-  operation(etcpal_shutdown);                     \
-  operation(etcpal_socket);                       \
-  operation(etcpal_setblocking);                  \
-  operation(etcpal_poll_context_init);            \
-  operation(etcpal_poll_context_deinit);          \
-  operation(etcpal_poll_add_socket);              \
-  operation(etcpal_poll_modify_socket);           \
-  operation(etcpal_poll_remove_socket);           \
-  operation(etcpal_poll_wait);                    \
-  operation(etcpal_getaddrinfo);                  \
-  operation(etcpal_nextaddr);                     \
-  operation(etcpal_freeaddrinfo);
+void etcpal_socket_reset_all_fakes(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ETCPAL_MOCK_SOCKET_H_ */
+#endif /* ETCPAL_MOCK_SOCKET_H_ */

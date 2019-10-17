@@ -20,3 +20,8 @@
 #include "etcpal_mock/timer.h"
 
 DEFINE_FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
+
+void etcpal_timer_reset_all_fakes(void)
+{
+  RESET_FAKE(etcpal_getms);
+}
