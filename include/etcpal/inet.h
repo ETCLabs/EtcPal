@@ -222,18 +222,74 @@ etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpA
 #endif
 
 #ifdef __cplusplus
+
 /* C++ utilities */
 
 /* Comparison operators for IpAddrs */
+
+inline bool operator==(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
+{
+  return (etcpal_ip_cmp(&a, &b) == 0);
+}
+
+inline bool operator!=(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
+{
+  return !(a == b);
+}
 
 inline bool operator<(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
 {
   return (etcpal_ip_cmp(&a, &b) < 0);
 }
 
-inline bool operator==(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
+inline bool operator>(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
 {
-  return (etcpal_ip_cmp(&a, &b) == 0);
+  return b < a;
+}
+
+inline bool operator<=(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
+{
+  return !(a < b);
+}
+
+/* Comparison operators for Sockaddrs */
+
+inline bool operator==(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+{
+  return (a.ip == b.ip && a.port == b.port);
+}
+
+inline bool operator!=(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+{
+  return !(a == b);
+}
+
+inline bool operator<(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+{
+  if (a.port == b.port)
+    return (etcpal_ip_cmp(&a.ip, &b.ip) < 0);
+  else
+    return (a.port < b.port);
+}
+
+inline bool operator>(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+{
+  return b < a;
+}
+
+inline bool operator<=(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+{
+  return !(a < b);
 }
 
 #endif
