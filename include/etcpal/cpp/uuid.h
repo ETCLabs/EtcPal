@@ -45,6 +45,8 @@ class Uuid
 public:
   /// \brief Constructs a null UUID by default.
   Uuid() = default;
+  // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
+  //   etcpal::Uuid uuid = etcpal_c_function_that_returns_uuid();
   Uuid(const EtcPalUuid& c_uuid);
   Uuid& operator=(const EtcPalUuid& c_uuid);
 

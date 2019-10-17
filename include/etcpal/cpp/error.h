@@ -74,6 +74,8 @@ class Result
 {
 public:
   Result() = delete;
+  // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
+  //   etcpal::Result res = etcpal_c_function_that_returns_error_t();
   Result(etcpal_error_t code);
   Result& operator=(etcpal_error_t code);
 
