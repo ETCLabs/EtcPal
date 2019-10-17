@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/socket.h"
 #include "unity_fixture.h"
 
@@ -132,8 +133,9 @@ TEST(etcpal_socket, poll_invalid_calls_fail)
 
   // Add the socket and try to modify it with invalid calls
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock, ETCPAL_POLL_IN, NULL));
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, 0, NULL));              // Invalid events
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, ETCPAL_POLL_ERR, NULL));  // Invalid events
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock, 0, NULL));  // Invalid events
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk,
+                        etcpal_poll_modify_socket(&context, sock, ETCPAL_POLL_ERR, NULL));  // Invalid events
 
   // Deinit and make sure we cannot modify
   etcpal_poll_context_deinit(&context);

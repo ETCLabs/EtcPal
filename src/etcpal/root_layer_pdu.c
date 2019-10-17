@@ -36,17 +36,18 @@
 #define ACN_PACKET_IDENT "ASC-E1.17\0\0\0"
 #define ACN_PACKET_IDENT_SIZE 12
 
-/*! \brief Parse an ACN TCP Preamble.
+/*!
+ * \brief Parse an ACN TCP Preamble.
  *
- *  Determine whether this byte buffer, received over TCP, starts with an ACN TCP Preamble and thus
- *  contains an ACN protocol family packet. For best results, wait until you receive at least
- *  #ACN_TCP_PREAMBLE_SIZE bytes before calling this function.
+ * Determine whether this byte buffer, received over TCP, starts with an ACN TCP Preamble and thus
+ * contains an ACN protocol family packet. For best results, wait until you receive at least
+ * #ACN_TCP_PREAMBLE_SIZE bytes before calling this function.
  *
- *  \param[in]   buf       Received TCP buffer.
- *  \param[in]   buflen    Size in bytes of buf.
- *  \param[out]  preamble  Struct to contain parsed preamble information.
- *  \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
- *          contain a valid TCP preamble).
+ * \param[in]   buf       Received TCP buffer.
+ * \param[in]   buflen    Size in bytes of buf.
+ * \param[out]  preamble  Struct to contain parsed preamble information.
+ * \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
+ *         contain a valid TCP preamble).
  */
 bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPreamble* preamble)
 {
@@ -62,16 +63,17 @@ bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPream
   return false;
 }
 
-/*! \brief Parse an ACN UDP Preamble.
+/*!
+ * \brief Parse an ACN UDP Preamble.
  *
- *  Determine whether this received UDP datagram contains an ACN protocol family packet by
- *  determining whether it starts with the ACN UDP preamble.
+ * Determine whether this received UDP datagram contains an ACN protocol family packet by
+ * determining whether it starts with the ACN UDP preamble.
  *
- *  \param[in] buf Received UDP buffer.
- *  \param[in] buflen Size in bytes of buf.
- *  \param[out] preamble Struct to contain parsed preamble information.
- *  \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
- *          contain a valid UDP preamble).
+ * \param[in] buf Received UDP buffer.
+ * \param[in] buflen Size in bytes of buf.
+ * \param[out] preamble Struct to contain parsed preamble information.
+ * \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
+ *         contain a valid UDP preamble).
  */
 bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPreamble* preamble)
 {
@@ -96,18 +98,20 @@ bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPream
   return false;
 }
 
-/*! \brief Parse only the header of an ACN Root Layer PDU.
+/*!
+ * \brief Parse only the header of an ACN Root Layer PDU.
  *
- *  This can be useful when working with stream sockets.
+ * This can be useful when working with stream sockets.
  *
- *  \param[in] buf Root Layer Protocol buffer.
- *  \param[in] buflen Size in bytes of buf.
- *  \param[in] pdu Struct to contain parsed PDU header.
- *  \param[in] last_pdu The last PDU structure that was parsed by this function, or NULL for the
- *                      first PDU in the block.
- *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
+ * \param[in] buf Root Layer Protocol buffer.
+ * \param[in] buflen Size in bytes of buf.
+ * \param[in] pdu Struct to contain parsed PDU header.
+ * \param[in] last_pdu The last PDU structure that was parsed by this function, or NULL for the
+ *                     first PDU in the block.
+ * \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalRootLayerPdu* last_pdu)
+bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu,
+                                    EtcPalRootLayerPdu* last_pdu)
 {
   uint32_t min_pdu_len, pdu_len;
   bool extlength, inheritvect, inherithead, inheritdata;
@@ -171,44 +175,45 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
   return true;
 }
 
-/*! \brief Parse an ACN Root Layer PDU.
+/*!
+ * \brief Parse an ACN Root Layer PDU.
  *
- *  Parse a Root Layer PDU from a Root Layer PDU block. Fills in the EtcPalRootLayerPdu structure with
- *  the parsed PDU information, and stores state data in a EtcPalPdu structure for parsing the next
- *  PDU in the block, if there is one.
+ * Parse a Root Layer PDU from a Root Layer PDU block. Fills in the EtcPalRootLayerPdu structure with
+ * the parsed PDU information, and stores state data in a EtcPalPdu structure for parsing the next
+ * PDU in the block, if there is one.
  *
- *  Example usage:
+ * Example usage:
  *
- *  After parsing an ACN protocol family preamble (perhaps by using etcpal_parse_udp_preamble() or
- *  etcpal_parse_tcp_preamble()), buf points to the data starting after the preamble and buflen is the
- *  length parsed from the preamble...
+ * After parsing an ACN protocol family preamble (perhaps by using etcpal_parse_udp_preamble() or
+ * etcpal_parse_tcp_preamble()), buf points to the data starting after the preamble and buflen is the
+ * length parsed from the preamble...
  *
- *  \code
- *  EtcPalPdu pdu = ETCPAL_PDU_INIT; // Must initialize this!!
- *  bool res = false;
- *  do
- *  {
- *      EtcPalRootLayerPdu cur;
- *      res = etcpal_parse_root_layer_pdu(buf, buflen, &cur, &pdu);
- *      if (res)
- *      {
- *          // Example application handler function that forwards the pdu appropriately based on
- *          // vector
- *          handle_root_layer_pdu(&cur);
- *      }
- *  } while (res);
- *  \endcode
+ * \code
+ * EtcPalPdu pdu = ETCPAL_PDU_INIT; // Must initialize this!!
+ * bool res = false;
+ * do
+ * {
+ *   EtcPalRootLayerPdu cur;
+ *   res = etcpal_parse_root_layer_pdu(buf, buflen, &cur, &pdu);
+ *   if (res)
+ *   {
+ *     // Example application handler function that forwards the pdu appropriately based on
+ *     // vector
+ *     handle_root_layer_pdu(&cur);
+ *   }
+ * } while (res);
+ * \endcode
  *
- *  \param[in] buf Root Layer Protocol buffer.
- *  \param[in] buflen Size in bytes of buf.
- *  \param[out] pdu Struct to contain parsed PDU.
- *  \param[in,out] last_pdu State data for future calls.
- *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
+ * \param[in] buf Root Layer Protocol buffer.
+ * \param[in] buflen Size in bytes of buf.
+ * \param[out] pdu Struct to contain parsed PDU.
+ * \param[in,out] last_pdu State data for future calls.
+ * \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
 bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalPdu* last_pdu)
 {
   EtcPalPduConstraints rlp_constraints = {/* vector_size */ 4,
-                                        /* header_size */ 16};
+                                          /* header_size */ 16};
 
   if (!buf || !pdu || !last_pdu)
     return false;
@@ -224,14 +229,15 @@ bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLa
   return false;
 }
 
-/*! \brief Pack an ACN UDP Preamble into a buffer.
+/*!
+ * \brief Pack an ACN UDP Preamble into a buffer.
  *
- *  All ACN protocol family packets sent over UDP must start with a UDP Preamble.
+ * All ACN protocol family packets sent over UDP must start with a UDP Preamble.
  *
- *  \param[out] buf Buffer into which to pack the preamble.
- *  \param[in] buflen Size in bytes of buf. Buffer should be at least of length
- *                    #ACN_UDP_PREAMBLE_SIZE.
- *  \return Number of bytes packed (success) or 0 (failure).
+ * \param[out] buf Buffer into which to pack the preamble.
+ * \param[in] buflen Size in bytes of buf. Buffer should be at least of length
+ *                   #ACN_UDP_PREAMBLE_SIZE.
+ * \return Number of bytes packed (success) or 0 (failure).
  */
 size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen)
 {
@@ -250,16 +256,17 @@ size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen)
   return (size_t)(cur_ptr - buf);
 }
 
-/*! \brief Pack an ACN TCP Preamble into a buffer.
+/*!
+ * \brief Pack an ACN TCP Preamble into a buffer.
  *
- *  All ACN protocol family packets sent over TCP must start with a TCP Preamble.
+ * All ACN protocol family packets sent over TCP must start with a TCP Preamble.
  *
- *  \param[out] buf Buffer into which to pack the preamble.
- *  \param[in] buflen Size in bytes of buf. Buffer should be at least of length
- *                    #ACN_TCP_PREAMBLE_SIZE.
- *  \param[in] rlp_block_len Full length in bytes of the Root Layer PDU block that will come after
- *                           this TCP preamble.
- *  \return Number of bytes packed (success) or 0 (failure).
+ * \param[out] buf Buffer into which to pack the preamble.
+ * \param[in] buflen Size in bytes of buf. Buffer should be at least of length
+ *                   #ACN_TCP_PREAMBLE_SIZE.
+ * \param[in] rlp_block_len Full length in bytes of the Root Layer PDU block that will come after
+ *                          this TCP preamble.
+ * \return Number of bytes packed (success) or 0 (failure).
  */
 size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
 {
@@ -276,14 +283,15 @@ size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_le
   return (size_t)(cur_ptr - buf);
 }
 
-/*! \brief Get the buffer size to allocate for a Root Layer PDU block.
+/*!
+ * \brief Get the buffer size to allocate for a Root Layer PDU block.
  *
- *  Calculate the buffer size to allocate for a future call to etcpal_pack_root_layer_block(), given
- *  an array of EtcPalRootLayerPdu.
+ * Calculate the buffer size to allocate for a future call to etcpal_pack_root_layer_block(), given
+ * an array of EtcPalRootLayerPdu.
  *
- *  \param[in] pdu_block Array of structs representing a Root Layer PDU block.
- *  \param[in] num_pdus Size of the pdu_block array.
- *  \return Buffer size to allocate.
+ * \param[in] pdu_block Array of structs representing a Root Layer PDU block.
+ * \param[in] num_pdus Size of the pdu_block array.
+ * \return Buffer size to allocate.
  */
 size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t num_pdus)
 {
@@ -301,9 +309,10 @@ size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t nu
   return block_size;
 }
 
-/*! \brief Pack only the header of a Root Layer PDU block into a buffer.
+/*!
+ * \brief Pack only the header of a Root Layer PDU block into a buffer.
  *
- *  This can be useful when working with stream sockets.
+ * This can be useful when working with stream sockets.
  *
  * \param[out] buf Buffer into which to pack the Root Layer PDU header.
  * \param[in] buflen Size in bytes of buf. Buffer should be at least of size
@@ -337,17 +346,18 @@ size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRo
   return (size_t)(cur_ptr - buf);
 }
 
-/*! \brief Pack a Root Layer PDU block into a buffer.
+/*!
+ * \brief Pack a Root Layer PDU block into a buffer.
  *
- *  The required buffer size can be calculated in advance using etcpal_root_layer_buf_size().
+ * The required buffer size can be calculated in advance using etcpal_root_layer_buf_size().
  *
- *  \param[out] buf Buffer into which to pack the Root Layer PDU block.
- *  \param[in] buflen Size in bytes of buf.
- *  \param[in] pdu_block Array of EtcPalRootLayerPdu representing the PDU block to pack.
- *  \param[in] num_pdus Number of EtcPalRootLayerPdu that make up the pdu_block array.
- *  \return Number of bytes packed (success) or 0 (failure). Note that this might be less than the
- *          value returned by etcpal_root_layer_buf_size(); this is because this function performs
- *          more optimizations related to PDU inheritance.
+ * \param[out] buf Buffer into which to pack the Root Layer PDU block.
+ * \param[in] buflen Size in bytes of buf.
+ * \param[in] pdu_block Array of EtcPalRootLayerPdu representing the PDU block to pack.
+ * \param[in] num_pdus Number of EtcPalRootLayerPdu that make up the pdu_block array.
+ * \return Number of bytes packed (success) or 0 (failure). Note that this might be less than the
+ *         value returned by etcpal_root_layer_buf_size(); this is because this function performs
+ *         more optimizations related to PDU inheritance.
  */
 size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu_block, size_t num_pdus)
 {

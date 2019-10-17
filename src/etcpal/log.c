@@ -105,14 +105,15 @@ void sanitize_str(char* str)
   }
 }
 
-/*! \brief Ensure that the given syslog parameters are compliant with the syslog RFC (modifying
- *         them if necessary).
+/*!
+ * \brief Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them
+ *        if necessary).
  *
- *  Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
- *  are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
- *  within the correct range (#ETCPAL_LOG_NFACILITIES).
+ * Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
+ * are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
+ * within the correct range (#ETCPAL_LOG_NFACILITIES).
  *
- *  \param[in,out] params Syslog params to sanitize.
+ * \param[in,out] params Syslog params to sanitize.
  */
 void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
 {
@@ -124,13 +125,14 @@ void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
   sanitize_str(params->procid);
 }
 
-/*! \brief Ensure that the given etcpal_log_params are valid.
+/*!
+ * \brief Ensure that the given etcpal_log_params are valid.
  *
- *  This also sanitizes the syslog params using etcpal_sanitize_syslog_params() if action is set to
- *  kEtcPalLogCreateSyslog or kEtcPalLogCreateBoth.
+ * This also sanitizes the syslog params using etcpal_sanitize_syslog_params() if action is set to
+ * kEtcPalLogCreateSyslog or kEtcPalLogCreateBoth.
  *
- *  \param[in,out] params etcpal_log_params to validate.
- *  \return true (params are valid) or false (params are invalid).
+ * \param[in,out] params etcpal_log_params to validate.
+ * \return true (params are valid) or false (params are invalid).
  */
 bool etcpal_validate_log_params(EtcPalLogParams* params)
 {
@@ -213,7 +215,8 @@ static bool get_time(const EtcPalLogParams* params, EtcPalLogTimeParams* time_pa
 /* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
  * original message within the syslog message, or NULL on failure. */
 static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParams* tparams,
-                                     const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args)
+                                       const EtcPalSyslogParams* syslog_params, int pri, const char* format,
+                                       va_list args)
 {
   if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
     return NULL;
@@ -241,21 +244,22 @@ static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLog
   }
 }
 
-/*! \brief Create a log message with syslog header in the given buffer.
+/*!
+ * \brief Create a log message with syslog header in the given buffer.
  *
- *  Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length.
+ * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length.
  *
- *  \param[out] buf Buffer in which to build the syslog message.
- *  \param[in] buflen Length in bytes of buf.
- *  \param[in] time A set of time parameters representing the current time. If NULL, no timestamp
- *                  will be added to the log message.
- *  \param[in] syslog_params A set of parameters for the syslog header.
- *  \param[in] pri Priority of this log message.
- *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
- *                    as appropriate for format specifiers.
+ * \param[out] buf Buffer in which to build the syslog message.
+ * \param[in] buflen Length in bytes of buf.
+ * \param[in] time A set of time parameters representing the current time. If NULL, no timestamp
+ *                 will be added to the log message.
+ * \param[in] syslog_params A set of parameters for the syslog header.
+ * \param[in] pri Priority of this log message.
+ * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
  */
 bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time,
-                            const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
+                              const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
 {
   va_list args;
   bool res;
@@ -268,7 +272,7 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParam
 /* Create a log message with a human-readable header given the appropriate va_list. Returns a
  * pointer to the original message within the log message, or NULL on failure. */
 static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format,
-                                        va_list args)
+                                          va_list args)
 {
   if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || !format)
     return NULL;
@@ -295,17 +299,18 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPal
   }
 }
 
-/*! \brief Create a log message with a human-readable header in the given
- *         buffer.
+/*!
+ * \brief Create a log message with a human-readable header in the given
+ *        buffer.
  *
- *  Buffer must be at least #ETCPAL_HUMAN_LOG_STR_MIN_LEN in length.
+ * Buffer must be at least #ETCPAL_HUMAN_LOG_STR_MIN_LEN in length.
  *
- *  \param[out] buf Buffer in which to build the log message.
- *  \param[in] buflen Length in bytes of buf.
- *  \param[in] time A set of time parameters representing the current time. If NULL, no timestamp
- *                  will be added to the log message.
- *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
- *                    as appropriate for format specifiers.
+ * \param[out] buf Buffer in which to build the log message.
+ * \param[in] buflen Length in bytes of buf.
+ * \param[in] time A set of time parameters representing the current time. If NULL, no timestamp
+ *                 will be added to the log message.
+ * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
  */
 bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format, ...)
 {
@@ -317,16 +322,17 @@ bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimePa
   return res;
 }
 
-/*! \brief Determine whether a priority level can be logged given the mask present in the log
- *         params.
+/*!
+ * \brief Determine whether a priority level can be logged given the mask present in the log
+ *        params.
  *
- *  This is useful to use as a guard around doing any conversions that are only for logging, e.g.
- *  converting addresses to strings -- if the priority of the message can't be logged, then those
- *  conversions are just wasted work.
+ * This is useful to use as a guard around doing any conversions that are only for logging, e.g.
+ * converting addresses to strings -- if the priority of the message can't be logged, then those
+ * conversions are just wasted work.
  *
- *  \param[in] params The log parameters to be checked.
- *  \param[in] pri Priority to check.
- *  \return Whether this priority will be logged with the current mask setting.
+ * \param[in] params The log parameters to be checked.
+ * \param[in] pri Priority to check.
+ * \return Whether this priority will be logged with the current mask setting.
  */
 bool etcpal_can_log(const EtcPalLogParams* params, int pri)
 {
@@ -335,14 +341,15 @@ bool etcpal_can_log(const EtcPalLogParams* params, int pri)
   return false;
 }
 
-/*! \brief Log a message from a library module.
+/*!
+ * \brief Log a message from a library module.
  *
- *  Takes a printf-style format string which is formatted and passed to the application callback.
+ * Takes a printf-style format string which is formatted and passed to the application callback.
  *
- *  \param[in] params The log parameters to be used for this message.
- *  \param[in] pri Priority of this log message.
- *  \param[in] format Log message with printf-style format specifiers. Provide additional arguments
- *                    as appropriate for format specifiers.
+ * \param[in] params The log parameters to be used for this message.
+ * \param[in] pri Priority of this log message.
+ * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
  */
 void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
 {
@@ -352,15 +359,16 @@ void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
   va_end(args);
 }
 
-/*! \brief Log a message from a library module with the list of format arguments already generated.
+/*!
+ * \brief Log a message from a library module with the list of format arguments already generated.
  *
- *  For normal usage, just use etcpal_log(). However, this function is useful if you want to create a
- *  wrapper function around etcpal_log() which also takes variable format arguments.
+ * For normal usage, just use etcpal_log(). However, this function is useful if you want to create a
+ * wrapper function around etcpal_log() which also takes variable format arguments.
  *
- *  \param[in] params The log parameters to be used for this message.
- *  \param[in] pri Priority of this log message.
- *  \param[in] format Log message with printf-style format specifiers.
- *  \param[in] args Argument list for the format specifiers in format.
+ * \param[in] params The log parameters to be used for this message.
+ * \param[in] pri Priority of this log message.
+ * \param[in] format Log message with printf-style format specifiers.
+ * \param[in] args Argument list for the format specifiers in format.
  */
 void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_list args)
 {
@@ -386,14 +394,16 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
       {
         va_list args_copy;
         va_copy(args_copy, args);
-        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
-                                              &params->syslog_params, pri, format, args_copy);
+        strings.raw =
+            etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+                                      &params->syslog_params, pri, format, args_copy);
         va_end(args_copy);
       }
       else
       {
-        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
-                                              &params->syslog_params, pri, format, args);
+        strings.raw =
+            etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+                                      &params->syslog_params, pri, format, args);
       }
       if (strings.raw)
       {
@@ -404,7 +414,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadableLog)
     {
       strings.raw = etcpal_vcreate_human_log_str(humanlogmsg, ETCPAL_HUMAN_LOG_STR_MAX_LEN + 1,
-                                               have_time ? &time_params : NULL, format, args);
+                                                 have_time ? &time_params : NULL, format, args);
       if (strings.raw)
       {
         strings.human_readable = humanlogmsg;

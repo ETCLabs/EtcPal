@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_THREAD_H_
-#define _ETCPAL_THREAD_H_
+#ifndef ETCPAL_THREAD_H_
+#define ETCPAL_THREAD_H_
 
 #include "etcpal/os_thread.h"
 
@@ -54,4 +54,4 @@ void etcpal_thread_sleep(int sleep_ms);
 }
 #endif
 
-#endif /* _ETCPAL_THREAD_H_ */
+#endif /* ETCPAL_THREAD_H_ */

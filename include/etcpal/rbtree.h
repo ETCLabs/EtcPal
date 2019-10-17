@@ -34,22 +34,24 @@
  *
  * For more information, please refer to <http://unlicense.org/>
  */
-#ifndef _ETCPAL_RBTREE_H_
-#define _ETCPAL_RBTREE_H_
+
+#ifndef ETCPAL_RBTREE_H_
+#define ETCPAL_RBTREE_H_
 
 #include <stddef.h>
 #include "etcpal/error.h"
 
-/*! \defgroup etcpal_rbtree etcpal_rbtree
- *  \ingroup etcpal
- *  \brief A red-black tree implementation.
+/*!
+ * \defgroup etcpal_rbtree etcpal_rbtree
+ * \ingroup etcpal
+ * \brief A red-black tree implementation.
  *
- *  \#include "etcpal/rbtree.h"
+ * \#include "etcpal/rbtree.h"
  *
- *  A red-black tree is a popular design for a self-balancing binary search tree. Based on a
- *  public-domain red-black tree implementation; see the header file for details.
+ * A red-black tree is a popular design for a self-balancing binary search tree. Based on a
+ * public-domain red-black tree implementation; see the header file for details.
  *
- *  @{
+ * @{
  */
 
 /*! The tallest allowable tree that can be iterated over. */
@@ -60,60 +62,67 @@
 typedef struct EtcPalRbNode EtcPalRbNode;
 typedef struct EtcPalRbTree EtcPalRbTree;
 
-/*! \name Callback Functions
- *  @{
+/*!
+ * \name Callback Functions
+ * @{
  */
 
-/*! \brief A function type that compares two nodes in a tree.
+/*!
+ * \brief A function type that compares two nodes in a tree.
  *
- *  A default, etcpal_rbtree_node_cmp_ptr_cb(), is provided which simply compares the pointer (address) of
- *  the value member of each node.
+ * A default, etcpal_rbtree_node_cmp_ptr_cb(), is provided which simply compares the pointer (address) of
+ * the value member of each node.
  *
- *  \param[in] self The tree in which two nodes are being compared.
- *  \param[in] node_a The first node being compared.
- *  \param[in] node_b The second node being compared.
- *  \return < 0 (node_a's value is less than node_b's value)\n
- *            0 (node_a's value is equal to node_b's value)\n
- *          > 0 (node_a's value is greater than node_b's value)
+ * \param[in] self The tree in which two nodes are being compared.
+ * \param[in] node_a The first node being compared.
+ * \param[in] node_b The second node being compared.
+ * \return < 0: node_a's value is less than node_b's value
+ * \return 0: node_a's value is equal to node_b's value
+ * \return > 0: node_a's value is greater than node_b's value
  */
-typedef int (*etcpal_rbtree_node_cmp_f)(const EtcPalRbTree* self, const EtcPalRbNode* node_a,
-                                        const EtcPalRbNode* node_b);
+typedef int (*EtcPalRbTreeNodeCmpFunc)(const EtcPalRbTree* self, const EtcPalRbNode* node_a,
+                                       const EtcPalRbNode* node_b);
 
-/*! \brief A function type to be called for each node in a tree.
+/*!
+ * \brief A function type to be called for each node in a tree.
  *
- *  Usually provided on a tree-wide clear or destroy operation; in this case, it should provide any
- *  deallocation necessary for the node structure and its value. A default,
- *  etcpal_rbtree_node_dealloc_cb(), is provided which simply calls the tree's #etcpal_rbnode_dealloc_f on the
- *  node.
+ * Usually provided on a tree-wide clear or destroy operation; in this case, it should provide any
+ * deallocation necessary for the node structure and its value. A default,
+ * etcpal_rbtree_node_dealloc_cb(), is provided which simply calls the tree's #etcpal_rbnode_dealloc_f on the
+ * node.
  *
- *  \param[in] self The tree in which the node resides.
- *  \param[in] node The node for which an action should be performed.
+ * \param[in] self The tree in which the node resides.
+ * \param[in] node The node for which an action should be performed.
  */
-typedef void (*etcpal_rbtree_node_f)(const EtcPalRbTree* self, EtcPalRbNode* node);
+typedef void (*EtcPalRbTreeNodeFunc)(const EtcPalRbTree* self, EtcPalRbNode* node);
 
-/*! \brief A function type to allocate a new node.
+/*!
+ * \brief A function type to allocate a new node.
  *
- *  The user provides the allocation method for new nodes, whether this be malloc() or some more
- *  static method. A function of this type is saved by the tree struct and called on a call to
- *  etcpal_rbtree_insert().
+ * The user provides the allocation method for new nodes, whether this be malloc() or some more
+ * static method. A function of this type is saved by the tree struct and called on a call to
+ * etcpal_rbtree_insert().
  *
- *  \return Pointer to the newly allocated node.
+ * \return Pointer to the newly allocated node.
  */
-typedef EtcPalRbNode* (*etcpal_rbnode_alloc_f)();
+typedef EtcPalRbNode* (*EtcPalRbNodeAllocFunc)();
 
-/*! \brief A function type to deallocate a node.
+/*!
+ * \brief A function type to deallocate a node.
  *
- *  The user provides the deallocation method for nodes, whether this be free() or some more static
- *  method. A function of this type is saved by the tree struct and called on calls to
- *  etcpal_rbtree_remove() and etcpal_rbtree_clear().
+ * The user provides the deallocation method for nodes, whether this be free() or some more static
+ * method. A function of this type is saved by the tree struct and called on calls to
+ * etcpal_rbtree_remove() and etcpal_rbtree_clear().
  *
- *  \param[in] node Pointer to node to deallocate.
+ * \param[in] node Pointer to node to deallocate.
  */
-typedef void (*etcpal_rbnode_dealloc_f)(EtcPalRbNode* node);
+typedef void (*EtcPalRbNodeDeallocFunc)(EtcPalRbNode* node);
 
-/*! @} */
+/*!
+ * @}
+ */
 
-/*! \brief A red-black tree node. */
+/*! A red-black tree node. */
 struct EtcPalRbNode
 {
   int red;               /*!< The node color: red (1), black (0) */
@@ -121,23 +130,25 @@ struct EtcPalRbNode
   void* value;           /*!< The value object represented by this node. */
 };
 
-/*! \brief A red-black tree.
+/*!
+ * \brief A red-black tree.
  *
- *  Initialize using etcpal_rbtree_init() before carrying out any other operation on the tree.
+ * Initialize using etcpal_rbtree_init() before carrying out any other operation on the tree.
  */
 struct EtcPalRbTree
 {
   EtcPalRbNode* root;                /*!< The root node of the tree. */
-  etcpal_rbtree_node_cmp_f cmp;      /*!< A function to use for comparing two nodes. */
+  EtcPalRbTreeNodeCmpFunc cmp;       /*!< A function to use for comparing two nodes. */
   size_t size;                       /*!< The current count of nodes in the tree. */
-  etcpal_rbnode_alloc_f alloc_f;     /*!< A function to use for allocating a new node.*/
-  etcpal_rbnode_dealloc_f dealloc_f; /*!< A function to use for deallocating a node. */
+  EtcPalRbNodeAllocFunc alloc_f;     /*!< A function to use for allocating a new node.*/
+  EtcPalRbNodeDeallocFunc dealloc_f; /*!< A function to use for deallocating a node. */
   void* info;                        /*!< User provided, not used by etcpal_rbtree. */
 };
 
-/*! \brief A red-black tree iterator.
+/*!
+ * \brief A red-black tree iterator.
  *
- *  Initialize using etcpal_rbiter_init() before carrying out any other operation on the iterator.
+ * Initialize using etcpal_rbiter_init() before carrying out any other operation on the iterator.
  */
 typedef struct EtcPalRbIter
 {
@@ -157,8 +168,8 @@ void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node)
 
 EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value);
 
-EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, etcpal_rbtree_node_cmp_f cmp, etcpal_rbnode_alloc_f alloc_f,
-                                 etcpal_rbnode_dealloc_f dealloc_f);
+EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, EtcPalRbTreeNodeCmpFunc cmp, EtcPalRbNodeAllocFunc alloc_f,
+                                 EtcPalRbNodeDeallocFunc dealloc_f);
 void* etcpal_rbtree_find(EtcPalRbTree* self, void* value);
 etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value);
 etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value);
@@ -166,8 +177,8 @@ etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree* self);
 size_t etcpal_rbtree_size(EtcPalRbTree* self);
 
 etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node);
-etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, etcpal_rbtree_node_f node_cb);
-etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, etcpal_rbtree_node_f node_cb);
+etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, EtcPalRbTreeNodeFunc node_cb);
+etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, EtcPalRbTreeNodeFunc node_cb);
 
 int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root);
 
@@ -181,6 +192,8 @@ void* etcpal_rbiter_prev(EtcPalRbIter* self);
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_RBTREE_H_ */
+#endif /* ETCPAL_RBTREE_H_ */

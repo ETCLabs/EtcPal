@@ -16,8 +16,9 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
-#ifndef _ACN_PROT_H_
-#define _ACN_PROT_H_
+
+#ifndef ETCPAL_ACN_PROT_H_
+#define ETCPAL_ACN_PROT_H_
 
 #include "etcpal/int.h"
 
@@ -33,4 +34,4 @@ typedef uint32_t acn_protocol_t;
 #define ACN_PROTOCOL_RPT 0x00000005u
 #define ACN_PROTOCOL_EPT 0x0000000Bu
 
-#endif /* _ACN_PROT_H_ */
+#endif /* ETCPAL_ACN_PROT_H_ */

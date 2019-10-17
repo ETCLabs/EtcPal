@@ -18,38 +18,41 @@
  ******************************************************************************/
 
 /* etcpal/log.h: Common logging functions. */
-#ifndef _ETCPAL_LOG_H_
-#define _ETCPAL_LOG_H_
+
+#ifndef ETCPAL_LOG_H_
+#define ETCPAL_LOG_H_
 
 #include <stdarg.h>
 #include <stddef.h>
 #include "etcpal/bool.h"
 #include "etcpal/common.h"
 
-/*! \defgroup etcpal_log etcpal_log
- *  \ingroup etcpal
- *  \brief A platform-neutral module enabling applications and libraries to log messages in either
- *         or both of syslog-compliant and human-readable format.
+/*!
+ * \defgroup etcpal_log etcpal_log
+ * \ingroup etcpal
+ * \brief A platform-neutral module enabling applications and libraries to log messages in either
+ *        or both of syslog-compliant and human-readable format.
  *
- *  \#include "etcpal/log.h"
+ * \#include "etcpal/log.h"
  *
- *  This module can be used in two ways. Applications can use the lightweight
- *  etcpal_create_syslog_str() and etcpal_create_human_log_str() to create log messages with a header
- *  defined by the Syslog protocol or with a human-readable header defined by ETC.
+ * This module can be used in two ways. Applications can use the lightweight
+ * etcpal_create_syslog_str() and etcpal_create_human_log_str() to create log messages with a header
+ * defined by the Syslog protocol or with a human-readable header defined by ETC.
  *
- *  This module can also be used to enable other libraries to log messages via a callback function.
- *  Library functions can take a set of parameters (etcpal_log_params) on initialization. They use
- *  these parameters and the etcpal_log() or etcpal_vlog() functions to call back to the application to
- *  log messages. The application can then decide what to do with these log messages (print to
- *  console, syslog, etc.)
+ * This module can also be used to enable other libraries to log messages via a callback function.
+ * Library functions can take a set of parameters (etcpal_log_params) on initialization. They use
+ * these parameters and the etcpal_log() or etcpal_vlog() functions to call back to the application to
+ * log messages. The application can then decide what to do with these log messages (print to
+ * console, syslog, etc.)
  *
- *  @{
+ * @{
  */
 
 /* clang-format off */
 
-/*! \name Log Facility
- *  @{
+/*!
+ * \name Log Facility
+ * @{
  */
 #define ETCPAL_LOG_KERN (0 << 3)      /*!< Kernel messages. */
 #define ETCPAL_LOG_USER (1 << 3)      /*!< Random user-level messages. */
@@ -72,14 +75,17 @@
 #define ETCPAL_LOG_LOCAL5 (21 << 3) /*!< Reserved for local use. */
 #define ETCPAL_LOG_LOCAL6 (22 << 3) /*!< Reserved for local use. */
 #define ETCPAL_LOG_LOCAL7 (23 << 3) /*!< Reserved for local use. */
-/*! @} */
+/*!
+ * @}
+ */
 
 #define ETCPAL_LOG_NFACILITIES 24 /*!< Current number of facilities. */
 #define ETCPAL_LOG_FACMASK 0x03f8 /* Mask to extract facility part of a prival. */
 #define ETCPAL_LOG_FAC(p) (((p)&ETCPAL_LOG_FACMASK) >> 3)
 
-/*! \name Log Priority
- *  @{
+/*!
+ * \name Log Priority
+ * @{
  */
 #define ETCPAL_LOG_EMERG 0   /*!< System is unusable. */
 #define ETCPAL_LOG_ALERT 1   /*!< Action must be taken immediately. */
@@ -89,7 +95,9 @@
 #define ETCPAL_LOG_NOTICE 5  /*!< Normal but significant condition. */
 #define ETCPAL_LOG_INFO 6    /*!< Informational. */
 #define ETCPAL_LOG_DEBUG 7   /*!< Debug-level messages. */
-/*! @} */
+/*!
+ * @}
+ */
 
 #define ETCPAL_LOG_PRIMASK 0x07 /* mask to extract priority part (internal) */
 #define ETCPAL_LOG_PRI(p) ((p) & ETCPAL_LOG_PRIMASK) /* extract priority */
@@ -155,28 +163,30 @@ typedef struct EtcPalLogStrings
   const char* raw;
 } EtcPalLogStrings;
 
-/*! \brief Log callback function.
+/*!
+ * \brief Log callback function.
  *
- *  The function that library modules use to log messages. The application developer defines the
- *  function and determines where the messages go.
+ * The function that library modules use to log messages. The application developer defines the
+ * function and determines where the messages go.
  *
- *  <b>Do not call etcpal_log() or etcpal_vlog() from this function; a deadlock will result.</b>
+ * <b>Do not call etcpal_log() or etcpal_vlog() from this function; a deadlock will result.</b>
  *
- *  \param[in] context Optional application-provided value that was previously passed to the library
- *                     module.
- *  \param[in] strings Strings associated with the log message. Will contain valid strings
- *                     corresponding to the log actions requested in the corresponding EtcPalLogParams
- *                     struct.
+ * \param[in] context Optional application-provided value that was previously passed to the library
+ *                    module.
+ * \param[in] strings Strings associated with the log message. Will contain valid strings
+ *                    corresponding to the log actions requested in the corresponding EtcPalLogParams
+ *                    struct.
  */
 typedef void (*etcpal_log_callback)(void* context, const EtcPalLogStrings* strings);
 
-/*! \brief Time callback function.
+/*!
+ * \brief Time callback function.
  *
- *  A function by which the logging module can get the current local time.
+ * A function by which the logging module can get the current local time.
  *
- *  \param[in] context Optional application-provided value that was previously passed to the library
- *                     module.
- *  \param[out] time_params Fill this in with the current local time.
+ * \param[in] context Optional application-provided value that was previously passed to the library
+ *                    module.
+ * \param[out] time_params Fill this in with the current local time.
  */
 typedef void (*etcpal_log_time_fn)(void* context, EtcPalLogTimeParams* time_params);
 
@@ -271,6 +281,8 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_LOG_H_ */
+#endif /* ETCPAL_LOG_H_ */

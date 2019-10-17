@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_OS_SOCKET_H_
-#define _ETCPAL_OS_SOCKET_H_
+#ifndef ETCPAL_OS_SOCKET_H_
+#define ETCPAL_OS_SOCKET_H_
 
 #include <rtcs.h>
 #include "etcpal/inet.h"
@@ -70,4 +70,4 @@ typedef struct EtcPalPollContext
 }
 #endif
 
-#endif /* _ETCPAL_OS_SOCKET_H_ */
+#endif /* ETCPAL_OS_SOCKET_H_ */

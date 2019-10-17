@@ -19,8 +19,9 @@
 
 /* etcpal/root_layer_pdu.h: Functions to parse or pack a Root Layer PDU block (as defined in ANSI
  * E1.17) and its associated preambles. */
-#ifndef _ETCPAL_ROOT_LAYER_PDU_H_
-#define _ETCPAL_ROOT_LAYER_PDU_H_
+
+#ifndef ETCPAL_ROOT_LAYER_PDU_H_
+#define ETCPAL_ROOT_LAYER_PDU_H_
 
 #include <stddef.h>
 #include "etcpal/int.h"
@@ -29,13 +30,14 @@
 #include "etcpal/acn_prot.h"
 #include "etcpal/pdu.h"
 
-/*! \defgroup etcpal_rootlayerpdu etcpal_rootlayerpdu
- *  \ingroup etcpal_pdu
- *  \brief Parse or pack a Root Layer PDU block.
+/*!
+ * \defgroup etcpal_rootlayerpdu etcpal_rootlayerpdu
+ * \ingroup etcpal_pdu
+ * \brief Parse or pack a Root Layer PDU block.
  *
- *  \#include "etcpal/root_layer_pdu.h"
+ * \#include "etcpal/root_layer_pdu.h"
  *
- *  @{
+ * @{
  */
 
 /*! Size of an ACN family TCP preamble. */
@@ -47,10 +49,11 @@
 /*! Size of the Root Layer PDU header when the length is 4096 or greater. */
 #define ACN_RLP_HEADER_SIZE_EXT_LEN 23
 
-/*! \name Protocol Vectors
- *  Each ACN family protocol is defined by a protocol vector in a Root Layer PDU. These values
- *  occupy the vector field of a RootLayerPdu to identify the contents of its data segment.
- *  @{
+/*!
+ * \name Protocol Vectors
+ * Each ACN family protocol is defined by a protocol vector in a Root Layer PDU. These values
+ * occupy the vector field of a RootLayerPdu to identify the contents of its data segment.
+ * @{
  */
 #define ACN_VECTOR_ROOT_SDT ACN_PROTOCOL_SDT
 #define ACN_VECTOR_ROOT_DRAFT_E131_DATA ACN_PROTOCOL_DRAFT_E131_DATA
@@ -60,7 +63,9 @@
 #define ACN_VECTOR_ROOT_BROKER ACN_PROTOCOL_BROKER
 #define ACN_VECTOR_ROOT_RPT ACN_PROTOCOL_RPT
 #define ACN_VECTOR_ROOT_EPT ACN_PROTOCOL_EPT
-/*! @} */
+/*!
+ * @}
+ */
 
 /*! Holds the information contained in an ACN TCP Preamble. */
 typedef struct EtcPalTcpPreamble
@@ -99,7 +104,8 @@ extern "C" {
 
 bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPreamble* preamble);
 bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPreamble* preamble);
-bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalRootLayerPdu* last_pdu);
+bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu,
+                                    EtcPalRootLayerPdu* last_pdu);
 bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalPdu* last_pdu);
 
 size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len);
@@ -112,6 +118,8 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_ROOT_LAYER_PDU_H_ */
+#endif /* ETCPAL_ROOT_LAYER_PDU_H_ */

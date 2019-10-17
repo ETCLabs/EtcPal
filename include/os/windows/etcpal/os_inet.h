@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_OS_INET_H_
-#define _ETCPAL_OS_INET_H_
+#ifndef ETCPAL_OS_INET_H_
+#define ETCPAL_OS_INET_H_
 
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
@@ -26,4 +26,4 @@
 typedef struct sockaddr etcpal_os_sockaddr_t;
 typedef struct sockaddr etcpal_os_ipaddr_t;
 
-#endif /* _ETCPAL_OS_INET_H_ */
+#endif /* ETCPAL_OS_INET_H_ */

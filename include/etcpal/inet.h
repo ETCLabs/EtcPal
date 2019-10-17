@@ -18,8 +18,9 @@
  ******************************************************************************/
 
 /* etcpal/inet.h: POSIX-like identifiers for IP addresses, network interfaces and related items. */
-#ifndef _ETCPAL_INET_H_
-#define _ETCPAL_INET_H_
+
+#ifndef ETCPAL_INET_H_
+#define ETCPAL_INET_H_
 
 #include <string.h>
 #include "etcpal/bool.h"
@@ -27,13 +28,14 @@
 #include "etcpal/int.h"
 #include "etcpal/os_inet.h"
 
-/*! \defgroup etcpal_inet etcpal_inet
- *  \ingroup etcpal
- *  \brief POSIX-like identifiers for IP addresses and network interfaces.
+/*!
+ * \defgroup etcpal_inet etcpal_inet
+ * \ingroup etcpal
+ * \brief POSIX-like identifiers for IP addresses and network interfaces.
  *
- *  \#include "etcpal/inet.h"
+ * \#include "etcpal/inet.h"
  *
- *  @{
+ * @{
  */
 
 #ifdef __cplusplus
@@ -54,12 +56,13 @@ typedef enum
 /*! The number of bytes in an IPv6 address. */
 #define ETCPAL_IPV6_BYTES 16
 
-/*! \brief An IP address.
+/*!
+ * \brief An IP address.
  *
- *  Can hold either an IPv4 or IPv6 address. IPv4 addresses are in host byte order. IPv6 addresses
- *  also contain a scope ID, which is also sometimes referred to as a zone index (RFC 4007), to
- *  help disambiguate link-local addresses, among other uses. In most cases, this field can be left
- *  at its default value, which is set by the ETCPAL_IP_SET_V6_ADDRESS() macro.
+ * Can hold either an IPv4 or IPv6 address. IPv4 addresses are in host byte order. IPv6 addresses
+ * also contain a scope ID, which is also sometimes referred to as a zone index (RFC 4007), to
+ * help disambiguate link-local addresses, among other uses. In most cases, this field can be left
+ * at its default value, which is set by the ETCPAL_IP_SET_V6_ADDRESS() macro.
  */
 typedef struct EtcPalIpAddr
 {
@@ -77,44 +80,65 @@ typedef struct EtcPalIpAddr
   } addr;
 } EtcPalIpAddr;
 
-/*! \name EtcPalIpAddr macros
- *  A set of macros for interacting with a EtcPalIpAddr. It is recommended to use these macros where
- *  possible rather than accessing the structure members directly; otherwise, it's easy to forget
- *  to fill in a field.
- *  @{
+/*!
+ * \name EtcPalIpAddr macros
+ * A set of macros for interacting with a EtcPalIpAddr. It is recommended to use these macros where
+ * possible rather than accessing the structure members directly; otherwise, it's easy to forget
+ * to fill in a field.
+ * @{
  */
 
-/*! Determine whether a EtcPalIpAddr contains an IPv4 address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \return true (contains an IPv4 address) or false (does not contain an IPv4 address). */
+/*!
+ * \brief Determine whether a EtcPalIpAddr contains an IPv4 address.
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \return true (contains an IPv4 address) or false (does not contain an IPv4 address).
+ */
 #define ETCPAL_IP_IS_V4(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeV4)
 
-/*! Determine whether a EtcPalIpAddr contains an IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \return true (contains an IPv6 address) or false (does not contain an IPv6 address). */
+/*!
+ * \brief Determine whether a EtcPalIpAddr contains an IPv6 address.
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \return true (contains an IPv6 address) or false (does not contain an IPv6 address).
+ */
 #define ETCPAL_IP_IS_V6(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeV6)
 
-/*! Determine whether a EtcPalIpAddr contains an invalid address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \return true (is invalid) or false (is not invalid). */
+/*!
+ * \brief Determine whether a EtcPalIpAddr contains an invalid address.
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \return true (is invalid) or false (is not invalid).
+ */
 #define ETCPAL_IP_IS_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type == kEtcPalIpTypeInvalid)
 
-/*! Get the IPv4 address from a EtcPalIpAddr. It is recommended to first use ETCPAL_IP_IS_V4() to make
- *  sure this EtcPalIpAddr contains a valid IPv4 address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \return The IPv4 address (uint32_t). */
+/*!
+ * \brief Get the IPv4 address from a EtcPalIpAddr.
+ *
+ * It is recommended to first use ETCPAL_IP_IS_V4() to make sure this EtcPalIpAddr contains a valid
+ * IPv4 address.
+ *
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \return The IPv4 address (uint32_t).
+ */
 #define ETCPAL_IP_V4_ADDRESS(etcpal_ip_ptr) ((etcpal_ip_ptr)->addr.v4)
 
-/*! Get the IPv6 address from a EtcPalIpAddr. It is recommended to first use ETCPAL_IP_IS_V6() to make
- *  sure this EtcPalIpAddr contains a valid IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \return The IPv6 address (uint8_t[]). */
+/*!
+ * \brief Get the IPv6 address from a EtcPalIpAddr.
+ *
+ * It is recommended to first use ETCPAL_IP_IS_V6() to make sure this EtcPalIpAddr contains a valid
+ * IPv6 address.
+ *
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \return The IPv6 address (uint8_t[]).
+ */
 #define ETCPAL_IP_V6_ADDRESS(etcpal_ip_ptr) ((etcpal_ip_ptr)->addr.v6.addr_buf)
 
-/*! Set the IPv4 address in a EtcPalIpAddr. Also sets the type field to indicate that this EtcPalIpAddr
- *  contains an IPv4 address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \param val IPv4 address to set (uint32_t). */
+/*!
+ * \brief Set the IPv4 address in a EtcPalIpAddr.
+ *
+ * Also sets the type field to indicate that this EtcPalIpAddr contains an IPv4 address.
+ *
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \param val IPv4 address to set (uint32_t).
+ */
 #define ETCPAL_IP_SET_V4_ADDRESS(etcpal_ip_ptr, val) \
   do                                                 \
   {                                                  \
@@ -122,20 +146,28 @@ typedef struct EtcPalIpAddr
     (etcpal_ip_ptr)->addr.v4 = val;                  \
   } while (0)
 
-/*! Set the IPv6 address in a EtcPalIpAddr. Also sets the type field to indicate that this EtcPalIpAddr
- *  contains an IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #ETCPAL_IPV6_BYTES.
- *                  Gets copied into the struct. */
+/*!
+ * \brief Set the IPv6 address in a EtcPalIpAddr.
+ *
+ * Also sets the type field to indicate that this EtcPalIpAddr contains an IPv6 address.
+ *
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #ETCPAL_IPV6_BYTES.
+ *                 Gets copied into the struct.
+ */
 #define ETCPAL_IP_SET_V6_ADDRESS(etcpal_ip_ptr, addr_val) \
   ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(etcpal_ip_ptr, addr_val, 0u)
 
-/*! Set an IPv6 address with an explicit scope ID in a EtcPalIpAddr. Also sets the type field to
- *  indicate that this EtcPalIpAddr contains an IPv6 address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
- *  \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #ETCPAL_IPV6_BYTES.
- *                  Gets copied into the struct.
- *  \param scope_id_val IPv6 scope ID to set. */
+/*!
+ * \brief Set an IPv6 address with an explicit scope ID in a EtcPalIpAddr.
+ *
+ * Also sets the type field to indicate that this EtcPalIpAddr contains an IPv6 address.
+ *
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \param addr_val IPv6 address to set (uint8_t[]). Must be at least of length #ETCPAL_IPV6_BYTES.
+ *                 Gets copied into the struct.
+ * \param scope_id_val IPv6 scope ID to set.
+ */
 #define ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(etcpal_ip_ptr, addr_val, scope_id_val) \
   do                                                                                  \
   {                                                                                   \
@@ -144,11 +176,15 @@ typedef struct EtcPalIpAddr
     (etcpal_ip_ptr)->addr.v6.scope_id = (scope_id_val);                               \
   } while (0)
 
-/*! Set the type field in a EtcPalIpAddr to indicate that it does not contain a valid address.
- *  \param etcpal_ip_ptr Pointer to a EtcPalIpAddr. */
+/*!
+ * \brief Set the type field in a EtcPalIpAddr to indicate that it does not contain a valid address.
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ */
 #define ETCPAL_IP_SET_INVALID(etcpal_ip_ptr) ((etcpal_ip_ptr)->type = kEtcPalIpTypeInvalid)
 
-/*! @} */
+/*!
+ * @}
+ */
 
 /*! An IP address with associated interface and port. Ports are in host byte order. */
 typedef struct EtcPalSockaddr
@@ -294,6 +330,8 @@ inline bool operator>=(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
 
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_INET_H_ */
+#endif /* ETCPAL_INET_H_ */

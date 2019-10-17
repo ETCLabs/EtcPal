@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/netint.h"
 #include "unity_fixture.h"
 
@@ -99,7 +100,7 @@ TEST(etcpal_netint, get_netints_by_index_works)
       // Get the new one
       current_index = netint->index;
       TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces_by_index(netint->index, &current_arr_by_index,
-                                                                        &current_index_arr_size));
+                                                                            &current_index_arr_size));
       TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
     }
 
@@ -161,7 +162,8 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
   // the interface address itself.
   for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
-    if (!ETCPAL_IP_IS_V4(&netint->addr) || etcpal_ip_is_loopback(&netint->addr) || etcpal_ip_is_link_local(&netint->addr))
+    if (!ETCPAL_IP_IS_V4(&netint->addr) || etcpal_ip_is_loopback(&netint->addr) ||
+        etcpal_ip_is_link_local(&netint->addr))
       continue;
 
     EtcPalIpAddr test_addr = netint->addr;

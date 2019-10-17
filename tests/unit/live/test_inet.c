@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/inet.h"
 #include "unity_fixture.h"
 
@@ -109,7 +110,7 @@ TEST(etcpal_inet, ip_is_multicast_works)
 
   // Test the edges of the IPv6 multicast range
   uint8_t v6_data[ETCPAL_IPV6_BYTES] = {0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-                                      0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+                                        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
   ETCPAL_IP_SET_V6_ADDRESS(&test_addr, v6_data);
   TEST_ASSERT_UNLESS(etcpal_ip_is_multicast(&test_addr));
 
@@ -319,7 +320,7 @@ const char* test_ip6_2 = "::1";
 const uint8_t test_ip6_2_bin[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
 const char* test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
 const uint8_t test_ip6_3_bin[ETCPAL_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-                                                 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+                                                   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 const char* test_ip6_fail = "abcd::ef01::2345";
 
 TEST(etcpal_inet, inet_string_functions_work)

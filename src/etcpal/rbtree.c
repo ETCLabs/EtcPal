@@ -48,15 +48,16 @@ static EtcPalRbNode* etcpal_rbnode_alloc(EtcPalRbTree* tree)
   return NULL;
 }
 
-/*! \brief Initialize a red-black tree node.
+/*!
+ * \brief Initialize a red-black tree node.
  *
- *  This function must be called on a new node before inserting it manually using
- *  etcpal_rbtree_insert_node(). When using etcpal_rbtree_insert(), this function is called on the new
- *  node automatically.
+ * This function must be called on a new node before inserting it manually using
+ * etcpal_rbtree_insert_node(). When using etcpal_rbtree_insert(), this function is called on the new
+ * node automatically.
  *
- *  \param[in] self The node to be initialized.
- *  \param[in] value Pointer to the value to assign to the node.
- *  \return Pointer to the node that was initialized.
+ * \param[in] self The node to be initialized.
+ * \param[in] value Pointer to the value to assign to the node.
+ * \return Pointer to the node that was initialized.
  */
 EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value)
 {
@@ -114,10 +115,11 @@ static EtcPalRbNode* rb_node_rotate2(EtcPalRbNode* self, int dir)
 
 /* etcpal_rbtree - default callbacks */
 
-/*! \brief The default node comparison callback.
+/*!
+ * \brief The default node comparison callback.
  *
- *  This function can be supplied as an argument to any function that takes a
- *  #etcpal_rbtree_node_cmp_f. Simply compares the pointer addresses of the two node values.
+ * This function can be supplied as an argument to any function that takes a
+ * #EtcPalRbTreeNodeCmpFunc. Simply compares the pointer addresses of the two node values.
  */
 int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const EtcPalRbNode* a, const EtcPalRbNode* b)
 {
@@ -125,10 +127,11 @@ int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const EtcPalRbNode* 
   return (a->value > b->value) - (a->value < b->value);
 }
 
-/*! \brief The default node deallocation callback.
+/*!
+ * \brief The default node deallocation callback.
  *
- *  This function can be supplied as an argument to any function that takes a #etcpal_rbtree_node_f.
- *  Simply deallocates the node using the tree's dealloc_f.
+ * This function can be supplied as an argument to any function that takes a #EtcPalRbTreeNodeFunc.
+ * Simply deallocates the node using the tree's dealloc_f.
  */
 void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node)
 {
@@ -137,19 +140,20 @@ void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node)
 
 /* etcpal_rbtree */
 
-/*! \brief Initialize a red-black tree node.
+/*!
+ * \brief Initialize a red-black tree node.
  *
- *  This function must be called on a new red-black tree before performing any other operations on
- *  it.
+ * This function must be called on a new red-black tree before performing any other operations on
+ * it.
  *
- *  \param[in] self The tree to be initialized.
- *  \param[in] node_cmp_cb A function to use for comparing values in the tree.
- *  \param[in] alloc_f A function to use for allocating new node structures.
- *  \param[in] dealloc_f A function to use for deallocating node structures.
- *  \return Pointer to the tree that was initialized.
+ * \param[in] self The tree to be initialized.
+ * \param[in] node_cmp_cb A function to use for comparing values in the tree.
+ * \param[in] alloc_f A function to use for allocating new node structures.
+ * \param[in] dealloc_f A function to use for deallocating node structures.
+ * \return Pointer to the tree that was initialized.
  */
-EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, etcpal_rbtree_node_cmp_f node_cmp_cb, etcpal_rbnode_alloc_f alloc_f,
-                             etcpal_rbnode_dealloc_f dealloc_f)
+EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, EtcPalRbTreeNodeCmpFunc node_cmp_cb, EtcPalRbNodeAllocFunc alloc_f,
+                                 EtcPalRbNodeDeallocFunc dealloc_f)
 {
   if (self)
   {
@@ -162,14 +166,15 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, etcpal_rbtree_node_cmp_f no
   return self;
 }
 
-/*! \brief Find a value in a red-black tree.
+/*!
+ * \brief Find a value in a red-black tree.
  *
- *  Uses the #etcpal_rbtree_node_cmp_f provided in etcpal_rbtree_init() to compare values. Lookup
- *  guaranteed in log(n) time.
+ * Uses the #EtcPalRbTreeNodeCmpFunc provided in etcpal_rbtree_init() to compare values. Lookup
+ * guaranteed in log(n) time.
  *
- *  \param[in] self Tree in which to find the value.
- *  \param[in] value Value to find.
- *  \return Pointer to the value (value found) or NULL (value not found).
+ * \param[in] self Tree in which to find the value.
+ * \param[in] value Value to find.
+ * \return Pointer to the value (value found) or NULL (value not found).
  */
 void* etcpal_rbtree_find(EtcPalRbTree* self, void* value)
 {
@@ -199,18 +204,19 @@ void* etcpal_rbtree_find(EtcPalRbTree* self, void* value)
   return result;
 }
 
-/*! \brief Insert a new value into a red-black tree.
+/*!
+ * \brief Insert a new value into a red-black tree.
  *
- *  If the value did not already exist in the tree, a new node is allocated using the
- *  #etcpal_rbnode_alloc_f provided in etcpal_rbtree_init(). Uses the #etcpal_rbtree_node_cmp_f provided
- *  in etcpal_rbtree_init() to compare values. Insertion guaranteed in log(n) time.
+ * If the value did not already exist in the tree, a new node is allocated using the
+ * #EtcPalRbNodeAllocFunc provided in etcpal_rbtree_init(). Uses the #EtcPalRbTreeNodeCmpFunc
+ * provided in etcpal_rbtree_init() to compare values. Insertion guaranteed in log(n) time.
  *
- *  \param[in] self Tree in which to insert the value.
- *  \param[in] value Value to insert.
- *  \return #kEtcPalErrOk: the value was inserted.
- *  \return #kEtcPalErrExists: the value already existed in the tree.
- *  \return #kEtcPalErrNoMem: Couldn't allocate new node.
- *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \param[in] self Tree in which to insert the value.
+ * \param[in] value Value to insert.
+ * \return #kEtcPalErrOk: the value was inserted.
+ * \return #kEtcPalErrExists: the value already existed in the tree.
+ * \return #kEtcPalErrNoMem: Couldn't allocate new node.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
 {
@@ -238,18 +244,19 @@ etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
   }
 }
 
-/*! \brief Insert a node containing a new value into a red-black tree.
+/*!
+ * \brief Insert a node containing a new value into a red-black tree.
  *
- *  The node is supplied by the caller and its memory must remain valid as long as it remains in the
- *  tree. Uses the #etcpal_rbtree_node_cmp_f provided in etcpal_rbtree_init() to compare values.
- *  Insertion guaranteed in log(n) time.
+ * The node is supplied by the caller and its memory must remain valid as long as it remains in the
+ * tree. Uses the #EtcPalRbTreeNodeCmpFunc provided in etcpal_rbtree_init() to compare values.
+ * Insertion guaranteed in log(n) time.
  *
- *  \param[in] self Tree in which to insert the value.
- *  \param[in] node Node containing value to insert. Must have been previously initialized using
- *                  etcpal_rbnode_init().
- *  \return #kEtcPalErrOk: The value was inserted.
- *  \return #kEtcPalErrExists: The value already existed in the tree.
- *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \param[in] self Tree in which to insert the value.
+ * \param[in] node Node containing value to insert. Must have been previously initialized using
+ *                 etcpal_rbnode_init().
+ * \return #kEtcPalErrOk: The value was inserted.
+ * \return #kEtcPalErrExists: The value already existed in the tree.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
 {
@@ -332,17 +339,19 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
   return result;
 }
 
-/*! \brief Remove a value from a red-black tree.
+/*!
+ * \brief Remove a value from a red-black tree.
  *
- *  The node memory is deallocated using the #etcpal_rbnode_dealloc_f provided in etcpal_rbtree_init();
- *  the user is responsible for deallocating the value memory. Uses the #etcpal_rbtree_node_cmp_f
- *  provided in etcpal_rbtree_init() to compare values. Removal guaranteed in log(n) time.
+ * The node memory is deallocated using the #EtcPalRbNodeDeallocFunc provided in
+ * etcpal_rbtree_init(); the user is responsible for deallocating the value memory. Uses the
+ * #EtcPalRbTreeNodeCmpFunc provided in etcpal_rbtree_init() to compare values. Removal guaranteed
+ * in log(n) time.
  *
- *  \param[in] self Tree from which to remove the value.
- *  \param[in] value Value to remove.
- *  \return #kEtcPalErrOk: The value was removed.
- *  \return #kEtcPalErrInvalid: Invalid argument provided.
- *  \return #kEtcPalErrNotFound: The value did not exist in the tree.
+ * \param[in] self Tree from which to remove the value.
+ * \param[in] value Value to remove.
+ * \return #kEtcPalErrOk: The value was removed.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
 etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value)
 {
@@ -352,21 +361,22 @@ etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value)
   return result;
 }
 
-/*! \brief Remove a value from a red-black tree, calling back into the application with the node and
- *         value being removed.
+/*!
+ * \brief Remove a value from a red-black tree, calling back into the application with the node and
+ *        value being removed.
  *
- *  The user provides a #etcpal_rbtree_node_f callback function and is responsible for deallocating
- *  both the node and value memory. Uses the #etcpal_rbtree_node_cmp_f provided in etcpal_rbtree_init()
- *  to compare values. Removal guaranteed in log(n) time.
+ * The user provides a #EtcPalRbTreeNodeFunc callback function and is responsible for deallocating
+ * both the node and value memory. Uses the #EtcPalRbTreeNodeCmpFunc provided in
+ * etcpal_rbtree_init() to compare values. Removal guaranteed in log(n) time.
  *
- *  \param[in] self Tree from which to remove the value.
- *  \param[in] value Value to remove.
- *  \param[in] node_cb Callback function to call with the node and value being removed.
- *  \return #kEtcPalErrOk: The value was removed.
- *  \return #kEtcPalErrInvalid: Invalid argument provided.
- *  \return #kEtcPalErrNotFound: The value did not exist in the tree.
+ * \param[in] self Tree from which to remove the value.
+ * \param[in] value Value to remove.
+ * \param[in] node_cb Callback function to call with the node and value being removed.
+ * \return #kEtcPalErrOk: The value was removed.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
-etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, etcpal_rbtree_node_f node_cb)
+etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, EtcPalRbTreeNodeFunc node_cb)
 {
   EtcPalRbNode head = {0}; /* False tree root */
   EtcPalRbNode node;       /* Value wrapper node */
@@ -466,14 +476,15 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, etc
   return kEtcPalErrOk;
 }
 
-/*! \brief Clear all values from a red-black tree.
+/*!
+ * \brief Clear all values from a red-black tree.
  *
- *  The node memory is deallocated using the #etcpal_rbnode_dealloc_f provided in etcpal_rbtree_init();
- *  the user is responsible for deallocating the value memory.
+ * The node memory is deallocated using the #EtcPalRbNodeDeallocFunc provided in
+ * etcpal_rbtree_init(); the user is responsible for deallocating the value memory.
  *
- *  \param[in] self Tree to clear.
- *  \return #kEtcPalErrOk: The tree was cleared.
- *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \param[in] self Tree to clear.
+ * \return #kEtcPalErrOk: The tree was cleared.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree* self)
 {
@@ -483,18 +494,19 @@ etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree* self)
   return result;
 }
 
-/*! \brief Clear all values from a red-black tree, calling back into the application for each node
- *         and value being removed.
+/*!
+ * \brief Clear all values from a red-black tree, calling back into the application for each node
+ *        and value being removed.
  *
- *  The user provides a #etcpal_rbtree_node_f callback function which is called for each node in the
- *  tree. The user is responsible for deallocating both the node and value memory.
+ * The user provides a #EtcPalRbTreeNodeFunc callback function which is called for each node in the
+ * tree. The user is responsible for deallocating both the node and value memory.
  *
- *  \param[in] self Tree to clear.
- *  \param[in] node_cb Callback function to call with each node and value being removed.
- *  \return #kEtcPalErrOk: The tree was cleared.
- *  \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \param[in] self Tree to clear.
+ * \param[in] node_cb Callback function to call with each node and value being removed.
+ * \return #kEtcPalErrOk: The tree was cleared.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, etcpal_rbtree_node_f node_cb)
+etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, EtcPalRbTreeNodeFunc node_cb)
 {
   etcpal_error_t result = kEtcPalErrInvalid;
   if (self && node_cb)
@@ -528,9 +540,10 @@ etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, etcpal_rbtree_nod
   return result;
 }
 
-/*! \brief Get the current number of values in a red-black tree.
- *  \param[in] self The tree of which to get the size.
- *  \return The number of values currently in the tree.
+/*!
+ * \brief Get the current number of values in a red-black tree.
+ * \param[in] self The tree of which to get the size.
+ * \return The number of values currently in the tree.
  */
 size_t etcpal_rbtree_size(EtcPalRbTree* self)
 {
@@ -540,17 +553,18 @@ size_t etcpal_rbtree_size(EtcPalRbTree* self)
   return result;
 }
 
-/*! \brief Test the validity of a red-black tree.
+/*!
+ * \brief Test the validity of a red-black tree.
  *
- *  A debugging function; tests that both basic binary tree rules and specific red-black rules are
- *  not violated.
+ * A debugging function; tests that both basic binary tree rules and specific red-black rules are
+ * not violated.
  *
- *  \param[in] self Tree to test.
- *  \param[in] root Node at which to start the test. All nodes beneath this node will be tested.
- *  \return The "black height" of the tree; the number of black nodes present in the traversal
- *          from the root to each leaf. A valid red-black tree requires this number to be the same
- *          for every possible traversal.
- *  \return 0: Invalid tree.
+ * \param[in] self Tree to test.
+ * \param[in] root Node at which to start the test. All nodes beneath this node will be tested.
+ * \return The "black height" of the tree; the number of black nodes present in the traversal
+ *         from the root to each leaf. A valid red-black tree requires this number to be the same
+ *         for every possible traversal.
+ * \return 0: Invalid tree.
  */
 int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
 {
@@ -599,13 +613,14 @@ int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
 
 /* etcpal_rbiter */
 
-/*! \brief Initialize a red-black tree iterator.
+/*!
+ * \brief Initialize a red-black tree iterator.
  *
- *  This function must be called on a new iterator before using any of the other etcpal_rbiter_*
- *  functions on it.
+ * This function must be called on a new iterator before using any of the other etcpal_rbiter_*
+ * functions on it.
  *
- *  \param[in] self The iterator to be initialized.
- *  \return Pointer to the iterator that was initialized.
+ * \param[in] self The iterator to be initialized.
+ * \return Pointer to the iterator that was initialized.
  */
 EtcPalRbIter* etcpal_rbiter_init(EtcPalRbIter* self)
 {
@@ -676,54 +691,58 @@ static void* rb_iter_move(EtcPalRbIter* self, int dir)
   return self->node == NULL ? NULL : self->node->value;
 }
 
-/*! \brief Point a red-black tree iterator at the first value in the tree.
+/*!
+ * \brief Point a red-black tree iterator at the first value in the tree.
  *
- *  The first value is the lowest, as determined by the #etcpal_rbtree_node_cmp_f provided in
- *  etcpal_rbtree_init(). Use etcpal_rbiter_next() to get the next higher value.
+ * The first value is the lowest, as determined by the #EtcPalRbTreeNodeCmpFunc provided in
+ * etcpal_rbtree_init(). Use etcpal_rbiter_next() to get the next higher value.
  *
- *  \param[in] self Iterator to point at the first value.
- *  \param[in] tree Tree of which to get the first value.
- *  \return Pointer to the first value or NULL (the tree was empty or invalid).
+ * \param[in] self Iterator to point at the first value.
+ * \param[in] tree Tree of which to get the first value.
+ * \return Pointer to the first value or NULL (the tree was empty or invalid).
  */
 void* etcpal_rbiter_first(EtcPalRbIter* self, EtcPalRbTree* tree)
 {
   return rb_iter_start(self, tree, 0);
 }
 
-/*! \brief Point a red-black tree iterator at the last value in the tree.
+/*!
+ * \brief Point a red-black tree iterator at the last value in the tree.
  *
- *  The last value is the highest, as determined by the #etcpal_rbtree_node_cmp_f provided in
- *  etcpal_rbtree_init(). Use etcpal_rbiter_prev() to get the next lower value.
+ * The last value is the highest, as determined by the #EtcPalRbTreeNodeCmpFunc provided in
+ * etcpal_rbtree_init(). Use etcpal_rbiter_prev() to get the next lower value.
  *
- *  \param[in] self Iterator to point at the last value.
- *  \param[in] tree Tree of which to get the last value.
- *  \return Pointer to the last value or NULL (the tree was empty or invalid).
+ * \param[in] self Iterator to point at the last value.
+ * \param[in] tree Tree of which to get the last value.
+ * \return Pointer to the last value or NULL (the tree was empty or invalid).
  */
 void* etcpal_rbiter_last(EtcPalRbIter* self, EtcPalRbTree* tree)
 {
   return rb_iter_start(self, tree, 1);
 }
 
-/*! \brief Advance a red-black tree iterator.
+/*!
+ * \brief Advance a red-black tree iterator.
  *
- *  Gets the next higher value in the tree as determined by the #etcpal_rbtree_node_cmp_f provided in
- *  etcpal_rbtree_init().
+ * Gets the next higher value in the tree as determined by the #EtcPalRbTreeNodeCmpFunc provided in
+ * etcpal_rbtree_init().
  *
- *  \param[in] self Iterator to advance.
- *  \return Pointer to next higher value, or NULL (the end of the tree has been reached).
+ * \param[in] self Iterator to advance.
+ * \return Pointer to next higher value, or NULL (the end of the tree has been reached).
  */
 void* etcpal_rbiter_next(EtcPalRbIter* self)
 {
   return rb_iter_move(self, 1);
 }
 
-/*! \brief Reverse-advance a red-black tree iterator.
+/*!
+ * \brief Reverse-advance a red-black tree iterator.
  *
- *  Gets the next lower value in the tree as determined by the #etcpal_rbtree_node_cmp_f provided in
- *  etcpal_rbtree_init().
+ * Gets the next lower value in the tree as determined by the #EtcPalRbTreeNodeCmpFunc provided in
+ * etcpal_rbtree_init().
  *
- *  \param[in] self Iterator to reverse-advance.
- *  \return Pointer to next lower value, or NULL (the beginning of the tree has been reached).
+ * \param[in] self Iterator to reverse-advance.
+ * \return Pointer to next lower value, or NULL (the beginning of the tree has been reached).
  */
 void* etcpal_rbiter_prev(EtcPalRbIter* self)
 {

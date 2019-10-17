@@ -19,33 +19,35 @@
 
 /* etcpal/int.h: Provide fixed-wid.h C integer types for non-C99 environments. */
 
-#ifndef _ETCPAL_INT_H_
-#define _ETCPAL_INT_H_
+#ifndef ETCPAL_INT_H_
+#define ETCPAL_INT_H_
 
-/*! \defgroup etcpal_int etcpal_int
- *  \ingroup etcpal
- *  \brief Fixed-width integer types.
+/*!
+ * \defgroup etcpal_int etcpal_int
+ * \ingroup etcpal
+ * \brief Fixed-width integer types.
  *
- *  \#include "etcpal/int.h"
+ * \#include "etcpal/int.h"
  *
- *  In the before-times, C had no fixed-width integer types. Then, C99 gave us stdint.h. But there
- *  still exist environments where a C99 compiler is not available or practical, and one allegedly
- *  modern toolchain (it rhymes with "Nicrosoft Fishual D++") picks and chooses the modern C
- *  features it supports seemingly at random.
+ * In the before-times, C had no fixed-width integer types. Then, C99 gave us stdint.h. But there
+ * still exist environments where a C99 compiler is not available or practical, and one allegedly
+ * modern toolchain (it rhymes with "Nicrosoft Fishual D++") picks and chooses the modern C
+ * features it supports seemingly at random.
  *
- *  This header attempts to detect if it is being compiled with C99 or later (or C++). If so, it
- *  simply includes stdint.h (or cstdint). If not, it attempts to include a user-created file
- *  "stdint_usr.h" which the user provides.
+ * This header attempts to detect if it is being compiled with C99 or later (or C++). If so, it
+ * simply includes stdint.h (or cstdint). If not, it attempts to include a user-created file
+ * "stdint_usr.h" which the user provides.
  *
- *  @{
+ * @{
  */
 
-/*! \def HAVE_STDINT_H
- *  \brief Define this value in your compiler settings if your toolchain provides a <stdint.h>.
+/*!
+ * \def HAVE_STDINT_H
+ * \brief Define this value in your compiler settings if your toolchain provides a <stdint.h>.
  *
- *  Some compilers are non-C99 (or non-C++11) and nevertheless provide fixed-width types in
- *  <stdint.h>. In that situation, the user can define HAVE_STDINT_H to force etcpal_int to include
- *  <stdint.h>.
+ * Some compilers are non-C99 (or non-C++11) and nevertheless provide fixed-width types in
+ * <stdint.h>. In that situation, the user can define HAVE_STDINT_H to force etcpal_int to include
+ * <stdint.h>.
  */
 #if DOXYGEN
 #define HAVE_STDINT_H 1
@@ -78,6 +80,8 @@
 
 #endif /* __cplusplus */
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_INT_H_ */
+#endif /* ETCPAL_INT_H_ */

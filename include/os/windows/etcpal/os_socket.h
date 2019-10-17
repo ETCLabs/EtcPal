@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_OS_SOCKET_H_
-#define _ETCPAL_OS_SOCKET_H_
+#ifndef ETCPAL_OS_SOCKET_H_
+#define ETCPAL_OS_SOCKET_H_
 
 #ifndef NOMINMAX
 #define NOMINMAX 1 /* Suppress some conflicting definitions in the Windows headers */
@@ -76,4 +76,4 @@ typedef struct EtcPalPollContext
 }
 #endif
 
-#endif /* _ETCPAL_OS_SOCKET_H_ */
+#endif /* ETCPAL_OS_SOCKET_H_ */

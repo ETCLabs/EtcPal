@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/pack.h"
 #include "etcpal/pack64.h"
 #include "unity_fixture.h"

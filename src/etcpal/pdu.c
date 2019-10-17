@@ -19,17 +19,18 @@
 
 #include "etcpal/pdu.h"
 
-/*! \brief Parse a generic ACN PDU.
+/*!
+ * \brief Parse a generic ACN PDU.
  *
- *  A function to parse a generic ACN PDU. The specific PDU info needed for parsing is contained in
- *  a struct pdu_constraints. Uses EtcPalPdu to maintain state across multiple PDUs in a block.
+ * A function to parse a generic ACN PDU. The specific PDU info needed for parsing is contained in
+ * a struct pdu_constraints. Uses EtcPalPdu to maintain state across multiple PDUs in a block.
  *
- *  \param[in] buf Byte buffer containing a PDU.
- *  \param[in] buflen Size in bytes of buf.
- *  \param[in] constraints Specific information about the PDU being parsed
- *  \param[in,out] pdu PDU data from the last PDU in the block. The data is used and then replaced
- *                     with data from this PDU.
- *  \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
+ * \param[in] buf Byte buffer containing a PDU.
+ * \param[in] buflen Size in bytes of buf.
+ * \param[in] constraints Specific information about the PDU being parsed
+ * \param[in,out] pdu PDU data from the last PDU in the block. The data is used and then replaced
+ *                    with data from this PDU.
+ * \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
 bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstraints* constraints, EtcPalPdu* pdu)
 {

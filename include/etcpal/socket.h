@@ -18,8 +18,9 @@
  ******************************************************************************/
 
 /* etcpal/socket.h: Platform-neutral BSD-modeled network socket implementation. */
-#ifndef _ETCPAL_SOCKET_H_
-#define _ETCPAL_SOCKET_H_
+
+#ifndef ETCPAL_SOCKET_H_
+#define ETCPAL_SOCKET_H_
 
 #include <stddef.h>
 #include "etcpal/common.h"
@@ -27,18 +28,19 @@
 #include "etcpal/error.h"
 #include "etcpal/inet.h"
 
-/*! \defgroup etcpal_socket etcpal_socket
- *  \ingroup etcpal
- *  \brief Platform-neutral BSD-modeled network socket implementation.
+/*!
+ * \defgroup etcpal_socket etcpal_socket
+ * \ingroup etcpal
+ * \brief Platform-neutral BSD-modeled network socket implementation.
  *
- *  \#include "etcpal/socket.h"
+ * \#include "etcpal/socket.h"
  *
- *  This module attempts to abstract the network socket interface from various platforms into one
- *  platform-neutral interface. The functions and flags are modeled after the BSD sockets
- *  interface. <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner,
- *  and Rudoff is highly recommended reading for those unfamiliar with this interface.
+ * This module attempts to abstract the network socket interface from various platforms into one
+ * platform-neutral interface. The functions and flags are modeled after the BSD sockets
+ * interface. <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner,
+ * and Rudoff is highly recommended reading for those unfamiliar with this interface.
  *
- *  @{
+ * @{
  */
 
 /*! Event flags for the etcpal_poll_*() API functions. */
@@ -48,28 +50,38 @@ typedef uint32_t etcpal_poll_events_t;
 
 /* clang-format off */
 
-/*! \name Flags for etcpal_recvfrom()
- *  @{ */
+/*!
+ * \name Flags for etcpal_recvfrom()
+ * @{
+ */
 #define ETCPAL_MSG_PEEK 0x1
-/*! @} */
+/*!
+ * @}
+ */
 
 /* Note: no flags are currently implemented for etcpal_sendto() */
 
-/*! \name Level values for etcpal_setsockopt() and etcpal_getsockopt()
- *  Refer to the group of option names for each level.
- *  @{ */
+/*!
+ * \name Level values for etcpal_setsockopt() and etcpal_getsockopt()
+ * Refer to the group of option names for each level.
+ * @{
+ */
 #define ETCPAL_SOL_SOCKET     0 /*!< etcpal_socket API level. */
 #define ETCPAL_IPPROTO_IP     1 /*!< IPv4 protocol level. */
 #define ETCPAL_IPPROTO_ICMPV6 2 /*!< ICMPv6 protocol level. */
 #define ETCPAL_IPPROTO_IPV6   3 /*!< IPv6 protocol level. */
 #define ETCPAL_IPPROTO_TCP    4 /*!< TCP protocol level. */
 #define ETCPAL_IPPROTO_UDP    5 /*!< UDP protocol level. */
-/*! @} */
+/*!
+ * @}
+ */
 
-/*! \name Options for level ETCPAL_SOL_SOCKET
- *  Used in the option parameter to etcpal_setsockopt() and etcpal_getsockopt().
- *  Refer to the similarly-named option on your favorite man page for more details.
- *  @{ */
+/*!
+ * \name Options for level ETCPAL_SOL_SOCKET
+ * Used in the option parameter to etcpal_setsockopt() and etcpal_getsockopt().
+ * Refer to the similarly-named option on your favorite man page for more details.
+ * @{
+ */
 #define ETCPAL_SO_BROADCAST 0  /*!< Get/Set, value is boolean int */
 #define ETCPAL_SO_ERROR     1  /*!< Get only, value is int representing platform error value */
 #define ETCPAL_SO_KEEPALIVE 2  /*!< Get/Set, value is boolean int */
@@ -81,12 +93,17 @@ typedef uint32_t etcpal_poll_events_t;
 #define ETCPAL_SO_REUSEADDR 8  /*!< Get/Set, value is boolean int */
 #define ETCPAL_SO_REUSEPORT 9  /*!< Get/Set, value is boolean int */
 #define ETCPAL_SO_TYPE      10 /*!< Get only, value is int */
-/*! @} */
+/*!
+ * @}
+ */
 
-/*! \name Options for level ETCPAL_IPPROTO_IP or ETCPAL_IPPROTO_IPV6
- *  Used in the option parameter to etcpal_setsockopt() and etcpal_getsockopt().
- *  Refer to the similarly-named option on your favorite man page for more details.
- *  @{ */
+/*!
+ * \name Options for level ETCPAL_IPPROTO_IP or ETCPAL_IPPROTO_IPV6
+ * Used in the option parameter to etcpal_setsockopt() and etcpal_getsockopt().
+ * Refer to the similarly-named option on your favorite man page for more details.
+ * @{
+ */
+
 /*! Get/Set, value is int. Value indicates TTL for IPv4 or hop limit for IPv6. */
 #define ETCPAL_IP_TTL             11
 /*! Get/Set, value is unsigned int representing interface index (see \ref interface_indexes). */
@@ -103,7 +120,10 @@ typedef uint32_t etcpal_poll_events_t;
 #define ETCPAL_MCAST_JOIN_GROUP   17 /*!< Set only, value is EtcPalGroupReq */
 #define ETCPAL_MCAST_LEAVE_GROUP  18 /*!< Set only, value is EtcPalGroupReq */
 #define ETCPAL_IPV6_V6ONLY        19 /*!< Get/Set, value is boolean int */
-/*! @} */
+
+/*!
+ * @}
+ */
 
 /* clang-format on */
 
@@ -135,25 +155,37 @@ typedef struct EtcPalGroupReq
   EtcPalIpAddr group;
 } EtcPalGroupReq;
 
-/*! \name 'how' values for etcpal_shutdown()
- *  @{ */
+/*!
+ * \name 'how' values for etcpal_shutdown()
+ * @{
+ */
 #define ETCPAL_SHUT_RD 0
 #define ETCPAL_SHUT_WR 1
 #define ETCPAL_SHUT_RDWR 2
-/*! @} */
+/*!
+ * @}
+ */
 
-/*! \name 'family' values for etcpal_socket() and EtcPalAddrinfo
- *  @{ */
+/*!
+ * \name 'family' values for etcpal_socket() and EtcPalAddrinfo
+ * @{
+ */
 #define ETCPAL_AF_UNSPEC 0u
 #define ETCPAL_AF_INET 1u
 #define ETCPAL_AF_INET6 2u
-/*! @} */
+/*!
+ * @}
+ */
 
-/*! \name 'type' values for etcpal_socket() and etcpal_getsockopt()
- *  @{ */
+/*!
+ * \name 'type' values for etcpal_socket() and etcpal_getsockopt()
+ * @{
+ */
 #define ETCPAL_STREAM 0u
 #define ETCPAL_DGRAM 1u
-/*! @} */
+/*!
+ * @}
+ */
 
 /********************** Mimic sys/socket.h functions *************************/
 
@@ -189,15 +221,18 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
 
 /**************************** Mimic poll() API *******************************/
 
-/*! \name Flag values to use with etcpal_poll_events_t.
- *
- *  @{ */
+/*!
+ * \name Flag values to use with etcpal_poll_events_t.
+ * @{
+ */
 #define ETCPAL_POLL_IN 0x1u      /*!< Notify when data is available for reading on the socket. */
 #define ETCPAL_POLL_OUT 0x2u     /*!< Notify when the socket has space available to write data. */
 #define ETCPAL_POLL_CONNECT 0x4u /*!< Notify when a non-blocking connect operation has completed. */
 #define ETCPAL_POLL_OOB 0x8u     /*!< Notify when there is out-of-band data on a TCP socket. */
 #define ETCPAL_POLL_ERR 0x10u    /*!< An error has occurred on the socket (output only). */
-/*! @} */
+/*!
+ * @}
+ */
 
 /* Mask of valid events for use with etcpal_poll_add_socket(). */
 #define ETCPAL_POLL_VALID_INPUT_EVENT_MASK 0x0fu
@@ -222,14 +257,17 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
 
 /************************ Mimic getaddrinfo() API ****************************/
 
-/*! \name 'flags' values for EtcPalAddrinfo
- *
- *  Refer to the similarly-named flags in your favorite getaddrinfo() man page for more details.
- *  @{ */
+/*!
+ * \name 'flags' values for EtcPalAddrinfo
+ * Refer to the similarly-named flags in your favorite getaddrinfo() man page for more details.
+ * @{
+ */
 #define ETCPAL_AI_PASSIVE 0x01
 #define ETCPAL_AI_CANONNAME 0x02
 #define ETCPAL_AI_NUMERICHOST 0x04
-/*! @} */
+/*!
+ * @}
+ */
 
 /*! A structure containing name and address information about an internet host. Returned by
  *  etcpal_getaddrinfo(). */
@@ -256,6 +294,8 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai);
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_SOCKET_H_ */
+#endif /* ETCPAL_SOCKET_H_ */

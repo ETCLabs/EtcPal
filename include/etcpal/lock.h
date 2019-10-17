@@ -17,9 +17,9 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_LOCK_H_
-#define _ETCPAL_LOCK_H_
+#ifndef ETCPAL_LOCK_H_
+#define ETCPAL_LOCK_H_
 
 #include "etcpal/os_lock.h"
 
-#endif /* _ETCPAL_LOCK_H_ */
+#endif /* ETCPAL_LOCK_H_ */

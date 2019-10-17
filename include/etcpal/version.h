@@ -17,31 +17,38 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/*! \file etcpal/version.h
- *  \brief Provides the current version of the EtcPal library.
- *  \author Sam Kearney
+/*!
+ * \file etcpal/version.h
+ * \brief Provides the current version of the EtcPal library.
  */
-#ifndef _ETCPAL_VERSION_H_
-#define _ETCPAL_VERSION_H_
+
+#ifndef ETCPAL_VERSION_H_
+#define ETCPAL_VERSION_H_
 
 /* clang-format off */
 
-/*! \name EtcPal version numbers
- *  @{
+/*!
+ * \name EtcPal version numbers
+ * @{
  */
 #define ETCPAL_VERSION_MAJOR 0
 #define ETCPAL_VERSION_MINOR 3
 #define ETCPAL_VERSION_PATCH 0
 #define ETCPAL_VERSION_BUILD 4
-/*! @} */
+/*!
+ * @}
+ */
 
-/*! \name EtcPal version strings
- *  @{
+/*!
+ * \name EtcPal version strings
+ * @{
  */
 #define ETCPAL_VERSION_STRING "0.3.0.4"
 #define ETCPAL_VERSION_DATESTR "03.Oct.2019"
 #define ETCPAL_VERSION_COPYRIGHT "Copyright 2019 ETC Inc."
 #define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_VERSION_H_ */
+#endif /* ETCPAL_VERSION_H_ */

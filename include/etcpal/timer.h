@@ -18,26 +18,29 @@
  ******************************************************************************/
 
 /* etcpal_timer.h: Platform-neutral implementation of system timers. */
-#ifndef _ETCPAL_TIMER_H_
-#define _ETCPAL_TIMER_H_
+
+#ifndef ETCPAL_TIMER_H_
+#define ETCPAL_TIMER_H_
 
 #include "etcpal/int.h"
 #include "etcpal/bool.h"
 
-/*! \defgroup etcpal_timer etcpal_timer
- *  \ingroup etcpal
- *  \brief Platform-neutral system timers.
+/*!
+ * \defgroup etcpal_timer etcpal_timer
+ * \ingroup etcpal
+ * \brief Platform-neutral system timers.
  *
- *  \#include "etcpal/timer.h"
+ * \#include "etcpal/timer.h"
  *
- *  @{
+ * @{
  */
 
-/*! \brief A millisecond-resolution timer.
+/*!
+ * \brief A millisecond-resolution timer.
  *
- *  The times are represented in milliseconds by a 32-bit unsigned integer. Since the timer is
- *  monotonically-increasing, wraparound is handled by doing comparisons of the form
- *  \code timeA - timeB > 0 \endcode rather than \code timeA > timeB \endcode.
+ * The times are represented in milliseconds by a 32-bit unsigned integer. Since the timer is
+ * monotonically-increasing, wraparound is handled by doing comparisons of the form
+ * \code timeA - timeB > 0 \endcode rather than \code timeA > timeB \endcode.
  */
 typedef struct EtcPalTimer
 {
@@ -51,8 +54,9 @@ extern "C" {
 
 /* Function with platform-specific definition */
 
-/*! \brief Get a monotonically-increasing millisecond value
- *  \return The current timestamp in milliseconds.
+/*!
+ * \brief Get a monotonically-increasing millisecond value
+ * \return The current timestamp in milliseconds.
  */
 uint32_t etcpal_getms();
 
@@ -68,6 +72,8 @@ uint32_t etcpal_timer_remaining(const EtcPalTimer* timer);
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_TIMER_H_ */
+#endif /* ETCPAL_TIMER_H_ */

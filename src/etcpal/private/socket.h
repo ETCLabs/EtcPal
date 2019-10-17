@@ -17,12 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_PRIVATE_SOCKET_H_
-#define _ETCPAL_PRIVATE_SOCKET_H_
+#ifndef ETCPAL_PRIVATE_SOCKET_H_
+#define ETCPAL_PRIVATE_SOCKET_H_
 
 #include "etcpal/error.h"
 
 etcpal_error_t etcpal_socket_init();
 void etcpal_socket_deinit();
 
-#endif /* _ETCPAL_PRIVATE_SOCKET_H_ */
+#endif /* ETCPAL_PRIVATE_SOCKET_H_ */

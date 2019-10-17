@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/log.h"
 #include "unity_fixture.h"
 #include "fff.h"
@@ -247,13 +248,13 @@ TEST(etcpal_log, syslog_header_is_well_formed)
 #define SYSLOG_HEADER_TEST_MESSAGE "Test Message"
 
   // For each set of parameters, test both the etcpal_log() and etcpal_create_syslog_str() functions.
-#define SYSLOG_HEADER_TEST_AND_ASSERT(time_params)                                                                 \
-  etcpal_log(&lparams, ETCPAL_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                                                  \
-  etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, time_params, &lparams.syslog_params, ETCPAL_LOG_EMERG, \
-                         SYSLOG_HEADER_TEST_MESSAGE);                                                              \
-  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);                                                         \
-  TEST_ASSERT_EQUAL_STRING(last_log_strings_received.syslog, expect_syslog_str);                                   \
-  TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);                                                         \
+#define SYSLOG_HEADER_TEST_AND_ASSERT(time_params)                                                     \
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                                  \
+  etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, time_params, &lparams.syslog_params, \
+                           ETCPAL_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                              \
+  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);                                             \
+  TEST_ASSERT_EQUAL_STRING(last_log_strings_received.syslog, expect_syslog_str);                       \
+  TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);                                             \
   RESET_FAKE(log_callback)
 
   // Validate (and also sanitize) the log params
@@ -309,7 +310,7 @@ TEST(etcpal_log, syslog_prival_is_correct)
       sprintf(error_msg, error_format, facility, priority);
 
       TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, NULL, &syslog_params, priority,
-                                         SYSLOG_PRIVAL_TEST_MESSAGE));
+                                           SYSLOG_PRIVAL_TEST_MESSAGE));
       TEST_ASSERT_EQUAL(syslog_buf[0], '<');
       TEST_ASSERT_EQUAL_MESSAGE(atoi(&syslog_buf[1]), ((facility << 3) + priority), error_msg);
     }
@@ -382,8 +383,8 @@ TEST(etcpal_log, time_header_is_well_formed)
   EtcPalSyslogParams syslog_params;
 
   memset(&syslog_params, 0, sizeof syslog_params);
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, ETCPAL_LOG_EMERG,
-                                     "Test Message"));
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params,
+                                       ETCPAL_LOG_EMERG, "Test Message"));
   TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
 
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000Z"));
@@ -396,15 +397,15 @@ TEST(etcpal_log, time_header_is_well_formed)
 
   // Test the addition of UTC offsets
   cur_time.utc_offset = 30;
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, ETCPAL_LOG_EMERG,
-                                     "Test Message"));
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params,
+                                       ETCPAL_LOG_EMERG, "Test Message"));
   TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000+00:30"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000+00:30"));
 
   cur_time.utc_offset = -120;
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params, ETCPAL_LOG_EMERG,
-                                     "Test Message"));
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params,
+                                       ETCPAL_LOG_EMERG, "Test Message"));
   TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000-02:00"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000-02:00"));
@@ -431,10 +432,11 @@ TEST(etcpal_log, formatting_int_values_works)
   // Try the functions that simply build the log strings
   // We just check to make sure the
   TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
-                                     ETCPAL_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS));
+                                       ETCPAL_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(syslog_buf, expect_raw_str));
 
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, INTVAL_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT(
+      etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, INTVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(human_buf, expect_raw_str));
 
   // Now test the etcpal_log function
@@ -468,8 +470,8 @@ TEST(etcpal_log, formatting_string_values_works)
 #define STRVAL_FORMAT_STR_AND_ARGS "Here are some string values: %s %s %s", "hey", "wassup", "hello"
 
   // Try the functions that simply build the log strings
-  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, NULL, &lparams.syslog_params, ETCPAL_LOG_EMERG,
-                                     STRVAL_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, NULL, &lparams.syslog_params,
+                                       ETCPAL_LOG_EMERG, STRVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(syslog_buf, expect_raw_str));
 
   TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, NULL, STRVAL_FORMAT_STR_AND_ARGS));
@@ -583,7 +585,7 @@ TEST(etcpal_log, logging_maximum_length_string_works)
 
   // Try the functions that simply build the log strings
   TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &lparams.syslog_params,
-                                     ETCPAL_LOG_DEBUG, to_log_str));
+                                       ETCPAL_LOG_DEBUG, to_log_str));
   TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);
 
   TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, to_log_str));

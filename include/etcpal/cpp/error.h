@@ -110,7 +110,7 @@ inline Result& Result::operator=(etcpal_error_t code)
 
 /// \brief Whether this Result contains the code #kEtcPalErrOk.
 /// \details #kEtcPalErrOk is the only #etcpal_error_t code that does not indicate an error.
-/// \returns Whether the result is OK (not an error).
+/// \return Whether the result is OK (not an error).
 inline bool Result::IsOk() const
 {
   return code_ == kEtcPalErrOk;

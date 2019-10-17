@@ -18,18 +18,20 @@
  ******************************************************************************/
 
 /* etcpal/error.h: Platform-neutral error codes. */
-#ifndef _ETCPAL_ERROR_H_
-#define _ETCPAL_ERROR_H_
+
+#ifndef ETCPAL_ERROR_H_
+#define ETCPAL_ERROR_H_
 
 #include <stdlib.h>
 
-/*! \defgroup etcpal_error etcpal_error
- *  \ingroup etcpal
- *  \brief Platform-neutral error codes.
+/*!
+ * \defgroup etcpal_error etcpal_error
+ * \ingroup etcpal
+ * \brief Platform-neutral error codes.
  *
- *  \#include "etcpal/error.h"
+ * \#include "etcpal/error.h"
  *
- *  @{
+ * @{
  */
 
 /*! A set of error codes that can be returned by library functions. */
@@ -110,9 +112,10 @@ extern "C" {
 
 extern const char* etcpal_error_strings[ETCPAL_NUM_ERROR_CODES];
 
-/*! \brief Get a string representation of an error code.
- *  \param errcode EtcPal error code.
- *  \return Error string (char *) (valid error code) or NULL (invalid error code).
+/*!
+ * \brief Get a string representation of an error code.
+ * \param errcode EtcPal error code.
+ * \return Error string (char *) (valid error code) or NULL (invalid error code).
  */
 #define etcpal_strerror(errcode) \
   (((int)errcode <= 0 && (int)errcode > -ETCPAL_NUM_ERROR_CODES) ? etcpal_error_strings[-((int)errcode)] : NULL)
@@ -121,6 +124,8 @@ extern const char* etcpal_error_strings[ETCPAL_NUM_ERROR_CODES];
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_ERROR_H_ */
+#endif /* ETCPAL_ERROR_H_ */

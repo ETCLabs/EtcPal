@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef _ETCPAL_OS_LOCK_H_
-#define _ETCPAL_OS_LOCK_H_
+#ifndef ETCPAL_OS_LOCK_H_
+#define ETCPAL_OS_LOCK_H_
 
 #ifndef NOMINMAX
 #define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
@@ -79,4 +79,4 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 }
 #endif
 
-#endif /* _ETCPAL_OS_LOCK_H_ */
+#endif /* ETCPAL_OS_LOCK_H_ */

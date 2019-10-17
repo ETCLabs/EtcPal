@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/socket.h"
 #include "unity_fixture.h"
 
@@ -53,7 +54,7 @@ static const uint32_t kTestMcastAddrIPv4 = 0xec02054d;  // 236.2.5.77
 // ff02::7465:7374:7465:7374
 #if ETCPAL_TEST_IPV6
 static const uint8_t kTestMcastAddrIPv6[ETCPAL_IPV6_BYTES] = {0xff, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                                            0x74, 0x65, 0x73, 0x74, 0x74, 0x65, 0x73, 0x74};
+                                                              0x74, 0x65, 0x73, 0x74, 0x74, 0x65, 0x73, 0x74};
 #endif
 
 static etcpal_socket_t send_sock;
@@ -117,7 +118,8 @@ static void select_network_interface_v6()
     {
       for (const EtcPalNetintInfo* netint = arr; netint < arr + etcpal_netint_get_num_interfaces(); ++netint)
       {
-        if (ETCPAL_IP_IS_V6(&netint->addr) && !etcpal_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
+        if (ETCPAL_IP_IS_V6(&netint->addr) && !etcpal_ip_is_loopback(&netint->addr) &&
+            NULL == strstr(netint->name, "utun"))
         {
           v6_netint = netint->index;
           run_ipv6_mcast_test = true;
@@ -332,8 +334,8 @@ TEST(socket_integration_udp, multicast_udp_ipv4)
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IP, ETCPAL_IP_MULTICAST_LOOP, &intval, sizeof(int)));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk,
-                    etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IP, ETCPAL_IP_MULTICAST_IF, &v4_netint, sizeof v4_netint));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IP, ETCPAL_IP_MULTICAST_IF, &v4_netint,
+                                                    sizeof v4_netint));
 
   // Bind socket 1 to the wildcard address and a specific port.
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
@@ -437,7 +439,8 @@ TEST(socket_integration_udp, bulk_poll)
     TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_getsockname(recv_socks[i], &bind_addr), error_msg);
     bind_ports[i] = bind_addr.port;
 
-    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_poll_add_socket(&context, recv_socks[i], ETCPAL_POLL_IN, NULL), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_poll_add_socket(&context, recv_socks[i], ETCPAL_POLL_IN, NULL),
+                              error_msg);
   }
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &send_sock));

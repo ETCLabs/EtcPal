@@ -18,21 +18,23 @@
  ******************************************************************************/
 
 /* etcpal_netint.h: Platform-neutral method for enumerating network interfaces. */
-#ifndef _ETCPAL_NETINT_H_
-#define _ETCPAL_NETINT_H_
+
+#ifndef ETCPAL_NETINT_H_
+#define ETCPAL_NETINT_H_
 
 #include <stddef.h>
 #include "etcpal/bool.h"
 #include "etcpal/common.h"
 #include "etcpal/inet.h"
 
-/*! \defgroup etcpal_netint etcpal_netint
- *  \ingroup etcpal
- *  \brief A platform-neutral method for enumerating network interfaces.
+/*!
+ * \defgroup etcpal_netint etcpal_netint
+ * \ingroup etcpal
+ * \brief A platform-neutral method for enumerating network interfaces.
  *
- *  \#include "etcpal/netint.h"
+ * \#include "etcpal/netint.h"
  *
- *  @{
+ * @{
  */
 
 #ifdef __cplusplus
@@ -52,6 +54,8 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, un
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_NETINT_H_ */
+#endif /* ETCPAL_NETINT_H_ */

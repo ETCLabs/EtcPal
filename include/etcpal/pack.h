@@ -18,25 +18,27 @@
  ******************************************************************************/
 
 /* etcpal/pack.h: Platform- and endianness-independent buffer packing and unpacking. */
-#ifndef _ETCPAL_PACK_H_
-#define _ETCPAL_PACK_H_
+
+#ifndef ETCPAL_PACK_H_
+#define ETCPAL_PACK_H_
 
 #include "etcpal/int.h"
 
-/*! \defgroup etcpal_pack etcpal_pack
- *  \ingroup etcpal
- *  \brief Platform- and endianness-independent buffer packing and unpacking.
+/*!
+ * \defgroup etcpal_pack etcpal_pack
+ * \ingroup etcpal
+ * \brief Platform- and endianness-independent buffer packing and unpacking.
  *
- *  For 16- and 32-bit integer packing and unpacking:
- *  \#include "etcpal/pack.h"
- *  For 64-bit integer packing and unpacking:
- *  \#include "etcpal/pack64.h"
+ * For 16- and 32-bit integer packing and unpacking:
+ * \#include "etcpal/pack.h"
+ * For 64-bit integer packing and unpacking:
+ * \#include "etcpal/pack64.h"
  *
- *  This module defines macros for packing and unpacking integer types to/from a byte buffer. They
- *  are architected in such a way that the endianness of the integer in the buffer is always known,
- *  regardless of the endianness of your platform.
+ * This module defines macros for packing and unpacking integer types to/from a byte buffer. They
+ * are architected in such a way that the endianness of the integer in the buffer is always known,
+ * regardless of the endianness of your platform.
  *
- *  @{
+ * @{
  */
 
 #ifdef __cplusplus
@@ -56,6 +58,8 @@ void etcpal_pack_32l(uint8_t* buf, uint32_t val);
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_PACK_H_ */
+#endif /* ETCPAL_PACK_H_ */

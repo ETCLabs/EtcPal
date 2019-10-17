@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/thread.h"
 #include "unity_fixture.h"
 
@@ -47,8 +48,8 @@ TEST(etcpal_thread, create_and_destroy_functions_work)
   EtcPalThreadParams params = {
       ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
       ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
-      "cd_thread",                   // thread_name
-      NULL                           // platform_data
+      "cd_thread",                     // thread_name
+      NULL                             // platform_data
   };
   etcpal_thread_t wait_thread;
 
@@ -90,8 +91,8 @@ TEST(etcpal_thread, threads_are_time_sliced)
   EtcPalThreadParams params = {
       ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
       ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
-      "ts_thread",                   // thread_name
-      NULL                           // platform_data
+      "ts_thread",                     // thread_name
+      NULL                             // platform_data
   };
   etcpal_thread_t spin_task, oneshot_task;
   spin_task_run = true;

@@ -18,24 +18,26 @@
  ******************************************************************************/
 
 /* etcpal/uuid.h: A type and.helper functions for a Universally Unique Identifier (UUID) */
-#ifndef _ETCPAL_UUID_H_
-#define _ETCPAL_UUID_H_
+
+#ifndef ETCPAL_UUID_H_
+#define ETCPAL_UUID_H_
 
 #include <string.h>
 #include "etcpal/int.h"
 #include "etcpal/bool.h"
 #include "etcpal/error.h"
 
-/*! \defgroup etcpal_uuid etcpal_uuid
- *  \ingroup etcpal
- *  \brief Type and helper functions for a Universally Unique Identifier (UUID).
+/*!
+ * \defgroup etcpal_uuid etcpal_uuid
+ * \ingroup etcpal
+ * \brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
- *  UUIDs (per RFC 4122) are used in several libraries supported by EtcPal. This module contains a
- *  type for a UUID and functions to generate, inspect and manipulate them.
+ * UUIDs (per RFC 4122) are used in several libraries supported by EtcPal. This module contains a
+ * type for a UUID and functions to generate, inspect and manipulate them.
  *
- *  \#include "etcpal/uuid.h"
+ * \#include "etcpal/uuid.h"
  *
- *  @{
+ * @{
  */
 
 #ifdef __cplusplus
@@ -51,24 +53,26 @@ typedef struct EtcPalUuid
   uint8_t data[ETCPAL_UUID_BYTES];
 } EtcPalUuid;
 
-/*! \brief Compare two UUIDs.
- *  \param uuid1ptr Pointer to first EtcPalUuid to compare.
- *  \param uuid2ptr Pointer to second EtcPalUuid to compare.
- *  \return < 0 (uuid1ptr is less than uuid2ptr)\n
- *            0 (uuid1ptr is equal to uuid2ptr)\n
- *          > 0 (uuid1ptr is greater than uuid2ptr)
+/*!
+ * \brief Compare two UUIDs.
+ * \param uuid1ptr Pointer to first EtcPalUuid to compare.
+ * \param uuid2ptr Pointer to second EtcPalUuid to compare.
+ * \return < 0: uuid1ptr is less than uuid2ptr
+ * \return 0: uuid1ptr is equal to uuid2ptr
+ * \return > 0: uuid1ptr is greater than uuid2ptr
  */
 #define ETCPAL_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, ETCPAL_UUID_BYTES)
 
 /*! A null (all 0's) UUID, used by uuid_isnull() for comparison. */
 extern const EtcPalUuid kEtcPalNullUuid;
 
-/*! \brief Determine if a UUID is null.
+/*!
+ * \brief Determine if a UUID is null.
  *
- *  A UUID is said to be 'null' when it is made up of all 0's.
+ * A UUID is said to be 'null' when it is made up of all 0's.
  *
- *  \param uuidptr Pointer to UUID to null-check.
- *  \return true (UUID is null) or false (UUID is not null).
+ * \param uuidptr Pointer to UUID to null-check.
+ * \return true (UUID is null) or false (UUID is not null).
  */
 #define ETCPAL_UUID_IS_NULL(uuidptr) (memcmp((uuidptr)->data, kEtcPalNullUuid.data, ETCPAL_UUID_BYTES) == 0)
 
@@ -90,6 +94,7 @@ etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid);
 #endif
 
 #ifdef __cplusplus
+
 /* C++ utilities */
 
 /* Comparison operators for UUIDs */
@@ -106,6 +111,8 @@ inline bool operator==(const EtcPalUuid& a, const EtcPalUuid& b)
 
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_UUID_H_ */
+#endif /* ETCPAL_UUID_H_ */

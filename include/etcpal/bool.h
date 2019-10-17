@@ -18,26 +18,28 @@
  ******************************************************************************/
 
 /* etcpal/bool.h: Provide a C boolean type for non-C99 environments. */
-#ifndef _ETCPAL_BOOL_H_
-#define _ETCPAL_BOOL_H_
 
-/*! \defgroup etcpal_bool etcpal_bool
- *  \ingroup etcpal
- *  \brief A C boolean type.
+#ifndef ETCPAL_BOOL_H_
+#define ETCPAL_BOOL_H_
+
+/*!
+ * \defgroup etcpal_bool etcpal_bool
+ * \ingroup etcpal
+ * \brief A C boolean type.
  *
- *  \#include "etcpal/bool.h"
+ * \#include "etcpal/bool.h"
  *
- *  In the before-times, C had no boolean type. Then, C99 gave us stdbool.h. But there still exist
- *  environments where a C99 compiler is not available or practical, and one allegedly modern
- *  toolchain (it rhymes with "Nicrosoft Fishual D++") picks and chooses the modern C features it
- *  supports seemingly at random.
+ * In the before-times, C had no boolean type. Then, C99 gave us stdbool.h. But there still exist
+ * environments where a C99 compiler is not available or practical, and one allegedly modern
+ * toolchain (it rhymes with "Nicrosoft Fishual D++") picks and chooses the modern C features it
+ * supports seemingly at random.
  *
- *  This header attempts to detect if it is being compiled with C99 or later (or C++). If it is
- *  being compiled with C99 or later it simply includes stdbool.h. If it is being compiled with C++
- *  it does nothing (bool is a native type in C++). If none of the above are true, it creates a
- *  boolean type the old-fashioned way: \#defines.
+ * This header attempts to detect if it is being compiled with C99 or later (or C++). If it is
+ * being compiled with C99 or later it simply includes stdbool.h. If it is being compiled with C++
+ * it does nothing (bool is a native type in C++). If none of the above are true, it creates a
+ * boolean type the old-fashioned way: \#defines.
  *
- *  @{
+ * @{
  */
 
 #if (!defined(__cplusplus)) || defined(DOXYGEN)
@@ -68,6 +70,8 @@
 
 #endif /* __cplusplus || DOXYGEN */
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_BOOL_H_ */
+#endif /* ETCPAL_BOOL_H_ */

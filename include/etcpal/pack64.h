@@ -18,13 +18,15 @@
  ******************************************************************************/
 
 /* etcpal/pack64.h: Optional extensions to etcpal_pack for 64-bit types. */
-#ifndef _ETCPAL_PACK64_H_
-#define _ETCPAL_PACK64_H_
+
+#ifndef ETCPAL_PACK64_H_
+#define ETCPAL_PACK64_H_
 
 #include "etcpal/int.h"
 
-/*! \addtogroup etcpal_pack
- *  @{
+/*!
+ * \addtogroup etcpal_pack
+ * @{
  */
 
 #ifdef __cplusplus
@@ -40,6 +42,8 @@ void etcpal_pack_64l(uint8_t* buf, uint64_t val);
 }
 #endif
 
-/*! @} */
+/*!
+ * @}
+ */
 
-#endif /* _ETCPAL_PACK64_H_ */
+#endif /* ETCPAL_PACK64_H_ */

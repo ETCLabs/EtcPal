@@ -17,7 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* An example application showing usage of the etcpal_netint functions.
+/*
+ * An example application showing usage of the etcpal_netint functions.
  * This example will print information about each network interface on your machine. It is
  * platform-neutral.
  */
