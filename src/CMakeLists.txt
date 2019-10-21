@@ -108,7 +108,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
     ${ETCPAL_ROOT}/include/etcpal/bool.h
     ${ETCPAL_ROOT}/include/etcpal/uuid.h
-    ${ETCPAL_ROOT}/include/etcpal/common.h
     ${ETCPAL_ROOT}/include/etcpal/error.h
     ${ETCPAL_ROOT}/include/etcpal/inet.h
     ${ETCPAL_ROOT}/include/etcpal/int.h
@@ -126,13 +125,13 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.h
     ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.h
 
+    ${ETCPAL_ROOT}/include/etcpal_mock/common.h
     ${ETCPAL_ROOT}/include/etcpal_mock/socket.h
     ${ETCPAL_ROOT}/include/etcpal_mock/timer.h
     ${ETCPAL_ROOT}/include/etcpal_mock/thread.h
 
     # EtcPal sources
     # We will gradually substitute these with mocks as needed
-    ${ETCPAL_ROOT}/src/etcpal/common.c
     ${ETCPAL_ROOT}/src/etcpal/error.c
     ${ETCPAL_ROOT}/src/etcpal/inet.c
     ${ETCPAL_ROOT}/src/etcpal/log.c
@@ -154,6 +153,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.c
 
+    ${ETCPAL_ROOT}/src/etcpal_mock/common.c
     ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
     ${ETCPAL_ROOT}/src/etcpal_mock/timer.c
     ${ETCPAL_ROOT}/src/etcpal_mock/thread.c
