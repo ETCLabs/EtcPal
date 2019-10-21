@@ -151,7 +151,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
 
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_socket.c
 
     ${ETCPAL_ROOT}/src/etcpal_mock/common.c
     ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
