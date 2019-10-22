@@ -41,7 +41,7 @@ TEST_TEAR_DOWN(etcpal_inet)
 TEST(etcpal_inet, invalid_calls_fail)
 {
   // TODO fill this out with the rest of the functions
-  char* mac_str_buf = (char*)0xdeadbeef;
+  char mac_str_buf[ETCPAL_MAC_STRING_BYTES];
   const EtcPalMacAddr mac = {0};
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(NULL, mac_str_buf, ETCPAL_MAC_STRING_BYTES));
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(&mac, NULL, ETCPAL_MAC_STRING_BYTES));
