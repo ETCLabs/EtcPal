@@ -75,6 +75,8 @@ public:
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
   void SetAddress(const uint8_t* v6_data, unsigned long scope_id) noexcept;
+  void SetAddress(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data) noexcept;
+  void SetAddress(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, unsigned long scope_id) noexcept;
 
   static IpAddr FromString(const std::string& ip_str) noexcept;
   static IpAddr WildcardV4() noexcept;
@@ -436,7 +438,6 @@ public:
   MacAddr(const EtcPalMacAddr& c_mac) noexcept;
   MacAddr& operator=(const EtcPalMacAddr& c_mac) noexcept;
   explicit MacAddr(const uint8_t* mac_data) noexcept;
-  explicit MacAddr(const std::array<uint8_t, ETCPAL_MAC_BYTES>& mac_data) noexcept;
 
   const EtcPalMacAddr& get() const noexcept;
   EtcPalMacAddr& get() noexcept;
