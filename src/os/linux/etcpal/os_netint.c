@@ -201,9 +201,9 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     // Hardware address
     int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
     if (ioctl_res == 0)
-      memcpy(current_info->mac, if_req.ifr_hwaddr.sa_data, ETCPAL_NETINTINFO_MAC_LEN);
+      memcpy(current_info->mac.data, if_req.ifr_hwaddr.sa_data, ETCPAL_MAC_BYTES);
     else
-      memset(current_info->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
+      memset(current_info->mac.data, 0, ETCPAL_MAC_BYTES);
 
     // Interface index
     ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);

@@ -239,10 +239,10 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
       WideCharToMultiByte(CP_UTF8, 0, pcur->FriendlyName, -1, info->friendly_name,
                           ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1, NULL, NULL);
 
-      if (pcur->PhysicalAddressLength == ETCPAL_NETINTINFO_MAC_LEN)
-        memcpy(info->mac, pcur->PhysicalAddress, ETCPAL_NETINTINFO_MAC_LEN);
+      if (pcur->PhysicalAddressLength == ETCPAL_MAC_BYTES)
+        memcpy(info->mac.data, pcur->PhysicalAddress, ETCPAL_MAC_BYTES);
       else
-        memset(info->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
+        memset(info->mac.data, 0, ETCPAL_MAC_BYTES);
 
       ++netint_index;
 

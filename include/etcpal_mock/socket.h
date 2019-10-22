@@ -35,18 +35,18 @@
 extern "C" {
 #endif
 
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_accept, etcpal_socket_t, EtcPalSockaddr*, etcpal_socket_t*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_bind, etcpal_socket_t, const EtcPalSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_accept, etcpal_socket_t, EtcPalSockAddr*, etcpal_socket_t*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_bind, etcpal_socket_t, const EtcPalSockAddr*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_close, etcpal_socket_t);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_connect, etcpal_socket_t, const EtcPalSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getpeername, etcpal_socket_t, EtcPalSockaddr*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockname, etcpal_socket_t, EtcPalSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_connect, etcpal_socket_t, const EtcPalSockAddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getpeername, etcpal_socket_t, EtcPalSockAddr*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockname, etcpal_socket_t, EtcPalSockAddr*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockopt, etcpal_socket_t, int, int, void*, size_t*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_listen, etcpal_socket_t, int);
 DECLARE_FAKE_VALUE_FUNC(int, etcpal_recv, etcpal_socket_t, void*, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, etcpal_recvfrom, etcpal_socket_t, void*, size_t, int, EtcPalSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_recvfrom, etcpal_socket_t, void*, size_t, int, EtcPalSockAddr*);
 DECLARE_FAKE_VALUE_FUNC(int, etcpal_send, etcpal_socket_t, const void*, size_t, int);
-DECLARE_FAKE_VALUE_FUNC(int, etcpal_sendto, etcpal_socket_t, const void*, size_t, int, const EtcPalSockaddr*);
+DECLARE_FAKE_VALUE_FUNC(int, etcpal_sendto, etcpal_socket_t, const void*, size_t, int, const EtcPalSockAddr*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setsockopt, etcpal_socket_t, int, int, const void*, size_t);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_shutdown, etcpal_socket_t, int);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_socket, unsigned int, unsigned int, etcpal_socket_t*);

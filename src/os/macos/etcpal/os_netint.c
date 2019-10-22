@@ -209,13 +209,13 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     if (link_name && link_addr && 0 == strcmp(ifaddr->ifa_name, link_name))
     {
       current_info->index = link_addr->sdl_index;
-      memcpy(current_info->mac, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_NETINTINFO_MAC_LEN);
+      memcpy(current_info->mac.data, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_MAC_BYTES);
     }
     else
     {
       // Backup - get the interface index using if_nametoindex
       current_info->index = if_nametoindex(ifaddr->ifa_name);
-      memset(current_info->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
+      memset(current_info->mac.data, 0, ETCPAL_MAC_BYTES);
     }
 
     // Is Default

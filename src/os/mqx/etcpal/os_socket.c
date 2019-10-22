@@ -28,16 +28,16 @@
 
 /***************************** Private macros ********************************/
 
-#define ETCPAL_FD_ZERO(setptr)    \
+#define ETCPAL_FD_ZERO(setptr)  \
   RTCS_FD_ZERO(&(setptr)->set); \
   (setptr)->count = 0
 
-#define ETCPAL_FD_SET(sock, setptr)    \
+#define ETCPAL_FD_SET(sock, setptr)  \
   RTCS_FD_SET(sock, &(setptr)->set); \
   (setptr)->count++
 
-#define ETCPAL_FD_CLEAR(sock, setptr)  \
-  RTCS_FD_CLR(sock, &(setptr)->set); \
+#define ETCPAL_FD_CLEAR(sock, setptr) \
+  RTCS_FD_CLR(sock, &(setptr)->set);  \
   (setptr)->count--
 
 #define ETCPAL_FD_ISSET(sock, setptr) RTCS_FD_ISSET(sock, &(setptr)->set)
@@ -110,8 +110,9 @@ static EtcPalPollCtxSocket* find_socket(EtcPalPollContext* context, etcpal_socke
 static EtcPalPollCtxSocket* find_hole(EtcPalPollContext* context);
 static void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollCtxSocket* sock);
 static void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollCtxSocket* sock);
-static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent* event, etcpal_error_t socket_error,
-                                         const rtcs_fd_set* readfds, const rtcs_fd_set* writefds);
+static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent* event,
+                                           etcpal_error_t socket_error, const rtcs_fd_set* readfds,
+                                           const rtcs_fd_set* writefds);
 
 // Helper functions for etcpal_setsockopt()
 static int32_t join_leave_mcast_group_ipv4(etcpal_socket_t id, const struct EtcPalMreq* mreq, bool join);
@@ -176,13 +177,13 @@ void etcpal_socket_deinit()
   // No deinitialization is necessary on this platform.
 }
 
-etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal_socket_t* conn_sock)
+etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal_socket_t* conn_sock)
 {
   /* TODO */
   return kEtcPalErrNotImpl;
 }
 
-etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
   struct sockaddr ss;
   size_t sa_size;
@@ -202,19 +203,19 @@ etcpal_error_t etcpal_close(etcpal_socket_t id)
   return err_os_to_etcpal((uint32_t)closesocket(id));
 }
 
-etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
   /* TODO */
   return kEtcPalErrNotImpl;
 }
 
-etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address)
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   /* TODO */
   return kEtcPalErrNotImpl;
 }
 
-etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address)
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   struct sockaddr ss;
   uint16_t size = sizeof ss;
@@ -250,7 +251,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
   return kEtcPalErrNotImpl;
 }
 
-int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address)
+int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockAddr* address)
 {
   int32_t res;
   uint32_t impl_flags = (flags & ETCPAL_MSG_PEEK) ? RTCS_MSG_PEEK : 0;
@@ -279,7 +280,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
   return kEtcPalErrNotImpl;
 }
 
-int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr)
+int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr)
 {
   int32_t res;
   size_t ss_size;
@@ -295,7 +296,8 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
   return (res == RTCS_ERROR ? err_os_to_etcpal(RTCS_geterror(id)) : res);
 }
 
-etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value, size_t option_len)
+etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value,
+                                 size_t option_len)
 {
   int32_t res = RTCSERR_SOCK_INVALID_OPTION;
 
@@ -440,7 +442,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name,
           EtcPalIpAddr default_netint_ip;
 
           ETCPAL_IP_SET_V4_ADDRESS(&default_netint_ip, ip_data.ip);
-          if (etcpal_ip_equal(netint_requested, &default_netint_ip))
+          if (etcpal_ip_cmp(netint_requested, &default_netint_ip) == 0)
             res = kEtcPalErrOk;
         }
       }
@@ -565,7 +567,7 @@ void etcpal_poll_context_deinit(EtcPalPollContext* context)
 }
 
 etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
-                                  void* user_data)
+                                      void* user_data)
 {
   if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID || !(events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
     return kEtcPalErrInvalid;
@@ -590,10 +592,11 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_
   }
 }
 
-etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t new_events,
-                                     void* new_user_data)
+etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_socket_t socket,
+                                         etcpal_poll_events_t new_events, void* new_user_data)
 {
-  if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID || !(new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
+  if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID ||
+      !(new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
     return kEtcPalErrInvalid;
 
   EtcPalPollCtxSocket* sock_desc = find_socket(context, socket);
@@ -674,7 +677,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
 }
 
 etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent* event, etcpal_error_t socket_error,
-                                  const rtcs_fd_set* readfds, const rtcs_fd_set* writefds)
+                                    const rtcs_fd_set* readfds, const rtcs_fd_set* writefds)
 {
   // Init the event data.
   event->socket = ETCPAL_SOCKET_INVALID;
@@ -774,7 +777,7 @@ void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollCtxSocket* soc
 }
 
 etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const EtcPalAddrinfo* hints,
-                              EtcPalAddrinfo* result)
+                                  EtcPalAddrinfo* result)
 {
   int32_t res;
   struct addrinfo* pf_res;

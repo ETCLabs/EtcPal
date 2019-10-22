@@ -19,6 +19,16 @@
 
 #include "etcpal/inet.h"
 
+#include <stdio.h>
+
+/****************************** Private macros *******************************/
+
+#ifdef _MSC_VER
+#define ETCPAL_SPRINTF __pragma(warning(suppress : 4996)) sprintf
+#else
+#define ETCPAL_SPRINTF sprintf
+#endif
+
 /**************************** Private variables ******************************/
 
 static const uint8_t v6_wildcard[ETCPAL_IPV6_BYTES] = {0};
@@ -169,32 +179,6 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip)
 }
 
 /*!
- * \brief Determine whether two instances of EtcPalIpAddr contain identical addresses.
- *
- * The type (IPv4 or IPv6) must be the same, as well as the value of the relevant address.
- *
- * \param[in] ip1 First EtcPalIpAddr to compare.
- * \param[in] ip2 Second EtcPalIpAddr to compare.
- * \return true: IPs are identical.
- * \return false: IPs are not identical.
- */
-bool etcpal_ip_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2)
-{
-  if (ip1 && ip2 && ip1->type == ip2->type)
-  {
-    if (ip1->type == kEtcPalIpTypeV4)
-    {
-      return ETCPAL_IP_V4_ADDRESS(ip1) == ETCPAL_IP_V4_ADDRESS(ip2);
-    }
-    else
-    {
-      return (0 == memcmp(ETCPAL_IP_V6_ADDRESS(ip1), ETCPAL_IP_V6_ADDRESS(ip2), ETCPAL_IPV6_BYTES));
-    }
-  }
-  return false;
-}
-
-/*!
  * \brief Compare two EtcPalIpAddrs.
  *
  * Rules for comparison:
@@ -231,18 +215,36 @@ int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2)
 }
 
 /*!
- * \brief Determine whether two instances of EtcPalSockaddr contain identical IP addresses and ports.
- * \param[in] sock1 First EtcPalSockaddr to compare.
- * \param[in] sock2 Second EtcPalSockaddr to compare.
+ * \brief Determine whether two instances of EtcPalSockAddr contain identical IP addresses and ports.
+ * \param[in] sock1 First EtcPalSockAddr to compare.
+ * \param[in] sock2 Second EtcPalSockAddr to compare.
  * \return true: the IP address and port are identical.
  * \return false: the IP address and port are not identical.
  */
-bool etcpal_ip_and_port_equal(const EtcPalSockaddr* sock1, const EtcPalSockaddr* sock2)
+bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr* sock2)
 {
   if (sock1 && sock2)
-    return (etcpal_ip_equal(&sock1->ip, &sock2->ip) && sock1->port == sock2->port);
+    return ((etcpal_ip_cmp(&sock1->ip, &sock2->ip) == 0) && sock1->port == sock2->port);
   else
     return false;
+}
+
+/*!
+ * \brief Compare two EtcPalMacAddrs numerically.
+ *
+ * \param[in] mac1 First EtcPalMacAddr to compare.
+ * \param[in] mac2 Second EtcPalMacAddr to compare.
+ * \return < 0: mac1 < mac2
+ * \return 0: mac1 == mac2
+ * \return > 0: mac1 > mac2
+ */
+int etcpal_mac_cmp(const EtcPalMacAddr* mac1, const EtcPalMacAddr* mac2)
+{
+  if (mac1 && mac2)
+  {
+    return memcmp(mac1->data, mac2->data, ETCPAL_MAC_BYTES);
+  }
+  return 0;
 }
 
 /*!
@@ -403,4 +405,87 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
     return true;
   }
   return false;
+}
+
+/*!
+ * \brief Create a string representation of a MAC address.
+ *
+ * The resulting string will be of the form xx:xx:xx:xx:xx:xx (lowercase is used for hexadecimal
+ * letters per common convention).
+ *
+ * \param[in] src MAC address to convert to a string.
+ * \param[out] dest Character buffer to which to write the resulting string. Must be at least of
+ *                  size #ETCPAL_MAC_STRING_BYTES.
+ * \param[in] size Size of destination buffer.
+ * \return #kEtcPalErrOk: Conversion successful.
+ * \return #kEtcPalErrInvalid: Invalid argument.
+ */
+etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest, size_t size)
+{
+  if (!src || !dest || size < ETCPAL_MAC_STRING_BYTES)
+    return kEtcPalErrInvalid;
+
+  ETCPAL_SPRINTF(dest, "%02x:%02x:%02x:%02x:%02x:%02x", src->data[0], src->data[1], src->data[2], src->data[3],
+                 src->data[4], src->data[5]);
+  return kEtcPalErrOk;
+}
+
+/*!
+ * \brief Create a MAC address from a string representation.
+ *
+ * Parses a string-represented MAC address and fills in an EtcPalMacAddr structure with the result.
+ * The input should be of the form: xx:xx:xx:xx:xx:xx, or xxxxxxxxxxxx (hexadecimal letters can be
+ * in upper- or lowercase).
+ *
+ * \param[in] src The null-terminated string to convert.
+ * \param[out] dest MAC address structure to fill in with the parse result.
+ * \return #kEtcPalErrOk: Parse successful.
+ * \return #kEtcPalErrInvalid: Parse failed or invalid argument.
+ */
+etcpal_error_t etcpal_string_to_mac(const char* src, EtcPalMacAddr* dest)
+{
+  if (!src || !dest)
+    return kEtcPalErrInvalid;
+
+  const char* from_ptr = src;
+  uint8_t to_buf[ETCPAL_MAC_BYTES];
+  uint8_t* to_ptr = to_buf;
+  bool first = true; /* Whether we are doing the first or second nibble of the byte */
+
+  while ((to_ptr - to_buf < ETCPAL_MAC_BYTES) && (*from_ptr != '\0'))
+  {
+    uint8_t offset = 0;
+    if ((*from_ptr >= '0') && (*from_ptr <= '9'))
+      offset = '0';
+    else if ((*from_ptr >= 'A') && (*from_ptr <= 'F'))
+      offset = 0x37; /* 0x41('A') - 0x37('7') = 0xa */
+    else if ((*from_ptr >= 'a') && (*from_ptr <= 'f'))
+      offset = 0x57; /* 0x61('a') - 0x57('W') = 0xa */
+
+    if (offset == 0)
+      break;
+
+    if (first)
+    {
+      *to_ptr = (uint8_t)(*from_ptr - offset);
+      *to_ptr = (uint8_t)(*to_ptr << 4);
+      first = false;
+    }
+    else
+    {
+      *to_ptr |= (uint8_t)(*from_ptr - offset);
+      ++to_ptr;
+      first = true;
+    }
+
+    if (*(++from_ptr) == ':')
+      ++from_ptr;
+  }
+
+  if (to_ptr == to_buf + ETCPAL_MAC_BYTES)
+  {
+    memcpy(dest->data, to_buf, ETCPAL_MAC_BYTES);
+    return kEtcPalErrOk;
+  }
+  return kEtcPalErrInvalid;
 }

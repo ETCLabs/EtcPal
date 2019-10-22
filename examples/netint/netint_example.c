@@ -108,12 +108,10 @@ int main()
   {
     char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
     char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
-    char mac_str[18];
+    char mac_str[ETCPAL_MAC_STRING_BYTES];
     etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
     etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
-    snprintf(mac_str, 18, "%02x:%02x:%02x:%02x:%02x:%02x", netint->mac[0], netint->mac[1], netint->mac[2],
-             netint->mac[3], netint->mac[4], netint->mac[5]);
-
+    etcpal_mac_to_string(&netint->mac, mac_str, ETCPAL_MAC_STRING_BYTES);
     printf(line_format, netint->name, addr_str, netmask_str, mac_str, netint->index);
   }
 

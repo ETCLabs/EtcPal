@@ -193,21 +193,21 @@ typedef struct EtcPalGroupReq
 extern "C" {
 #endif
 
-etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal_socket_t* conn_sock);
-etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address);
+etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal_socket_t* conn_sock);
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address);
 etcpal_error_t etcpal_close(etcpal_socket_t id);
-etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address);
-etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address);
-etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address);
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address);
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address);
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address);
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value,
                                  size_t* option_len);
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog);
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags);
-int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address);
+int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockAddr* address);
 /* recvmsg - not implemented */
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags);
 /* sendmsg - not implemented */
-int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr);
+int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr);
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value,
                                  size_t option_len);
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
@@ -278,7 +278,7 @@ typedef struct EtcPalAddrinfo
   int ai_socktype;        /*!< i.e. ETCPAL_STREAM or ETCPAL_DGRAM */
   int ai_protocol;        /*!< i.e. ETCPAL_IPPROTO_xxx */
   char* ai_canonname;     /*!< Canonical name for host */
-  EtcPalSockaddr ai_addr; /*!< Address of host */
+  EtcPalSockAddr ai_addr; /*!< Address of host */
   void* pd[2];            /*!< Used by internal platform logic; don't touch */
 } EtcPalAddrinfo;
 

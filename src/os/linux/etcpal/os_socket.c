@@ -142,7 +142,7 @@ void etcpal_socket_deinit()
   // No deinitialization necessary on this platform
 }
 
-etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal_socket_t* conn_sock)
+etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal_socket_t* conn_sock)
 {
   if (!conn_sock)
     return kEtcPalErrInvalid;
@@ -164,7 +164,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr* address, etcpal
   return errno_os_to_etcpal(errno);
 }
 
-etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr* address)
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
   if (!address)
     return kEtcPalErrInvalid;
@@ -184,7 +184,7 @@ etcpal_error_t etcpal_close(etcpal_socket_t id)
   return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
-etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
   if (!address)
     return kEtcPalErrInvalid;
@@ -198,7 +198,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr* address)
   return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
-etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address)
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   /* TODO */
   (void)id;
@@ -206,7 +206,7 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr* address)
   return kEtcPalErrNotImpl;
 }
 
-etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr* address)
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   if (!address)
     return kEtcPalErrInvalid;
@@ -250,7 +250,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
   return (res >= 0 ? res : (int)errno_os_to_etcpal(errno));
 }
 
-int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockaddr* address)
+int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockAddr* address)
 {
   if (!buffer)
     return (int)kEtcPalErrInvalid;
@@ -283,7 +283,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
   return (res >= 0 ? res : (int)errno_os_to_etcpal(errno));
 }
 
-int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockaddr* dest_addr)
+int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr)
 {
   (void)flags;
 

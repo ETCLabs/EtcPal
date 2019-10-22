@@ -23,6 +23,11 @@
 #include <string.h>
 #include <limits.h>
 
+// Disable sprintf() warning on Windows/MSVC
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
+
 TEST_GROUP(etcpal_inet);
 
 TEST_SETUP(etcpal_inet)
@@ -31,6 +36,16 @@ TEST_SETUP(etcpal_inet)
 
 TEST_TEAR_DOWN(etcpal_inet)
 {
+}
+
+TEST(etcpal_inet, invalid_calls_fail)
+{
+  // TODO fill this out with the rest of the functions
+  char* mac_str_buf = (char*)0xdeadbeef;
+  const EtcPalMacAddr mac = {0};
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(NULL, mac_str_buf, ETCPAL_MAC_STRING_BYTES));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(&mac, NULL, ETCPAL_MAC_STRING_BYTES));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(&mac, mac_str_buf, ETCPAL_MAC_STRING_BYTES - 1));
 }
 
 // Test the EtcPalIpAddr struct and macros
@@ -138,7 +153,7 @@ TEST(etcpal_inet, ip_is_wildcard_works)
   TEST_ASSERT(etcpal_ip_is_wildcard(&test_addr));
 }
 
-// Test the etcpal_ip_equal() and etcpal_ip_cmp() functions
+// Test the etcpal_ip_cmp() function
 TEST(etcpal_inet, ip_compare_functions_work)
 {
   EtcPalIpAddr v4;
@@ -146,7 +161,6 @@ TEST(etcpal_inet, ip_compare_functions_work)
 
   // Copied address should compare equal
   EtcPalIpAddr v4_copy = v4;
-  TEST_ASSERT(etcpal_ip_equal(&v4_copy, &v4));
   TEST_ASSERT_EQUAL_INT(0, etcpal_ip_cmp(&v4_copy, &v4));
 
   EtcPalIpAddr v6;
@@ -155,12 +169,10 @@ TEST(etcpal_inet, ip_compare_functions_work)
 
   // Copied address should compare equal
   EtcPalIpAddr v6_copy = v6;
-  TEST_ASSERT(etcpal_ip_equal(&v6_copy, &v6));
   TEST_ASSERT_EQUAL_INT(0, etcpal_ip_cmp(&v6_copy, &v6));
 
   // The v4 and v6 should not be equal, and per the comparison algorithm the v4 should be less than
   // the v6
-  TEST_ASSERT_UNLESS(etcpal_ip_equal(&v4, &v6));
   TEST_ASSERT_LESS_THAN_INT(0, etcpal_ip_cmp(&v4, &v6));
 
   // Further test the etcpal_ip_cmp() function, with like address types
@@ -360,8 +372,49 @@ TEST(etcpal_inet, inet_string_functions_work)
               (0 == strcmp(str, "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF")));
 }
 
+TEST(etcpal_inet, mac_to_string_conversion_works)
+{
+  const EtcPalMacAddr mac = {{1, 2, 3, 4, 5, 6}};
+  char str_buf[ETCPAL_MAC_STRING_BYTES];
+
+  etcpal_mac_to_string(&mac, str_buf, ETCPAL_MAC_STRING_BYTES);
+  TEST_ASSERT_EQUAL_STRING(str_buf, "01:02:03:04:05:06");
+}
+
+TEST(etcpal_inet, string_to_mac_conversion_works)
+{
+  EtcPalMacAddr mac;
+  const char* good_strings[] = {"0a:0b:cd:01:02:34", "0a0bcd010234"};
+  const EtcPalMacAddr good_str_mac = {{0x0a, 0x0b, 0xcd, 0x01, 0x02, 0x34}};
+  // clang-format off
+  const char* bad_strings[] = {
+    "0a:0b:cd:01:02:0", // short by one character
+    "0a:0b::cd:01:02:34", // extra colon
+    "ga:0b:cd:01:02:34", // bad character at the beginning
+    "This isn't a MAC", // Short random string
+    "This isn't a MAC but it is a very long string" // Long random string
+  };
+  // clang-format on
+
+  for (size_t i = 0; i < (sizeof(good_strings) / sizeof(const char*)); ++i)
+  {
+    char msg_buf[100];
+    sprintf(msg_buf, "Failed on input: %s", good_strings[i]);
+    TEST_ASSERT_EQUAL_MESSAGE(etcpal_string_to_mac(good_strings[i], &mac), kEtcPalErrOk, msg_buf);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, etcpal_mac_cmp(&mac, &good_str_mac), msg_buf);
+  }
+
+  for (size_t i = 0; i < (sizeof(bad_strings) / sizeof(const char*)); ++i)
+  {
+    char msg_buf[100];
+    sprintf(msg_buf, "Failed on input: %s", bad_strings[i]);
+    TEST_ASSERT_NOT_EQUAL_MESSAGE(etcpal_string_to_mac(bad_strings[i], &mac), kEtcPalErrOk, msg_buf);
+  }
+}
+
 TEST_GROUP_RUNNER(etcpal_inet)
 {
+  RUN_TEST_CASE(etcpal_inet, invalid_calls_fail);
   RUN_TEST_CASE(etcpal_inet, ipaddr_macros_work);
   RUN_TEST_CASE(etcpal_inet, ip_is_loopback_works);
   RUN_TEST_CASE(etcpal_inet, ip_is_multicast_works);
@@ -370,4 +423,6 @@ TEST_GROUP_RUNNER(etcpal_inet)
   RUN_TEST_CASE(etcpal_inet, ip_mask_length_works);
   RUN_TEST_CASE(etcpal_inet, ip_mask_from_length_works);
   RUN_TEST_CASE(etcpal_inet, inet_string_functions_work);
+  RUN_TEST_CASE(etcpal_inet, mac_to_string_conversion_works);
+  RUN_TEST_CASE(etcpal_inet, string_to_mac_conversion_works);
 }

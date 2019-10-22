@@ -187,13 +187,20 @@ typedef struct EtcPalIpAddr
  */
 
 /*! An IP address with associated interface and port. Ports are in host byte order. */
-typedef struct EtcPalSockaddr
+typedef struct EtcPalSockAddr
 {
   uint16_t port;   /*!< TCP or UDP port. */
   EtcPalIpAddr ip; /*!< IP address. */
-} EtcPalSockaddr;
+} EtcPalSockAddr;
 
-#define ETCPAL_NETINTINFO_MAC_LEN 6
+#define ETCPAL_MAC_BYTES 6
+
+/*! A MAC address. */
+typedef struct EtcPalMacAddr
+{
+  uint8_t data[ETCPAL_MAC_BYTES];
+} EtcPalMacAddr;
+
 #define ETCPAL_NETINTINFO_NAME_LEN 64
 #define ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN 64
 
@@ -211,7 +218,7 @@ typedef struct EtcPalNetintInfo
   /*! The subnet mask for this interface. */
   EtcPalIpAddr mask;
   /*! The adapter MAC address. */
-  uint8_t mac[ETCPAL_NETINTINFO_MAC_LEN];
+  EtcPalMacAddr mac;
   /*! The system name for the interface. This name will not change unless the adapter is removed or
    *  reconfigured. */
   char name[ETCPAL_NETINTINFO_NAME_LEN];
@@ -229,6 +236,8 @@ typedef struct EtcPalNetintInfo
 #define ETCPAL_INET_ADDRSTRLEN 16
 /*! Maximum length of the string representation of an IPv6 address. */
 #define ETCPAL_INET6_ADDRSTRLEN 46
+/*! Maximum length of the string representation of a MAC address. */
+#define ETCPAL_MAC_STRING_BYTES 18
 
 bool etcpal_ip_is_link_local(const EtcPalIpAddr* ip);
 bool etcpal_ip_is_loopback(const EtcPalIpAddr* ip);
@@ -236,9 +245,9 @@ bool etcpal_ip_is_multicast(const EtcPalIpAddr* ip);
 bool etcpal_ip_is_wildcard(const EtcPalIpAddr* ip);
 void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip);
 
-bool etcpal_ip_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
 int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
-bool etcpal_ip_and_port_equal(const EtcPalSockaddr* sock1, const EtcPalSockaddr* sock2);
+bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr* sock2);
+int etcpal_mac_cmp(const EtcPalMacAddr* mac1, const EtcPalMacAddr* mac2);
 
 unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask);
 EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length);
@@ -247,11 +256,13 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
 bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip);
 size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip);
 
-bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockaddr* sa);
-size_t sockaddr_etcpal_to_os(const EtcPalSockaddr* sa, etcpal_os_sockaddr_t* os_sa);
+bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa);
+size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_sa);
 
 etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size);
 etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest);
+etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest, size_t size);
+etcpal_error_t etcpal_string_to_mac(const char* src, EtcPalMacAddr* dest);
 
 #ifdef __cplusplus
 }
@@ -293,19 +304,19 @@ inline bool operator>=(const EtcPalIpAddr& a, const EtcPalIpAddr& b)
   return !(a < b);
 }
 
-/* Comparison operators for Sockaddrs */
+/* Comparison operators for SockAddrs */
 
-inline bool operator==(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+inline bool operator==(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
 {
   return (a.ip == b.ip && a.port == b.port);
 }
 
-inline bool operator!=(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+inline bool operator!=(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
 {
   return !(a == b);
 }
 
-inline bool operator<(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+inline bool operator<(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
 {
   if (a.port == b.port)
     return (etcpal_ip_cmp(&a.ip, &b.ip) < 0);
@@ -313,17 +324,49 @@ inline bool operator<(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
     return (a.port < b.port);
 }
 
-inline bool operator>(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+inline bool operator>(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
 {
   return b < a;
 }
 
-inline bool operator<=(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+inline bool operator<=(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
 {
   return !(b < a);
 }
 
-inline bool operator>=(const EtcPalSockaddr& a, const EtcPalSockaddr& b)
+inline bool operator>=(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
+{
+  return !(a < b);
+}
+
+/* Comparison operators for MacAddrs */
+
+inline bool operator==(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
+{
+  return (etcpal_mac_cmp(&a, &b) == 0);
+}
+
+inline bool operator!=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
+{
+  return !(a == b);
+}
+
+inline bool operator<(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
+{
+  return (etcpal_mac_cmp(&a, &b) < 0);
+}
+
+inline bool operator>(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
+{
+  return b < a;
+}
+
+inline bool operator<=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
 {
   return !(a < b);
 }

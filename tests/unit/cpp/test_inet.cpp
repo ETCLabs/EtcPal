@@ -29,9 +29,9 @@ static EtcPalIpAddr ipv4_2;
 static EtcPalIpAddr ipv6_1;
 static EtcPalIpAddr ipv6_2;
 
-static EtcPalSockaddr sock_v4_port_1;
-static EtcPalSockaddr sock_v4_port_2;
-static EtcPalSockaddr sock_v6_port_1;
+static EtcPalSockAddr sock_v4_port_1;
+static EtcPalSockAddr sock_v4_port_2;
+static EtcPalSockAddr sock_v6_port_1;
 
 TEST_SETUP(etcpal_cpp_inet)
 {

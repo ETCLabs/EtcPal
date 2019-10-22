@@ -54,7 +54,7 @@ TEST(etcpal_socket, bind_works_as_expected)
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Make sure we can bind to the wildcard address and port
-  EtcPalSockaddr bind_addr;
+  EtcPalSockAddr bind_addr;
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
   bind_addr.port = 0;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(sock, &bind_addr));
@@ -218,7 +218,7 @@ TEST(etcpal_socket, poll_modify_socket_works)
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
   // Bind the socket to the wildcard address and a specific port.
-  EtcPalSockaddr bind_addr;
+  EtcPalSockAddr bind_addr;
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
   bind_addr.port = POLL_MODIFY_TEST_PORT_BASE;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(sock, &bind_addr));
@@ -240,7 +240,7 @@ TEST(etcpal_socket, poll_modify_socket_works)
   TEST_ASSERT_EQUAL(kEtcPalErrTimedOut, etcpal_poll_wait(&context, &event, 100));
 
   // Send data to socket
-  EtcPalSockaddr send_addr;
+  EtcPalSockAddr send_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   send_addr.port = POLL_MODIFY_TEST_PORT_BASE;
   etcpal_sendto(sock, (const uint8_t*)"test message", sizeof("test message"), 0, &send_addr);
@@ -277,7 +277,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   // Bind socket 1 to the wildcard address and a specific port.
-  EtcPalSockaddr bind_addr;
+  EtcPalSockAddr bind_addr;
   etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
   bind_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(rcvsock1, &bind_addr));
@@ -294,7 +294,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrTimedOut, etcpal_poll_wait(&context, &event, 100));
 
-  EtcPalSockaddr send_addr;
+  EtcPalSockAddr send_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   send_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
 
@@ -313,10 +313,10 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
 
   // Receive data on the socket.
   uint8_t recv_buf[POLL_UDP_IN_TEST_MESSAGE_LENGTH];
-  EtcPalSockaddr from_addr;
+  EtcPalSockAddr from_addr;
   TEST_ASSERT_EQUAL(POLL_UDP_IN_TEST_MESSAGE_LENGTH,
                     (size_t)etcpal_recvfrom(event.socket, recv_buf, POLL_UDP_IN_TEST_MESSAGE_LENGTH, 0, &from_addr));
-  TEST_ASSERT(etcpal_ip_equal(&send_addr.ip, &from_addr.ip));
+  TEST_ASSERT_EQUAL(etcpal_ip_cmp(&send_addr.ip, &from_addr.ip), 0);
   TEST_ASSERT_NOT_EQUAL(from_addr.port, POLL_UDP_IN_TEST_PORT_BASE);
   TEST_ASSERT_NOT_EQUAL(from_addr.port, POLL_UDP_IN_TEST_PORT_BASE + 1);
   TEST_ASSERT_EQUAL_MEMORY(recv_buf, POLL_UDP_IN_TEST_MESSAGE, POLL_UDP_IN_TEST_MESSAGE_LENGTH);

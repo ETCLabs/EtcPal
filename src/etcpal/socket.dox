@@ -27,7 +27,7 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
  *
  * Refer to your favorite accept() man page for more information.
  *
- * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockaddr 
+ * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockAddr 
  * type. Connected socket is returned in an output parameter rather than the return value.
  *
  * \param[in] id Listening socket on which to accept a new connection.
@@ -35,21 +35,21 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
  * \param[out] conn_sock Filled in on success with handle to connected socket.
  * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (failure).
  */
-etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockaddr *address, etcpal_socket_t *conn_sock);
+etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr *address, etcpal_socket_t *conn_sock);
 
 /*!
  * \brief Bind a name to a socket.
  *
  * Refer to your favorite bind() man page for more information.
  *
- * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockaddr
+ * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockAddr
  * type.
  *
  * \param[in] id Socket to which to bind an address (traditionally called a 'name').
  * \param[in] address Address to assign to the socket.
  * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockaddr *address);
+etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr *address);
 
 /*!
  * \brief Close a socket.
@@ -77,7 +77,7 @@ etcpal_error_t etcpal_close(etcpal_socket_t id);
  * \param[in] address Address to which to connect.
  * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr *address);
+etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr *address);
 
 /*!
  * \brief Get the name of the connected peer socket.
@@ -91,7 +91,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockaddr *address)
  * \param[in] address Filled in with peer address on success.
  * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr *address);
+etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr *address);
 
 /*!
  * \brief Get socket name.
@@ -105,7 +105,7 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockaddr *address);
  * \param[in] address Filled in with bound address on success.
  * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
-etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockaddr *address);
+etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr *address);
 
 /*!
  * \brief Get an option value for a socket.
@@ -166,7 +166,7 @@ int etcpal_recv(etcpal_socket_t id, void *buffer, size_t length, int flags);
  *                     received.
  * \return Number of bytes received (success) or #etcpal_error_t code from system (error occurred).
  */
-int etcpal_recvfrom(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockaddr *address);
+int etcpal_recvfrom(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockAddr *address);
 
 /*! 
  * \brief Send data on a connected socket.
@@ -198,7 +198,7 @@ int etcpal_send(etcpal_socket_t id, const void *message, size_t length, int flag
  * \param[in] dest_addr Address to which to send the message.
  * \return Number of bytes sent (success) or #etcpal_error_t code from system (error occurred).
  */
-int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockaddr *dest_addr);
+int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockAddr *dest_addr);
 
 /*!
  * \brief Set an option value on a socket.

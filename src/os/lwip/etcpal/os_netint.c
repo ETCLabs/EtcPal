@@ -35,8 +35,8 @@ size_t default_index;
 static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
 {
   netint->index = netif_get_index(lwip_netif);
-  memset(netint->mac, 0, ETCPAL_NETINTINFO_MAC_LEN);
-  memcpy(netint->mac, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
+  memset(netint->mac.data, 0, ETCPAL_MAC_BYTES);
+  memcpy(netint->mac.data, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
 
   char lwip_name[NETIF_NAMESIZE];
   if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
@@ -72,7 +72,7 @@ static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
   {
 #if LWIP_IPV6_SCOPES
     ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
-                                         ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
+                                           ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
 #else
     ETCPAL_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
     // TODO revisit
