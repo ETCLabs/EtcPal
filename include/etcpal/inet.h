@@ -201,6 +201,29 @@ typedef struct EtcPalMacAddr
   uint8_t data[ETCPAL_MAC_BYTES];
 } EtcPalMacAddr;
 
+/*!
+ * \brief Compare two EtcPalMacAddrs numerically.
+ * \param[in] mac1ptr Pointer to first EtcPalMacAddr to compare.
+ * \param[in] mac2ptr Pointer to second EtcPalMacAddr to compare.
+ * \return < 0: mac1 < mac2
+ * \return 0: mac1 == mac2
+ * \return > 0: mac1 > mac2
+ */
+#define ETCPAL_MAC_CMP(mac1ptr, mac2ptr) memcmp((mac1ptr)->data, (mac2ptr)->data, ETCPAL_MAC_BYTES)
+
+/*! A null (all 0's) MAC address, used by ETCPAL_MAC_IS_NULL() for comparison. */
+extern const EtcPalMacAddr kEtcPalNullMacAddr;
+
+/*!
+ * \brief Determine if a MAC address is null.
+ *
+ * A MAC address is said to be 'null' when it is made up of all 0's.
+ *
+ * \param macptr Pointer to EtcPalMacAddr to null-check.
+ * \return true (MAC address is null) or false (MAC address is not null).
+ */
+#define ETCPAL_MAC_IS_NULL(macptr) (memcmp((macptr)->data, kEtcPalNullMacAddr.data, ETCPAL_MAC_BYTES) == 0)
+
 #define ETCPAL_NETINTINFO_NAME_LEN 64
 #define ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN 64
 
@@ -247,7 +270,6 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip);
 
 int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
 bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr* sock2);
-int etcpal_mac_cmp(const EtcPalMacAddr* mac1, const EtcPalMacAddr* mac2);
 
 unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask);
 EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length);
@@ -343,7 +365,7 @@ inline bool operator>=(const EtcPalSockAddr& a, const EtcPalSockAddr& b)
 
 inline bool operator==(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
 {
-  return (etcpal_mac_cmp(&a, &b) == 0);
+  return (ETCPAL_MAC_CMP(&a, &b) == 0);
 }
 
 inline bool operator!=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
@@ -353,7 +375,7 @@ inline bool operator!=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
 
 inline bool operator<(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
 {
-  return (etcpal_mac_cmp(&a, &b) < 0);
+  return (ETCPAL_MAC_CMP(&a, &b) < 0);
 }
 
 inline bool operator>(const EtcPalMacAddr& a, const EtcPalMacAddr& b)

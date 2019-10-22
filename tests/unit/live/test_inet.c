@@ -372,6 +372,29 @@ TEST(etcpal_inet, inet_string_functions_work)
               (0 == strcmp(str, "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF")));
 }
 
+TEST(etcpal_inet, mac_is_null_works)
+{
+  EtcPalMacAddr mac = {{0}};
+  TEST_ASSERT_TRUE(ETCPAL_MAC_IS_NULL(&mac));
+
+  mac = kEtcPalNullMacAddr;
+  TEST_ASSERT_TRUE(ETCPAL_MAC_IS_NULL(&mac));
+
+  for (uint8_t i = 0; i < ETCPAL_MAC_BYTES; ++i)
+    mac.data[i] = i;
+  TEST_ASSERT_FALSE(ETCPAL_MAC_IS_NULL(&mac));
+}
+
+TEST(etcpal_inet, mac_compare_works)
+{
+  const EtcPalMacAddr mac1 = {{1, 2, 3, 4, 5, 6}};
+  const EtcPalMacAddr mac2 = {{1, 2, 3, 4, 5, 7}};
+
+  TEST_ASSERT_EQUAL(0, ETCPAL_MAC_CMP(&mac1, &mac1));
+  TEST_ASSERT_GREATER_THAN(0, ETCPAL_MAC_CMP(&mac2, &mac1));
+  TEST_ASSERT_LESS_THAN(0, ETCPAL_MAC_CMP(&mac1, &mac2));
+}
+
 TEST(etcpal_inet, mac_to_string_conversion_works)
 {
   const EtcPalMacAddr mac = {{1, 2, 3, 4, 5, 6}};
@@ -401,7 +424,7 @@ TEST(etcpal_inet, string_to_mac_conversion_works)
     char msg_buf[100];
     sprintf(msg_buf, "Failed on input: %s", good_strings[i]);
     TEST_ASSERT_EQUAL_MESSAGE(etcpal_string_to_mac(good_strings[i], &mac), kEtcPalErrOk, msg_buf);
-    TEST_ASSERT_EQUAL_INT_MESSAGE(0, etcpal_mac_cmp(&mac, &good_str_mac), msg_buf);
+    TEST_ASSERT_EQUAL_INT_MESSAGE(0, ETCPAL_MAC_CMP(&mac, &good_str_mac), msg_buf);
   }
 
   for (size_t i = 0; i < (sizeof(bad_strings) / sizeof(const char*)); ++i)
@@ -423,6 +446,8 @@ TEST_GROUP_RUNNER(etcpal_inet)
   RUN_TEST_CASE(etcpal_inet, ip_mask_length_works);
   RUN_TEST_CASE(etcpal_inet, ip_mask_from_length_works);
   RUN_TEST_CASE(etcpal_inet, inet_string_functions_work);
+  RUN_TEST_CASE(etcpal_inet, mac_is_null_works);
+  RUN_TEST_CASE(etcpal_inet, mac_compare_works);
   RUN_TEST_CASE(etcpal_inet, mac_to_string_conversion_works);
   RUN_TEST_CASE(etcpal_inet, string_to_mac_conversion_works);
 }

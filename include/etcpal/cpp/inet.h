@@ -50,13 +50,17 @@ public:
   IpAddr& operator=(const EtcPalIpAddr& c_ip) noexcept;
 
   IpAddr(uint32_t v4_data) noexcept;
-  IpAddr(const uint8_t* v6_data) noexcept;
+  explicit IpAddr(const uint8_t* v6_data) noexcept;
   IpAddr(const uint8_t* v6_data, unsigned long scope_id) noexcept;
+  explicit IpAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data) noexcept;
+  IpAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, unsigned long scope_id) noexcept;
 
   const EtcPalIpAddr& get() const noexcept;
+  EtcPalIpAddr& get() noexcept;
   std::string ToString() const;
   uint32_t v4_data() const noexcept;
   const uint8_t* v6_data() const noexcept;
+  std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
   unsigned long scope_id() const noexcept;
 
   bool IsValid() const noexcept;
@@ -124,8 +128,14 @@ inline IpAddr::IpAddr(const uint8_t* v6_data, unsigned long scope_id) noexcept
   ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&addr_, v6_data, scope_id);
 }
 
-/// \brief Get a reference to the underlying C type.
+/// \brief Get a const reference to the underlying C type.
 inline const EtcPalIpAddr& IpAddr::get() const noexcept
+{
+  return addr_;
+}
+
+/// \brief Get a mutable reference to the underlying C type.
+inline EtcPalIpAddr& IpAddr::get() noexcept
 {
   return addr_;
 }
@@ -313,9 +323,13 @@ public:
 
   SockAddr(uint32_t v4_data, uint16_t port) noexcept;
   SockAddr(const uint8_t* v6_data, uint16_t port) noexcept;
+  SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16_t port) noexcept;
+  SockAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, uint16_t port) noexcept;
+  SockAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, unsigned long scope_id, uint16_t port) noexcept;
   SockAddr(IpAddr ip, uint16_t port) noexcept;
 
   const EtcPalSockAddr& get() const noexcept;
+  EtcPalSockAddr& get() noexcept;
   std::string ToString() const;
   IpAddr ip() const noexcept;
   uint16_t port() const noexcept;
@@ -369,8 +383,14 @@ inline SockAddr::SockAddr(IpAddr ip, uint16_t port) noexcept
   addr_.port = port;
 }
 
-/// \brief Get a reference to the underlying C type.
+/// \brief Get a const reference to the underlying C type.
 inline const EtcPalSockAddr& SockAddr::get() const noexcept
+{
+  return addr_;
+}
+
+/// \brief Get a mutable reference to the underlying C type.
+inline EtcPalSockAddr& SockAddr::get() noexcept
 {
   return addr_;
 }
@@ -416,10 +436,13 @@ public:
   MacAddr(const EtcPalMacAddr& c_mac) noexcept;
   MacAddr& operator=(const EtcPalMacAddr& c_mac) noexcept;
   explicit MacAddr(const uint8_t* mac_data) noexcept;
+  explicit MacAddr(const std::array<uint8_t, ETCPAL_MAC_BYTES>& mac_data) noexcept;
 
   const EtcPalMacAddr& get() const noexcept;
+  EtcPalMacAddr& get() noexcept;
   std::string ToString() const;
   const uint8_t* data() const noexcept;
+  std::array<uint8_t, ETCPAL_MAC_BYTES> ToArray() const noexcept;
 
   bool IsNull() const noexcept;
 
@@ -448,8 +471,14 @@ inline MacAddr::MacAddr(const uint8_t* mac_data) noexcept
   std::memcpy(addr_.data, mac_data, ETCPAL_MAC_BYTES);
 }
 
-/// \brief Get a reference to the underlying C type.
+/// \brief Get a const reference to the underlying C type.
 inline const EtcPalMacAddr& MacAddr::get() const noexcept
+{
+  return addr_;
+}
+
+/// \brief Get a mutable reference to the underlying C type.
+inline EtcPalMacAddr& MacAddr::get() noexcept
 {
   return addr_;
 }
@@ -474,10 +503,7 @@ inline const uint8_t* MacAddr::data() const noexcept
 /// \brief Whether this MacAddr represents a null (all 0's) MAC address.
 inline bool MacAddr::IsNull() const noexcept
 {
-  return std::all_of(std::begin(addr_.data), std::end(addr_.data), [](uint8_t byte) { return byte == 0; });
-  // TODO would this be a better implementation?
-  // std::array<uint8_t, ETCPAL_MAC_BYTES> null_mac{};
-  // return (std::memcmp(addr_.data, null_mac.data(), ETCPAL_MAC_BYTES) == 0);
+  return ETCPAL_MAC_IS_NULL(&addr_);
 }
 
 /// \brief Construct a MacAddr from a string representation.
