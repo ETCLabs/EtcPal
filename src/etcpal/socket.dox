@@ -450,7 +450,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext *context, EtcPalPollEvent *eve
  * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (an error occurred).
  */
 etcpal_error_t etcpal_getaddrinfo(const char *hostname, const char *service, const EtcPalAddrinfo *hints,
-                              EtcPalAddrinfo *result);
+                                  EtcPalAddrinfo *result);
 
 /*!
  * \brief Get the next address from the list returned by etcpal_getaddrinfo().
@@ -478,40 +478,6 @@ bool etcpal_nextaddr(EtcPalAddrinfo *ai);
  * \param[in] ai Pointer to EtcPalAddrinfo struct for which to free the platform memory.
  */
 void etcpal_freeaddrinfo(EtcPalAddrinfo *ai);
-
-/*!
- * \brief Convert IPv4 and IPv6 addresses from binary to text form.
- *
- * Refer to your favorite inet_ntop() man page for more information.
- *
- * Differences from POSIX: af parameter is omitted because that information is contained in the
- * EtcPalIpAddr.
- *
- * \param[in] src Address to convert to string form.
- * \param[out] dest Filled in on success with the string-represented address.
- * \param[in] size Size in bytes of dest buf.
- * \return #kEtcPalErrOk: Success.
- * \return #kEtcPalErrInvalid: Invalid parameter.
- * \return #kEtcPalErrSys: System call failed.
- */
-etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr *src, char *dest, size_t size);
-
-/*!
- * \brief Convert IPv4 and IPv6 addresses from text to binary form.
- *
- * Refer to your favorite inet_pton() man page for more information.
- *
- * Differences from POSIX: etcpal_iptype_t used instead of AF_* value, since this function is only
- * used for IP addresses.
- *
- * \param[in] type Type of string-represented IP address pointed to by src.
- * \param[in] src Character string containing a string-represented IP address.
- * \param[out] dest Filled in on success with the address.
- * \return #kEtcPalErrOk: Success.
- * \return #kEtcPalErrInvalid: Invalid parameter.
- * \return #kEtcPalErrSys: System call failed.
- */
-etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char *src, EtcPalIpAddr *dest);
 
 /*!
  * @}

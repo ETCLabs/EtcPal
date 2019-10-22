@@ -407,6 +407,42 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
   return false;
 }
 
+/* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_inet.c */
+/*!
+ * \fn etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size)
+ * \brief Convert IPv4 and IPv6 addresses from binary to text form.
+ *
+ * Refer to your favorite inet_ntop() man page for more information.
+ *
+ * Differences from POSIX: af parameter is omitted because that information is contained in the
+ * EtcPalIpAddr.
+ *
+ * \param[in] src Address to convert to string form.
+ * \param[out] dest Filled in on success with the string-represented address.
+ * \param[in] size Size in bytes of dest buf.
+ * \return #kEtcPalErrOk: Success.
+ * \return #kEtcPalErrInvalid: Invalid parameter.
+ * \return #kEtcPalErrSys: System call failed.
+ */
+
+/* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_inet.c */
+/*!
+ * \fn etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
+ * \brief Convert IPv4 and IPv6 addresses from text to binary form.
+ *
+ * Refer to your favorite inet_pton() man page for more information.
+ *
+ * Differences from POSIX: etcpal_iptype_t used instead of AF_* value, since this function is only
+ * used for IP addresses.
+ *
+ * \param[in] type Type of string-represented IP address pointed to by src.
+ * \param[in] src Character string containing a string-represented IP address.
+ * \param[out] dest Filled in on success with the address.
+ * \return #kEtcPalErrOk: Success.
+ * \return #kEtcPalErrInvalid: Invalid parameter.
+ * \return #kEtcPalErrSys: System call failed.
+ */
+
 /*!
  * \brief Create a string representation of a MAC address.
  *
