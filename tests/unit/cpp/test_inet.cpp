@@ -17,10 +17,11 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/inet.h"
+#include "etcpal/cpp/inet.h"
 #include "unity_fixture.h"
 
 #include <array>
+#include <cstring>
 
 TEST_GROUP(etcpal_cpp_inet);
 
@@ -158,10 +159,172 @@ TEST(etcpal_cpp_inet, c_sockaddr_comparison_operators_work)
   TEST_ASSERT_FALSE(sock_v4_port_1 >= sock_v6_port_1);
 }
 
+TEST(etcpal_cpp_inet, ip_default_constructor_works)
+{
+  const etcpal::IpAddr ip;
+  TEST_ASSERT_FALSE(ip.IsValid());
+  TEST_ASSERT_FALSE(ip.IsV4());
+  TEST_ASSERT_FALSE(ip.IsV6());
+  TEST_ASSERT_EQUAL(ip.type(), kEtcPalIpTypeInvalid);
+}
+
+TEST(etcpal_cpp_inet, ip_copy_constructors_work)
+{
+  EtcPalIpAddr c_ip;
+  ETCPAL_IP_SET_V4_ADDRESS(&c_ip, 0xdeadbeef);
+  const etcpal::IpAddr ip1(c_ip);
+  TEST_ASSERT_TRUE(ip1.get() == c_ip);
+
+  // Use the default copy constructor
+  const etcpal::IpAddr ip2(ip1);
+  TEST_ASSERT_TRUE(ip1 == ip2);
+  TEST_ASSERT_TRUE(ip2.IsValid());
+}
+
+TEST(etcpal_cpp_inet, ip_assignment_operators_work)
+{
+  etcpal::IpAddr ip;
+  EtcPalIpAddr c_ip;
+  ETCPAL_IP_SET_V4_ADDRESS(&c_ip, 0xdeadbeef);
+
+  // Assign to an EtcPalIpAddr
+  ip = c_ip;
+  TEST_ASSERT_TRUE(ip.get() == c_ip);
+  TEST_ASSERT_TRUE(ip.IsValid());
+
+  // Use the default assignment operator
+  const etcpal::IpAddr invalid_ip;
+  ip = invalid_ip;
+  TEST_ASSERT_TRUE(ip == invalid_ip);
+  TEST_ASSERT_TRUE(ip.get() == invalid_ip.get());
+  TEST_ASSERT_FALSE(ip.IsValid());
+}
+
+TEST(etcpal_cpp_inet, ip_v4_addresses_assigned_properly)
+{
+  // Using the IPv4 direct data constructor
+  const etcpal::IpAddr ip(0xdeadbeef);
+
+  TEST_ASSERT_TRUE(ip.IsValid());
+  TEST_ASSERT_TRUE(ip.IsV4());
+  TEST_ASSERT_FALSE(ip.IsV6());
+  TEST_ASSERT_EQUAL(ip.type(), kEtcPalIpTypeV4);
+  TEST_ASSERT_EQUAL(ip.v4_data(), 0xdeadbeef);
+
+  // Using the SetAddress() function
+  etcpal::IpAddr ip2;
+  ip2.SetAddress(0xdeadbeef);
+
+  TEST_ASSERT_TRUE(ip2.IsValid());
+  TEST_ASSERT_TRUE(ip2.IsV4());
+  TEST_ASSERT_FALSE(ip2.IsV6());
+  TEST_ASSERT_EQUAL(ip2.type(), kEtcPalIpTypeV4);
+  TEST_ASSERT_EQUAL(ip2.v4_data(), 0xdeadbeef);
+}
+
+static const std::array<uint8_t, ETCPAL_IPV6_BYTES> s_v6_data{0x20, 0x01, 0x0d, 0xb8, 0x00, 0x00, 0x00, 0x00,
+                                                              0x00, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78};
+
+TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
+{
+  // Using the IPv6 direct data constructor
+  const etcpal::IpAddr ip(s_v6_data.data());
+
+  TEST_ASSERT_TRUE(ip.IsValid());
+  TEST_ASSERT_TRUE(ip.IsV6());
+  TEST_ASSERT_FALSE(ip.IsV4());
+  TEST_ASSERT_EQUAL(ip.type(), kEtcPalIpTypeV6);
+  TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip.v6_data(), ETCPAL_IPV6_BYTES));
+
+  // Using the SetAddress() function
+  etcpal::IpAddr ip2;
+  ip2.SetAddress(s_v6_data.data());
+
+  TEST_ASSERT_TRUE(ip2.IsValid());
+  TEST_ASSERT_TRUE(ip2.IsV6());
+  TEST_ASSERT_FALSE(ip2.IsV4());
+  TEST_ASSERT_EQUAL(ip2.type(), kEtcPalIpTypeV6);
+  TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip2.v6_data(), ETCPAL_IPV6_BYTES));
+}
+
+TEST(etcpal_cpp_inet, ip_to_string_works)
+{
+  const etcpal::IpAddr ip(0xdeadbeef);
+  TEST_ASSERT_TRUE(ip.ToString() == "222.173.190.239");
+
+  const etcpal::IpAddr ip2(s_v6_data.data());
+  TEST_ASSERT_TRUE(ip2.ToString() == "2001:db8::1234:5678");
+}
+
+// We do more rigorous testing of the string conversion functions in the core C unit tests, so we
+// will only test one bad string in this one.
+TEST(etcpal_cpp_inet, ip_from_string_works)
+{
+  const auto v4_good = etcpal::IpAddr::FromString("10.101.20.30");
+  TEST_ASSERT_TRUE(v4_good.IsValid());
+  TEST_ASSERT_TRUE(v4_good.IsV4());
+  TEST_ASSERT_FALSE(v4_good.IsV6());
+  TEST_ASSERT_EQUAL(v4_good.v4_data(), 0x0a65141e);
+
+  const auto v6_good = etcpal::IpAddr::FromString("2001:db8::1234:5678");
+  TEST_ASSERT_TRUE(v6_good.IsValid());
+  TEST_ASSERT_TRUE(v6_good.IsV6());
+  TEST_ASSERT_FALSE(v6_good.IsV4());
+  TEST_ASSERT_EQUAL(0, std::memcmp(v6_good.v6_data(), s_v6_data.data(), ETCPAL_IPV6_BYTES));
+
+  const auto ip_bad = etcpal::IpAddr::FromString("Bad string");
+  TEST_ASSERT_FALSE(ip_bad.IsValid());
+}
+
+// More rigorous testing is done in the C unit tests, we just do one test here
+TEST(etcpal_cpp_inet, ip_is_link_local_works)
+{
+  const auto ip = etcpal::IpAddr::FromString("169.254.1.2");
+  TEST_ASSERT_TRUE(ip.IsLinkLocal());
+}
+
+// More rigorous testing is done in the C unit tests, we just do one test here
+TEST(etcpal_cpp_inet, ip_is_loopback_works)
+{
+  const auto ip = etcpal::IpAddr::FromString("127.0.0.1");
+  TEST_ASSERT_TRUE(ip.IsLoopback());
+}
+
+// More rigorous testing is done in the C unit tests, we just do one test here
+TEST(etcpal_cpp_inet, ip_is_multicast_works)
+{
+  const auto ip = etcpal::IpAddr::FromString("239.154.2.3");
+  TEST_ASSERT_TRUE(ip.IsMulticast());
+}
+
+// More rigorous testing is done in the C unit tests, we just do a few tests here
+TEST(etcpal_cpp_inet, ip_is_wildcard_works)
+{
+  auto wildcard = etcpal::IpAddr::WildcardV4();
+  TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  wildcard = etcpal::IpAddr::WildcardV6();
+  TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  wildcard = etcpal::IpAddr::Wildcard(kEtcPalIpTypeV4);
+  TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  wildcard = etcpal::IpAddr::Wildcard(kEtcPalIpTypeV6);
+  TEST_ASSERT_TRUE(wildcard.IsWildcard());
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_inet)
 {
   RUN_TEST_CASE(etcpal_cpp_inet, c_ipaddr_equality_operators_work);
   RUN_TEST_CASE(etcpal_cpp_inet, c_ipaddr_comparison_operators_work);
   RUN_TEST_CASE(etcpal_cpp_inet, c_sockaddr_equality_operators_work);
   RUN_TEST_CASE(etcpal_cpp_inet, c_sockaddr_comparison_operators_work);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_default_constructor_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_copy_constructors_work);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_assignment_operators_work);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_v4_addresses_assigned_properly);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_v6_addresses_assigned_properly);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_to_string_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_from_string_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_is_link_local_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_is_loopback_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_is_multicast_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_is_wildcard_works);
 }
