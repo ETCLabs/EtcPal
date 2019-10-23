@@ -63,7 +63,7 @@ typedef struct EtcPalUuid
  */
 #define ETCPAL_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, ETCPAL_UUID_BYTES)
 
-/*! A null (all 0's) UUID, used by uuid_isnull() for comparison. */
+/*! A null (all 0's) UUID, used by ETCPAL_UUID_IS_NULL() for comparison. */
 extern const EtcPalUuid kEtcPalNullUuid;
 
 /*!

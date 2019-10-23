@@ -21,6 +21,10 @@
 
 #include <stdio.h>
 
+/***************************** Global variables ******************************/
+
+const EtcPalMacAddr kEtcPalNullMacAddr = {{0}};
+
 /****************************** Private macros *******************************/
 
 #ifdef _MSC_VER
@@ -227,24 +231,6 @@ bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr*
     return ((etcpal_ip_cmp(&sock1->ip, &sock2->ip) == 0) && sock1->port == sock2->port);
   else
     return false;
-}
-
-/*!
- * \brief Compare two EtcPalMacAddrs numerically.
- *
- * \param[in] mac1 First EtcPalMacAddr to compare.
- * \param[in] mac2 Second EtcPalMacAddr to compare.
- * \return < 0: mac1 < mac2
- * \return 0: mac1 == mac2
- * \return > 0: mac1 > mac2
- */
-int etcpal_mac_cmp(const EtcPalMacAddr* mac1, const EtcPalMacAddr* mac2)
-{
-  if (mac1 && mac2)
-  {
-    return memcmp(mac1->data, mac2->data, ETCPAL_MAC_BYTES);
-  }
-  return 0;
 }
 
 /*!
