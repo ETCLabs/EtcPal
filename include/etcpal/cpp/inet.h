@@ -61,8 +61,6 @@ public:
   IpAddr(uint32_t v4_data) noexcept;
   explicit IpAddr(const uint8_t* v6_data) noexcept;
   IpAddr(const uint8_t* v6_data, unsigned long scope_id) noexcept;
-  explicit IpAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data) noexcept;
-  IpAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, unsigned long scope_id) noexcept;
 
   const EtcPalIpAddr& get() const noexcept;
   EtcPalIpAddr& get() noexcept;
@@ -84,8 +82,6 @@ public:
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
   void SetAddress(const uint8_t* v6_data, unsigned long scope_id) noexcept;
-  void SetAddress(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data) noexcept;
-  void SetAddress(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, unsigned long scope_id) noexcept;
 
   static IpAddr FromString(const std::string& ip_str) noexcept;
   static IpAddr WildcardV4() noexcept;
@@ -335,8 +331,6 @@ public:
   SockAddr(uint32_t v4_data, uint16_t port) noexcept;
   SockAddr(const uint8_t* v6_data, uint16_t port) noexcept;
   SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16_t port) noexcept;
-  SockAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, uint16_t port) noexcept;
-  SockAddr(const std::array<uint8_t, ETCPAL_IPV6_BYTES>& v6_data, unsigned long scope_id, uint16_t port) noexcept;
   SockAddr(IpAddr ip, uint16_t port) noexcept;
 
   const EtcPalSockAddr& get() const noexcept;
@@ -344,6 +338,12 @@ public:
   std::string ToString() const;
   IpAddr ip() const noexcept;
   uint16_t port() const noexcept;
+
+  void SetAddress(uint32_t v4_data) noexcept;
+  void SetAddress(const uint8_t* v6_data) noexcept;
+  void SetAddress(const uint8_t* v6_data, unsigned long scope_id) noexcept;
+  void SetAddress(const IpAddr& ip) noexcept;
+  void SetPort(uint16_t port) noexcept;
 
 private:
   EtcPalSockAddr addr_{};
@@ -431,6 +431,31 @@ inline IpAddr SockAddr::ip() const noexcept
 inline uint16_t SockAddr::port() const noexcept
 {
   return addr_.port;
+}
+
+inline void SockAddr::SetAddress(uint32_t v4_data) noexcept
+{
+  ETCPAL_IP_SET_V4_ADDRESS(&addr_.ip, v4_data);
+}
+
+inline void SockAddr::SetAddress(const uint8_t* v6_data) noexcept
+{
+  ETCPAL_IP_SET_V6_ADDRESS(&addr_.ip, v6_data);
+}
+
+inline void SockAddr::SetAddress(const uint8_t* v6_data, unsigned long scope_id) noexcept
+{
+  ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&addr_.ip, v6_data, scope_id);
+}
+
+inline void SockAddr::SetAddress(const IpAddr& ip) noexcept
+{
+  addr_.ip = ip.get();
+}
+
+inline void SockAddr::SetPort(uint16_t port) noexcept
+{
+  addr_.port = port;
 }
 
 /// \ingroup etcpal_cpp_inet
