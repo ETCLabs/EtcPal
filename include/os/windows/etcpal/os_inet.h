@@ -20,8 +20,15 @@
 #ifndef ETCPAL_OS_INET_H_
 #define ETCPAL_OS_INET_H_
 
-#include <Winsock2.h>
-#include <Ws2tcpip.h>
+#ifndef NOMINMAX
+#define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
+#include <winsock2.h> /* To fix winsock include order issues */
+#include <windows.h>
+#undef NOMINMAX
+#else
+#include <winsock2.h>
+#include <windows.h>
+#endif
 
 typedef struct sockaddr etcpal_os_sockaddr_t;
 typedef struct sockaddr etcpal_os_ipaddr_t;
