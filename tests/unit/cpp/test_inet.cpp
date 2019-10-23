@@ -165,7 +165,7 @@ TEST(etcpal_cpp_inet, ip_default_constructor_works)
   TEST_ASSERT_FALSE(ip.IsValid());
   TEST_ASSERT_FALSE(ip.IsV4());
   TEST_ASSERT_FALSE(ip.IsV6());
-  TEST_ASSERT_EQUAL(ip.type(), kEtcPalIpTypeInvalid);
+  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::Invalid);
 }
 
 TEST(etcpal_cpp_inet, ip_copy_constructors_work)
@@ -208,7 +208,7 @@ TEST(etcpal_cpp_inet, ip_v4_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip.IsValid());
   TEST_ASSERT_TRUE(ip.IsV4());
   TEST_ASSERT_FALSE(ip.IsV6());
-  TEST_ASSERT_EQUAL(ip.type(), kEtcPalIpTypeV4);
+  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V4);
   TEST_ASSERT_EQUAL(ip.v4_data(), 0xdeadbeef);
 
   // Using the SetAddress() function
@@ -218,7 +218,7 @@ TEST(etcpal_cpp_inet, ip_v4_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip2.IsValid());
   TEST_ASSERT_TRUE(ip2.IsV4());
   TEST_ASSERT_FALSE(ip2.IsV6());
-  TEST_ASSERT_EQUAL(ip2.type(), kEtcPalIpTypeV4);
+  TEST_ASSERT_TRUE(ip2.type() == etcpal::IpAddrType::V4);
   TEST_ASSERT_EQUAL(ip2.v4_data(), 0xdeadbeef);
 }
 
@@ -233,7 +233,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip.IsValid());
   TEST_ASSERT_TRUE(ip.IsV6());
   TEST_ASSERT_FALSE(ip.IsV4());
-  TEST_ASSERT_EQUAL(ip.type(), kEtcPalIpTypeV6);
+  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_EQUAL(ip.scope_id(), 0);
 
@@ -243,7 +243,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip2.IsValid());
   TEST_ASSERT_TRUE(ip2.IsV6());
   TEST_ASSERT_FALSE(ip2.IsV4());
-  TEST_ASSERT_EQUAL(ip2.type(), kEtcPalIpTypeV6);
+  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip2.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_EQUAL(ip2.scope_id(), 12);
 
@@ -254,7 +254,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip3.IsValid());
   TEST_ASSERT_TRUE(ip3.IsV6());
   TEST_ASSERT_FALSE(ip3.IsV4());
-  TEST_ASSERT_EQUAL(ip3.type(), kEtcPalIpTypeV6);
+  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip3.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_EQUAL(ip3.scope_id(), 0);
 
@@ -264,7 +264,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip4.IsValid());
   TEST_ASSERT_TRUE(ip4.IsV6());
   TEST_ASSERT_FALSE(ip4.IsV4());
-  TEST_ASSERT_EQUAL(ip4.type(), kEtcPalIpTypeV6);
+  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip4.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_EQUAL(ip4.scope_id(), 12);
 }
@@ -326,9 +326,9 @@ TEST(etcpal_cpp_inet, ip_is_wildcard_works)
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
   wildcard = etcpal::IpAddr::WildcardV6();
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
-  wildcard = etcpal::IpAddr::Wildcard(kEtcPalIpTypeV4);
+  wildcard = etcpal::IpAddr::Wildcard(etcpal::IpAddrType::V4);
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
-  wildcard = etcpal::IpAddr::Wildcard(kEtcPalIpTypeV6);
+  wildcard = etcpal::IpAddr::Wildcard(etcpal::IpAddrType::V6);
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
 }
 

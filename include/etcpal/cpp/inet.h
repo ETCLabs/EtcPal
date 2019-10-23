@@ -37,6 +37,15 @@ namespace etcpal
 /// \brief C++ utilities for the \ref etcpal_inet module.
 
 /// \ingroup etcpal_cpp_inet
+/// \brief An IP address type.
+enum class IpAddrType
+{
+  Invalid = kEtcPalIpTypeInvalid,
+  V4 = kEtcPalIpTypeV4,
+  V6 = kEtcPalIpTypeV6
+};
+
+/// \ingroup etcpal_cpp_inet
 /// \brief A wrapper class for the EtcPal IP address type.
 ///
 /// Provides C++ syntactic sugar for working with IP addresses.
@@ -64,7 +73,7 @@ public:
   unsigned long scope_id() const noexcept;
 
   bool IsValid() const noexcept;
-  etcpal_iptype_t type() const noexcept;
+  IpAddrType type() const noexcept;
   bool IsV4() const noexcept;
   bool IsV6() const noexcept;
   bool IsLinkLocal() const noexcept;
@@ -81,7 +90,7 @@ public:
   static IpAddr FromString(const std::string& ip_str) noexcept;
   static IpAddr WildcardV4() noexcept;
   static IpAddr WildcardV6() noexcept;
-  static IpAddr Wildcard(etcpal_iptype_t type) noexcept;
+  static IpAddr Wildcard(IpAddrType type) noexcept;
 
 private:
   EtcPalIpAddr addr_{};
@@ -196,9 +205,9 @@ inline bool IpAddr::IsValid() const noexcept
 }
 
 /// \brief Get the type of the IP address.
-inline etcpal_iptype_t IpAddr::type() const noexcept
+inline IpAddrType IpAddr::type() const noexcept
 {
-  return addr_.type;
+  return static_cast<IpAddrType>(addr_.type);
 }
 
 /// \brief Whether an IpAddr contains a valid IPv4 address.
@@ -288,7 +297,7 @@ inline IpAddr IpAddr::FromString(const std::string& ip_str) noexcept
 /// See etcpal_ip_set_wildcard() for more information.
 inline IpAddr IpAddr::WildcardV4() noexcept
 {
-  return Wildcard(kEtcPalIpTypeV4);
+  return Wildcard(IpAddrType::V4);
 }
 
 /// \brief Construct a wildcard IPv6 address.
@@ -296,16 +305,16 @@ inline IpAddr IpAddr::WildcardV4() noexcept
 /// See etcpal_ip_set_wildcard() for more information.
 inline IpAddr IpAddr::WildcardV6() noexcept
 {
-  return Wildcard(kEtcPalIpTypeV6);
+  return Wildcard(IpAddrType::V6);
 }
 
 /// \brief Construct a wildcard address of the type specified.
 ///
 /// See etcpal_ip_set_wildcard() for more information.
-inline IpAddr IpAddr::Wildcard(etcpal_iptype_t type) noexcept
+inline IpAddr IpAddr::Wildcard(IpAddrType type) noexcept
 {
   IpAddr result;
-  etcpal_ip_set_wildcard(type, &result.addr_);
+  etcpal_ip_set_wildcard(static_cast<etcpal_iptype_t>(type), &result.addr_);
   return result;
 }
 
