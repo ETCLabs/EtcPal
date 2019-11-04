@@ -24,7 +24,7 @@ if(NOT ETCPAL_OS_TARGET)
   if(APPLE AND IOS)
     message(STATUS "Assuming cross-compile for iOS and similar based on CMAKE_SYSTEM_NAME...")
   else()
-   message(STATUS "Assuming native compile by default...")
+    message(STATUS "Assuming native compile by default...")
   endif()
 
   if(WIN32)

@@ -4,8 +4,15 @@ Thank you for your interest in contributing to the EtcPal project!
 
 ## Pull requests
 
-The EtcPal library is currently in early development. In order to keep things
-as stable as possible, we are not accepting pull requests at this time.
+If you would like to make a pull request to fix a bug or add a feature to
+EtcPal, please try to mimic the coding style of the rest of the repository.
+There are .clang-format and .editorconfig files provided in the resository
+root that help with this.
+
+Please add unit tests as appropriate to cover the bug fix or new feature you
+are developing.
+
+If you are developing a new port of EtcPal, please see the porting guide first.
 
 ## Reporting issues
 

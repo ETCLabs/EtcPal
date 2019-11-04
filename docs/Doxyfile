@@ -794,6 +794,7 @@ INPUT                  = ../src/etcpal \
                          ../include/etcpal \
                          mainpage.md \
                          additional_docs.md \
+                         porting_guide.md \
                          interface_indexes.md
 
 # This tag can be used to specify the character encoding of the source files
