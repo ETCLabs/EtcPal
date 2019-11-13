@@ -12,34 +12,30 @@ variables:
   cmake_definitions: -DETCPAL_BUILD_MOCK_LIB=ON -DETCPAL_BUILDING_FOR_AZURE_PIPELINES_CI=1
 
 jobs:
-# Build and test EtcPal on Windows using CMake and Visual Studio 2017.
+# Build and test EtcPal on Windows using CMake and Visual Studio 2019.
 - job: windows_build
   displayName: 'Windows Build and Test'
   pool:
-    vmImage: 'vs2017-win2016'
-  strategy:
-    matrix:
-      Debug:
-        ETCPAL_BUILD_CONFIG: 'Debug'
-      Release:
-        ETCPAL_BUILD_CONFIG: 'Release'
+    vmImage: 'windows-2019'
+  variables:
+    cmake_generator: 'Visual Studio 16 2019'
   steps:
   - script: |
       mkdir build
       cd build
       cmake --version
-      cmake -G "Visual Studio 15 2017 Win64" $(cmake_definitions) ..
-      cmake --build . --config %ETCPAL_BUILD_CONFIG%
+      cmake -G "$(cmake_generator)" -A x64 $(cmake_definitions) ..
+      cmake --build . --config Release
     displayName: 'EtcPal Windows build'
   - script: |
       cd build
-      ctest --verbose -C %ETCPAL_BUILD_CONFIG%
+      ctest --verbose -C Release
     displayName: 'EtcPal Windows test'
 
 - job: macos_build
   displayName: 'macOS Build and Test'
   pool:
-    vmImage: 'macos-10.14'
+    vmImage: 'macos-latest'
   steps:
   - script: |
       mkdir build
@@ -56,7 +52,7 @@ jobs:
 - job: linux_build
   displayName: 'Linux Build and Test'
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - script: |
       sudo apt-get update
@@ -79,7 +75,7 @@ jobs:
   displayName: 'Deploy documentation'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   variables: 
   - group: github-push-access
   steps:
