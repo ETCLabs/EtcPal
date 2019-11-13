@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+Note: This is a pre-release version. This version changelog is not exhaustive.
+
 ### Added
 - New port: Linux
 - New port: macOS
@@ -13,42 +16,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - etcpal_init() in etcpal/common.h. etcpal_init() must be called before using
   features defined by feature macros defined in etcpal/common.h.
 - Extra documentation page for network interface indexes.
-- New function etcpal_netint_copy_interfaces() to perform the old behavior of
-  etcpal_netint_get_interfaces() (see Changed below)
-- New function etcpal_netint_get_interfaces_by_index()
 - The beginning of a C++ wrapper layer over EtcPal. Added wrapper classes for
-  etcpal_error, etcpal_uuid, and etcpal_lock.
+  etcpal_error, etcpal_uuid, etcpal_lock and etcpal_inet.
 
 ### Changed
 - Naming: Library name changed from lwpa to EtcPal. All API names updated
   accordingly.
 - Naming: Separated the platform-specific sources into 'os' and 'net' targets
   to aid in targeting mix-and-match stack environments like FreeRTOS and lwIP.
-- Moved the sockaddr and inet_xtox conversion functions into the etcpal_inet
-  module
-- etcpal_thread_stop() changed to etcpal_thread_join() to better describe
-  behavior
-- LwpaNetintInfo: Removed 'gate' member, which has no consistent meaning across
-  platforms.
-- etcpal_log_callback interface tweak - combine the various log message pointers
-  into a struct LwpaLogStrings.
-- LwpaNetintInfo: 'ifindex' renamed to 'index' and changed to type unsigned int
-  for better compliance with RFC 3493
-- etcpal_netint_get_interface_for_dest(): Signature changed to return
-  etcpal_error_t
-- etcpal_socket: Multicast socket options now refer to network interfaces only
-  by interface index, for portability and compatibility with IPv6.
-- etcpal_netint_get_interfaces() simply provides const access to the cached
-  array of network interfaces built at init time.
-- etcpal_netint_get_default_interface() and
-  etcpal_netint_get_interface_for_dest() now return network interface indexes
-  instead of addresses.
-- etcpal_rbtree: Change some function signatures to give more meaningful return
-  information.
+- Improvements in mnemonic consistency across the public APIs, including
+  addition of meaningful return information, better function naming, etc.
+- Modified etcpal_netint and etcpal_inet to make more meaningful use of network
+  interface indexes, for portability and compatibility with IPv6.
 
 ### Removed
 
 ## [0.2.0] - 2019-05-29
+
+Note: This is a pre-release version. This version changelog is not exhaustive.
+
 ### Added
 - This CHANGELOG file.
 - lwpa_mempool: LWPA_MEMPOOL_DEFINE_ARRAY(), which allows a memory pool of
@@ -77,6 +63,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Visual Studio project files, as we now build with CMake.
 
 ## [0.1.0] - 2018-10-18
+
+Note: This is a pre-release version. This version changelog is not exhaustive.
+
 ### Added
 - Initial library modules, tests and documentation.
 
