@@ -132,6 +132,17 @@ typedef struct EtcPalIpAddr
 #define ETCPAL_IP_V6_ADDRESS(etcpal_ip_ptr) ((etcpal_ip_ptr)->addr.v6.addr_buf)
 
 /*!
+ * \brief Get the IPv6 scope ID from an EtcPalIpAddr.
+ *
+ * See \ref interface_indexes for more information. It is recommended to first use
+ * ETCPAL_IP_IS_V6() to make sure this EtcPalIpAddr contains a valid IPv6 address.
+ *
+ * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
+ * \return The IPv6 scope ID (unsigned int).
+ */
+#define ETCPAL_IP_V6_SCOPE_ID(etcpal_ip_ptr) ((etcpal_ip_ptr)->addr.v6.scope_id)
+
+/*!
  * \brief Set the IPv4 address in a EtcPalIpAddr.
  *
  * Also sets the type field to indicate that this EtcPalIpAddr contains an IPv4 address.

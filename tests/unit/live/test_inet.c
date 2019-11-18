@@ -58,8 +58,9 @@ TEST(etcpal_inet, ipaddr_macros_work)
   TEST_ASSERT_EQUAL_UINT32(ETCPAL_IP_V4_ADDRESS(&test_addr), 0x01020304u);
 
   uint8_t v6_data[ETCPAL_IPV6_BYTES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-  ETCPAL_IP_SET_V6_ADDRESS(&test_addr, v6_data);
+  ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&test_addr, v6_data, 32);
   TEST_ASSERT(ETCPAL_IP_IS_V6(&test_addr));
+  TEST_ASSERT_EQUAL(ETCPAL_IP_V6_SCOPE_ID(&test_addr), 32);
   TEST_ASSERT_EQUAL_UINT8_ARRAY(ETCPAL_IP_V6_ADDRESS(&test_addr), v6_data, ETCPAL_IPV6_BYTES);
 
   ETCPAL_IP_SET_INVALID(&test_addr);
