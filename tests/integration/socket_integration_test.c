@@ -61,6 +61,7 @@ static etcpal_socket_t send_sock;
 static EtcPalSockAddr send_addr;
 static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
 
+#if !ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS
 // Select the default interface if available, the very first non-loopback, non-link-local interface
 // if not.
 static void select_network_interface_v4()
@@ -132,6 +133,7 @@ static void select_network_interface_v6()
     }
   }
 }
+#endif
 #endif
 
 TEST_GROUP(socket_integration_udp);
