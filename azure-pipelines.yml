@@ -25,12 +25,16 @@ jobs:
       cd build
       cmake --version
       cmake -G "$(cmake_generator)" -A x64 $(cmake_definitions) ..
-      cmake --build . --config Release
-    displayName: 'EtcPal Windows build'
+    displayName: 'Configure Project'
+  - task: VSBuild@1
+    displayName: 'Build Project'
+    inputs:
+      solution: $(Build.SourcesDirectory)\build\EtcPal.sln
+      configuration: Release
   - script: |
       cd build
       ctest --verbose -C Release
-    displayName: 'EtcPal Windows test'
+    displayName: 'Run Tests'
 
 - job: macos_build
   displayName: 'macOS Build and Test'
@@ -43,11 +47,11 @@ jobs:
       cmake --version
       cmake $(cmake_definitions) ..
       cmake --build .
-    displayName: 'EtcPal macOS build'
+    displayName: 'Configure and Build Project'
   - script: |
       cd build
       ctest --verbose
-    displayName: 'EtcPal macOS test'
+    displayName: 'Run Tests'
 
 - job: linux_build
   displayName: 'Linux Build and Test'
@@ -64,17 +68,17 @@ jobs:
       cmake --version
       cmake -G "Unix Makefiles" $(cmake_definitions) ..
       cmake --build .
-    displayName: 'EtcPal Linux build'
+    displayName: 'Configure and Build Project'
   - script: |
       cd build
       ctest --verbose
-    displayName: 'EtcPal Linux test'
+    displayName: 'Run Tests'
 
 # Generate documentation with doxygen. Documentation is generated from the
 # develop branch and posted to the 'head' portion of the Github page
 # (etclabs.github.io/EtcPal)
 - job: docs
-  displayName: 'Deploy documentation'
+  displayName: 'Deploy Documentation'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
   pool:
     # TODO change to ubuntu-latest when this issue is fixed:

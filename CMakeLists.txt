@@ -19,7 +19,7 @@ endif()
 # options, or build tests or examples by default.
 if(PROJECT_SOURCE_DIR_LC STREQUAL CMAKE_SOURCE_DIR_LC)
   if (MSVC)
-    add_compile_options(/W4)
+    add_compile_options(/W4 /permissive-)
   elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_compile_options(-Wall -Wconversion)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
