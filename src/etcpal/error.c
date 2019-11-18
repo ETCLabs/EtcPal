@@ -21,8 +21,10 @@
 
 /* clang-format off */
 
+/**************************** Private variables ******************************/
+
 /* The etcpal_error string array, for use by etcpal_strerror(). */
-const char *etcpal_error_strings[ETCPAL_NUM_ERROR_CODES] =
+static const char *etcpal_error_strings[ETCPAL_NUM_ERROR_CODES] =
 {
   "No error",                         /* kEtcPalErrOk */
   "Handle not found",                 /* kEtcPalErrNotFound */
@@ -43,6 +45,7 @@ const char *etcpal_error_strings[ETCPAL_NUM_ERROR_CODES] =
   "Not connected",                    /* kEtcPalErrNotConn */
   "Transport endpoint shut down",     /* kEtcPalErrShutdown */
   "Operation timed out",              /* kEtcPalErrTimedOut */
+  "Host is unreachable",              /* kEtcPalErrHostUnreach */
   "Software caused connection abort", /* kEtcPalErrConnAborted */
   "Connection refused",               /* kEtcPalErrConnRefused */
   "Operation already in progress",    /* kEtcPalErrAlready */
@@ -55,3 +58,19 @@ const char *etcpal_error_strings[ETCPAL_NUM_ERROR_CODES] =
   "Operation not permitted",          /* kEtcPalErrPerm */
   "System or library call failed",    /* kEtcPalErrSys */
 };
+
+/*************************** Function definitions ****************************/
+
+/*!
+ * \brief Get a string representation of an error code.
+ * \param errcode EtcPal error code.
+ * \return Error string (char *) (valid error code) or NULL (invalid error code).
+ */
+const char* etcpal_strerror(etcpal_error_t code)
+{
+  if ((int)code <= 0 && (int)code > -ETCPAL_NUM_ERROR_CODES)
+  {
+    return etcpal_error_strings[-((int)code)];
+  }
+  return NULL;
+}

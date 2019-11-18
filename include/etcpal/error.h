@@ -34,6 +34,10 @@
  * @{
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*! A set of error codes that can be returned by library functions. */
 typedef enum
 {
@@ -78,47 +82,37 @@ typedef enum
   kEtcPalErrShutdown = -17,
   /*! A connection timed out. */
   kEtcPalErrTimedOut = -18,
+  /*! Host is unreachable. */
+  kEtcPalErrHostUnreach = -19,
   /*! A connection has been aborted. */
-  kEtcPalErrConnAborted = -19,
+  kEtcPalErrConnAborted = -20,
   /*! A connection was refused. */
-  kEtcPalErrConnRefused = -20,
+  kEtcPalErrConnRefused = -21,
   /*! The operation requested is already in progress. */
-  kEtcPalErrAlready = -21,
+  kEtcPalErrAlready = -22,
   /*! The operation requested is now in progress and will complete later. */
-  kEtcPalErrInProgress = -22,
+  kEtcPalErrInProgress = -23,
   /*! A buffer provided to a function was not big enough to hold the data that needed to be packed
    *  into it. */
-  kEtcPalErrBufSize = -23,
+  kEtcPalErrBufSize = -24,
   /*! An API function was called from a module that was not previously initialized. */
-  kEtcPalErrNotInit = -24,
+  kEtcPalErrNotInit = -25,
   /*! No network interfaces were found on the system, or there are no network interfaces of a type
    *  that can satisfy the call being made. */
-  kEtcPalErrNoNetints = -25,
+  kEtcPalErrNoNetints = -26,
   /*! No sockets have been added to the context. */
-  kEtcPalErrNoSockets = -26,
+  kEtcPalErrNoSockets = -27,
   /*! A function or specific use of a function is not implemented yet. */
-  kEtcPalErrNotImpl = -27,
+  kEtcPalErrNotImpl = -28,
   /*! The operation is not permitted. */
-  kEtcPalErrPerm = -28,
+  kEtcPalErrPerm = -29,
   /*! A system call or C library call failed in a way not covered by other errors. */
-  kEtcPalErrSys = -29,
+  kEtcPalErrSys = -30,
 } etcpal_error_t;
 
-#define ETCPAL_NUM_ERROR_CODES 30
+#define ETCPAL_NUM_ERROR_CODES 31
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern const char* etcpal_error_strings[ETCPAL_NUM_ERROR_CODES];
-
-/*!
- * \brief Get a string representation of an error code.
- * \param errcode EtcPal error code.
- * \return Error string (char *) (valid error code) or NULL (invalid error code).
- */
-#define etcpal_strerror(errcode) \
-  (((int)errcode <= 0 && (int)errcode > -ETCPAL_NUM_ERROR_CODES) ? etcpal_error_strings[-((int)errcode)] : NULL)
+const char* etcpal_strerror(etcpal_error_t code);
 
 #ifdef __cplusplus
 }
