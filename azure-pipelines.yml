@@ -31,10 +31,22 @@ jobs:
     inputs:
       solution: $(Build.SourcesDirectory)\build\EtcPal.sln
       configuration: Release
+  - task: UsePythonVersion@0
+    displayName: 'Select Python Version'
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
   - script: |
-      cd build
-      ctest --verbose -C Release
+      python tools\ci\run_tests.py build --config Release
     displayName: 'Run Tests'
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test_results_*.xml'
+      searchFolder: '$(Build.SourcesDirectory)/build'
+      testRunTitle: 'Windows x64'
 
 - job: macos_build
   displayName: 'macOS Build and Test'
@@ -48,10 +60,22 @@ jobs:
       cmake $(cmake_definitions) ..
       cmake --build .
     displayName: 'Configure and Build Project'
+  - task: UsePythonVersion@0
+    displayName: 'Select Python Version'
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
   - script: |
-      cd build
-      ctest --verbose
+      python tools/ci/run_tests.py build
     displayName: 'Run Tests'
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test_results_*.xml'
+      searchFolder: '$(Build.SourcesDirectory)/build'
+      testRunTitle: 'macOS'
 
 - job: linux_build
   displayName: 'Linux Build and Test'
@@ -69,10 +93,22 @@ jobs:
       cmake -G "Unix Makefiles" $(cmake_definitions) ..
       cmake --build .
     displayName: 'Configure and Build Project'
+  - task: UsePythonVersion@0
+    displayName: 'Select Python Version'
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
   - script: |
-      cd build
-      ctest --verbose
+      python tools/ci/run_tests.py build
     displayName: 'Run Tests'
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    condition: always()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test_results_*.xml'
+      searchFolder: '$(Build.SourcesDirectory)/build'
+      testRunTitle: 'Linux'
 
 # Generate documentation with doxygen. Documentation is generated from the
 # develop branch and posted to the 'head' portion of the Github page
