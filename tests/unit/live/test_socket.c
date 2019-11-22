@@ -86,7 +86,7 @@ TEST(etcpal_socket, blocking_state_is_consistent)
   if (gb_result == kEtcPalErrNotImpl)
   {
     etcpal_close(sock);
-    TEST_PASS_MESSAGE("etcpal_getblocking() not implemented on this platform. Skipping the remainder of the test.");
+    TEST_IGNORE_MESSAGE("etcpal_getblocking() not implemented on this platform. Skipping the remainder of the test.");
   }
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, gb_result);
