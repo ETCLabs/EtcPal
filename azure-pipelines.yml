@@ -116,6 +116,12 @@ jobs:
       mergeTestResults: true
       testRunTitle: 'Linux'
 
+- job: freertos_lwip_build
+  displayName: 'FreeRTOS/lwIP build and test'
+  pool: OnTargetTesting
+  steps:
+    script: echo "Hello, world"
+
 # Generate documentation with doxygen. Documentation is generated from the
 # develop branch and posted to the 'head' portion of the Github page
 # (etclabs.github.io/EtcPal)
