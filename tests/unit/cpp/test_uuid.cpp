@@ -20,6 +20,7 @@
 #include "etcpal/cpp/uuid.h"
 #include "unity_fixture.h"
 
+extern "C" {
 TEST_GROUP(etcpal_cpp_uuid);
 
 TEST_SETUP(etcpal_cpp_uuid)
@@ -228,4 +229,5 @@ TEST_GROUP_RUNNER(etcpal_cpp_uuid)
   RUN_TEST_CASE(etcpal_cpp_uuid, equality_operators_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, comparison_operators_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, special_equality_operators_work);
+}
 }

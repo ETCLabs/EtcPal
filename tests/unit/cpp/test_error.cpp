@@ -21,6 +21,8 @@
 #include "etcpal/common.h"
 #include "unity_fixture.h"
 
+extern "C" {
+
 TEST_GROUP(etcpal_cpp_error);
 
 TEST_SETUP(etcpal_cpp_error)
@@ -110,4 +112,5 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
   RUN_TEST_CASE(etcpal_cpp_error, assignment_operators);
   RUN_TEST_CASE(etcpal_cpp_error, equality_operators);
   RUN_TEST_CASE(etcpal_cpp_error, strings_exist_for_all_codes);
+}
 }

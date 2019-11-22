@@ -19,7 +19,7 @@
 
 #include "unity_fixture.h"
 
-void run_all_tests(void)
+extern "C" void run_all_tests(void)
 {
   RUN_TEST_GROUP(etcpal_cpp_error);
   RUN_TEST_GROUP(etcpal_cpp_inet);

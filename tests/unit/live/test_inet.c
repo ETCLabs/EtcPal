@@ -20,8 +20,9 @@
 #include "etcpal/inet.h"
 #include "unity_fixture.h"
 
-#include <string.h>
 #include <limits.h>
+#include <stdio.h>
+#include <string.h>
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER

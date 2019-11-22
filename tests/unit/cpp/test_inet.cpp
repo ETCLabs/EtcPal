@@ -23,6 +23,8 @@
 #include <array>
 #include <cstring>
 
+extern "C" {
+
 TEST_GROUP(etcpal_cpp_inet);
 
 static EtcPalIpAddr ipv4_1;
@@ -510,4 +512,5 @@ TEST_GROUP_RUNNER(etcpal_cpp_inet)
   RUN_TEST_CASE(etcpal_cpp_inet, mac_custom_constructors_work);
   RUN_TEST_CASE(etcpal_cpp_inet, mac_to_string_works);
   RUN_TEST_CASE(etcpal_cpp_inet, mac_from_string_works);
+}
 }
