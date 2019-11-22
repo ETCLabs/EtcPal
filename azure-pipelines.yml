@@ -37,6 +37,7 @@ jobs:
       versionSpec: '3.x'
       addToPath: true
   - script: |
+      python -m pip install unity-test-parser
       python tools\ci\run_tests.py build --config Release
     displayName: 'Run Tests'
   - task: PublishTestResults@2
@@ -66,6 +67,7 @@ jobs:
       versionSpec: '3.x'
       addToPath: true
   - script: |
+      python -m pip install unity-test-parser
       python tools/ci/run_tests.py build
     displayName: 'Run Tests'
   - task: PublishTestResults@2
@@ -99,6 +101,7 @@ jobs:
       versionSpec: '3.x'
       addToPath: true
   - script: |
+      python -m pip install unity-test-parser
       python tools/ci/run_tests.py build
     displayName: 'Run Tests'
   - task: PublishTestResults@2
