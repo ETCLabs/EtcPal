@@ -117,10 +117,11 @@ jobs:
       testRunTitle: 'Linux'
 
 - job: freertos_lwip_build
-  displayName: 'FreeRTOS/lwIP build and test'
+  displayName: 'FreeRTOS/lwIP Build and Test'
   pool: OnTargetTesting
   steps:
-  - script: echo "Hello, world"
+  - script: |
+      python C:\Scripts\build_and_test_on_target.py etcpal $(Build.SourcesDirectory) freertos_lwip
 
 # Generate documentation with doxygen. Documentation is generated from the
 # develop branch and posted to the 'head' portion of the Github page
