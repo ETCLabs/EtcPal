@@ -47,6 +47,7 @@ jobs:
       testResultsFormat: 'JUnit'
       testResultsFiles: 'test_results_*.xml'
       searchFolder: '$(Build.SourcesDirectory)/build'
+      mergeTestResults: true
       testRunTitle: 'Windows x64'
 
 - job: macos_build
@@ -77,6 +78,7 @@ jobs:
       testResultsFormat: 'JUnit'
       testResultsFiles: 'test_results_*.xml'
       searchFolder: '$(Build.SourcesDirectory)/build'
+      mergeTestResults: true
       testRunTitle: 'macOS'
 
 - job: linux_build
@@ -111,6 +113,7 @@ jobs:
       testResultsFormat: 'JUnit'
       testResultsFiles: 'test_results_*.xml'
       searchFolder: '$(Build.SourcesDirectory)/build'
+      mergeTestResults: true
       testRunTitle: 'Linux'
 
 # Generate documentation with doxygen. Documentation is generated from the
