@@ -120,7 +120,7 @@ jobs:
   displayName: 'FreeRTOS/lwIP build and test'
   pool: OnTargetTesting
   steps:
-    script: echo "Hello, world"
+  - script: echo "Hello, world"
 
 # Generate documentation with doxygen. Documentation is generated from the
 # develop branch and posted to the 'head' portion of the Github page
