@@ -17,21 +17,22 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include <type_traits>
 #include "etcpal/cpp/error.h"
 #include "etcpal/common.h"
 #include "unity_fixture.h"
 
-TEST_GROUP(etcpal_cpp_error);
+TEST_GROUP(etcpal_result);
 
-TEST_SETUP(etcpal_cpp_error)
+TEST_SETUP(etcpal_result)
 {
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_error)
+TEST_TEAR_DOWN(etcpal_result)
 {
 }
 
-TEST(etcpal_cpp_error, constructors_function_correctly)
+TEST(etcpal_result, constructors_function_correctly)
 {
   // Explicit constructor from "OK" error code
   etcpal::Result exp_ok(kEtcPalErrOk);
@@ -50,7 +51,7 @@ TEST(etcpal_cpp_error, constructors_function_correctly)
   TEST_ASSERT_FALSE(exp_not_ok.ToString().empty());
 }
 
-TEST(etcpal_cpp_error, static_ok_works)
+TEST(etcpal_result, static_ok_works)
 {
   auto result = etcpal::Result::Ok();
   TEST_ASSERT_TRUE(result);
@@ -60,7 +61,7 @@ TEST(etcpal_cpp_error, static_ok_works)
   TEST_ASSERT(result_2 == result);
 }
 
-TEST(etcpal_cpp_error, assignment_operators)
+TEST(etcpal_result, assignment_operators)
 {
   etcpal::Result result = kEtcPalErrOk;
   TEST_ASSERT_TRUE(result);
@@ -77,7 +78,7 @@ TEST(etcpal_cpp_error, assignment_operators)
   TEST_ASSERT(result.ToString() == result_2.ToString());
 }
 
-TEST(etcpal_cpp_error, equality_operators)
+TEST(etcpal_result, equality_operators)
 {
   etcpal::Result result(kEtcPalErrOk);
   TEST_ASSERT(result == kEtcPalErrOk);
@@ -92,7 +93,7 @@ TEST(etcpal_cpp_error, equality_operators)
   TEST_ASSERT_UNLESS(result == result_3);
 }
 
-TEST(etcpal_cpp_error, strings_exist_for_all_codes)
+TEST(etcpal_result, strings_exist_for_all_codes)
 {
   for (int i = 0; i > 0 - ETCPAL_NUM_ERROR_CODES; --i)
   {
@@ -103,11 +104,58 @@ TEST(etcpal_cpp_error, strings_exist_for_all_codes)
   }
 }
 
+TEST_GROUP(etcpal_expected);
+
+TEST_SETUP(etcpal_expected)
+{
+}
+
+TEST_TEAR_DOWN(etcpal_expected)
+{
+}
+
+class NoDefaultConstructor
+{
+public:
+  NoDefaultConstructor() = delete;
+  NoDefaultConstructor(int val) : val_(val) {}
+
+private:
+  int val_;
+};
+
+static_assert(!std::is_default_constructible<etcpal::Expected<NoDefaultConstructor>>::value,
+              "Expected should not be default-constructible with a non-default-constructible class");
+static_assert(std::is_default_constructible<etcpal::Expected<int>>::value,
+              "Expected should be default-constructible with a default-constructible class");
+
+TEST(etcpal_expected, default_constructor)
+{
+  etcpal::Expected<int> e;
+  TEST_ASSERT_EQUAL_INT(e.value(), 0);
+}
+
+TEST(etcpal_expected, from_error)
+{
+  etcpal::Expected<int> e = kEtcPalErrSys;
+  try
+  {
+    int val = e.value();
+    TEST_FAIL_MESSAGE("This block should not be entered");
+  }
+  catch (etcpal::BadExpectedAccess e)
+  {
+    TEST_ASSERT_EQUAL_INT(e.code(), kEtcPalErrSys);
+  }
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_error)
 {
-  RUN_TEST_CASE(etcpal_cpp_error, constructors_function_correctly);
-  RUN_TEST_CASE(etcpal_cpp_error, static_ok_works);
-  RUN_TEST_CASE(etcpal_cpp_error, assignment_operators);
-  RUN_TEST_CASE(etcpal_cpp_error, equality_operators);
-  RUN_TEST_CASE(etcpal_cpp_error, strings_exist_for_all_codes);
+  RUN_TEST_CASE(etcpal_result, constructors_function_correctly);
+  RUN_TEST_CASE(etcpal_result, static_ok_works);
+  RUN_TEST_CASE(etcpal_result, assignment_operators);
+  RUN_TEST_CASE(etcpal_result, equality_operators);
+  RUN_TEST_CASE(etcpal_result, strings_exist_for_all_codes);
+  RUN_TEST_CASE(etcpal_expected, default_constructor);
+  RUN_TEST_CASE(etcpal_expected, from_error);
 }

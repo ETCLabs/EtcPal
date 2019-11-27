@@ -23,6 +23,7 @@
 #ifndef ETCPAL_CPP_ERROR_H_
 #define ETCPAL_CPP_ERROR_H_
 
+#include <exception>
 #include <string>
 #include "etcpal/error.h"
 
@@ -183,6 +184,100 @@ inline bool operator==(const Result& a, const Result& b)
 inline bool operator!=(const Result& a, const Result& b)
 {
   return !(a == b);
+}
+
+class BadExpectedAccess : public std::exception
+{
+public:
+  explicit BadExpectedAccess(etcpal_error_t err) noexcept;
+  virtual const char* what() const noexcept override;
+  etcpal_error_t code() const noexcept;
+
+private:
+  etcpal_error_t err_;
+};
+
+BadExpectedAccess::BadExpectedAccess(etcpal_error_t err) noexcept : err_(err)
+{
+}
+
+const char* BadExpectedAccess::what() const noexcept
+{
+  return "Bad access to etcpal::Expected::value()";
+}
+
+etcpal_error_t BadExpectedAccess::code() const noexcept
+{
+  return err_;
+}
+
+template <typename T>
+class Expected
+{
+public:
+  static_assert(!std::is_reference<T>::value, "T must not be a reference");
+  static_assert(!std::is_same<T, etcpal_error_t>::value, "T must not be etcpal_error_t");
+  static_assert(!std::is_same<T, Result>::value, "T must not be etcpal::Result");
+
+  using ValueType = T;
+
+  constexpr Expected() = default;
+  constexpr Expected(const Expected& other);
+  Expected(T&& value);
+  Expected(etcpal_error_t error);
+
+  ~Expected();
+
+  // TODO: fill out class from http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0323r3.pdf
+
+  // constexpr explicit operator bool() const noexcept;
+  // constexpr bool has_value() const noexcept;
+  // constexpr const T& value() const&;
+  constexpr ValueType& value() &;
+  // constexpr const T&& value() const&&;
+  // constexpr T&& value() &&;
+  // constexpr const E& error() const&;
+  // constexpr E& error() &;
+  // constexpr const E&& error() const&&;
+  // constexpr E&& error() &&;
+  // template <class U>
+  // constexpr T value_or(U&&) const&;
+  // template <class U>
+  // T value_or(U&&) &&;
+
+private:
+  bool has_value_{true};
+  union
+  {
+    ValueType value_{};
+    etcpal_error_t error_;
+  };
+};
+
+template <typename T>
+Expected<T>::Expected(T&& value) : value(std::forward<T>(value))
+{
+}
+
+template <typename T>
+Expected<T>::Expected(etcpal_error_t error) : has_value_(false), error_(error)
+{
+}
+
+template <typename T>
+Expected<T>::~Expected()
+{
+  if (has_value_)
+    value_.~ValueType();
+}
+
+template <typename T>
+constexpr T& Expected<T>::value() &
+{
+  if (has_value_)
+    return value_;
+  else
+    throw BadExpectedAccess(error_);
 }
 
 };  // namespace etcpal
