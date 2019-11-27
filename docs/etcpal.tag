@@ -2,13 +2,31 @@
 <tagfile>
   <compound kind="file">
     <name>error.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <class kind="class">etcpal::Result</class>
   </compound>
   <compound kind="file">
+    <name>inet.h</name>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2inet_8h</filename>
+    <class kind="class">etcpal::IpAddr</class>
+    <class kind="class">etcpal::SockAddr</class>
+    <class kind="class">etcpal::MacAddr</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>IpAddrType</name>
+      <anchorfile>group__etcpal__cpp__inet.html</anchorfile>
+      <anchor>gaf149bcc08653396944a3699b8c5a57c5</anchor>
+      <arglist></arglist>
+      <enumvalue file="group__etcpal__cpp__inet.html" anchor="ggaf149bcc08653396944a3699b8c5a57c5a4bbb8f967da6d1a610596d7257179c2b">Invalid</enumvalue>
+      <enumvalue file="group__etcpal__cpp__inet.html" anchor="ggaf149bcc08653396944a3699b8c5a57c5ab354cab57768c7d4c1106eb4e82c75dc">V4</enumvalue>
+      <enumvalue file="group__etcpal__cpp__inet.html" anchor="ggaf149bcc08653396944a3699b8c5a57c5adb93f1c35b844334e2b266951618b4fe">V6</enumvalue>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>lock.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
@@ -19,27 +37,19 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="union">
     <name>EtcPalIpAddr::AddrUnion</name>
     <filename>union_etc_pal_ip_addr_1_1_addr_union.html</filename>
     <class kind="struct">EtcPalIpAddr::AddrUnion::EtcPalIpv6Addr</class>
-  </compound>
-  <compound kind="struct">
-    <name>CachedNetintInfo</name>
-    <filename>struct_cached_netint_info.html</filename>
-  </compound>
-  <compound kind="struct">
-    <name>DefaultNetint</name>
-    <filename>struct_default_netint.html</filename>
   </compound>
   <compound kind="struct">
     <name>EtcPalAddrinfo</name>
@@ -80,10 +90,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>EtcPalSockaddr</type>
+      <type>EtcPalSockAddr</type>
       <name>ai_addr</name>
       <anchorfile>struct_etc_pal_addrinfo.html</anchorfile>
-      <anchor>a838f45940224c6e6bb31a64c3dd1961f</anchor>
+      <anchor>a2000f4ebfae33b230309b0344354031d</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -278,6 +288,10 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>EtcPalMacAddr</name>
+    <filename>struct_etc_pal_mac_addr.html</filename>
+  </compound>
+  <compound kind="struct">
     <name>EtcPalMempool</name>
     <filename>struct_etc_pal_mempool.html</filename>
   </compound>
@@ -328,10 +342,6 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>EtcPalModuleInit</name>
-    <filename>struct_etc_pal_module_init.html</filename>
-  </compound>
-  <compound kind="struct">
     <name>EtcPalMreq</name>
     <filename>struct_etc_pal_mreq.html</filename>
     <member kind="variable">
@@ -374,11 +384,11 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>uint8_t</type>
+      <type>EtcPalMacAddr</type>
       <name>mac</name>
       <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
-      <anchor>aca9240e27db0f39672b30d0aac336e80</anchor>
-      <arglist>[ETCPAL_NETINTINFO_MAC_LEN]</arglist>
+      <anchor>a166afed9bf79aa905a870e4a130923ef</anchor>
+      <arglist></arglist>
     </member>
     <member kind="variable">
       <type>char</type>
@@ -531,10 +541,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>etcpal_rbtree_node_cmp_f</type>
+      <type>EtcPalRbTreeNodeCmpFunc</type>
       <name>cmp</name>
       <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
-      <anchor>a10ccc54f5d61567cc7831f8f415687d8</anchor>
+      <anchor>a7b29df8f3907a7cb322be7a1cb130670</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -545,17 +555,17 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>etcpal_rbnode_alloc_f</type>
+      <type>EtcPalRbNodeAllocFunc</type>
       <name>alloc_f</name>
       <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
-      <anchor>af09735d8bf310cef3d8a0005138de5e3</anchor>
+      <anchor>a2969aaea1ac7bf7f69dba4965e8b8d5b</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>etcpal_rbnode_dealloc_f</type>
+      <type>EtcPalRbNodeDeallocFunc</type>
       <name>dealloc_f</name>
       <anchorfile>struct_etc_pal_rb_tree.html</anchorfile>
-      <anchor>a163e7baba46efbe3c7fdd65c1c4051f2</anchor>
+      <anchor>a29c69388460d3c40b35a388dcbea6b58</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -599,19 +609,19 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>EtcPalSockaddr</name>
-    <filename>struct_etc_pal_sockaddr.html</filename>
+    <name>EtcPalSockAddr</name>
+    <filename>struct_etc_pal_sock_addr.html</filename>
     <member kind="variable">
       <type>uint16_t</type>
       <name>port</name>
-      <anchorfile>struct_etc_pal_sockaddr.html</anchorfile>
+      <anchorfile>struct_etc_pal_sock_addr.html</anchorfile>
       <anchor>a8e0798404bf2cf5dabb84c5ba9a4f236</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>EtcPalIpAddr</type>
       <name>ip</name>
-      <anchorfile>struct_etc_pal_sockaddr.html</anchorfile>
+      <anchorfile>struct_etc_pal_sock_addr.html</anchorfile>
       <anchor>a19cc8016f534a565f984438cfe911a9e</anchor>
       <arglist></arglist>
     </member>
@@ -738,9 +748,272 @@
     <name>EtcPalUuid</name>
     <filename>struct_etc_pal_uuid.html</filename>
   </compound>
-  <compound kind="struct">
-    <name>MD5_CTX</name>
-    <filename>struct_m_d5___c_t_x.html</filename>
+  <compound kind="class">
+    <name>etcpal::IpAddr</name>
+    <filename>classetcpal_1_1_ip_addr.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>IpAddr</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a4a003a4fea5fb690128013fc94677ff5</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>IpAddr</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>aa0ecd73e87259b2e2d5435673c8e5149</anchor>
+      <arglist>(const EtcPalIpAddr &amp;c_ip) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>IpAddr &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>af68058aa8f42f5ce7aa01eb92b583bd1</anchor>
+      <arglist>(const EtcPalIpAddr &amp;c_ip) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>IpAddr</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a47a9c1b3e45125fac51fa2d28b19beeb</anchor>
+      <arglist>(uint32_t v4_data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>IpAddr</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a10a0e9f0e89374ef5543a40bb6e9aafb</anchor>
+      <arglist>(const uint8_t *v6_data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>IpAddr</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>abd1c05fc9b5b627f239972390c0bfeab</anchor>
+      <arglist>(const uint8_t *v6_data, unsigned long scope_id) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>const EtcPalIpAddr &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a19515352bb017814527c2be05f352a1f</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>EtcPalIpAddr &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a03ca80b4d8a6285595ba334e1e6f3180</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>v4_data</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>ac916b557b42f871359ce597c4c17556b</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
+      <name>v6_data</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a092dcb96eb18fa8c6526322cd6d62245</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned long</type>
+      <name>scope_id</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a3ddc22a71f0df9873b7bbf20b7b4a54e</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsValid</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a472f705194218179e9cf26ffb288da6c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>IpAddrType</type>
+      <name>type</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a72e87c00e9e7eb9c88fcbd0f030cc59c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsV4</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a77c4dddfd37b29508860336f844cd745</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsV6</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>aca9ab0a7348c500efcfa08168dd70f85</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsLinkLocal</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a211a72caa8aba79efd967fa3114e8c95</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsLoopback</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a4833f2d2e3f0434978f59f5020a7f84b</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsMulticast</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a2f371a6bc900dd3ddcf0f7f16c5db00a</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsWildcard</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>ac384adc1cbf470fe6672659bdef8358c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAddress</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a289b584a63be9da802a0692f16a9a7fc</anchor>
+      <arglist>(uint32_t v4_data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAddress</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a5b87e44914b8e5d6acc662c0e7ada452</anchor>
+      <arglist>(const uint8_t *v6_data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAddress</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a5e188695085f61a2fd9c0ba28a6e0893</anchor>
+      <arglist>(const uint8_t *v6_data, unsigned long scope_id) noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static IpAddr</type>
+      <name>FromString</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a5c2b23004b9bdca3df3142b5f4fbd8ac</anchor>
+      <arglist>(const std::string &amp;ip_str) noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static IpAddr</type>
+      <name>WildcardV4</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a8ddb6547f191f5d3f3b24f3f02727095</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static IpAddr</type>
+      <name>WildcardV6</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a24fd3077450fceffa3e02fb4c76be7df</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static IpAddr</type>
+      <name>Wildcard</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a6dd5f9ef79404118ec2427c68eedad86</anchor>
+      <arglist>(IpAddrType type) noexcept</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::MacAddr</name>
+    <filename>classetcpal_1_1_mac_addr.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>MacAddr</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>ae745add18e97ed3960a513f993c4fd39</anchor>
+      <arglist>()=default</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>MacAddr</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>ae3a2a6ea57714e57bf4c829449e2f04e</anchor>
+      <arglist>(const EtcPalMacAddr &amp;c_mac) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>MacAddr &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>abf74026b5f8428336b974584cbd534df</anchor>
+      <arglist>(const EtcPalMacAddr &amp;c_mac) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>MacAddr</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>aff3e9838bb257f6f5c09396be07fa4f3</anchor>
+      <arglist>(const uint8_t *mac_data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>const EtcPalMacAddr &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>ad707eabf21debd3afc8a47f28a41c96c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>EtcPalMacAddr &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>abd82397c8172b871348b31a16473f61e</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
+      <name>data</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>a21b8e060baa6eeed3e5e45e6d760b54c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsNull</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>a27909eb1d61b8b261d259be7c70c58dd</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static MacAddr</type>
+      <name>FromString</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>a4ddd74c443669ab0d7c1aefac0e13fd7</anchor>
+      <arglist>(const std::string &amp;mac_str) noexcept</arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>etcpal::Mutex</name>
@@ -1012,6 +1285,87 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>etcpal::SockAddr</name>
+    <filename>classetcpal_1_1_sock_addr.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>SockAddr</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>ab509e15c062994750a41ff72761acab2</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SockAddr</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a953bdc1c8acc45e6339bfc809478c395</anchor>
+      <arglist>(const EtcPalSockAddr &amp;c_sa) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>SockAddr &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>aa75677e1db37e94003d6f82a25934b0f</anchor>
+      <arglist>(const EtcPalSockAddr &amp;c_sa) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SockAddr</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a18104a287d9daf45ef6058197c80d6b9</anchor>
+      <arglist>(uint32_t v4_data, uint16_t port) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SockAddr</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a47df50740970dda850f7f8d748381dd4</anchor>
+      <arglist>(const uint8_t *v6_data, uint16_t port) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SockAddr</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a9b2e0399b2484eaea02c6858f98331fc</anchor>
+      <arglist>(IpAddr ip, uint16_t port) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>const EtcPalSockAddr &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>aafa2e8990aa4c3bcac9d7dc52820ff00</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>EtcPalSockAddr &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>ab6767c93f33490f5fec0303eba1d8772</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>IpAddr</type>
+      <name>ip</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>acbb9df748594ef90cf431ae61c84f547</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>port</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a6aac8bbc4a1ac6c37d4c9f0564256fbd</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>etcpal::Uuid</name>
     <filename>classetcpal_1_1_uuid.html</filename>
     <member kind="function">
@@ -1130,10 +1484,10 @@
     <title>etcpal_mutex</title>
     <filename>group__etcpal__mutex.html</filename>
     <member kind="typedef">
-      <type>UNDEFINED</type>
+      <type>PLATFORM_DEFINED</type>
       <name>etcpal_mutex_t</name>
       <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga1e6a1360f61ff249137e3f6757322698</anchor>
+      <anchor>ga7360372b14b0feb1ad9f22d2a42734a9</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -1177,10 +1531,10 @@
     <title>etcpal_signal</title>
     <filename>group__etcpal__signal.html</filename>
     <member kind="typedef">
-      <type>UNDEFINED</type>
+      <type>PLATFORM_DEFINED</type>
       <name>etcpal_signal_t</name>
       <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga9dc52b1097114b218c95970c599f01eb</anchor>
+      <anchor>gab450fff060bfcede49357b2e00357669</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -1224,10 +1578,10 @@
     <title>etcpal_rwlock</title>
     <filename>group__etcpal__rwlock.html</filename>
     <member kind="typedef">
-      <type>UNDEFINED</type>
+      <type>PLATFORM_DEFINED</type>
       <name>etcpal_rwlock_t</name>
       <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga06eaed70bff366f707fdcae078a0333f</anchor>
+      <anchor>ga5949678b1acff7d9829e257a9bee8d8e</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -1288,32 +1642,6 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_opts</name>
-    <title>EtcPal config options</title>
-    <filename>group__etcpal__opts.html</filename>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_INCLUDE_PACK_64</name>
-      <anchorfile>group__etcpal__opts.html</anchorfile>
-      <anchor>ga5ababb448dd9ec260738821bd16d06cd</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_EMBOS_USE_MALLOC</name>
-      <anchorfile>group__etcpal__opts.html</anchorfile>
-      <anchor>gaab67221f3adba4ea2b638e55341f8074</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_EMBOS_MAX_NETINTS</name>
-      <anchorfile>group__etcpal__opts.html</anchorfile>
-      <anchor>gaf5e80b2cbceca9bbe4e918610021a5ba</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="group">
     <name>etcpal_thread</name>
     <title>etcpal_thread</title>
     <filename>group__etcpal__thread.html</filename>
@@ -1354,10 +1682,10 @@
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>UNDEFINED</type>
+      <type>PLATFORM_DEFINED</type>
       <name>etcpal_thread_t</name>
       <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>gaf5e68040f0d382ecebc46735a8f53c93</anchor>
+      <anchor>ga6ea2bb55f405380e3ea296e3b6164ae8</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -1413,7 +1741,6 @@
     <title>EtcPal</title>
     <filename>group__etcpal.html</filename>
     <subgroup>etcpal_lock</subgroup>
-    <subgroup>etcpal_opts</subgroup>
     <subgroup>etcpal_thread</subgroup>
     <subgroup>etcpal_bool</subgroup>
     <subgroup>etcpal_error</subgroup>
@@ -1500,47 +1827,9 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_cpp_error</name>
-    <title>etcpal_cpp_error</title>
-    <filename>group__etcpal__cpp__error.html</filename>
-    <class kind="class">etcpal::Result</class>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_cpp</name>
-    <title>EtcPal C++ Wrappers</title>
-    <filename>group__etcpal__cpp.html</filename>
-    <subgroup>etcpal_cpp_error</subgroup>
-    <subgroup>etcpal_cpp_lock</subgroup>
-    <subgroup>etcpal_cpp_uuid</subgroup>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_cpp_lock</name>
-    <title>etcpal_cpp_lock</title>
-    <filename>group__etcpal__cpp__lock.html</filename>
-    <class kind="class">etcpal::Mutex</class>
-    <class kind="class">etcpal::Signal</class>
-    <class kind="class">etcpal::RwLock</class>
-    <class kind="class">etcpal::MutexGuard</class>
-    <class kind="class">etcpal::ReadGuard</class>
-    <class kind="class">etcpal::WriteGuard</class>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_cpp_uuid</name>
-    <title>etcpal_cpp_uuid</title>
-    <filename>group__etcpal__cpp__uuid.html</filename>
-    <class kind="class">etcpal::Uuid</class>
-  </compound>
-  <compound kind="group">
     <name>etcpal_error</name>
     <title>etcpal_error</title>
     <filename>group__etcpal__error.html</filename>
-    <member kind="define">
-      <type>#define</type>
-      <name>etcpal_strerror</name>
-      <anchorfile>group__etcpal__error.html</anchorfile>
-      <anchor>ga6c57f2a17ae4e5fcdf299b4210331f25</anchor>
-      <arglist>(errcode)</arglist>
-    </member>
     <member kind="enumeration">
       <type></type>
       <name>etcpal_error_t</name>
@@ -1663,6 +1952,12 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <name>kEtcPalErrHostUnreach</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gga743b0648f0ca798ef29c9f69c6e255afa9c5af0e9de48f403358d6b9e2ef819b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
       <name>kEtcPalErrConnAborted</name>
       <anchorfile>group__etcpal__error.html</anchorfile>
       <anchor>gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde</anchor>
@@ -1728,13 +2023,21 @@
       <anchor>gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8</anchor>
       <arglist></arglist>
     </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>etcpal_strerror</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>ga4902a840d9801e02baebd4c70924c4b0</anchor>
+      <arglist>(etcpal_error_t code)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>etcpal_inet</name>
     <title>etcpal_inet</title>
     <filename>group__etcpal__inet.html</filename>
     <class kind="struct">EtcPalIpAddr</class>
-    <class kind="struct">EtcPalSockaddr</class>
+    <class kind="struct">EtcPalSockAddr</class>
+    <class kind="struct">EtcPalMacAddr</class>
     <class kind="struct">EtcPalNetintInfo</class>
     <member kind="define">
       <type>#define</type>
@@ -1742,6 +2045,20 @@
       <anchorfile>group__etcpal__inet.html</anchorfile>
       <anchor>gad5f18940857b50304b956505fb77df20</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_MAC_CMP</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga4aadcedf06a097132f1eef8176b83419</anchor>
+      <arglist>(mac1ptr, mac2ptr)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_MAC_IS_NULL</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga84ac8ff7c11b7b3d05e66192205ae0cb</anchor>
+      <arglist>(macptr)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -1757,6 +2074,13 @@
       <anchor>ga71fa8216f8c0c7472c8786e793a7b280</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_MAC_STRING_BYTES</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga73f73b31cc309024d3284ebcf4b66b45</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>struct EtcPalIpAddr</type>
       <name>EtcPalIpAddr</name>
@@ -1765,10 +2089,17 @@
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct EtcPalSockaddr</type>
-      <name>EtcPalSockaddr</name>
+      <type>struct EtcPalSockAddr</type>
+      <name>EtcPalSockAddr</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
-      <anchor>gacd6641e07d027a38b3b275fd97dc948d</anchor>
+      <anchor>ga0178b5f6d720a2293ef10bb61dcecf7a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct EtcPalMacAddr</type>
+      <name>EtcPalMacAddr</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gac0911b094d33366046d9b947b24cc63f</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -1839,13 +2170,6 @@
       <arglist>(etcpal_iptype_t type, EtcPalIpAddr *ip)</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
-      <name>etcpal_ip_equal</name>
-      <anchorfile>group__etcpal__inet.html</anchorfile>
-      <anchor>gaa5de56fa77b6190297ce164910c2eca0</anchor>
-      <arglist>(const EtcPalIpAddr *ip1, const EtcPalIpAddr *ip2)</arglist>
-    </member>
-    <member kind="function">
       <type>int</type>
       <name>etcpal_ip_cmp</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
@@ -1856,8 +2180,8 @@
       <type>bool</type>
       <name>etcpal_ip_and_port_equal</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
-      <anchor>gac3f119aa04305d7cf485d1a86baf74cb</anchor>
-      <arglist>(const EtcPalSockaddr *sock1, const EtcPalSockaddr *sock2)</arglist>
+      <anchor>gaf897a891bcf59ccb447845628c2a04c2</anchor>
+      <arglist>(const EtcPalSockAddr *sock1, const EtcPalSockAddr *sock2)</arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
@@ -1879,6 +2203,41 @@
       <anchorfile>group__etcpal__inet.html</anchorfile>
       <anchor>ga2112e37aae54451f5b7b03168183cace</anchor>
       <arglist>(const EtcPalIpAddr *ip1, const EtcPalIpAddr *ip2, const EtcPalIpAddr *netmask)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_inet_ntop</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga8f8b3a64cec296d5d896e10bf7a60ac3</anchor>
+      <arglist>(const EtcPalIpAddr *src, char *dest, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_inet_pton</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gacc09a02c09d9798f46d1fb6e9e84b900</anchor>
+      <arglist>(etcpal_iptype_t type, const char *src, EtcPalIpAddr *dest)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_mac_to_string</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga4d0f54c9182caac7f69ec49116d42448</anchor>
+      <arglist>(const EtcPalMacAddr *src, char *dest, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_string_to_mac</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gac2175076e5d4834fccf76e17a29bbbfe</anchor>
+      <arglist>(const char *src, EtcPalMacAddr *dest)</arglist>
+    </member>
+    <member kind="variable">
+      <type>const EtcPalMacAddr</type>
+      <name>kEtcPalNullMacAddr</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gae648df0d068e3335073224fb0fb45512</anchor>
+      <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -1913,6 +2272,13 @@
       <name>ETCPAL_IP_V6_ADDRESS</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
       <anchor>gaaee800da95371923f9375dec1a6c0a5c</anchor>
+      <arglist>(etcpal_ip_ptr)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_IP_V6_SCOPE_ID</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga88982a2d40356f278c53563ddf96d8b2</anchor>
       <arglist>(etcpal_ip_ptr)</arglist>
     </member>
     <member kind="define">
@@ -2705,8 +3071,8 @@
       <type>EtcPalRbTree *</type>
       <name>etcpal_rbtree_init</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>gaf7b76e69622bca24f161d0998d6625b0</anchor>
-      <arglist>(EtcPalRbTree *self, etcpal_rbtree_node_cmp_f cmp, etcpal_rbnode_alloc_f alloc_f, etcpal_rbnode_dealloc_f dealloc_f)</arglist>
+      <anchor>ga82765df01bbb32545a67ec148536602a</anchor>
+      <arglist>(EtcPalRbTree *self, EtcPalRbTreeNodeCmpFunc cmp, EtcPalRbNodeAllocFunc alloc_f, EtcPalRbNodeDeallocFunc dealloc_f)</arglist>
     </member>
     <member kind="function">
       <type>void *</type>
@@ -2754,15 +3120,15 @@
       <type>etcpal_error_t</type>
       <name>etcpal_rbtree_remove_with_cb</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>ga71a4587a7746d0e43beb9687de446723</anchor>
-      <arglist>(EtcPalRbTree *self, void *value, etcpal_rbtree_node_f node_cb)</arglist>
+      <anchor>gaa2d2391c36849d9a9cd32a0a131f6341</anchor>
+      <arglist>(EtcPalRbTree *self, void *value, EtcPalRbTreeNodeFunc node_cb)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
       <name>etcpal_rbtree_clear_with_cb</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>ga8b115911ba175651df1c73bdb1c0a773</anchor>
-      <arglist>(EtcPalRbTree *self, etcpal_rbtree_node_f node_cb)</arglist>
+      <anchor>ga2dfae49efd1e9a9dbd02635bdea8e73d</anchor>
+      <arglist>(EtcPalRbTree *self, EtcPalRbTreeNodeFunc node_cb)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -2808,30 +3174,30 @@
     </member>
     <member kind="typedef">
       <type>int(*</type>
-      <name>etcpal_rbtree_node_cmp_f</name>
+      <name>EtcPalRbTreeNodeCmpFunc</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>gaa8464a406583530043f66b63955ebb1c</anchor>
+      <anchor>gaa92041a856567f1d411d6e2b74233ddc</anchor>
       <arglist>)(const EtcPalRbTree *self, const EtcPalRbNode *node_a, const EtcPalRbNode *node_b)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>etcpal_rbtree_node_f</name>
+      <name>EtcPalRbTreeNodeFunc</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>gac3929405ade6133edb8cf06d7fa6271b</anchor>
+      <anchor>ga6687d480b9c3f3583303d537190a47de</anchor>
       <arglist>)(const EtcPalRbTree *self, EtcPalRbNode *node)</arglist>
     </member>
     <member kind="typedef">
       <type>EtcPalRbNode *(*</type>
-      <name>etcpal_rbnode_alloc_f</name>
+      <name>EtcPalRbNodeAllocFunc</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>gadb6dac2a828f26ba2ae35656a738d685</anchor>
+      <anchor>ga0f5e94b3a86c36a4a4af25b167cc2990</anchor>
       <arglist>)()</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>etcpal_rbnode_dealloc_f</name>
+      <name>EtcPalRbNodeDeallocFunc</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>ga94fa4793990e233cddc87d1606b38f79</anchor>
+      <anchor>gab04d15dd62a53956d6ea4b1e5dcbe930</anchor>
       <arglist>)(EtcPalRbNode *node)</arglist>
     </member>
   </compound>
@@ -3031,15 +3397,15 @@
       <type>etcpal_error_t</type>
       <name>etcpal_accept</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga135bc72cd29f02fec9e610397d1d212a</anchor>
-      <arglist>(etcpal_socket_t id, EtcPalSockaddr *address, etcpal_socket_t *conn_sock)</arglist>
+      <anchor>ga89be7d2b1e4193d678e36dae7a49b4db</anchor>
+      <arglist>(etcpal_socket_t id, EtcPalSockAddr *address, etcpal_socket_t *conn_sock)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
       <name>etcpal_bind</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga408d5b56a68e54697dfa3c5febd82c99</anchor>
-      <arglist>(etcpal_socket_t id, const EtcPalSockaddr *address)</arglist>
+      <anchor>ga86f8e53de9955be4f0ea33f632cc4b2a</anchor>
+      <arglist>(etcpal_socket_t id, const EtcPalSockAddr *address)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -3052,22 +3418,22 @@
       <type>etcpal_error_t</type>
       <name>etcpal_connect</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gac0a61cfe25dfa9691cc8064f5cc57341</anchor>
-      <arglist>(etcpal_socket_t id, const EtcPalSockaddr *address)</arglist>
+      <anchor>gac5de9387d7aab2a7aa0e6c4e1d4fee3b</anchor>
+      <arglist>(etcpal_socket_t id, const EtcPalSockAddr *address)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
       <name>etcpal_getpeername</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga27daad6bd01f29e7cb9731783b4655e4</anchor>
-      <arglist>(etcpal_socket_t id, EtcPalSockaddr *address)</arglist>
+      <anchor>gaedab208ccf3be6da95380c5bf01fdf30</anchor>
+      <arglist>(etcpal_socket_t id, EtcPalSockAddr *address)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
       <name>etcpal_getsockname</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga5097372bea204f9469f426a54cfab6af</anchor>
-      <arglist>(etcpal_socket_t id, EtcPalSockaddr *address)</arglist>
+      <anchor>ga3563bac602f434da73673accc8da01aa</anchor>
+      <arglist>(etcpal_socket_t id, EtcPalSockAddr *address)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -3094,8 +3460,8 @@
       <type>int</type>
       <name>etcpal_recvfrom</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gaf3007bbae16c9cb60635fae38410b1e5</anchor>
-      <arglist>(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockaddr *address)</arglist>
+      <anchor>ga305e1fb78f8ad29e562fff5762d9c3c0</anchor>
+      <arglist>(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockAddr *address)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -3108,8 +3474,8 @@
       <type>int</type>
       <name>etcpal_sendto</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gac3b8ee613e51b01a420ee6b820c8da63</anchor>
-      <arglist>(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockaddr *dest_addr)</arglist>
+      <anchor>gaf13f2f32e223ba9ef28e732cc8906508</anchor>
+      <arglist>(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockAddr *dest_addr)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -3166,20 +3532,6 @@
       <anchorfile>group__etcpal__socket.html</anchorfile>
       <anchor>ga8cc1d9b7b5e8e2b88a337fc727b44535</anchor>
       <arglist>(EtcPalAddrinfo *ai)</arglist>
-    </member>
-    <member kind="function">
-      <type>etcpal_error_t</type>
-      <name>etcpal_inet_ntop</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga8f8b3a64cec296d5d896e10bf7a60ac3</anchor>
-      <arglist>(const EtcPalIpAddr *src, char *dest, size_t size)</arglist>
-    </member>
-    <member kind="function">
-      <type>etcpal_error_t</type>
-      <name>etcpal_inet_pton</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gacc09a02c09d9798f46d1fb6e9e84b900</anchor>
-      <arglist>(etcpal_iptype_t type, const char *src, EtcPalIpAddr *dest)</arglist>
     </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
@@ -3592,6 +3944,56 @@
       <anchor>gae518c32bbc7d2266568ee9a703bb4f5e</anchor>
       <arglist></arglist>
     </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_error</name>
+    <title>etcpal_cpp_error</title>
+    <filename>group__etcpal__cpp__error.html</filename>
+    <class kind="class">etcpal::Result</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp</name>
+    <title>EtcPal C++ Wrappers</title>
+    <filename>group__etcpal__cpp.html</filename>
+    <subgroup>etcpal_cpp_error</subgroup>
+    <subgroup>etcpal_cpp_inet</subgroup>
+    <subgroup>etcpal_cpp_lock</subgroup>
+    <subgroup>etcpal_cpp_uuid</subgroup>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_inet</name>
+    <title>etcpal_cpp_inet</title>
+    <filename>group__etcpal__cpp__inet.html</filename>
+    <class kind="class">etcpal::IpAddr</class>
+    <class kind="class">etcpal::SockAddr</class>
+    <class kind="class">etcpal::MacAddr</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>IpAddrType</name>
+      <anchorfile>group__etcpal__cpp__inet.html</anchorfile>
+      <anchor>gaf149bcc08653396944a3699b8c5a57c5</anchor>
+      <arglist></arglist>
+      <enumvalue file="group__etcpal__cpp__inet.html" anchor="ggaf149bcc08653396944a3699b8c5a57c5a4bbb8f967da6d1a610596d7257179c2b">Invalid</enumvalue>
+      <enumvalue file="group__etcpal__cpp__inet.html" anchor="ggaf149bcc08653396944a3699b8c5a57c5ab354cab57768c7d4c1106eb4e82c75dc">V4</enumvalue>
+      <enumvalue file="group__etcpal__cpp__inet.html" anchor="ggaf149bcc08653396944a3699b8c5a57c5adb93f1c35b844334e2b266951618b4fe">V6</enumvalue>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_lock</name>
+    <title>etcpal_cpp_lock</title>
+    <filename>group__etcpal__cpp__lock.html</filename>
+    <class kind="class">etcpal::Mutex</class>
+    <class kind="class">etcpal::Signal</class>
+    <class kind="class">etcpal::RwLock</class>
+    <class kind="class">etcpal::MutexGuard</class>
+    <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::WriteGuard</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_uuid</name>
+    <title>etcpal_cpp_uuid</title>
+    <filename>group__etcpal__cpp__uuid.html</filename>
+    <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="page">
     <name>additional_docs</name>

@@ -154,6 +154,8 @@ inline void Result::SetCode(etcpal_error_t code)
   str_ = etcpal_strerror(code);
 }
 
+/// \cond equality_operators
+
 // equality operators
 inline bool operator==(etcpal_error_t code, const Result& result)
 {
@@ -184,6 +186,8 @@ inline bool operator!=(const Result& a, const Result& b)
 {
   return !(a == b);
 }
+
+/// \endcond
 
 };  // namespace etcpal
 

@@ -558,6 +558,9 @@ inline MacAddr MacAddr::FromString(const std::string& mac_str) noexcept
 /// \addtogroup etcpal_cpp_inet
 /// @{
 
+/// \name Relational Operators
+/// @{
+
 // Special operators for comparing with the underlying types
 
 inline bool operator==(const EtcPalIpAddr& c_ip, const IpAddr& ip) noexcept
@@ -712,6 +715,7 @@ inline bool operator>=(const MacAddr& a, const MacAddr& b) noexcept
   return !(a < b);
 }
 
+/// @}
 /// @}
 
 };  // namespace etcpal

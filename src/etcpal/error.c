@@ -63,7 +63,7 @@ static const char *etcpal_error_strings[ETCPAL_NUM_ERROR_CODES] =
 
 /*!
  * \brief Get a string representation of an error code.
- * \param errcode EtcPal error code.
+ * \param code EtcPal error code.
  * \return Error string (char *) (valid error code) or NULL (invalid error code).
  */
 const char* etcpal_strerror(etcpal_error_t code)
