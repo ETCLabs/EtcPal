@@ -46,11 +46,6 @@
     <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
-  <compound kind="union">
-    <name>EtcPalIpAddr::AddrUnion</name>
-    <filename>union_etc_pal_ip_addr_1_1_addr_union.html</filename>
-    <class kind="struct">EtcPalIpAddr::AddrUnion::EtcPalIpv6Addr</class>
-  </compound>
   <compound kind="struct">
     <name>EtcPalAddrinfo</name>
     <filename>struct_etc_pal_addrinfo.html</filename>
@@ -125,7 +120,6 @@
   <compound kind="struct">
     <name>EtcPalIpAddr</name>
     <filename>struct_etc_pal_ip_addr.html</filename>
-    <class kind="union">EtcPalIpAddr::AddrUnion</class>
     <member kind="variable">
       <type>etcpal_iptype_t</type>
       <name>type</name>
@@ -133,10 +127,34 @@
       <anchor>a89368dca599010efedd3d8ca663d5953</anchor>
       <arglist></arglist>
     </member>
-  </compound>
-  <compound kind="struct">
-    <name>EtcPalIpAddr::AddrUnion::EtcPalIpv6Addr</name>
-    <filename>struct_etc_pal_ip_addr_1_1_addr_union_1_1_etc_pal_ipv6_addr.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>v4</name>
+      <anchorfile>struct_etc_pal_ip_addr.html</anchorfile>
+      <anchor>a654069046d83e652d54cae5e353051c5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>addr_buf</name>
+      <anchorfile>struct_etc_pal_ip_addr.html</anchorfile>
+      <anchor>a53d9f270f12d57a90a97d60b5e612237</anchor>
+      <arglist>[ETCPAL_IPV6_BYTES]</arglist>
+    </member>
+    <member kind="variable">
+      <type>unsigned long</type>
+      <name>scope_id</name>
+      <anchorfile>struct_etc_pal_ip_addr.html</anchorfile>
+      <anchor>a77c3e8275263425c8924ad010b38fae7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>union EtcPalIpAddr::@0</type>
+      <name>addr</name>
+      <anchorfile>struct_etc_pal_ip_addr.html</anchorfile>
+      <anchor>a3423eb761e78396c67ba1345c0438871</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>EtcPalLinger</name>
@@ -290,10 +308,6 @@
   <compound kind="struct">
     <name>EtcPalMacAddr</name>
     <filename>struct_etc_pal_mac_addr.html</filename>
-  </compound>
-  <compound kind="struct">
-    <name>EtcPalMempool</name>
-    <filename>struct_etc_pal_mempool.html</filename>
   </compound>
   <compound kind="struct">
     <name>EtcPalMempoolDesc</name>
@@ -694,17 +708,17 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>char *</type>
-      <name>thread_name</name>
-      <anchorfile>struct_etc_pal_thread_params.html</anchorfile>
-      <anchor>a9c15c6e0b10239673fa9d8be6ad08128</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
       <type>void *</type>
       <name>platform_data</name>
       <anchorfile>struct_etc_pal_thread_params.html</anchorfile>
       <anchor>abea5d4a9dc1ef714b423a1ae6afaf4ae</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char *</type>
+      <name>thread_name</name>
+      <anchorfile>struct_etc_pal_thread_params.html</anchorfile>
+      <anchor>a9c15c6e0b10239673fa9d8be6ad08128</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -1472,247 +1486,8 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_lock</name>
-    <title>etcpal_lock</title>
-    <filename>group__etcpal__lock.html</filename>
-    <subgroup>etcpal_mutex</subgroup>
-    <subgroup>etcpal_signal</subgroup>
-    <subgroup>etcpal_rwlock</subgroup>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_mutex</name>
-    <title>etcpal_mutex</title>
-    <filename>group__etcpal__mutex.html</filename>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>etcpal_mutex_t</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga7360372b14b0feb1ad9f22d2a42734a9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_mutex_create</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga848f261552bf8c981590eb784ee5b3b8</anchor>
-      <arglist>(etcpal_mutex_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_mutex_take</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>gac56c0f48e3bfc5e8e0d321a711816f67</anchor>
-      <arglist>(etcpal_mutex_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_mutex_try_take</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga26e7c3d33f3ab2dd5a82de3cbc36d39e</anchor>
-      <arglist>(etcpal_mutex_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_mutex_give</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga5a1ceebcbb5856a98dab50a13f894bcf</anchor>
-      <arglist>(etcpal_mutex_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_mutex_destroy</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga4b71ed71a637a07c0fe5cd55222a209c</anchor>
-      <arglist>(etcpal_mutex_t *id)</arglist>
-    </member>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_signal</name>
-    <title>etcpal_signal</title>
-    <filename>group__etcpal__signal.html</filename>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>etcpal_signal_t</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gab450fff060bfcede49357b2e00357669</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_signal_create</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga4082ebadfba33b125930d5c5067139f0</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_signal_wait</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga10e2d2cc15e6a30f38ba65f02c0905d7</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_signal_poll</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gad04fbc96ac93defb7ea545c81a880f12</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_signal_post</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gafa2af190375bdb673563e2a029f0a89b</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_signal_destroy</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga4ecc28a0f67939859d91c8e9e75701e4</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_rwlock</name>
-    <title>etcpal_rwlock</title>
-    <filename>group__etcpal__rwlock.html</filename>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>etcpal_rwlock_t</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga5949678b1acff7d9829e257a9bee8d8e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_rwlock_create</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga694477ee8932b83784f2d7a70ac856e3</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_rwlock_readlock</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga846b8783133884b5fbce918811568825</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_rwlock_try_readlock</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga473b7cb0a2bae2deb5477bb699e6cf9b</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_rwlock_readunlock</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga3ab0cac4b091255a2694a4a472151160</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_rwlock_writelock</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>gac6989af16cb55025d06ee35373739380</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_rwlock_try_writelock</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga05a985e996a37e5a4c8aa7f9c3b1d654</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_rwlock_writeunlock</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga83fbb82557a70ad86c8a65fd53b0cb8b</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_rwlock_destroy</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga2d4feb63613ff8dfb1f106f5ed63dee5</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_thread</name>
-    <title>etcpal_thread</title>
-    <filename>group__etcpal__thread.html</filename>
-    <class kind="struct">EtcPalThreadParams</class>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_THREAD_DEFAULT_PRIORITY</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga3539233977b6e793b9b5a4c071fd6e78</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_THREAD_DEFAULT_STACK</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>gac4147a48a462f0c5b9758334b41243a9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_THREAD_DEFAULT_NAME</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga41f1567e754166e758fc1fdda38fc300</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_THREAD_NAME_MAX_LENGTH</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga5a0a37d186ac57231b94c287a58b54a0</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>struct EtcPalThreadParams</type>
-      <name>EtcPalThreadParams</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>gabb277d1d3fc2b021ca7513d8af038ed4</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>etcpal_thread_t</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga6ea2bb55f405380e3ea296e3b6164ae8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_thread_create</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga6622ac7af8e6cc018c28ba15cc824de5</anchor>
-      <arglist>(etcpal_thread_t *id, const EtcPalThreadParams *params, void(*thread_fn)(void *), void *thread_arg)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_thread_join</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga8841872731c92356965eac616aedc2ff</anchor>
-      <arglist>(etcpal_thread_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_thread_sleep</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga8c76ca9a8ebd49dcb4b376f351fb4517</anchor>
-      <arglist>(int sleep_ms)</arglist>
-    </member>
-  </compound>
-  <compound kind="group">
     <name>etcpal_bool</name>
-    <title>etcpal_bool</title>
+    <title>C Boolean Type (bool)</title>
     <filename>group__etcpal__bool.html</filename>
     <member kind="define">
       <type>#define</type>
@@ -1740,8 +1515,6 @@
     <name>etcpal</name>
     <title>EtcPal</title>
     <filename>group__etcpal.html</filename>
-    <subgroup>etcpal_lock</subgroup>
-    <subgroup>etcpal_thread</subgroup>
     <subgroup>etcpal_bool</subgroup>
     <subgroup>etcpal_error</subgroup>
     <subgroup>etcpal_inet</subgroup>
@@ -1755,6 +1528,9 @@
     <subgroup>etcpal_socket</subgroup>
     <subgroup>etcpal_timer</subgroup>
     <subgroup>etcpal_uuid</subgroup>
+    <subgroup>etcpal_lock</subgroup>
+    <subgroup>etcpal_thread</subgroup>
+    <subgroup>etcpal_opts</subgroup>
     <member kind="define">
       <type>#define</type>
       <name>ETCPAL_WAIT_FOREVER</name>
@@ -1828,8 +1604,15 @@
   </compound>
   <compound kind="group">
     <name>etcpal_error</name>
-    <title>etcpal_error</title>
+    <title>Error Handling (error)</title>
     <filename>group__etcpal__error.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_NUM_ERROR_CODES</name>
+      <anchorfile>group__etcpal__error.html</anchorfile>
+      <anchor>gae0de193fbaf16861756958bd3f21e07f</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="enumeration">
       <type></type>
       <name>etcpal_error_t</name>
@@ -2033,7 +1816,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_inet</name>
-    <title>etcpal_inet</title>
+    <title>Internet Addressing (inet)</title>
     <filename>group__etcpal__inet.html</filename>
     <class kind="struct">EtcPalIpAddr</class>
     <class kind="struct">EtcPalSockAddr</class>
@@ -2044,6 +1827,13 @@
       <name>ETCPAL_IPV6_BYTES</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
       <anchor>gad5f18940857b50304b956505fb77df20</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_MAC_BYTES</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga2222b6d9e40f95ec1d74e1865537863f</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -2059,6 +1849,20 @@
       <anchorfile>group__etcpal__inet.html</anchorfile>
       <anchor>ga84ac8ff7c11b7b3d05e66192205ae0cb</anchor>
       <arglist>(macptr)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_NETINTINFO_NAME_LEN</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga492fc3dd7fabb325e80e375d6be69d89</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga7f8d8782f4dea64648bb74e20db6d3c3</anchor>
+      <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -2205,6 +2009,34 @@
       <arglist>(const EtcPalIpAddr *ip1, const EtcPalIpAddr *ip2, const EtcPalIpAddr *netmask)</arglist>
     </member>
     <member kind="function">
+      <type>bool</type>
+      <name>ip_os_to_etcpal</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gad3a164fa82579c3047f6053f7266e6a8</anchor>
+      <arglist>(const etcpal_os_ipaddr_t *os_ip, EtcPalIpAddr *ip)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>ip_etcpal_to_os</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gafe364c911711c469e0574821e30600e3</anchor>
+      <arglist>(const EtcPalIpAddr *ip, etcpal_os_ipaddr_t *os_ip)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>sockaddr_os_to_etcpal</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga087efaef8630f32173eb397b4cb1ae7f</anchor>
+      <arglist>(const etcpal_os_sockaddr_t *os_sa, EtcPalSockAddr *sa)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>sockaddr_etcpal_to_os</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaa8d939a802f0ab99ae1a6e8f9253a83d</anchor>
+      <arglist>(const EtcPalSockAddr *sa, etcpal_os_sockaddr_t *os_sa)</arglist>
+    </member>
+    <member kind="function">
       <type>etcpal_error_t</type>
       <name>etcpal_inet_ntop</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
@@ -2312,7 +2144,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_int</name>
-    <title>etcpal_int</title>
+    <title>Fixed-Width Integer Types (int)</title>
     <filename>group__etcpal__int.html</filename>
     <member kind="define">
       <type>#define</type>
@@ -2324,7 +2156,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_log</name>
-    <title>etcpal_log</title>
+    <title>Logging (log)</title>
     <filename>group__etcpal__log.html</filename>
     <class kind="struct">EtcPalLogTimeParams</class>
     <class kind="struct">EtcPalLogStrings</class>
@@ -2722,9 +2554,8 @@
   </compound>
   <compound kind="group">
     <name>etcpal_mempool</name>
-    <title>etcpal_mempool</title>
+    <title>Memory Pools (mempool)</title>
     <filename>group__etcpal__mempool.html</filename>
-    <class kind="struct">EtcPalMempool</class>
     <class kind="struct">EtcPalMempoolDesc</class>
     <member kind="define">
       <type>#define</type>
@@ -2783,13 +2614,6 @@
       <arglist>(name)</arglist>
     </member>
     <member kind="typedef">
-      <type>struct EtcPalMempool</type>
-      <name>EtcPalMempool</name>
-      <anchorfile>group__etcpal__mempool.html</anchorfile>
-      <anchor>gacafad538d67632fc0278a608e1c019c7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
       <type>struct EtcPalMempoolDesc</type>
       <name>EtcPalMempoolDesc</name>
       <anchorfile>group__etcpal__mempool.html</anchorfile>
@@ -2799,7 +2623,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_netint</name>
-    <title>etcpal_netint</title>
+    <title>Network Interfaces (netint)</title>
     <filename>group__etcpal__netint.html</filename>
     <member kind="function">
       <type>size_t</type>
@@ -2846,7 +2670,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_pack</name>
-    <title>etcpal_pack</title>
+    <title>Buffer Packing and Unpacking (pack)</title>
     <filename>group__etcpal__pack.html</filename>
     <member kind="function">
       <type>uint16_t</type>
@@ -2904,10 +2728,38 @@
       <anchor>gacc712186e152a6d7c03cc5f8af5a1cf2</anchor>
       <arglist>(uint8_t *buf, uint32_t val)</arglist>
     </member>
+    <member kind="function">
+      <type>uint64_t</type>
+      <name>etcpal_upack_64b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gac832d56516e61492af5b80013dcb983a</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_64b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga9fd45b2bdbb50c140789f639e74a0a01</anchor>
+      <arglist>(uint8_t *buf, uint64_t val)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint64_t</type>
+      <name>etcpal_upack_64l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga0d083dae6c2b1c0a04d0512e8fa871d7</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_64l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gaf60d2ae433f57f6cf14f6e54c3aa3a63</anchor>
+      <arglist>(uint8_t *buf, uint64_t val)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>etcpal_pdu</name>
-    <title>etcpal_pdu</title>
+    <title>ACN Protocol Family PDUs (pdu)</title>
     <filename>group__etcpal__pdu.html</filename>
     <subgroup>etcpal_rootlayerpdu</subgroup>
     <class kind="struct">EtcPalPdu</class>
@@ -3027,7 +2879,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_rbtree</name>
-    <title>etcpal_rbtree</title>
+    <title>Red-Black Trees (rbtree)</title>
     <filename>group__etcpal__rbtree.html</filename>
     <class kind="struct">EtcPalRbNode</class>
     <class kind="struct">EtcPalRbTree</class>
@@ -3203,7 +3055,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_rootlayerpdu</name>
-    <title>etcpal_rootlayerpdu</title>
+    <title>ACN Root Layer PDUs (rootlayerpdu)</title>
     <filename>group__etcpal__rootlayerpdu.html</filename>
     <class kind="struct">EtcPalTcpPreamble</class>
     <class kind="struct">EtcPalUdpPreamble</class>
@@ -3323,7 +3175,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_socket</name>
-    <title>etcpal_socket</title>
+    <title>Network Socket Interface (socket)</title>
     <filename>group__etcpal__socket.html</filename>
     <class kind="struct">EtcPalLinger</class>
     <class kind="struct">EtcPalMreq</class>
@@ -3342,13 +3194,6 @@
       <name>ETCPAL_SOCKET_MAX_POLL_SIZE</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
       <anchor>ga06b68eaa9d0e50e624659ed1b9c7f05a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>etcpal_socket_t</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gaf08a63353f05072ee3b28fd754985b66</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -3391,6 +3236,13 @@
       <name>EtcPalAddrinfo</name>
       <anchorfile>group__etcpal__socket.html</anchorfile>
       <anchor>ga83e2e233e87a88a7edf037928d203550</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_socket_t</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf08a63353f05072ee3b28fd754985b66</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -3532,55 +3384,6 @@
       <anchorfile>group__etcpal__socket.html</anchorfile>
       <anchor>ga8cc1d9b7b5e8e2b88a337fc727b44535</anchor>
       <arglist>(EtcPalAddrinfo *ai)</arglist>
-    </member>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>EtcPalPollContext</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga906fd2bcb17663f4de3fefd0b335656e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>etcpal_error_t</type>
-      <name>etcpal_poll_context_init</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gaf566500c673f2e7941f9a399c61c1b68</anchor>
-      <arglist>(EtcPalPollContext *context)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_poll_context_deinit</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga08a886e98949a8c0ba7f162e54cd1a72</anchor>
-      <arglist>(EtcPalPollContext *context)</arglist>
-    </member>
-    <member kind="function">
-      <type>etcpal_error_t</type>
-      <name>etcpal_poll_add_socket</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gab901f9cf32e98e0d99369366f2e1ffa4</anchor>
-      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data)</arglist>
-    </member>
-    <member kind="function">
-      <type>etcpal_error_t</type>
-      <name>etcpal_poll_modify_socket</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga396b218eda2c3e52b4b917b73e18dab7</anchor>
-      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t new_events, void *new_user_data)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_poll_remove_socket</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>ga8233886a08aff8ba010dfa7384c76408</anchor>
-      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket)</arglist>
-    </member>
-    <member kind="function">
-      <type>etcpal_error_t</type>
-      <name>etcpal_poll_wait</name>
-      <anchorfile>group__etcpal__socket.html</anchorfile>
-      <anchor>gae5017e2346be12e91c6450fe9860614b</anchor>
-      <arglist>(EtcPalPollContext *context, EtcPalPollEvent *event, int timeout_ms)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -3799,10 +3602,59 @@
       <anchor>ga837082b33f4ca260e78373ee40bd25ec</anchor>
       <arglist></arglist>
     </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>EtcPalPollContext</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga906fd2bcb17663f4de3fefd0b335656e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_context_init</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gaf566500c673f2e7941f9a399c61c1b68</anchor>
+      <arglist>(EtcPalPollContext *context)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_poll_context_deinit</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga08a886e98949a8c0ba7f162e54cd1a72</anchor>
+      <arglist>(EtcPalPollContext *context)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_add_socket</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gab901f9cf32e98e0d99369366f2e1ffa4</anchor>
+      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_modify_socket</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga396b218eda2c3e52b4b917b73e18dab7</anchor>
+      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t new_events, void *new_user_data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_poll_remove_socket</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>ga8233886a08aff8ba010dfa7384c76408</anchor>
+      <arglist>(EtcPalPollContext *context, etcpal_socket_t socket)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_poll_wait</name>
+      <anchorfile>group__etcpal__socket.html</anchorfile>
+      <anchor>gae5017e2346be12e91c6450fe9860614b</anchor>
+      <arglist>(EtcPalPollContext *context, EtcPalPollEvent *event, int timeout_ms)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>etcpal_timer</name>
-    <title>etcpal_timer</title>
+    <title>Timers (timer)</title>
     <filename>group__etcpal__timer.html</filename>
     <class kind="struct">EtcPalTimer</class>
     <member kind="typedef">
@@ -3857,7 +3709,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_uuid</name>
-    <title>etcpal_uuid</title>
+    <title>UUIDs (uuid)</title>
     <filename>group__etcpal__uuid.html</filename>
     <class kind="struct">EtcPalUuid</class>
     <member kind="define">
@@ -3994,6 +3846,271 @@
     <title>etcpal_cpp_uuid</title>
     <filename>group__etcpal__cpp__uuid.html</filename>
     <class kind="class">etcpal::Uuid</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_lock</name>
+    <title>Locks and Synchronization (lock)</title>
+    <filename>group__etcpal__lock.html</filename>
+    <subgroup>etcpal_mutex</subgroup>
+    <subgroup>etcpal_signal</subgroup>
+    <subgroup>etcpal_rwlock</subgroup>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_mutex</name>
+    <title>etcpal_mutex</title>
+    <filename>group__etcpal__mutex.html</filename>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_mutex_t</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga7360372b14b0feb1ad9f22d2a42734a9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_mutex_create</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga848f261552bf8c981590eb784ee5b3b8</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_mutex_take</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>gac56c0f48e3bfc5e8e0d321a711816f67</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_mutex_try_take</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga26e7c3d33f3ab2dd5a82de3cbc36d39e</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_mutex_give</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga5a1ceebcbb5856a98dab50a13f894bcf</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_mutex_destroy</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga4b71ed71a637a07c0fe5cd55222a209c</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_signal</name>
+    <title>etcpal_signal</title>
+    <filename>group__etcpal__signal.html</filename>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_signal_t</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gab450fff060bfcede49357b2e00357669</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_signal_create</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga4082ebadfba33b125930d5c5067139f0</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_signal_wait</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga10e2d2cc15e6a30f38ba65f02c0905d7</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_signal_poll</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gad04fbc96ac93defb7ea545c81a880f12</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_signal_post</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gafa2af190375bdb673563e2a029f0a89b</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_signal_destroy</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga4ecc28a0f67939859d91c8e9e75701e4</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_rwlock</name>
+    <title>etcpal_rwlock</title>
+    <filename>group__etcpal__rwlock.html</filename>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_rwlock_t</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga5949678b1acff7d9829e257a9bee8d8e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_rwlock_create</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga694477ee8932b83784f2d7a70ac856e3</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_rwlock_readlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga846b8783133884b5fbce918811568825</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_rwlock_try_readlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga473b7cb0a2bae2deb5477bb699e6cf9b</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_rwlock_readunlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga3ab0cac4b091255a2694a4a472151160</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_rwlock_writelock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>gac6989af16cb55025d06ee35373739380</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_rwlock_try_writelock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga05a985e996a37e5a4c8aa7f9c3b1d654</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_rwlock_writeunlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga83fbb82557a70ad86c8a65fd53b0cb8b</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_rwlock_destroy</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga2d4feb63613ff8dfb1f106f5ed63dee5</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_thread</name>
+    <title>Threading (thread)</title>
+    <filename>group__etcpal__thread.html</filename>
+    <class kind="struct">EtcPalThreadParams</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_DEFAULT_PRIORITY</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga3539233977b6e793b9b5a4c071fd6e78</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_DEFAULT_STACK</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gac4147a48a462f0c5b9758334b41243a9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_DEFAULT_NAME</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga41f1567e754166e758fc1fdda38fc300</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_NAME_MAX_LENGTH</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga5a0a37d186ac57231b94c287a58b54a0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct EtcPalThreadParams</type>
+      <name>EtcPalThreadParams</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gabb277d1d3fc2b021ca7513d8af038ed4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_thread_t</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga6ea2bb55f405380e3ea296e3b6164ae8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_thread_create</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga6622ac7af8e6cc018c28ba15cc824de5</anchor>
+      <arglist>(etcpal_thread_t *id, const EtcPalThreadParams *params, void(*thread_fn)(void *), void *thread_arg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_thread_join</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga8841872731c92356965eac616aedc2ff</anchor>
+      <arglist>(etcpal_thread_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_thread_sleep</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga8c76ca9a8ebd49dcb4b376f351fb4517</anchor>
+      <arglist>(int sleep_ms)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_opts</name>
+    <title>EtcPal config options</title>
+    <filename>group__etcpal__opts.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_INCLUDE_PACK_64</name>
+      <anchorfile>group__etcpal__opts.html</anchorfile>
+      <anchor>ga5ababb448dd9ec260738821bd16d06cd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EMBOS_USE_MALLOC</name>
+      <anchorfile>group__etcpal__opts.html</anchorfile>
+      <anchor>gaab67221f3adba4ea2b638e55341f8074</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EMBOS_MAX_NETINTS</name>
+      <anchorfile>group__etcpal__opts.html</anchorfile>
+      <anchor>gaf5e80b2cbceca9bbe4e918610021a5ba</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="page">
     <name>additional_docs</name>

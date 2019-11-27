@@ -28,12 +28,14 @@
 #include "etcpal/common.h"
 
 /*!
- * \defgroup etcpal_log etcpal_log
+ * \defgroup etcpal_log Logging (log)
  * \ingroup etcpal
  * \brief A platform-neutral module enabling applications and libraries to log messages in either
  *        or both of syslog-compliant and human-readable format.
  *
- * \#include "etcpal/log.h"
+ * ```c
+ * #include "etcpal/log.h"
+ * ```
  *
  * This module can be used in two ways. Applications can use the lightweight
  * etcpal_create_syslog_str() and etcpal_create_human_log_str() to create log messages with a header

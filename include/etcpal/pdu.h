@@ -27,11 +27,13 @@
 #include "etcpal/bool.h"
 
 /*!
- * \defgroup etcpal_pdu etcpal_pdu
+ * \defgroup etcpal_pdu ACN Protocol Family PDUs (pdu)
  * \ingroup etcpal
  * \brief Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN).
  *
- * \#include "etcpal/pdu.h"
+ * ```c
+ * #include "etcpal/pdu.h"
+ * ```
  *
  * @{
  */

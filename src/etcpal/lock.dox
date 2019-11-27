@@ -3,11 +3,13 @@ platform-specific, and some of them implement types and functions differently (i
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
 /*!
- * \defgroup etcpal_lock etcpal_lock
+ * \defgroup etcpal_lock Locks and Synchronization (lock)
  * \ingroup etcpal
  * \brief Platform-neutral locks, mutexes and signals.
  *
- * \#include "etcpal_lock.h"
+ * ```c
+ * #include "etcpal_lock.h"
+ * ```
  *
  * @{
  */

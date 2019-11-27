@@ -29,11 +29,13 @@
 #include "etcpal/inet.h"
 
 /*!
- * \defgroup etcpal_socket etcpal_socket
+ * \defgroup etcpal_socket Network Socket Interface (socket)
  * \ingroup etcpal
  * \brief Platform-neutral BSD-modeled network socket implementation.
  *
- * \#include "etcpal/socket.h"
+ * ```c
+ * #include "etcpal/socket.h"
+ * ```
  *
  * This module attempts to abstract the network socket interface from various platforms into one
  * platform-neutral interface. The functions and flags are modeled after the BSD sockets

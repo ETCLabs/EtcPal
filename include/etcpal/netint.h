@@ -28,11 +28,13 @@
 #include "etcpal/inet.h"
 
 /*!
- * \defgroup etcpal_netint etcpal_netint
+ * \defgroup etcpal_netint Network Interfaces (netint)
  * \ingroup etcpal
  * \brief A platform-neutral method for enumerating network interfaces.
  *
- * \#include "etcpal/netint.h"
+ * ```c
+ * #include "etcpal/netint.h"
+ * ```
  *
  * @{
  */

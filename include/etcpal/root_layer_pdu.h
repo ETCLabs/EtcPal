@@ -31,11 +31,13 @@
 #include "etcpal/pdu.h"
 
 /*!
- * \defgroup etcpal_rootlayerpdu etcpal_rootlayerpdu
+ * \defgroup etcpal_rootlayerpdu ACN Root Layer PDUs (rootlayerpdu)
  * \ingroup etcpal_pdu
  * \brief Parse or pack a Root Layer PDU block.
  *
- * \#include "etcpal/root_layer_pdu.h"
+ * ```c
+ * #include "etcpal/root_layer_pdu.h"
+ * ```
  *
  * @{
  */

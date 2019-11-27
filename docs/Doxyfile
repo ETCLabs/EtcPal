@@ -791,9 +791,10 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = . \
-                         ../src/etcpal \
                          ../include/etcpal \
                          ../include/etcpal/cpp \
+                         ../src/etcpal \
+                         ../src/etcpal/private/opts.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

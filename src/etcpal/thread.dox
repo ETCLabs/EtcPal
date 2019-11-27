@@ -3,11 +3,13 @@ platform-specific, and some of them implement types and functions differently (i
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
 /*!
- * \defgroup etcpal_thread etcpal_thread
+ * \defgroup etcpal_thread Threading (thread)
  * \ingroup etcpal
  * \brief Platform-neutral threads.
  *
- * \#include "etcpal_thread.h"
+ * ```c
+ * #include "etcpal_thread.h"
+ * ```
  *
  * @{
  */

@@ -23,11 +23,13 @@
 #define ETCPAL_INT_H_
 
 /*!
- * \defgroup etcpal_int etcpal_int
+ * \defgroup etcpal_int Fixed-Width Integer Types (int)
  * \ingroup etcpal
- * \brief Fixed-width integer types.
+ * \brief Compatibility layer for fixed-width integer types.
  *
- * \#include "etcpal/int.h"
+ * ```c
+ * #include "etcpal/int.h"
+ * ```
  *
  * In the before-times, C had no fixed-width integer types. Then, C99 gave us stdint.h. But there
  * still exist environments where a C99 compiler is not available or practical, and one allegedly

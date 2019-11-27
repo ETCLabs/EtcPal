@@ -25,14 +25,18 @@
 #include "etcpal/int.h"
 
 /*!
- * \defgroup etcpal_pack etcpal_pack
+ * \defgroup etcpal_pack Buffer Packing and Unpacking (pack)
  * \ingroup etcpal
  * \brief Platform- and endianness-independent buffer packing and unpacking.
  *
  * For 16- and 32-bit integer packing and unpacking:
- * \#include "etcpal/pack.h"
+ * ```c
+ * #include "etcpal/pack.h"
+ * ```
  * For 64-bit integer packing and unpacking:
- * \#include "etcpal/pack64.h"
+ * ```c
+ * #include "etcpal/pack64.h"
+ * ```
  *
  * This module defines macros for packing and unpacking integer types to/from a byte buffer. They
  * are architected in such a way that the endianness of the integer in the buffer is always known,
