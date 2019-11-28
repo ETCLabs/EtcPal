@@ -28,7 +28,7 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_lock etcpal_cpp_lock
+/// \defgroup etcpal_cpp_lock Locks and Synchronization (lock)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_lock module.
 

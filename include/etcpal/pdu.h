@@ -27,11 +27,13 @@
 #include "etcpal/bool.h"
 
 /*!
- * \defgroup etcpal_pdu etcpal_pdu
+ * \defgroup etcpal_pdu ACN Protocol Family PDUs (pdu)
  * \ingroup etcpal
  * \brief Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN).
  *
- * \#include "etcpal/pdu.h"
+ * ```c
+ * #include "etcpal/pdu.h"
+ * ```
  *
  * @{
  */
@@ -154,11 +156,11 @@
 /*! Holds state data used when parsing multiple PDUs in a PDU block. */
 typedef struct EtcPalPdu
 {
-  const uint8_t* pvector;
-  const uint8_t* pheader;
-  const uint8_t* pdata;
-  size_t datalen;
-  const uint8_t* pnextpdu;
+  const uint8_t* pvector;  /*!< Pointer to the most recent PDU's vector. */
+  const uint8_t* pheader;  /*!< Pointer to the most recent PDU's header. */
+  const uint8_t* pdata;    /*!< Pointer to the most recent PDU's data. */
+  size_t datalen;          /*!< Length of the PDU's data section. */
+  const uint8_t* pnextpdu; /*!< Pointer to the beginning of the next PDU. */
 } EtcPalPdu;
 
 /*! Default EtcPalPdu initializer values; must be used to intialize an EtcPalPdu when parsing the first

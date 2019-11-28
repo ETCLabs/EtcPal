@@ -394,6 +394,59 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_inet.c */
+
+/*!
+ * \fn bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
+ * \brief Convert a platform-specific IP address to an EtcPalIpAddr.
+ *
+ * Most of the time etcpal_os_ipaddr_t is defined as a struct sockaddr. Since most platforms use
+ * struct sockaddr (which holds an IP address, port, and additional information) in functions which
+ * only require IP addresses, this function will discard some information, including any port value
+ * in the sockaddr.
+ *
+ * \param[in] os_ip Platform-specific IP address to convert from.
+ * \param[out] ip Filled in on success with the EtcPalIpAddr.
+ * \return true on success, false if an invalid argument was provided.
+ */
+
+/*!
+ * \fn size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
+ * \brief Convert an EtcPalIpAddr to a platform-specific IP address.
+ *
+ * Most of the time etcpal_os_ipaddr_t is defined as a struct sockaddr. Since most platforms use
+ * struct sockaddr (which holds an IP address, port, and additional information) in functions which
+ * only require IP addresses, this function will fill in only part of the etcpal_os_ipaddr_t
+ * (the address family, address, and for IPv6, the scope ID).
+ *
+ * \param[in] ip The EtcPalIpAddr to convert from.
+ * \param[out] os_ip Filled in on success with the platform-specific IP address.
+ * \return On success, the size of os_ip, for convenience. Returns 0 if an invalid argument was
+ *         provided.
+ */
+
+/*!
+ * \fn bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa)
+ * \brief Convert a platform-specific socket address to an EtcPalSockAddr.
+ *
+ * On most platforms, etcpal_os_sockaddr_t is defined to struct sockaddr.
+ *
+ * \param[in] os_sa Platform-specific socket address to convert from.
+ * \param[out] sa Filled in on success with the EtcPalSockAddr.
+ * \return true on success, false if an invalid argument was provided.
+ */
+
+/*!
+ * \fn size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_sa)
+ * \brief Convert an EtcPalSockAddr to a platform-specific socket address.
+ *
+ * On most platforms, etcpal_os_sockaddr_t is defined to struct sockaddr.
+ *
+ * \param[in] sa The EtcPalSockAddr to convert from.
+ * \param[out] os_sa Filled in on success with the platform-specific socket address.
+ * \return On success, the size of os_sa, for convenience. Returns 0 if an invalid argument was
+ *         provided.
+ */
+
 /*!
  * \fn etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size)
  * \brief Convert IPv4 and IPv6 addresses from binary to text form.

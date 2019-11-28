@@ -28,14 +28,16 @@
 #include "etcpal/error.h"
 
 /*!
- * \defgroup etcpal_uuid etcpal_uuid
+ * \defgroup etcpal_uuid UUIDs (uuid)
  * \ingroup etcpal
  * \brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
  * UUIDs (per RFC 4122) are used in several libraries supported by EtcPal. This module contains a
  * type for a UUID and functions to generate, inspect and manipulate them.
  *
- * \#include "etcpal/uuid.h"
+ * ```c
+ * #include "etcpal/uuid.h"
+ * ```
  *
  * @{
  */
@@ -50,7 +52,7 @@ extern "C" {
 /*! The UUID type. */
 typedef struct EtcPalUuid
 {
-  uint8_t data[ETCPAL_UUID_BYTES];
+  uint8_t data[ETCPAL_UUID_BYTES]; /*!< The 16-byte UUID data. */
 } EtcPalUuid;
 
 /*!

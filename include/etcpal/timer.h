@@ -26,11 +26,13 @@
 #include "etcpal/bool.h"
 
 /*!
- * \defgroup etcpal_timer etcpal_timer
+ * \defgroup etcpal_timer Timers (timer)
  * \ingroup etcpal
  * \brief Platform-neutral system timers.
  *
- * \#include "etcpal/timer.h"
+ * ```c
+ * #include "etcpal/timer.h"
+ * ```
  *
  * @{
  */

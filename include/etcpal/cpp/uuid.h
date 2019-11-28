@@ -31,7 +31,7 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_uuid etcpal_cpp_uuid
+/// \defgroup etcpal_cpp_uuid UUIDs (uuid)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_uuid module.
 
@@ -151,6 +151,9 @@ inline Uuid Uuid::OsPreferred()
 /// \addtogroup etcpal_cpp_uuid
 /// @{
 
+/// \name Relational Operators
+/// @{
+
 // Special operators for comparing with EtcPalUuids
 
 inline bool operator==(const EtcPalUuid& c_uuid, const Uuid& uuid) noexcept
@@ -205,6 +208,7 @@ inline bool operator>=(const Uuid& a, const Uuid& b) noexcept
   return !(a < b);
 }
 
+/// @}
 /// @}
 
 };  // namespace etcpal

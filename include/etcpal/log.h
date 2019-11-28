@@ -28,12 +28,14 @@
 #include "etcpal/common.h"
 
 /*!
- * \defgroup etcpal_log etcpal_log
+ * \defgroup etcpal_log Logging (log)
  * \ingroup etcpal
  * \brief A platform-neutral module enabling applications and libraries to log messages in either
  *        or both of syslog-compliant and human-readable format.
  *
- * \#include "etcpal/log.h"
+ * ```c
+ * #include "etcpal/log.h"
+ * ```
  *
  * This module can be used in two ways. Applications can use the lightweight
  * etcpal_create_syslog_str() and etcpal_create_human_log_str() to create log messages with a header
@@ -80,8 +82,10 @@
  */
 
 #define ETCPAL_LOG_NFACILITIES 24 /*!< Current number of facilities. */
-#define ETCPAL_LOG_FACMASK 0x03f8 /* Mask to extract facility part of a prival. */
-#define ETCPAL_LOG_FAC(p) (((p)&ETCPAL_LOG_FACMASK) >> 3)
+/*! \cond facmask */
+#define ETCPAL_LOG_FACMASK 0x03f8 /* Mask off the facility part of a prival */
+/*! \endcond */
+#define ETCPAL_LOG_FAC(p) (((p) & ETCPAL_LOG_FACMASK) >> 3) /*!< Extract the facility part of a prival. */
 
 /*!
  * \name Log Priority
@@ -99,12 +103,14 @@
  * @}
  */
 
-#define ETCPAL_LOG_PRIMASK 0x07 /* mask to extract priority part (internal) */
-#define ETCPAL_LOG_PRI(p) ((p) & ETCPAL_LOG_PRIMASK) /* extract priority */
-#define ETCPAL_LOG_MAKEPRI(fac, pri) (((fac) << 3) | (pri))
+/*! \cond primask */
+#define ETCPAL_LOG_PRIMASK 0x07 /* mask off the priority part of a prival */
+/*! \endcond */
+#define ETCPAL_LOG_PRI(p) ((p) & ETCPAL_LOG_PRIMASK) /*!< Extract the priority part of a prival. */
+#define ETCPAL_LOG_MAKEPRI(fac, pri) (((fac) << 3) | (pri)) /*!< Make a prival from a facility and priority value. */
 
-#define ETCPAL_LOG_MASK(pri) (1 << (pri)) /* mask for one priority */
-#define ETCPAL_LOG_UPTO(pri) ((1 << ((pri) + 1)) - 1) /* all priorities through pri */
+#define ETCPAL_LOG_MASK(pri) (1 << (pri)) /*!< Create a priority mask for one priority. */
+#define ETCPAL_LOG_UPTO(pri) ((1 << ((pri) + 1)) - 1) /*!< Create a priority mask for all priorities through pri. */
 
 #define ETCPAL_LOG_HOSTNAME_MAX_LEN 256u /*!< Max length of the hostname param. */
 #define ETCPAL_LOG_APP_NAME_MAX_LEN 49u  /*!< Max length of the app_name param. */

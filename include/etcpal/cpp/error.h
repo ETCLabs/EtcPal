@@ -29,7 +29,7 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_error etcpal_cpp_error
+/// \defgroup etcpal_cpp_error Error Handling (error)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_error module.
 
@@ -155,6 +155,8 @@ inline void Result::SetCode(etcpal_error_t code)
   str_ = etcpal_strerror(code);
 }
 
+/// \cond equality_operators
+
 // equality operators
 inline bool operator==(etcpal_error_t code, const Result& result)
 {
@@ -185,6 +187,8 @@ inline bool operator!=(const Result& a, const Result& b)
 {
   return !(a == b);
 }
+
+/// \endcond
 
 class BadExpectedAccess : public std::exception
 {

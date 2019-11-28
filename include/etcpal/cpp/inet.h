@@ -32,12 +32,12 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_inet etcpal_cpp_inet
+/// \defgroup etcpal_cpp_inet Internet Addressing (inet)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_inet module.
 
 /// \ingroup etcpal_cpp_inet
-/// \brief An IP address type.
+/// \brief Indicates an IP address family, or an invalid IP address.
 enum class IpAddrType
 {
   Invalid = kEtcPalIpTypeInvalid,
@@ -172,12 +172,23 @@ inline uint32_t IpAddr::v4_data() const noexcept
 
 /// \brief Get the raw 16-byte array representation of an IPv6 address.
 ///
-/// This function will return undefined data if the IpAddr's type is V4 or Invalid.
-///
-/// \return Pointer to an array of length #ETCPAL_IPV6_BYTES containing the address data.
+/// The returned pointer has the same lifetime as this IpAddr instance. This function will return
+/// undefined data if the IpAddr's type is V4 or Invalid.
 inline const uint8_t* IpAddr::v6_data() const noexcept
 {
   return ETCPAL_IP_V6_ADDRESS(&addr_);
+}
+
+/// \brief Get a 16-byte std::array representation of an IPv6 address.
+///
+/// Copies the data into a new array. This function will return undefined data if the IpAddr's type
+/// is V4 or Invalid.
+inline std::array<uint8_t, ETCPAL_IPV6_BYTES> IpAddr::ToV6Array() const
+{
+  // RVO should hopefully make this only a single copy
+  std::array<uint8_t, ETCPAL_IPV6_BYTES> arr;
+  std::memcpy(arr.data(), ETCPAL_IP_V6_ADDRESS(&addr_), ETCPAL_IPV6_BYTES);
+  return arr;
 }
 
 /// \brief Get the scope ID of an IPv6 address.
@@ -385,6 +396,19 @@ inline SockAddr::SockAddr(const uint8_t* v6_data, uint16_t port) noexcept
   addr_.port = port;
 }
 
+/// \brief Construct a Sockaddr from a raw 16-byte IPv6 representation with scope ID and port number.
+///
+/// See IpAddr::scope_id() for more information on scope IDs.
+///
+/// \param[in] v6_data Pointer to the address data, an array of length #ETCPAL_IPV6_BYTES.
+/// \param[in] scope_id The Scope ID value.
+/// \param[in] port The port number in host byte order.
+inline SockAddr::SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16_t port) noexcept
+{
+  ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&addr_.ip, v6_data, scope_id);
+  addr_.port = port;
+}
+
 /// \brief Construct a SockAddr from an IpAddr and port number.
 /// \param[in] ip The IP address.
 /// \param[in] port The port number in host byte order.
@@ -433,26 +457,46 @@ inline uint16_t SockAddr::port() const noexcept
   return addr_.port;
 }
 
+/// \brief Set the IPv4 address data.
+///
+/// Automatically converts this address's type to V4.
+///
+/// \param[in] v4_data The address data in host byte order.
 inline void SockAddr::SetAddress(uint32_t v4_data) noexcept
 {
   ETCPAL_IP_SET_V4_ADDRESS(&addr_.ip, v4_data);
 }
 
+/// \brief Set the IPv6 address data.
+///
+/// Automatically converts this address's type to V6.
+///
+/// \param[in] v6_data Pointer to the address data, an array of length #ETCPAL_IPV6_BYTES.
 inline void SockAddr::SetAddress(const uint8_t* v6_data) noexcept
 {
   ETCPAL_IP_SET_V6_ADDRESS(&addr_.ip, v6_data);
 }
 
+/// \brief Set the IPv6 address data and scope ID.
+///
+/// See IpAddr::scope_id() for more information.
+///
+/// \param[in] v6_data Pointer to the address data, an array of length #ETCPAL_IPV6_BYTES.
+/// \param[in] scope_id The address's scope ID.
 inline void SockAddr::SetAddress(const uint8_t* v6_data, unsigned long scope_id) noexcept
 {
   ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&addr_.ip, v6_data, scope_id);
 }
 
+/// \brief Set the IP address using an IpAddr instance.
+/// \param[in] ip IpAddr to copy into this SockAddr's underlying IP address.
 inline void SockAddr::SetAddress(const IpAddr& ip) noexcept
 {
   addr_.ip = ip.get();
 }
 
+/// \brief Set the port.
+/// \param[in] port The port number.
 inline void SockAddr::SetPort(uint16_t port) noexcept
 {
   addr_.port = port;
@@ -535,6 +579,17 @@ inline const uint8_t* MacAddr::data() const noexcept
   return addr_.data;
 }
 
+/// \brief Get a 6-byte std::array representation of a MAC address.
+///
+/// Copies the data into a new array.
+inline std::array<uint8_t, ETCPAL_MAC_BYTES> MacAddr::ToArray() const noexcept
+{
+  // RVO should hopefully make this only a single copy
+  std::array<uint8_t, ETCPAL_MAC_BYTES> arr;
+  std::memcpy(arr.data(), addr_.data, ETCPAL_MAC_BYTES);
+  return arr;
+}
+
 /// \brief Whether this MacAddr represents a null (all 0's) MAC address.
 inline bool MacAddr::IsNull() const noexcept
 {
@@ -556,6 +611,9 @@ inline MacAddr MacAddr::FromString(const std::string& mac_str) noexcept
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// \addtogroup etcpal_cpp_inet
+/// @{
+
+/// \name Relational Operators
 /// @{
 
 // Special operators for comparing with the underlying types
@@ -712,6 +770,7 @@ inline bool operator>=(const MacAddr& a, const MacAddr& b) noexcept
   return !(a < b);
 }
 
+/// @}
 /// @}
 
 };  // namespace etcpal

@@ -23,11 +23,13 @@
 #define ETCPAL_BOOL_H_
 
 /*!
- * \defgroup etcpal_bool etcpal_bool
+ * \defgroup etcpal_bool C Boolean Type (bool)
  * \ingroup etcpal
- * \brief A C boolean type.
+ * \brief Compatibility layer for the C boolean type.
  *
- * \#include "etcpal/bool.h"
+ * ```c
+ * #include "etcpal/bool.h"
+ * ```
  *
  * In the before-times, C had no boolean type. Then, C99 gave us stdbool.h. But there still exist
  * environments where a C99 compiler is not available or practical, and one allegedly modern

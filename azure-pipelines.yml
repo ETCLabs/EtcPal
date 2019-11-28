@@ -79,7 +79,7 @@ jobs:
 # (etclabs.github.io/EtcPal)
 - job: docs
   displayName: 'Deploy Documentation'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+  condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/pull'))
   pool:
     # TODO change to ubuntu-latest when this issue is fixed:
     # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
@@ -88,12 +88,16 @@ jobs:
   - group: github-push-access
   steps:
   - script: sudo apt-get install doxygen
-    displayName: 'Install dependencies'
-  - script: |
-      cd tools/ci
-      chmod +x publish_docs.sh
-      ./publish_docs.sh
-    displayName: 'Generate and deploy documentation'
+    displayName: 'Install Doxygen'
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+  - task: ShellScript@2
+    inputs:
+      scriptPath: 'tools/ci/publish_docs.sh'
+      failOnStandardError: false
+    displayName: 'Generate and Push Documentation'
     env:
       GH_REPO_NAME: EtcPal
       GH_REPO_REF: github.com/ETCLabs/EtcPal.git

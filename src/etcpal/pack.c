@@ -150,7 +150,7 @@ void etcpal_pack_32l(uint8_t* buf, uint32_t val)
   }
 }
 
-#if ETCPAL_INCLUDE_PACK_64
+#if ETCPAL_INCLUDE_PACK_64 || DOXYGEN
 
 /*!
  * \brief Unpack a uint64_t from a known big-endian buffer.
