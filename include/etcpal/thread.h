@@ -26,29 +26,52 @@
 extern "C" {
 #endif
 
+/*!
+ * \defgroup etcpal_thread Threading (thread)
+ * \ingroup etcpal
+ * \brief Platform-neutral threads.
+ *
+ * ```c
+ * #include "etcpal/thread.h"
+ * ```
+ *
+ * @{
+ */
+
+/*! A set of parameters for an etcpal_thread. */
 typedef struct EtcPalThreadParams
 {
+  /*! The priority of the thread. Note that thread priority is not valid on all platforms. */
   unsigned int thread_priority;
+  /*! The stack size of the thread. Note that thread stack size is not valid on all platforms. */
   unsigned int stack_size;
+  /*! A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH. */
   const char* thread_name;
+  /*! Pointer to a platform-specific parameter structure. */
   void* platform_data;
 } EtcPalThreadParams;
 
+/*! Set the platform-default values for the EtcPalThreadParams struct. */
 #define ETCPAL_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)                \
-  do                                                                   \
-  {                                                                    \
+  do                                                                     \
+  {                                                                      \
     (threadparamsptr)->thread_priority = ETCPAL_THREAD_DEFAULT_PRIORITY; \
     (threadparamsptr)->stack_size = ETCPAL_THREAD_DEFAULT_STACK;         \
     (threadparamsptr)->thread_name = ETCPAL_THREAD_DEFAULT_NAME;         \
-    (threadparamsptr)->platform_data = NULL;                           \
+    (threadparamsptr)->platform_data = NULL;                             \
   } while (0)
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg);
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+                          void* thread_arg);
 bool etcpal_thread_join(etcpal_thread_t* id);
 
-#ifndef etcpal_thread_sleep
+#if !defined(etcpal_thread_sleep) || DOXYGEN
 void etcpal_thread_sleep(int sleep_ms);
 #endif
+
+/*!
+ * @}
+ */
 
 #ifdef __cplusplus
 }

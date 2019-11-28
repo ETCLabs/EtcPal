@@ -52,7 +52,7 @@ extern "C" {
 /*! The UUID type. */
 typedef struct EtcPalUuid
 {
-  uint8_t data[ETCPAL_UUID_BYTES];
+  uint8_t data[ETCPAL_UUID_BYTES]; /*!< The 16-byte UUID data. */
 } EtcPalUuid;
 
 /*!

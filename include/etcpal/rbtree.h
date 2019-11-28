@@ -61,8 +61,10 @@
 #define ETCPAL_RB_ITER_MAX_HEIGHT 64
 #endif
 
+/*! \cond rb_struct_typedefs */
 typedef struct EtcPalRbNode EtcPalRbNode;
 typedef struct EtcPalRbTree EtcPalRbTree;
+/*! \endcond */
 
 /*!
  * \name Callback Functions

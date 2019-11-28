@@ -236,7 +236,7 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
  * @}
  */
 
-/* Mask of valid events for use with etcpal_poll_add_socket(). */
+/*! Mask of valid events for use with etcpal_poll_add_socket(). */
 #define ETCPAL_POLL_VALID_INPUT_EVENT_MASK 0x0fu
 
 /*! A description of an event that occurred on a socket, for usage with etcpal_poll_wait(). */

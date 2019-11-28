@@ -215,7 +215,7 @@ typedef struct EtcPalSockAddr
 /*! A MAC address. */
 typedef struct EtcPalMacAddr
 {
-  uint8_t data[ETCPAL_MAC_BYTES];
+  uint8_t data[ETCPAL_MAC_BYTES]; /*!< The 6-byte address data. */
 } EtcPalMacAddr;
 
 /*!
