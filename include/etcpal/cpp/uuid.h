@@ -31,7 +31,7 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_uuid etcpal_cpp_uuid
+/// \defgroup etcpal_cpp_uuid UUIDs (uuid)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_uuid module.
 

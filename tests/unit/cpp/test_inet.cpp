@@ -235,6 +235,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_FALSE(ip.IsV4());
   TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip.v6_data(), ETCPAL_IPV6_BYTES));
+  TEST_ASSERT_TRUE(ip.ToV6Array() == s_v6_data);
   TEST_ASSERT_EQUAL(ip.scope_id(), 0);
 
   // Using the IPv6 direct data constructor with a scope ID
@@ -243,8 +244,9 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip2.IsValid());
   TEST_ASSERT_TRUE(ip2.IsV6());
   TEST_ASSERT_FALSE(ip2.IsV4());
-  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
+  TEST_ASSERT_TRUE(ip2.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip2.v6_data(), ETCPAL_IPV6_BYTES));
+  TEST_ASSERT_TRUE(ip2.ToV6Array() == s_v6_data);
   TEST_ASSERT_EQUAL(ip2.scope_id(), 12);
 
   // Using the SetAddress() function
@@ -254,8 +256,9 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip3.IsValid());
   TEST_ASSERT_TRUE(ip3.IsV6());
   TEST_ASSERT_FALSE(ip3.IsV4());
-  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
+  TEST_ASSERT_TRUE(ip3.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip3.v6_data(), ETCPAL_IPV6_BYTES));
+  TEST_ASSERT_TRUE(ip3.ToV6Array() == s_v6_data);
   TEST_ASSERT_EQUAL(ip3.scope_id(), 0);
 
   // Use the SetAddress() function with a scope ID
@@ -264,8 +267,9 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip4.IsValid());
   TEST_ASSERT_TRUE(ip4.IsV6());
   TEST_ASSERT_FALSE(ip4.IsV4());
-  TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::V6);
+  TEST_ASSERT_TRUE(ip4.type() == etcpal::IpAddrType::V6);
   TEST_ASSERT_EQUAL(0, std::memcmp(s_v6_data.data(), ip4.v6_data(), ETCPAL_IPV6_BYTES));
+  TEST_ASSERT_TRUE(ip4.ToV6Array() == s_v6_data);
   TEST_ASSERT_EQUAL(ip4.scope_id(), 12);
 }
 
@@ -392,12 +396,21 @@ TEST(etcpal_cpp_inet, sockaddr_custom_constructors_work)
   TEST_ASSERT_EQUAL_UINT8_ARRAY(sockaddr2.ip().v6_data(), s_v6_data.data(), ETCPAL_IPV6_BYTES);
   TEST_ASSERT_EQUAL_UINT16(sockaddr2.port(), 0xbeef);
 
-  // Construct from an IpAddr and port number
-  const etcpal::SockAddr sockaddr3(etcpal::IpAddr(0xdeadbeef), 0xfeed);
+  // Construct from raw IPv6 data, a scope ID and port number.
+  const etcpal::SockAddr sockaddr3(s_v6_data.data(), 12, 0xdead);
+
   TEST_ASSERT_TRUE(sockaddr3.ip().IsValid());
-  TEST_ASSERT_TRUE(sockaddr3.ip().IsV4());
-  TEST_ASSERT_EQUAL_UINT32(sockaddr3.ip().v4_data(), 0xdeadbeef);
-  TEST_ASSERT_EQUAL_UINT16(sockaddr3.port(), 0xfeed);
+  TEST_ASSERT_TRUE(sockaddr3.ip().IsV6());
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(sockaddr3.ip().v6_data(), s_v6_data.data(), ETCPAL_IPV6_BYTES);
+  TEST_ASSERT_EQUAL(sockaddr3.ip().scope_id(), 12);
+  TEST_ASSERT_EQUAL_UINT16(sockaddr3.port(), 0xdead);
+
+  // Construct from an IpAddr and port number
+  const etcpal::SockAddr sockaddr4(etcpal::IpAddr(0xdeadbeef), 0xfeed);
+  TEST_ASSERT_TRUE(sockaddr4.ip().IsValid());
+  TEST_ASSERT_TRUE(sockaddr4.ip().IsV4());
+  TEST_ASSERT_EQUAL_UINT32(sockaddr4.ip().v4_data(), 0xdeadbeef);
+  TEST_ASSERT_EQUAL_UINT16(sockaddr4.port(), 0xfeed);
 }
 
 TEST(etcpal_cpp_inet, sockaddr_to_string_works)
@@ -482,6 +495,13 @@ TEST(etcpal_cpp_inet, mac_from_string_works)
   TEST_ASSERT_TRUE(bad_mac.IsNull());
 }
 
+TEST(etcpal_cpp_inet, mac_to_array_works)
+{
+  const std::array<uint8_t, ETCPAL_MAC_BYTES> mac_data{0x11, 0x22, 0x33, 0xaa, 0xbb, 0xcc};
+  const etcpal::MacAddr mac(mac_data.data());
+  TEST_ASSERT_TRUE(mac.ToArray() == mac_data);
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_inet)
 {
   RUN_TEST_CASE(etcpal_cpp_inet, c_ipaddr_equality_operators_work);
@@ -510,4 +530,5 @@ TEST_GROUP_RUNNER(etcpal_cpp_inet)
   RUN_TEST_CASE(etcpal_cpp_inet, mac_custom_constructors_work);
   RUN_TEST_CASE(etcpal_cpp_inet, mac_to_string_works);
   RUN_TEST_CASE(etcpal_cpp_inet, mac_from_string_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, mac_to_array_works);
 }

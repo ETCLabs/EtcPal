@@ -892,6 +892,13 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
+      <type>std::array&lt; uint8_t, ETCPAL_IPV6_BYTES &gt;</type>
+      <name>ToV6Array</name>
+      <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
+      <anchor>a9d6d96f2d5b5fb9fd6a16bcceb8dea59</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
       <type>unsigned long</type>
       <name>scope_id</name>
       <anchorfile>classetcpal_1_1_ip_addr.html</anchorfile>
@@ -1061,6 +1068,13 @@
       <name>data</name>
       <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
       <anchor>a21b8e060baa6eeed3e5e45e6d760b54c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::array&lt; uint8_t, ETCPAL_MAC_BYTES &gt;</type>
+      <name>ToArray</name>
+      <anchorfile>classetcpal_1_1_mac_addr.html</anchorfile>
+      <anchor>a9ef1e40476be6ec748b2cb8d1e7235ce</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -1389,6 +1403,13 @@
       <type></type>
       <name>SockAddr</name>
       <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>afc7a705bc0a693bf397d9862d9cd8b0a</anchor>
+      <arglist>(const uint8_t *v6_data, unsigned long scope_id, uint16_t port) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SockAddr</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
       <anchor>a9b2e0399b2484eaea02c6858f98331fc</anchor>
       <arglist>(IpAddr ip, uint16_t port) noexcept</arglist>
     </member>
@@ -1426,6 +1447,41 @@
       <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
       <anchor>a6aac8bbc4a1ac6c37d4c9f0564256fbd</anchor>
       <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAddress</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a289b584a63be9da802a0692f16a9a7fc</anchor>
+      <arglist>(uint32_t v4_data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAddress</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a5b87e44914b8e5d6acc662c0e7ada452</anchor>
+      <arglist>(const uint8_t *v6_data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAddress</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a5e188695085f61a2fd9c0ba28a6e0893</anchor>
+      <arglist>(const uint8_t *v6_data, unsigned long scope_id) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAddress</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a297607ac00a2f71ea955edfbaa43875f</anchor>
+      <arglist>(const IpAddr &amp;ip) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetPort</name>
+      <anchorfile>classetcpal_1_1_sock_addr.html</anchorfile>
+      <anchor>a8f2a678aed9c3bdd389633dea859b5d2</anchor>
+      <arglist>(uint16_t port) noexcept</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -4024,7 +4080,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_mutex</name>
-    <title>etcpal_mutex</title>
+    <title>Mutexes</title>
     <filename>group__etcpal__mutex.html</filename>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
@@ -4071,7 +4127,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_signal</name>
-    <title>etcpal_signal</title>
+    <title>Signals</title>
     <filename>group__etcpal__signal.html</filename>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
@@ -4118,7 +4174,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_rwlock</name>
-    <title>etcpal_rwlock</title>
+    <title>Read-Write Locks</title>
     <filename>group__etcpal__rwlock.html</filename>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
