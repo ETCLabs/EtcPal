@@ -17,6 +17,9 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include <iostream>
+#include <memory>
+#include <stdexcept>
 #include <type_traits>
 #include "etcpal/cpp/error.h"
 #include "etcpal/common.h"
@@ -114,6 +117,35 @@ TEST_TEAR_DOWN(etcpal_expected)
 {
 }
 
+// Static assertions for etcpal::Expected
+
+// Storage overhead
+struct ExpectedDummy
+{
+  bool has_value;
+  union
+  {
+    int value;
+    etcpal_error_t err;
+  };
+};
+static_assert(sizeof(etcpal::Expected<int>) == sizeof(ExpectedDummy),
+              "Expected should not have more storage overhead than its type plus a bool");
+
+class RuleOfZero
+{
+private:
+  int val_{20};
+};
+
+static_assert(std::is_default_constructible<etcpal::Expected<RuleOfZero>>::value,
+              "Expected should be default-constructible with a default-constructible class");
+static_assert(std::is_copy_constructible<etcpal::Expected<RuleOfZero>>::value,
+              "Expected should be copy-constructible with a copy-constructible class");
+static_assert(std::is_move_constructible<etcpal::Expected<RuleOfZero>>::value,
+              "Expected should be move-constructible with a move-constructible class");
+
+// Constructors
 class NoDefaultConstructor
 {
 public:
@@ -126,27 +158,205 @@ private:
 
 static_assert(!std::is_default_constructible<etcpal::Expected<NoDefaultConstructor>>::value,
               "Expected should not be default-constructible with a non-default-constructible class");
-static_assert(std::is_default_constructible<etcpal::Expected<int>>::value,
-              "Expected should be default-constructible with a default-constructible class");
 
-TEST(etcpal_expected, default_constructor)
+class NoCopyConstructor
 {
-  etcpal::Expected<int> e;
-  TEST_ASSERT_EQUAL_INT(e.value(), 0);
+public:
+  NoCopyConstructor(const NoCopyConstructor& other) = delete;
+  NoCopyConstructor(NoCopyConstructor&& other) = default;
+
+private:
+  int val_;
+};
+
+static_assert(!std::is_copy_constructible<etcpal::Expected<NoCopyConstructor>>::value,
+              "Expected should not be copy-constructible with a non-copy-constructible class");
+static_assert(std::is_move_constructible<etcpal::Expected<NoCopyConstructor>>::value,
+              "Expected should be move-constructible with a move-constructible class");
+
+class NoMoveConstructor
+{
+public:
+  NoMoveConstructor() = default;
+  NoMoveConstructor(const NoMoveConstructor& other) = default;
+  NoMoveConstructor(NoMoveConstructor&& other) = delete;
+
+private:
+  int val_;
+};
+
+// TODO this does not currently work
+// static_assert(std::is_copy_constructible<etcpal::Expected<NoMoveConstructor>>::value,
+//               "Expected should be copy-constructible with a copy-constructible class");
+// static_assert(!std::is_move_constructible<etcpal::Expected<NoMoveConstructor>>::value,
+//               "Expected should not be move-constructible with a non-move-constructible class");
+
+TEST(etcpal_expected, default_constructor_default_init)
+{
+  etcpal::Expected<int> v;
+  TEST_ASSERT_EQUAL_INT(v.value(), 0);
+
+  etcpal::Expected<void*> v2;
+  etcpal::Expected<RuleOfZero> v3;
+
+  // etcpal::Expected<NoMoveConstructor> e;
 }
 
-TEST(etcpal_expected, from_error)
+TEST(etcpal_expected, default_constructor_is_called)
 {
-  etcpal::Expected<int> e = kEtcPalErrSys;
+  class ConstructorThrows
+  {
+  public:
+    ConstructorThrows() { throw std::runtime_error("Whoops!"); }
+
+  private:
+    int i{42};
+  };
+
   try
   {
-    int val = e.value();
+    etcpal::Expected<ConstructorThrows> v;
+    TEST_FAIL_MESSAGE("Constructor should have thrown runtime_error");
+  }
+  catch (const std::runtime_error&)
+  {
+    TEST_PASS();
+  }
+}
+
+TEST(etcpal_expected, copy_constructor_works)
+{
+  etcpal::Expected<int> v1{20};
+  etcpal::Expected<int> v2{v1};
+  TEST_ASSERT_TRUE(v2.has_value());
+  TEST_ASSERT_EQUAL_INT(v2.value(), 20);
+}
+
+TEST(etcpal_expected, move_constructor_works)
+{
+  struct Foo
+  {
+    int bar{30};
+  };
+
+  etcpal::Expected<std::unique_ptr<Foo>> v1 = std::make_unique<Foo>();
+  etcpal::Expected<std::unique_ptr<Foo>> v2{std::move(v1)};
+  TEST_ASSERT_TRUE(v2.has_value());
+  TEST_ASSERT_EQUAL_INT(v2.value()->bar, 30);
+}
+
+TEST(etcpal_expected, conversion_copy_constructor_works)
+{
+  // Implicit conversion
+  etcpal::Expected<int> v = etcpal::Expected<unsigned int>(40u);
+  TEST_ASSERT_TRUE(v.has_value());
+  TEST_ASSERT_EQUAL_INT(v.value(), 40);
+
+  etcpal::Expected<int> v2 = etcpal::Expected<unsigned int>(kEtcPalErrAlready);
+  TEST_ASSERT_FALSE(v2.has_value());
+  TEST_ASSERT_EQUAL(v2.error(), kEtcPalErrAlready);
+
+  // Explicit conversion
+  class ExplicitFromInt
+  {
+  public:
+    explicit ExplicitFromInt(int val) : val_(val) {}
+    int number() { return val_; }
+
+  private:
+    int val_{};
+  };
+
+  etcpal::Expected<ExplicitFromInt> v3{etcpal::Expected<int>(50)};
+  TEST_ASSERT_TRUE(v3.has_value());
+  TEST_ASSERT_EQUAL_INT(v3.value().number(), 50);
+}
+
+TEST(etcpal_expected, conversion_move_constructor_works)
+{
+  etcpal::Expected<int> v = std::move(etcpal::Expected<unsigned int>(40u));
+  TEST_ASSERT_TRUE(v.has_value());
+  TEST_ASSERT_EQUAL_INT(v.value(), 40);
+
+  etcpal::Expected<int> v2 = std::move(etcpal::Expected<unsigned int>(kEtcPalErrAlready));
+  TEST_ASSERT_FALSE(v2.has_value());
+  TEST_ASSERT_EQUAL(v2.error(), kEtcPalErrAlready);
+
+  // Explicit conversion
+  class ExplicitFromInt
+  {
+  public:
+    explicit ExplicitFromInt(int val) : val_(val) {}
+    int number() { return val_; }
+
+  private:
+    int val_{};
+  };
+
+  etcpal::Expected<ExplicitFromInt> v3{std::move(etcpal::Expected<int>(50))};
+  TEST_ASSERT_TRUE(v3.has_value());
+  TEST_ASSERT_EQUAL_INT(v3.value().number(), 50);
+}
+
+TEST(etcpal_expected, has_value_is_correct)
+{
+  etcpal::Expected<int> v = 20;
+  TEST_ASSERT_TRUE(v.has_value());
+  TEST_ASSERT_TRUE(v);
+
+  etcpal::Expected<int> e = kEtcPalErrAddrInUse;
+  TEST_ASSERT_FALSE(e.has_value());
+  TEST_ASSERT_FALSE(e);
+}
+
+TEST(etcpal_expected, value_is_correct)
+{
+  etcpal::Expected<int> v = 20;
+  TEST_ASSERT_EQUAL_INT(v.value(), 20);
+}
+
+TEST(etcpal_expected, error_is_correct)
+{
+  etcpal::Expected<int> e = kEtcPalErrNoMem;
+  TEST_ASSERT_EQUAL(e.error(), kEtcPalErrNoMem);
+  TEST_ASSERT_EQUAL(e.result().code(), kEtcPalErrNoMem);
+}
+
+TEST(etcpal_expected, value_throws_on_error)
+{
+  try
+  {
+    int val = etcpal::Expected<int>(kEtcPalErrSys).value();
     TEST_FAIL_MESSAGE("This block should not be entered");
   }
-  catch (etcpal::BadExpectedAccess e)
+  catch (const etcpal::BadExpectedAccess& e)
   {
-    TEST_ASSERT_EQUAL_INT(e.code(), kEtcPalErrSys);
+    TEST_ASSERT_EQUAL_INT(e.result().code(), kEtcPalErrSys);
   }
+}
+
+TEST(etcpal_expected, with_error_constructor_destructor_not_called)
+{
+  class DoNotConstructOrDestruct
+  {
+  public:
+    DoNotConstructOrDestruct() { TEST_FAIL(); }
+    ~DoNotConstructOrDestruct() { TEST_FAIL(); }
+  };
+
+  etcpal::Expected<DoNotConstructOrDestruct> e{kEtcPalErrSys};
+}
+
+TEST(etcpal_expected, value_or_works)
+{
+  etcpal::Expected<int> v{20};
+  TEST_ASSERT_EQUAL_INT(v.value_or(30), 20);
+
+  etcpal::Expected<int> e{kEtcPalErrBusy};
+  TEST_ASSERT_EQUAL_INT(v.value_or(20), 20);
+
+  etcpal::Expected<std::string> s{kEtcPalErrSys};
+  TEST_ASSERT_EQUAL_STRING(s.value_or("Default string").c_str(), "Default string");
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_error)
@@ -156,6 +366,16 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
   RUN_TEST_CASE(etcpal_result, assignment_operators);
   RUN_TEST_CASE(etcpal_result, equality_operators);
   RUN_TEST_CASE(etcpal_result, strings_exist_for_all_codes);
-  RUN_TEST_CASE(etcpal_expected, default_constructor);
-  RUN_TEST_CASE(etcpal_expected, from_error);
+  RUN_TEST_CASE(etcpal_expected, default_constructor_default_init);
+  RUN_TEST_CASE(etcpal_expected, default_constructor_is_called);
+  RUN_TEST_CASE(etcpal_expected, copy_constructor_works);
+  RUN_TEST_CASE(etcpal_expected, move_constructor_works);
+  RUN_TEST_CASE(etcpal_expected, conversion_copy_constructor_works);
+  RUN_TEST_CASE(etcpal_expected, conversion_move_constructor_works);
+  RUN_TEST_CASE(etcpal_expected, has_value_is_correct);
+  RUN_TEST_CASE(etcpal_expected, value_is_correct);
+  RUN_TEST_CASE(etcpal_expected, error_is_correct);
+  RUN_TEST_CASE(etcpal_expected, value_throws_on_error);
+  RUN_TEST_CASE(etcpal_expected, with_error_constructor_destructor_not_called);
+  RUN_TEST_CASE(etcpal_expected, value_or_works);
 }
