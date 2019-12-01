@@ -186,6 +186,9 @@ private:
 };
 
 // TODO this does not currently work
+// Reason seems to be related to https://github.com/martinmoene/expected-lite/issues/32
+// Keep an eye on this issue for possible resolution
+
 // static_assert(std::is_copy_constructible<etcpal::Expected<NoMoveConstructor>>::value,
 //               "Expected should be copy-constructible with a copy-constructible class");
 // static_assert(!std::is_move_constructible<etcpal::Expected<NoMoveConstructor>>::value,
@@ -309,10 +312,20 @@ TEST(etcpal_expected, has_value_is_correct)
   TEST_ASSERT_FALSE(e);
 }
 
-TEST(etcpal_expected, value_is_correct)
+TEST(etcpal_expected, observers_are_correct)
 {
   etcpal::Expected<int> v = 20;
   TEST_ASSERT_EQUAL_INT(v.value(), 20);
+  TEST_ASSERT_EQUAL_INT(*v, 20);
+
+  struct Foo
+  {
+    int val{20};
+  };
+  etcpal::Expected<Foo> v2;
+  TEST_ASSERT_EQUAL_INT(v2.value().val, 20);
+  TEST_ASSERT_EQUAL_INT((*v2).val, 20);
+  TEST_ASSERT_EQUAL_INT(v2->val, 20);
 }
 
 TEST(etcpal_expected, error_is_correct)
@@ -327,6 +340,7 @@ TEST(etcpal_expected, value_throws_on_error)
   try
   {
     int val = etcpal::Expected<int>(kEtcPalErrSys).value();
+    (void)val;
     TEST_FAIL_MESSAGE("This block should not be entered");
   }
   catch (const etcpal::BadExpectedAccess& e)
@@ -359,6 +373,40 @@ TEST(etcpal_expected, value_or_works)
   TEST_ASSERT_EQUAL_STRING(s.value_or("Default string").c_str(), "Default string");
 }
 
+TEST(etcpal_expected, relational_operators_work)
+{
+  etcpal::Expected<int> v{10};
+  etcpal::Expected<int> v_equal{10};
+  etcpal::Expected<int> v_not_equal{20};
+  etcpal::Expected<int> e{kEtcPalErrInvalid};
+  etcpal::Expected<int> e_equal{kEtcPalErrInvalid};
+  etcpal::Expected<int> e_not_equal{kEtcPalErrSys};
+
+  // Comparison with values
+  TEST_ASSERT_TRUE(v == v_equal);
+  TEST_ASSERT_FALSE(v != v_equal);
+  TEST_ASSERT_TRUE(v != v_not_equal);
+  TEST_ASSERT_FALSE(v == v_not_equal);
+  // Comparison with T
+  TEST_ASSERT_TRUE(v == 10);
+  TEST_ASSERT_FALSE(v != 10);
+  TEST_ASSERT_FALSE(v == 20);
+  TEST_ASSERT_TRUE(v != 20);
+  // Comparison between value and error
+  TEST_ASSERT_TRUE(v != e);
+  TEST_ASSERT_FALSE(v == e);
+  // Comparison between errors
+  TEST_ASSERT_TRUE(e == e_equal);
+  TEST_ASSERT_FALSE(e != e_equal);
+  TEST_ASSERT_TRUE(e != e_not_equal);
+  TEST_ASSERT_FALSE(e == e_not_equal);
+  // Comparison with etcpal_error_t
+  TEST_ASSERT_TRUE(e == kEtcPalErrInvalid);
+  TEST_ASSERT_FALSE(e != kEtcPalErrInvalid);
+  TEST_ASSERT_TRUE(e != kEtcPalErrSys);
+  TEST_ASSERT_FALSE(e == kEtcPalErrSys);
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_error)
 {
   RUN_TEST_CASE(etcpal_result, constructors_function_correctly);
@@ -373,9 +421,10 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
   RUN_TEST_CASE(etcpal_expected, conversion_copy_constructor_works);
   RUN_TEST_CASE(etcpal_expected, conversion_move_constructor_works);
   RUN_TEST_CASE(etcpal_expected, has_value_is_correct);
-  RUN_TEST_CASE(etcpal_expected, value_is_correct);
+  RUN_TEST_CASE(etcpal_expected, observers_are_correct);
   RUN_TEST_CASE(etcpal_expected, error_is_correct);
   RUN_TEST_CASE(etcpal_expected, value_throws_on_error);
   RUN_TEST_CASE(etcpal_expected, with_error_constructor_destructor_not_called);
   RUN_TEST_CASE(etcpal_expected, value_or_works);
+  RUN_TEST_CASE(etcpal_expected, relational_operators_work)
 }

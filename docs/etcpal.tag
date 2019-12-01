@@ -842,6 +842,13 @@
     <name>etcpal::Expected</name>
     <filename>classetcpal_1_1_expected.html</filename>
     <templarg>T</templarg>
+    <member kind="typedef">
+      <type>T</type>
+      <name>ValueType</name>
+      <anchorfile>classetcpal_1_1_expected.html</anchorfile>
+      <anchor>aecaeabaa9da616ae42bb20787878260d</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function">
       <type>constexpr</type>
       <name>Expected</name>
@@ -920,6 +927,48 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
+      <type>constexpr const T *</type>
+      <name>operator-&gt;</name>
+      <anchorfile>classetcpal_1_1_expected.html</anchorfile>
+      <anchor>a59a8d66ef67871af2a14f8cc08dc1d2e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>T *</type>
+      <name>operator-&gt;</name>
+      <anchorfile>classetcpal_1_1_expected.html</anchorfile>
+      <anchor>a4442b1b9eab40e7939e1e01cdedcb7ae</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr const T &amp;</type>
+      <name>operator*</name>
+      <anchorfile>classetcpal_1_1_expected.html</anchorfile>
+      <anchor>a6573281a3d9396dfc8c2c5f1cca82247</anchor>
+      <arglist>() const &amp;</arglist>
+    </member>
+    <member kind="function">
+      <type>T &amp;</type>
+      <name>operator*</name>
+      <anchorfile>classetcpal_1_1_expected.html</anchorfile>
+      <anchor>aef577cb229ef2a9d16ea231ab32bb90d</anchor>
+      <arglist>() &amp;</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr const T &amp;&amp;</type>
+      <name>operator*</name>
+      <anchorfile>classetcpal_1_1_expected.html</anchorfile>
+      <anchor>a9fde1d75aef70226df99291f44c4c7d5</anchor>
+      <arglist>() const &amp;&amp;</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr T &amp;&amp;</type>
+      <name>operator*</name>
+      <anchorfile>classetcpal_1_1_expected.html</anchorfile>
+      <anchor>a4b1b0ac2a151c256b031fef21f6651cc</anchor>
+      <arglist>() &amp;&amp;</arglist>
+    </member>
+    <member kind="function">
       <type>constexpr</type>
       <name>operator bool</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
@@ -965,15 +1014,15 @@
       <type>constexpr etcpal_error_t</type>
       <name>error</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>af5dd08762695159437133b8699ca7241</anchor>
-      <arglist>()</arglist>
+      <anchor>a50623f3a6e41cdc3b27d8658808797c8</anchor>
+      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
       <type>constexpr Result</type>
       <name>result</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a1bde82b8162c8fc2b8fe8e40d7f14b9b</anchor>
-      <arglist>()</arglist>
+      <anchor>a28c72c40e1a8ff5c26c86ffd8b3220df</anchor>
+      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
       <type>constexpr T</type>
@@ -1374,29 +1423,29 @@
       <type></type>
       <name>Result</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a586e35c43a3c745bd69d9b8546acd2e9</anchor>
-      <arglist>(etcpal_error_t code)</arglist>
+      <anchor>a1632987f6b0d6d53fbecd0cc123558f0</anchor>
+      <arglist>(etcpal_error_t code) noexcept</arglist>
     </member>
     <member kind="function">
       <type>Result &amp;</type>
       <name>operator=</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>ac73855e615ce6a49c8b3042ca7868d72</anchor>
-      <arglist>(etcpal_error_t code)</arglist>
+      <anchor>aa17ae9a95db6d0224d2280bbb1f8667d</anchor>
+      <arglist>(etcpal_error_t code) noexcept</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>IsOk</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a955b65059e7f9429a5d6041136bc1487</anchor>
-      <arglist>() const</arglist>
+      <anchor>a644febf37130fba98a432cef161bccc0</anchor>
+      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
       <name>code</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a911ed787decfceb8f34de72e8b534240</anchor>
-      <arglist>() const</arglist>
+      <anchor>a3379f90d50bc0858a3c2fb44eb4f5edd</anchor>
+      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
       <type>std::string</type>
@@ -1409,22 +1458,22 @@
       <type>const char *</type>
       <name>ToCString</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a7e6504273039529f1d50576cd22c991e</anchor>
-      <arglist>() const</arglist>
+      <anchor>aa4d860f883bc4c6bc997eb61f218a27e</anchor>
+      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>operator bool</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a67b76affb3b5d35fa419ac234144038b</anchor>
-      <arglist>() const</arglist>
+      <anchor>a420e60e9788bfa3b52aa3aab72ea3a5e</anchor>
+      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Result</type>
       <name>Ok</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a86e2ff3aef5c292f81528060905b8967</anchor>
-      <arglist>()</arglist>
+      <anchor>a9908177b0717b32031b195426058cc9a</anchor>
+      <arglist>() noexcept</arglist>
     </member>
   </compound>
   <compound kind="class">
