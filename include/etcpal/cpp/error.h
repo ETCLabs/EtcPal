@@ -75,12 +75,25 @@ namespace etcpal
 ///   // Prints "Error: 'Out of memory'"
 /// }
 /// \endcode
+///
+/// Result is often used as the return type for functions; it has an implicit constructor from
+/// #etcpal_error_t to simplify return statements:
+/// \code
+/// etcpal::Result DoSomething()
+/// {
+///   // ... After we did something successfully...
+///   return kEtcPalErrOk;
+/// }
+/// \endcode
 class Result
 {
 public:
   Result() = delete;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
-  //   etcpal::Result res = etcpal_c_function_that_returns_error_t();
+  //   etcpal::Result FunctionReturningResult()
+  //   {
+  //     return kEtcPalErrOk;
+  //   }
   constexpr Result(etcpal_error_t code) noexcept;
   Result& operator=(etcpal_error_t code) noexcept;
 
@@ -437,7 +450,7 @@ enum class enabler
 /// on the correct state instead).
 ///
 /// Inside functions that return Expected, you can use implicit conversions from the value type or
-/// etcpal_error_t to return success or failure:
+/// #etcpal_error_t to return success or failure:
 ///
 /// \code
 /// // Possible implementation of CreateSocket()...
@@ -709,6 +722,7 @@ Expected<T>::~Expected()
 template <typename T>
 constexpr const T* Expected<T>::operator->() const
 {
+  // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(has_value()), contained_.value_ptr();
 }
 
@@ -718,6 +732,7 @@ constexpr const T* Expected<T>::operator->() const
 template <typename T>
 T* Expected<T>::operator->()
 {
+  // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(has_value()), contained_.value_ptr();
 }
 
@@ -727,6 +742,7 @@ T* Expected<T>::operator->()
 template <typename T>
 constexpr const T& Expected<T>::operator*() const&
 {
+  // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(has_value()), contained_.value();
 }
 
@@ -736,6 +752,7 @@ constexpr const T& Expected<T>::operator*() const&
 template <typename T>
 T& Expected<T>::operator*() &
 {
+  // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(has_value()), contained_.value();
 }
 
@@ -745,6 +762,7 @@ T& Expected<T>::operator*() &
 template <typename T>
 constexpr const T&& Expected<T>::operator*() const&&
 {
+  // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(has_value()), std::move(contained_.value());
 }
 
@@ -754,6 +772,7 @@ constexpr const T&& Expected<T>::operator*() const&&
 template <typename T>
 ETCPAL_CONSTEXPR_14 T&& Expected<T>::operator*() &&
 {
+  // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(has_value()), std::move(contained_.value());
 }
 
@@ -776,6 +795,7 @@ constexpr bool Expected<T>::has_value() const noexcept
 template <typename T>
 constexpr const T& Expected<T>::value() const&
 {
+  // Comma syntax is to satisfy C++11 requirements for constexpr
   return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
 }
 
