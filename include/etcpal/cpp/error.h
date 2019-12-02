@@ -431,14 +431,28 @@ enum class enabler
 /// Note that this only works for the value() function, not any of the other accessors (they assert
 /// on the correct state instead).
 ///
-/// The value_or() function can also be useful when you want to use a default value in case of an
-/// error condition:
+/// Inside functions that return Expected, you can use implicit conversions from the value type or
+/// etcpal_error_t to return success or failure:
 ///
 /// \code
-/// etcpal::Result<std::string> ConvertIntToString(int val);
+/// // Possible implementation of CreateSocket()...
+/// etcpal::Expected<etcpal_socket_t> CreateSocket(int family, int type)
+/// {
+///    etcpal_socket_t socket;
+///    etcpal_error_t res = etcpal_socket(family, type, &socket);
+///    if (res == kEtcPalErrOk)
+///      return socket; // Implicitly converted to Expected, has_value() is true
+///    else
+///      return res; // Implicitly converted to Expected, has_value() is false
+/// }
+/// \endcode
 ///
+/// The value_or() function can be useful when you want to use a default value in case of an error
+/// condition:
+///
+/// \code
+/// etcpal::Expected<std::string> ConvertIntToString(int val);
 /// // ...
-///
 /// std::string conversion = ConvertIntToString(arg).value_or("0");
 /// // Conversion contains the successful conversion result, or "0" if the conversion failed.
 /// \endcode
