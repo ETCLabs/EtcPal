@@ -24,7 +24,7 @@
 #define ETCPAL_CPP_ERROR_H_
 
 #include <cassert>
-#include <exception>
+#include <stdexcept>
 #include <string>
 #include "etcpal/error.h"
 
@@ -198,11 +198,10 @@ inline bool operator!=(const Result& a, const Result& b)
 /// Thrown when attempting to access Expected<T>::value() when Expected<T>::has_value() is false.
 /// Holds an etcpal::Result; this allows nicer access to error information than just having the
 /// #etcpal_error_t code.
-class BadExpectedAccess : public std::exception
+class BadExpectedAccess : public std::logic_error
 {
 public:
-  explicit BadExpectedAccess(Result res) noexcept;
-  virtual const char* what() const noexcept override;
+  explicit BadExpectedAccess(Result res);
   Result result() const noexcept;
 
 private:
@@ -210,14 +209,12 @@ private:
 };
 
 /// \brief Construct from a Result.
-BadExpectedAccess::BadExpectedAccess(Result res) noexcept : res_(res)
+/// \throw May throw std::bad_alloc.
+BadExpectedAccess::BadExpectedAccess(Result res)
+    : std::logic_error("Bad access to etcpal::Expected::value(); the Expected instance contained error '" +
+                       res.ToString() + "'.")
+    , res_(res)
 {
-}
-
-/// \brief Description of this exception type.
-const char* BadExpectedAccess::what() const noexcept
-{
-  return "Bad access to etcpal::Expected::value()";
 }
 
 /// \brief Get the error code which was contained in the associated Expected when the exception occurred.
