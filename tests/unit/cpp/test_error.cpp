@@ -242,7 +242,7 @@ TEST(etcpal_expected, move_constructor_works)
     int bar{30};
   };
 
-  etcpal::Expected<std::unique_ptr<Foo>> v1 = std::make_unique<Foo>();
+  etcpal::Expected<std::unique_ptr<Foo>> v1 = std::unique_ptr<Foo>(new Foo);
   etcpal::Expected<std::unique_ptr<Foo>> v2{std::move(v1)};
   TEST_ASSERT_TRUE(v2.has_value());
   TEST_ASSERT_EQUAL_INT(v2.value()->bar, 30);

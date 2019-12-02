@@ -81,26 +81,25 @@ public:
   Result() = delete;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::Result res = etcpal_c_function_that_returns_error_t();
-  Result(etcpal_error_t code) noexcept;
+  constexpr Result(etcpal_error_t code) noexcept;
   Result& operator=(etcpal_error_t code) noexcept;
 
-  bool IsOk() const noexcept;
-  etcpal_error_t code() const noexcept;
+  constexpr bool IsOk() const noexcept;
+  constexpr etcpal_error_t code() const noexcept;
   std::string ToString() const;
   const char* ToCString() const noexcept;
 
-  explicit operator bool() const noexcept;
+  constexpr explicit operator bool() const noexcept;
 
-  static Result Ok() noexcept;
+  static constexpr Result Ok() noexcept;
 
 private:
   etcpal_error_t code_{kEtcPalErrOk};
 };
 
 /// \brief Construct a Result from an error code.
-inline Result::Result(etcpal_error_t code) noexcept
+constexpr Result::Result(etcpal_error_t code) noexcept : code_(code)
 {
-  code_ = code;
 }
 
 /// \brief Assign an error code to this Result.
@@ -113,13 +112,13 @@ inline Result& Result::operator=(etcpal_error_t code) noexcept
 /// \brief Whether this Result contains the code #kEtcPalErrOk.
 /// \details #kEtcPalErrOk is the only #etcpal_error_t code that does not indicate an error.
 /// \return Whether the result is OK (not an error).
-inline bool Result::IsOk() const noexcept
+constexpr bool Result::IsOk() const noexcept
 {
   return code_ == kEtcPalErrOk;
 }
 
 /// \brief Get the underlying code from a Result.
-inline etcpal_error_t Result::code() const noexcept
+constexpr etcpal_error_t Result::code() const noexcept
 {
   return code_;
 }
@@ -138,13 +137,13 @@ inline const char* Result::ToCString() const noexcept
 
 /// \brief Evaluate the Result inline - evaluates true if the result is #kEtcPalErrOk, false
 ///        otherwise.
-inline Result::operator bool() const noexcept
+constexpr Result::operator bool() const noexcept
 {
   return IsOk();
 }
 
 /// \brief Construct a result containing #kEtcPalErrOk.
-inline Result Result::Ok() noexcept
+constexpr Result Result::Ok() noexcept
 {
   return Result(kEtcPalErrOk);
 }
@@ -155,32 +154,32 @@ inline Result Result::Ok() noexcept
 /// \name Result Relational Operators
 /// @{
 
-inline bool operator==(etcpal_error_t code, const Result& result)
+constexpr bool operator==(etcpal_error_t code, const Result& result)
 {
   return code == result.code();
 }
 
-inline bool operator!=(etcpal_error_t code, const Result& result)
+constexpr bool operator!=(etcpal_error_t code, const Result& result)
 {
   return !(code == result);
 }
 
-inline bool operator==(const Result& result, etcpal_error_t code)
+constexpr bool operator==(const Result& result, etcpal_error_t code)
 {
   return result.code() == code;
 }
 
-inline bool operator!=(const Result& result, etcpal_error_t code)
+constexpr bool operator!=(const Result& result, etcpal_error_t code)
 {
   return !(result == code);
 }
 
-inline bool operator==(const Result& a, const Result& b)
+constexpr bool operator==(const Result& a, const Result& b)
 {
   return a.code() == b.code();
 }
 
-inline bool operator!=(const Result& a, const Result& b)
+constexpr bool operator!=(const Result& a, const Result& b)
 {
   return !(a == b);
 }
@@ -229,6 +228,15 @@ Result BadExpectedAccess::result() const noexcept
 // etcpal::Expected internals
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// ETCPAL_CONSTEXPR_14 - a stand-in for entities that can only be defined "constexpr" in C++14 or
+// higher.
+
+#if ((defined(_MSC_VER) && (_MSC_VER > 1900)) || (__cplusplus >= 201402L))
+#define ETCPAL_CONSTEXPR_14 constexpr
+#else
+#define ETCPAL_CONSTEXPR_14
+#endif
+
 template <typename T>
 class Expected;
 
@@ -258,7 +266,7 @@ public:
   constexpr const ValueType& value() const& { return value_; }
   ValueType& value() & { return value_; }
   constexpr const ValueType&& value() const&& { return std::move(value_); }
-  constexpr ValueType&& value() && { return std::move(value_); }
+  ETCPAL_CONSTEXPR_14 ValueType&& value() && { return std::move(value_); }
   const ValueType* value_ptr() const { return &value_; }
   ValueType* value_ptr() { return &value_; }
 
@@ -366,10 +374,10 @@ enum class enabler
 {
 };
 
-};  // namespace detail
-
 #define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
 #define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
+
+};  // namespace detail
 
 /// \endcond
 
@@ -479,7 +487,7 @@ public:
   /// Default-constructs an instance of T. This Expected instance has a value after this
   /// constructor is called.
   template <bool B = std::is_default_constructible<T>::value, typename std::enable_if<B, int>::type = 0>
-  constexpr Expected() : contained_(true)
+  ETCPAL_CONSTEXPR_14 Expected() : contained_(true)
   {
     contained_.ConstructValue(ValueType());
   }
@@ -488,32 +496,32 @@ public:
   ///
   /// If other has a value, copies its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
-  constexpr Expected(const Expected& other) = default;
+  ETCPAL_CONSTEXPR_14 Expected(const Expected& other) = default;
 
   /// \brief Move constructor - enabled if T is move-constructible.
   ///
   /// If other has a value, moves its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
-  constexpr Expected(Expected&& other) = default;
+  ETCPAL_CONSTEXPR_14 Expected(Expected&& other) = default;
 
   /// \brief Explicit conversion copy constructor - enabled for U that can be explicitly converted to T.
   ///
   /// If other has a value, copies its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
   template<typename U>
-  constexpr explicit Expected(const Expected<U>& other,
-                              ETCPAL_ENABLE_IF_ARG(
-                                  std::is_constructible<T, const U&>::value &&
-                                 !std::is_constructible<T, Expected<U>&>::value &&
-                                 !std::is_constructible<T, Expected<U>       &&   >::value &&
-                                 !std::is_constructible<T, Expected<U> const &    >::value &&
-                                 !std::is_constructible<T, Expected<U> const &&   >::value &&
-                                 !std::is_convertible<     Expected<U>       & , T>::value &&
-                                 !std::is_convertible<     Expected<U>       &&, T>::value &&
-                                 !std::is_convertible<     Expected<U> const & , T>::value &&
-                                 !std::is_convertible<     Expected<U> const &&, T>::value &&
-                                 !std::is_convertible<const U&, T>::value
-                             ))
+  ETCPAL_CONSTEXPR_14 explicit Expected(const Expected<U>& other,
+                                        ETCPAL_ENABLE_IF_ARG(
+                                            std::is_constructible<T, const U&>::value &&
+                                           !std::is_constructible<T, Expected<U>&>::value &&
+                                           !std::is_constructible<T, Expected<U>       &&   >::value &&
+                                           !std::is_constructible<T, Expected<U> const &    >::value &&
+                                           !std::is_constructible<T, Expected<U> const &&   >::value &&
+                                           !std::is_convertible<     Expected<U>       & , T>::value &&
+                                           !std::is_convertible<     Expected<U>       &&, T>::value &&
+                                           !std::is_convertible<     Expected<U> const & , T>::value &&
+                                           !std::is_convertible<     Expected<U> const &&, T>::value &&
+                                           !std::is_convertible<const U&, T>::value
+                                       ))
       : contained_(other.has_value())
   {
     if (has_value())
@@ -527,19 +535,19 @@ public:
   /// If other has a value, copies its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
   template<typename U>
-  constexpr Expected(const Expected<U>& other,
-                     ETCPAL_ENABLE_IF_ARG(
-                         std::is_constructible<T, const U&>::value &&
-                        !std::is_constructible<T, Expected<U>       &    >::value &&
-                        !std::is_constructible<T, Expected<U>       &&   >::value &&
-                        !std::is_constructible<T, Expected<U> const &    >::value &&
-                        !std::is_constructible<T, Expected<U> const &&   >::value &&
-                        !std::is_convertible<     Expected<U>       & , T>::value &&
-                        !std::is_convertible<     Expected<U>       &&, T>::value &&
-                        !std::is_convertible<     Expected<U> const  &, T>::value &&
-                        !std::is_convertible<     Expected<U> const &&, T>::value &&
-                        std::is_convertible<const U&, T>::value
-                    ))
+  ETCPAL_CONSTEXPR_14 Expected(const Expected<U>& other,
+                               ETCPAL_ENABLE_IF_ARG(
+                                   std::is_constructible<T, const U&>::value &&
+                                  !std::is_constructible<T, Expected<U>       &    >::value &&
+                                  !std::is_constructible<T, Expected<U>       &&   >::value &&
+                                  !std::is_constructible<T, Expected<U> const &    >::value &&
+                                  !std::is_constructible<T, Expected<U> const &&   >::value &&
+                                  !std::is_convertible<     Expected<U>       & , T>::value &&
+                                  !std::is_convertible<     Expected<U>       &&, T>::value &&
+                                  !std::is_convertible<     Expected<U> const  &, T>::value &&
+                                  !std::is_convertible<     Expected<U> const &&, T>::value &&
+                                  std::is_convertible<const U&, T>::value
+                              ))
       : contained_(other.has_value())
   {
     if (has_value())
@@ -553,19 +561,19 @@ public:
   /// If other has a value, moves its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
   template<typename U>
-  constexpr explicit Expected(Expected<U>&& other,
-                              ETCPAL_ENABLE_IF_ARG(
-                                  std::is_constructible<T, U>::value &&
-                                 !std::is_constructible<T, Expected<U>       &    >::value &&
-                                 !std::is_constructible<T, Expected<U>       &&   >::value &&
-                                 !std::is_constructible<T, Expected<U> const &    >::value &&
-                                 !std::is_constructible<T, Expected<U> const &&   >::value &&
-                                 !std::is_convertible<     Expected<U>       & , T>::value &&
-                                 !std::is_convertible<     Expected<U>       &&, T>::value &&
-                                 !std::is_convertible<     Expected<U> const & , T>::value &&
-                                 !std::is_convertible<     Expected<U> const &&, T>::value &&
-                                 !std::is_convertible<U, T>::value
-                             ))
+  ETCPAL_CONSTEXPR_14 explicit Expected(Expected<U>&& other,
+                                        ETCPAL_ENABLE_IF_ARG(
+                                            std::is_constructible<T, U>::value &&
+                                           !std::is_constructible<T, Expected<U>       &    >::value &&
+                                           !std::is_constructible<T, Expected<U>       &&   >::value &&
+                                           !std::is_constructible<T, Expected<U> const &    >::value &&
+                                           !std::is_constructible<T, Expected<U> const &&   >::value &&
+                                           !std::is_convertible<     Expected<U>       & , T>::value &&
+                                           !std::is_convertible<     Expected<U>       &&, T>::value &&
+                                           !std::is_convertible<     Expected<U> const & , T>::value &&
+                                           !std::is_convertible<     Expected<U> const &&, T>::value &&
+                                           !std::is_convertible<U, T>::value
+                                       ))
       : contained_(other.has_value())
   {
     if (has_value())
@@ -579,19 +587,19 @@ public:
   /// If other has a value, moves its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
   template<typename U>
-  constexpr Expected(Expected<U>&& other,
-                     ETCPAL_ENABLE_IF_ARG(
-                         std::is_constructible<T, U>::value &&
-                        !std::is_constructible<T, Expected<U>      &     >::value &&
-                        !std::is_constructible<T, Expected<U>      &&    >::value &&
-                        !std::is_constructible<T, Expected<U> const &    >::value &&
-                        !std::is_constructible<T, Expected<U> const &&   >::value &&
-                        !std::is_convertible<     Expected<U>       & , T>::value &&
-                        !std::is_convertible<     Expected<U>       &&, T>::value &&
-                        !std::is_convertible<     Expected<U> const & , T>::value &&
-                        !std::is_convertible<     Expected<U> const &&, T>::value &&
-                         std::is_convertible<U, T>::value
-                    ))
+  ETCPAL_CONSTEXPR_14 Expected(Expected<U>&& other,
+                               ETCPAL_ENABLE_IF_ARG(
+                                   std::is_constructible<T, U>::value &&
+                                  !std::is_constructible<T, Expected<U>      &     >::value &&
+                                  !std::is_constructible<T, Expected<U>      &&    >::value &&
+                                  !std::is_constructible<T, Expected<U> const &    >::value &&
+                                  !std::is_constructible<T, Expected<U> const &&   >::value &&
+                                  !std::is_convertible<     Expected<U>       & , T>::value &&
+                                  !std::is_convertible<     Expected<U>       &&, T>::value &&
+                                  !std::is_convertible<     Expected<U> const & , T>::value &&
+                                  !std::is_convertible<     Expected<U> const &&, T>::value &&
+                                   std::is_convertible<U, T>::value
+                              ))
       : contained_(other.has_value())
   {
     if (has_value())
@@ -608,9 +616,10 @@ public:
   ///
   /// \param value Value to construct from.
   template <typename U = T>
-  explicit Expected(U&& value, ETCPAL_ENABLE_IF_ARG(std::is_constructible<T, U&&>::value &&
-                                                    !std::is_convertible<U&&, T>::value
-                                                   )) noexcept(std::is_nothrow_move_constructible<U>::value)
+  ETCPAL_CONSTEXPR_14 explicit Expected(U&& value,
+                                        ETCPAL_ENABLE_IF_ARG( std::is_constructible<T, U&&>::value &&
+                                                             !std::is_convertible<U&&, T>::value
+                                                            )) noexcept(std::is_nothrow_move_constructible<U>::value)
       : contained_(true)
   {
     contained_.ConstructValue(T{std::forward<U>(value)});
@@ -624,9 +633,9 @@ public:
   ///
   /// \param value Value to construct from.
   template <typename U = T>
-  Expected(U&& value, ETCPAL_ENABLE_IF_ARG(std::is_constructible<T, U&&>::value &&
-                                           std::is_convertible<U&&, T>::value
-                                          )) noexcept(std::is_nothrow_move_constructible<U>::value)
+  ETCPAL_CONSTEXPR_14 Expected(U&& value, ETCPAL_ENABLE_IF_ARG(std::is_constructible<T, U&&>::value &&
+                                                               std::is_convertible<U&&, T>::value
+                                                              )) noexcept(std::is_nothrow_move_constructible<U>::value)
       : contained_(true)
   {
     contained_.ConstructValue(std::forward<U>(value));
@@ -635,7 +644,7 @@ public:
   // clang-format on
 
   // Always implicit by design
-  Expected(etcpal_error_t error);
+  ETCPAL_CONSTEXPR_14 Expected(etcpal_error_t error);
   ~Expected();
 
   constexpr const T* operator->() const;
@@ -643,13 +652,13 @@ public:
   constexpr const T& operator*() const&;
   T& operator*() &;
   constexpr const T&& operator*() const&&;
-  constexpr T&& operator*() &&;
+  ETCPAL_CONSTEXPR_14 T&& operator*() &&;
   constexpr explicit operator bool() const noexcept;
   constexpr bool has_value() const noexcept;
   constexpr const T& value() const&;
-  constexpr T& value() &;
+  T& value() &;
   constexpr const T&& value() const&&;
-  constexpr T&& value() &&;
+  ETCPAL_CONSTEXPR_14 T&& value() &&;
   constexpr etcpal_error_t error() const noexcept;
   constexpr Result result() const noexcept;
 
@@ -681,7 +690,7 @@ private:
 
 /// \brief Construct an Expected instance containing an error code.
 template <typename T>
-Expected<T>::Expected(etcpal_error_t error) : contained_(false)
+ETCPAL_CONSTEXPR_14 Expected<T>::Expected(etcpal_error_t error) : contained_(false)
 {
   contained_.SetError(error);
 }
@@ -700,8 +709,7 @@ Expected<T>::~Expected()
 template <typename T>
 constexpr const T* Expected<T>::operator->() const
 {
-  assert(has_value());
-  return contained_.value_ptr();
+  return assert(has_value()), contained_.value_ptr();
 }
 
 /// \brief Access members of a composite contained value.
@@ -710,8 +718,7 @@ constexpr const T* Expected<T>::operator->() const
 template <typename T>
 T* Expected<T>::operator->()
 {
-  assert(has_value());
-  return contained_.value_ptr();
+  return assert(has_value()), contained_.value_ptr();
 }
 
 /// \brief Get the underlying value.
@@ -720,8 +727,7 @@ T* Expected<T>::operator->()
 template <typename T>
 constexpr const T& Expected<T>::operator*() const&
 {
-  assert(has_value());
-  return contained_.value();
+  return assert(has_value()), contained_.value();
 }
 
 /// \brief Get the underlying value.
@@ -730,8 +736,7 @@ constexpr const T& Expected<T>::operator*() const&
 template <typename T>
 T& Expected<T>::operator*() &
 {
-  assert(has_value());
-  return contained_.value();
+  return assert(has_value()), contained_.value();
 }
 
 /// \brief Get the underlying value.
@@ -740,18 +745,16 @@ T& Expected<T>::operator*() &
 template <typename T>
 constexpr const T&& Expected<T>::operator*() const&&
 {
-  assert(has_value());
-  return std::move(contained_.value());
+  return assert(has_value()), std::move(contained_.value());
 }
 
 /// \brief Get the underlying value.
 ///
 /// If has_value() is false, the behavior is undefined.
 template <typename T>
-constexpr T&& Expected<T>::operator*() &&
+ETCPAL_CONSTEXPR_14 T&& Expected<T>::operator*() &&
 {
-  assert(has_value());
-  return std::move(contained_.value());
+  return assert(has_value()), std::move(contained_.value());
 }
 
 /// \brief Evaluate the Expected instance inline - evaluates to has_value().
@@ -773,21 +776,16 @@ constexpr bool Expected<T>::has_value() const noexcept
 template <typename T>
 constexpr const T& Expected<T>::value() const&
 {
-  if (has_value())
-    return contained_.value();
-  else
-    throw BadExpectedAccess(contained_.error());
+  return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
 }
 
 /// \brief Get the underlying value.
 /// \throw BadExpectedAccess if has_value() is false.
 template <typename T>
-constexpr T& Expected<T>::value() &
+T& Expected<T>::value() &
 {
-  if (has_value())
-    return contained_.value();
-  else
-    throw BadExpectedAccess(contained_.error());
+  // Comma syntax is to satisfy C++11 requirements for constexpr
+  return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
 }
 
 /// \brief Get the underlying value.
@@ -795,21 +793,19 @@ constexpr T& Expected<T>::value() &
 template <typename T>
 constexpr const T&& Expected<T>::value() const&&
 {
-  if (has_value())
-    return std::move(contained_.value());
-  else
-    throw BadExpectedAccess(contained_.error());
+  // Comma syntax is to satisfy C++11 requirements for constexpr
+  return std::move(has_value() ? (contained_.value())
+                               : (throw BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
 /// \brief Get the underlying value.
 /// \throw BadExpectedAccess if has_value() is false.
 template <typename T>
-constexpr T&& Expected<T>::value() &&
+ETCPAL_CONSTEXPR_14 T&& Expected<T>::value() &&
 {
-  if (has_value())
-    return std::move(contained_.value());
-  else
-    throw BadExpectedAccess(contained_.error());
+  // Comma syntax is to satisfy C++11 requirements for constexpr
+  return std::move(has_value() ? (contained_.value())
+                               : (throw BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
 /// \brief Get the error code.
@@ -818,8 +814,8 @@ constexpr T&& Expected<T>::value() &&
 template <typename T>
 constexpr etcpal_error_t Expected<T>::error() const noexcept
 {
-  assert(!has_value());
-  return contained_.error();
+  // Comma syntax is to satisfy C++11 requirements for constexpr
+  return assert(!has_value()), contained_.error();
 }
 
 /// \brief Get the error code as a Result object.
@@ -828,8 +824,8 @@ constexpr etcpal_error_t Expected<T>::error() const noexcept
 template <typename T>
 constexpr Result Expected<T>::result() const noexcept
 {
-  assert(!has_value());
-  return contained_.error();
+  // Comma syntax is to satisfy C++11 requirements for constexpr
+  return assert(!has_value()), contained_.error();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
