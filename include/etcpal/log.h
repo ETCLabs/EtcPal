@@ -133,14 +133,15 @@
 /*! The minimum length of a buffer passed to etcpal_create_syslog_str(). */
 #define ETCPAL_SYSLOG_STR_MIN_LEN ETCPAL_SYSLOG_HEADER_MAX_LEN
 /*! The minimum length of a buffer passed to etcpal_create_human_log_str(). */
-#define ETCPAL_HUMAN_LOG_STR_MIN_LEN ETCPAL_LOG_TIMESTAMP_LEN
+#define ETCPAL_HUMAN_LOG_STR_MIN_LEN (ETCPAL_LOG_TIMESTAMP_LEN + 1u /*SP*/ + 6u /*pri*/ + 1u /*SP*/)
 
 /*! The maximum length of a syslog string that will be passed to an etcpal_log_callback function. */
 #define ETCPAL_SYSLOG_STR_MAX_LEN (ETCPAL_SYSLOG_HEADER_MAX_LEN + ETCPAL_LOG_MSG_MAX_LEN)
 
 /*! The maximum length of a human-readable string that will be passed to an etcpal_log_callback
  *  function.  */
-#define ETCPAL_HUMAN_LOG_STR_MAX_LEN ((ETCPAL_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + ETCPAL_LOG_MSG_MAX_LEN)
+#define ETCPAL_HUMAN_LOG_STR_MAX_LEN \
+  ((ETCPAL_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + 6u /*pri*/ + 1u /*SP*/ + ETCPAL_LOG_MSG_MAX_LEN)
 
 /*! A set of parameters which represent the current local time with millisecond resolution. */
 typedef struct EtcPalLogTimeParams
@@ -261,9 +262,10 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParam
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format, ...)
+bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri, const char* format,
+                                 ...)
 #ifdef __GNUC__
-    __attribute__((__format__(__printf__, 4, 5)))
+    __attribute__((__format__(__printf__, 5, 6)))
 #endif
     ;
 
