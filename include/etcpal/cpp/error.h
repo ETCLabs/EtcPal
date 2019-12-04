@@ -222,7 +222,7 @@ private:
 
 /// \brief Construct from a Result.
 /// \throw May throw std::bad_alloc.
-BadExpectedAccess::BadExpectedAccess(Result res)
+inline BadExpectedAccess::BadExpectedAccess(Result res)
     : std::logic_error("Bad access to etcpal::Expected::value(); the Expected instance contained error '" +
                        res.ToString() + "'.")
     , res_(res)
@@ -230,7 +230,7 @@ BadExpectedAccess::BadExpectedAccess(Result res)
 }
 
 /// \brief Get the error code which was contained in the associated Expected when the exception occurred.
-Result BadExpectedAccess::result() const noexcept
+inline Result BadExpectedAccess::result() const noexcept
 {
   return res_;
 }
