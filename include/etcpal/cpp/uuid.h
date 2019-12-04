@@ -151,7 +151,7 @@ inline Uuid Uuid::OsPreferred()
 /// \addtogroup etcpal_cpp_uuid
 /// @{
 
-/// \name Relational Operators
+/// \name UUID Relational Operators
 /// @{
 
 // Special operators for comparing with EtcPalUuids
