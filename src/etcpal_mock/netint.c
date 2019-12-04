@@ -17,22 +17,22 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal_mock/common.h"
 #include "etcpal_mock/netint.h"
-#include "etcpal_mock/socket.h"
-#include "etcpal_mock/thread.h"
-#include "etcpal_mock/timer.h"
 
-DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_init, etcpal_features_t);
-DEFINE_FAKE_VOID_FUNC(etcpal_deinit, etcpal_features_t);
+DEFINE_FAKE_VALUE_FUNC(size_t, etcpal_netint_get_num_interfaces);
+DEFINE_FAKE_VALUE_FUNC(const EtcPalNetintInfo*, etcpal_netint_get_interfaces);
+DEFINE_FAKE_VALUE_FUNC(size_t, etcpal_netint_copy_interfaces, EtcPalNetintInfo*, size_t);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interfaces_by_index, unsigned int, const EtcPalNetintInfo**,
+                       size_t*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_default_interface, etcpal_iptype_t, unsigned int*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interface_for_dest, const EtcPalIpAddr*, unsigned int*);
 
-void etcpal_reset_all_fakes(void)
+void etcpal_netint_reset_all_fakes(void)
 {
-  etcpal_netint_reset_all_fakes();
-  etcpal_socket_reset_all_fakes();
-  etcpal_thread_reset_all_fakes();
-  etcpal_timer_reset_all_fakes();
-
-  RESET_FAKE(etcpal_init);
-  RESET_FAKE(etcpal_deinit);
+  RESET_FAKE(etcpal_netint_get_num_interfaces);
+  RESET_FAKE(etcpal_netint_get_interfaces);
+  RESET_FAKE(etcpal_netint_copy_interfaces);
+  RESET_FAKE(etcpal_netint_get_interfaces_by_index);
+  RESET_FAKE(etcpal_netint_get_default_interface);
+  RESET_FAKE(etcpal_netint_get_interface_for_dest);
 }
