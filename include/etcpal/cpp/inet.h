@@ -613,7 +613,7 @@ inline MacAddr MacAddr::FromString(const std::string& mac_str) noexcept
 /// \addtogroup etcpal_cpp_inet
 /// @{
 
-/// \name Relational Operators
+/// \name Inet Relational Operators
 /// @{
 
 // Special operators for comparing with the underlying types

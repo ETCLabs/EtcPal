@@ -14,12 +14,12 @@ if os.getenv("BUILD_REASON", "IndividualCI") == "PullRequest":
         os.getenv("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER")
     )
     output_dir = "build/{}/docs/stage/{}".format(
-        os.getenv("GH_REPO_NAME", "RDMnet"),
+        os.getenv("GH_REPO_NAME", "EtcPal"),
         os.getenv("SYSTEM_PULLREQUEST_PULLREQUESTNUMBER"),
     )
 else:
     project_number = "HEAD (unstable)"
-    output_dir = "build/{}/docs/head".format(os.getenv("GH_REPO_NAME", "RDMnet"))
+    output_dir = "build/{}/docs/head".format(os.getenv("GH_REPO_NAME", "EtcPal"))
 
 # Remove the relevant documentation directory - git will resolve the changes when the documentation
 # is regenerated.
