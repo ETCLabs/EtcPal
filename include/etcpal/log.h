@@ -41,11 +41,18 @@
  * etcpal_create_syslog_str() and etcpal_create_human_log_str() to create log messages with a header
  * defined by the Syslog protocol or with a human-readable header defined by ETC.
  *
+ * The human-readable format consists of an ISO timestamp with the separating `T` replaced by a
+ * space, followed by a string indicating the priority and the message:
+ * ```
+ * 1970-01-01 00:00:00.001-06:00 [CRIT] This is a log message!
+ * ```
+ *
  * This module can also be used to enable other libraries to log messages via a callback function.
- * Library functions can take a set of parameters (etcpal_log_params) on initialization. They use
- * these parameters and the etcpal_log() or etcpal_vlog() functions to call back to the application to
- * log messages. The application can then decide what to do with these log messages (print to
- * console, syslog, etc.)
+ * Library functions can take a set of parameters (EtcPalLogParams) on initialization. They use
+ * these parameters and the etcpal_log() or etcpal_vlog() functions to call back to the application
+ * to log messages. The application implements an #EtcPalLogCallback from which it dispatches the
+ * log messages in whatever way it chooses (print to console, syslog, etc.), and an
+ * #EtcPalLogTimeFn which is called to get the current time for each log message.
  *
  * @{
  */
@@ -184,7 +191,7 @@ typedef struct EtcPalLogStrings
  *                    corresponding to the log actions requested in the corresponding EtcPalLogParams
  *                    struct.
  */
-typedef void (*etcpal_log_callback)(void* context, const EtcPalLogStrings* strings);
+typedef void (*EtcPalLogCallback)(void* context, const EtcPalLogStrings* strings);
 
 /*!
  * \brief Time callback function.
@@ -195,7 +202,7 @@ typedef void (*etcpal_log_callback)(void* context, const EtcPalLogStrings* strin
  *                    module.
  * \param[out] time_params Fill this in with the current local time.
  */
-typedef void (*etcpal_log_time_fn)(void* context, EtcPalLogTimeParams* time_params);
+typedef void (*EtcPalLogTimeFn)(void* context, EtcPalLogTimeParams* time_params);
 
 /*! Which types of log message(s) the etcpal_log() and etcpal_vlog() functions create. */
 typedef enum
@@ -230,14 +237,14 @@ typedef struct EtcPalLogParams
   /*! What should be done when etcpal_log() or etcpal_vlog() is called. */
   etcpal_log_action_t action;
   /*! A callback function for the finished log string(s). */
-  etcpal_log_callback log_fn;
+  EtcPalLogCallback log_fn;
   /*! The syslog header parameters. */
   EtcPalSyslogParams syslog_params;
   /*! A mask value that determines which priority messages can be logged. */
   int log_mask;
   /*! A callback function for the etcpal_log() and etcpal_vlog() functions to obtain the time from the
    *  application. If NULL, no timestamp will be added to log messages. */
-  etcpal_log_time_fn time_fn;
+  EtcPalLogTimeFn time_fn;
   /*! Application context that will be passed back with the log callback function. */
   void* context;
 } EtcPalLogParams;

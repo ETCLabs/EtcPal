@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>error.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <class kind="class">etcpal::Result</class>
     <class kind="class">etcpal::BadExpectedAccess</class>
@@ -10,7 +10,7 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <class kind="class">etcpal::IpAddr</class>
     <class kind="class">etcpal::SockAddr</class>
@@ -28,7 +28,7 @@
   </compound>
   <compound kind="file">
     <name>lock.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
@@ -39,13 +39,13 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="class">
@@ -55,15 +55,8 @@
       <type></type>
       <name>BadExpectedAccess</name>
       <anchorfile>classetcpal_1_1_bad_expected_access.html</anchorfile>
-      <anchor>aeaa52e8c1a8d52deb6030d756f8e8933</anchor>
-      <arglist>(Result res) noexcept</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual const char *</type>
-      <name>what</name>
-      <anchorfile>classetcpal_1_1_bad_expected_access.html</anchorfile>
-      <anchor>abf843cbb29dec939d0731e491bab6f70</anchor>
-      <arglist>() const noexcept override</arglist>
+      <anchor>ae32d1ca3903371ac073eacb510ce597d</anchor>
+      <arglist>(Result res)</arglist>
     </member>
     <member kind="function">
       <type>Result</type>
@@ -212,10 +205,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>etcpal_log_callback</type>
+      <type>EtcPalLogCallback</type>
       <name>log_fn</name>
       <anchorfile>struct_etc_pal_log_params.html</anchorfile>
-      <anchor>a878e8584783aed32b30a35697ffa27b5</anchor>
+      <anchor>a9a6659e83ffc5e4e7ab3c5ba5009f4e7</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -233,10 +226,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>etcpal_log_time_fn</type>
+      <type>EtcPalLogTimeFn</type>
       <name>time_fn</name>
       <anchorfile>struct_etc_pal_log_params.html</anchorfile>
-      <anchor>aaeb7319ba51e6b5fe1f4df5dea2eabce</anchor>
+      <anchor>aceff50b76400c01d88b158c0a68f32d8</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -850,73 +843,73 @@
       <arglist></arglist>
     </member>
     <member kind="function">
-      <type>constexpr</type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a05eee239980486bf36c4f8950d967b3d</anchor>
+      <anchor>a9e2d2226ed3d9558528f40d1e8cdb90a</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>constexpr</type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>afbcd61d5831db1cae7c98f61c6b487f7</anchor>
+      <anchor>af47fca6f0a4334c9331b742efa869cb5</anchor>
       <arglist>(const Expected &amp;other)=default</arglist>
     </member>
     <member kind="function">
-      <type>constexpr</type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>ad1e0dc7fef59a1d8b87d22cd586cfcf7</anchor>
+      <anchor>abf3e9a1d1447150ab2f8d6dcdd3e8781</anchor>
       <arglist>(Expected &amp;&amp;other)=default</arglist>
     </member>
     <member kind="function">
-      <type>constexpr</type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a9218bac8e2e2f3ad495bf4c9f0a6973f</anchor>
+      <anchor>a76e78926d166ad8e9d61586963fc078f</anchor>
       <arglist>(const Expected&lt; U &gt; &amp;other, ETCPAL_ENABLE_IF_ARG(std::is_constructible&lt; T, const U &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&amp;&gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;&amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;&amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; const U &amp;, T &gt;::value))</arglist>
     </member>
     <member kind="function">
-      <type>constexpr</type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a22a38e2d07ffb1e9295aa2237ada9fc6</anchor>
+      <anchor>ae4842b36d4f8813847dfc700633b08f0</anchor>
       <arglist>(const Expected&lt; U &gt; &amp;other, ETCPAL_ENABLE_IF_ARG(std::is_constructible&lt; T, const U &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&amp;&gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;&amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;&amp;, T &gt;::value &amp;&amp;std::is_convertible&lt; const U &amp;, T &gt;::value))</arglist>
     </member>
     <member kind="function">
-      <type>constexpr</type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>aa3dc47e18317ee5dfe579355d6a43dfe</anchor>
+      <anchor>ac20996a0e3daf91215530876a7300f19</anchor>
       <arglist>(Expected&lt; U &gt; &amp;&amp;other, ETCPAL_ENABLE_IF_ARG(std::is_constructible&lt; T, U &gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&amp;&gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;&amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;&amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; U, T &gt;::value))</arglist>
     </member>
     <member kind="function">
-      <type>constexpr</type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>ab140b28680238373a39161bed5cd002a</anchor>
+      <anchor>ab6d89b907f9b5b8773739bb7a1eab687</anchor>
       <arglist>(Expected&lt; U &gt; &amp;&amp;other, ETCPAL_ENABLE_IF_ARG(std::is_constructible&lt; T, U &gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; &amp;&amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&gt;::value &amp;&amp;!std::is_constructible&lt; T, Expected&lt; U &gt; const &amp;&amp;&gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; &amp;&amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;, T &gt;::value &amp;&amp;!std::is_convertible&lt; Expected&lt; U &gt; const &amp;&amp;, T &gt;::value &amp;&amp;std::is_convertible&lt; U, T &gt;::value))</arglist>
     </member>
     <member kind="function">
-      <type></type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a59c942fe4fb741cdd75818afe46aa58e</anchor>
+      <anchor>a545cdd9fdc844d352d39aeb345774069</anchor>
       <arglist>(U &amp;&amp;value, ETCPAL_ENABLE_IF_ARG(std::is_constructible&lt; T, U &amp;&amp;&gt;::value &amp;&amp;!std::is_convertible&lt; U &amp;&amp;, T &gt;::value)) noexcept(std::is_nothrow_move_constructible&lt; U &gt;::value)</arglist>
     </member>
     <member kind="function">
-      <type></type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a30568dad48509352dedb7ba6a16899b4</anchor>
+      <anchor>ac7a8678f6251b90111837a493eef9abe</anchor>
       <arglist>(U &amp;&amp;value, ETCPAL_ENABLE_IF_ARG(std::is_constructible&lt; T, U &amp;&amp;&gt;::value &amp;&amp;std::is_convertible&lt; U &amp;&amp;, T &gt;::value)) noexcept(std::is_nothrow_move_constructible&lt; U &gt;::value)</arglist>
     </member>
     <member kind="function">
-      <type></type>
+      <type>ETCPAL_CONSTEXPR_14</type>
       <name>Expected</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a372215ac699d087a7413d2bba7b47c1c</anchor>
+      <anchor>ab223fb4af6a34c52a294fb48e37c92c6</anchor>
       <arglist>(etcpal_error_t error)</arglist>
     </member>
     <member kind="function">
@@ -962,10 +955,10 @@
       <arglist>() const &amp;&amp;</arglist>
     </member>
     <member kind="function">
-      <type>constexpr T &amp;&amp;</type>
+      <type>ETCPAL_CONSTEXPR_14 T &amp;&amp;</type>
       <name>operator*</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a4b1b0ac2a151c256b031fef21f6651cc</anchor>
+      <anchor>aec2b0f86ca602b33ae1bbe4e72cd571e</anchor>
       <arglist>() &amp;&amp;</arglist>
     </member>
     <member kind="function">
@@ -990,10 +983,10 @@
       <arglist>() const &amp;</arglist>
     </member>
     <member kind="function">
-      <type>constexpr T &amp;</type>
+      <type>T &amp;</type>
       <name>value</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a1db9740321489652d5420f80c57b5643</anchor>
+      <anchor>a316aefaaaa5e04f8843b07749e04d759</anchor>
       <arglist>() &amp;</arglist>
     </member>
     <member kind="function">
@@ -1004,10 +997,10 @@
       <arglist>() const &amp;&amp;</arglist>
     </member>
     <member kind="function">
-      <type>constexpr T &amp;&amp;</type>
+      <type>ETCPAL_CONSTEXPR_14 T &amp;&amp;</type>
       <name>value</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>ab71ecf7b054666c750a48f0249ea7ff1</anchor>
+      <anchor>abdfb1ce4b51972bd578d02bd8d1daa0c</anchor>
       <arglist>() &amp;&amp;</arglist>
     </member>
     <member kind="function">
@@ -1420,10 +1413,10 @@
     <name>etcpal::Result</name>
     <filename>classetcpal_1_1_result.html</filename>
     <member kind="function">
-      <type></type>
+      <type>constexpr</type>
       <name>Result</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a1632987f6b0d6d53fbecd0cc123558f0</anchor>
+      <anchor>af1913dbf20908a83085407f633807fe3</anchor>
       <arglist>(etcpal_error_t code) noexcept</arglist>
     </member>
     <member kind="function">
@@ -1434,17 +1427,17 @@
       <arglist>(etcpal_error_t code) noexcept</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
+      <type>constexpr bool</type>
       <name>IsOk</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a644febf37130fba98a432cef161bccc0</anchor>
+      <anchor>a030d244ccd9a40a9f9ac813ea912a639</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>etcpal_error_t</type>
+      <type>constexpr etcpal_error_t</type>
       <name>code</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a3379f90d50bc0858a3c2fb44eb4f5edd</anchor>
+      <anchor>a65e890bf700cdd8262c552690a03baad</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -1462,17 +1455,17 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type></type>
+      <type>constexpr</type>
       <name>operator bool</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a420e60e9788bfa3b52aa3aab72ea3a5e</anchor>
+      <anchor>a7990d8e87d9eab2383f94c88c23a6488</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function" static="yes">
-      <type>static Result</type>
+      <type>static constexpr Result</type>
       <name>Ok</name>
       <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a9908177b0717b32031b195426058cc9a</anchor>
+      <anchor>a466e2e4a2b6c74e6f7c7140579d10a09</anchor>
       <arglist>() noexcept</arglist>
     </member>
   </compound>
@@ -2623,16 +2616,16 @@
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>etcpal_log_callback</name>
+      <name>EtcPalLogCallback</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga2149ec5b6a6311efd2c235358f3c49c7</anchor>
+      <anchor>gaf8d8eef393a51fca0f1ddbfd7cad9c82</anchor>
       <arglist>)(void *context, const EtcPalLogStrings *strings)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
-      <name>etcpal_log_time_fn</name>
+      <name>EtcPalLogTimeFn</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga738d510e7988bf2364ed059fb193a5ae</anchor>
+      <anchor>ga3e3f125146999063f5d25dc98686744d</anchor>
       <arglist>)(void *context, EtcPalLogTimeParams *time_params)</arglist>
     </member>
     <member kind="typedef">
@@ -2685,8 +2678,8 @@
       <type>bool</type>
       <name>etcpal_create_human_log_str</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gaeb1f0786f9b553d05991a97db73e3dad</anchor>
-      <arglist>(char *buf, size_t buflen, const EtcPalLogTimeParams *time, const char *format,...)</arglist>
+      <anchor>gaa2bb79ac403c09c2c05ce3fab966b053</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimeParams *time, int pri, const char *format,...)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
