@@ -11,95 +11,105 @@ pr:
 variables:
   cmake_definitions: -DETCPAL_BUILD_MOCK_LIB=ON -DETCPAL_BUILDING_FOR_AZURE_PIPELINES_CI=1
 
-jobs:
-# Build and test EtcPal on Windows using CMake and Visual Studio 2019.
-- job: windows_build
-  displayName: 'Windows Build and Test'
-  pool:
-    vmImage: 'windows-2019'
-  variables:
-    cmake_generator: 'Visual Studio 16 2019'
-  steps:
-  - script: |
-      mkdir build
-      cd build
-      cmake --version
-      cmake -G "$(cmake_generator)" -A x64 $(cmake_definitions) ..
-    displayName: 'Configure Project'
-  - task: VSBuild@1
-    displayName: 'Build Project'
-    inputs:
-      solution: $(Build.SourcesDirectory)\build\EtcPal.sln
-      configuration: Release
-  - script: |
-      cd build
-      ctest --verbose -C Release
-    displayName: 'Run Tests'
+stages:
+- stage: build_and_test
+  displayName: 'Build and Test EtcPal'
+  jobs:
+  # Build and test EtcPal on Windows using CMake and Visual Studio 2019.
+  - job: windows_build
+    displayName: 'Windows'
+    pool:
+      vmImage: 'windows-2019'
+    variables:
+      cmake_generator: 'Visual Studio 16 2019'
+    steps:
+    - script: |
+        mkdir build
+        cd build
+        cmake --version
+        cmake -G "$(cmake_generator)" -A x64 $(cmake_definitions) ..
+      displayName: 'Configure Project'
+    - task: VSBuild@1
+      displayName: 'Build Project'
+      inputs:
+        solution: $(Build.SourcesDirectory)\build\EtcPal.sln
+        configuration: Release
+    - script: |
+        cd build
+        ctest --verbose -C Release
+      displayName: 'Run Tests'
+  # Build and test EtcPal on macOS using CMake and Xcode/clang
+  - job: macos_build
+    displayName: 'macOS'
+    pool:
+      vmImage: 'macos-latest'
+    steps:
+    - script: |
+        mkdir build
+        cd build
+        cmake --version
+        cmake $(cmake_definitions) ..
+        cmake --build .
+      displayName: 'Configure and Build Project'
+    - script: |
+        cd build
+        ctest --verbose
+      displayName: 'Run Tests'
+  # Build and test EtcPal on Linux using CMake and gcc
+  - job: linux_build
+    displayName: 'Linux'
+    pool:
+      # TODO change to ubuntu-latest when this issue is fixed:
+      # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
+      vmImage: 'ubuntu-18.04'
+    steps:
+    - script: |
+        sudo apt-get update
+        sudo apt-get install uuid-dev
+        mkdir build
+        cd build
+        cmake --version
+        cmake -G "Unix Makefiles" $(cmake_definitions) ..
+        cmake --build .
+      displayName: 'Configure and Build Project'
+    - script: |
+        cd build
+        ctest --verbose
+      displayName: 'Run Tests'
+  # Generate documentation with doxygen. Documentation is generated from the
+  # develop branch and posted to the 'head' portion of the Github page
+  # (etclabs.github.io/EtcPal)
+  - job: docs
+    displayName: 'Deploy Documentation'
+    condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/pull'))
+    pool:
+      # TODO change to ubuntu-latest when this issue is fixed:
+      # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
+      vmImage: 'ubuntu-18.04'
+    variables: 
+    - group: github-push-access
+    steps:
+    - script: sudo apt-get install doxygen
+      displayName: 'Install Doxygen'
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+    - task: ShellScript@2
+      inputs:
+        scriptPath: 'tools/ci/publish_docs.sh'
+        failOnStandardError: false
+      displayName: 'Generate and Push Documentation'
+      env:
+        GH_REPO_NAME: EtcPal
+        GH_REPO_REF: github.com/ETCLabs/EtcPal.git
+        GH_REPO_TOKEN: $(GH_ACCESS_TOKEN)
 
-- job: macos_build
-  displayName: 'macOS Build and Test'
-  pool:
-    vmImage: 'macos-latest'
-  steps:
-  - script: |
-      mkdir build
-      cd build
-      cmake --version
-      cmake $(cmake_definitions) ..
-      cmake --build .
-    displayName: 'Configure and Build Project'
-  - script: |
-      cd build
-      ctest --verbose
-    displayName: 'Run Tests'
-
-- job: linux_build
-  displayName: 'Linux Build and Test'
-  pool:
-    # TODO change to ubuntu-latest when this issue is fixed:
-    # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
-    vmImage: 'ubuntu-18.04'
-  steps:
-  - script: |
-      sudo apt-get update
-      sudo apt-get install uuid-dev
-      mkdir build
-      cd build
-      cmake --version
-      cmake -G "Unix Makefiles" $(cmake_definitions) ..
-      cmake --build .
-    displayName: 'Configure and Build Project'
-  - script: |
-      cd build
-      ctest --verbose
-    displayName: 'Run Tests'
-
-# Generate documentation with doxygen. Documentation is generated from the
-# develop branch and posted to the 'head' portion of the Github page
-# (etclabs.github.io/EtcPal)
-- job: docs
-  displayName: 'Deploy Documentation'
-  condition: or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'), startsWith(variables['Build.SourceBranch'], 'refs/pull'))
-  pool:
-    # TODO change to ubuntu-latest when this issue is fixed:
-    # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
-    vmImage: 'ubuntu-18.04'
-  variables: 
-  - group: github-push-access
-  steps:
-  - script: sudo apt-get install doxygen
-    displayName: 'Install Doxygen'
-  - task: UsePythonVersion@0
-    inputs:
-      versionSpec: '3.x'
-      addToPath: true
-  - task: ShellScript@2
-    inputs:
-      scriptPath: 'tools/ci/publish_docs.sh'
-      failOnStandardError: false
-    displayName: 'Generate and Push Documentation'
-    env:
-      GH_REPO_NAME: EtcPal
-      GH_REPO_REF: github.com/ETCLabs/EtcPal.git
-      GH_REPO_TOKEN: $(GH_ACCESS_TOKEN)
-  
+- stage: deploy
+  displayName: 'Deploy Build Artifacts'
+  condition: and(succeeded('build_and_test'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  jobs:
+  - job: create_build_report
+    displayName: 'Create Build Report'
+    pool:
+      vmImage: 'ubuntu-latest'

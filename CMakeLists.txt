@@ -44,7 +44,7 @@ option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" ${OPTION_DEFAULTS})
 option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps" ${OPTION_DEFAULTS})
 
 # Platform support
-include(${PROJECT_SOURCE_DIR}/tools/cmake/etcpal-os.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/etcpal-os.cmake)
 
 if(ETCPAL_BUILD_MOCK_LIB OR ETCPAL_BUILD_TESTS)
   add_subdirectory(external/fff)
