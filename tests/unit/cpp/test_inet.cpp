@@ -336,6 +336,29 @@ TEST(etcpal_cpp_inet, ip_is_wildcard_works)
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
 }
 
+// More rigorous testing is done in the C unit tests, we just do a few tests here
+TEST(etcpal_cpp_inet, mask_length_works)
+{
+  auto ip = etcpal::IpAddr::FromString("255.254.0.0");
+  TEST_ASSERT_EQUAL_UINT(ip.MaskLength(), 15);
+
+  ip = etcpal::IpAddr::FromString("ffff:ffff:ffff:fffe::");
+  TEST_ASSERT_EQUAL_UINT(ip.MaskLength(), 63);
+}
+
+// More rigorous testing is done in the C unit tests, we just do a few tests here
+TEST(etcpal_cpp_inet, netmask_from_length_works)
+{
+  auto ip = etcpal::IpAddr::NetmaskV4(20);
+  TEST_ASSERT_EQUAL(ip.MaskLength(), 20);
+  ip = etcpal::IpAddr::NetmaskV6(127);
+  TEST_ASSERT_EQUAL(ip.MaskLength(), 127);
+  ip = etcpal::IpAddr::Netmask(etcpal::IpAddrType::V4, 32);
+  TEST_ASSERT_EQUAL(ip.MaskLength(), 32);
+  ip = etcpal::IpAddr::Netmask(etcpal::IpAddrType::V6, 128);
+  TEST_ASSERT_EQUAL(ip.MaskLength(), 128);
+}
+
 TEST(etcpal_cpp_inet, sockaddr_default_constructor_works)
 {
   etcpal::SockAddr sockaddr;
@@ -519,6 +542,8 @@ TEST_GROUP_RUNNER(etcpal_cpp_inet)
   RUN_TEST_CASE(etcpal_cpp_inet, ip_is_loopback_works);
   RUN_TEST_CASE(etcpal_cpp_inet, ip_is_multicast_works);
   RUN_TEST_CASE(etcpal_cpp_inet, ip_is_wildcard_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_mask_length_works)
+  RUN_TEST_CASE(etcpal_cpp_inet, ip_netmask_from_length_works)
   RUN_TEST_CASE(etcpal_cpp_inet, sockaddr_default_constructor_works);
   RUN_TEST_CASE(etcpal_cpp_inet, sockaddr_copy_constructors_work);
   RUN_TEST_CASE(etcpal_cpp_inet, sockaddr_assignment_operators_work);

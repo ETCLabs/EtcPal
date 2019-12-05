@@ -78,6 +78,7 @@ public:
   bool IsLoopback() const noexcept;
   bool IsMulticast() const noexcept;
   bool IsWildcard() const noexcept;
+  unsigned int MaskLength() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -87,6 +88,9 @@ public:
   static IpAddr WildcardV4() noexcept;
   static IpAddr WildcardV6() noexcept;
   static IpAddr Wildcard(IpAddrType type) noexcept;
+  static IpAddr NetmaskV4(unsigned int mask_length) noexcept;
+  static IpAddr NetmaskV6(unsigned int mask_length) noexcept;
+  static IpAddr Netmask(IpAddrType type, unsigned int mask_length) noexcept;
 
 private:
   EtcPalIpAddr addr_{};
@@ -255,6 +259,14 @@ inline bool IpAddr::IsWildcard() const noexcept
   return etcpal_ip_is_wildcard(&addr_);
 }
 
+/// \brief The number of consecutive set bits in a netmask.
+///
+/// See etcpal_ip_mask_length() for more information.
+inline unsigned int IpAddr::MaskLength() const noexcept
+{
+  return etcpal_ip_mask_length(&addr_);
+}
+
 /// \brief Set the IPv4 address data.
 ///
 /// Automatically converts this address's type to V4.
@@ -323,6 +335,30 @@ inline IpAddr IpAddr::Wildcard(IpAddrType type) noexcept
   IpAddr result;
   etcpal_ip_set_wildcard(static_cast<etcpal_iptype_t>(type), &result.addr_);
   return result;
+}
+
+/// \brief Construct an IPv4 netmask given a length in bits.
+///
+/// See etcpal_ip_mask_from_length() for more information.
+inline IpAddr IpAddr::NetmaskV4(unsigned int mask_length) noexcept
+{
+  return Netmask(IpAddrType::V4, mask_length);
+}
+
+/// \brief Construct an IPv6 netmask given a length in bits.
+///
+/// See etcpal_ip_mask_from_length() for more information.
+inline IpAddr IpAddr::NetmaskV6(unsigned int mask_length) noexcept
+{
+  return Netmask(IpAddrType::V6, mask_length);
+}
+
+/// \brief Construct a netmask of the type specifed given a length in bits.
+///
+/// See etcpal_ip_mask_from_length() for more information.
+inline IpAddr IpAddr::Netmask(IpAddrType type, unsigned int mask_length) noexcept
+{
+  return etcpal_ip_mask_from_length(static_cast<etcpal_iptype_t>(type), mask_length);
 }
 
 /// \ingroup etcpal_cpp_inet
