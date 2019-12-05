@@ -33,18 +33,27 @@ TEST_TEAR_DOWN(etcpal_cpp_thread)
 {
 }
 
+using namespace std::chrono_literals;
+
 TEST(etcpal_cpp_thread, placeholder)
 {
   auto thread_func = []() { std::printf("Hello, world!\n"); };
   etcpal::Thread thrd(thread_func);
+  thrd.Join();
 
   auto thread_func_2 = [](int number) { std::printf("The number is %d\n", number); };
   etcpal::Thread thrd_2(thread_func_2, 42);
+  thrd_2.Join();
 
   std::vector<etcpal::Thread> threads;
   for (int i = 0; i < 10; ++i)
   {
     threads.push_back(etcpal::Thread([]() { std::printf("Hello hello hello hello hello hello hello\n"); }));
+  }
+
+  for (auto& thread : threads)
+  {
+    thread.Join();
   }
 }
 
