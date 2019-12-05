@@ -337,7 +337,7 @@ TEST(etcpal_cpp_inet, ip_is_wildcard_works)
 }
 
 // More rigorous testing is done in the C unit tests, we just do a few tests here
-TEST(etcpal_cpp_inet, mask_length_works)
+TEST(etcpal_cpp_inet, ip_mask_length_works)
 {
   auto ip = etcpal::IpAddr::FromString("255.254.0.0");
   TEST_ASSERT_EQUAL_UINT(ip.MaskLength(), 15);
@@ -347,7 +347,7 @@ TEST(etcpal_cpp_inet, mask_length_works)
 }
 
 // More rigorous testing is done in the C unit tests, we just do a few tests here
-TEST(etcpal_cpp_inet, netmask_from_length_works)
+TEST(etcpal_cpp_inet, ip_netmask_from_length_works)
 {
   auto ip = etcpal::IpAddr::NetmaskV4(20);
   TEST_ASSERT_EQUAL(ip.MaskLength(), 20);
