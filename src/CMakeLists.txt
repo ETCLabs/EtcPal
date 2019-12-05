@@ -172,3 +172,12 @@ if(ETCPAL_BUILD_MOCK_LIB)
     set_target_properties(EtcPalMock PROPERTIES C_STANDARD 99)
   endif()
 endif()
+
+###############################################################################
+# EtcPalCpp header-only interface library
+###############################################################################
+
+add_library(EtcPalCpp INTERFACE)
+target_link_libraries(EtcPalCpp INTERFACE EtcPal)
+
+install(DIRECTORY ${ETCPAL_ROOT}/include/etcpal/cpp DESTINATION include/etcpal FILES_MATCHING PATTERN "*.h")
