@@ -29,6 +29,7 @@
 #include <iterator>
 #include <string>
 #include "etcpal/inet.h"
+#include "etcpal/cpp/common.h"
 
 namespace etcpal
 {
@@ -52,32 +53,33 @@ enum class IpAddrType
 class IpAddr
 {
 public:
-  IpAddr() noexcept;
+  ETCPAL_CONSTEXPR_14 IpAddr() noexcept;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::IpAddr ip = etcpal_c_function_that_returns_ip();
-  IpAddr(const EtcPalIpAddr& c_ip) noexcept;
+  constexpr IpAddr(const EtcPalIpAddr& c_ip) noexcept;
   IpAddr& operator=(const EtcPalIpAddr& c_ip) noexcept;
 
-  IpAddr(uint32_t v4_data) noexcept;
+  ETCPAL_CONSTEXPR_14 IpAddr(uint32_t v4_data) noexcept;
   explicit IpAddr(const uint8_t* v6_data) noexcept;
   IpAddr(const uint8_t* v6_data, unsigned long scope_id) noexcept;
 
-  const EtcPalIpAddr& get() const noexcept;
-  EtcPalIpAddr& get() noexcept;
+  constexpr const EtcPalIpAddr& get() const noexcept;
+  ETCPAL_CONSTEXPR_14 EtcPalIpAddr& get() noexcept;
   std::string ToString() const;
-  uint32_t v4_data() const noexcept;
-  const uint8_t* v6_data() const noexcept;
+  constexpr uint32_t v4_data() const noexcept;
+  constexpr const uint8_t* v6_data() const noexcept;
   std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
-  unsigned long scope_id() const noexcept;
+  constexpr unsigned long scope_id() const noexcept;
 
-  bool IsValid() const noexcept;
-  IpAddrType type() const noexcept;
-  bool IsV4() const noexcept;
-  bool IsV6() const noexcept;
+  constexpr bool IsValid() const noexcept;
+  constexpr IpAddrType type() const noexcept;
+  constexpr bool IsV4() const noexcept;
+  constexpr bool IsV6() const noexcept;
   bool IsLinkLocal() const noexcept;
   bool IsLoopback() const noexcept;
   bool IsMulticast() const noexcept;
   bool IsWildcard() const noexcept;
+  unsigned int MaskLength() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -87,19 +89,22 @@ public:
   static IpAddr WildcardV4() noexcept;
   static IpAddr WildcardV6() noexcept;
   static IpAddr Wildcard(IpAddrType type) noexcept;
+  static IpAddr NetmaskV4(unsigned int mask_length) noexcept;
+  static IpAddr NetmaskV6(unsigned int mask_length) noexcept;
+  static IpAddr Netmask(IpAddrType type, unsigned int mask_length) noexcept;
 
 private:
   EtcPalIpAddr addr_{};
 };
 
 /// \brief Constructs an invalid IP address by default.
-inline IpAddr::IpAddr() noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE IpAddr::IpAddr() noexcept
 {
   ETCPAL_IP_SET_INVALID(&addr_);
 }
 
 /// \brief Construct an IP address copied from an instance of the C EtcPalIpAddr type.
-inline IpAddr::IpAddr(const EtcPalIpAddr& c_ip) noexcept : addr_(c_ip)
+constexpr IpAddr::IpAddr(const EtcPalIpAddr& c_ip) noexcept : addr_(c_ip)
 {
 }
 
@@ -112,7 +117,7 @@ inline IpAddr& IpAddr::operator=(const EtcPalIpAddr& c_ip) noexcept
 
 /// \brief Construct an IPv4 address from its raw 32-bit representation.
 /// \param[in] v4_data The address data in host byte order.
-inline IpAddr::IpAddr(uint32_t v4_data) noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE IpAddr::IpAddr(uint32_t v4_data) noexcept
 {
   ETCPAL_IP_SET_V4_ADDRESS(&addr_, v4_data);
 }
@@ -136,13 +141,13 @@ inline IpAddr::IpAddr(const uint8_t* v6_data, unsigned long scope_id) noexcept
 }
 
 /// \brief Get a const reference to the underlying C type.
-inline const EtcPalIpAddr& IpAddr::get() const noexcept
+constexpr const EtcPalIpAddr& IpAddr::get() const noexcept
 {
   return addr_;
 }
 
 /// \brief Get a mutable reference to the underlying C type.
-inline EtcPalIpAddr& IpAddr::get() noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalIpAddr& IpAddr::get() noexcept
 {
   return addr_;
 }
@@ -165,7 +170,7 @@ inline std::string IpAddr::ToString() const
 /// This function will return undefined data if the IpAddr's type is V6 or Invalid.
 ///
 /// \return The address data in host byte order.
-inline uint32_t IpAddr::v4_data() const noexcept
+constexpr uint32_t IpAddr::v4_data() const noexcept
 {
   return ETCPAL_IP_V4_ADDRESS(&addr_);
 }
@@ -174,7 +179,7 @@ inline uint32_t IpAddr::v4_data() const noexcept
 ///
 /// The returned pointer has the same lifetime as this IpAddr instance. This function will return
 /// undefined data if the IpAddr's type is V4 or Invalid.
-inline const uint8_t* IpAddr::v6_data() const noexcept
+constexpr const uint8_t* IpAddr::v6_data() const noexcept
 {
   return ETCPAL_IP_V6_ADDRESS(&addr_);
 }
@@ -200,31 +205,31 @@ inline std::array<uint8_t, ETCPAL_IPV6_BYTES> IpAddr::ToV6Array() const
 /// This function will return undefined data if the IpAddr's type is V4 or Invalid.
 ///
 /// \return The scope ID.
-inline unsigned long IpAddr::scope_id() const noexcept
+constexpr unsigned long IpAddr::scope_id() const noexcept
 {
   return addr_.addr.v6.scope_id;
 }
 
 /// \brief Whether an IpAddr contains a valid IPv4 or IPv6 address.
-inline bool IpAddr::IsValid() const noexcept
+constexpr bool IpAddr::IsValid() const noexcept
 {
   return !ETCPAL_IP_IS_INVALID(&addr_);
 }
 
 /// \brief Get the type of the IP address.
-inline IpAddrType IpAddr::type() const noexcept
+constexpr IpAddrType IpAddr::type() const noexcept
 {
   return static_cast<IpAddrType>(addr_.type);
 }
 
 /// \brief Whether an IpAddr contains a valid IPv4 address.
-inline bool IpAddr::IsV4() const noexcept
+constexpr bool IpAddr::IsV4() const noexcept
 {
   return ETCPAL_IP_IS_V4(&addr_);
 }
 
 /// \brief Whether an IpAddr contains a valid IPv6 address.
-inline bool IpAddr::IsV6() const noexcept
+constexpr bool IpAddr::IsV6() const noexcept
 {
   return ETCPAL_IP_IS_V6(&addr_);
 }
@@ -253,6 +258,14 @@ inline bool IpAddr::IsMulticast() const noexcept
 inline bool IpAddr::IsWildcard() const noexcept
 {
   return etcpal_ip_is_wildcard(&addr_);
+}
+
+/// \brief The number of consecutive set bits in a netmask.
+///
+/// See etcpal_ip_mask_length() for more information.
+inline unsigned int IpAddr::MaskLength() const noexcept
+{
+  return etcpal_ip_mask_length(&addr_);
 }
 
 /// \brief Set the IPv4 address data.
@@ -325,6 +338,30 @@ inline IpAddr IpAddr::Wildcard(IpAddrType type) noexcept
   return result;
 }
 
+/// \brief Construct an IPv4 netmask given a length in bits.
+///
+/// See etcpal_ip_mask_from_length() for more information.
+inline IpAddr IpAddr::NetmaskV4(unsigned int mask_length) noexcept
+{
+  return Netmask(IpAddrType::V4, mask_length);
+}
+
+/// \brief Construct an IPv6 netmask given a length in bits.
+///
+/// See etcpal_ip_mask_from_length() for more information.
+inline IpAddr IpAddr::NetmaskV6(unsigned int mask_length) noexcept
+{
+  return Netmask(IpAddrType::V6, mask_length);
+}
+
+/// \brief Construct a netmask of the type specifed given a length in bits.
+///
+/// See etcpal_ip_mask_from_length() for more information.
+inline IpAddr IpAddr::Netmask(IpAddrType type, unsigned int mask_length) noexcept
+{
+  return etcpal_ip_mask_from_length(static_cast<etcpal_iptype_t>(type), mask_length);
+}
+
 /// \ingroup etcpal_cpp_inet
 /// \brief A wrapper for the EtcPal socket address type.
 ///
@@ -333,22 +370,22 @@ inline IpAddr IpAddr::Wildcard(IpAddrType type) noexcept
 class SockAddr
 {
 public:
-  SockAddr() noexcept;
+  ETCPAL_CONSTEXPR_14 SockAddr() noexcept;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::SockAddr sa = etcpal_c_function_that_returns_sockaddr();
-  SockAddr(const EtcPalSockAddr& c_sa) noexcept;
+  constexpr SockAddr(const EtcPalSockAddr& c_sa) noexcept;
   SockAddr& operator=(const EtcPalSockAddr& c_sa) noexcept;
 
-  SockAddr(uint32_t v4_data, uint16_t port) noexcept;
+  ETCPAL_CONSTEXPR_14 SockAddr(uint32_t v4_data, uint16_t port) noexcept;
   SockAddr(const uint8_t* v6_data, uint16_t port) noexcept;
   SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16_t port) noexcept;
-  SockAddr(IpAddr ip, uint16_t port) noexcept;
+  ETCPAL_CONSTEXPR_14 SockAddr(IpAddr ip, uint16_t port) noexcept;
 
-  const EtcPalSockAddr& get() const noexcept;
-  EtcPalSockAddr& get() noexcept;
+  constexpr const EtcPalSockAddr& get() const noexcept;
+  ETCPAL_CONSTEXPR_14 EtcPalSockAddr& get() noexcept;
   std::string ToString() const;
-  IpAddr ip() const noexcept;
-  uint16_t port() const noexcept;
+  constexpr IpAddr ip() const noexcept;
+  constexpr uint16_t port() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -361,13 +398,13 @@ private:
 };
 
 /// \brief Constructs an invalid SockAddr by default.
-inline SockAddr::SockAddr() noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE SockAddr::SockAddr() noexcept
 {
   ETCPAL_IP_SET_INVALID(&addr_.ip);
 }
 
 /// \brief Construct a SockAddr copied from an instance of the C EtcPalSockAddr type.
-inline SockAddr::SockAddr(const EtcPalSockAddr& c_sa) noexcept : addr_(c_sa)
+constexpr SockAddr::SockAddr(const EtcPalSockAddr& c_sa) noexcept : addr_(c_sa)
 {
 }
 
@@ -381,7 +418,7 @@ inline SockAddr& SockAddr::operator=(const EtcPalSockAddr& c_sa) noexcept
 /// \brief Construct a SockAddr from a raw 32-bit IPv4 representation and port number.
 /// \param[in] v4_data The address data in host byte order.
 /// \param[in] port The port number in host byte order.
-inline SockAddr::SockAddr(uint32_t v4_data, uint16_t port) noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE SockAddr::SockAddr(uint32_t v4_data, uint16_t port) noexcept
 {
   ETCPAL_IP_SET_V4_ADDRESS(&addr_.ip, v4_data);
   addr_.port = port;
@@ -412,20 +449,20 @@ inline SockAddr::SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16
 /// \brief Construct a SockAddr from an IpAddr and port number.
 /// \param[in] ip The IP address.
 /// \param[in] port The port number in host byte order.
-inline SockAddr::SockAddr(IpAddr ip, uint16_t port) noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE SockAddr::SockAddr(IpAddr ip, uint16_t port) noexcept
 {
   addr_.ip = ip.get();
   addr_.port = port;
 }
 
 /// \brief Get a const reference to the underlying C type.
-inline const EtcPalSockAddr& SockAddr::get() const noexcept
+constexpr const EtcPalSockAddr& SockAddr::get() const noexcept
 {
   return addr_;
 }
 
 /// \brief Get a mutable reference to the underlying C type.
-inline EtcPalSockAddr& SockAddr::get() noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalSockAddr& SockAddr::get() noexcept
 {
   return addr_;
 }
@@ -446,13 +483,13 @@ inline std::string SockAddr::ToString() const
 }
 
 /// \brief Get the IP address from the SockAddr.
-inline IpAddr SockAddr::ip() const noexcept
+constexpr IpAddr SockAddr::ip() const noexcept
 {
   return addr_.ip;
 }
 
 /// \brief Get the port number from the SockAddr.
-inline uint16_t SockAddr::port() const noexcept
+constexpr uint16_t SockAddr::port() const noexcept
 {
   return addr_.port;
 }
@@ -513,14 +550,14 @@ public:
   MacAddr() = default;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::MacAddr sa = etcpal_c_function_that_returns_macaddr();
-  MacAddr(const EtcPalMacAddr& c_mac) noexcept;
+  constexpr MacAddr(const EtcPalMacAddr& c_mac) noexcept;
   MacAddr& operator=(const EtcPalMacAddr& c_mac) noexcept;
   explicit MacAddr(const uint8_t* mac_data) noexcept;
 
-  const EtcPalMacAddr& get() const noexcept;
-  EtcPalMacAddr& get() noexcept;
+  constexpr const EtcPalMacAddr& get() const noexcept;
+  ETCPAL_CONSTEXPR_14 EtcPalMacAddr& get() noexcept;
   std::string ToString() const;
-  const uint8_t* data() const noexcept;
+  constexpr const uint8_t* data() const noexcept;
   std::array<uint8_t, ETCPAL_MAC_BYTES> ToArray() const noexcept;
 
   bool IsNull() const noexcept;
@@ -532,7 +569,7 @@ private:
 };
 
 /// \brief Construct a MAC address copied from an instance of the C EtcPalMacAddr type.
-inline MacAddr::MacAddr(const EtcPalMacAddr& c_mac) noexcept : addr_(c_mac)
+constexpr MacAddr::MacAddr(const EtcPalMacAddr& c_mac) noexcept : addr_(c_mac)
 {
 }
 
@@ -551,13 +588,13 @@ inline MacAddr::MacAddr(const uint8_t* mac_data) noexcept
 }
 
 /// \brief Get a const reference to the underlying C type.
-inline const EtcPalMacAddr& MacAddr::get() const noexcept
+constexpr const EtcPalMacAddr& MacAddr::get() const noexcept
 {
   return addr_;
 }
 
 /// \brief Get a mutable reference to the underlying C type.
-inline EtcPalMacAddr& MacAddr::get() noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalMacAddr& MacAddr::get() noexcept
 {
   return addr_;
 }
@@ -574,7 +611,7 @@ inline std::string MacAddr::ToString() const
 
 /// \brief Get the raw 6-byte array representation of a MAC address.
 /// \return Pointer to an array of length #ETCPAL_MAC_BYTES containing the address data.
-inline const uint8_t* MacAddr::data() const noexcept
+constexpr const uint8_t* MacAddr::data() const noexcept
 {
   return addr_.data;
 }
