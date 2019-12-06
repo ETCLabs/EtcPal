@@ -31,7 +31,7 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_uuid etcpal_cpp_uuid
+/// \defgroup etcpal_cpp_uuid UUIDs (uuid)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_uuid module.
 
@@ -47,10 +47,10 @@ public:
   Uuid() = default;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::Uuid uuid = etcpal_c_function_that_returns_uuid();
-  Uuid(const EtcPalUuid& c_uuid);
+  constexpr Uuid(const EtcPalUuid& c_uuid);
   Uuid& operator=(const EtcPalUuid& c_uuid);
 
-  const EtcPalUuid& get() const;
+  constexpr const EtcPalUuid& get() const;
   std::string ToString() const;
   bool IsNull() const;
 
@@ -65,7 +65,7 @@ private:
 };
 
 /// \brief Construct a UUID copied from an instance of the C EtcPalUuid type.
-inline Uuid::Uuid(const EtcPalUuid& c_uuid) : uuid_(c_uuid)
+constexpr Uuid::Uuid(const EtcPalUuid& c_uuid) : uuid_(c_uuid)
 {
 }
 
@@ -77,7 +77,7 @@ inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid)
 }
 
 /// \brief Get a reference to the underlying C type.
-inline const EtcPalUuid& Uuid::get() const
+constexpr const EtcPalUuid& Uuid::get() const
 {
   return uuid_;
 }
@@ -151,6 +151,9 @@ inline Uuid Uuid::OsPreferred()
 /// \addtogroup etcpal_cpp_uuid
 /// @{
 
+/// \name UUID Relational Operators
+/// @{
+
 // Special operators for comparing with EtcPalUuids
 
 inline bool operator==(const EtcPalUuid& c_uuid, const Uuid& uuid) noexcept
@@ -205,6 +208,7 @@ inline bool operator>=(const Uuid& a, const Uuid& b) noexcept
   return !(a < b);
 }
 
+/// @}
 /// @}
 
 };  // namespace etcpal

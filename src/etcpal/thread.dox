@@ -3,27 +3,9 @@ platform-specific, and some of them implement types and functions differently (i
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
 /*!
- * \defgroup etcpal_thread etcpal_thread
- * \ingroup etcpal
- * \brief Platform-neutral threads.
- *
- * \#include "etcpal_thread.h"
- *
+ * \addtogroup etcpal_thread
  * @{
  */
-
-/*! A set of parameters for an etcpal_thread. */
-typedef struct EtcPalThreadParams
-{
-  /*! The priority of the thread. Note that thread priority is not valid on all platforms. */
-  unsigned int thread_priority;
-  /*! The stack size of the thread. Note that thread stack size is not valid on all platforms. */
-  unsigned int stack_size;
-  /*! A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH. */
-  char *thread_name;
-  /*! Pointer to a platform-specific parameter structure. */
-  void *platform_data;
-} EtcPalThreadParams;
 
 /*!
  * \brief The platform-specific default priority for an etcpal_thread.

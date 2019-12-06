@@ -50,11 +50,15 @@ extern "C" {
 /*! A mask of desired EtcPal features. See "EtcPal feature masks". */
 typedef uint32_t etcpal_features_t;
 
+/*! \cond feature_offset_values */
+
 #define ETCPAL_FEATURE_SOCKETS_OFFSET 0
 #define ETCPAL_FEATURE_NETINTS_OFFSET 1
 #define ETCPAL_FEATURE_TIMERS_OFFSET 2
 #define ETCPAL_FEATURE_LOGGING_OFFSET 3
 #define ETCPAL_NUM_FEATURES 4
+
+/*! \endcond */
 
 /*!
  * \name EtcPal feature masks

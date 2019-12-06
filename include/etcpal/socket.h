@@ -29,11 +29,13 @@
 #include "etcpal/inet.h"
 
 /*!
- * \defgroup etcpal_socket etcpal_socket
+ * \defgroup etcpal_socket Network Socket Interface (socket)
  * \ingroup etcpal
  * \brief Platform-neutral BSD-modeled network socket implementation.
  *
- * \#include "etcpal/socket.h"
+ * ```c
+ * #include "etcpal/socket.h"
+ * ```
  *
  * This module attempts to abstract the network socket interface from various platforms into one
  * platform-neutral interface. The functions and flags are modeled after the BSD sockets
@@ -234,7 +236,7 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
  * @}
  */
 
-/* Mask of valid events for use with etcpal_poll_add_socket(). */
+/*! Mask of valid events for use with etcpal_poll_add_socket(). */
 #define ETCPAL_POLL_VALID_INPUT_EVENT_MASK 0x0fu
 
 /*! A description of an event that occurred on a socket, for usage with etcpal_poll_wait(). */

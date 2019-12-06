@@ -3,18 +3,20 @@ platform-specific, and some of them implement types and functions differently (i
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
 /*!
- * \defgroup etcpal_lock etcpal_lock
+ * \defgroup etcpal_lock Locks and Synchronization (lock)
  * \ingroup etcpal
  * \brief Platform-neutral locks, mutexes and signals.
  *
- * \#include "etcpal_lock.h"
+ * ```c
+ * #include "etcpal/lock.h"
+ * ```
  *
  * @{
  */
 
 /*!
- * \defgroup etcpal_mutex etcpal_mutex
- * \brief A mutual-exclusion (mutex) object.
+ * \defgroup etcpal_mutex Mutexes
+ * \brief Mutual-exclusion (mutex) objects.
  *
  * Sometimes also referred to as a critical section. Only one thread can take the mutex at a time
  * using etcpal_mutex_take(). Where possible on real-time platforms, the mutex provides priority
@@ -88,8 +90,8 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  */
 
 /*!
- * \defgroup etcpal_signal etcpal_signal
- * \brief A signal object.
+ * \defgroup etcpal_signal Signals
+ * \brief Signal objects.
  *
  * Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
  * call to etcpal_signal_wait() blocks until etcpal_signal_post() is called.
@@ -173,8 +175,8 @@ void etcpal_signal_destroy(etcpal_signal_t *id);
  */
 
 /*!
- * \defgroup etcpal_rwlock etcpal_rwlock
- * \brief A reader-writer lock object.
+ * \defgroup etcpal_rwlock Read-Write Locks
+ * \brief Reader-writer lock objects.
  *
  * Sometimes also referred to as a shared-exclusive lock or multi-reader lock. When implemented to
  * protect a resource, allows multiple "readers" to access the resource at the same time for

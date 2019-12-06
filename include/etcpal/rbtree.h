@@ -42,11 +42,13 @@
 #include "etcpal/error.h"
 
 /*!
- * \defgroup etcpal_rbtree etcpal_rbtree
+ * \defgroup etcpal_rbtree Red-Black Trees (rbtree)
  * \ingroup etcpal
  * \brief A red-black tree implementation.
  *
- * \#include "etcpal/rbtree.h"
+ * ```c
+ * #include "etcpal/rbtree.h"
+ * ```
  *
  * A red-black tree is a popular design for a self-balancing binary search tree. Based on a
  * public-domain red-black tree implementation; see the header file for details.
@@ -59,8 +61,10 @@
 #define ETCPAL_RB_ITER_MAX_HEIGHT 64
 #endif
 
+/*! \cond rb_struct_typedefs */
 typedef struct EtcPalRbNode EtcPalRbNode;
 typedef struct EtcPalRbTree EtcPalRbTree;
+/*! \endcond */
 
 /*!
  * \name Callback Functions
@@ -88,8 +92,8 @@ typedef int (*EtcPalRbTreeNodeCmpFunc)(const EtcPalRbTree* self, const EtcPalRbN
  *
  * Usually provided on a tree-wide clear or destroy operation; in this case, it should provide any
  * deallocation necessary for the node structure and its value. A default,
- * etcpal_rbtree_node_dealloc_cb(), is provided which simply calls the tree's #etcpal_rbnode_dealloc_f on the
- * node.
+ * etcpal_rbtree_node_dealloc_cb(), is provided which simply calls the tree's
+ * #EtcPalRbNodeDeallocFunc on the node.
  *
  * \param[in] self The tree in which the node resides.
  * \param[in] node The node for which an action should be performed.

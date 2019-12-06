@@ -21,7 +21,7 @@ if(PROJECT_SOURCE_DIR_LC STREQUAL CMAKE_SOURCE_DIR_LC)
   if (MSVC)
     add_compile_options(/W4 /permissive-)
   elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    add_compile_options(-Wall -Wconversion)
+    add_compile_options(-Wall)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
       add_compile_options(-Wno-sign-conversion)
     else()
@@ -44,7 +44,7 @@ option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" ${OPTION_DEFAULTS})
 option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps" ${OPTION_DEFAULTS})
 
 # Platform support
-include(${PROJECT_SOURCE_DIR}/tools/cmake/etcpal-os.cmake)
+include(${PROJECT_SOURCE_DIR}/cmake/etcpal-os.cmake)
 
 if(ETCPAL_BUILD_MOCK_LIB OR ETCPAL_BUILD_TESTS)
   add_subdirectory(external/fff)

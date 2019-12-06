@@ -29,11 +29,13 @@
 #include "etcpal/os_inet.h"
 
 /*!
- * \defgroup etcpal_inet etcpal_inet
+ * \defgroup etcpal_inet Internet Addressing (inet)
  * \ingroup etcpal
- * \brief POSIX-like identifiers for IP addresses and network interfaces.
+ * \brief Identifiers for IP addresses and network interfaces.
  *
- * \#include "etcpal/inet.h"
+ * ```c
+ * #include "etcpal/inet.h"
+ * ```
  *
  * @{
  */
@@ -59,7 +61,8 @@ typedef enum
 /*!
  * \brief An IP address.
  *
- * Can hold either an IPv4 or IPv6 address. IPv4 addresses are in host byte order. IPv6 addresses
+ * Can hold either an IPv4 or IPv6 address. Do not manipulate the members directly; use the macros
+ * defined in this module to access them. IPv4 addresses are in host byte order. IPv6 addresses
  * also contain a scope ID, which is also sometimes referred to as a zone index (RFC 4007), to
  * help disambiguate link-local addresses, among other uses. In most cases, this field can be left
  * at its default value, which is set by the ETCPAL_IP_SET_V6_ADDRESS() macro.
@@ -68,14 +71,16 @@ typedef struct EtcPalIpAddr
 {
   /*! The IP address type (IPv4 or IPv6) */
   etcpal_iptype_t type;
-  /*! The address (use the macros to access), either v4 or v6 depending on the value of type. */
-  union AddrUnion
+  /*! A union containing either the IPv4 or IPv6 address. */
+  union
   {
+    /*! The IPv4 address value in host byte order. */
     uint32_t v4;
+    /*! The IPv6 address value containing the address and scope ID. */
     struct EtcPalIpv6Addr
     {
-      uint8_t addr_buf[ETCPAL_IPV6_BYTES];
-      unsigned long scope_id;
+      uint8_t addr_buf[ETCPAL_IPV6_BYTES]; /*!< The IPv6 address. */
+      unsigned long scope_id;              /*!< The IPv6 scope ID. */
     } v6;
   } addr;
 } EtcPalIpAddr;
@@ -204,12 +209,13 @@ typedef struct EtcPalSockAddr
   EtcPalIpAddr ip; /*!< IP address. */
 } EtcPalSockAddr;
 
+/*! The number of bytes in a MAC address. */
 #define ETCPAL_MAC_BYTES 6
 
 /*! A MAC address. */
 typedef struct EtcPalMacAddr
 {
-  uint8_t data[ETCPAL_MAC_BYTES];
+  uint8_t data[ETCPAL_MAC_BYTES]; /*!< The 6-byte address data. */
 } EtcPalMacAddr;
 
 /*!
@@ -235,7 +241,9 @@ extern const EtcPalMacAddr kEtcPalNullMacAddr;
  */
 #define ETCPAL_MAC_IS_NULL(macptr) (memcmp((macptr)->data, kEtcPalNullMacAddr.data, ETCPAL_MAC_BYTES) == 0)
 
+/*! The maximum length of a network interface name. */
 #define ETCPAL_NETINTINFO_NAME_LEN 64
+/*! The maximum length of a user-friendly network interface name. */
 #define ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN 64
 
 /*! A description of a single address assigned to a network interface. */

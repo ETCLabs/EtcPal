@@ -25,11 +25,11 @@
 #include <stdlib.h>
 
 /*!
- * \defgroup etcpal_error etcpal_error
+ * \defgroup etcpal_error Error Handling (error)
  * \ingroup etcpal
  * \brief Platform-neutral error codes.
  *
- * \#include "etcpal/error.h"
+ * `include "etcpal/error.h"`
  *
  * @{
  */
@@ -110,6 +110,7 @@ typedef enum
   kEtcPalErrSys = -30,
 } etcpal_error_t;
 
+/*! The total number of error codes currently defined. */
 #define ETCPAL_NUM_ERROR_CODES 31
 
 const char* etcpal_strerror(etcpal_error_t code);

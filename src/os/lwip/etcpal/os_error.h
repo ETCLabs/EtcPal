@@ -21,11 +21,6 @@
 #define ETCPAL_OS_ERROR_H_
 
 #include "etcpal/error.h"
-#include <lwip/errno.h>
-
-#if !LWIP_PROVIDE_ERRNO && !LWIP_ERRNO_STDINCLUDE && !defined(LWIP_ERRNO_INCLUDE)
-#include <errno.h>
-#endif
 
 etcpal_error_t errno_lwip_to_etcpal(int lwip_errno);
 etcpal_error_t err_gai_to_etcpal(int gai_error);

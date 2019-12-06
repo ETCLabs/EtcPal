@@ -113,7 +113,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/etcpal/int.h
     ${ETCPAL_ROOT}/include/etcpal/log.h
     ${ETCPAL_ROOT}/include/etcpal/mempool.h
-    ${ETCPAL_ROOT}/include/etcpal/netint.h
     ${ETCPAL_ROOT}/include/etcpal/pack.h
     ${ETCPAL_ROOT}/include/etcpal/pdu.h
     ${ETCPAL_ROOT}/include/etcpal/rbtree.h
@@ -126,6 +125,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.h
 
     ${ETCPAL_ROOT}/include/etcpal_mock/common.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/netint.h
     ${ETCPAL_ROOT}/include/etcpal_mock/socket.h
     ${ETCPAL_ROOT}/include/etcpal_mock/timer.h
     ${ETCPAL_ROOT}/include/etcpal_mock/thread.h
@@ -138,7 +138,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal/md5.h
     ${ETCPAL_ROOT}/src/etcpal/md5.c
     ${ETCPAL_ROOT}/src/etcpal/mempool.c
-    ${ETCPAL_ROOT}/src/etcpal/netint.c
     ${ETCPAL_ROOT}/src/etcpal/pack.c
     ${ETCPAL_ROOT}/src/etcpal/pdu.c
     ${ETCPAL_ROOT}/src/etcpal/rbtree.c
@@ -150,9 +149,9 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/os/${ETCPAL_OS_TARGET}/etcpal/os_uuid.c
 
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.c
-    ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
 
     ${ETCPAL_ROOT}/src/etcpal_mock/common.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/netint.c
     ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
     ${ETCPAL_ROOT}/src/etcpal_mock/timer.c
     ${ETCPAL_ROOT}/src/etcpal_mock/thread.c
@@ -173,3 +172,12 @@ if(ETCPAL_BUILD_MOCK_LIB)
     set_target_properties(EtcPalMock PROPERTIES C_STANDARD 99)
   endif()
 endif()
+
+###############################################################################
+# EtcPalCpp header-only interface library
+###############################################################################
+
+add_library(EtcPalCpp INTERFACE)
+target_link_libraries(EtcPalCpp INTERFACE EtcPal)
+
+install(DIRECTORY ${ETCPAL_ROOT}/include/etcpal/cpp DESTINATION include/etcpal FILES_MATCHING PATTERN "*.h")

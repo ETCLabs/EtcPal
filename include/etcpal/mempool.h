@@ -26,11 +26,13 @@
 #include "etcpal/error.h"
 
 /*!
- * \defgroup etcpal_mempool etcpal_mempool
+ * \defgroup etcpal_mempool Memory Pools (mempool)
  * \ingroup etcpal
  * \brief Memory pools with fixed-size elements.
  *
- * \#include "etcpal/mempool.h"
+ * ```c
+ * #include "etcpal/mempool.h"
+ * ```
  *
  * This module can be used to declare memory pools containing some number of elements of an
  * arbitrary type. Only elements of that type can be allocated from the pool or freed back into it.
@@ -45,12 +47,19 @@
 extern "C" {
 #endif
 
-/*! (Not for direct usage) A tiny structure simply used to maintain the freelist for each pool. */
+/*! \cond internal_mempool_structs */
+
 typedef struct EtcPalMempool EtcPalMempool;
+
+/*!
+ * (Not for direct usage) A tiny structure simply used to maintain the freelist for each pool.
+ */
 struct EtcPalMempool
 {
   EtcPalMempool* next;
 };
+
+/*! \endcond */
 
 /*!
  * \brief (Not for direct usage) A memory pool description structure.
@@ -170,10 +179,14 @@ typedef struct EtcPalMempoolDesc
  */
 #define etcpal_mempool_used(name) etcpal_mempool_used_priv(&name##_pool_desc)
 
+/*! \cond internal_mempool_functions */
+
 etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc);
 void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc);
 void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem);
 size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc);
+
+/*! \endcond */
 
 #ifdef __cplusplus
 }
