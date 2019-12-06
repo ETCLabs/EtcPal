@@ -134,7 +134,7 @@ stages:
         testResultsFiles: 'test_results_*.xml'
         searchFolder: '$(Build.SourcesDirectory)'
         mergeTestResults: true
-        testRunTitle: 'Linux'
+        testRunTitle: 'FreeRTOS_lwIP'
   # Generate documentation with doxygen. Documentation is generated from the
   # develop branch and posted to the 'head' portion of the Github page
   # (etclabs.github.io/EtcPal)
