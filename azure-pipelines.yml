@@ -121,7 +121,7 @@ stages:
         testRunTitle: 'Linux'
   # Build and test EtcPal against FreeRTOS, lwIP for ARM Cortex-M4 using arm-gcc
   - job: freertos_lwip_build
-    displayName: 'FreeRTOS/lwIP Build and Test'
+    displayName: 'FreeRTOS/lwIP'
     pool: OnTargetTesting
     steps:
     - script: |
