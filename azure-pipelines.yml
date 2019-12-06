@@ -4,6 +4,7 @@ trigger:
 - develop
 - master
 - release/*
+- refs/tags/v*.*.*.*
 
 pr:
 - develop
@@ -110,6 +111,20 @@ stages:
   condition: and(succeeded('build_and_test'), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   jobs:
   - job: create_build_report
-    displayName: 'Create Build Report'
+    displayName: 'Create Jira Build Report'
     pool:
       vmImage: 'ubuntu-latest'
+    variables:
+    - group: etc_jira
+    steps:
+    - task: UsePythonVersion@0
+      displayName: 'Select Python Version'
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+    - script: |
+        python -m pip install requests
+        python tools/ci/create_build_report.py
+      displayName: 'Run Create Build Report Script'
+      env:
+        BUILDNETWORKING_PASSWORD: $(buildnetworking_password)

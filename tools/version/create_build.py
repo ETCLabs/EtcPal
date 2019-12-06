@@ -23,12 +23,12 @@ FILE_TEMPLATE_DIR = os.path.join('tools', 'version', 'templates')
 FILE_IN_PATHS = [
     os.path.join(FILE_TEMPLATE_DIR, 'version.h.in'),
     os.path.join(FILE_TEMPLATE_DIR, 'current_version.txt.in'),
-    os.path.join(FILE_TEMPLATE_DIR, 'imports.txt.in'),
+    os.path.join(FILE_TEMPLATE_DIR, 'imports.txt.in')
 ]
 FILE_OUT_PATHS = [
-    os.path.join('include', 'rdmnet', 'version.h'),
-    os.path.join('tools', 'version', 'current_version.txt')
-    os.path.join('tools', 'version', 'imports.txt'),
+    os.path.join('include', 'etcpal', 'version.h'),
+    os.path.join('tools', 'version', 'current_version.txt'),
+    os.path.join('tools', 'version', 'imports.txt')
 ]
 COMMIT_MSG_TEMPLATE = 'Update version files for EtcPal build {}'
 TAG_MSG_TEMPLATE = 'EtcPal version {}'
