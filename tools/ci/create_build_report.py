@@ -28,7 +28,7 @@ def main():
     post_url = "https://jira.etcconnect.com/rest/api/2/issue"
     try:
         response = requests.post(post_url, json=post_body, auth=("buildnetworking", BN_PASSWORD))
-        if response.status_code != 200:
+        if response.status_code < 200 or response.status_code >= 300:
             print("An error HTTP response was received with code {}.".format(response.status_code))
             sys.exit(1)
     except Exception:
