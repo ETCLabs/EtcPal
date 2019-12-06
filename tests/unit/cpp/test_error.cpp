@@ -27,7 +27,7 @@
 
 extern "C" {
 
-TEST_GROUP(etcpal_cpp_error);
+TEST_GROUP(etcpal_result);
 
 TEST_SETUP(etcpal_result)
 {
