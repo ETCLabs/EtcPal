@@ -2,13 +2,15 @@
 
 | Test Platform | Build & Test Status |
 |---------------|:-------------------:|
+| FreeRTOS+lwIP | [![Build & Test Status][freertos-lwip-build-badge]][azure-devops-link] |
 | Linux         | [![Build & Test Status][linux-build-badge]][azure-devops-link] |
 | macOS         | [![Build & Test Status][macos-build-badge]][azure-devops-link] |
 | Windows       | [![Build & Test Status][win-build-badge]][azure-devops-link] |
 
-[win-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&jobName=Windows%20Build%20and%20Test
-[macos-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&jobName=macOS%20Build%20and%20Test
-[linux-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&jobName=Linux%20Build%20and%20Test
+[win-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=Windows
+[macos-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=macOS
+[linux-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=Linux
+[freertos-lwip-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=FreeRTOS_lwIP
 [azure-devops-link]: https://dev.azure.com/ETCLabs/EtcPal/_build/latest?definitionId=4&branchName=develop 
 
 

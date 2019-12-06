@@ -126,6 +126,7 @@ stages:
     steps:
     - script: |
         python C:\Scripts\build_and_test_on_target.py etcpal $(Build.SourcesDirectory) freertos_lwip
+      displayName: 'Build Project and Run Tests'
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
       condition: always()
