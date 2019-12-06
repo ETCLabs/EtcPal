@@ -25,6 +25,8 @@
 #include "etcpal/common.h"
 #include "unity_fixture.h"
 
+extern "C" {
+
 TEST_GROUP(etcpal_result);
 
 TEST_SETUP(etcpal_result)
@@ -427,4 +429,5 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
   RUN_TEST_CASE(etcpal_expected, with_error_constructor_destructor_not_called);
   RUN_TEST_CASE(etcpal_expected, value_or_works);
   RUN_TEST_CASE(etcpal_expected, relational_operators_work)
+}
 }

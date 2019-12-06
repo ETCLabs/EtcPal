@@ -23,7 +23,7 @@ extern "C" {
 #include "unity_fixture.h"
 }
 
-extern void run_all_tests(void);
+extern "C" void run_all_tests(void);
 
 int main(int argc, char* argv[])
 {

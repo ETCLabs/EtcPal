@@ -20,6 +20,7 @@
 #include "etcpal/cpp/lock.h"
 #include "unity_fixture.h"
 
+extern "C" {
 TEST_GROUP(etcpal_cpp_lock);
 
 TEST_SETUP(etcpal_cpp_lock)
@@ -163,4 +164,5 @@ TEST_GROUP_RUNNER(etcpal_cpp_lock)
   RUN_TEST_CASE(etcpal_cpp_lock, rwlock_create_and_destroy_works);
   RUN_TEST_CASE(etcpal_cpp_lock, read_guard_works);
   RUN_TEST_CASE(etcpal_cpp_lock, write_guard_works);
+}
 }
