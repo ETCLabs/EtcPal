@@ -62,6 +62,7 @@ static void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintI
     netint->is_default = false;
 }
 
+#if LWIP_IPV6
 static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
 {
   copy_common_interface_info(lwip_netif, netint);
@@ -88,6 +89,7 @@ static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
   }
   return false;
 }
+#endif
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
@@ -138,8 +140,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
       if (copy_interface_info_v6(netif_default, i, &static_netints[num_static_netints]))
         ++num_static_netints;
     }
-#endif
   }
+#endif
 
   NETIF_FOREACH(lwip_netif)
   {

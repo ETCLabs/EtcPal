@@ -27,6 +27,7 @@
 #include <stdexcept>
 #include <string>
 #include "etcpal/error.h"
+#include "etcpal/cpp/common.h"
 
 namespace etcpal
 {
@@ -241,15 +242,6 @@ inline Result BadExpectedAccess::result() const noexcept
 // etcpal::Expected internals
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// ETCPAL_CONSTEXPR_14 - a stand-in for entities that can only be defined "constexpr" in C++14 or
-// higher.
-
-#if ((defined(_MSC_VER) && (_MSC_VER > 1900)) || (__cplusplus >= 201402L))
-#define ETCPAL_CONSTEXPR_14 constexpr
-#else
-#define ETCPAL_CONSTEXPR_14
-#endif
-
 template <typename T>
 class Expected;
 
@@ -387,12 +379,16 @@ enum class enabler
 {
 };
 
+};  // namespace detail
+
 #define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
 #define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
 
-};  // namespace detail
-
 /// \endcond
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// etcpal::Expected
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// \brief A type representing either a value or an #etcpal_error_t code.
 /// \ingroup etcpal_cpp_error
@@ -847,10 +843,6 @@ constexpr Result Expected<T>::result() const noexcept
   // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(!has_value()), contained_.error();
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Operators
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// \addtogroup etcpal_cpp_error
 /// @{

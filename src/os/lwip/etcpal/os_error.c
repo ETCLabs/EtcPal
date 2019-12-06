@@ -19,6 +19,15 @@
 
 #include "os_error.h"
 #include <lwip/netdb.h>
+#include <lwip/errno.h>
+
+#if !LWIP_PROVIDE_ERRNO && !LWIP_ERRNO_STDINCLUDE
+#if defined(LWIP_ERRNO_INCLUDE)
+#include LWIP_ERRNO_INCLUDE
+#else
+#include <errno.h>
+#endif
+#endif
 
 etcpal_error_t errno_lwip_to_etcpal(int lwip_errno)
 {
@@ -69,8 +78,10 @@ etcpal_error_t errno_lwip_to_etcpal(int lwip_errno)
       return kEtcPalErrIsConn;
     case ENOTCONN:
       return kEtcPalErrNotConn;
+#ifdef ESHUTDOWN
     case ESHUTDOWN:
       return kEtcPalErrShutdown;
+#endif
     case ETIMEDOUT:
       return kEtcPalErrTimedOut;
     case ECONNREFUSED:
@@ -83,10 +94,14 @@ etcpal_error_t errno_lwip_to_etcpal(int lwip_errno)
     case ENFILE:
     case EMFILE:
     case ENOSPC:
+#ifdef EPFNOSUPPORT
     case EPFNOSUPPORT:
+#endif
     case EAFNOSUPPORT:
     case EPROTONOSUPPORT:
+#ifdef ESOCKTNOSUPPORT
     case ESOCKTNOSUPPORT:
+#endif
     default:
       return kEtcPalErrSys;
   }
