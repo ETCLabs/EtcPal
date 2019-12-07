@@ -114,6 +114,11 @@ TEST(etcpal_cpp_uuid, is_null_works)
 
 TEST(etcpal_cpp_uuid, generates_v1_correctly)
 {
+  // Only run this test if generate_v1_uuid() is implemented on this platform.
+  EtcPalUuid test_uuid;
+  if (etcpal_generate_v1_uuid(&test_uuid) == kEtcPalErrNotImpl)
+    TEST_IGNORE_MESSAGE("etcpal::Uuid::V1() is not implemented on this platform.");
+
   const etcpal::Uuid v1 = etcpal::Uuid::V1();
   TEST_ASSERT_UNLESS(v1.IsNull());
 
@@ -142,6 +147,11 @@ TEST(etcpal_cpp_uuid, generates_v3_correctly)
 
 TEST(etcpal_cpp_uuid, generates_v4_correctly)
 {
+  // Only run this test if generate_v4_uuid() is implemented on this platform.
+  EtcPalUuid test_uuid;
+  if (etcpal_generate_v4_uuid(&test_uuid) == kEtcPalErrNotImpl)
+    TEST_IGNORE_MESSAGE("etcpal::Uuid::V4() is not implemented on this platform.");
+
   const etcpal::Uuid v4 = etcpal::Uuid::V4();
   TEST_ASSERT_UNLESS(v4.IsNull());
 
@@ -153,6 +163,11 @@ TEST(etcpal_cpp_uuid, generates_v4_correctly)
 
 TEST(etcpal_cpp_uuid, generates_os_preferred_correctly)
 {
+  // Only run this test if generate_os_preferred_uuid() is implemented on this platform.
+  EtcPalUuid test_uuid;
+  if (etcpal_generate_os_preferred_uuid(&test_uuid) == kEtcPalErrNotImpl)
+    TEST_IGNORE_MESSAGE("etcpal::Uuid::OsPreferred() is not implemented on this platform.");
+
   const etcpal::Uuid os_preferred = etcpal::Uuid::OsPreferred();
   // There is really not much we can test here besides that it's not a null UUID
   TEST_ASSERT_UNLESS(os_preferred.IsNull());

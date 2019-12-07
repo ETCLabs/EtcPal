@@ -278,10 +278,10 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
 TEST(etcpal_cpp_inet, ip_to_string_works)
 {
   const etcpal::IpAddr ip(0xdeadbeef);
-  TEST_ASSERT_TRUE(ip.ToString() == "222.173.190.239");
+  TEST_ASSERT_EQUAL_STRING(ip.ToString().c_str(), "222.173.190.239");
 
   const etcpal::IpAddr ip2(s_v6_data.data());
-  TEST_ASSERT_TRUE(ip2.ToString() == "2001:db8::1234:5678");
+  TEST_ASSERT_EQUAL_STRING(ip2.ToString().c_str(), "2001:db8::1234:5678");
 }
 
 // We do more rigorous testing of the string conversion functions in the core C unit tests, so we
@@ -441,10 +441,10 @@ TEST(etcpal_cpp_inet, sockaddr_custom_constructors_work)
 TEST(etcpal_cpp_inet, sockaddr_to_string_works)
 {
   const etcpal::SockAddr sockaddr_v4(etcpal::IpAddr::FromString("10.101.2.3"), 5555);
-  TEST_ASSERT_TRUE(sockaddr_v4.ToString() == "10.101.2.3:5555");
+  TEST_ASSERT_EQUAL_STRING(sockaddr_v4.ToString().c_str(), "10.101.2.3:5555");
 
   const etcpal::SockAddr sockaddr_v6(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 6666);
-  TEST_ASSERT_TRUE(sockaddr_v6.ToString() == "[2001:db8::2222:3333]:6666");
+  TEST_ASSERT_EQUAL_STRING(sockaddr_v6.ToString().c_str(), "[2001:db8::2222:3333]:6666");
 
   const etcpal::SockAddr sockaddr_invalid;
   TEST_ASSERT_TRUE(sockaddr_invalid.ToString().empty());
@@ -501,10 +501,10 @@ TEST(etcpal_cpp_inet, mac_custom_constructors_work)
 TEST(etcpal_cpp_inet, mac_to_string_works)
 {
   const etcpal::MacAddr mac({0x1d, 0xee, 0x03, 0xfa, 0x34, 0x60});
-  TEST_ASSERT_TRUE(mac.ToString() == "1d:ee:03:fa:34:60");
+  TEST_ASSERT_EQUAL_STRING(mac.ToString().c_str(), "1d:ee:03:fa:34:60");
 
   const etcpal::MacAddr null_mac;
-  TEST_ASSERT_TRUE(null_mac.ToString() == "00:00:00:00:00:00");
+  TEST_ASSERT_EQUAL_STRING(null_mac.ToString().c_str(), "00:00:00:00:00:00");
 }
 
 // We do more rigorous testing of the string conversion functions in the core C unit tests, so we

@@ -148,8 +148,7 @@ TEST(etcpal_uuid, generates_correct_v1_uuids)
     // prematurely if that's the case.
     if (generate_result == kEtcPalErrNotImpl)
     {
-      TEST_PASS_MESSAGE(
-          "etcpal_generate_v1_uuid() not implemented on this platform. Skipping the remainder of the test.");
+      TEST_IGNORE_MESSAGE("etcpal_generate_v1_uuid() not implemented on this platform.");
     }
 
     TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, generate_result, error_msg);
@@ -220,8 +219,7 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
     // prematurely if that's the case.
     if (generate_result == kEtcPalErrNotImpl)
     {
-      TEST_PASS_MESSAGE(
-          "etcpal_generate_v4_uuid() not implemented on this platform. Skipping the remainder of the test.");
+      TEST_IGNORE_MESSAGE("etcpal_generate_v4_uuid() not implemented on this platform.");
     }
 
     TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, generate_result, error_msg);
@@ -256,8 +254,7 @@ TEST(etcpal_uuid, generates_os_preferred_uuids)
     // prematurely if that's the case.
     if (generate_result == kEtcPalErrNotImpl)
     {
-      TEST_PASS_MESSAGE(
-          "etcpal_generate_os_preferred_uuid() not implemented on this platform. Skipping the remainder of the test.");
+      TEST_IGNORE_MESSAGE("etcpal_generate_os_preferred_uuid() not implemented on this platform.");
     }
 
     TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, generate_result, error_msg);

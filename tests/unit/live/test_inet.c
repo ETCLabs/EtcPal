@@ -358,16 +358,16 @@ TEST(etcpal_inet, inet_string_functions_work)
   // Test etcpal_inet_ntop()
   ETCPAL_IP_SET_V4_ADDRESS(&addr, 0);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, ETCPAL_INET_ADDRSTRLEN));
-  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip4_1));
+  TEST_ASSERT_EQUAL_STRING(str, test_ip4_1);
   ETCPAL_IP_SET_V4_ADDRESS(&addr, 0xffffffff);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, ETCPAL_INET_ADDRSTRLEN));
-  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip4_2));
+  TEST_ASSERT_EQUAL_STRING(str, test_ip4_2);
   ETCPAL_IP_SET_V6_ADDRESS(&addr, test_ip6_1_bin);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, ETCPAL_INET6_ADDRSTRLEN));
-  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip6_1));
+  TEST_ASSERT_EQUAL_STRING(str, test_ip6_1);
   ETCPAL_IP_SET_V6_ADDRESS(&addr, test_ip6_2_bin);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, ETCPAL_INET6_ADDRSTRLEN));
-  TEST_ASSERT_EQUAL(0, strcmp(str, test_ip6_2));
+  TEST_ASSERT_EQUAL_STRING(str, test_ip6_2);
   ETCPAL_IP_SET_V6_ADDRESS(&addr, test_ip6_3_bin);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_inet_ntop(&addr, str, ETCPAL_INET6_ADDRSTRLEN));
   TEST_ASSERT((0 == strcmp(str, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")) ||
