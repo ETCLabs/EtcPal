@@ -352,7 +352,7 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
   // Build the request
   RtNetlinkRequest req;
   memset(&req, 0, sizeof(req));
-  req.nl_header.nlmsg_len = NLMSG_LENGTH(sizeof(RtNetlinkRequest));
+  req.nl_header.nlmsg_len = NLMSG_LENGTH(sizeof(struct rtmsg));
   req.nl_header.nlmsg_type = RTM_GETROUTE;
   req.nl_header.nlmsg_flags = (__u16)(NLM_F_REQUEST | NLM_F_DUMP);
   req.nl_header.nlmsg_pid = (__u32)getpid();
