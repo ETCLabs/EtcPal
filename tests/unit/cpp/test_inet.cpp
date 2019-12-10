@@ -20,8 +20,17 @@
 #include "etcpal/cpp/inet.h"
 #include "unity_fixture.h"
 
+#include <algorithm>
 #include <array>
+#include <cctype>
 #include <cstring>
+#include <string>
+
+static void ConvertStringToLowercase(std::string& str)
+{
+  std::transform(str.begin(), str.end(), str.begin(),
+                 [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+}
 
 extern "C" {
 
@@ -281,7 +290,9 @@ TEST(etcpal_cpp_inet, ip_to_string_works)
   TEST_ASSERT_EQUAL_STRING(ip.ToString().c_str(), "222.173.190.239");
 
   const etcpal::IpAddr ip2(s_v6_data.data());
-  TEST_ASSERT_EQUAL_STRING(ip2.ToString().c_str(), "2001:db8::1234:5678");
+  auto ip_str = ip2.ToString();
+  ConvertStringToLowercase(ip_str);
+  TEST_ASSERT_EQUAL_STRING(ip_str.c_str(), "2001:db8::1234:5678");
 }
 
 // We do more rigorous testing of the string conversion functions in the core C unit tests, so we
@@ -444,7 +455,9 @@ TEST(etcpal_cpp_inet, sockaddr_to_string_works)
   TEST_ASSERT_EQUAL_STRING(sockaddr_v4.ToString().c_str(), "10.101.2.3:5555");
 
   const etcpal::SockAddr sockaddr_v6(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 6666);
-  TEST_ASSERT_EQUAL_STRING(sockaddr_v6.ToString().c_str(), "[2001:db8::2222:3333]:6666");
+  auto sockaddr_str = sockaddr_v6.ToString();
+  ConvertStringToLowercase(sockaddr_str);
+  TEST_ASSERT_EQUAL_STRING(sockaddr_str.c_str(), "[2001:db8::2222:3333]:6666");
 
   const etcpal::SockAddr sockaddr_invalid;
   TEST_ASSERT_TRUE(sockaddr_invalid.ToString().empty());

@@ -466,6 +466,8 @@ TEST(socket_integration_udp, bulk_poll)
     uint8_t recv_buf[SOCKET_TEST_MESSAGE_LENGTH];
     TEST_ASSERT_GREATER_THAN(0, etcpal_recvfrom(recv_socks[i], recv_buf, SOCKET_TEST_MESSAGE_LENGTH, 0, NULL));
   }
+
+  etcpal_poll_context_deinit(&context);
 }
 
 TEST_GROUP_RUNNER(socket_integration_udp)

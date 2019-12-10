@@ -1,7 +1,7 @@
 # Main test module.
 
-set(ETCPAL_INCLUDE ${CMAKE_CURRENT_LIST_DIR}/../include)
-set(ETCPAL_SRC ${CMAKE_CURRENT_LIST_DIR}/../src)
+set(ETCPAL_INCLUDE ${ETCPAL_ROOT}/include)
+set(ETCPAL_SRC ${ETCPAL_ROOT}/src)
 set(ETCPAL_TEST ${CMAKE_CURRENT_LIST_DIR})
 
 option(ETCPAL_TEST_IPV6 "Test IPv6 socket functions in the EtcPal unit and integration tests" ON)
@@ -20,7 +20,8 @@ endfunction()
 if(WIN32)
   set(ETCPAL_TEST_COMPILE_OPTIONS /wd4210)
 elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
-  set(ETCPAL_TEST_COMPILE_OPTIONS -Wno-format-security -Wno-conversion)
+  set(ETCPAL_TEST_COMPILE_OPTIONS -Wno-format-security -Wno-conversion -fsanitize=address)
+  set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address)
 else()
   set(ETCPAL_TEST_COMPILE_OPTIONS "")
 endif()
