@@ -23,6 +23,7 @@
 #include <vector>
 #include "unity_fixture.h"
 
+extern "C" {
 TEST_GROUP(etcpal_cpp_thread);
 
 TEST_SETUP(etcpal_cpp_thread)
@@ -60,4 +61,5 @@ TEST(etcpal_cpp_thread, placeholder)
 TEST_GROUP_RUNNER(etcpal_cpp_thread)
 {
   RUN_TEST_CASE(etcpal_cpp_thread, placeholder);
+}
 }
