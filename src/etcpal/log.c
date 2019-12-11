@@ -55,6 +55,19 @@
 /* LOG_LOCAL1 seems to be one that's lightly used */
 #define DEFAULT_FACILITY ETCPAL_LOG_LOCAL1
 
+// clang-format off
+static const char* kLogSeverityStrings[] = {
+  "EMRG", // ETCPAL_LOG_EMERG
+  "ALRT", // ETCPAL_LOG_ALERT
+  "CRIT", // ETCPAL_LOG_CRIT
+  "ERR ", // ETCPAL_LOG_ERR
+  "WARN", // ETCPAL_LOG_WARNING
+  "NOTI", // ETCPAL_LOG_NOTICE
+  "INFO", // ETCPAL_LOG_INFO
+  "DBUG"  // ETCPAL_LOG_DEBUG
+};
+// clang-format on
+
 /**************************** Private variables ******************************/
 
 static unsigned int init_count;
@@ -271,10 +284,10 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParam
 
 /* Create a log message with a human-readable header given the appropriate va_list. Returns a
  * pointer to the original message within the log message, or NULL on failure. */
-static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format,
-                                          va_list args)
+static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri,
+                                          const char* format, va_list args)
 {
-  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || !format)
+  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
     return NULL;
 
   char timestamp[ETCPAL_LOG_TIMESTAMP_LEN];
@@ -282,9 +295,14 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPal
 
   int human_header_size;
   if (timestamp[0] == '\0')
-    human_header_size = 0;
+  {
+    human_header_size = snprintf(buf, ETCPAL_HUMAN_LOG_STR_MIN_LEN + 1, "[%s] ", kLogSeverityStrings[pri]);
+  }
   else
-    human_header_size = snprintf(buf, ETCPAL_LOG_TIMESTAMP_LEN + 1, "%s ", timestamp);
+  {
+    human_header_size =
+        snprintf(buf, ETCPAL_HUMAN_LOG_STR_MIN_LEN + 1, "%s [%s] ", timestamp, kLogSeverityStrings[pri]);
+  }
 
   if (human_header_size >= 0)
   {
@@ -309,15 +327,17 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPal
  * \param[in] buflen Length in bytes of buf.
  * \param[in] time A set of time parameters representing the current time. If NULL, no timestamp
  *                 will be added to the log message.
+ * \param[in] pri Priority of this log message.
  * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                   as appropriate for format specifiers.
  */
-bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, const char* format, ...)
+bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri, const char* format,
+                                 ...)
 {
   va_list args;
   bool res;
   va_start(args, format);
-  res = (NULL != etcpal_vcreate_human_log_str(buf, buflen, time, format, args));
+  res = (NULL != etcpal_vcreate_human_log_str(buf, buflen, time, pri, format, args));
   va_end(args);
   return res;
 }
@@ -414,7 +434,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadableLog)
     {
       strings.raw = etcpal_vcreate_human_log_str(humanlogmsg, ETCPAL_HUMAN_LOG_STR_MAX_LEN + 1,
-                                                 have_time ? &time_params : NULL, format, args);
+                                                 have_time ? &time_params : NULL, pri, format, args);
       if (strings.raw)
       {
         strings.human_readable = humanlogmsg;

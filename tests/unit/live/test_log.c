@@ -161,7 +161,7 @@ TEST(etcpal_log, log_action_is_honored)
 #define LOG_ACTION_TEST_MESSAGE "Test Message"
 
   const char* expect_syslog_str = "<0>1 - 10.101.17.38 My_App - - - " LOG_ACTION_TEST_MESSAGE;
-  const char* expect_human_str = LOG_ACTION_TEST_MESSAGE;
+  const char* expect_human_str = "[EMRG] " LOG_ACTION_TEST_MESSAGE;
   const char* expect_raw_str = LOG_ACTION_TEST_MESSAGE;
 
   // Try logging only syslog
@@ -385,28 +385,32 @@ TEST(etcpal_log, time_header_is_well_formed)
   memset(&syslog_params, 0, sizeof syslog_params);
   TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params,
                                        ETCPAL_LOG_EMERG, "Test Message"));
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
+  TEST_ASSERT(
+      etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, ETCPAL_LOG_CRIT, "Test Message"));
 
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000Z"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000Z"));
 
   // We test absence of the time in the syslog header in a different test, but here we test absence
   // in the human-readable log string
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, NULL, "Test Message"));
-  TEST_ASSERT_EQUAL_STRING(human_buf, "Test Message");
+  TEST_ASSERT(
+      etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, NULL, ETCPAL_LOG_CRIT, "Test Message"));
+  TEST_ASSERT_EQUAL_STRING(human_buf, "[CRIT] Test Message");
 
   // Test the addition of UTC offsets
   cur_time.utc_offset = 30;
   TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params,
                                        ETCPAL_LOG_EMERG, "Test Message"));
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
+  TEST_ASSERT(
+      etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, ETCPAL_LOG_CRIT, "Test Message"));
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000+00:30"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000+00:30"));
 
   cur_time.utc_offset = -120;
   TEST_ASSERT(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params,
                                        ETCPAL_LOG_EMERG, "Test Message"));
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, "Test Message"));
+  TEST_ASSERT(
+      etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, ETCPAL_LOG_CRIT, "Test Message"));
   TEST_ASSERT(strstr(syslog_buf, "1970-01-01T00:00:00.000-02:00"));
   TEST_ASSERT(strstr(human_buf, "1970-01-01 00:00:00.000-02:00"));
 }
@@ -435,8 +439,8 @@ TEST(etcpal_log, formatting_int_values_works)
                                        ETCPAL_LOG_EMERG, INTVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(syslog_buf, expect_raw_str));
 
-  TEST_ASSERT(
-      etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, INTVAL_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, ETCPAL_LOG_EMERG,
+                                          INTVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(human_buf, expect_raw_str));
 
   // Now test the etcpal_log function
@@ -474,7 +478,8 @@ TEST(etcpal_log, formatting_string_values_works)
                                        ETCPAL_LOG_EMERG, STRVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(syslog_buf, expect_raw_str));
 
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, NULL, STRVAL_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, NULL, ETCPAL_LOG_EMERG,
+                                          STRVAL_FORMAT_STR_AND_ARGS));
   TEST_ASSERT(strstr(human_buf, expect_raw_str));
 
   // Now test the etcpal_log function
@@ -519,7 +524,7 @@ TEST(etcpal_log, logging_maximum_length_string_works)
   static char expect_human_str[ETCPAL_HUMAN_LOG_STR_MAX_LEN];
   static char expect_raw_str[ETCPAL_HUMAN_LOG_STR_MAX_LEN];
   strcpy(expect_syslog_str, "<191>1 1970-01-01T00:00:00.000-12:00 ");
-  strcpy(expect_human_str, "1970-01-01 00:00:00.000-12:00 ");
+  strcpy(expect_human_str, "1970-01-01 00:00:00.000-12:00 [DBUG] ");
 
   size_t expect_syslog_str_pos = strlen(expect_syslog_str);
   size_t expect_human_str_pos = strlen(expect_human_str);
@@ -588,7 +593,8 @@ TEST(etcpal_log, logging_maximum_length_string_works)
                                        ETCPAL_LOG_DEBUG, to_log_str));
   TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);
 
-  TEST_ASSERT(etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, to_log_str));
+  TEST_ASSERT(
+      etcpal_create_human_log_str(human_buf, ETCPAL_HUMAN_LOG_STR_MAX_LEN, &cur_time, ETCPAL_LOG_DEBUG, to_log_str));
   TEST_ASSERT_EQUAL_STRING(human_buf, expect_human_str);
 
   // Now test the etcpal_log function
