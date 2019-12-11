@@ -17,36 +17,47 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_THREAD_H_
-#define ETCPAL_OS_THREAD_H_
+#include "etcpal/cpp/thread.h"
 
-#include <pthread.h>
-#include <unistd.h>
-#include "etcpal/bool.h"
+#include <cstdio>
+#include <vector>
+#include "unity_fixture.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+TEST_GROUP(etcpal_cpp_thread);
 
-#define ETCPAL_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on macOS */
-#define ETCPAL_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
-#define ETCPAL_THREAD_DEFAULT_NAME NULL  /* Name ignored on macOS */
-
-#define ETCPAL_THREAD_NAME_MAX_LENGTH 0
-
-typedef pthread_t etcpal_thread_id_t;
-
-typedef struct
+TEST_SETUP(etcpal_cpp_thread)
 {
-  void (*fn)(void*);
-  void* arg;
-  pthread_t handle;
-} etcpal_thread_t;
-
-#define etcpal_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
-
-#ifdef __cplusplus
 }
-#endif
 
-#endif /* ETCPAL_OS_THREAD_H_ */
+TEST_TEAR_DOWN(etcpal_cpp_thread)
+{
+}
+
+using namespace std::chrono_literals;
+
+TEST(etcpal_cpp_thread, placeholder)
+{
+  auto thread_func = []() { std::printf("Hello, world!\n"); };
+  etcpal::Thread thrd(thread_func);
+  thrd.Join();
+
+  auto thread_func_2 = [](int number) { std::printf("The number is %d\n", number); };
+  etcpal::Thread thrd_2(thread_func_2, 42);
+  thrd_2.Join();
+
+  std::vector<etcpal::Thread> threads;
+  for (int i = 0; i < 10; ++i)
+  {
+    threads.push_back(etcpal::Thread([]() { std::printf("Hello hello hello hello hello hello hello\n"); }));
+  }
+
+  for (auto& thread : threads)
+  {
+    thread.Join();
+  }
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_thread)
+{
+  RUN_TEST_CASE(etcpal_cpp_thread, placeholder);
+}

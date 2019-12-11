@@ -34,6 +34,8 @@ extern "C" {
 #define ETCPAL_THREAD_DEFAULT_STACK 500
 #define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
 
+typedef TaskHandle_t etcpal_thread_id_t;
+
 typedef struct
 {
   void (*fn)(void*);

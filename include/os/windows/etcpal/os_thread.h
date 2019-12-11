@@ -54,7 +54,15 @@ typedef struct
   char name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
 
+typedef HANDLE etcpal_thread_id_t;
+#define ETCPAL_THREAD_ID_INVALID NULL
+#define ETCPAL_THREAD_GET_ID(threadptr) ((threadptr)->tid)
+
+#ifdef __cplusplus
+#define etcpal_thread_sleep(sleep_ms) ::Sleep(sleep_ms)
+#else
 #define etcpal_thread_sleep(sleep_ms) Sleep(sleep_ms)
+#endif
 
 #ifdef __cplusplus
 }

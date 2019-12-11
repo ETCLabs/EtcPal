@@ -24,5 +24,6 @@ extern "C" void run_all_tests(void)
   RUN_TEST_GROUP(etcpal_cpp_error);
   RUN_TEST_GROUP(etcpal_cpp_inet);
   RUN_TEST_GROUP(etcpal_cpp_lock);
+  RUN_TEST_GROUP(etcpal_cpp_thread);
   RUN_TEST_GROUP(etcpal_cpp_uuid);
 }

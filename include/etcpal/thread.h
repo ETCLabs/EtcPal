@@ -61,6 +61,11 @@ typedef struct EtcPalThreadParams
     (threadparamsptr)->platform_data = NULL;                             \
   } while (0)
 
+#define ETCPAL_THREAD_DEFAULT_PARAMS_INIT                                                         \
+  {                                                                                               \
+    ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, ETCPAL_THREAD_DEFAULT_NAME, NULL \
+  }
+
 bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
                           void* thread_arg);
 bool etcpal_thread_join(etcpal_thread_t* id);

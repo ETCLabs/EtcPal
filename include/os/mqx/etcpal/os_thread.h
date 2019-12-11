@@ -40,6 +40,8 @@ typedef struct EtcPalThreadParamsMqx
 #define ETCPAL_THREAD_MQX_DEFAULT_ATTRIBUTES NULL
 #define ETCPAL_THREAD_MQX_DEFAULT_TIME_SLICE 0
 
+typedef _task_id etcpal_thread_id_t;
+
 typedef struct
 {
   void (*fn)(void*);
