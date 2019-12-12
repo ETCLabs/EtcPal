@@ -39,6 +39,7 @@ TEST(etcpal_cpp_thread, default_constructor_works)
 {
   etcpal::Thread thrd;
   TEST_ASSERT_FALSE(thrd.joinable());
+  TEST_ASSERT_FALSE(thrd.Join().IsOk());
 }
 
 TEST(etcpal_cpp_thread, constructor_works_no_args)
@@ -49,7 +50,7 @@ TEST(etcpal_cpp_thread, constructor_works_no_args)
     thread_ran = true;
   });
   TEST_ASSERT_TRUE(thrd.joinable());
-  thrd.Join();
+  TEST_ASSERT_TRUE(thrd.Join().IsOk());
   TEST_ASSERT_FALSE(thrd.joinable());
   TEST_ASSERT_TRUE(thread_ran);
 }
@@ -64,7 +65,7 @@ TEST(etcpal_cpp_thread, constructor_works_with_args)
       },
       1u);
   TEST_ASSERT_TRUE(thrd.joinable());
-  thrd.Join();
+  TEST_ASSERT_TRUE(thrd.Join().IsOk());
   TEST_ASSERT_FALSE(thrd.joinable());
   TEST_ASSERT_TRUE(thread_ran);
 }
@@ -73,12 +74,13 @@ TEST(etcpal_cpp_thread, start_works_no_args)
 {
   bool thread_ran = false;
   etcpal::Thread thrd;
-  thrd.Start([&]() {
-    etcpal::Thread::Sleep(1);
-    thread_ran = true;
-  });
+  TEST_ASSERT_TRUE(thrd.Start([&]() {
+                         etcpal::Thread::Sleep(1);
+                         thread_ran = true;
+                       })
+                       .IsOk());
   TEST_ASSERT_TRUE(thrd.joinable());
-  thrd.Join();
+  TEST_ASSERT_TRUE(thrd.Join().IsOk());
   TEST_ASSERT_FALSE(thrd.joinable());
   TEST_ASSERT_TRUE(thread_ran);
 }
@@ -87,16 +89,37 @@ TEST(etcpal_cpp_thread, start_works_with_args)
 {
   bool thread_ran = false;
   etcpal::Thread thrd;
-  thrd.Start(
-      [&](unsigned int ms) {
-        etcpal::Thread::Sleep(ms);
-        thread_ran = true;
-      },
-      1u);
+  TEST_ASSERT_TRUE(thrd.Start(
+                           [&](unsigned int ms) {
+                             etcpal::Thread::Sleep(ms);
+                             thread_ran = true;
+                           },
+                           1u)
+                       .IsOk());
   TEST_ASSERT_TRUE(thrd.joinable());
-  thrd.Join();
+  TEST_ASSERT_TRUE(thrd.Join().IsOk());
   TEST_ASSERT_FALSE(thrd.joinable());
   TEST_ASSERT_TRUE(thread_ran);
+}
+
+struct Foo
+{
+  bool did_run{false};
+  void Bar()
+  {
+    etcpal::Thread::Sleep(1);
+    did_run = true;
+  }
+};
+
+TEST(etcpal_cpp_thread, member_function)
+{
+  Foo foo;
+  etcpal::Thread thrd(&Foo::Bar, &foo);
+  TEST_ASSERT_TRUE(thrd.joinable());
+  TEST_ASSERT_TRUE(thrd.Join().IsOk());
+  TEST_ASSERT_FALSE(thrd.joinable());
+  TEST_ASSERT_TRUE(foo.did_run);
 }
 
 TEST(etcpal_cpp_thread, move_constructor_works)
@@ -118,7 +141,7 @@ TEST(etcpal_cpp_thread, move_constructor_works)
   TEST_ASSERT_TRUE(thrd2.joinable());
   TEST_ASSERT_EQUAL_STRING(thrd2.name(), "Test Thread Blah");
 
-  thrd2.Join();
+  TEST_ASSERT_TRUE(thrd2.Join().IsOk());
   TEST_ASSERT_FALSE(thrd2.joinable());
   TEST_ASSERT_TRUE(thread_ran);
 }
@@ -142,7 +165,7 @@ TEST(etcpal_cpp_thread, move_assignment_operator_works)
   TEST_ASSERT_TRUE(thrd2.joinable());
   TEST_ASSERT_EQUAL_STRING(thrd2.name(), "Test Thread Blah");
 
-  thrd2.Join();
+  TEST_ASSERT_TRUE(thrd2.Join().IsOk());
   TEST_ASSERT_FALSE(thrd2.joinable());
   TEST_ASSERT_TRUE(thread_ran);
 }
@@ -162,7 +185,7 @@ TEST(etcpal_cpp_thread, param_setters_work)
       });
 
   TEST_ASSERT_TRUE(thrd.joinable());
-  thrd.Join();
+  TEST_ASSERT_TRUE(thrd.Join().IsOk());
   TEST_ASSERT_FALSE(thrd.joinable());
   TEST_ASSERT_TRUE(thread_ran);
 }
@@ -186,6 +209,7 @@ TEST_GROUP_RUNNER(etcpal_cpp_thread)
   RUN_TEST_CASE(etcpal_cpp_thread, constructor_works_with_args);
   RUN_TEST_CASE(etcpal_cpp_thread, start_works_no_args);
   RUN_TEST_CASE(etcpal_cpp_thread, start_works_with_args);
+  RUN_TEST_CASE(etcpal_cpp_thread, member_function);
   RUN_TEST_CASE(etcpal_cpp_thread, move_constructor_works);
   RUN_TEST_CASE(etcpal_cpp_thread, move_assignment_operator_works);
   RUN_TEST_CASE(etcpal_cpp_thread, param_setters_work);
