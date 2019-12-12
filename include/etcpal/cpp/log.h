@@ -23,37 +23,46 @@
 #ifndef ETCPAL_CPP_LOG_H_
 #define ETCPAL_CPP_LOG_H_
 
+#include <memory>
+#include <queue>
+#include <string>
 #include "etcpal/log.h"
 #include "etcpal/cpp/lock.h"
+#include "etcpal/cpp/thread.h"
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_log etcpal_cpp_log
+/// \defgroup etcpal_cpp_log log (Logging)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_log module.
+
+class LogMessageHandler
+{
+public:
+  virtual void GetLogTimestamp(EtcPalLogTimeParams& time) = 0;
+  virtual void HandleLogMessage(const EtcPalLogStrings& strings) = 0;
+};
+
+/// Options for the method by which the Logger dispatches log messages.
+enum class LogDispatchPolicy
+{
+  Direct,  ///< Log messages propagate directly from Log() calls to output streams (normally only used for testing)
+  Queued   ///< Log messages are queued and dispatched from another thread (recommended)
+};
 
 /// \ingroup etcpal_cpp_log
 /// \brief A class for dispatching log messages.
 class Logger
 {
 public:
-  /// Options for the method by which the Logger dispatches log messages.
-  enum class DispatchPolicy
-  {
-    kDirect,  ///< Log messages propagate directly from Log() calls to output streams (normally only used for testing)
-    kQueued   ///< Log messages are queued and dispatched from another thread (recommended)
-  };
+  explicit Logger(LogDispatchPolicy dispatch_policy = LogDispatchPolicy::Queued);
 
-  explicit Logger(DispatchPolicy dispatch_policy = DispatchPolicy::kQueued);
-  virtual ~Logger();
-
-  bool Startup(int log_mask);
+  bool Startup(LogMessageHandler& message_handler);
   void Shutdown();
 
-  // Log a message
+  bool CanLog(int pri) const noexcept;
   void Log(int pri, const char* format, ...);
 
-  // Shortcuts to log at a specific priority level
   void Debug(const char* format, ...);
   void Info(const char* format, ...);
   void Notice(const char* format, ...);
@@ -63,15 +72,41 @@ public:
   void Alert(const char* format, ...);
   void Emergency(const char* format, ...);
 
-  const EtcPalLogParams& GetLogParams() const;
+  Logger& SetLogMask(int log_mask) noexcept;
+  Logger& SetLogAction(etcpal_log_action_t log_action) noexcept;
+  Logger& SetSyslogFacility(int facility) noexcept;
+  Logger& SetSyslogHostname(const char* hostname) noexcept;
+  Logger& SetSyslogAppName(const char* app_name) noexcept;
+  Logger& SetSyslogProcId(const char* proc_id) noexcept;
 
-  virtual void GetTimestamp(EtcPalLogTimeParams& time) = 0;
-  virtual void OutputLogMessage(const std::string& str) = 0;
+  int log_mask() const noexcept;
+  etcpal_log_action_t log_action() const noexcept;
+  int syslog_facility() const noexcept;
+  const char* syslog_hostname() const noexcept;
+  const char* syslog_app_name() const noexcept;
+  const char* syslog_procid() const noexcept;
+  const EtcPalLogParams& log_params() const noexcept;
 
-protected:
-  EtcPalLogParams log_params_;
+private:
+  LogDispatchPolicy dispatch_policy_;
 
-  const DispatchPolicy dispatch_policy_{DispatchPolicy::kQueued};
+  LogMessageHandler* handler_{nullptr};
+
+  EtcPalLogParams log_params_{};
+
+  struct LogStrings
+  {
+    char human_readable[ETCPAL_LOG_STR_MAX_LEN];
+    char syslog[ETCPAL_SYSLOG_STR_MAX_LEN];
+    char raw[ETCPAL_RAW_LOG_MSG_MAX_LEN];
+  };
+
+  // Used when dispatch_policy_ == Queued
+  std::queue<LogStrings> msg_q_;
+  std::unique_ptr<etcpal::Signal> signal_;
+  std::unique_ptr<etcpal::Mutex> mutex_;
+  etcpal::Thread thread_;
+  bool keep_running_{false};
 };
 };  // namespace etcpal
 

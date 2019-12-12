@@ -31,7 +31,7 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_error Error Handling (error)
+/// \defgroup etcpal_cpp_error error (Error Handling)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_error module.
 

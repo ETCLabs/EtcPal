@@ -129,7 +129,8 @@ namespace etcpal
 class Thread
 {
 public:
-  ETCPAL_CONSTEXPR_14 Thread() noexcept;
+  /// \brief Create a new thread object which does not yet represent a thread.
+  ETCPAL_CONSTEXPR_14 Thread() = default;
   template <class Function, class... Args>
   Thread(Function&& func, Args&&... args);
   virtual ~Thread();
@@ -146,7 +147,7 @@ public:
 
   /// \name Getters
   /// @{
-  unsigned int priority() const;
+  unsigned int priority() const noexcept;
   unsigned int stack_size() const noexcept;
   const char* name() const noexcept;
   void* platform_data() const noexcept;
@@ -176,7 +177,7 @@ public:
 
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
-  EtcPalThreadParams params_{};
+  EtcPalThreadParams params_ = ETCPAL_THREAD_DEFAULT_PARAMS_INIT;
 };
 
 extern "C" inline void ThreadFn(void* arg)
@@ -184,12 +185,6 @@ extern "C" inline void ThreadFn(void* arg)
   std::unique_ptr<Thread::FunctionType> p_func(static_cast<Thread::FunctionType*>(arg));
   // Tear the roof off the sucker
   (*p_func)();
-}
-
-/// \brief Create a new thread object which does not yet represent a thread.
-ETCPAL_CONSTEXPR_14_OR_INLINE Thread::Thread() noexcept
-{
-  ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
 }
 
 /// \brief Create a new thread object and associate it with a new thread of execution.
@@ -249,7 +244,7 @@ inline bool Thread::joinable() const noexcept
 }
 
 /// \brief Get the priority of this thread (not valid on all platforms).
-inline unsigned int Thread::priority() const
+inline unsigned int Thread::priority() const noexcept
 {
   return params_.priority;
 }

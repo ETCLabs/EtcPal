@@ -33,7 +33,7 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_inet Internet Addressing (inet)
+/// \defgroup etcpal_cpp_inet inet (Internet Addressing)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_inet module.
 

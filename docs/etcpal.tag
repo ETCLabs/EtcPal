@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
@@ -21,7 +21,7 @@
   </compound>
   <compound kind="file">
     <name>error.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Result</class>
@@ -30,7 +30,7 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
@@ -49,7 +49,7 @@
   </compound>
   <compound kind="file">
     <name>lock.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
@@ -60,14 +60,25 @@
   </compound>
   <compound kind="file">
     <name>log.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
+    <includes id="cpp_2thread_8h" name="thread.h" local="yes" imported="no">etcpal/cpp/thread.h</includes>
+    <class kind="class">etcpal::LogMessageHandler</class>
     <class kind="class">etcpal::Logger</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>LogDispatchPolicy</name>
+      <anchorfile>cpp_2log_8h.html</anchorfile>
+      <anchor>a886bd6be55942894f6ddb878d1cfc662</anchor>
+      <arglist></arglist>
+      <enumvalue file="cpp_2log_8h.html" anchor="a886bd6be55942894f6ddb878d1cfc662afd1dd0c603be8170f9eae0be9f2f6afb">Direct</enumvalue>
+      <enumvalue file="cpp_2log_8h.html" anchor="a886bd6be55942894f6ddb878d1cfc662a7b2f31b90fe1c2cc33a52233c1925df3">Queued</enumvalue>
+    </member>
   </compound>
   <compound kind="file">
     <name>thread.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
@@ -75,13 +86,13 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="class">
@@ -1299,15 +1310,10 @@
   <compound kind="class">
     <name>etcpal::Logger</name>
     <filename>classetcpal_1_1_logger.html</filename>
-    <member kind="enumeration">
-      <type></type>
-      <name>DispatchPolicy</name>
-      <anchorfile>classetcpal_1_1_logger.html</anchorfile>
-      <anchor>a93e428f9c3a64486226fb000197e6365</anchor>
-      <arglist></arglist>
-      <enumvalue file="classetcpal_1_1_logger.html" anchor="a93e428f9c3a64486226fb000197e6365aa9a2bb1cd77c7a81a96b73f10722040e">kDirect</enumvalue>
-      <enumvalue file="classetcpal_1_1_logger.html" anchor="a93e428f9c3a64486226fb000197e6365a023506f9e1203a14ea275f5e6acb2e1a">kQueued</enumvalue>
-    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::LogMessageHandler</name>
+    <filename>classetcpal_1_1_log_message_handler.html</filename>
   </compound>
   <compound kind="class">
     <name>etcpal::MacAddr</name>
@@ -1789,8 +1795,8 @@
       <type>ETCPAL_CONSTEXPR_14</type>
       <name>Thread</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a257084db54c064408a979721d25d91dc</anchor>
-      <arglist>() noexcept</arglist>
+      <anchor>a7e1e4a2ae3e9262eaedc7672ed6f49c1</anchor>
+      <arglist>()=default</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -1856,38 +1862,38 @@
       <arglist>() noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr unsigned int</type>
+      <type>unsigned int</type>
       <name>priority</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a10795c05c9e644a51d4bec4f6f37c673</anchor>
+      <anchor>a22b3fcc6a92ed687e662730c073d9f7d</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr unsigned int</type>
+      <type>unsigned int</type>
       <name>stack_size</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a331ff181a31c1cf44713dfab127d77b0</anchor>
+      <anchor>a1e4efbd2bc46e7d5a1b2077ff2038ad8</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr const char *</type>
+      <type>const char *</type>
       <name>name</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>ac266c73c09c181d1c2b32af025c5042a</anchor>
+      <anchor>a33256784969e3347f423f72af1727cbd</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr void *</type>
+      <type>void *</type>
       <name>platform_data</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a60fcfe453a2dfe8ffc0217186e749df6</anchor>
+      <anchor>ac0e98e4ce31becd580ed2ea39cd926b3</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr const EtcPalThreadParams &amp;</type>
+      <type>const EtcPalThreadParams &amp;</type>
       <name>params</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a07cc51b47475e76fef0e154ad94d826d</anchor>
+      <anchor>aa66aa5c50746cd41312f22bebbf0d4e0</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -1940,38 +1946,38 @@
       <arglist>(const std::chrono::duration&lt; Rep, Period &gt; &amp;sleep_duration) noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr unsigned int</type>
+      <type>unsigned int</type>
       <name>priority</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a10795c05c9e644a51d4bec4f6f37c673</anchor>
+      <anchor>a22b3fcc6a92ed687e662730c073d9f7d</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr unsigned int</type>
+      <type>unsigned int</type>
       <name>stack_size</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a331ff181a31c1cf44713dfab127d77b0</anchor>
+      <anchor>a1e4efbd2bc46e7d5a1b2077ff2038ad8</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr const char *</type>
+      <type>const char *</type>
       <name>name</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>ac266c73c09c181d1c2b32af025c5042a</anchor>
+      <anchor>a33256784969e3347f423f72af1727cbd</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr void *</type>
+      <type>void *</type>
       <name>platform_data</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a60fcfe453a2dfe8ffc0217186e749df6</anchor>
+      <anchor>ac0e98e4ce31becd580ed2ea39cd926b3</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr const EtcPalThreadParams &amp;</type>
+      <type>const EtcPalThreadParams &amp;</type>
       <name>params</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a07cc51b47475e76fef0e154ad94d826d</anchor>
+      <anchor>aa66aa5c50746cd41312f22bebbf0d4e0</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -2144,7 +2150,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal</name>
-    <title>EtcPal</title>
+    <title>etcpal (Core Modules)</title>
     <filename>group__etcpal.html</filename>
     <subgroup>etcpal_bool</subgroup>
     <subgroup>etcpal_error</subgroup>
@@ -2787,7 +2793,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_log</name>
-    <title>Logging (log)</title>
+    <title>log (Logging)</title>
     <filename>group__etcpal__log.html</filename>
     <class kind="struct">EtcPalLogTimeParams</class>
     <class kind="struct">EtcPalLogStrings</class>
@@ -2858,9 +2864,9 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>ETCPAL_LOG_MSG_MAX_LEN</name>
+      <name>ETCPAL_RAW_LOG_MSG_MAX_LEN</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga2ee8e585233bc73a2a299fc94230fed4</anchor>
+      <anchor>ga23f61f04ce3dd5ee8ceaf88f99121999</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -2886,9 +2892,9 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>ETCPAL_HUMAN_LOG_STR_MIN_LEN</name>
+      <name>ETCPAL_LOG_STR_MIN_LEN</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gac2b8a36af28b78d0060a1d89b9b18211</anchor>
+      <anchor>ga5f7e222e2b3359ca02363b27f38e97b2</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -2900,9 +2906,9 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>ETCPAL_HUMAN_LOG_STR_MAX_LEN</name>
+      <name>ETCPAL_LOG_STR_MAX_LEN</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga0fafd8567d72170461c34b0f4b4cde74</anchor>
+      <anchor>gaec05f1fdff3420181c0fe5ae92648e68</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -2961,9 +2967,9 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>kEtcPalLogCreateHumanReadableLog</name>
+      <name>kEtcPalLogCreateHumanReadable</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5ae82eb0e5fc80d2657c033413df36224e</anchor>
+      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5aa0ece7bdc03dd5b29a3be01c212f6b48</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
@@ -2981,9 +2987,9 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_create_human_log_str</name>
+      <name>etcpal_create_log_str</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gaa2bb79ac403c09c2c05ce3fab966b053</anchor>
+      <anchor>ga9e67b13d5afeb1049caecdbf9fbf5171</anchor>
       <arglist>(char *buf, size_t buflen, const EtcPalLogTimeParams *time, int pri, const char *format,...)</arglist>
     </member>
     <member kind="function">
@@ -3289,7 +3295,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_netint</name>
-    <title>Network Interfaces (netint)</title>
+    <title>netint (Network Interfaces)</title>
     <filename>group__etcpal__netint.html</filename>
     <member kind="function">
       <type>size_t</type>
@@ -3841,7 +3847,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_socket</name>
-    <title>Network Socket Interface (socket)</title>
+    <title>socket (Network Socket Interface)</title>
     <filename>group__etcpal__socket.html</filename>
     <class kind="struct">EtcPalLinger</class>
     <class kind="struct">EtcPalMreq</class>
@@ -4403,7 +4409,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_timer</name>
-    <title>Timers (timer)</title>
+    <title>timer (Timers)</title>
     <filename>group__etcpal__timer.html</filename>
     <class kind="struct">EtcPalTimer</class>
     <member kind="typedef">
@@ -4548,7 +4554,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_cpp</name>
-    <title>EtcPal C++ Wrappers</title>
+    <title>etcpal/cpp (C++ Wrappers)</title>
     <filename>group__etcpal__cpp.html</filename>
     <subgroup>etcpal_cpp_error</subgroup>
     <subgroup>etcpal_cpp_inet</subgroup>
@@ -4610,7 +4616,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_cpp_log</name>
-    <title>etcpal_cpp_log</title>
+    <title>log (Logging)</title>
     <filename>group__etcpal__cpp__log.html</filename>
     <class kind="class">etcpal::Logger</class>
   </compound>

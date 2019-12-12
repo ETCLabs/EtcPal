@@ -39,13 +39,6 @@
 #endif
 #endif
 
-/* This module uses some C99 features:
- * - vsnprintf()
- * - va_copy()
- * These additional exceptions to the normal C89 rules are permissible here because there are
- * workarounds for VS.
- */
-
 /*************************** Private constants *******************************/
 
 #define SYSLOG_PROT_VERSION 1 /*RFC 5424, sec. 6.2.2 */
@@ -284,8 +277,8 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParam
 
 /* Create a log message with a human-readable header given the appropriate va_list. Returns a
  * pointer to the original message within the log message, or NULL on failure. */
-static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri,
-                                          const char* format, va_list args)
+static char* etcpal_vcreate_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri,
+                                    const char* format, va_list args)
 {
   if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
     return NULL;
@@ -293,23 +286,22 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPal
   char timestamp[ETCPAL_LOG_TIMESTAMP_LEN];
   make_timestamp(time, timestamp, true);
 
-  int human_header_size;
+  int header_size;
   if (timestamp[0] == '\0')
   {
-    human_header_size = snprintf(buf, ETCPAL_HUMAN_LOG_STR_MIN_LEN + 1, "[%s] ", kLogSeverityStrings[pri]);
+    header_size = snprintf(buf, ETCPAL_LOG_STR_MIN_LEN + 1, "[%s] ", kLogSeverityStrings[pri]);
   }
   else
   {
-    human_header_size =
-        snprintf(buf, ETCPAL_HUMAN_LOG_STR_MIN_LEN + 1, "%s [%s] ", timestamp, kLogSeverityStrings[pri]);
+    header_size = snprintf(buf, ETCPAL_LOG_STR_MIN_LEN + 1, "%s [%s] ", timestamp, kLogSeverityStrings[pri]);
   }
 
-  if (human_header_size >= 0)
+  if (header_size >= 0)
   {
     // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
     // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
-    vsnprintf(&buf[human_header_size], buflen - (size_t)human_header_size, format, args);
-    return &buf[human_header_size];
+    vsnprintf(&buf[header_size], buflen - (size_t)header_size, format, args);
+    return &buf[header_size];
   }
   else
   {
@@ -318,10 +310,9 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPal
 }
 
 /*!
- * \brief Create a log message with a human-readable header in the given
- *        buffer.
+ * \brief Create a log message with a human-readable prefix in the given buffer.
  *
- * Buffer must be at least #ETCPAL_HUMAN_LOG_STR_MIN_LEN in length.
+ * Buffer must be at least #ETCPAL_LOG_STR_MIN_LEN in length.
  *
  * \param[out] buf Buffer in which to build the log message.
  * \param[in] buflen Length in bytes of buf.
@@ -331,13 +322,12 @@ static char* etcpal_vcreate_human_log_str(char* buf, size_t buflen, const EtcPal
  * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                   as appropriate for format specifiers.
  */
-bool etcpal_create_human_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri, const char* format,
-                                 ...)
+bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri, const char* format, ...)
 {
   va_list args;
   bool res;
   va_start(args, format);
-  res = (NULL != etcpal_vcreate_human_log_str(buf, buflen, time, pri, format, args));
+  res = (NULL != etcpal_vcreate_log_str(buf, buflen, time, pri, format, args));
   va_end(args);
   return res;
 }
@@ -401,7 +391,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
   if (etcpal_mutex_take(&buf_lock))
   {
     static char syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
-    static char humanlogmsg[ETCPAL_HUMAN_LOG_STR_MAX_LEN + 1];
+    static char humanlogmsg[ETCPAL_LOG_STR_MAX_LEN + 1];
     EtcPalLogStrings strings = {NULL, NULL, NULL};
 
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateSyslog)
@@ -431,10 +421,10 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
       }
     }
 
-    if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadableLog)
+    if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadable)
     {
-      strings.raw = etcpal_vcreate_human_log_str(humanlogmsg, ETCPAL_HUMAN_LOG_STR_MAX_LEN + 1,
-                                                 have_time ? &time_params : NULL, pri, format, args);
+      strings.raw = etcpal_vcreate_log_str(humanlogmsg, ETCPAL_LOG_STR_MAX_LEN + 1, have_time ? &time_params : NULL,
+                                           pri, format, args);
       if (strings.raw)
       {
         strings.human_readable = humanlogmsg;

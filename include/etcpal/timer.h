@@ -26,13 +26,19 @@
 #include "etcpal/bool.h"
 
 /*!
- * \defgroup etcpal_timer Timers (timer)
+ * \defgroup etcpal_timer timer (Timers)
  * \ingroup etcpal
  * \brief Platform-neutral system timers.
  *
  * ```c
  * #include "etcpal/timer.h"
  * ```
+ *
+ * **WARNING:** This module must be explicitly initialized before use. Initialize the module by
+ * calling etcpal_init() with the relevant feature mask:
+ * \code
+ * etcpal_init(ETCPAL_FEATURE_TIMERS);
+ * \endcode
  *
  * @{
  */

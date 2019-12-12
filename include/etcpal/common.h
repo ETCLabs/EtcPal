@@ -26,7 +26,7 @@
 #include "etcpal/error.h"
 
 /*!
- * \defgroup etcpal EtcPal
+ * \defgroup etcpal etcpal (Core Modules)
  * \brief ETC Platform Abstraction Layer (EtcPal): A set of platform abstraction and utility
  *        modules used by ETC software libraries.
  *

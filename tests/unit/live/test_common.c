@@ -77,7 +77,7 @@ TEST(etcpal_common, log_double_init_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_LOGGING));
 
   EtcPalLogParams params;
-  params.action = kEtcPalLogCreateHumanReadableLog;
+  params.action = kEtcPalLogCreateHumanReadable;
   params.log_fn = common_test_log_callback;
   params.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   params.time_fn = NULL;

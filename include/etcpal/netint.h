@@ -28,13 +28,19 @@
 #include "etcpal/inet.h"
 
 /*!
- * \defgroup etcpal_netint Network Interfaces (netint)
+ * \defgroup etcpal_netint netint (Network Interfaces)
  * \ingroup etcpal
  * \brief A platform-neutral method for enumerating network interfaces.
  *
  * ```c
  * #include "etcpal/netint.h"
  * ```
+ *
+ * **WARNING:** This module must be explicitly initialized before use. Initialize the module by
+ * calling etcpal_init() with the relevant feature mask:
+ * \code
+ * etcpal_init(ETCPAL_FEATURE_NETINTS);
+ * \endcode
  *
  * @{
  */
