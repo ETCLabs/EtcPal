@@ -35,8 +35,6 @@ TEST_TEAR_DOWN(etcpal_cpp_thread)
 {
 }
 
-using namespace std::chrono_literals;
-
 TEST(etcpal_cpp_thread, default_constructor_works)
 {
   etcpal::Thread thrd;
@@ -178,7 +176,7 @@ TEST(etcpal_cpp_thread, sleep_ms_works)
 TEST(etcpal_cpp_thread, sleep_chrono_works)
 {
   // Sleep for one millisecond
-  etcpal::Thread::Sleep(1ms);
+  etcpal::Thread::Sleep(std::chrono::milliseconds(1));
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_thread)

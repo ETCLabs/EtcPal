@@ -1785,13 +1785,6 @@
   <compound kind="class">
     <name>etcpal::Thread</name>
     <filename>classetcpal_1_1_thread.html</filename>
-    <member kind="typedef">
-      <type>etcpal_thread_id_t</type>
-      <name>Id</name>
-      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>afb81efc3ad1f2d1dccd91e609f9f831b</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="function">
       <type>ETCPAL_CONSTEXPR_14</type>
       <name>Thread</name>
@@ -1861,13 +1854,6 @@
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
       <anchor>ae781d3e549a84cebb2c463ba12df8cbf</anchor>
       <arglist>() noexcept</arglist>
-    </member>
-    <member kind="function">
-      <type>Id</type>
-      <name>id</name>
-      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>ab01c9e39923e2e5bdd5dc8a4f880ba6c</anchor>
-      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
       <type>constexpr unsigned int</type>
@@ -1952,20 +1938,6 @@
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
       <anchor>a0e7e603ebed62b739065a10cd090213b</anchor>
       <arglist>(const std::chrono::duration&lt; Rep, Period &gt; &amp;sleep_duration) noexcept</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr Id</type>
-      <name>kInvalidId</name>
-      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a04eb663cb600c780205a39d6f7b97b4e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>Id</type>
-      <name>id</name>
-      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>ab01c9e39923e2e5bdd5dc8a4f880ba6c</anchor>
-      <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
       <type>constexpr unsigned int</type>
@@ -4393,20 +4365,6 @@
       <anchor>ga5a0a37d186ac57231b94c287a58b54a0</anchor>
       <arglist></arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_THREAD_ID_INVALID</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>gaa6bbd6ac012e5dd484dabac1394a96b2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_THREAD_GET_ID</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga5dc05f0ebe84775946739096c082e660</anchor>
-      <arglist>(threadptr)</arglist>
-    </member>
     <member kind="typedef">
       <type>struct EtcPalThreadParams</type>
       <name>EtcPalThreadParams</name>
@@ -4419,13 +4377,6 @@
       <name>etcpal_thread_t</name>
       <anchorfile>group__etcpal__thread.html</anchorfile>
       <anchor>ga6ea2bb55f405380e3ea296e3b6164ae8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>etcpal_thread_id_t</name>
-      <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga49a282891a67da2481c22266f6adf0d6</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">

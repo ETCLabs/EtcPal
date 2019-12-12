@@ -111,6 +111,16 @@ namespace etcpal
 /// etcpal::Thread thread([]() { std::cout << "Hello from a thread!\n"; });
 /// \endcode
 ///
+/// The Thread class also provides static Sleep() functions, which can be used as a
+/// platform-neutral sleep.
+/// \code
+/// etcpal::Thread::Sleep(20); // Sleep for 20 milliseconds
+///
+/// // In a C++14 or greater environment, you can also...
+/// using namespace std::chrono_literals;
+/// etcpal::Thread::Sleep(10s); // Sleep for 10 seconds
+/// \endcode
+///
 /// This is one of the few EtcPal wrappers that does heap allocation, as the thread function and
 /// arguments need to be stored.
 class Thread
