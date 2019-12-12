@@ -58,6 +58,59 @@ namespace etcpal
 /// * The thread has a Start() function - a previously default-constructed thread can be assigned
 ///   some operation parameters, then started, without being reassigned to another instance.
 ///
+/// To start the thread with default parameters, you can use the constructor:
+/// \code
+/// void MyThreadFunction()
+/// {
+///   std::cout << "Hello from a thread!\n";
+/// }
+///
+/// etcpal::Thread thread(MyThreadFunction); // Thread is now running
+/// // Thread will be automatically joined when thread goes out of scope, or join it explicitly:
+/// thread.Join();
+/// \endcode
+///
+/// The value constructor will throw an etcpal::Result object if the thread fails to start for any
+/// reason. To avoid an exception-handling approach, you can default-construct and use the Start()
+/// function:
+/// \code
+/// etcpal::Thread thread;
+/// etcpal::Result start_result = thread.Start(MyThreadFunction);
+/// if (start_result)
+/// {
+///   // Thread is running, yay!
+/// }
+/// else
+/// {
+///   std::cout << "Error starting thread: " << start_result.ToString() << '\n';
+/// }
+/// \endcode
+///
+/// This approach also lets you set non-default thread parameters before starting; method-chaining
+/// syntax is available on these setters:
+/// \code
+/// etcpal::Thread thread;
+/// etcpal::Result start_result = thread.SetName("My Thread")
+///                                     .SetPriority(4)
+///                                     .SetStackSize(4000)
+///                                     .Start(MyThreadFunction);
+/// \endcode
+///
+/// Pass arguments to your thread function, which will be stored on the heap:
+/// \code
+/// void MyThreadFunction(int value)
+/// {
+///   std::cout << "The value is " << value << ".\n";
+/// }
+///
+/// etcpal::Thread thread(MyThreadFunction, 5); // Thread will print "The value is 5."
+/// \endcode
+///
+/// You can even use lambdas for quick-and-dirty operations:
+/// \code
+/// etcpal::Thread thread([]() { std::cout << "Hello from a thread!\n"; });
+/// \endcode
+///
 /// This is one of the few EtcPal wrappers that does heap allocation, as the thread function and
 /// arguments need to be stored.
 class Thread
@@ -82,19 +135,25 @@ public:
   Thread& operator=(const Thread& other) = delete;
 
   bool joinable() const noexcept;
-  Id id() const noexcept;
 
+  /// \name Getters
+  /// @{
+  Id id() const noexcept;
   constexpr unsigned int priority() const noexcept;
   constexpr unsigned int stack_size() const noexcept;
   constexpr const char* name() const noexcept;
   constexpr void* platform_data() const noexcept;
   constexpr const EtcPalThreadParams& params() const noexcept;
+  /// @}
 
+  /// \name Setters
+  /// @{
   Thread& SetPriority(unsigned int priority) noexcept;
   Thread& SetStackSize(unsigned int stack_size) noexcept;
   Thread& SetName(const char* name) noexcept;
   Thread& SetName(const std::string& name) noexcept;
   Thread& SetPlatformData(void* platform_data) noexcept;
+  /// @}
 
   template <class Function, class... Args>
   Result Start(Function&& func, Args&&... args);
@@ -330,10 +389,9 @@ Result Thread::Start(Function&& func, Args&&... args)
 ///
 /// Blocks until the thread has exited.
 ///
-/// \return #kEtcPalErrOk: The thread was stopped.
+/// \return #kEtcPalErrOk: The thread was stopped; joinable() is now false.
 /// \return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
 /// \return Other codes translated from system error codes are possible.
-/// \post joinable() is false.
 inline Result Thread::Join() noexcept
 {
   if (thread_)

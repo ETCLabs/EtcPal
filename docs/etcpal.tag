@@ -1849,6 +1849,20 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
+      <type>Result</type>
+      <name>Start</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a1a4d94c5a8d7aa7536c61e4ca4854907</anchor>
+      <arglist>(Function &amp;&amp;func, Args &amp;&amp;... args)</arglist>
+    </member>
+    <member kind="function">
+      <type>Result</type>
+      <name>Join</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>ae781d3e549a84cebb2c463ba12df8cbf</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function">
       <type>Id</type>
       <name>id</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
@@ -1925,20 +1939,6 @@
       <anchor>a23a3a84c2368bdf07cf64e1b49df5364</anchor>
       <arglist>(void *platform_data) noexcept</arglist>
     </member>
-    <member kind="function">
-      <type>Result</type>
-      <name>Start</name>
-      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a1a4d94c5a8d7aa7536c61e4ca4854907</anchor>
-      <arglist>(Function &amp;&amp;func, Args &amp;&amp;... args)</arglist>
-    </member>
-    <member kind="function">
-      <type>Result</type>
-      <name>Join</name>
-      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>ae781d3e549a84cebb2c463ba12df8cbf</anchor>
-      <arglist>() noexcept</arglist>
-    </member>
     <member kind="function" static="yes">
       <type>static void</type>
       <name>Sleep</name>
@@ -1959,6 +1959,83 @@
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
       <anchor>a04eb663cb600c780205a39d6f7b97b4e</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>Id</type>
+      <name>id</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>ab01c9e39923e2e5bdd5dc8a4f880ba6c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr unsigned int</type>
+      <name>priority</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a10795c05c9e644a51d4bec4f6f37c673</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr unsigned int</type>
+      <name>stack_size</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a331ff181a31c1cf44713dfab127d77b0</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr const char *</type>
+      <name>name</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>ac266c73c09c181d1c2b32af025c5042a</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr void *</type>
+      <name>platform_data</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a60fcfe453a2dfe8ffc0217186e749df6</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr const EtcPalThreadParams &amp;</type>
+      <name>params</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a07cc51b47475e76fef0e154ad94d826d</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>Thread &amp;</type>
+      <name>SetPriority</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>ac83a10f16662668e1d8a494ddb6e1234</anchor>
+      <arglist>(unsigned int priority) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>Thread &amp;</type>
+      <name>SetStackSize</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a3cb4d6197b72897c0ceba341f7beff4b</anchor>
+      <arglist>(unsigned int stack_size) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>Thread &amp;</type>
+      <name>SetName</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>ae6cedd23a7b2b24f90059df894846864</anchor>
+      <arglist>(const char *name) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>Thread &amp;</type>
+      <name>SetName</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>afe34480dc3ef0d8b9f74e389ec1ca647</anchor>
+      <arglist>(const std::string &amp;name) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>Thread &amp;</type>
+      <name>SetPlatformData</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a23a3a84c2368bdf07cf64e1b49df5364</anchor>
+      <arglist>(void *platform_data) noexcept</arglist>
     </member>
   </compound>
   <compound kind="class">
