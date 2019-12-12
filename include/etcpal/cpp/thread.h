@@ -115,10 +115,13 @@ namespace etcpal
 /// platform-neutral sleep.
 /// \code
 /// etcpal::Thread::Sleep(20); // Sleep for 20 milliseconds
+/// etcpal::Thread::Sleep(std::chrono::seconds(2)); // Sleep for 2 seconds
 ///
 /// // In a C++14 or greater environment, you can also...
+///
 /// using namespace std::chrono_literals;
-/// etcpal::Thread::Sleep(10s); // Sleep for 10 seconds
+///
+/// etcpal::Thread::Sleep(1min); // Sleep for 1 minute
 /// \endcode
 ///
 /// This is one of the few EtcPal wrappers that does heap allocation, as the thread function and
@@ -411,6 +414,8 @@ inline void Thread::Sleep(unsigned int ms) noexcept
 }
 
 /// \brief Blocks the current thread for the specified duration.
+///
+/// Note: Duration will be clamped to [0, UINT_MAX] milliseconds.
 template <typename Rep, typename Period>
 void Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept
 {
