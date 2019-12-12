@@ -146,11 +146,11 @@ public:
 
   /// \name Getters
   /// @{
-  constexpr unsigned int priority() const noexcept;
-  constexpr unsigned int stack_size() const noexcept;
-  constexpr const char* name() const noexcept;
-  constexpr void* platform_data() const noexcept;
-  constexpr const EtcPalThreadParams& params() const noexcept;
+  unsigned int priority() const;
+  unsigned int stack_size() const noexcept;
+  const char* name() const noexcept;
+  void* platform_data() const noexcept;
+  const EtcPalThreadParams& params() const noexcept;
   /// @}
 
   /// \name Setters
@@ -249,31 +249,31 @@ inline bool Thread::joinable() const noexcept
 }
 
 /// \brief Get the priority of this thread (not valid on all platforms).
-constexpr unsigned int Thread::priority() const noexcept
+inline unsigned int Thread::priority() const
 {
   return params_.priority;
 }
 
 /// \brief Get the stack size of this thread (not valid on all platforms).
-constexpr unsigned int Thread::stack_size() const noexcept
+inline unsigned int Thread::stack_size() const noexcept
 {
   return params_.stack_size;
 }
 
 /// \brief Get the name of this thread.
-constexpr const char* Thread::name() const noexcept
+inline const char* Thread::name() const noexcept
 {
   return params_.thread_name;
 }
 
 /// \brief Get the platform-specific data of this thread.
-constexpr void* Thread::platform_data() const noexcept
+inline void* Thread::platform_data() const noexcept
 {
   return params_.platform_data;
 }
 
 /// \brief Get a reference the parameters of this thread.
-constexpr const EtcPalThreadParams& Thread::params() const noexcept
+inline const EtcPalThreadParams& Thread::params() const noexcept
 {
   return params_;
 }

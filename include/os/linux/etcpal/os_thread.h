@@ -34,8 +34,6 @@ extern "C" {
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 0
 
-typedef pthread_t etcpal_thread_id_t;
-
 typedef struct
 {
   void (*fn)(void*);

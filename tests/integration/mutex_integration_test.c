@@ -41,7 +41,7 @@ static void mutex_test_thread(void* arg)
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    etcpal_mutex_take(&mutex);
+    (void)etcpal_mutex_take(&mutex);
     ++shared_var;
     etcpal_mutex_give(&mutex);
     // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
