@@ -34,19 +34,6 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  */
 typedef PLATFORM_DEFINED etcpal_thread_t;
 
-/*! The thread identifier. */
-typedef PLATFORM_DEFINED etcpal_thread_id_t;
-
-/*! An invalid value for etcpal_thread_id_t. */
-#define ETCPAL_THREAD_ID_INVALID PLATFORM_DEFINED
-
-/*!
- * \brief Get the thread ID from a thread handle.
- * \param threadptr (etcpal_thread_t*) The thread handle.
- * \return The thread ID (etcpal_thread_id_t).
- */
-#define ETCPAL_THREAD_GET_ID(threadptr) PLATFORM_DEFINED
-
 /*! 
  * \brief Create a new thread.
  *

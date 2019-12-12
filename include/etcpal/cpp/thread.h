@@ -116,11 +116,6 @@ namespace etcpal
 class Thread
 {
 public:
-  /// The thread identifier type.
-  using Id = etcpal_thread_id_t;
-  /// An invalid value for Id.
-  constexpr static Id kInvalidId = ETCPAL_THREAD_ID_INVALID;
-
   ETCPAL_CONSTEXPR_14 Thread() noexcept;
   template <class Function, class... Args>
   Thread(Function&& func, Args&&... args);
@@ -138,7 +133,6 @@ public:
 
   /// \name Getters
   /// @{
-  Id id() const noexcept;
   constexpr unsigned int priority() const noexcept;
   constexpr unsigned int stack_size() const noexcept;
   constexpr const char* name() const noexcept;
@@ -169,7 +163,7 @@ public:
 
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
-  EtcPalThreadParams params_;
+  EtcPalThreadParams params_{};
 };
 
 extern "C" inline void ThreadFn(void* arg)
@@ -215,8 +209,8 @@ inline Thread::~Thread()
 /// \brief Move another thread into this thread.
 ///
 /// If *this has a valid associated thread (`joinable() == true`), the behavior is undefined.
-/// After this call, *this has the parameters and ID of other, and other is set to a
-/// default-constructed state.
+/// After this call, *this has the parameters of other, and other is set to a default-constructed
+/// state.
 inline Thread::Thread(Thread&& other) noexcept
 {
   *this = std::move(other);
@@ -225,8 +219,8 @@ inline Thread::Thread(Thread&& other) noexcept
 /// \brief Move another thread into this thread.
 ///
 /// If *this has a valid associated thread (`joinable() == true`), the behavior is undefined.
-/// After this call, *this has the parameters and ID of other, and other is set to a
-/// default-constructed state.
+/// After this call, *this has the parameters of other, and other is set to a default-constructed
+/// state.
 inline Thread& Thread::operator=(Thread&& other) noexcept
 {
   thread_ = std::move(other.thread_);
@@ -239,13 +233,6 @@ inline Thread& Thread::operator=(Thread&& other) noexcept
 inline bool Thread::joinable() const noexcept
 {
   return (bool)thread_;
-}
-
-/// \brief Get the ID of this thread.
-/// \return The thread ID if joinable() is true, or Thread::kInvalidId if joinable() is false.
-inline Thread::Id Thread::id() const noexcept
-{
-  return (thread_ ? ETCPAL_THREAD_GET_ID(thread_.get()) : kInvalidId);
 }
 
 /// \brief Get the priority of this thread (not valid on all platforms).

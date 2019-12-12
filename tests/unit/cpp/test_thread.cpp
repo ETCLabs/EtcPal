@@ -41,7 +41,6 @@ TEST(etcpal_cpp_thread, default_constructor_works)
 {
   etcpal::Thread thrd;
   TEST_ASSERT_FALSE(thrd.joinable());
-  TEST_ASSERT_TRUE(thrd.id() == etcpal::Thread::kInvalidId);
 }
 
 TEST(etcpal_cpp_thread, constructor_works_no_args)
@@ -112,8 +111,6 @@ TEST(etcpal_cpp_thread, move_constructor_works)
   });
   TEST_ASSERT_TRUE(thrd.joinable());
 
-  etcpal::Thread::Id id = thrd.id();
-
   etcpal::Thread thrd2(std::move(thrd));
   // thrd should be in a default-constructed state
   TEST_ASSERT_FALSE(thrd.joinable());
@@ -122,7 +119,6 @@ TEST(etcpal_cpp_thread, move_constructor_works)
   // thrd2 should be running and have thrd's parameters
   TEST_ASSERT_TRUE(thrd2.joinable());
   TEST_ASSERT_EQUAL_STRING(thrd2.name(), "Test Thread Blah");
-  TEST_ASSERT_TRUE(thrd2.id() == id);
 
   thrd2.Join();
   TEST_ASSERT_FALSE(thrd2.joinable());
@@ -139,8 +135,6 @@ TEST(etcpal_cpp_thread, move_assignment_operator_works)
   });
   TEST_ASSERT_TRUE(thrd.joinable());
 
-  etcpal::Thread::Id id = thrd.id();
-
   etcpal::Thread thrd2 = std::move(thrd);
   // thrd should be in a default-constructed state
   TEST_ASSERT_FALSE(thrd.joinable());
@@ -149,19 +143,10 @@ TEST(etcpal_cpp_thread, move_assignment_operator_works)
   // thrd2 should be running and have thrd's parameters
   TEST_ASSERT_TRUE(thrd2.joinable());
   TEST_ASSERT_EQUAL_STRING(thrd2.name(), "Test Thread Blah");
-  TEST_ASSERT_TRUE(thrd2.id() == id);
 
   thrd2.Join();
   TEST_ASSERT_FALSE(thrd2.joinable());
   TEST_ASSERT_TRUE(thread_ran);
-}
-
-TEST(etcpal_cpp_thread, id_getter_works)
-{
-  etcpal::Thread thrd([]() { etcpal::Thread::Sleep(1); });
-  TEST_ASSERT_TRUE(thrd.joinable());
-  TEST_ASSERT_TRUE(thrd.id() != etcpal::Thread::kInvalidId);
-  thrd.Join();
 }
 
 TEST(etcpal_cpp_thread, param_setters_work)
@@ -205,7 +190,6 @@ TEST_GROUP_RUNNER(etcpal_cpp_thread)
   RUN_TEST_CASE(etcpal_cpp_thread, start_works_with_args);
   RUN_TEST_CASE(etcpal_cpp_thread, move_constructor_works);
   RUN_TEST_CASE(etcpal_cpp_thread, move_assignment_operator_works);
-  RUN_TEST_CASE(etcpal_cpp_thread, id_getter_works);
   RUN_TEST_CASE(etcpal_cpp_thread, param_setters_work);
   RUN_TEST_CASE(etcpal_cpp_thread, sleep_ms_works);
   RUN_TEST_CASE(etcpal_cpp_thread, sleep_chrono_works);
