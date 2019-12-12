@@ -21,6 +21,7 @@
 
 #include <process.h>
 #include <string.h>
+#include "os_error.h"
 
 /* THIS IS WINDOWS BLACK MAGIC, and copied from the sample code at Microsoft
  * Lasciate ogne speranza, voi ch'intrate
@@ -70,33 +71,34 @@ unsigned __stdcall thread_func_internal(void* pthread)
   return 1;
 }
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+                                    void* thread_arg)
 {
   if (!id || !params || !thread_fn)
-    return false;
+    return kEtcPalErrInvalid;
 
   strncpy_s(id->name, ETCPAL_THREAD_NAME_MAX_LENGTH, params->thread_name, _TRUNCATE);
   id->arg = thread_arg;
   id->fn = thread_fn;
   id->tid = (HANDLE)_beginthreadex(NULL, params->stack_size, thread_func_internal, id, CREATE_SUSPENDED, NULL);
   if (id->tid == 0)
-    return false;
+    return err_os_to_etcpal(errno);
 
-  SetThreadPriority(id->tid, params->thread_priority);
+  SetThreadPriority(id->tid, params->priority);
   ResumeThread(id->tid);
-  return true;
+  return kEtcPalErrOk;
 }
 
-bool etcpal_thread_join(etcpal_thread_t* id)
+etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
   if (id)
   {
     if (WAIT_OBJECT_0 != WaitForSingleObject(id->tid, INFINITE))
     {
-      return false;
+      return kEtcPalErrSys;
     }
     CloseHandle(id->tid);
-    return true;
+    return kEtcPalErrOk;
   }
-  return false;
+  return kEtcPalErrInvalid;
 }

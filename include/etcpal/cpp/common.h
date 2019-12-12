@@ -30,7 +30,7 @@
 /// provided for convenience when writing C++ code that uses EtcPal. To include a C++ wrapper for a
 /// given module, where you would normally include "etcpal/[module].h", instead include
 /// "etcpal/cpp/[module].h".
-/// 
+///
 /// @{
 
 /// \def ETCPAL_CONSTEXPR_14
@@ -48,4 +48,21 @@
 
 /// @}
 
-#endif // ETCPAL_CPP_COMMON_H_
+namespace etcpal
+{
+/// \cond detail
+
+namespace detail
+{
+enum class enabler
+{
+};
+
+#define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
+#define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
+}  // namespace detail
+
+/// \endcond
+}  // namespace etcpal
+
+#endif  // ETCPAL_CPP_COMMON_H_

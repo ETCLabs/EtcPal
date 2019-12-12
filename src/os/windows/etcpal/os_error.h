@@ -20,10 +20,10 @@
 #ifndef ETCPAL_OS_ERROR_H_
 #define ETCPAL_OS_ERROR_H_
 
-#include <WinSock2.h>
-#include <Windows.h>
+#include <errno.h>
 #include "etcpal/error.h"
 
 etcpal_error_t err_winsock_to_etcpal(int wsaerror);
+etcpal_error_t err_os_to_etcpal(int error);
 
 #endif /* ETCPAL_OS_ERROR_H_ */

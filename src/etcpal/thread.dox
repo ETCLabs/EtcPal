@@ -28,11 +28,24 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 #define ETCPAL_THREAD_NAME_MAX_LENGTH
 
 /*! 
- * \brief The thread identifier.
+ * \brief The thread handle.
  *
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_thread_t;
+
+/*! The thread identifier. */
+typedef PLATFORM_DEFINED etcpal_thread_id_t;
+
+/*! An invalid value for etcpal_thread_id_t. */
+#define ETCPAL_THREAD_ID_INVALID PLATFORM_DEFINED
+
+/*!
+ * \brief Get the thread ID from a thread handle.
+ * \param threadptr (etcpal_thread_t*) The thread handle.
+ * \return The thread ID (etcpal_thread_id_t).
+ */
+#define ETCPAL_THREAD_GET_ID(threadptr) PLATFORM_DEFINED
 
 /*! 
  * \brief Create a new thread.
@@ -47,10 +60,11 @@ typedef PLATFORM_DEFINED etcpal_thread_t;
  * \param[in] thread_fn Pointer to function that should be called from the new thread. This
  *                      function takes one void* argument and returns void.
  * \param[in] thread_arg Argument to the function called from the new thread.
- * \return true: The thread was created.
- * \return false: The thread was not created.
+ * \return #kEtcPalErrOk: The thread was created.
+ * \return #kEtcPalErrInvalid: Invalid argument.
+ * \return Other codes translated from system error codes are possible.
  */
-bool etcpal_thread_create(etcpal_thread_t *id, const EtcPalThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
+etcpal_error_t etcpal_thread_create(etcpal_thread_t *id, const EtcPalThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
 
 /*!
  * \brief Wait for a thread to finish execution.
@@ -58,16 +72,17 @@ bool etcpal_thread_create(etcpal_thread_t *id, const EtcPalThreadParams *params,
  * Blocks until the thread has exited.
  *
  * \param[in] id Identifier for the thread to stop.
- * \return true: The thread was stopped.
- * \return false: An error occurred.
+ * \return #kEtcPalErrOk: The thread was stopped.
+ * \return #kEtcPalErrInvalid: id does not represent a joinable thread.
+ * \return Other codes translated from system error codes are possible.
  */
-bool etcpal_thread_join(etcpal_thread_t *id);
+etcpal_error_t etcpal_thread_join(etcpal_thread_t *id);
 
 /*!
  * \brief Provides a platform-neutral sleep.
  * \param[in] sleep_ms How long to sleep, in milliseconds.
  */
-void etcpal_thread_sleep(int sleep_ms);
+void etcpal_thread_sleep(unsigned int sleep_ms);
 
 /*!
  * @}

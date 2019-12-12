@@ -59,9 +59,9 @@ typedef HANDLE etcpal_thread_id_t;
 #define ETCPAL_THREAD_GET_ID(threadptr) ((threadptr)->tid)
 
 #ifdef __cplusplus
-#define etcpal_thread_sleep(sleep_ms) ::Sleep(sleep_ms)
+#define etcpal_thread_sleep(sleep_ms) ::Sleep(static_cast<DWORD>(sleep_ms))
 #else
-#define etcpal_thread_sleep(sleep_ms) Sleep(sleep_ms)
+#define etcpal_thread_sleep(sleep_ms) Sleep((DWORD)sleep_ms)
 #endif
 
 #ifdef __cplusplus

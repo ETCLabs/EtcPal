@@ -30,7 +30,8 @@ static void thread_func_internal(void* pvParameters)
   vTaskDelete(NULL);
 }
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+                          void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return false;
@@ -42,7 +43,7 @@ bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params,
   id->fn = thread_fn;
   id->arg = thread_arg;
   if (pdPASS == xTaskCreate(thread_func_internal, params->thread_name ? params->thread_name : "etcpal_thread",
-                            (uint16_t)params->stack_size, id, params->thread_priority, &id->tid))
+                            (uint16_t)params->stack_size, id, params->priority, &id->tid))
   {
     return true;
   }

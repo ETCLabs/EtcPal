@@ -189,7 +189,7 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
   etcpal_thread_t send_thr_handle;
-  TEST_ASSERT(etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
@@ -224,7 +224,7 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
   TEST_ASSERT_LESS_OR_EQUAL_INT(0, etcpal_recvfrom(recv_socks[1], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr));
 
   // Let the send thread end
-  TEST_ASSERT_TRUE(etcpal_thread_join(&send_thr_handle));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_join(&send_thr_handle));
 }
 
 TEST(socket_integration_udp, unicast_udp_ipv4)
@@ -279,7 +279,7 @@ void multicast_udp_test(void)
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
   etcpal_thread_t send_thr_handle;
-  TEST_ASSERT(etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
@@ -312,7 +312,7 @@ void multicast_udp_test(void)
   TEST_ASSERT_LESS_OR_EQUAL_INT(0, etcpal_recvfrom(recv_socks[1], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr));
 
   // Let the send thread end
-  TEST_ASSERT(etcpal_thread_join(&send_thr_handle));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_join(&send_thr_handle));
 }
 
 TEST(socket_integration_udp, multicast_udp_ipv4)

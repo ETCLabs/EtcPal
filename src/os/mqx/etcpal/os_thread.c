@@ -29,7 +29,8 @@ static void thread_func_internal(uint32_t initial_data)
   }
 }
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+                          void* thread_arg)
 {
   if (!id || !params || !thread_fn || (MQX_OK != _lwsem_create(&id->sig, 0)))
     return false;
@@ -37,7 +38,7 @@ bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params,
   TASK_TEMPLATE_STRUCT template;
   template.TASK_ADDRESS = thread_func_internal;
   template.TASK_NAME = (char*)(params->thread_name ? params->thread_name : "etcpal_thread");
-  template.TASK_PRIORITY = params->thread_priority;
+  template.TASK_PRIORITY = params->priority;
   template.TASK_STACKSIZE = params->stack_size;
   if (params->platform_data)
   {
