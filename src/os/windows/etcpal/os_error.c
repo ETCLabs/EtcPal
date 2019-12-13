@@ -23,8 +23,6 @@
 #include <WinSock2.h>
 #include <Windows.h>
 
-#include "etcpal/int.h"
-
 // Convert Windows sockets errors to etcpal_error_t values.
 etcpal_error_t err_winsock_to_etcpal(int wsaerror)
 {

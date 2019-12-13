@@ -23,17 +23,21 @@
 #define ETCPAL_PDU_H_
 
 #include <stddef.h>
-#include "etcpal/int.h"
+#include <stdint.h>
 #include "etcpal/bool.h"
 
 /*!
- * \defgroup etcpal_pdu ACN Protocol Family PDUs (pdu)
+ * \defgroup etcpal_pdu pdu (ACN Protocol Family PDUs)
  * \ingroup etcpal
  * \brief Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN).
  *
  * ```c
  * #include "etcpal/pdu.h"
  * ```
+ *
+ * This module handles building and parsing the ACN PDU format as defined in ANSI E1.17, ACN
+ * Architecture document, &sect; 2. EtcPal supports a few different ACN protocol family libraries,
+ * so it's convenient to have this logic here.
  *
  * @{
  */

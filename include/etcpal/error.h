@@ -25,11 +25,17 @@
 #include <stdlib.h>
 
 /*!
- * \defgroup etcpal_error Error Handling (error)
+ * \defgroup etcpal_error error (Error Handling)
  * \ingroup etcpal
  * \brief Platform-neutral error codes.
  *
- * `include "etcpal/error.h"`
+ * ```c
+ * include "etcpal/error.h"
+ * ```
+ *
+ * Provides a set of error codes that can be returned by library functions. For platform
+ * abstraction modules, error codes are translated from their platform-specific counterparts. Use
+ * etcpal_strerror() to get a string representation of any error code.
  *
  * @{
  */

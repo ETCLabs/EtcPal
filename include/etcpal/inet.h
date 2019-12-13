@@ -22,20 +22,24 @@
 #ifndef ETCPAL_INET_H_
 #define ETCPAL_INET_H_
 
+#include <stdint.h>
 #include <string.h>
 #include "etcpal/bool.h"
 #include "etcpal/error.h"
-#include "etcpal/int.h"
 #include "etcpal/os_inet.h"
 
 /*!
- * \defgroup etcpal_inet Internet Addressing (inet)
+ * \defgroup etcpal_inet inet (Internet Addressing)
  * \ingroup etcpal
  * \brief Identifiers for IP addresses and network interfaces.
  *
  * ```c
  * #include "etcpal/inet.h"
  * ```
+ *
+ * Provides types representing internet addressing constructs. Many of these functions and types
+ * mimic those found in POSIX's `arpa/inet.h`, with some quality-of-life improvements. Several
+ * functions and macros are provided to inspect, compare and manipulate these types.
  *
  * @{
  */

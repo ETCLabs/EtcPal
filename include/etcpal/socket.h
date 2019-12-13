@@ -45,8 +45,10 @@
  *
  * This module attempts to abstract the network socket interface from various platforms into one
  * platform-neutral interface. The functions and flags are modeled after the BSD sockets
- * interface. <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner,
- * and Rudoff is highly recommended reading for those unfamiliar with this interface.
+ * interface. This API is too large and complex to provide a concise how-to here; users of this
+ * module are assumed to already be familiar with some version of the BSD interface. If not,
+ * <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner, and Rudoff is
+ * highly recommended reading.
  *
  * @{
  */
@@ -54,7 +56,7 @@
 /*! Event flags for the etcpal_poll_*() API functions. */
 typedef uint32_t etcpal_poll_events_t;
 
-#include "etcpal/os_socket.h" /* .he os-specific socket definitions */
+#include "etcpal/os_socket.h" /* The os-specific socket definitions */
 
 /* clang-format off */
 

@@ -7,5 +7,6 @@ etcpal_add_live_test(etcpal_cpp_unit_tests CXX
   test_log.cpp
   test_main.cpp
   test_thread.cpp
+  test_timer.cpp
   test_uuid.cpp
 )

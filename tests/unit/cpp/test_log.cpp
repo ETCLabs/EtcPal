@@ -18,3 +18,27 @@
  ******************************************************************************/
 
 #include "etcpal/cpp/log.h"
+#include "unity_fixture.h"
+
+extern "C" {
+
+TEST_GROUP(etcpal_cpp_log);
+
+TEST_SETUP(etcpal_cpp_log)
+{
+}
+
+TEST_TEAR_DOWN(etcpal_cpp_log)
+{
+}
+
+TEST(etcpal_cpp_log, placeholder)
+{
+  etcpal::Logger logger;
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_log)
+{
+  RUN_TEST_CASE(etcpal_cpp_log, placeholder);
+}
+}

@@ -3,13 +3,18 @@ platform-specific, and some of them implement types and functions differently (i
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
 /*!
- * \defgroup etcpal_lock Locks and Synchronization (lock)
+ * \defgroup etcpal_lock lock (Locks and Synchronization)
  * \ingroup etcpal
  * \brief Platform-neutral locks, mutexes and signals.
  *
  * ```c
  * #include "etcpal/lock.h"
  * ```
+ *
+ * Currently provides definitions for the following synchronization primitives:
+ * * Mutexes: A mutual-exclusion lock that can only be held by a single thread at a time.
+ * * Signals: A method of synchronizing two or more threads around an event.
+ * * Read-Write Locks: A lock which can be held either for shared or exclusive access.
  *
  * @{
  */
@@ -25,7 +30,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * etcpal_mutex implementations use the following constructs under the hood on various platforms:
  *
  * | On:      | etcpal_mutex uses: |
- * |----------|------------------|
+ * |----------|--------------------|
  * | FreeRTOS | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
  * | Linux    | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
  * | macOS    | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
@@ -99,7 +104,7 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  * etcpal_signal implementations use the following constructs under the hood on various platforms:
  *
  * | On:      | etcpal_mutex uses: |
- * |----------|------------------|
+ * |----------|--------------------|
  * | FreeRTOS | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
  * | Linux    | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
  * | macOS    | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)

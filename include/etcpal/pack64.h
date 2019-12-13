@@ -22,7 +22,7 @@
 #ifndef ETCPAL_PACK64_H_
 #define ETCPAL_PACK64_H_
 
-#include "etcpal/int.h"
+#include <stdint.h>
 
 /*!
  * \addtogroup etcpal_pack

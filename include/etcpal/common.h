@@ -22,7 +22,7 @@
 #ifndef ETCPAL_COMMON_H_
 #define ETCPAL_COMMON_H_
 
-#include "etcpal/int.h"
+#include <stdint.h>
 #include "etcpal/error.h"
 
 /*!
@@ -36,6 +36,25 @@
  * either platform-neutral (contained in include/) or platform-specific (contained in
  * include/os/[platform]). All platform-specific headers of the same EtcPal module will conform to
  * an identical interface.
+ *
+ * Some EtcPal modules must be initialized before use. These modules have a prominent notice in
+ * the "detailed description" portion of their documentation. To initialize the EtcPal library,
+ * call etcpal_init() with a mask of your desired features. The feature masks can be combined with
+ * a bitwise OR.
+ *
+ * \code
+ * #include "etcpal/common.h"
+ *
+ * etcpal_error_t result = etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_LOGGING);
+ * \endcode
+ *
+ * etcpal_init() can be called multiple times for the same or different sets of features, with no
+ * adverse effects. At deinitialization time, there should be a paired call to etcpal_deinit() with
+ * the same mask that was passed to the corresponding call to etcpal_init().
+ *
+ * \code
+ * etcpal_deinit(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_LOGGING);
+ * \endcode
  *
  * @{
  */
@@ -72,13 +91,13 @@ typedef uint32_t etcpal_features_t;
  */
 
 #define ETCPAL_FEATURE_SOCKETS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal_socket module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal/socket module. */
 #define ETCPAL_FEATURE_NETINTS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal_netint module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal/netint module. */
 #define ETCPAL_FEATURE_TIMERS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET)) /*!< Use the etcpal_timer module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET)) /*!< Use the etcpal/timer module. */
 #define ETCPAL_FEATURE_LOGGING \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal_log module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal/log module. */
 #define ETCPAL_FEATURES_ALL 0xffffffffu                      /*!< Use every available module. */
 
 /*!

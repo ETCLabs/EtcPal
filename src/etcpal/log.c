@@ -352,7 +352,7 @@ bool etcpal_can_log(const EtcPalLogParams* params, int pri)
 }
 
 /*!
- * \brief Log a message from a library module.
+ * \brief Log a message.
  *
  * Takes a printf-style format string which is formatted and passed to the application callback.
  *
@@ -370,7 +370,7 @@ void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
 }
 
 /*!
- * \brief Log a message from a library module with the list of format arguments already generated.
+ * \brief Log a message with the list of format arguments already generated.
  *
  * For normal usage, just use etcpal_log(). However, this function is useful if you want to create a
  * wrapper function around etcpal_log() which also takes variable format arguments.

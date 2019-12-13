@@ -86,29 +86,6 @@ const EtcPalNetintInfo* etcpal_netint_get_interfaces()
 }
 
 /*!
- * \brief Copy the list of network interfaces on the system into an array.
- *
- * For NICs with multiple IP addresses assigned, this module separates each address into its own
- * entry in the netint array. Because of this, multiple array entries could have the same value
- * for the index, mac and name parameters.
- *
- * \param[out] netint_arr Array of network interface description structs to fill in with interface
- *                        info.
- * \param[in] netint_arr_size Size of the netint array.
- * \return Number of network interfaces that were copied, up to a maximum of netint_arr_size,
- *         or 0 if there are no interfaces present or the module is not initialized.
- */
-size_t etcpal_netint_copy_interfaces(EtcPalNetintInfo* netint_arr, size_t netint_arr_size)
-{
-  if (!init_count || !netint_arr || netint_arr_size == 0)
-    return 0;
-
-  size_t addrs_copied = (netint_arr_size < netint_cache.num_netints ? netint_arr_size : netint_cache.num_netints);
-  memcpy(netint_arr, netint_cache.netints, addrs_copied * sizeof(EtcPalNetintInfo));
-  return addrs_copied;
-}
-
-/*!
  * \brief Get a set of network interface addresses that have the index specified.
  *
  * See \ref interface_indexes for more information.
@@ -237,4 +214,23 @@ int compare_netints(const void* a, const void* b)
   EtcPalNetintInfo* netint2 = (EtcPalNetintInfo*)b;
 
   return (netint1->index > netint2->index) - (netint1->index < netint2->index);
+}
+
+/*!
+ * \brief Refresh the list of network interfaces.
+ *
+ * Rebuilds the cached array of network interfaces that is returned via the
+ * etcpal_netint_get_interfaces() function. If the refresh operation results in a different list
+ * (there is a different number of network interfaces, or any interface has changed IP settings),
+ * *list_changed is set to true.
+ *
+ * \param[out] list_changed Set to true if the set of interfaces has changed in any way.
+ * \return #kEtcPalErrOk: Interfaces refreshed.
+ * \return Other error codes from the underlying platform are possible here.
+ */
+etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)
+{
+  // TODO
+  (void)list_changed;
+  return kEtcPalErrNotImpl;
 }

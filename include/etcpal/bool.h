@@ -23,7 +23,7 @@
 #define ETCPAL_BOOL_H_
 
 /*!
- * \defgroup etcpal_bool C Boolean Type (bool)
+ * \defgroup etcpal_bool bool (C Boolean Type)
  * \ingroup etcpal
  * \brief Compatibility layer for the C boolean type.
  *

@@ -43,8 +43,8 @@ namespace etcpal
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_thread module.
 
-/// \brief A thread class, modeled after std::thread.
 /// \ingroup etcpal_cpp_thread
+/// \brief A thread class, modeled after std::thread.
 ///
 /// This class is similar to std::thread, with the key advantage that it will work on any threaded
 /// platform that EtcPal is ported for, including the embedded RTOS platforms. If your application
@@ -177,15 +177,19 @@ public:
 
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
-  EtcPalThreadParams params_ = ETCPAL_THREAD_DEFAULT_PARAMS_INIT;
+  EtcPalThreadParams params_{ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
 };
 
-extern "C" inline void ThreadFn(void* arg)
+/// \cond Internal thread function
+
+extern "C" inline void CppThreadFn(void* arg)
 {
   std::unique_ptr<Thread::FunctionType> p_func(static_cast<Thread::FunctionType*>(arg));
   // Tear the roof off the sucker
   (*p_func)();
 }
+
+/// \endcond
 
 /// \brief Create a new thread object and associate it with a new thread of execution.
 ///
@@ -372,7 +376,7 @@ Result Thread::Start(Function&& func, Args&&... args)
 
   auto new_f = std::unique_ptr<FunctionType>(
       new FunctionType(std::bind(std::forward<Function>(func), std::forward<Args>(args)...)));
-  Result create_res = etcpal_thread_create(thread_.get(), &params_, ThreadFn, new_f.get());
+  Result create_res = etcpal_thread_create(thread_.get(), &params_, CppThreadFn, new_f.get());
   if (create_res)
     new_f.release();
   else

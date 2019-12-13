@@ -23,7 +23,7 @@
 #include <bsp.h>
 #include <rtcs.h>
 
-#include "etcpal/int.h"
+#include <stdint.h>
 #include "etcpal/private/netint.h"
 
 static EtcPalNetintInfo netints[BSP_ENET_DEVICE_COUNT];

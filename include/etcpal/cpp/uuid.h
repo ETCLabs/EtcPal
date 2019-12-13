@@ -28,10 +28,11 @@
 #include <array>
 #include <string>
 #include "etcpal/uuid.h"
+#include "etcpal/cpp/inet.h"
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_uuid UUIDs (uuid)
+/// \defgroup etcpal_cpp_uuid uuid (UUIDs)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_uuid module.
 
@@ -47,37 +48,40 @@ public:
   Uuid() = default;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::Uuid uuid = etcpal_c_function_that_returns_uuid();
-  constexpr Uuid(const EtcPalUuid& c_uuid);
-  Uuid& operator=(const EtcPalUuid& c_uuid);
+  constexpr Uuid(const EtcPalUuid& c_uuid) noexcept;
+  Uuid& operator=(const EtcPalUuid& c_uuid) noexcept;
 
-  constexpr const EtcPalUuid& get() const;
+  constexpr const EtcPalUuid& get() const noexcept;
   std::string ToString() const;
-  bool IsNull() const;
+  bool IsNull() const noexcept;
 
-  static Uuid FromString(const std::string& uuid_str);
-  static Uuid V1();
-  static Uuid V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num);
-  static Uuid V4();
-  static Uuid OsPreferred();
+  static Uuid FromString(const char* uuid_str) noexcept;
+  static Uuid FromString(const std::string& uuid_str) noexcept;
+  static Uuid V1() noexcept;
+  static Uuid V3(const Uuid& ns, const void* name, size_t name_len) noexcept;
+  static Uuid V4() noexcept;
+  static Uuid V5(const Uuid& ns, const void* name, size_t name_len) noexcept;
+  static Uuid OsPreferred() noexcept;
+  static Uuid Device(const std::string& device_str, const MacAddr& mac_addr, uint32_t uuid_num) noexcept;
 
 private:
   EtcPalUuid uuid_{kEtcPalNullUuid};
 };
 
 /// \brief Construct a UUID copied from an instance of the C EtcPalUuid type.
-constexpr Uuid::Uuid(const EtcPalUuid& c_uuid) : uuid_(c_uuid)
+constexpr Uuid::Uuid(const EtcPalUuid& c_uuid) noexcept : uuid_(c_uuid)
 {
 }
 
 /// \brief Assign an instance of the C EtcPalUuid type to an instance of this class.
-inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid)
+inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid) noexcept
 {
   uuid_ = c_uuid;
   return *this;
 }
 
 /// \brief Get a reference to the underlying C type.
-constexpr const EtcPalUuid& Uuid::get() const
+constexpr const EtcPalUuid& Uuid::get() const noexcept
 {
   return uuid_;
 }
@@ -93,24 +97,31 @@ inline std::string Uuid::ToString() const
 }
 
 /// \brief Check if a UUID is null (all 0's).
-inline bool Uuid::IsNull() const
+inline bool Uuid::IsNull() const noexcept
 {
   return ETCPAL_UUID_IS_NULL(&uuid_);
 }
 
 /// \brief Create a UUID from a string representation.
 /// \return A valid UUID on successful parse, or a null UUID on failure.
-inline Uuid Uuid::FromString(const std::string& uuid_str)
+inline Uuid Uuid::FromString(const char* uuid_str) noexcept
 {
   Uuid uuid;
-  etcpal_string_to_uuid(uuid_str.c_str(), &uuid.uuid_);
+  etcpal_string_to_uuid(uuid_str, &uuid.uuid_);
   return uuid;
+}
+
+/// \brief Create a UUID from a string representation.
+/// \return A valid UUID on successful parse, or a null UUID on failure.
+inline Uuid Uuid::FromString(const std::string& uuid_str) noexcept
+{
+  return FromString(uuid_str.c_str());
 }
 
 /// \brief Generate and return a Version 1 UUID.
 ///
 /// If not implemented, returns a null UUID. See etcpal_generate_v1_uuid() for more information.
-inline Uuid Uuid::V1()
+inline Uuid Uuid::V1() noexcept
 {
   Uuid uuid;
   etcpal_generate_v1_uuid(&uuid.uuid_);
@@ -120,20 +131,30 @@ inline Uuid Uuid::V1()
 /// \brief Generate and return a Version 3 UUID.
 ///
 /// See etcpal_generate_v3_uuid() for more information.
-inline Uuid Uuid::V3(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num)
+inline Uuid Uuid::V3(const Uuid& ns, const void* name, size_t name_len) noexcept
 {
   Uuid uuid;
-  etcpal_generate_v3_uuid(device_str.c_str(), mac_addr.data(), uuid_num, &uuid.uuid_);
+  etcpal_generate_v3_uuid(&ns.get(), name, name_len, &uuid.uuid_);
   return uuid;
 }
 
 /// \brief Generate and return a Version 4 UUID.
 ///
 /// If not implemented, returns a null UUID. See etcpal_generate_v4_uuid() for more information.
-inline Uuid Uuid::V4()
+inline Uuid Uuid::V4() noexcept
 {
   Uuid uuid;
   etcpal_generate_v4_uuid(&uuid.uuid_);
+  return uuid;
+}
+
+/// \brief Generate and return a Version 5 UUID.
+///
+/// See etcpal_generate_v5_uuid() for more information.
+inline Uuid Uuid::V5(const Uuid& ns, const void* name, size_t name_len) noexcept
+{
+  Uuid uuid;
+  etcpal_generate_v5_uuid(&ns.get(), name, name_len, &uuid.uuid_);
   return uuid;
 }
 
@@ -141,10 +162,20 @@ inline Uuid Uuid::V4()
 ///
 /// If not implemented, returns a null UUID. See etcpal_generate_os_preferred_uuid() for more
 /// information.
-inline Uuid Uuid::OsPreferred()
+inline Uuid Uuid::OsPreferred() noexcept
 {
   Uuid uuid;
   etcpal_generate_os_preferred_uuid(&uuid.uuid_);
+  return uuid;
+}
+
+/// \brief Generate and return a Device UUID.
+///
+/// See etcpal_generate_device_uuid() for more information.
+inline Uuid Uuid::Device(const std::string& device_str, const MacAddr& mac_addr, uint32_t uuid_num) noexcept
+{
+  Uuid uuid;
+  etcpal_generate_device_uuid(device_str.c_str(), &mac_addr.get(), uuid_num, &uuid.uuid_);
   return uuid;
 }
 

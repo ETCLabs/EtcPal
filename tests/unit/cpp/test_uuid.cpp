@@ -91,12 +91,19 @@ TEST(etcpal_cpp_uuid, to_string_works)
 // will only test one bad string in this one.
 TEST(etcpal_cpp_uuid, from_string_works)
 {
-  etcpal::Uuid uuid = etcpal::Uuid::FromString("00010203-0405-0607-0809-0a0b0c0d0e0f");
+  auto uuid = etcpal::Uuid::FromString("00010203-0405-0607-0809-0a0b0c0d0e0f");
   const etcpal::Uuid uuid_cmp(UUID_INITIALIZER);
   TEST_ASSERT(uuid == uuid_cmp);
   TEST_ASSERT_UNLESS(uuid.IsNull());
 
+  uuid = etcpal::Uuid::FromString(std::string{"00010203-0405-0607-0809-0a0b0c0d0e0f"});
+  TEST_ASSERT(uuid == uuid_cmp);
+  TEST_ASSERT_UNLESS(uuid.IsNull());
+
   uuid = etcpal::Uuid::FromString("Bad string");
+  TEST_ASSERT(uuid.IsNull());
+
+  uuid = etcpal::Uuid::FromString(std::string{"Bad string"});
   TEST_ASSERT(uuid.IsNull());
 }
 
@@ -130,19 +137,7 @@ TEST(etcpal_cpp_uuid, generates_v1_correctly)
 
 TEST(etcpal_cpp_uuid, generates_v3_correctly)
 {
-  const std::array<uint8_t, 6> mac = {0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
-
-  const etcpal::Uuid v3_1 = etcpal::Uuid::V3("Test Device", mac, 20);
-  const etcpal::Uuid v3_1_dup = etcpal::Uuid::V3("Test Device", mac, 20);
-  const etcpal::Uuid v3_2 = etcpal::Uuid::V3("Test Device", mac, 21);
-
-  TEST_ASSERT_UNLESS(v3_1.IsNull());
-  TEST_ASSERT_UNLESS(v3_1_dup.IsNull());
-  TEST_ASSERT_UNLESS(v3_2.IsNull());
-
-  TEST_ASSERT(v3_1 == v3_1_dup);
-  TEST_ASSERT(v3_1 != v3_2);
-  TEST_ASSERT(v3_1_dup != v3_2);
+  // TODO
 }
 
 TEST(etcpal_cpp_uuid, generates_v4_correctly)
@@ -161,6 +156,11 @@ TEST(etcpal_cpp_uuid, generates_v4_correctly)
   TEST_ASSERT_EQUAL_UINT8((v4.get().data[8] & 0xc0u), 0x80u);
 }
 
+TEST(etcpal_cpp_uuid, generates_v5_correctly)
+{
+  // TODO
+}
+
 TEST(etcpal_cpp_uuid, generates_os_preferred_correctly)
 {
   // Only run this test if generate_os_preferred_uuid() is implemented on this platform.
@@ -171,6 +171,23 @@ TEST(etcpal_cpp_uuid, generates_os_preferred_correctly)
   const etcpal::Uuid os_preferred = etcpal::Uuid::OsPreferred();
   // There is really not much we can test here besides that it's not a null UUID
   TEST_ASSERT_UNLESS(os_preferred.IsNull());
+}
+
+TEST(etcpal_cpp_uuid, generates_device_correctly)
+{
+  const etcpal::MacAddr mac({0x00, 0xc0, 0x16, 0x01, 0x02, 0x03});
+
+  const etcpal::Uuid dev_1 = etcpal::Uuid::Device("Test Device", mac, 20);
+  const etcpal::Uuid dev_1_dup = etcpal::Uuid::Device("Test Device", mac, 20);
+  const etcpal::Uuid dev_2 = etcpal::Uuid::Device("Test Device", mac, 21);
+
+  TEST_ASSERT_UNLESS(dev_1.IsNull());
+  TEST_ASSERT_UNLESS(dev_1_dup.IsNull());
+  TEST_ASSERT_UNLESS(dev_2.IsNull());
+
+  TEST_ASSERT(dev_1 == dev_1_dup);
+  TEST_ASSERT(dev_1 != dev_2);
+  TEST_ASSERT(dev_1_dup != dev_2);
 }
 
 TEST(etcpal_cpp_uuid, equality_operators_work)
@@ -240,7 +257,9 @@ TEST_GROUP_RUNNER(etcpal_cpp_uuid)
   RUN_TEST_CASE(etcpal_cpp_uuid, generates_v1_correctly);
   RUN_TEST_CASE(etcpal_cpp_uuid, generates_v3_correctly);
   RUN_TEST_CASE(etcpal_cpp_uuid, generates_v4_correctly);
+  RUN_TEST_CASE(etcpal_cpp_uuid, generates_v5_correctly);
   RUN_TEST_CASE(etcpal_cpp_uuid, generates_os_preferred_correctly);
+  RUN_TEST_CASE(etcpal_cpp_uuid, generates_device_correctly);
   RUN_TEST_CASE(etcpal_cpp_uuid, equality_operators_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, comparison_operators_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, special_equality_operators_work);

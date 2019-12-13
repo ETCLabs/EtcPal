@@ -24,20 +24,23 @@
 #define ETCPAL_ROOT_LAYER_PDU_H_
 
 #include <stddef.h>
-#include "etcpal/int.h"
+#include <stdint.h>
 #include "etcpal/bool.h"
 #include "etcpal/uuid.h"
 #include "etcpal/acn_prot.h"
 #include "etcpal/pdu.h"
 
 /*!
- * \defgroup etcpal_rootlayerpdu ACN Root Layer PDUs (rootlayerpdu)
+ * \defgroup etcpal_root_layer_pdu root_layer_pdu (ACN Root Layer PDUs)
  * \ingroup etcpal_pdu
  * \brief Parse or pack a Root Layer PDU block.
  *
  * ```c
  * #include "etcpal/root_layer_pdu.h"
  * ```
+ *
+ * This module handles building and parsing the ACN Root Layer Protocol, as defined in ANSI E1.17,
+ * ACN Architecture document, &sect; 2.6.
  *
  * @{
  */

@@ -59,11 +59,11 @@ TEST(etcpal_uuid, invalid_calls_fail)
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v4_uuid(NULL));
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_os_preferred_uuid(NULL));
 
-  const uint8_t mac[6] = {0, 1, 2, 3, 4, 5};
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac, 0, NULL));
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", NULL, 0, &uuid));
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(NULL, mac, 0, &uuid));
-  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(NULL, NULL, 0, NULL));
+  const EtcPalMacAddr mac = {{0, 1, 2, 3, 4, 5}};
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", &mac, 0, NULL));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", NULL, 0, &uuid));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid(NULL, &mac, 0, &uuid));
+  TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid(NULL, NULL, 0, NULL));
 }
 
 TEST(etcpal_uuid, uuid_is_null_works)
@@ -166,38 +166,7 @@ TEST(etcpal_uuid, generates_correct_v1_uuids)
 
 TEST(etcpal_uuid, generates_correct_v3_uuids)
 {
-  const uint8_t mac1[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x12};
-  const uint8_t mac2[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x13};
-  EtcPalUuid uuid1, uuid2, uuid3, uuid4, uuid1_dup;
-
-  // Version 3 UUIDs should be deterministic for the same combination of the three possible input
-  // arguments. If any of the arguments is different, a different UUID should result.
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac1, 0, &uuid1));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac1, 1, &uuid2));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Tst Device", mac1, 0, &uuid3));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac2, 0, &uuid4));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid("Test Device", mac1, 0, &uuid1_dup));
-
-  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid2));
-  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid3));
-  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid4));
-  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid2, &uuid3));
-  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid2, &uuid4));
-  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid3, &uuid4));
-  TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid1_dup));
-
-  // Make sure the Variant Version bits are correct.
-  // We should always have Variant 1, Version 3.
-  TEST_ASSERT_EQUAL_UINT8((uuid1.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid1.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid2.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid2.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid3.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid3.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid4.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid4.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid1_dup.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid1_dup.data[8] & 0xc0u), 0x80u);
+  // TODO
 }
 
 TEST(etcpal_uuid, generates_correct_v4_uuids)
@@ -235,6 +204,11 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
   }
 }
 
+TEST(etcpal_uuid, generates_correct_v5_uuids)
+{
+  // TODO
+}
+
 TEST(etcpal_uuid, generates_os_preferred_uuids)
 {
   // Generate a bunch of OS-preferred UUIDs. They should all be unique from each other -- but we
@@ -266,6 +240,42 @@ TEST(etcpal_uuid, generates_os_preferred_uuids)
   }
 }
 
+TEST(etcpal_uuid, generates_correct_device_uuids)
+{
+  const EtcPalMacAddr mac1 = {{0x00, 0xc0, 0x16, 0xff, 0xef, 0x12}};
+  const EtcPalMacAddr mac2 = {{0x00, 0xc0, 0x16, 0xff, 0xef, 0x13}};
+  EtcPalUuid uuid1, uuid2, uuid3, uuid4, uuid1_dup;
+
+  // Device UUIDs should be deterministic for the same combination of the three possible input
+  // arguments. If any of the arguments is different, a different UUID should result.
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", &mac1, 0, &uuid1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", &mac1, 1, &uuid2));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Tst Device", &mac1, 0, &uuid3));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", &mac2, 0, &uuid4));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_device_uuid("Test Device", &mac1, 0, &uuid1_dup));
+
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid2));
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid3));
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid4));
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid2, &uuid3));
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid2, &uuid4));
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid3, &uuid4));
+  TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid1_dup));
+
+  // Make sure the Variant Version bits are correct.
+  // We should always have Variant 1, Version 3.
+  TEST_ASSERT_EQUAL_UINT8((uuid1.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid1.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid2.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid2.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid3.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid3.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid4.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid4.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid1_dup.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid1_dup.data[8] & 0xc0u), 0x80u);
+}
+
 TEST_GROUP_RUNNER(etcpal_uuid)
 {
   RUN_TEST_CASE(etcpal_uuid, invalid_calls_fail);
@@ -276,5 +286,7 @@ TEST_GROUP_RUNNER(etcpal_uuid)
   RUN_TEST_CASE(etcpal_uuid, generates_correct_v1_uuids);
   RUN_TEST_CASE(etcpal_uuid, generates_correct_v3_uuids);
   RUN_TEST_CASE(etcpal_uuid, generates_correct_v4_uuids);
+  RUN_TEST_CASE(etcpal_uuid, generates_correct_v5_uuids);
   RUN_TEST_CASE(etcpal_uuid, generates_os_preferred_uuids);
+  RUN_TEST_CASE(etcpal_uuid, generates_correct_device_uuids);
 }

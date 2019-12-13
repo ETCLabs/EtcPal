@@ -25,7 +25,6 @@ add_library(EtcPal
   ${ETCPAL_ROOT}/include/etcpal/common.h
   ${ETCPAL_ROOT}/include/etcpal/error.h
   ${ETCPAL_ROOT}/include/etcpal/inet.h
-  ${ETCPAL_ROOT}/include/etcpal/int.h
   ${ETCPAL_ROOT}/include/etcpal/log.h
   ${ETCPAL_ROOT}/include/etcpal/mempool.h
   ${ETCPAL_ROOT}/include/etcpal/pack.h
@@ -110,7 +109,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/etcpal/uuid.h
     ${ETCPAL_ROOT}/include/etcpal/error.h
     ${ETCPAL_ROOT}/include/etcpal/inet.h
-    ${ETCPAL_ROOT}/include/etcpal/int.h
     ${ETCPAL_ROOT}/include/etcpal/log.h
     ${ETCPAL_ROOT}/include/etcpal/mempool.h
     ${ETCPAL_ROOT}/include/etcpal/pack.h

@@ -19,6 +19,7 @@
 
 #include "etcpal/netint.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <WinSock2.h>
@@ -26,7 +27,6 @@
 #include <Ws2tcpip.h>
 #include <iphlpapi.h>
 
-#include "etcpal/int.h"
 #include "etcpal/socket.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"

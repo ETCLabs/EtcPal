@@ -17,11 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/cpp/error.h"
+
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
-#include "etcpal/cpp/error.h"
 #include "etcpal/common.h"
 #include "unity_fixture.h"
 

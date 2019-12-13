@@ -20,7 +20,7 @@
 #ifndef ETCPAL_ACN_PROT_H_
 #define ETCPAL_ACN_PROT_H_
 
-#include "etcpal/int.h"
+#include <stdint.h>
 
 typedef uint32_t acn_protocol_t;
 

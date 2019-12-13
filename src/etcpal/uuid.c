@@ -21,14 +21,13 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include "etcpal/pack.h"
 #include "md5.h"
 
 /****************************** Private macros *******************************/
 
 #ifdef _MSC_VER
-#define ETCPAL_SPRINTF __pragma(warning(suppress : 4996)) sprintf
-#else
-#define ETCPAL_SPRINTF sprintf
+#pragma warning(disable : 4996)
 #endif
 
 /**************************** Private variables ******************************/
@@ -55,10 +54,9 @@ bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf)
 
   const uint8_t* c = uuid->data;
 
-  /* Automatically suppresses MSVC warning - minimum buffer size is well documented and cannot be
-   * exceeded by this format string. */
-  ETCPAL_SPRINTF(buf, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0], c[1], c[2], c[3],
-                 c[4], c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
+  /* Minimum buffer size is well documented and cannot be exceeded by this format string. */
+  sprintf(buf, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0], c[1], c[2], c[3], c[4],
+          c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
   return true;
 }
 
@@ -129,7 +127,8 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
  * space and time. Some OSes have deprecated this method because it creates a UUID that is
  * traceable to the MAC address of the machine on which it was generated. If this type of security
  * is a concern, etcpal_generate_v4_uuid() should be preferred. If you want to generate UUIDs that
- * are deterministic for a combination of inputs you provide, see etcpal_generate_v3_uuid().
+ * are deterministic for a combination of inputs you provide, see etcpal_generate_v3_uuid(),
+ * etcpal_generate_v5_uuid() or etcpal_generate_device_uuid().
  *
  * This function may return #kEtcPalErrNotImpl on platforms that do not have this functionality
  * available (this is mostly a concern for RTOS-level embedded platforms).
@@ -142,7 +141,7 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
  */
 
 /* Quick utility for generating a uuid out of a md5 hash buffer */
-static void generate_from_hash(EtcPalUuid* uuid_out, MD5_CTX* pmd5)
+static void generate_from_hash(MD5_CTX* pmd5, EtcPalUuid* uuid_out)
 {
   uint8_t buffer[ETCPAL_UUID_BYTES];
   MD5Final(buffer, pmd5);
@@ -157,52 +156,36 @@ static void generate_from_hash(EtcPalUuid* uuid_out, MD5_CTX* pmd5)
 }
 
 /*!
- * \brief Generate a Version 3 UUID from a combination of a custom string and MAC address.
+ * \brief Generate a Version 3 UUID.
  *
- * This function is for use by devices that want to create their own UUIDs, and create the same
- * UUIDs each time. It creates a Version 3 UUID (defined in RFC 4122) within a constant, hardcoded
- * namespace. The UUID output is deterministic for each combination of devstr, macaddr and
- * uuidnum inputs.
+ * Version 3 UUIDs are "name-based"; they deterministically convert a combination of a "namespace"
+ * and "name" to a UUID. A namespace is another UUID of any type which represents a space within
+ * which UUIDs generated from different names are unique. A name is opaque data of any length. The
+ * same combination of namespace and name will always produce the same Version 3 UUID.
  *
- * The namespace UUID used is: 57323103-db01-44b3-bafa-abdee3f37c1a
+ * Version 3 UUIDs use the MD5 hashing algorithm to convert their inputs into a UUID. Prefer using
+ * etcpal_generate_v5_uuid(), which uses the SHA-1 algorithm instead, if backward compatibility is
+ * not an issue.
  *
- * \param[in] devstr The device-specific string, such as the model name. This should never change
- *                   on the device. It also allows different programs running on the device to
- *                   generate different UUID sets.
- * \param[in] macaddr The device's MAC address as an array of 6 bytes.
- * \param[in] uuidnum Component number. By changing this number, multiple unique UUIDs can be
- *                    generated for the same device string-MAC address combination.
+ * \param[in] ns UUID to use as a namespace.
+ * \param[in] name The name to convert into a UUID - opaque data.
+ * \param[in] name_len The length in bytes of name.
  * \param[out] uuid UUID to fill in with the generation result.
  * \return #kEtcPalErrOk: UUID generated successfully.
  * \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_generate_v3_uuid(const char* devstr, const uint8_t* macaddr, uint32_t uuidnum, EtcPalUuid* uuid)
+etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid)
 {
-  if (!devstr || !macaddr || !uuid)
+  if (!ns || !name || name_len == 0 || !uuid)
     return kEtcPalErrInvalid;
 
   MD5_CTX md5;
-  /* RFC4122 requires that we use a name space UUID before the string */
-  uint8_t ns[16] = {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a};
 
   MD5Init(&md5);
-  MD5Update(&md5, ns, 16);
+  MD5Update(&md5, ns->data, ETCPAL_UUID_BYTES);
+  MD5Update(&md5, (const uint8_t*)name, (unsigned int)name_len);
 
-  /* The string we'll be encoding is "EtcPal device,[devstr][macaddr][uuidnum in network order]" */
-  MD5Update(&md5, (uint8_t*)"EtcPal device, ", 15);
-  if (devstr)
-    MD5Update(&md5, (uint8_t*)(devstr), (unsigned int)strlen(devstr));
-
-  MD5Update(&md5, macaddr, 6);
-
-  uint8_t num[4];
-  num[0] = (uint8_t)(uuidnum & 0xFF);
-  num[1] = (uint8_t)((uuidnum >> 8) & 0xFF);
-  num[2] = (uint8_t)((uuidnum >> 16) & 0xFF);
-  num[3] = (uint8_t)((uuidnum >> 24) & 0xFF);
-  MD5Update(&md5, num, 4);
-
-  generate_from_hash(uuid, &md5);
+  generate_from_hash(&md5, uuid);
   return kEtcPalErrOk;
 }
 
@@ -225,6 +208,31 @@ etcpal_error_t etcpal_generate_v3_uuid(const char* devstr, const uint8_t* macadd
  * \return #kEtcPalErrSys: An internal library of system call error occurred.
  */
 
+/*!
+ * \brief Generate a Version 5 UUID.
+ *
+ * Version 5 UUIDs are "name-based"; they deterministically convert a combination of a "namespace"
+ * and "name" to a UUID. A namespace is another UUID of any type which represents a space within
+ * which UUIDs generated from different names are unique. A name is opaque data of any length. The
+ * same combination of namespace and name will always produce the same Version 5 UUID.
+ *
+ * Version 5 UUIDs use the SHA-1 hashing algorithm to convert their inputs into a UUID.
+ *
+ * etcpal_generate_device_uuid() provides a specialized form of this function which embedded
+ * devices can use to create UUIDs representing themselves.
+ *
+ * \param[in] ns UUID to use as a namespace.
+ * \param[in] name The name to convert into a UUID - opaque data.
+ * \param[in] name_len The length in bytes of name.
+ * \param[out] uuid UUID to fill in with the generation result.
+ * \return #kEtcPalErrOk: UUID generated successfully.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
+ */
+etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid)
+{
+  return kEtcPalErrNotImpl;
+}
+
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
 /*!
  * \fn etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid *uuid)
@@ -242,3 +250,44 @@ etcpal_error_t etcpal_generate_v3_uuid(const char* devstr, const uint8_t* macadd
  * \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
  * \return #kEtcPalErrSys: An internal library of system call error occurred.
  */
+
+/*!
+ * \brief Generate a UUID from a combination of a custom string and MAC address.
+ *
+ * This function is for use by embedded devices that want to create UUIDs representing themselves,
+ * and create the same UUIDs each time. It creates a Version 3 UUID (defined in RFC 4122) within a
+ * constant, hardcoded namespace. The UUID output is deterministic for each combination of dev_str,
+ * mac_addr and uuid_num inputs.
+ *
+ * The namespace UUID used is: 57323103-db01-44b3-bafa-abdee3f37c1a
+ *
+ * \param[in] dev_str The device-specific string, such as the model name. This should never change
+ *                    on the device. It also allows different programs running on the device to
+ *                    generate different UUID sets.
+ * \param[in] mac_addr The device's MAC address.
+ * \param[in] uuid_num Component number. By changing this number, multiple unique UUIDs can be
+ *                     generated for the same device string-MAC address combination.
+ * \param[out] uuid UUID to fill in with the generation result.
+ * \return #kEtcPalErrOk: UUID generated successfully.
+ * \return #kEtcPalErrInvalid: Invalid argument provided.
+ */
+etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const EtcPalMacAddr* mac_addr, uint32_t uuid_num,
+                                           EtcPalUuid* uuid)
+{
+  if (!dev_str || !mac_addr || !uuid)
+    return kEtcPalErrInvalid;
+
+  /* The hardcoded namespace UUID for EtcPal device UUIDs. */
+  static const EtcPalUuid namespace = {
+      {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a}};
+
+#define TOTAL_NAME_LEN (ETCPAL_UUID_DEV_STR_MAX_LEN + ETCPAL_MAC_BYTES + 4)
+
+  /* Concatenate the input data into a buffer of the form "[dev_str][mac_addr][uuid_num]" */
+  uint8_t name[TOTAL_NAME_LEN];
+  strncpy((char*)name, dev_str, ETCPAL_UUID_DEV_STR_MAX_LEN);
+  memcpy(&name[ETCPAL_UUID_DEV_STR_MAX_LEN], mac_addr->data, ETCPAL_MAC_BYTES);
+  etcpal_pack_32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + ETCPAL_MAC_BYTES], uuid_num);
+
+  return etcpal_generate_v3_uuid(&namespace, name, TOTAL_NAME_LEN, uuid);
+}
