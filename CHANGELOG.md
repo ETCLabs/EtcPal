@@ -16,8 +16,8 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 - etcpal_init() in etcpal/common.h. etcpal_init() must be called before using
   features defined by feature macros defined in etcpal/common.h.
 - Extra documentation page for network interface indexes.
-- The beginning of a C++ wrapper layer over EtcPal. Added wrapper classes for
-  etcpal/error, etcpal/uuid, etcpal_lock and etcpal_inet.
+- Addition of a C++ wrapper layer over EtcPal. Added wrapper classes for error,
+  inet, lock, log, thread, timer and uuid.
 
 ### Changed
 - Naming: Library name changed from lwpa to EtcPal. All API names updated
