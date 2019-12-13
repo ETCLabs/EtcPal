@@ -302,6 +302,7 @@ inline void Logger::Emergency(const char* format, ...)
 /// \brief Get the current log dispatch policy.
 inline LogDispatchPolicy Logger::dispatch_policy() const noexcept
 {
+  return dispatch_policy_;
 }
 
 /// \brief Get the current log mask.
