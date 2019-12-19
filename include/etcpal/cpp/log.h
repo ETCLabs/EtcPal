@@ -42,48 +42,13 @@ namespace etcpal
 /// \code
 /// etcpal_init(ETCPAL_FEATURE_LOGGING);
 /// \endcode
-
-/// \ingroup etcpal_cpp_log
-/// \brief An interface which handles log messages.
 ///
-/// Users of the Logger class must provide a class that derives from LogMessageHandler to handle
-/// the Logger's output. LogMessageHandler has two jobs: getting a current timestamp to apply to
-/// log messages, and handling the final dispatched log message.
-class LogMessageHandler
-{
-public:
-  /// Return an EtcPalLogTimeParams representing the current local time.
-  virtual EtcPalLogTimeParams GetLogTimestamp() = 0;
-
-  /// \brief Define this function to handle log messages and determine what to do with them.
-  ///
-  /// If the corresponding Logger has a dispatch policy of LogDispatchPolicy::Direct, this function
-  /// is invoked directly from the context of the corresponding call to Log() or similar. In this
-  /// case, be mindful of whether this function implementation has potential to block. If
-  /// significant blocking is a possibility while handling log messages, consider using
-  /// LogDispatchPolicy::Queued.
-  ///
-  /// \param strings Strings associated with the log message. Will contain valid strings
-  ///                corresponding to the log actions requested using Logger::SetLogAction().
-  virtual void HandleLogMessage(const EtcPalLogStrings& strings) = 0;
-};
-
-/// \ingroup etcpal_cpp_log
-/// \brief Options for the method by which the Logger dispatches log messages.
-enum class LogDispatchPolicy
-{
-  Direct,  ///< Log messages propagate directly from Log() calls to output streams (normally only used for testing)
-  Queued   ///< Log messages are queued and dispatched from another thread (recommended)
-};
-
-/// \ingroup etcpal_cpp_log
-/// \brief A class for dispatching log messages.
-///
-/// This class is used to gather log messages dispatched from different portions of an application
-/// into a single stream with a unified format. It wraps the C logging module, which provides the
-/// core of this functionality, in a convenience layer which can also spawn a background thread to
-/// handle large log volumes. See the \ref etcpal_log "documentation for the C module" for more
-/// detailed information on the log format.
+/// This module contains a class Logger which is used to gather log messages dispatched from
+/// different portions of an application into a single stream with a unified format. It wraps the C
+/// logging module, which provides the core of this functionality, in a convenience layer which can
+/// also spawn a background thread to handle large log volumes. See the
+/// \ref etcpal_log "documentation for the C module" for more detailed information on the log
+/// format.
 ///
 /// Generally a single instance per application is sufficient:
 ///
@@ -138,6 +103,45 @@ enum class LogDispatchPolicy
 /// // support it.
 /// somelib_init(&logger.log_params());
 /// \endcode
+
+/// \ingroup etcpal_cpp_log
+/// \brief An interface which handles log messages.
+///
+/// Users of the Logger class must provide a class that derives from LogMessageHandler to handle
+/// the Logger's output. LogMessageHandler has two jobs: getting a current timestamp to apply to
+/// log messages, and handling the final dispatched log message.
+class LogMessageHandler
+{
+public:
+  /// Return an EtcPalLogTimeParams representing the current local time.
+  virtual EtcPalLogTimeParams GetLogTimestamp() = 0;
+
+  /// \brief Define this function to handle log messages and determine what to do with them.
+  ///
+  /// If the corresponding Logger has a dispatch policy of LogDispatchPolicy::Direct, this function
+  /// is invoked directly from the context of the corresponding call to Log() or similar. In this
+  /// case, be mindful of whether this function implementation has potential to block. If
+  /// significant blocking is a possibility while handling log messages, consider using
+  /// LogDispatchPolicy::Queued.
+  ///
+  /// \param strings Strings associated with the log message. Will contain valid strings
+  ///                corresponding to the log actions requested using Logger::SetLogAction().
+  virtual void HandleLogMessage(const EtcPalLogStrings& strings) = 0;
+};
+
+/// \ingroup etcpal_cpp_log
+/// \brief Options for the method by which the Logger dispatches log messages.
+enum class LogDispatchPolicy
+{
+  Direct,  ///< Log messages propagate directly from Log() calls to output streams (normally only used for testing)
+  Queued   ///< Log messages are queued and dispatched from another thread (recommended)
+};
+
+/// \ingroup etcpal_cpp_log
+/// \brief A class for dispatching log messages.
+///
+/// See the long description for the \ref etcpal_cpp_log module for more detailed usage
+/// information.
 class Logger
 {
 public:

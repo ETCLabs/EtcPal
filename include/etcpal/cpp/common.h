@@ -26,10 +26,10 @@
 /// \defgroup etcpal_cpp etcpal/cpp (C++ Wrappers)
 /// \brief C++ Wrappers for EtcPal modules.
 ///
-/// EtcPal is primarly a C-language library, but C++ language wrappers for certain modules are
+/// EtcPal is primarily a C-language library, but C++ language wrappers for certain modules are
 /// provided for convenience when writing C++ code that uses EtcPal. To include a C++ wrapper for a
-/// given module, where you would normally include "etcpal/[module].h", instead include
-/// "etcpal/cpp/[module].h".
+/// given module, where you would normally include `"etcpal/[module].h"`, instead include
+/// `"etcpal/cpp/[module].h"`.
 ///
 /// @{
 

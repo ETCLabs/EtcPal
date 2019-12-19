@@ -26,6 +26,41 @@
 
 static size_t num_netints;
 
+// Tests to run on the netint module without it being initialized first
+
+TEST_GROUP(etcpal_netint_no_init);
+
+TEST_SETUP(etcpal_netint_no_init)
+{
+}
+
+TEST_TEAR_DOWN(etcpal_netint_no_init)
+{
+}
+
+// Test that none of the API functions return successfully before the module is initialized. We
+// generate valid data to pass to each one, to be sure they don't return e.g. kEtcPalErrInvalid
+// instead.
+TEST(etcpal_netint_no_init, api_does_not_work_before_initialization)
+{
+  TEST_ASSERT_EQUAL(etcpal_netint_get_num_interfaces(), 0u);
+  TEST_ASSERT_EQUAL_PTR(etcpal_netint_get_interfaces(), NULL);
+
+  const EtcPalNetintInfo* netint_arr;
+  size_t netint_arr_size;
+  TEST_ASSERT_EQUAL(etcpal_netint_get_interfaces_by_index(1, &netint_arr, &netint_arr_size), kEtcPalErrNotInit);
+
+  unsigned int index;
+  TEST_ASSERT_EQUAL(etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &index), kEtcPalErrNotInit);
+  TEST_ASSERT_EQUAL(etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &index), kEtcPalErrNotInit);
+
+  EtcPalIpAddr dest;
+  etcpal_inet_pton(kEtcPalIpTypeV4, "8.8.8.8", &dest);
+  TEST_ASSERT_EQUAL(etcpal_netint_get_interface_for_dest(&dest, &index), kEtcPalErrNotInit);
+}
+
+// The main test group. This initializes the module before each test and deinits it after.
+
 TEST_GROUP(etcpal_netint);
 
 TEST_SETUP(etcpal_netint)
@@ -191,6 +226,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
 
 TEST_GROUP_RUNNER(etcpal_netint)
 {
+  RUN_TEST_CASE(etcpal_netint_no_init, api_does_not_work_before_initialization);
   RUN_TEST_CASE(etcpal_netint, netint_enumeration_works);
   RUN_TEST_CASE(etcpal_netint, netints_are_in_index_order);
   RUN_TEST_CASE(etcpal_netint, get_netints_by_index_works);

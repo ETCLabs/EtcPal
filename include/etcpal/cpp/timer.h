@@ -43,6 +43,9 @@ namespace etcpal
 /// platform for which EtcPal is ported, including embedded RTOS platforms, using their native tick
 /// count. If your application or library does not need to run on these platforms, consider using
 /// &lt;chrono&gt; instead.
+///
+/// Provides a class for representing points in time (TimePoint) and one which implements a passive
+/// monotonic timer (Timer).
 
 /// \ingroup etcpal_cpp_timer
 /// \brief Represents a point in time.

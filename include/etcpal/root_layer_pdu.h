@@ -40,7 +40,8 @@
  * ```
  *
  * This module handles building and parsing the ACN Root Layer Protocol, as defined in ANSI E1.17,
- * ACN Architecture document, &sect; 2.6.
+ * ACN Architecture document, &sect; 2.6. This protocol is also used by sACN (ANSI E1.31) and
+ * RDMnet (ANSI E1.33).
  *
  * @{
  */

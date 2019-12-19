@@ -1,0 +1,5 @@
+add_executable(etcpal_windows_lock_test EXCLUDE_FROM_ALL
+  lock_test.c
+)
+target_link_libraries(etcpal_windows_lock_test PRIVATE EtcPal)
+set_target_properties(etcpal_windows_lock_test PROPERTIES FOLDER tests)

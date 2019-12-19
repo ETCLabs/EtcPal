@@ -42,21 +42,11 @@ namespace etcpal
 /// \defgroup etcpal_cpp_thread thread (Threading)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_thread module.
-
-/// \ingroup etcpal_cpp_thread
-/// \brief A thread class, modeled after std::thread.
 ///
-/// This class is similar to std::thread, with the key advantage that it will work on any threaded
-/// platform that EtcPal is ported for, including the embedded RTOS platforms. If your application
-/// or library does not need to run on these platforms, consider using std::thread instead.
-///
-/// There are a few differences from std::thread:
-/// * The thread is automatically joined on destruction (std::thread calls std::terminate if it is
-///   destroyed while its associated thread is still running)
-/// * The thread is not _detachable_; that is, once created, it _must_ be joined before it is
-///   destroyed in all cases.
-/// * The thread has a Start() function - a previously default-constructed thread can be assigned
-///   some operation parameters, then started, without being reassigned to another instance.
+/// Provides a thread class Thread which is similar to std::thread, with the key advantage that it
+/// will work on any threaded platform that EtcPal is ported for, including the embedded RTOS
+/// platforms. If your application or library does not need to run on these platforms, consider
+/// using std::thread instead.
 ///
 /// To start the thread with default parameters, you can use the constructor:
 /// \code
@@ -123,6 +113,21 @@ namespace etcpal
 ///
 /// etcpal::Thread::Sleep(1min); // Sleep for 1 minute
 /// \endcode
+
+/// \ingroup etcpal_cpp_thread
+/// \brief A thread class, modeled after std::thread.
+///
+/// This class is similar to std::thread, with the key advantage that it will work on any threaded
+/// platform that EtcPal is ported for, including the embedded RTOS platforms. If your application
+/// or library does not need to run on these platforms, consider using std::thread instead.
+///
+/// There are a few differences from std::thread:
+/// * The thread is automatically joined on destruction (std::thread calls std::terminate if it is
+///   destroyed while its associated thread is still running)
+/// * The thread is not _detachable_; that is, once created, it _must_ be joined before it is
+///   destroyed in all cases.
+/// * The thread has a Start() function - a previously default-constructed thread can be assigned
+///   some operation parameters, then started, without being reassigned to another instance.
 ///
 /// This is one of the few EtcPal wrappers that does heap allocation, as the thread function and
 /// arguments need to be stored.

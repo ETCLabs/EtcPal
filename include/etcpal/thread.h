@@ -61,7 +61,19 @@ extern "C" {
  * @{
  */
 
-/*! A set of parameters for an etcpal_thread. */
+/*!
+ * \brief A set of parameters for an etcpal_thread.
+ *
+ * The members of this structure are not all honored on all platforms. Here is a breakdown:
+ *
+ * Platform | Priority Honored | Stack Size Honored | Thread Name Honored | Platform Data Available    |
+ * ---------|------------------|--------------------|---------------------|----------------------------|
+ * FreeRTOS | Yes              | Yes                | Yes                 | No                         |
+ * Linux    | No               | Yes                | No                  | No                         |
+ * macOS    | No               | Yes                | No                  | No                         |
+ * MQX      | Yes              | Yes                | Yes                 | Yes, EtcPalThreadParamsMqx |
+ * Windows  | Yes              | Yes                | Yes                 | No                         |
+ */
 typedef struct EtcPalThreadParams
 {
   /*! The priority of the thread. Note that thread priority is not valid on all platforms. */

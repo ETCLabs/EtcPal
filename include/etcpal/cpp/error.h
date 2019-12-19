@@ -34,14 +34,18 @@ namespace etcpal
 /// \defgroup etcpal_cpp_error error (Error Handling)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_error module.
+///
+/// This module provides two main utilites: Result, which wraps an error code, and Expected, which
+/// represents either an error code or a value of configurable type. See the documentation for each
+/// of those classes for more details.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // etcpal::Result
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// \brief A wrapper class for the EtcPal error type.
 /// \ingroup etcpal_cpp_error
-/// \details
+/// \brief A wrapper class for the EtcPal error type.
+///
 /// Provides C++ syntactic sugar on top of #etcpal_error_t codes. A Result can be created from an
 /// #etcpal_error_t, and contains the code and a string representation. If the Result contains
 /// #kEtcPalErrOk, it will evaluate to true in expressions (and IsOk() will return true).
@@ -382,9 +386,9 @@ public:
 // etcpal::Expected
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// \brief A type representing either a value or an #etcpal_error_t code.
 /// \ingroup etcpal_cpp_error
-/// \details
+/// \brief A type representing either a value or an #etcpal_error_t code.
+///
 /// This class is modeled after the [std::expected proposal](http://wg21.link/p0323). It is a
 /// useful companion to C++17's std::optional, when one desires a concise representation of either
 /// a value or an error code representing why that value is not present.

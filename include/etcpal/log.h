@@ -193,14 +193,41 @@
 
 /* clang-format on */
 
+/* Timestamp length:
+ * Date:       10 (1970-01-01)
+ * "T" or " ":  1
+ * Time:       12 (00:00:00.001)
+ * UTC Offset:  6 (-05:00)
+ * Nullterm:    1
+ * --------------
+ * Total:      30
+ */
 /*! The maximum length of the timestamp used in syslog and human-readable logging. */
-#define ETCPAL_LOG_TIMESTAMP_LEN (10u /*Date*/ + 1u /*T*/ + 12u /*Time*/ + 6u /*Offset*/ + 1u /*Nullterm*/)
+#define ETCPAL_LOG_TIMESTAMP_LEN 30u
 
+/* Syslog header length (from RFC 5424):
+ * PRIVAL:                     5
+ * VERSION:                    3
+ * SP:                         1
+ * TIMESTAMP:       [Referenced]
+ * SP:                         1
+ * HOSTNAME:        [Referenced]
+ * SP:                         1
+ * APP-NAME:        [Referenced]
+ * SP:                         1
+ * PROCID:          [Referenced]
+ * SP:                         1
+ * MSGID (not used):           1
+ * SP:                         1
+ * STRUCTURED-DATA (not used): 1
+ * SP:                         1
+ * -----------------------------
+ * Total non-referenced:      17
+ */
 /*! The maximum length of the syslog header. */
-#define ETCPAL_SYSLOG_HEADER_MAX_LEN                                                                        \
-  (5u /*PRIVAL*/ + 3u /*Version*/ + 1u /*SP*/ + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) /*Timestamp*/ + 1u /*SP*/ + \
-   (ETCPAL_LOG_HOSTNAME_MAX_LEN - 1u) + 1u /*SP*/ + (ETCPAL_LOG_APP_NAME_MAX_LEN - 1u) + 1u /*SP*/ +        \
-   (ETCPAL_LOG_PROCID_MAX_LEN - 1u) + 1u /*SP*/ + 1u /*MSGID*/ + 1u /*SP*/ + 1u /*STRUCTURED-DATA*/ + 1u /*SP*/)
+#define ETCPAL_SYSLOG_HEADER_MAX_LEN                                                                                 \
+  (17u + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) + (ETCPAL_LOG_HOSTNAME_MAX_LEN - 1u) + (ETCPAL_LOG_APP_NAME_MAX_LEN - 1u) + \
+   (ETCPAL_LOG_PROCID_MAX_LEN - 1u))
 
 /*! The minimum length of a buffer passed to etcpal_create_syslog_str(). */
 #define ETCPAL_SYSLOG_STR_MIN_LEN ETCPAL_SYSLOG_HEADER_MAX_LEN
@@ -210,10 +237,18 @@
 /*! The maximum length of a syslog string that will be passed to an etcpal_log_callback function. */
 #define ETCPAL_SYSLOG_STR_MAX_LEN (ETCPAL_SYSLOG_HEADER_MAX_LEN + ETCPAL_RAW_LOG_MSG_MAX_LEN)
 
+/* Human-reaadable log string max length:
+ * Timestamp:      [Referenced]
+ * Space:                     1
+ * Priority:                  6 ([CRIT])
+ * Space:                     1
+ * Message length: [Referenced]
+ * ----------------------------
+ * Total non-referenced:      8
+ */
 /*! The maximum length of a string that will be passed via the human_readable member of an
  *  EtcPalLogStrings struct. */
-#define ETCPAL_LOG_STR_MAX_LEN \
-  ((ETCPAL_LOG_TIMESTAMP_LEN - 1u) + 1u /*SP*/ + 6u /*pri*/ + 1u /*SP*/ + ETCPAL_RAW_LOG_MSG_MAX_LEN)
+#define ETCPAL_LOG_STR_MAX_LEN (8u + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) + ETCPAL_RAW_LOG_MSG_MAX_LEN)
 
 /*! A set of parameters which represent the current local time with millisecond resolution. */
 typedef struct EtcPalLogTimeParams

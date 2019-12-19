@@ -37,7 +37,7 @@
  *
  * This module handles building and parsing the ACN PDU format as defined in ANSI E1.17, ACN
  * Architecture document, &sect; 2. EtcPal supports a few different ACN protocol family libraries,
- * so it's convenient to have this logic here.
+ * including sACN and RDMnet, so it's convenient to have this logic here.
  *
  * @{
  */

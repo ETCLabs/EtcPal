@@ -95,6 +95,7 @@ const EtcPalNetintInfo* etcpal_netint_get_interfaces()
  * \param[out] netint_arr_size Filled in on success with the size of the matching interface array.
  * \return #kEtcPalErrOk: netint_arr and netint_arr_size were filled in.
  * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \return #kEtcPalErrNotInit: Module not initialized.
  * \return #kEtcPalErrNotFound: No interfaces found for this index.
  */
 etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const EtcPalNetintInfo** netint_arr,
@@ -102,6 +103,8 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const E
 {
   if (index == 0 || !netint_arr || !netint_arr_size)
     return kEtcPalErrInvalid;
+  if (!init_count)
+    return kEtcPalErrNotInit;
 
   size_t arr_size = 0;
   for (const EtcPalNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
@@ -150,35 +153,38 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const E
  * \param[out] netint_index Pointer to value to fill with the index of the default interface.
  * \return #kEtcPalErrOk: netint was filled in.
  * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \return #kEtcPalErrNotInit: Module not initialized.
  * \return #kEtcPalErrNotFound: No default interface found for this type.
  */
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index)
 {
-  if (init_count && netint_index)
+  if (!netint_index)
+    return kEtcPalErrInvalid;
+  if (!init_count)
+    return kEtcPalErrNotInit;
+
+  if (type == kEtcPalIpTypeV4)
   {
-    if (type == kEtcPalIpTypeV4)
+    if (netint_cache.def.v4_valid)
     {
-      if (netint_cache.def.v4_valid)
-      {
-        *netint_index = netint_cache.def.v4_index;
-        return kEtcPalErrOk;
-      }
-      else
-      {
-        return kEtcPalErrNotFound;
-      }
+      *netint_index = netint_cache.def.v4_index;
+      return kEtcPalErrOk;
     }
-    else if (type == kEtcPalIpTypeV6)
+    else
     {
-      if (netint_cache.def.v6_valid)
-      {
-        *netint_index = netint_cache.def.v6_index;
-        return kEtcPalErrOk;
-      }
-      else
-      {
-        return kEtcPalErrNotFound;
-      }
+      return kEtcPalErrNotFound;
+    }
+  }
+  else if (type == kEtcPalIpTypeV6)
+  {
+    if (netint_cache.def.v6_valid)
+    {
+      *netint_index = netint_cache.def.v6_index;
+      return kEtcPalErrOk;
+    }
+    else
+    {
+      return kEtcPalErrNotFound;
     }
   }
   return kEtcPalErrInvalid;

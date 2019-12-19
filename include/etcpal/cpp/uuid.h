@@ -32,9 +32,40 @@
 
 namespace etcpal
 {
+// clang-format off
 /// \defgroup etcpal_cpp_uuid uuid (UUIDs)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_uuid module.
+///
+/// Provides a class Uuid for generating and inspecting Universal Unique Identifiers (UUIDs).
+///
+/// Default-constructed Uuid instances will be all-zeros ("null"):
+/// \code
+/// etcpal::Uuid uuid;
+/// EXPECT_TRUE(uuid.IsNull());
+/// \endcode
+///
+/// To generate a specific type of UUID, use the static generator functions:
+/// \code
+/// auto uuid1 = etcpal::Uuid::V1(); // Generate a V1 (MAC + time based) UUID.
+/// auto uuid3 = etcpal::Uuid::V3(namespace_uuid, name_data, name_size); // Generate a V3 (name-based, MD5) UUID.
+/// auto uuid4 = etcpal::Uuid::V4(); // Generate a V4 (random) UUID.k
+/// auto uuid5 = etcpal::Uuid::V5(namespace_uuid, name_data, name_size); // Generate a V5 (name-based, SHA-1)
+/// auto uuid_os = etcpal::Uuid::OsPreferred(); // Generate the UUID type preferred by the underlying OS
+/// auto uuid_dev = etcpal::Uuid::Device("My Device Type", dev_mac_address, 0); // Generate a UUID representing an embedded device
+/// \endcode
+///
+/// **Note:** Uuid::V3(), Uuid::V5() and Uuid::Device() are guaranteed to be implemented on all
+/// systems. Uuid::V1(), Uuid::V4() and Uuid::OsPreferred() may not be available on embedded
+/// devices. If not implemented, these functions will return a null Uuid. For more information, see
+/// the \ref etcpal_uuid module.
+///
+/// You can also convert UUIDs to and from strings:
+/// \code
+/// auto uuid = etcpal::Uuid::FromString("1b0c096d-9baa-476d-866d-4e0cad18f5a4");
+/// std::string uuid_str = uuid.ToString();
+/// \endcode
+// clang-format on
 
 /// \ingroup etcpal_cpp_uuid
 /// \brief A wrapper class for the EtcPal UUID type.

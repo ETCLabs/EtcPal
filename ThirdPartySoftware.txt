@@ -28,3 +28,7 @@ include/etcpal/rbtree.h
 src/etcpal/rbtree.c
 
 See the license information at the top of those source files for more details.
+
+NOTE: This software uses the Unlicense - the author is credited here as a
+courtesy, but software which includes EtcPal does not need to provide
+attribution for mirek/rb_tree if not desired. 

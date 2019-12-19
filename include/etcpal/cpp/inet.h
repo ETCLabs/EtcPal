@@ -36,6 +36,9 @@ namespace etcpal
 /// \defgroup etcpal_cpp_inet inet (Internet Addressing)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_inet module.
+///
+/// Provides C++ wrappers for IP addresses (IpAddr), socket addresses (SockAddr) and MAC addresses
+/// (MacAddr).
 
 /// \ingroup etcpal_cpp_inet
 /// \brief Indicates an IP address family, or an invalid IP address.

@@ -41,7 +41,10 @@
  * ```
  *
  * The basic UUID type is quite simple - an array of 16 data bytes. Functions are provided to
- * generate every current UUID type except Version 2, which is very rarely used.
+ * generate every current UUID type except Version 2, which is very rarely used. Additionally,
+ * etcpal_generate_os_preferred_uuid() generates the UUID type preferred by the underlying OS, and
+ * etcpal_generate_device_uuid() generates a special type of V5 UUID which can be used to identify
+ * embedded devices.
  *
  * The basic form of UUID generation is:
  * \code
@@ -51,6 +54,18 @@
  *   // uuid now contains a valid Version 1 UUID.
  * }
  * \endcode
+ *
+ * **Note:** Not all UUID types are available on all systems. V3, V5 and Device UUIDs are
+ * guaranteed to be available in all ports of EtcPal, but V1, V4 and os_preferred UUIDs are
+ * generally not available on embedded systems:
+ *
+ * EtcPal Platform | V1  | V3  | V4  | V5  | os_preferred | device |
+ * ----------------|-----|-----|-----|-----|--------------|--------|
+ * FreeRTOS        | No  | Yes | No  | Yes | No           | Yes    |
+ * Linux           | Yes | Yes | Yes | Yes | Yes          | Yes    |
+ * macOS           | Yes | Yes | Yes | Yes | Yes          | Yes    |
+ * MQX             | No  | Yes | No  | Yes | No           | Yes    |
+ * Windows         | Yes | Yes | Yes | Yes | Yes          | Yes    |
  *
  * You can also convert UUIDs to and from strings:
  * \code

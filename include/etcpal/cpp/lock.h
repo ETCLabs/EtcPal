@@ -31,6 +31,10 @@ namespace etcpal
 /// \defgroup etcpal_cpp_lock lock (Locks and Synchronization)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_lock module.
+///
+/// Provides C++ wrappers for mutexes (Mutex), signals (Signal) and read-write locks (RwLock). Also
+/// provides RAII guard classes for these types (MutexGuard, ReadGuard, WriteGuard), which should
+/// be the primary constructs used to interact with the mutual-exclusion classes.
 
 /// \ingroup etcpal_cpp_lock
 /// \brief A wrapper class for the EtcPal mutex type.
