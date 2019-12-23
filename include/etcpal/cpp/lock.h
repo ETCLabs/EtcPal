@@ -35,6 +35,11 @@ namespace etcpal
 /// Provides C++ wrappers for mutexes (Mutex), signals (Signal) and read-write locks (RwLock). Also
 /// provides RAII guard classes for these types (MutexGuard, ReadGuard, WriteGuard), which should
 /// be the primary constructs used to interact with the mutual-exclusion classes.
+///
+/// These classes are similar to td::mutex, std::condition_variable, and std::shared_mutex, with
+/// the key advantage that they will work on any threaded platform that EtcPal is ported for,
+/// including the embedded RTOS platforms. If your application or library does not need to run on
+/// these platforms, consider using the STL versions instead.
 
 /// \ingroup etcpal_cpp_lock
 /// \brief A wrapper class for the EtcPal mutex type.

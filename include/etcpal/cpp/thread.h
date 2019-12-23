@@ -135,7 +135,7 @@ class Thread
 {
 public:
   /// \brief Create a new thread object which does not yet represent a thread.
-  ETCPAL_CONSTEXPR_14 Thread() = default;
+  Thread() = default;
   template <class Function, class... Args>
   Thread(Function&& func, Args&&... args);
   virtual ~Thread();
