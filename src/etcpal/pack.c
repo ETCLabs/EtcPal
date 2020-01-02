@@ -24,7 +24,8 @@
 
 /*!
  * \brief Unpack a uint16_t from a known big-endian buffer.
- * \param buf Pointer to the buffer from which to unpack a uint16_t.
+ * \param buf Pointer to the buffer from which to unpack a uint16_t; must be at least 2 bytes in
+ *            size.
  * \return Unpacked uint16_t.
  */
 uint16_t etcpal_upack_16b(const uint8_t* buf)
@@ -40,7 +41,7 @@ uint16_t etcpal_upack_16b(const uint8_t* buf)
 
 /*!
  * \brief Pack a uint16_t to a known big-endian buffer.
- * \param buf Pointer to the buffer into which to pack a uint16_t.
+ * \param buf Pointer to the buffer into which to pack a uint16_t; must be at least 2 bytes in size.
  * \param val uint16_t value to pack into the buffer.
  */
 void etcpal_pack_16b(uint8_t* buf, uint16_t val)
@@ -54,7 +55,8 @@ void etcpal_pack_16b(uint8_t* buf, uint16_t val)
 
 /*!
  * \brief Unpack a uint16_t from a known little-endian buffer.
- * \param buf Pointer to the buffer from which to unpack a uint16_t.
+ * \param buf Pointer to the buffer from which to unpack a uint16_t; must be at least 2 bytes in
+ *            size.
  * \return Unpacked uint16_t.
  */
 uint16_t etcpal_upack_16l(const uint8_t* buf)
@@ -70,7 +72,7 @@ uint16_t etcpal_upack_16l(const uint8_t* buf)
 
 /*!
  * \brief Pack a uint16_t to a known little-endian buffer.
- * \param buf Pointer to the buffer into which to pack a uint16_t.
+ * \param buf Pointer to the buffer into which to pack a uint16_t; must be at least 2 bytes in size.
  * \param val uint16_t value to pack into the buffer.
  */
 void etcpal_pack_16l(uint8_t* buf, uint16_t val)
@@ -84,7 +86,8 @@ void etcpal_pack_16l(uint8_t* buf, uint16_t val)
 
 /*!
  * \brief Unpack a uint32_t from a known big-endian buffer.
- * \param buf Pointer to the buffer from which to unpack a uint32_t.
+ * \param buf Pointer to the buffer from which to unpack a uint32_t; must be at least 4 bytes in
+ *            size.
  * \return Unpacked uint32_t.
  */
 uint32_t etcpal_upack_32b(const uint8_t* buf)
@@ -102,7 +105,7 @@ uint32_t etcpal_upack_32b(const uint8_t* buf)
 
 /*!
  * \brief Pack a uint32_t to a known big-endian buffer.
- * \param buf Pointer to the buffer into which to pack a uint32_t.
+ * \param buf Pointer to the buffer into which to pack a uint32_t; must be at least 4 bytes in size.
  * \param val uint32_t value to pack into the buffer.
  */
 void etcpal_pack_32b(uint8_t* buf, uint32_t val)
@@ -118,7 +121,8 @@ void etcpal_pack_32b(uint8_t* buf, uint32_t val)
 
 /*!
  * \brief Unpack a uint32_t from a known little-endian buffer.
- * \param buf Pointer to the buffer from which to unpack a uint32_t.
+ * \param buf Pointer to the buffer from which to unpack a uint32_t; must be at least 4 bytes in
+ *            size.
  * \return Unpacked uint32_t.
  */
 uint32_t etcpal_upack_32l(const uint8_t* buf)
@@ -136,7 +140,7 @@ uint32_t etcpal_upack_32l(const uint8_t* buf)
 
 /*!
  * \brief Pack a uint32_t to a known little-endian buffer.
- * \param buf Pointer to the buffer into which to pack a uint32_t.
+ * \param buf Pointer to the buffer into which to pack a uint32_t; must be at least 4 bytes in size.
  * \param val uint32_t value to pack into the buffer.
  */
 void etcpal_pack_32l(uint8_t* buf, uint32_t val)
@@ -154,7 +158,8 @@ void etcpal_pack_32l(uint8_t* buf, uint32_t val)
 
 /*!
  * \brief Unpack a uint64_t from a known big-endian buffer.
- * \param buf Pointer to the buffer from which to unpack a uint64_t.
+ * \param buf Pointer to the buffer from which to unpack a uint64_t; must be at least 8 bytes in
+ *            size.
  * \return Unpacked uint64_t.
  */
 uint64_t etcpal_upack_64b(const uint8_t* buf)
@@ -176,7 +181,7 @@ uint64_t etcpal_upack_64b(const uint8_t* buf)
 
 /*!
  * \brief Pack a uint64_t to a known big-endian buffer.
- * \param buf Pointer to the buffer into which to pack a uint64_t.
+ * \param buf Pointer to the buffer into which to pack a uint64_t; must be at least 8 bytes in size.
  * \param val uint64_t value to pack into the buffer.
  */
 void etcpal_pack_64b(uint8_t* buf, uint64_t val)
@@ -196,7 +201,8 @@ void etcpal_pack_64b(uint8_t* buf, uint64_t val)
 
 /*!
  * \brief Unpack a uint64_t from a known little-endian buffer.
- * \param buf Pointer to the buffer from which to unpack a uint64_t.
+ * \param buf Pointer to the buffer from which to unpack a uint64_t; must be at least 8 bytes in
+ *            size.
  * \return Unpacked uint64_t.
  */
 uint64_t etcpal_upack_64l(const uint8_t* buf)
@@ -218,7 +224,7 @@ uint64_t etcpal_upack_64l(const uint8_t* buf)
 
 /*!
  * \brief Pack a uint64_t to a known little-endian buffer.
- * \param buf Pointer to the buffer into which to pack a uint64_t.
+ * \param buf Pointer to the buffer into which to pack a uint64_t; must be at least 8 bytes in size.
  * \param val uint64_t value to pack into the buffer.
  */
 void etcpal_pack_64l(uint8_t* buf, uint64_t val)
