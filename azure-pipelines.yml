@@ -8,6 +8,7 @@ trigger:
 
 pr:
 - develop
+- review-base/*
 
 variables:
   cmake_definitions: -DETCPAL_BUILD_MOCK_LIB=ON -DETCPAL_BUILDING_FOR_AZURE_PIPELINES_CI=1
