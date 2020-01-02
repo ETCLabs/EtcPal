@@ -23,7 +23,7 @@
 #include "os_error.h"
 
 #if !LWIP_SOCKET
-#error "LWIP_SOCKET is necessary in lwipopts.h to use the etcpal_inet module."
+#error "LWIP_SOCKET is necessary in lwipopts.h to use the EtcPal lwIP port."
 #endif
 
 bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
@@ -32,7 +32,7 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
   if (os_ip->sa_family == AF_INET)
   {
     struct sockaddr_in* sin = (struct sockaddr_in*)os_ip;
-    ETCPAL_IP_SET_V4_ADDRESS(ip, ntohl(sin->sin_addr.s_addr));
+    ETCPAL_IP_SET_V4_ADDRESS(ip, lwip_ntohl(sin->sin_addr.s_addr));
     return true;
   }
 #endif
@@ -56,7 +56,7 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
     struct sockaddr_in* sin = (struct sockaddr_in*)os_ip;
     memset(sin, 0, sizeof(struct sockaddr_in));
     sin->sin_family = AF_INET;
-    sin->sin_addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(ip));
+    sin->sin_addr.s_addr = lwip_htonl(ETCPAL_IP_V4_ADDRESS(ip));
     ret = sizeof(struct sockaddr_in);
   }
 #endif
@@ -81,14 +81,14 @@ bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa
 #if LWIP_IPV4
     if (os_sa->sa_family == AF_INET)
     {
-      sa->port = ntohs(((const struct sockaddr_in*)os_sa)->sin_port);
+      sa->port = lwip_ntohs(((const struct sockaddr_in*)os_sa)->sin_port);
       return true;
     }
 #endif
 #if LWIP_IPV6
     if (os_sa->sa_family == AF_INET6)
     {
-      sa->port = ntohs(((const struct sockaddr_in6*)os_sa)->sin6_port);
+      sa->port = lwip_ntohs(((const struct sockaddr_in6*)os_sa)->sin6_port);
       return true;
     }
 #endif
@@ -103,11 +103,11 @@ size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_
   {
 #if LWIP_IPV4
     if (ETCPAL_IP_IS_V4(&sa->ip))
-      ((struct sockaddr_in*)os_sa)->sin_port = htons(sa->port);
+      ((struct sockaddr_in*)os_sa)->sin_port = lwip_htons(sa->port);
 #endif
 #if LWIP_IPV6
     if (ETCPAL_IP_IS_V6(&sa->ip))
-      ((struct sockaddr_in6*)os_sa)->sin6_port = htons(sa->port);
+      ((struct sockaddr_in6*)os_sa)->sin6_port = lwip_htons(sa->port);
 #endif
   }
   return ret;
@@ -122,15 +122,15 @@ etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size
   {
     case kEtcPalIpTypeV4: {
       struct in_addr addr;
-      addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(src));
-      if (NULL != inet_ntop(AF_INET, &addr, dest, size))
+      addr.s_addr = lwip_htonl(ETCPAL_IP_V4_ADDRESS(src));
+      if (NULL != lwip_inet_ntop(AF_INET, &addr, dest, size))
         return kEtcPalErrOk;
       return errno_lwip_to_etcpal(errno);
     }
     case kEtcPalIpTypeV6: {
       struct in6_addr addr;
       memcpy(addr.s6_addr, ETCPAL_IP_V6_ADDRESS(src), ETCPAL_IPV6_BYTES);
-      if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
+      if (NULL != lwip_inet_ntop(AF_INET6, &addr, dest, size))
         return kEtcPalErrOk;
       return errno_lwip_to_etcpal(errno);
     }
@@ -148,14 +148,14 @@ etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpA
   {
     case kEtcPalIpTypeV4: {
       struct in_addr addr;
-      if (inet_pton(AF_INET, src, &addr) <= 0)
+      if (lwip_inet_pton(AF_INET, src, &addr) <= 0)
         return kEtcPalErrInvalid;
-      ETCPAL_IP_SET_V4_ADDRESS(dest, ntohl(addr.s_addr));
+      ETCPAL_IP_SET_V4_ADDRESS(dest, lwip_ntohl(addr.s_addr));
       return kEtcPalErrOk;
     }
     case kEtcPalIpTypeV6: {
       struct in6_addr addr;
-      if (inet_pton(AF_INET6, src, &addr) <= 0)
+      if (lwip_inet_pton(AF_INET6, src, &addr) <= 0)
         return kEtcPalErrInvalid;
       ETCPAL_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kEtcPalErrOk;
