@@ -38,7 +38,10 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParam
 
   id->sig = xSemaphoreCreateBinary();
   if (!id->sig)
-    return false;
+  {
+    // Per the FreeRTOS docs, NULL means there was not enough FreeRTOS heap available
+    return kEtcPalErrNoMem;
+  }
 
   id->fn = thread_fn;
   id->arg = thread_arg;
