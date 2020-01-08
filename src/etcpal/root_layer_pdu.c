@@ -32,7 +32,7 @@
   ((vector == ACN_VECTOR_ROOT_LLRP) || (vector == ACN_VECTOR_ROOT_BROKER) || (vector == ACN_VECTOR_ROOT_RPT) || \
    (vector == ACN_VECTOR_ROOT_EPT))
 
-/* Make sure to use memcmp, not strcmp, because of the extra nulls */
+// Make sure to use memcmp, not strcmp, because of the extra nulls
 #define ACN_PACKET_IDENT "ASC-E1.17\0\0\0"
 #define ACN_PACKET_IDENT_SIZE 12
 
@@ -57,7 +57,7 @@ bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPream
   if (memcmp(buf, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE) == 0)
   {
     preamble->rlp_block = buf + ACN_TCP_PREAMBLE_SIZE;
-    preamble->rlp_block_len = etcpal_upack_32b(buf + ACN_PACKET_IDENT_SIZE);
+    preamble->rlp_block_len = etcpal_unpack_u32b(buf + ACN_PACKET_IDENT_SIZE);
     return true;
   }
   return false;
@@ -77,16 +77,13 @@ bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPream
  */
 bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPreamble* preamble)
 {
-  const uint8_t* pcur;
-  uint16_t preamble_len, postamble_len;
-
   if (!preamble || !buf || (buflen < ACN_UDP_PREAMBLE_SIZE))
     return false;
 
-  pcur = buf;
-  preamble_len = etcpal_upack_16b(pcur);
+  const uint8_t* pcur = buf;
+  uint16_t preamble_len = etcpal_unpack_u16b(pcur);
   pcur += 2;
-  postamble_len = etcpal_upack_16b(pcur);
+  uint16_t postamble_len = etcpal_unpack_u16b(pcur);
   pcur += 2;
   if ((preamble_len == ACN_UDP_PREAMBLE_SIZE) && (memcmp(pcur, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE) == 0) &&
       (buflen > (unsigned)(preamble_len + postamble_len)))
@@ -113,31 +110,25 @@ bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPream
 bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu,
                                     EtcPalRootLayerPdu* last_pdu)
 {
-  uint32_t min_pdu_len, pdu_len;
-  bool extlength, inheritvect, inherithead, inheritdata;
-  uint8_t flags_byte;
-  const uint8_t *cur_ptr, *buf_end;
-
   if (!buf || !pdu)
     return false;
 
-  buf_end = buf + buflen;
+  uint8_t flags_byte = *buf;
+  bool extlength = ETCPAL_PDU_L_FLAG_SET(flags_byte);
+  bool inheritvect = !ETCPAL_PDU_V_FLAG_SET(flags_byte);
+  bool inherithead = !ETCPAL_PDU_H_FLAG_SET(flags_byte);
+  bool inheritdata = !ETCPAL_PDU_D_FLAG_SET(flags_byte);
 
-  flags_byte = *buf;
-  extlength = ETCPAL_PDU_L_FLAG_SET(flags_byte);
-  inheritvect = !ETCPAL_PDU_V_FLAG_SET(flags_byte);
-  inherithead = !ETCPAL_PDU_H_FLAG_SET(flags_byte);
-  inheritdata = !ETCPAL_PDU_D_FLAG_SET(flags_byte);
-
-  cur_ptr = buf;
+  const uint8_t* cur_ptr = buf;
+  const uint8_t* buf_end = buf + buflen;
   if (cur_ptr + (extlength ? 3 : 2) >= buf_end)
   {
-    /* Not even enough room for the length?? Get outta here. */
+    // Not even enough room for the length?? Get outta here.
     return false;
   }
 
-  pdu_len = ETCPAL_PDU_LENGTH(buf);
-  min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : 4) + (inherithead ? 0 : 16));
+  uint32_t pdu_len = ETCPAL_PDU_LENGTH(buf);
+  uint32_t min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : 4) + (inherithead ? 0 : 16));
   if (((inheritvect || inherithead || inheritdata) && !last_pdu) || (pdu_len < min_pdu_len))
   {
     return false;
@@ -148,7 +139,7 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
     pdu->vector = last_pdu->vector;
   else
   {
-    pdu->vector = etcpal_upack_32b(cur_ptr);
+    pdu->vector = etcpal_unpack_u32b(cur_ptr);
     cur_ptr += 4;
     if (PROT_MANDATES_L_FLAG(pdu->vector) && !extlength)
       return false;
@@ -212,15 +203,15 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
  */
 bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalPdu* last_pdu)
 {
-  EtcPalPduConstraints rlp_constraints = {/* vector_size */ 4,
-                                          /* header_size */ 16};
-
   if (!buf || !pdu || !last_pdu)
     return false;
 
+  EtcPalPduConstraints rlp_constraints = {/* vector_size */ 4,
+                                          /* header_size */ 16};
+
   if (etcpal_parse_pdu(buf, buflen, &rlp_constraints, last_pdu))
   {
-    pdu->vector = etcpal_upack_32b(last_pdu->pvector);
+    pdu->vector = etcpal_unpack_u32b(last_pdu->pvector);
     memcpy(pdu->sender_cid.data, last_pdu->pheader, ETCPAL_UUID_BYTES);
     pdu->pdata = last_pdu->pdata;
     pdu->datalen = last_pdu->datalen;
@@ -247,9 +238,9 @@ size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen)
     return 0;
 
   cur_ptr = buf;
-  etcpal_pack_16b(cur_ptr, ACN_UDP_PREAMBLE_SIZE);
+  etcpal_pack_u16b(cur_ptr, ACN_UDP_PREAMBLE_SIZE);
   cur_ptr += 2;
-  etcpal_pack_16b(cur_ptr, 0);
+  etcpal_pack_u16b(cur_ptr, 0);
   cur_ptr += 2;
   memcpy(cur_ptr, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE);
   cur_ptr += ACN_PACKET_IDENT_SIZE;
@@ -270,15 +261,13 @@ size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen)
  */
 size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
 {
-  uint8_t* cur_ptr;
-
   if (!buf || buflen < ACN_TCP_PREAMBLE_SIZE)
     return 0;
 
-  cur_ptr = buf;
+  uint8_t* cur_ptr = buf;
   memcpy(cur_ptr, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE);
   cur_ptr += ACN_PACKET_IDENT_SIZE;
-  etcpal_pack_32b(cur_ptr, (uint32_t)rlp_block_len);
+  etcpal_pack_u32b(cur_ptr, (uint32_t)rlp_block_len);
   cur_ptr += 4;
   return (size_t)(cur_ptr - buf);
 }
@@ -301,7 +290,7 @@ size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t nu
   for (pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
     block_size += pdu->datalen;
-    /* We assume no inheritance here, so the largest possible buffer is allocated. */
+    // We assume no inheritance here, so the largest possible buffer is allocated.
     block_size += (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->datalen))
                       ? ACN_RLP_HEADER_SIZE_EXT_LEN
                       : ACN_RLP_HEADER_SIZE_NORMAL_LEN;
@@ -322,11 +311,10 @@ size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t nu
  */
 size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu)
 {
-  uint8_t* cur_ptr = buf;
-
   if (!buf || !pdu || buflen < ACN_RLP_HEADER_SIZE_EXT_LEN)
     return 0;
 
+  uint8_t* cur_ptr = buf;
   *cur_ptr = 0x70;
   if (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->datalen))
   {
@@ -339,7 +327,7 @@ size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRo
     ETCPAL_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->datalen);
     cur_ptr += 2;
   }
-  etcpal_pack_32b(cur_ptr, pdu->vector);
+  etcpal_pack_u32b(cur_ptr, pdu->vector);
   cur_ptr += 4;
   memcpy(cur_ptr, pdu->sender_cid.data, ETCPAL_UUID_BYTES);
   cur_ptr += ETCPAL_UUID_BYTES;
@@ -361,25 +349,21 @@ size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRo
  */
 size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu_block, size_t num_pdus)
 {
-  uint8_t* cur_ptr = buf;
-  const EtcPalRootLayerPdu* pdu;
-  EtcPalRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
-
   if (!buf || !pdu_block || (etcpal_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
-  {
     return 0;
-  }
 
-  for (pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
+  uint8_t* cur_ptr = buf;
+  EtcPalRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
+  for (const EtcPalRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
     bool inheritvec = true;
     bool inherithead = true;
     bool inheritdata = true;
-    /* Start with no flags set */
+    // Start with no flags set
     *cur_ptr = 0;
     if (pdu == pdu_block)
     {
-      /* First PDU in the block - no inheritance */
+      // First PDU in the block - no inheritance
       ETCPAL_PDU_SET_V_FLAG(*cur_ptr);
       inheritvec = false;
       last_pdu.vector = pdu->vector;
@@ -395,7 +379,7 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
     }
     else
     {
-      /* Check if we can use some inheritance */
+      // Check if we can use some inheritance
       if (pdu->vector != last_pdu.vector)
       {
         ETCPAL_PDU_SET_V_FLAG(*cur_ptr);
@@ -417,8 +401,8 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
       }
     }
 
-    /* Check if we are required to use the 3-byte length field, either by the
-     * higher-level protocol or because the length is greater than 4096 */
+    // Check if we are required to use the 3-byte length field, either by the higher-level protocol
+    // or because the length is greater than 4096
     if (PROT_MANDATES_L_FLAG(pdu->vector) ||
         RLP_EXTENDED_LENGTH(inheritvec, inherithead, inheritdata ? 0 : pdu->datalen))
     {
@@ -438,7 +422,7 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
 
     if (!inheritvec)
     {
-      etcpal_pack_32b(cur_ptr, pdu->vector);
+      etcpal_pack_u32b(cur_ptr, pdu->vector);
       cur_ptr += 4;
     }
     if (!inherithead)

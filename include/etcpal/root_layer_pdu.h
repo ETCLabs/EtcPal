@@ -23,12 +23,12 @@
 #ifndef ETCPAL_ROOT_LAYER_PDU_H_
 #define ETCPAL_ROOT_LAYER_PDU_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "etcpal/bool.h"
-#include "etcpal/uuid.h"
 #include "etcpal/acn_prot.h"
 #include "etcpal/pdu.h"
+#include "etcpal/uuid.h"
 
 /*!
  * \defgroup etcpal_root_layer_pdu root_layer_pdu (ACN Root Layer PDUs)

@@ -40,6 +40,41 @@
  * `uint8_t[100]`). Allocations and deallocations are ensured to be thread_safe by an
  * #etcpal_mutex_t internally.
  *
+ * For example:
+ * \code
+ * typedef struct
+ * {
+ *   int data1;
+ *   int data2;
+ * } MyStruct;
+ *
+ * // Create a memory pool of 20 MyStruct instances
+ * // This line typically appears at file scope
+ * ETCPAL_MEMPOOL_DEFINE(my_struct_pool, MyStruct, 20);
+ *
+ * // Then, at function scope...
+ *
+ * // Initialize the pool
+ * etcpal_mempool_init(my_struct_pool);
+ *
+ * // Get an item from the pool
+ * MyStruct* val = (MyStruct*)etcpal_mempool_alloc(my_struct_pool);
+ *
+ * if (val)
+ * {
+ *   // Do something with the item
+ * }
+ *
+ * // Check the status of the pool
+ * printf("my_struct_pool status: %zu used out of %zu total\n", etcpal_mempool_used(my_struct_pool),
+ *        etcpal_mempool_size(my_struct_pool));
+ *
+ * // Free the item back to the pool
+ * etcpal_mempool_free(my_struct_pool, val);
+ *
+ * // No deinitialization required
+ * \endcode
+ *
  * @{
  */
 

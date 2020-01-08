@@ -22,9 +22,9 @@
 #ifndef ETCPAL_PDU_H_
 #define ETCPAL_PDU_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "etcpal/bool.h"
 
 /*!
  * \defgroup etcpal_pdu pdu (ACN Protocol Family PDUs)

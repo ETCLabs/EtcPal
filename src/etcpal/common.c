@@ -19,8 +19,7 @@
 
 #include "etcpal/common.h"
 
-#include "etcpal/bool.h"
-
+#include <stdbool.h>
 #include "etcpal/private/log.h"
 #include "etcpal/private/netint.h"
 #include "etcpal/private/socket.h"

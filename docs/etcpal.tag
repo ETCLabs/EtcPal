@@ -2190,10 +2190,10 @@
     <name>etcpal::Thread</name>
     <filename>classetcpal_1_1_thread.html</filename>
     <member kind="function">
-      <type>ETCPAL_CONSTEXPR_14</type>
+      <type></type>
       <name>Thread</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a7e1e4a2ae3e9262eaedc7672ed6f49c1</anchor>
+      <anchor>acf0ebde1823ff6854a4add729b40a0c4</anchor>
       <arglist>()=default</arglist>
     </member>
     <member kind="function">
@@ -2630,6 +2630,20 @@
     </member>
     <member kind="function" static="yes">
       <type>static Uuid</type>
+      <name>V3</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a654bace3b7b14715143dd4a955f477c5</anchor>
+      <arglist>(const Uuid &amp;ns, const char *name) noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V3</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a637aba4ac439b6c6845f6ff8e3411186</anchor>
+      <arglist>(const Uuid &amp;ns, const std::string &amp;name) noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
       <name>V4</name>
       <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
       <anchor>a3bcee74617519b972666b57ff986bf43</anchor>
@@ -2641,6 +2655,20 @@
       <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
       <anchor>ae4e59b0f73518f92ed7c3c6d1b65bd3c</anchor>
       <arglist>(const Uuid &amp;ns, const void *name, size_t name_len) noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V5</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a729621c06a6d1bd895a9c82b30141c9a</anchor>
+      <arglist>(const Uuid &amp;ns, const char *name) noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static Uuid</type>
+      <name>V5</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>acaa3b4ab280e85d5c18c2749018c6153</anchor>
+      <arglist>(const Uuid &amp;ns, const std::string &amp;name) noexcept</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static Uuid</type>
@@ -2683,36 +2711,9 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_bool</name>
-    <title>bool (C Boolean Type)</title>
-    <filename>group__etcpal__bool.html</filename>
-    <member kind="define">
-      <type>#define</type>
-      <name>bool</name>
-      <anchorfile>group__etcpal__bool.html</anchorfile>
-      <anchor>gabb452686968e48b67397da5f97445f5b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>false</name>
-      <anchorfile>group__etcpal__bool.html</anchorfile>
-      <anchor>ga65e9886d74aaee76545e83dd09011727</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>true</name>
-      <anchorfile>group__etcpal__bool.html</anchorfile>
-      <anchor>ga41f9c5fb8b08eb5dc3edce4dcb37fee7</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="group">
     <name>etcpal</name>
     <title>etcpal (Core Modules)</title>
     <filename>group__etcpal.html</filename>
-    <subgroup>etcpal_bool</subgroup>
     <subgroup>etcpal_error</subgroup>
     <subgroup>etcpal_inet</subgroup>
     <subgroup>etcpal_log</subgroup>
@@ -3884,87 +3885,171 @@
     <title>pack (Buffer Packing and Unpacking)</title>
     <filename>group__etcpal__pack.html</filename>
     <member kind="function">
-      <type>uint16_t</type>
-      <name>etcpal_upack_16b</name>
+      <type>int16_t</type>
+      <name>etcpal_unpack_i16b</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>ga0880292ba3f725fb8085543b2d423be4</anchor>
+      <anchor>ga03cb215e85989e72c68d5375c3ba497a</anchor>
       <arglist>(const uint8_t *buf)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_pack_16b</name>
+      <name>etcpal_pack_i16b</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>ga2902019cf1a188b98606319d43ed08a5</anchor>
+      <anchor>ga643eda014d76e31b7b814740477129b6</anchor>
+      <arglist>(uint8_t *buf, int16_t val)</arglist>
+    </member>
+    <member kind="function">
+      <type>int16_t</type>
+      <name>etcpal_unpack_i16l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga9665c39fc1edb5c993a65d1bc0227eca</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_i16l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gab6baf283ded8edfee3eea443c8494b00</anchor>
+      <arglist>(uint8_t *buf, int16_t val)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>etcpal_unpack_u16b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gad3f7ba35fa369d1749bff71ef704fe3d</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_u16b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gad3d316c55c7673d619bbb92a27eaab5c</anchor>
       <arglist>(uint8_t *buf, uint16_t val)</arglist>
     </member>
     <member kind="function">
       <type>uint16_t</type>
-      <name>etcpal_upack_16l</name>
+      <name>etcpal_unpack_u16l</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>ga8bfbfc050e6a051ca3462c84948a8fcf</anchor>
+      <anchor>gaad71f04b710d89d536ed3d01c75b3d94</anchor>
       <arglist>(const uint8_t *buf)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_pack_16l</name>
+      <name>etcpal_pack_u16l</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>gac0fc9d22170eb708008eb09f9bb22ced</anchor>
+      <anchor>ga79214e42a36a2cc967fc417e82aa3ecf</anchor>
       <arglist>(uint8_t *buf, uint16_t val)</arglist>
     </member>
     <member kind="function">
-      <type>uint32_t</type>
-      <name>etcpal_upack_32b</name>
+      <type>int32_t</type>
+      <name>etcpal_unpack_i32b</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>gaac2718bc037c1fb14fc08aa8976b3e0f</anchor>
+      <anchor>ga36f5a90e3fe43a44a33a4d8ea7550f6f</anchor>
       <arglist>(const uint8_t *buf)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_pack_32b</name>
+      <name>etcpal_pack_i32b</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>gab516d6a148228ae6d76de7beb12e60ec</anchor>
-      <arglist>(uint8_t *buf, uint32_t val)</arglist>
+      <anchor>ga6195295fa17c918934dd7ad960356f53</anchor>
+      <arglist>(uint8_t *buf, int32_t val)</arglist>
     </member>
     <member kind="function">
-      <type>uint32_t</type>
-      <name>etcpal_upack_32l</name>
+      <type>int32_t</type>
+      <name>etcpal_unpack_i32l</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>gab002038413cf6518988bb965c879e265</anchor>
+      <anchor>gadcd258a8510cb2e25f916c03e2f3cf61</anchor>
       <arglist>(const uint8_t *buf)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_pack_32l</name>
+      <name>etcpal_pack_i32l</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>gacc712186e152a6d7c03cc5f8af5a1cf2</anchor>
+      <anchor>ga3d81cfd5ea0db9f904260c9269ae90e6</anchor>
+      <arglist>(uint8_t *buf, int32_t val)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>etcpal_unpack_u32b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga3a0676b70d6f218eb57a2b43a5556fa9</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_u32b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga88e2c7307bc91f9936fcc13c63c02631</anchor>
       <arglist>(uint8_t *buf, uint32_t val)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>etcpal_unpack_u32l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga08dcb3a3db0e2503288fc0510dacb607</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_u32l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga19ac23cec592f0bd81baa2fda9ae2336</anchor>
+      <arglist>(uint8_t *buf, uint32_t val)</arglist>
+    </member>
+    <member kind="function">
+      <type>int64_t</type>
+      <name>etcpal_unpack_i64b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga561ee21a6f18638da0ac63c6c564db3b</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_i64b</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gaad4afcee267b57a85444bdceb3115d46</anchor>
+      <arglist>(uint8_t *buf, int64_t val)</arglist>
+    </member>
+    <member kind="function">
+      <type>int64_t</type>
+      <name>etcpal_unpack_i64l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>gabf19d28117a02f5d9365f0acaae51b8b</anchor>
+      <arglist>(const uint8_t *buf)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_pack_i64l</name>
+      <anchorfile>group__etcpal__pack.html</anchorfile>
+      <anchor>ga1a7f6367dcee8974cb5e2ae1dfcced3d</anchor>
+      <arglist>(uint8_t *buf, int64_t val)</arglist>
     </member>
     <member kind="function">
       <type>uint64_t</type>
-      <name>etcpal_upack_64b</name>
+      <name>etcpal_unpack_u64b</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>gac832d56516e61492af5b80013dcb983a</anchor>
+      <anchor>ga60cf532cf79359bdee595b049627a1d1</anchor>
       <arglist>(const uint8_t *buf)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_pack_64b</name>
+      <name>etcpal_pack_u64b</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>ga9fd45b2bdbb50c140789f639e74a0a01</anchor>
+      <anchor>ga544c2b2ae7ba6f46758298719de9d2e8</anchor>
       <arglist>(uint8_t *buf, uint64_t val)</arglist>
     </member>
     <member kind="function">
       <type>uint64_t</type>
-      <name>etcpal_upack_64l</name>
+      <name>etcpal_unpack_u64l</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>ga0d083dae6c2b1c0a04d0512e8fa871d7</anchor>
+      <anchor>gafa3382e49751478fe5348e23b7c82dc1</anchor>
       <arglist>(const uint8_t *buf)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_pack_64l</name>
+      <name>etcpal_pack_u64l</name>
       <anchorfile>group__etcpal__pack.html</anchorfile>
-      <anchor>gaf60d2ae433f57f6cf14f6e54c3aa3a63</anchor>
+      <anchor>gaa220a31557370465e1be3f7bdc53d0fe</anchor>
       <arglist>(uint8_t *buf, uint64_t val)</arglist>
     </member>
   </compound>

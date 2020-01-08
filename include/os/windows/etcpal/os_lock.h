@@ -30,8 +30,8 @@
 #include <windows.h>
 #endif
 
+#include <stdbool.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {

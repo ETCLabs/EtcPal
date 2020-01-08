@@ -20,7 +20,7 @@
 #include "etcpal/thread.h"
 #include "unity_fixture.h"
 
-#include "etcpal/bool.h"
+#include <stdbool.h>
 
 TEST_GROUP(etcpal_thread);
 

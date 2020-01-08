@@ -34,19 +34,18 @@
  */
 bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstraints* constraints, EtcPalPdu* pdu)
 {
-  const uint8_t *this_pdu, *buf_end, *prev_vect, *prev_head, *prev_data, *cur_ptr;
-  uint8_t flags_byte;
-  bool extlength, inheritvect, inherithead, inheritdata;
-  uint32_t pdu_len, min_pdu_len;
-
   if (!buf || !buflen || !constraints || !pdu)
     return false;
 
-  buf_end = buf + buflen;
+  const uint8_t* buf_end = buf + buflen;
 
+  const uint8_t* this_pdu = buf;
+  const uint8_t* prev_vect = NULL;
+  const uint8_t* prev_head = NULL;
+  const uint8_t* prev_data = NULL;
   if (pdu->pnextpdu)
   {
-    /* We have already parsed one or more PDUs in this block. Try to parse the next one. */
+    // We have already parsed one or more PDUs in this block. Try to parse the next one.
     if (pdu->pnextpdu < buf || pdu->pnextpdu >= buf_end)
       return false;
 
@@ -55,29 +54,25 @@ bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstrai
     prev_head = pdu->pheader;
     prev_data = pdu->pdata;
   }
-  else /* This is the first PDU in the block. */
-  {
-    this_pdu = buf;
-    prev_vect = prev_head = prev_data = NULL;
-  }
+  // Else this is the first PDU in the block - leave pointers at their default values
 
-  /* Check the inheritance and the size of the length field */
-  flags_byte = *this_pdu;
-  extlength = ETCPAL_PDU_L_FLAG_SET(flags_byte);
-  inheritvect = !ETCPAL_PDU_V_FLAG_SET(flags_byte);
-  inherithead = !ETCPAL_PDU_H_FLAG_SET(flags_byte);
-  inheritdata = !ETCPAL_PDU_D_FLAG_SET(flags_byte);
+  // Check the inheritance and the size of the length field
+  uint8_t flags_byte = *this_pdu;
+  bool extlength = ETCPAL_PDU_L_FLAG_SET(flags_byte);
+  bool inheritvect = !ETCPAL_PDU_V_FLAG_SET(flags_byte);
+  bool inherithead = !ETCPAL_PDU_H_FLAG_SET(flags_byte);
+  bool inheritdata = !ETCPAL_PDU_D_FLAG_SET(flags_byte);
 
-  cur_ptr = this_pdu;
+  const uint8_t* cur_ptr = this_pdu;
   if (cur_ptr + (extlength ? 3 : 2) >= buf_end)
   {
-    /* Not even enough room for the length?? Get outta here. */
+    // Not even enough room for the length?? Get outta here.
     return false;
   }
 
-  pdu_len = ETCPAL_PDU_LENGTH(this_pdu);
-  min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : constraints->vector_size) +
-                           (inherithead ? 0 : constraints->header_size));
+  uint32_t pdu_len = ETCPAL_PDU_LENGTH(this_pdu);
+  uint32_t min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : constraints->vector_size) +
+                                    (inherithead ? 0 : constraints->header_size));
 
   if ((inheritvect && !prev_vect) || (inherithead && !prev_head) || (inheritdata && !prev_data) ||
       (pdu_len < min_pdu_len) || (this_pdu + pdu_len > buf_end))
@@ -85,7 +80,7 @@ bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstrai
     return false;
   }
 
-  /* Now fill in the pdu structure with the current PDU info */
+  // Now fill in the pdu structure with the current PDU info
   cur_ptr += extlength ? 3 : 2;
   if (!inheritvect)
   {

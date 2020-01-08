@@ -22,8 +22,8 @@
 #ifndef ETCPAL_TIMER_H_
 #define ETCPAL_TIMER_H_
 
+#include <stdbool.h>
 #include <stdint.h>
-#include "etcpal/bool.h"
 
 /*!
  * \defgroup etcpal_timer timer (Timers)

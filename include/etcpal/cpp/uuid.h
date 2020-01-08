@@ -90,8 +90,12 @@ public:
   static Uuid FromString(const std::string& uuid_str) noexcept;
   static Uuid V1() noexcept;
   static Uuid V3(const Uuid& ns, const void* name, size_t name_len) noexcept;
+  static Uuid V3(const Uuid& ns, const char* name) noexcept;
+  static Uuid V3(const Uuid& ns, const std::string& name) noexcept;
   static Uuid V4() noexcept;
   static Uuid V5(const Uuid& ns, const void* name, size_t name_len) noexcept;
+  static Uuid V5(const Uuid& ns, const char* name) noexcept;
+  static Uuid V5(const Uuid& ns, const std::string& name) noexcept;
   static Uuid OsPreferred() noexcept;
   static Uuid Device(const std::string& device_str, const MacAddr& mac_addr, uint32_t uuid_num) noexcept;
 
@@ -169,6 +173,28 @@ inline Uuid Uuid::V3(const Uuid& ns, const void* name, size_t name_len) noexcept
   return uuid;
 }
 
+/// \brief Generate and return a Version 3 UUID.
+/// \param ns UUID to use as a namespace.
+/// \param name A null-terminated C string representing the name to convert into a UUID.
+///
+/// See etcpal_generate_v3_uuid() for more information.
+inline Uuid Uuid::V3(const Uuid& ns, const char* name) noexcept
+{
+  // TODO
+  return Uuid{};
+}
+
+/// \brief Generate and return a Version 3 UUID.
+/// \param ns UUID to use as a namespace.
+/// \param name A string representing the name to convert into a UUID.
+///
+/// See etcpal_generate_v3_uuid() for more information.
+inline Uuid Uuid::V3(const Uuid& ns, const std::string& name) noexcept
+{
+  // TODO
+  return Uuid{};
+}
+
 /// \brief Generate and return a Version 4 UUID.
 ///
 /// If not implemented, returns a null UUID. See etcpal_generate_v4_uuid() for more information.
@@ -187,6 +213,28 @@ inline Uuid Uuid::V5(const Uuid& ns, const void* name, size_t name_len) noexcept
   Uuid uuid;
   etcpal_generate_v5_uuid(&ns.get(), name, name_len, &uuid.uuid_);
   return uuid;
+}
+
+/// \brief Generate and return a Version 5 UUID.
+/// \param ns UUID to use as a namespace.
+/// \param name A null-terminated C string representing the name to convert into a UUID.
+///
+/// See etcpal_generate_v5_uuid() for more information.
+inline Uuid Uuid::V5(const Uuid& ns, const char* name) noexcept
+{
+  // TODO
+  return Uuid{};
+}
+
+/// \brief Generate and return a Version 5 UUID.
+/// \param ns UUID to use as a namespace.
+/// \param name A string representing the name to convert into a UUID.
+///
+/// See etcpal_generate_v5_uuid() for more information.
+inline Uuid Uuid::V5(const Uuid& ns, const std::string& name) noexcept
+{
+  // TODO
+  return Uuid{};
 }
 
 /// \brief Generate and return a UUID of the version preferred by the underlying OS.

@@ -46,12 +46,12 @@
  *
  * \code
  * uint8_t buf[4];
- * etcpal_pack_32b(buf, 0x11223344); // Pack 32-bit value, big-endian
+ * etcpal_pack_u32b(buf, 0x11223344); // Pack 32-bit value, big-endian
  *
  * // buf now contains { 0x11, 0x22, 0x33, 0x44 }
  *
- * uint32_t val = etcpal_upack_32b(&buf); // Unpack 32-bit value, big-endian
- * etcpal_pack_32l(&buf, val); // Pack 32-bit value, little-endian
+ * uint32_t val = etcpal_unpack_u32b(&buf); // Unpack 32-bit value, big-endian
+ * etcpal_pack_u32l(&buf, val); // Pack 32-bit value, little-endian
  *
  * // buf now contains { 0x44, 0x33, 0x22, 0x11 }
  * \endcode
@@ -63,14 +63,25 @@
 extern "C" {
 #endif
 
-uint16_t etcpal_upack_16b(const uint8_t* buf);
-void etcpal_pack_16b(uint8_t* buf, uint16_t val);
-uint16_t etcpal_upack_16l(const uint8_t* buf);
-void etcpal_pack_16l(uint8_t* buf, uint16_t val);
-uint32_t etcpal_upack_32b(const uint8_t* buf);
-void etcpal_pack_32b(uint8_t* buf, uint32_t val);
-uint32_t etcpal_upack_32l(const uint8_t* buf);
-void etcpal_pack_32l(uint8_t* buf, uint32_t val);
+int16_t etcpal_unpack_i16b(const uint8_t* buf);
+void etcpal_pack_i16b(uint8_t* buf, int16_t val);
+int16_t etcpal_unpack_i16l(const uint8_t* buf);
+void etcpal_pack_i16l(uint8_t* buf, int16_t val);
+
+uint16_t etcpal_unpack_u16b(const uint8_t* buf);
+void etcpal_pack_u16b(uint8_t* buf, uint16_t val);
+uint16_t etcpal_unpack_u16l(const uint8_t* buf);
+void etcpal_pack_u16l(uint8_t* buf, uint16_t val);
+
+int32_t etcpal_unpack_i32b(const uint8_t* buf);
+void etcpal_pack_i32b(uint8_t* buf, int32_t val);
+int32_t etcpal_unpack_i32l(const uint8_t* buf);
+void etcpal_pack_i32l(uint8_t* buf, int32_t val);
+
+uint32_t etcpal_unpack_u32b(const uint8_t* buf);
+void etcpal_pack_u32b(uint8_t* buf, uint32_t val);
+uint32_t etcpal_unpack_u32l(const uint8_t* buf);
+void etcpal_pack_u32l(uint8_t* buf, uint32_t val);
 
 #ifdef __cplusplus
 }

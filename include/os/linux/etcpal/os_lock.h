@@ -20,8 +20,8 @@
 #ifndef ETCPAL_OS_LOCK_H_
 #define ETCPAL_OS_LOCK_H_
 
+#include <stdbool.h>
 #include <pthread.h>
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {

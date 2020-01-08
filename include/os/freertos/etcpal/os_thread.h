@@ -24,7 +24,6 @@
 #include <task.h>
 #include <semphr.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {

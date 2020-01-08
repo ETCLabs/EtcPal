@@ -22,9 +22,9 @@
 #ifndef ETCPAL_SOCKET_H_
 #define ETCPAL_SOCKET_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 #include "etcpal/error.h"
 #include "etcpal/inet.h"
 

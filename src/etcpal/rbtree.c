@@ -37,7 +37,7 @@
 
 #include "etcpal/rbtree.h"
 
-#include "etcpal/bool.h"
+#include <stdbool.h>
 
 /* etcpal_rbnode */
 

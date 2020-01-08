@@ -46,7 +46,8 @@ namespace etcpal
 /// Provides a thread class Thread which is similar to std::thread, with the key advantage that it
 /// will work on any threaded platform that EtcPal is ported for, including the embedded RTOS
 /// platforms. If your application or library does not need to run on these platforms, consider
-/// using std::thread instead.
+/// using std::thread instead (or in >= C++20, std::jthread, which more closely matches the
+/// behavior of this class).
 ///
 /// To start the thread with default parameters, you can use the constructor:
 /// \code
@@ -122,8 +123,8 @@ namespace etcpal
 /// or library does not need to run on these platforms, consider using std::thread instead.
 ///
 /// There are a few differences from std::thread:
-/// * The thread is automatically joined on destruction (std::thread calls std::terminate if it is
-///   destroyed while its associated thread is still running)
+/// * The thread is automatically joined on destruction (this matches the behavior of C++20's
+///   std::jthread)
 /// * The thread is not _detachable_; that is, once created, it _must_ be joined before it is
 ///   destroyed in all cases.
 /// * The thread has a Start() function - a previously default-constructed thread can be assigned

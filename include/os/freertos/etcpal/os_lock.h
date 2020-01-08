@@ -20,10 +20,10 @@
 #ifndef ETCPAL_OS_LOCK_H_
 #define ETCPAL_OS_LOCK_H_
 
+#include <stdbool.h>
 #include <FreeRTOS.h>
 #include <semphr.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {

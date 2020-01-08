@@ -22,8 +22,8 @@
 #ifndef ETCPAL_NETINT_H_
 #define ETCPAL_NETINT_H_
 
+#include <stdbool.h>
 #include <stddef.h>
-#include "etcpal/bool.h"
 #include "etcpal/common.h"
 #include "etcpal/inet.h"
 

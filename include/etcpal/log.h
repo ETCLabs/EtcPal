@@ -23,8 +23,8 @@
 #define ETCPAL_LOG_H_
 
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stddef.h>
-#include "etcpal/bool.h"
 #include "etcpal/common.h"
 
 /*!

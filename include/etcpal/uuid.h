@@ -22,9 +22,9 @@
 #ifndef ETCPAL_UUID_H_
 #define ETCPAL_UUID_H_
 
-#include <string.h>
+#include <stdbool.h>
 #include <stdint.h>
-#include "etcpal/bool.h"
+#include <string.h>
 #include "etcpal/error.h"
 #include "etcpal/inet.h"
 

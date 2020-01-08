@@ -287,7 +287,7 @@ etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const EtcPalMacA
   uint8_t name[TOTAL_NAME_LEN];
   strncpy((char*)name, dev_str, ETCPAL_UUID_DEV_STR_MAX_LEN);
   memcpy(&name[ETCPAL_UUID_DEV_STR_MAX_LEN], mac_addr->data, ETCPAL_MAC_BYTES);
-  etcpal_pack_32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + ETCPAL_MAC_BYTES], uuid_num);
+  etcpal_pack_u32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + ETCPAL_MAC_BYTES], uuid_num);
 
   return etcpal_generate_v3_uuid(&namespace, name, TOTAL_NAME_LEN, uuid);
 }

@@ -21,72 +21,70 @@
 #include "etcpal/pack64.h"
 #include "unity_fixture.h"
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-#include "etcpal/bool.h"
 
 // What we pack and unpack from
 uint8_t test_buf[100];
 
 // Test utility functions that are used by the actual tests
 
-static bool test_pack16b(uint8_t* buffer)
+static bool test_packu16b(uint8_t* buffer)
 {
   const uint16_t tst = 0x1234;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint16_t));
 
-  etcpal_pack_16b(buffer, tst);
+  etcpal_pack_u16b(buffer, tst);
   if ((ptst[0] == buffer[1]) && (ptst[1] == buffer[0]))
     return true;
   return false;
 }
 
-static bool test_pack16l(uint8_t* buffer)
+static bool test_packu16l(uint8_t* buffer)
 {
   const uint16_t tst = 0x1234;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint16_t));
 
-  etcpal_pack_16l(buffer, tst);
+  etcpal_pack_u16l(buffer, tst);
   if ((ptst[0] == buffer[0]) && (ptst[1] == buffer[1]))
     return true;
   return false;
 }
 
-static bool test_upack16b(uint8_t* buffer)
+static bool test_unpacku16b(uint8_t* buffer)
 {
   const uint16_t tst = 0x1234;
-  uint16_t var;
   memset(buffer, 0, sizeof(uint16_t));
 
-  etcpal_pack_16b(buffer, tst);
-  var = etcpal_upack_16b(buffer);
+  etcpal_pack_u16b(buffer, tst);
+  uint16_t var = etcpal_unpack_u16b(buffer);
   if (tst == var)
     return true;
   return false;
 }
 
-static bool test_upack16l(uint8_t* buffer)
+static bool test_unpacku16l(uint8_t* buffer)
 {
   const uint16_t tst = 0x1234;
-  uint16_t var;
   memset(buffer, 0, sizeof(uint16_t));
 
-  etcpal_pack_16l(buffer, tst);
-  var = etcpal_upack_16l(buffer);
+  etcpal_pack_u16l(buffer, tst);
+  uint16_t var = etcpal_unpack_u16l(buffer);
   if (tst == var)
     return true;
   return false;
 }
 
-static bool test_pack32b(uint8_t* buffer)
+static bool test_packu32b(uint8_t* buffer)
 {
   const uint32_t tst = 0x12345678;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint32_t));
 
-  etcpal_pack_32b(buffer, tst);
+  etcpal_pack_u32b(buffer, tst);
   if ((ptst[0] == buffer[3]) && (ptst[1] == buffer[2]) && (ptst[2] == buffer[1]) && (ptst[3] == buffer[0]))
   {
     return true;
@@ -94,13 +92,13 @@ static bool test_pack32b(uint8_t* buffer)
   return false;
 }
 
-static bool test_pack32l(uint8_t* buffer)
+static bool test_packu32l(uint8_t* buffer)
 {
   const uint32_t tst = 0x12345678;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint32_t));
 
-  etcpal_pack_32l(buffer, tst);
+  etcpal_pack_u32l(buffer, tst);
   if ((ptst[0] == buffer[0]) && (ptst[1] == buffer[1]) && (ptst[2] == buffer[2]) && (ptst[3] == buffer[3]))
   {
     return true;
@@ -108,39 +106,37 @@ static bool test_pack32l(uint8_t* buffer)
   return false;
 }
 
-static bool test_upack32b(uint8_t* buffer)
+static bool test_unpacku32b(uint8_t* buffer)
 {
   const uint32_t tst = 0x12345678;
-  uint32_t var;
   memset(buffer, 0, sizeof(uint32_t));
 
-  etcpal_pack_32b(buffer, tst);
-  var = etcpal_upack_32b(buffer);
+  etcpal_pack_u32b(buffer, tst);
+  uint32_t var = etcpal_unpack_u32b(buffer);
   if (tst == var)
     return true;
   return false;
 }
 
-static bool test_upack32l(uint8_t* buffer)
+static bool test_unpacku32l(uint8_t* buffer)
 {
   const uint32_t tst = 0x12345678;
-  uint32_t var;
   memset(buffer, 0, sizeof(uint32_t));
 
-  etcpal_pack_32l(buffer, tst);
-  var = etcpal_upack_32l(buffer);
+  etcpal_pack_u32l(buffer, tst);
+  uint32_t var = etcpal_unpack_u32l(buffer);
   if (tst == var)
     return true;
   return false;
 }
 
-static bool test_pack64b(uint8_t* buffer)
+static bool test_packu64b(uint8_t* buffer)
 {
   const uint64_t tst = 0x1234567890abcdef;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint64_t));
 
-  etcpal_pack_64b(buffer, tst);
+  etcpal_pack_u64b(buffer, tst);
   if ((ptst[0] == buffer[7]) && (ptst[1] == buffer[6]) && (ptst[2] == buffer[5]) && (ptst[3] == buffer[4]) &&
       (ptst[4] == buffer[3]) && (ptst[5] == buffer[2]) && (ptst[6] == buffer[1]) && (ptst[7] == buffer[0]))
   {
@@ -149,13 +145,13 @@ static bool test_pack64b(uint8_t* buffer)
   return false;
 }
 
-static bool test_pack64l(uint8_t* buffer)
+static bool test_packu64l(uint8_t* buffer)
 {
   const uint64_t tst = 0x1234567890abcdef;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(uint64_t));
 
-  etcpal_pack_64l(buffer, tst);
+  etcpal_pack_u64l(buffer, tst);
   if ((ptst[0] == buffer[0]) && (ptst[1] == buffer[1]) && (ptst[2] == buffer[2]) && (ptst[3] == buffer[3]) &&
       (ptst[4] == buffer[4]) && (ptst[5] == buffer[5]) && (ptst[6] == buffer[6]) && (ptst[7] == buffer[7]))
   {
@@ -164,27 +160,25 @@ static bool test_pack64l(uint8_t* buffer)
   return false;
 }
 
-static bool test_upack64b(uint8_t* buffer)
+static bool test_unpacku64b(uint8_t* buffer)
 {
   const uint64_t tst = 0x1234567890abcdef;
-  uint64_t var;
   memset(buffer, 0, sizeof(uint64_t));
 
-  etcpal_pack_64b(buffer, tst);
-  var = etcpal_upack_64b(buffer);
+  etcpal_pack_u64b(buffer, tst);
+  uint64_t var = etcpal_unpack_u64b(buffer);
   if (tst == var)
     return true;
   return false;
 }
 
-static bool test_upack64l(uint8_t* buffer)
+static bool test_unpacku64l(uint8_t* buffer)
 {
   const uint64_t tst = 0x1234567890abcdef;
-  uint64_t var;
   memset(buffer, 0, sizeof(uint64_t));
 
-  etcpal_pack_64l(buffer, tst);
-  var = etcpal_upack_64l(buffer);
+  etcpal_pack_u64l(buffer, tst);
+  uint64_t var = etcpal_unpack_u64l(buffer);
   if (tst == var)
     return true;
   return false;
@@ -207,10 +201,10 @@ TEST(etcpal_pack, pack_16_functions_work)
   // Test packing and unpacking values at varying memory offsets.
   for (size_t offset = 0; offset <= 60; ++offset)
   {
-    TEST_ASSERT(test_pack16b(test_buf + offset));
-    TEST_ASSERT(test_pack16l(test_buf + offset));
-    TEST_ASSERT(test_upack16b(test_buf + offset));
-    TEST_ASSERT(test_upack16l(test_buf + offset));
+    TEST_ASSERT(test_packu16b(test_buf + offset));
+    TEST_ASSERT(test_packu16l(test_buf + offset));
+    TEST_ASSERT(test_unpacku16b(test_buf + offset));
+    TEST_ASSERT(test_unpacku16l(test_buf + offset));
   }
 }
 
@@ -219,10 +213,10 @@ TEST(etcpal_pack, pack_32_functions_work)
   // Test packing and unpacking values at varying memory offsets.
   for (size_t offset = 0; offset <= 60; ++offset)
   {
-    TEST_ASSERT(test_pack32b(test_buf + offset));
-    TEST_ASSERT(test_pack32l(test_buf + offset));
-    TEST_ASSERT(test_upack32b(test_buf + offset));
-    TEST_ASSERT(test_upack32l(test_buf + offset));
+    TEST_ASSERT(test_packu32b(test_buf + offset));
+    TEST_ASSERT(test_packu32l(test_buf + offset));
+    TEST_ASSERT(test_unpacku32b(test_buf + offset));
+    TEST_ASSERT(test_unpacku32l(test_buf + offset));
   }
 }
 
@@ -231,10 +225,10 @@ TEST(etcpal_pack, pack_64_functions_work)
   // Test packing and unpacking values at varying memory offsets.
   for (size_t offset = 0; offset <= 60; ++offset)
   {
-    TEST_ASSERT(test_pack64b(test_buf + offset));
-    TEST_ASSERT(test_pack64l(test_buf + offset));
-    TEST_ASSERT(test_upack64b(test_buf + offset));
-    TEST_ASSERT(test_upack64l(test_buf + offset));
+    TEST_ASSERT(test_packu64b(test_buf + offset));
+    TEST_ASSERT(test_packu64l(test_buf + offset));
+    TEST_ASSERT(test_unpacku64b(test_buf + offset));
+    TEST_ASSERT(test_unpacku64l(test_buf + offset));
   }
 }
 

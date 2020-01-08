@@ -22,9 +22,9 @@
 #ifndef ETCPAL_INET_H_
 #define ETCPAL_INET_H_
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include "etcpal/bool.h"
 #include "etcpal/error.h"
 #include "etcpal/os_inet.h"
 

@@ -19,12 +19,12 @@
 
 #include "etcpal/log.h"
 
-#include <stdio.h>
-#include <stddef.h>
 #include <stdarg.h>
-#include <string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include "etcpal/bool.h"
+#include <string.h>
 #include "etcpal/lock.h"
 #include "etcpal/mempool.h"
 #include "etcpal/private/log.h"

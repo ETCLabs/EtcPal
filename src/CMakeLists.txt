@@ -20,7 +20,6 @@ target_include_directories(EtcPalInterface INTERFACE
 add_library(EtcPal
   # EtcPal headers
   ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
-  ${ETCPAL_ROOT}/include/etcpal/bool.h
   ${ETCPAL_ROOT}/include/etcpal/uuid.h
   ${ETCPAL_ROOT}/include/etcpal/common.h
   ${ETCPAL_ROOT}/include/etcpal/error.h
@@ -105,7 +104,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
   add_library(EtcPalMock
     # EtcPal headers
     ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
-    ${ETCPAL_ROOT}/include/etcpal/bool.h
     ${ETCPAL_ROOT}/include/etcpal/uuid.h
     ${ETCPAL_ROOT}/include/etcpal/error.h
     ${ETCPAL_ROOT}/include/etcpal/inet.h
