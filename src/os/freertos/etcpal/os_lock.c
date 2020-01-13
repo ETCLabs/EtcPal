@@ -50,7 +50,7 @@ bool etcpal_mutex_try_take(etcpal_mutex_t* id)
   return false;
 }
 
-bool etcpal_mutex_timed_take(etcpal_mutex_t* id)
+bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms)
 {
   // TODO
   return false;

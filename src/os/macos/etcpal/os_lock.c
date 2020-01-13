@@ -31,7 +31,7 @@ static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
 
-bool etcpal_mutex_timed_take(etcpal_mutex_t* id)
+bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms)
 {
   // TODO
   return false;
