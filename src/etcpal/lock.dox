@@ -27,15 +27,58 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * using etcpal_mutex_take(). Where possible on real-time platforms, the mutex provides priority
  * inheritance.
  *
- * etcpal_mutex implementations use the following constructs under the hood on various platforms:
+ * Mutexes are used to synchronize access to data from different threads. For example:
+ * 
+ * \code
+ * static int shared_counter;
+ * etcpal_mutex_t mutex;
  *
- * | On:      | etcpal_mutex uses: |
- * |----------|--------------------|
- * | FreeRTOS | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
- * | Linux    | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
- * | macOS    | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
- * | MQX      | Lightweight Semaphores |
- * | Windows  | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ * void counter_thread(void* arg)
+ * {
+ *   for (int i = 0; i < 10000; ++i)
+ *   {
+ *     // Ensure that we are the only context conducting read-modify-write operations on
+ *     // shared_counter. No other thread can be in this block of code at the same time.
+ *     etcpal_mutex_take(&mutex);
+ *     ++shared_counter;
+ *     etcpal_mutex_give(&mutex);
+ *   }
+ * }
+ *
+ * int main(void)
+ * {
+ *   etcpal_mutex_create(&mutex);
+ *
+ *   EtcPalThreadParams thread_params = { ETCPAL_THREAD_DEFAULT_PARAMS_INIT };
+ *   etcpal_thread_t thread_handles[5];
+ *   for (int i = 0; i < 5; ++i)
+ *   {
+ *     etcpal_thread_create(&thread_handles[i], &params, counter_thread, NULL);
+ *   }
+ *  
+ *   // Wait for the threads to finish
+ *   etcpal_thread_sleep(1000);
+ *   for (int i = 0; i < 5; ++i)
+ *   {
+ *     etcpal_thread_join(&thread_handles[i]);
+ *   }
+ *
+ *   printf("The counter is: %d\n", shared_counter); // Prints "The counter is: 50000"
+ *
+ *   etcpal_mutex_destroy(&mutex);
+ * }
+ * \endcode
+ *
+ * etcpal_mutex implementations use different constructs under the hood on various platforms. Also,
+ * different platforms affect the behavior of certain functions.
+ *
+ * | Platform | timed_take honored | give_from_isr meaningful | Underlying Type    |
+ * |----------|--------------------|--------------------------|--------------------|
+ * | FreeRTOS | Yes                | Yes                      | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
+ * | Linux    | No                 | No                       | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
+ * | macOS    | No                 | No                       | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
+ * | MQX      | Yes                | No                       | Lightweight Semaphores |
+ * | Windows  | No                 | No                       | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
  *
  * @{
  */
@@ -79,10 +122,38 @@ bool etcpal_mutex_take(etcpal_mutex_t *id);
 bool etcpal_mutex_try_take(etcpal_mutex_t *id);
 
 /*!
+ * \brief Try to acquire a mutex, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. See the table in the overview above for more
+ * information. On platforms on which it is not honored, this function executes the equivalent of
+ * etcpal_mutex_try_take() if timeout_ms is 0, or etcpal_mutex_take() otherwise.
+ *
+ * \param[in] id Identifier for the mutex to try to acquire.
+ * \param[in] timeout_ms Maximum amount of time to wait for the mutex to become available, in
+ *                       milliseconds. If #ETCPAL_WAIT_FOREVER is given, the result is the same as
+ *                       if etcpal_mutex_take() was called.
+ * \return true: The mutex was acquired.
+ * \return false: The timeout expired, the mutex was invalid or an error occurred.
+ */
+bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms);
+
+/*!
  * \brief Release a mutex.
  * \param[in] id Identifier for the mutex to release.
  */
 void etcpal_mutex_give(etcpal_mutex_t *id);
+
+/*!
+ * \brief Release a mutex from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for releasing a mutex from an interrupt context. See the table in the overview above for more
+ * information. On platforms on which it is not meaningful, this function simply executes the
+ * equivalent of etcpal_mutex_give().
+ *
+ * \param[in] id Identifier for the mutex to release.
+ */
+void etcpal_mutex_give_from_isr(etcpal_mutex_t* id);
 
 /*!
  * \brief Destroy a mutex object.
@@ -101,15 +172,16 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  * Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
  * call to etcpal_signal_wait() blocks until etcpal_signal_post() is called.
  *
- * etcpal_signal implementations use the following constructs under the hood on various platforms:
+ * etcpal_signal implementations use different constructs under the hood on various platforms. Also,
+ * different platforms affect the behavior of certain functions.
  *
- * | On:      | etcpal_mutex uses: |
- * |----------|--------------------|
- * | FreeRTOS | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
- * | Linux    | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
- * | macOS    | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
- * | MQX      | Lightweight Events |
- * | Windows  | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
+ * | Platform | timed_wait honored | post_from_isr meaningful | Underlying Type    |
+ * |----------|--------------------|--------------------------|--------------------|
+ * | FreeRTOS | Yes                | Yes                      | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
+ * | Linux    | No                 | No                       | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
+ * | macOS    | No                 | No                       | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
+ * | MQX      | Yes                | No                       | Lightweight Events |
+ * | Windows  | No                 | No                       | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
  *
  * @{
  */
@@ -148,6 +220,22 @@ bool etcpal_signal_create(etcpal_signal_t *id);
 bool etcpal_signal_wait(etcpal_signal_t *id);
 
 /*!
+ * \brief Wait for a signal, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. See the table in the overview above for more
+ * information. On platforms on which it is not honored, this function executes the equivalent of
+ * etcpal_signal_poll() if timeout_ms is 0, or etcpal_signal_wait() otherwise.
+ *
+ * \param[in] id Identifier for the signal for which to wait.
+ * \param[in] timeout_ms Maximum amount of time to wait for the signal, in milliseconds. If
+ *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_signal_wait() was called.
+ * \return true: The signal was received.
+ * \return false: The timeout expired, the signal was invalid or an error occurred.
+ */
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
+
+/*!
  * \brief Poll the state of a signal.
  *
  * Returns immediately whether the object is in a "signaled" state.
@@ -168,6 +256,18 @@ bool etcpal_signal_poll(etcpal_signal_t *id);
  * \param[in] id Identifier for the signal to post.
  */
 void etcpal_signal_post(etcpal_signal_t *id);
+
+/*!
+ * \brief Post a signal from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for posting a signal from an interrupt context. See the table in the overview above for more
+ * information. On platforms on which it is not meaningful, this function simply executes the
+ * equivalent of etcpal_signal_post().
+ *
+ * \param[in] id Identifier for the signal to post.
+ */
+void etcpal_signal_post_from_isr(etcpal_signal_t* id);
 
 /*!
  * \brief Destroy a signal object.
@@ -192,6 +292,14 @@ void etcpal_signal_destroy(etcpal_signal_t *id);
  *
  * EtcPal read-write locks are typically implemented using multiple OS synchronization constructs
  * under the hood.
+
+ * | Platform | timed_read/writelock honored | writeunlock_from_isr meaningful |
+ * |----------|------------------------------|---------------------------------|
+ * | FreeRTOS | Yes                          | Yes                             |
+ * | Linux    | No                           | No                              |
+ * | macOS    | No                           | No                              |
+ * | MQX      | Yes                          | No                              |
+ * | Windows  | No                           | No                              |
  *
  * @{
  */
@@ -236,9 +344,28 @@ bool etcpal_rwlock_readlock(etcpal_rwlock_t *id);
  * \param[in] id Identifier for the read-write lock on which to acquire a read lock.
  * \return true: The read lock was acquired.
  * \return false: The lock was held for writing from another thread, the lock is invalid, or an
- *         error occurred.
+ *                error occurred.
  */
 bool etcpal_rwlock_try_readlock(etcpal_rwlock_t *id);
+
+/*!
+ * \brief Try to access a read-write lock for reading, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. See the table in the overview above for more
+ * information. On platforms on which it is not honored, this function executes the equivalent of
+ * etcpal_rwlock_try_readlock() if timeout_ms is 0, or etcpal_rwlock_readlock() otherwise.
+ *
+ * In typical usage, the resource protected by this lock should only be read, not modified, while
+ * inside a read lock.
+ *
+ * \param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * \param[in] timeout_ms Maximum amount of time to wait to acquire a read lock, in milliseconds. If
+ *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_rwlock_readlock() was called.
+ * \return true: The read lock was acquired.
+ * \return false: The timeout expired, the lock is invalid or an error occurred.
+ */
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
 
 /*!
  * \brief Release a read lock on a read-write lock object.
@@ -272,10 +399,38 @@ bool etcpal_rwlock_writelock(etcpal_rwlock_t *id);
 bool etcpal_rwlock_try_writelock(etcpal_rwlock_t *id);
 
 /*!
+ * \brief Try to access a read-write lock for writing, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. See the table in the overview above for more
+ * information. On platforms on which it is not honored, this function executes the equivalent of
+ * etcpal_rwlock_try_writelock() if timeout_ms is 0, or etcpal_rwlock_writelock() otherwise.
+ *
+ * \param[in] id Identifier for the read-write lock on which to acquire a write lock.
+ * \param[in] timeout_ms Maximum amount of time to wait to acquire a write lock, in milliseconds.
+ *                       If #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_rwlock_writelock() was called.
+ * \return true: The write lock was acquired.
+ * \return false: The timeout expired, the lock is invalid or an error occurred.
+ */
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
+
+/*!
  * \brief Release a write lock on a read-write lock object.
  * \param[in] id Identifier for the read-write lock on which to release the write lock.
  */
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t *id);
+
+/*!
+ * \brief Release a write lock on a read-write lock object from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for releasing a lock from an interrupt context. See the table in the overview above for more
+ * information. On platforms on which it is not meaningful, this function simply executes the
+ * equivalent of etcpal_rwlock_writeunlock().
+ *
+ * \param[in] id Identifier for the read-write lock on which to release the write lock.
+ */
+void etcpal_rwlock_writeunlock_from_isr(etcpal_rwlock_t* id);
 
 /*!
  * \brief Destroy a read-write lock object.

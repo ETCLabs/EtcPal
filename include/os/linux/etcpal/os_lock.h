@@ -32,7 +32,9 @@ typedef pthread_mutex_t etcpal_mutex_t;
 #define etcpal_mutex_create(idptr) ((pthread_mutex_init((idptr), NULL) == 0) ? true : false)
 #define etcpal_mutex_take(idptr) ((pthread_mutex_lock(idptr) == 0) ? true : false)
 #define etcpal_mutex_try_take(idptr) ((pthread_mutex_trylock(idptr) == 0) ? true : false)
+bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms);
 #define etcpal_mutex_give(idptr) ((void)pthread_mutex_unlock(idptr))
+#define etcpal_mutex_give_from_isr etcpal_mutex_give
 #define etcpal_mutex_destroy(idptr) ((void)pthread_mutex_destroy(idptr))
 
 typedef struct
@@ -45,8 +47,10 @@ typedef struct
 
 bool etcpal_signal_create(etcpal_signal_t* id);
 bool etcpal_signal_wait(etcpal_signal_t* id);
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
 bool etcpal_signal_poll(etcpal_signal_t* id);
 void etcpal_signal_post(etcpal_signal_t* id);
+#define etcpal_signal_post_from_isr etcpal_signal_post
 void etcpal_signal_destroy(etcpal_signal_t* id);
 
 typedef struct
@@ -60,10 +64,13 @@ typedef struct
 bool etcpal_rwlock_create(etcpal_rwlock_t* id);
 bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
 bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
 void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
 bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
 bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
+#define etcpal_rwlock_writeunlock_from_isr etcpal_rwlock_writeunlock
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 #ifdef __cplusplus

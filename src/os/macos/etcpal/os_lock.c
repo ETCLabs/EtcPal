@@ -31,6 +31,12 @@ static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
 
+bool etcpal_mutex_timed_take(etcpal_mutex_t* id)
+{
+  // TODO
+  return false;
+}
+
 bool etcpal_signal_create(etcpal_signal_t* id)
 {
   if (id)
@@ -70,6 +76,12 @@ bool etcpal_signal_wait(etcpal_signal_t* id)
       return true;
     }
   }
+  return false;
+}
+
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
+{
+  // TODO
   return false;
 }
 
@@ -171,6 +183,12 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
   return res;
 }
 
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
+}
+
 void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
@@ -214,6 +232,12 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
       }
     }
   }
+  return false;
+}
+
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  // TODO
   return false;
 }
 

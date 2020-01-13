@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
@@ -21,7 +21,7 @@
   </compound>
   <compound kind="file">
     <name>error.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Result</class>
@@ -30,7 +30,7 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
@@ -49,7 +49,7 @@
   </compound>
   <compound kind="file">
     <name>lock.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
@@ -60,7 +60,7 @@
   </compound>
   <compound kind="file">
     <name>log.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
@@ -79,7 +79,7 @@
   </compound>
   <compound kind="file">
     <name>thread.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
@@ -87,7 +87,7 @@
   </compound>
   <compound kind="file">
     <name>timer.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2timer_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::TimePoint</class>
@@ -95,14 +95,14 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
     <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="class">
@@ -444,10 +444,10 @@
     </member>
     <member kind="variable">
       <type>char</type>
-      <name>name</name>
+      <name>id</name>
       <anchorfile>struct_etc_pal_netint_info.html</anchorfile>
-      <anchor>a6eaa1f18016764aa8812196745e36463</anchor>
-      <arglist>[ETCPAL_NETINTINFO_NAME_LEN]</arglist>
+      <anchor>a3548252138686cd633b4730070e2311f</anchor>
+      <arglist>[ETCPAL_NETINTINFO_ID_LEN]</arglist>
     </member>
     <member kind="variable">
       <type>char</type>
@@ -1822,14 +1822,21 @@
       <type>bool</type>
       <name>TryLock</name>
       <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
-      <anchor>a0fc3000efb073879e1c437d9e3d4e7f6</anchor>
-      <arglist>()</arglist>
+      <anchor>a8ad93c25cdc665654314bba0797d37ef</anchor>
+      <arglist>(int timeout_ms=0)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>Unlock</name>
       <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
       <anchor>a91b88a5d5517cb042431c4ea24d8ecb7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>UnlockFromIsr</name>
+      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
+      <anchor>a6a56038338a788f77ce41b0dc75177df</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -1978,8 +1985,8 @@
       <type>bool</type>
       <name>TryReadLock</name>
       <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
-      <anchor>a409d488d3b55cffa68f081ee05611764</anchor>
-      <arglist>()</arglist>
+      <anchor>ac46abb95ae4ab3f37da632ea31f01535</anchor>
+      <arglist>(int timeout_ms=0)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -1999,14 +2006,21 @@
       <type>bool</type>
       <name>TryWriteLock</name>
       <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
-      <anchor>a6c1151df4aab7df16590bee65e504873</anchor>
-      <arglist>()</arglist>
+      <anchor>adfd977b8c35b753a7341a6e64864fa6f</anchor>
+      <arglist>(int timeout_ms=0)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>WriteUnlock</name>
       <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
       <anchor>abfc3bd44b6252464c577c5ed8389dbd4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>WriteUnlockFromIsr</name>
+      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
+      <anchor>abcb023c04e0fe7353d40bc79b762b657</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -2043,6 +2057,13 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>WaitFor</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>a068797d0788994c507c4a9b55e0b1840</anchor>
+      <arglist>(int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>Poll</name>
       <anchorfile>classetcpal_1_1_signal.html</anchorfile>
       <anchor>a86acd23bf483d12b47cedfe52333e643</anchor>
@@ -2053,6 +2074,13 @@
       <name>Notify</name>
       <anchorfile>classetcpal_1_1_signal.html</anchorfile>
       <anchor>a6b945888ffd146338605d77f0366141b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>NotifyFromIsr</name>
+      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
+      <anchor>ad8b69b07e8a31350db1cd221db678cb3</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -3049,9 +3077,9 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>ETCPAL_NETINTINFO_NAME_LEN</name>
+      <name>ETCPAL_NETINTINFO_ID_LEN</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
-      <anchor>ga492fc3dd7fabb325e80e375d6be69d89</anchor>
+      <anchor>ga7d30e1fd482aa981c7ee4a5082d6bc2d</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -5343,10 +5371,24 @@
       <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
+      <type>bool</type>
+      <name>etcpal_mutex_timed_take</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga7395e6caae116fafaf61f44a7383aae5</anchor>
+      <arglist>(etcpal_mutex_t *id, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>etcpal_mutex_give</name>
       <anchorfile>group__etcpal__mutex.html</anchorfile>
       <anchor>ga5a1ceebcbb5856a98dab50a13f894bcf</anchor>
+      <arglist>(etcpal_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_mutex_give_from_isr</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>gade6bb83c220224890734bbe9ac9f16e4</anchor>
       <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
@@ -5384,6 +5426,13 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>etcpal_signal_timed_wait</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga770f7b128af027172c866a765f50f4fb</anchor>
+      <arglist>(etcpal_signal_t *id, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>etcpal_signal_poll</name>
       <anchorfile>group__etcpal__signal.html</anchorfile>
       <anchor>gad04fbc96ac93defb7ea545c81a880f12</anchor>
@@ -5394,6 +5443,13 @@
       <name>etcpal_signal_post</name>
       <anchorfile>group__etcpal__signal.html</anchorfile>
       <anchor>gafa2af190375bdb673563e2a029f0a89b</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_signal_post_from_isr</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gad88439176943dd91e5a98f0f508c55a1</anchor>
       <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
@@ -5437,6 +5493,13 @@
       <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
+      <type>bool</type>
+      <name>etcpal_rwlock_timed_readlock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>gafa8f15715dac3b6f54bd7dcafe62da10</anchor>
+      <arglist>(etcpal_rwlock_t *id, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>etcpal_rwlock_readunlock</name>
       <anchorfile>group__etcpal__rwlock.html</anchorfile>
@@ -5458,10 +5521,24 @@
       <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
+      <type>bool</type>
+      <name>etcpal_rwlock_timed_writelock</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga0f848288a067dbfd5348c089c1dbb76b</anchor>
+      <arglist>(etcpal_rwlock_t *id, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>etcpal_rwlock_writeunlock</name>
       <anchorfile>group__etcpal__rwlock.html</anchorfile>
       <anchor>ga83fbb82557a70ad86c8a65fd53b0cb8b</anchor>
+      <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_rwlock_writeunlock_from_isr</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga1fd9f75d14e0340d80d26583ce8343fe</anchor>
       <arglist>(etcpal_rwlock_t *id)</arglist>
     </member>
     <member kind="function">
