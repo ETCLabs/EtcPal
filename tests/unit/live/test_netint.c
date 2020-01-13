@@ -84,7 +84,7 @@ TEST(etcpal_netint, netint_enumeration_works)
   for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
     TEST_ASSERT_GREATER_THAN_UINT(0u, netint->index);
-    TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->name));
+    TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->id));
     TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->friendly_name));
   }
 }

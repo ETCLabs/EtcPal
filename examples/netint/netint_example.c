@@ -33,7 +33,7 @@
 static char header_format[FORMAT_BUF_SIZE];
 static char line_format[FORMAT_BUF_SIZE];
 
-#define NAME_COL_HEADER "Name"
+#define ID_COL_HEADER "ID"
 #define ADDR_COL_HEADER "Address"
 #define NETMASK_COL_HEADER "Netmask"
 #define MAC_COL_HEADER "MAC"
@@ -54,20 +54,20 @@ void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interf
     etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
     etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
 
-    size_t name_len = strlen(netint->name);
+    size_t id_len = strlen(netint->id);
     size_t addr_len = strlen(addr_str);
     size_t netmask_len = strlen(netmask_str);
 
-    if (name_len > longest_name)
-      longest_name = name_len;
+    if (id_len > longest_name)
+      longest_name = id_len;
     if (addr_len > longest_addr)
       longest_addr = addr_len;
     if (netmask_len > longest_netmask)
       longest_netmask = netmask_len;
   }
 
-  if (longest_name < sizeof(NAME_COL_HEADER))
-    longest_name = sizeof(NAME_COL_HEADER);
+  if (longest_name < sizeof(ID_COL_HEADER))
+    longest_name = sizeof(ID_COL_HEADER);
   if (longest_addr < sizeof(ADDR_COL_HEADER))
     longest_addr = sizeof(ADDR_COL_HEADER);
   if (longest_netmask < sizeof(NETMASK_COL_HEADER))
@@ -102,7 +102,7 @@ int main()
   create_format_strings(netint_arr, num_interfaces);
 
   printf("Network interfaces found:\n");
-  printf(header_format, NAME_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER);
+  printf(header_format, ID_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER);
 
   for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
@@ -112,7 +112,7 @@ int main()
     etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
     etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
     etcpal_mac_to_string(&netint->mac, mac_str, ETCPAL_MAC_STRING_BYTES);
-    printf(line_format, netint->name, addr_str, netmask_str, mac_str, netint->index);
+    printf(line_format, netint->id, addr_str, netmask_str, mac_str, netint->index);
   }
 
   unsigned int default_v4;

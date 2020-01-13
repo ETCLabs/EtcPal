@@ -75,7 +75,7 @@ size_t etcpal_netint_get_num_interfaces()
  *
  * For NICs with multiple IP addresses assigned, this module separates each address into its own
  * entry in the netint array. Because of this, multiple array entries could have the same value
- * for the index, mac and name parameters.
+ * for the index, mac and id parameters.
  *
  * \return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
  *         or NULL if there are no interfaces present or the module is not initialized.

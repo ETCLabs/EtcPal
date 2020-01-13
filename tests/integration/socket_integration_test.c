@@ -71,7 +71,7 @@ static void select_network_interface_v4()
     const EtcPalNetintInfo* netint_arr;
     size_t netint_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
-        NULL == strstr(netint_arr->name, "utun"))
+        NULL == strstr(netint_arr->id, "utun"))
     {
       run_ipv4_mcast_test = true;
     }
@@ -84,7 +84,7 @@ static void select_network_interface_v4()
       for (const EtcPalNetintInfo* netint = arr; netint < arr + etcpal_netint_get_num_interfaces(); ++netint)
       {
         if (ETCPAL_IP_IS_V4(&netint->addr) && !etcpal_ip_is_link_local(&netint->addr) &&
-            !etcpal_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
+            !etcpal_ip_is_loopback(&netint->addr) && NULL == strstr(netint->id, "utun"))
         {
           v4_netint = netint->index;
           run_ipv4_mcast_test = true;
@@ -107,7 +107,7 @@ static void select_network_interface_v6()
     const EtcPalNetintInfo* netint_arr;
     size_t netint_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
-        NULL == strstr(netint_arr->name, "utun"))
+        NULL == strstr(netint_arr->id, "utun"))
     {
       run_ipv6_mcast_test = true;
     }
@@ -120,7 +120,7 @@ static void select_network_interface_v6()
       for (const EtcPalNetintInfo* netint = arr; netint < arr + etcpal_netint_get_num_interfaces(); ++netint)
       {
         if (ETCPAL_IP_IS_V6(&netint->addr) && !etcpal_ip_is_loopback(&netint->addr) &&
-            NULL == strstr(netint->name, "utun"))
+            NULL == strstr(netint->id, "utun"))
         {
           v6_netint = netint->index;
           run_ipv6_mcast_test = true;
