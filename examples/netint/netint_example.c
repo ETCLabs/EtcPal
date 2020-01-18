@@ -42,7 +42,7 @@ static char line_format[FORMAT_BUF_SIZE];
 // Create a format string for printf based on the column width of the longest entry in each column
 void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interfaces)
 {
-  size_t longest_name = 0;
+  size_t longest_id = 0;
   size_t longest_addr = 0;
   size_t longest_netmask = 0;
 
@@ -58,24 +58,24 @@ void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interf
     size_t addr_len = strlen(addr_str);
     size_t netmask_len = strlen(netmask_str);
 
-    if (id_len > longest_name)
-      longest_name = id_len;
+    if (id_len > longest_id)
+      longest_id = id_len;
     if (addr_len > longest_addr)
       longest_addr = addr_len;
     if (netmask_len > longest_netmask)
       longest_netmask = netmask_len;
   }
 
-  if (longest_name < sizeof(ID_COL_HEADER))
-    longest_name = sizeof(ID_COL_HEADER);
+  if (longest_id < sizeof(ID_COL_HEADER))
+    longest_id = sizeof(ID_COL_HEADER);
   if (longest_addr < sizeof(ADDR_COL_HEADER))
     longest_addr = sizeof(ADDR_COL_HEADER);
   if (longest_netmask < sizeof(NETMASK_COL_HEADER))
     longest_netmask = sizeof(NETMASK_COL_HEADER);
 
-  snprintf(header_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%s\n", longest_name, longest_addr,
+  snprintf(header_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%s\n", longest_id, longest_addr,
            longest_netmask);
-  snprintf(line_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%8u\n", longest_name, longest_addr,
+  snprintf(line_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%8u\n", longest_id, longest_addr,
            longest_netmask);
 }
 
