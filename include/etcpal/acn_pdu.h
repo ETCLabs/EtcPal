@@ -175,7 +175,7 @@ typedef struct AcnPdu
   }
 
 /*!
- * An alternative to #ETCPAL_PDU_INIT which can be used on an existing AcnPdu to re-initialize its
+ * An alternative to #ACN_PDU_INIT which can be used on an existing AcnPdu to re-initialize its
  * values.
  *
  * \param pduptr Pointer to AcnPdu to initialize.
