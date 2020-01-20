@@ -27,6 +27,7 @@
 #include <cstring>
 #include <array>
 #include <string>
+#include "etcpal/pack.h"
 #include "etcpal/uuid.h"
 #include "etcpal/cpp/inet.h"
 
@@ -67,6 +68,17 @@ namespace etcpal
 /// \endcode
 // clang-format on
 
+/// Represents a UUID version as defined in RFC 4122.
+enum class UuidVersion
+{
+  V1 = 1,  ///< Version 1 UUID: Date-time and MAC address
+  V2 = 2,  ///< Version 2 UUID: DCE Security version (rarely used)
+  V3 = 3,  ///< Version 3 UUID: Namespace-based, MD5
+  V4 = 4,  ///< Version 4 UUID: Random
+  V5 = 5,  ///< Version 5 UUID: Namespace-based, SHA-1
+  Unknown  ///< Unknown UUID version
+};
+
 /// \ingroup etcpal_cpp_uuid
 /// \brief A wrapper class for the EtcPal UUID type.
 ///
@@ -77,14 +89,25 @@ class Uuid
 public:
   /// \brief Constructs a null UUID by default.
   Uuid() = default;
+
+  Uuid(const uint8_t* data) noexcept;
+  Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version, const uint8_t clock_seq_and_node[8]);
+
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::Uuid uuid = etcpal_c_function_that_returns_uuid();
   constexpr Uuid(const EtcPalUuid& c_uuid) noexcept;
   Uuid& operator=(const EtcPalUuid& c_uuid) noexcept;
 
   constexpr const EtcPalUuid& get() const noexcept;
+  const uint8_t* data() const noexcept;
   std::string ToString() const;
   bool IsNull() const noexcept;
+  UuidVersion version() const noexcept;
+
+  uint32_t time_low() const noexcept;
+  uint16_t time_mid() const noexcept;
+  uint16_t time_hi_and_version() const noexcept;
+  std::array<uint8_t, 8> clock_seq_and_node() const noexcept;
 
   static Uuid FromString(const char* uuid_str) noexcept;
   static Uuid FromString(const std::string& uuid_str) noexcept;
@@ -108,6 +131,26 @@ constexpr Uuid::Uuid(const EtcPalUuid& c_uuid) noexcept : uuid_(c_uuid)
 {
 }
 
+/// \brief Construct a UUID from raw data.
+/// \param data The raw data array, must be at least #ETCPAL_UUID_BYTES in length.
+Uuid::Uuid(const uint8_t* data) noexcept
+{
+  std::memcpy(uuid_.data, data, ETCPAL_UUID_BYTES);
+}
+
+/// \brief Construct a UUID from its RFC-specified layout fields.
+/// \param time_low The time_low portion of the UUID.
+/// \param time_mid The time_mid portion of the UUID.
+/// \param time_hi_and_version The time_hi_and_version portion of the UUID.
+/// \param clock_seq_and_node The clock_seq and node portions of the UUID.
+Uuid::Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version, const uint8_t clock_seq_and_node[8])
+{
+  etcpal_pack_u32b(&uuid_.data[0], time_low);
+  etcpal_pack_u16b(&uuid_.data[4], time_mid);
+  etcpal_pack_u16b(&uuid_.data[6], time_hi_and_version);
+  std::memcpy(&uuid_.data[8], clock_seq_and_node, 8);
+}
+
 /// \brief Assign an instance of the C EtcPalUuid type to an instance of this class.
 inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid) noexcept
 {
@@ -119,6 +162,13 @@ inline Uuid& Uuid::operator=(const EtcPalUuid& c_uuid) noexcept
 constexpr const EtcPalUuid& Uuid::get() const noexcept
 {
   return uuid_;
+}
+
+/// \brief Get the raw data of a UUID.
+/// \return A pointer to an array of length #ETCPAL_UUID_BYTES containing the UUID's data.
+inline const uint8_t* Uuid::data() const noexcept
+{
+  return uuid_.data;
 }
 
 /// \brief Convert the UUID to a string representation formatted per RFC 4122.
@@ -135,6 +185,41 @@ inline std::string Uuid::ToString() const
 inline bool Uuid::IsNull() const noexcept
 {
   return ETCPAL_UUID_IS_NULL(&uuid_);
+}
+
+/// \brief Get the version type of a UUID.
+/// \return The UUID's version, or UuidVersion::Unknown if the version field is invalid.
+inline UuidVersion Uuid::version() const noexcept
+{
+  uint8_t vers_val = uuid_.data[6] >> 4;
+  return (vers_val >= 1 && vers_val <= 5) ? static_cast<UuidVersion>(vers_val) : UuidVersion::Unknown;
+}
+
+/// \brief Get the time_low portion of a UUID.
+inline uint32_t Uuid::time_low() const noexcept
+{
+  return etcpal_unpack_u32b(&uuid_.data[0]);
+}
+
+/// \brief Get the time_mid portion of a UUID.
+inline uint16_t Uuid::time_mid() const noexcept
+{
+  return etcpal_unpack_u16b(&uuid_.data[4]);
+}
+
+/// \brief Get the time_hi_and_version portion of a UUID.
+inline uint16_t Uuid::time_hi_and_version() const noexcept
+{
+  return etcpal_unpack_u16b(&uuid_.data[6]);
+}
+
+/// \brief Get the remaining portion of a UUID, including clock_seq_hi_and_res, clock_seq_low, and
+///        node
+inline std::array<uint8_t, 8> Uuid::clock_seq_and_node() const noexcept
+{
+  std::array<uint8_t, 8> res;
+  std::memcpy(res.data(), &uuid_.data[8], 8);
+  return res;
 }
 
 /// \brief Create a UUID from a string representation.

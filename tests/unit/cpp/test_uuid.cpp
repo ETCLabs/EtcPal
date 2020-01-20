@@ -154,6 +154,7 @@ TEST(etcpal_cpp_uuid, generates_v4_correctly)
   // 4.
   TEST_ASSERT_EQUAL_UINT8((v4.get().data[6] & 0xf0u), 0x40u);
   TEST_ASSERT_EQUAL_UINT8((v4.get().data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL(v4.version(), etcpal::UuidVersion::V4);
 }
 
 TEST(etcpal_cpp_uuid, generates_v5_correctly)
