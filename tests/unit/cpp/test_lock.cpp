@@ -76,7 +76,7 @@ TEST(etcpal_cpp_lock, signal_create_and_destroy_works)
   etcpal::Signal sig;
 
   // Signals shouldn't be created in the signaled state.
-  TEST_ASSERT_FALSE(sig.Poll());
+  TEST_ASSERT_FALSE(sig.TryWait());
 
   sig.Notify();
   TEST_ASSERT_TRUE(sig.Wait());

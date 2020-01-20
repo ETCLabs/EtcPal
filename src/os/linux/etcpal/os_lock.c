@@ -79,13 +79,7 @@ bool etcpal_signal_wait(etcpal_signal_t* id)
   return false;
 }
 
-bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
-{
-  // TODO
-  return false;
-}
-
-bool etcpal_signal_poll(etcpal_signal_t* id)
+bool etcpal_signal_try_wait(etcpal_signal_t* id)
 {
   bool res = false;
   if (id && id->valid)
@@ -101,6 +95,12 @@ bool etcpal_signal_poll(etcpal_signal_t* id)
     }
   }
   return res;
+}
+
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
 }
 
 void etcpal_signal_post(etcpal_signal_t* id)
@@ -255,6 +255,47 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
     pthread_mutex_destroy(&id->readcount_mutex);
     id->valid = false;
   }
+}
+
+bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_wait(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_try_wait(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_post(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_post_from_isr(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+void etcpal_sem_destroy(etcpal_sem_t* id)
+{
+  // TODO
 }
 
 // TODO investigate C11 atomics for this

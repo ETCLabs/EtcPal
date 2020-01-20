@@ -94,7 +94,7 @@ TEST(etcpal_lock, signal_create_and_destroy_works)
   TEST_ASSERT_TRUE(etcpal_signal_create(&signal));
 
   // Signals shouldn't be created in the signaled state.
-  TEST_ASSERT_FALSE(etcpal_signal_poll(&signal));
+  TEST_ASSERT_FALSE(etcpal_signal_try_wait(&signal));
 
   etcpal_signal_post(&signal);
   TEST_ASSERT_TRUE(etcpal_signal_wait(&signal));

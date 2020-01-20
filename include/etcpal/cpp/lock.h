@@ -189,8 +189,7 @@ public:
   Signal& operator=(Signal&& other) = delete;
 
   bool Wait();
-  bool WaitFor(int timeout_ms);
-  bool Poll();
+  bool TryWait(int timeout_ms = 0);
   void Notify();
   void NotifyFromIsr();
 
@@ -228,16 +227,9 @@ inline bool Signal::Wait()
 ///
 /// \param timeout_ms How long to wait for the signal, in milliseconds.
 /// \return The result of etcpal_signal_timed_wait() on the underlying signal.
-inline bool Signal::WaitFor(int timeout_ms)
+inline bool Signal::TryWait(int timeout_ms)
 {
   return etcpal_signal_timed_wait(&signal_, timeout_ms);
-}
-
-/// \brief Poll the state of the signal.
-/// \return The result of etcpal_signal_poll() on the underlying signal.
-inline bool Signal::Poll()
-{
-  return etcpal_signal_poll(&signal_);
 }
 
 /// \brief Notify those waiting on the signal.
