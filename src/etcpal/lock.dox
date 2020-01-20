@@ -545,8 +545,11 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
  * overview for more information).
  *
  * \param[in] id Identifier for the semaphore to post.
+ * \return true: The semaphore was posted.
+ * \return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
+ *                occurred.
  */
-void etcpal_sem_post(etcpal_sem_t* id);
+bool etcpal_sem_post(etcpal_sem_t* id);
 
 /*!
  * \brief Post a semaphore from an interrupt context.
@@ -557,8 +560,11 @@ void etcpal_sem_post(etcpal_sem_t* id);
  * equivalent of etcpal_sem_post().
  *
  * \param[in] id Identifier for the semaphore to post.
+ * \return true: The semaphore was posted.
+ * \return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
+ *                occurred.
  */
-void etcpal_sem_post_from_isr(etcpal_sem_t* id);
+bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
 
 /*!
  * \brief Destroy a semaphore object.
