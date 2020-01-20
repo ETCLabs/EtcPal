@@ -61,12 +61,12 @@ namespace etcpal
 /// thread.Join();
 /// \endcode
 ///
-/// The value constructor will throw an etcpal::Result object if the thread fails to start for any
+/// The value constructor will throw an etcpal::Error object if the thread fails to start for any
 /// reason. To avoid an exception-handling approach, you can default-construct and use the Start()
 /// function:
 /// \code
 /// etcpal::Thread thread;
-/// etcpal::Result start_result = thread.Start(MyThreadFunction);
+/// etcpal::Error start_result = thread.Start(MyThreadFunction);
 /// if (start_result)
 /// {
 ///   // Thread is running, yay!
@@ -81,7 +81,7 @@ namespace etcpal
 /// syntax is available on these setters:
 /// \code
 /// etcpal::Thread thread;
-/// etcpal::Result start_result = thread.SetName("My Thread")
+/// etcpal::Error start_result = thread.SetName("My Thread")
 ///                                     .SetPriority(4)
 ///                                     .SetStackSize(4000)
 ///                                     .Start(MyThreadFunction);
@@ -170,8 +170,8 @@ public:
   /// @}
 
   template <class Function, class... Args>
-  Result Start(Function&& func, Args&&... args);
-  Result Join() noexcept;
+  Error Start(Function&& func, Args&&... args);
+  Error Join() noexcept;
 
   static void Sleep(unsigned int ms) noexcept;
   template <typename Rep, typename Period>
@@ -203,7 +203,7 @@ extern "C" inline void CppThreadFn(void* arg)
 ///
 /// \param func Callable object to execute in the new thread.
 /// \param args Arguments to pass to func.
-/// \throw etcpal::Result if Start() returns an error code.
+/// \throw etcpal::Error if Start() returns an error code.
 /// \post `joinable() == true`
 template <class Function, class... Args>
 inline Thread::Thread(Function&& func, Args&&... args)
@@ -373,7 +373,7 @@ inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
 /// \return #kEtcPalErrInvalid: The thread was already running (`joinable() == true`).
 /// \return Other codes translated from system error codes are possible.
 template <class Function, class... Args>
-Result Thread::Start(Function&& func, Args&&... args)
+Error Thread::Start(Function&& func, Args&&... args)
 {
   if (thread_)
     return kEtcPalErrInvalid;
@@ -382,7 +382,7 @@ Result Thread::Start(Function&& func, Args&&... args)
 
   auto new_f = std::unique_ptr<FunctionType>(
       new FunctionType(std::bind(std::forward<Function>(func), std::forward<Args>(args)...)));
-  Result create_res = etcpal_thread_create(thread_.get(), &params_, CppThreadFn, new_f.get());
+  Error create_res = etcpal_thread_create(thread_.get(), &params_, CppThreadFn, new_f.get());
   if (create_res)
     new_f.release();
   else
@@ -397,11 +397,11 @@ Result Thread::Start(Function&& func, Args&&... args)
 /// \return #kEtcPalErrOk: The thread was stopped; joinable() is now false.
 /// \return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
 /// \return Other codes translated from system error codes are possible.
-inline Result Thread::Join() noexcept
+inline Error Thread::Join() noexcept
 {
   if (thread_)
   {
-    Result join_res = etcpal_thread_join(thread_.get());
+    Error join_res = etcpal_thread_join(thread_.get());
     if (join_res)
       thread_.reset();
     return join_res;

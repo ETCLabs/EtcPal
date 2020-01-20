@@ -35,29 +35,29 @@ namespace etcpal
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_error module.
 ///
-/// This module provides two main utilites: Result, which wraps an error code, and Expected, which
+/// This module provides two main utilites: Error, which wraps an error code, and Expected, which
 /// represents either an error code or a value of configurable type. See the documentation for each
 /// of those classes for more details.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// etcpal::Result
+// etcpal::Error
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// \ingroup etcpal_cpp_error
 /// \brief A wrapper class for the EtcPal error type.
 ///
-/// Provides C++ syntactic sugar on top of #etcpal_error_t codes. A Result can be created from an
-/// #etcpal_error_t, and contains the code and a string representation. If the Result contains
+/// Provides C++ syntactic sugar on top of #etcpal_error_t codes. A Error can be created from an
+/// #etcpal_error_t, and contains the code and a string representation. If the Error contains
 /// #kEtcPalErrOk, it will evaluate to true in expressions (and IsOk() will return true).
-/// Otherwise, the Result evaluates to false.
+/// Otherwise, the Error evaluates to false.
 ///
-/// The human-readable string associated with the Result can be retrieved with ToString() and
+/// The human-readable string associated with the Error can be retrieved with ToString() and
 /// ToCString(); this will be the same string available from etcpal_strerror() for the given error
 /// code.
 ///
 /// Example with an "OK" error code:
 /// \code
-/// auto result = etcpal::Result(kEtcPalErrOk); // or etcpal::Result::Ok()
+/// auto result = etcpal::Error(kEtcPalErrOk); // or etcpal::Error::Ok()
 /// if (result)
 /// {
 ///    // This block will be entered...
@@ -66,7 +66,7 @@ namespace etcpal
 ///
 /// Example with a non-"OK" error code:
 /// \code
-/// auto result = etcpal::Result(kEtcPalErrNoMem);
+/// auto result = etcpal::Error(kEtcPalErrNoMem);
 /// if (result)
 /// {
 ///   // This block will not be entered
@@ -81,26 +81,26 @@ namespace etcpal
 /// }
 /// \endcode
 ///
-/// Result is often used as the return type for functions; it has an implicit constructor from
+/// Error is often used as the return type for functions; it has an implicit constructor from
 /// #etcpal_error_t to simplify return statements:
 /// \code
-/// etcpal::Result DoSomething()
+/// etcpal::Error DoSomething()
 /// {
 ///   // ... After we did something successfully...
 ///   return kEtcPalErrOk;
 /// }
 /// \endcode
-class Result
+class Error
 {
 public:
-  Result() = delete;
+  Error() = delete;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
-  //   etcpal::Result FunctionReturningResult()
+  //   etcpal::Error FunctionReturningError()
   //   {
   //     return kEtcPalErrOk;
   //   }
-  constexpr Result(etcpal_error_t code) noexcept;
-  Result& operator=(etcpal_error_t code) noexcept;
+  constexpr Error(etcpal_error_t code) noexcept;
+  Error& operator=(etcpal_error_t code) noexcept;
 
   constexpr bool IsOk() const noexcept;
   constexpr etcpal_error_t code() const noexcept;
@@ -109,95 +109,95 @@ public:
 
   constexpr explicit operator bool() const noexcept;
 
-  static constexpr Result Ok() noexcept;
+  static constexpr Error Ok() noexcept;
 
 private:
   etcpal_error_t code_{kEtcPalErrOk};
 };
 
-/// \brief Construct a Result from an error code.
-constexpr Result::Result(etcpal_error_t code) noexcept : code_(code)
+/// \brief Construct a Error from an error code.
+constexpr Error::Error(etcpal_error_t code) noexcept : code_(code)
 {
 }
 
-/// \brief Assign an error code to this Result.
-inline Result& Result::operator=(etcpal_error_t code) noexcept
+/// \brief Assign an error code to this Error.
+inline Error& Error::operator=(etcpal_error_t code) noexcept
 {
   code_ = code;
   return *this;
 }
 
-/// \brief Whether this Result contains the code #kEtcPalErrOk.
+/// \brief Whether this Error contains the code #kEtcPalErrOk.
 /// \details #kEtcPalErrOk is the only #etcpal_error_t code that does not indicate an error.
 /// \return Whether the result is OK (not an error).
-constexpr bool Result::IsOk() const noexcept
+constexpr bool Error::IsOk() const noexcept
 {
   return code_ == kEtcPalErrOk;
 }
 
-/// \brief Get the underlying code from a Result.
-constexpr etcpal_error_t Result::code() const noexcept
+/// \brief Get the underlying code from a Error.
+constexpr etcpal_error_t Error::code() const noexcept
 {
   return code_;
 }
 
-/// \brief Get a descriptive string for this Result as a std::string.
-inline std::string Result::ToString() const
+/// \brief Get a descriptive string for this Error as a std::string.
+inline std::string Error::ToString() const
 {
   return etcpal_strerror(code_);
 }
 
-/// \brief Get a descriptive string for this Result as a C string.
-inline const char* Result::ToCString() const noexcept
+/// \brief Get a descriptive string for this Error as a C string.
+inline const char* Error::ToCString() const noexcept
 {
   return etcpal_strerror(code_);
 }
 
-/// \brief Evaluate the Result inline - evaluates true if the result is #kEtcPalErrOk, false
+/// \brief Evaluate the Error inline - evaluates true if the result is #kEtcPalErrOk, false
 ///        otherwise.
-constexpr Result::operator bool() const noexcept
+constexpr Error::operator bool() const noexcept
 {
   return IsOk();
 }
 
 /// \brief Construct a result containing #kEtcPalErrOk.
-constexpr Result Result::Ok() noexcept
+constexpr Error Error::Ok() noexcept
 {
-  return Result(kEtcPalErrOk);
+  return Error(kEtcPalErrOk);
 }
 
 /// \addtogroup etcpal_cpp_error
 /// @{
 
-/// \name Result Relational Operators
+/// \name Error Relational Operators
 /// @{
 
-constexpr bool operator==(etcpal_error_t code, const Result& result)
+constexpr bool operator==(etcpal_error_t code, const Error& result)
 {
   return code == result.code();
 }
 
-constexpr bool operator!=(etcpal_error_t code, const Result& result)
+constexpr bool operator!=(etcpal_error_t code, const Error& result)
 {
   return !(code == result);
 }
 
-constexpr bool operator==(const Result& result, etcpal_error_t code)
+constexpr bool operator==(const Error& result, etcpal_error_t code)
 {
   return result.code() == code;
 }
 
-constexpr bool operator!=(const Result& result, etcpal_error_t code)
+constexpr bool operator!=(const Error& result, etcpal_error_t code)
 {
   return !(result == code);
 }
 
-constexpr bool operator==(const Result& a, const Result& b)
+constexpr bool operator==(const Error& a, const Error& b)
 {
   return a.code() == b.code();
 }
 
-constexpr bool operator!=(const Result& a, const Result& b)
+constexpr bool operator!=(const Error& a, const Error& b)
 {
   return !(a == b);
 }
@@ -213,21 +213,21 @@ constexpr bool operator!=(const Result& a, const Result& b)
 /// \ingroup etcpal_cpp_error
 /// \details
 /// Thrown when attempting to access Expected<T>::value() when Expected<T>::has_value() is false.
-/// Holds an etcpal::Result; this allows nicer access to error information than just having the
+/// Holds an etcpal::Error; this allows nicer access to error information than just having the
 /// #etcpal_error_t code.
 class BadExpectedAccess : public std::logic_error
 {
 public:
-  explicit BadExpectedAccess(Result res);
-  Result result() const noexcept;
+  explicit BadExpectedAccess(Error res);
+  Error result() const noexcept;
 
 private:
-  Result res_;
+  Error res_;
 };
 
-/// \brief Construct from a Result.
+/// \brief Construct from a Error.
 /// \throw May throw std::bad_alloc.
-inline BadExpectedAccess::BadExpectedAccess(Result res)
+inline BadExpectedAccess::BadExpectedAccess(Error res)
     : std::logic_error("Bad access to etcpal::Expected::value(); the Expected instance contained error '" +
                        res.ToString() + "'.")
     , res_(res)
@@ -235,7 +235,7 @@ inline BadExpectedAccess::BadExpectedAccess(Result res)
 }
 
 /// \brief Get the error code which was contained in the associated Expected when the exception occurred.
-inline Result BadExpectedAccess::result() const noexcept
+inline Error BadExpectedAccess::result() const noexcept
 {
   return res_;
 }
@@ -476,7 +476,7 @@ private:
 public:
   static_assert(!std::is_reference<T>::value, "T must not be a reference");
   static_assert(!std::is_same<T, etcpal_error_t>::value, "T must not be etcpal_error_t");
-  static_assert(!std::is_same<T, Result>::value, "T must not be etcpal::Result");
+  static_assert(!std::is_same<T, Error>::value, "T must not be etcpal::Error");
   static_assert(!std::is_void<T>::value, "T must not be void");
 
   /// The value type.
@@ -664,8 +664,8 @@ public:
   T& value() &;
   constexpr const T&& value() const&&;
   ETCPAL_CONSTEXPR_14 T&& value() &&;
-  constexpr etcpal_error_t error() const noexcept;
-  constexpr Result result() const noexcept;
+  constexpr etcpal_error_t error_code() const noexcept;
+  constexpr Error error() const noexcept;
 
   // clang-format off
 
@@ -824,17 +824,17 @@ ETCPAL_CONSTEXPR_14 T&& Expected<T>::value() &&
 ///
 /// If has_value() is true, the behavior is undefined.
 template <typename T>
-constexpr etcpal_error_t Expected<T>::error() const noexcept
+constexpr etcpal_error_t Expected<T>::error_code() const noexcept
 {
   // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(!has_value()), contained_.error();
 }
 
-/// \brief Get the error code as a Result object.
+/// \brief Get the error code as a Error object.
 ///
 /// If has_value() is true, the behavior is undefined.
 template <typename T>
-constexpr Result Expected<T>::result() const noexcept
+constexpr Error Expected<T>::error() const noexcept
 {
   // Comma syntax is to satisfy C++11 requirements for constexpr
   return assert(!has_value()), contained_.error();
@@ -849,7 +849,7 @@ constexpr Result Expected<T>::result() const noexcept
 template <typename T1, typename T2>
 constexpr bool operator==(const Expected<T1>& x, const Expected<T2>& y)
 {
-  return bool(x) != bool(y) ? false : bool(x) == false ? x.error() == y.error() : *x == *y;
+  return bool(x) != bool(y) ? false : bool(x) == false ? x.error_code() == y.error_code() : *x == *y;
 }
 
 template <typename T1, typename T2>
@@ -885,7 +885,7 @@ constexpr bool operator!=(const T2& v, const Expected<T1>& x)
 template <typename T>
 constexpr bool operator==(const Expected<T>& x, etcpal_error_t e)
 {
-  return (!x) ? x.error() == e : false;
+  return (!x) ? x.error_code() == e : false;
 }
 
 template <typename T>
