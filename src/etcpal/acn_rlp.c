@@ -17,10 +17,10 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/root_layer_pdu.h"
-#include "etcpal/pack.h"
+#include "etcpal/acn_rlp.h"
 
 #include <string.h>
+#include "etcpal/pack.h"
 
 #define ACN_RLP_HEADER_SIZE 16u
 #define RLP_VECTOR_SIZE 4u
@@ -49,7 +49,7 @@
  * \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
  *         contain a valid TCP preamble).
  */
-bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPreamble* preamble)
+bool acn_parse_tcp_preamble(const uint8_t* buf, size_t buflen, AcnTcpPreamble* preamble)
 {
   if (!preamble || !buf || (buflen < ACN_TCP_PREAMBLE_SIZE))
     return false;
@@ -75,7 +75,7 @@ bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPream
  * \return true (preamble was parsed successfully) or false (buffer too short or buffer does not
  *         contain a valid UDP preamble).
  */
-bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPreamble* preamble)
+bool acn_parse_udp_preamble(const uint8_t* buf, size_t buflen, AcnUdpPreamble* preamble)
 {
   if (!preamble || !buf || (buflen < ACN_UDP_PREAMBLE_SIZE))
     return false;
@@ -107,17 +107,16 @@ bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPream
  *                     first PDU in the block.
  * \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu,
-                                    EtcPalRootLayerPdu* last_pdu)
+bool acn_parse_root_layer_header(const uint8_t* buf, size_t buflen, AcnRootLayerPdu* pdu, AcnRootLayerPdu* last_pdu)
 {
   if (!buf || !pdu)
     return false;
 
   uint8_t flags_byte = *buf;
-  bool extlength = ETCPAL_PDU_L_FLAG_SET(flags_byte);
-  bool inheritvect = !ETCPAL_PDU_V_FLAG_SET(flags_byte);
-  bool inherithead = !ETCPAL_PDU_H_FLAG_SET(flags_byte);
-  bool inheritdata = !ETCPAL_PDU_D_FLAG_SET(flags_byte);
+  bool extlength = ACN_PDU_L_FLAG_SET(flags_byte);
+  bool inheritvect = !ACN_PDU_V_FLAG_SET(flags_byte);
+  bool inherithead = !ACN_PDU_H_FLAG_SET(flags_byte);
+  bool inheritdata = !ACN_PDU_D_FLAG_SET(flags_byte);
 
   const uint8_t* cur_ptr = buf;
   const uint8_t* buf_end = buf + buflen;
@@ -127,7 +126,7 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
     return false;
   }
 
-  uint32_t pdu_len = ETCPAL_PDU_LENGTH(buf);
+  uint32_t pdu_len = ACN_PDU_LENGTH(buf);
   uint32_t min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : 4) + (inherithead ? 0 : 16));
   if (((inheritvect || inherithead || inheritdata) && !last_pdu) || (pdu_len < min_pdu_len))
   {
@@ -136,7 +135,9 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
 
   cur_ptr += extlength ? 3 : 2;
   if (inheritvect)
+  {
     pdu->vector = last_pdu->vector;
+  }
   else
   {
     pdu->vector = etcpal_unpack_u32b(cur_ptr);
@@ -144,6 +145,7 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
     if (PROT_MANDATES_L_FLAG(pdu->vector) && !extlength)
       return false;
   }
+
   if (inherithead)
   {
     pdu->sender_cid = last_pdu->sender_cid;
@@ -153,6 +155,7 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
     memcpy(pdu->sender_cid.data, cur_ptr, ETCPAL_UUID_BYTES);
     cur_ptr += ETCPAL_UUID_BYTES;
   }
+
   if (inheritdata)
   {
     pdu->pdata = last_pdu->pdata;
@@ -163,29 +166,30 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
     pdu->pdata = cur_ptr;
     pdu->datalen = (size_t)(pdu_len - (size_t)(cur_ptr - buf));
   }
+
   return true;
 }
 
 /*!
  * \brief Parse an ACN Root Layer PDU.
  *
- * Parse a Root Layer PDU from a Root Layer PDU block. Fills in the EtcPalRootLayerPdu structure with
- * the parsed PDU information, and stores state data in a EtcPalPdu structure for parsing the next
+ * Parse a Root Layer PDU from a Root Layer PDU block. Fills in the AcnRootLayerPdu structure with
+ * the parsed PDU information, and stores state data in a AcnPdu structure for parsing the next
  * PDU in the block, if there is one.
  *
  * Example usage:
  *
- * After parsing an ACN protocol family preamble (perhaps by using etcpal_parse_udp_preamble() or
- * etcpal_parse_tcp_preamble()), buf points to the data starting after the preamble and buflen is the
+ * After parsing an ACN protocol family preamble (perhaps by using acn_parse_udp_preamble() or
+ * acn_parse_tcp_preamble()), buf points to the data starting after the preamble and buflen is the
  * length parsed from the preamble...
  *
  * \code
- * EtcPalPdu pdu = ETCPAL_PDU_INIT; // Must initialize this!!
+ * AcnPdu pdu = ACN_PDU_INIT; // Must initialize this!!
  * bool res = false;
  * do
  * {
- *   EtcPalRootLayerPdu cur;
- *   res = etcpal_parse_root_layer_pdu(buf, buflen, &cur, &pdu);
+ *   AcnRootLayerPdu cur;
+ *   res = acn_parse_root_layer_pdu(buf, buflen, &cur, &pdu);
  *   if (res)
  *   {
  *     // Example application handler function that forwards the pdu appropriately based on
@@ -201,15 +205,17 @@ bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRoo
  * \param[in,out] last_pdu State data for future calls.
  * \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalPdu* last_pdu)
+bool acn_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, AcnRootLayerPdu* pdu, AcnPdu* last_pdu)
 {
   if (!buf || !pdu || !last_pdu)
     return false;
 
-  EtcPalPduConstraints rlp_constraints = {/* vector_size */ 4,
-                                          /* header_size */ 16};
+  AcnPduConstraints rlp_constraints = {
+      4,  // vector size
+      16  // header size
+  };
 
-  if (etcpal_parse_pdu(buf, buflen, &rlp_constraints, last_pdu))
+  if (acn_parse_pdu(buf, buflen, &rlp_constraints, last_pdu))
   {
     pdu->vector = etcpal_unpack_u32b(last_pdu->pvector);
     memcpy(pdu->sender_cid.data, last_pdu->pheader, ETCPAL_UUID_BYTES);
@@ -230,7 +236,7 @@ bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLa
  *                   #ACN_UDP_PREAMBLE_SIZE.
  * \return Number of bytes packed (success) or 0 (failure).
  */
-size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen)
+size_t acn_pack_udp_preamble(uint8_t* buf, size_t buflen)
 {
   uint8_t* cur_ptr;
 
@@ -259,7 +265,7 @@ size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen)
  *                          this TCP preamble.
  * \return Number of bytes packed (success) or 0 (failure).
  */
-size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
+size_t acn_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
 {
   if (!buf || buflen < ACN_TCP_PREAMBLE_SIZE)
     return 0;
@@ -275,16 +281,16 @@ size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_le
 /*!
  * \brief Get the buffer size to allocate for a Root Layer PDU block.
  *
- * Calculate the buffer size to allocate for a future call to etcpal_pack_root_layer_block(), given
- * an array of EtcPalRootLayerPdu.
+ * Calculate the buffer size to allocate for a future call to acn_pack_root_layer_block(), given
+ * an array of AcnRootLayerPdu.
  *
  * \param[in] pdu_block Array of structs representing a Root Layer PDU block.
  * \param[in] num_pdus Size of the pdu_block array.
  * \return Buffer size to allocate.
  */
-size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t num_pdus)
+size_t acn_root_layer_buf_size(const AcnRootLayerPdu* pdu_block, size_t num_pdus)
 {
-  const EtcPalRootLayerPdu* pdu;
+  const AcnRootLayerPdu* pdu;
   size_t block_size = 0;
 
   for (pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
@@ -309,24 +315,26 @@ size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t nu
  * \param[in] pdu PDU for which to pack the header into a buffer.
  * \return Number of bytes packed (success) or 0 (failure).
  */
-size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu)
+size_t acn_pack_root_layer_header(uint8_t* buf, size_t buflen, const AcnRootLayerPdu* pdu)
 {
   if (!buf || !pdu || buflen < ACN_RLP_HEADER_SIZE_EXT_LEN)
     return 0;
 
   uint8_t* cur_ptr = buf;
   *cur_ptr = 0x70;
+
   if (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->datalen))
   {
-    ETCPAL_PDU_SET_L_FLAG(*cur_ptr);
-    ETCPAL_PDU_PACK_EXT_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_EXT_LEN + pdu->datalen);
+    ACN_PDU_SET_L_FLAG(*cur_ptr);
+    ACN_PDU_PACK_EXT_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_EXT_LEN + pdu->datalen);
     cur_ptr += 3;
   }
   else
   {
-    ETCPAL_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->datalen);
+    ACN_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->datalen);
     cur_ptr += 2;
   }
+
   etcpal_pack_u32b(cur_ptr, pdu->vector);
   cur_ptr += 4;
   memcpy(cur_ptr, pdu->sender_cid.data, ETCPAL_UUID_BYTES);
@@ -337,24 +345,24 @@ size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRo
 /*!
  * \brief Pack a Root Layer PDU block into a buffer.
  *
- * The required buffer size can be calculated in advance using etcpal_root_layer_buf_size().
+ * The required buffer size can be calculated in advance using acn_root_layer_buf_size().
  *
  * \param[out] buf Buffer into which to pack the Root Layer PDU block.
  * \param[in] buflen Size in bytes of buf.
- * \param[in] pdu_block Array of EtcPalRootLayerPdu representing the PDU block to pack.
- * \param[in] num_pdus Number of EtcPalRootLayerPdu that make up the pdu_block array.
+ * \param[in] pdu_block Array of AcnRootLayerPdu representing the PDU block to pack.
+ * \param[in] num_pdus Number of AcnRootLayerPdu that make up the pdu_block array.
  * \return Number of bytes packed (success) or 0 (failure). Note that this might be less than the
- *         value returned by etcpal_root_layer_buf_size(); this is because this function performs
+ *         value returned by acn_root_layer_buf_size(); this is because this function performs
  *         more optimizations related to PDU inheritance.
  */
-size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu_block, size_t num_pdus)
+size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayerPdu* pdu_block, size_t num_pdus)
 {
-  if (!buf || !pdu_block || (etcpal_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
+  if (!buf || !pdu_block || (acn_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
     return 0;
 
   uint8_t* cur_ptr = buf;
-  EtcPalRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
-  for (const EtcPalRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
+  AcnRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
+  for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
     bool inheritvec = true;
     bool inherithead = true;
@@ -364,15 +372,15 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
     if (pdu == pdu_block)
     {
       // First PDU in the block - no inheritance
-      ETCPAL_PDU_SET_V_FLAG(*cur_ptr);
+      ACN_PDU_SET_V_FLAG(*cur_ptr);
       inheritvec = false;
       last_pdu.vector = pdu->vector;
 
-      ETCPAL_PDU_SET_H_FLAG(*cur_ptr);
+      ACN_PDU_SET_H_FLAG(*cur_ptr);
       inherithead = false;
       last_pdu.sender_cid = pdu->sender_cid;
 
-      ETCPAL_PDU_SET_D_FLAG(*cur_ptr);
+      ACN_PDU_SET_D_FLAG(*cur_ptr);
       inheritdata = false;
       last_pdu.pdata = pdu->pdata;
       last_pdu.datalen = pdu->datalen;
@@ -382,19 +390,21 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
       // Check if we can use some inheritance
       if (pdu->vector != last_pdu.vector)
       {
-        ETCPAL_PDU_SET_V_FLAG(*cur_ptr);
+        ACN_PDU_SET_V_FLAG(*cur_ptr);
         inheritvec = false;
         last_pdu.vector = pdu->vector;
       }
+
       if (0 != ETCPAL_UUID_CMP(&pdu->sender_cid, &last_pdu.sender_cid))
       {
-        ETCPAL_PDU_SET_H_FLAG(*cur_ptr);
+        ACN_PDU_SET_H_FLAG(*cur_ptr);
         inherithead = false;
         last_pdu.sender_cid = pdu->sender_cid;
       }
+
       if ((pdu->datalen != last_pdu.datalen) || (0 != memcmp(pdu->pdata, last_pdu.pdata, last_pdu.datalen)))
       {
-        ETCPAL_PDU_SET_D_FLAG(*cur_ptr);
+        ACN_PDU_SET_D_FLAG(*cur_ptr);
         inheritdata = false;
         last_pdu.pdata = pdu->pdata;
         last_pdu.datalen = pdu->datalen;
@@ -408,15 +418,15 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
     {
       size_t len = 3u + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
                    (inheritdata ? 0u : pdu->datalen);
-      ETCPAL_PDU_SET_L_FLAG(*cur_ptr);
-      ETCPAL_PDU_PACK_EXT_LEN(cur_ptr, len);
+      ACN_PDU_SET_L_FLAG(*cur_ptr);
+      ACN_PDU_PACK_EXT_LEN(cur_ptr, len);
       cur_ptr += 3;
     }
     else
     {
       size_t len = 2 + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
                    (inheritdata ? 0u : pdu->datalen);
-      ETCPAL_PDU_PACK_NORMAL_LEN(cur_ptr, len);
+      ACN_PDU_PACK_NORMAL_LEN(cur_ptr, len);
       cur_ptr += 2;
     }
 
@@ -425,11 +435,13 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
       etcpal_pack_u32b(cur_ptr, pdu->vector);
       cur_ptr += 4;
     }
+
     if (!inherithead)
     {
       memcpy(cur_ptr, pdu->sender_cid.data, ETCPAL_UUID_BYTES);
       cur_ptr += ETCPAL_UUID_BYTES;
     }
+
     if (!inheritdata)
     {
       memcpy(cur_ptr, pdu->pdata, pdu->datalen);

@@ -17,26 +17,25 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* etcpal/root_layer_pdu.h: Functions to parse or pack a Root Layer PDU block (as defined in ANSI
+/* etcpal/acn_rlp.h: Functions to parse or pack a Root Layer PDU block (as defined in ANSI
  * E1.17) and its associated preambles. */
 
-#ifndef ETCPAL_ROOT_LAYER_PDU_H_
-#define ETCPAL_ROOT_LAYER_PDU_H_
+#ifndef ETCPAL_ACN_RLP_H_
+#define ETCPAL_ACN_RLP_H_
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "etcpal/acn_pdu.h"
 #include "etcpal/acn_prot.h"
-#include "etcpal/pdu.h"
 #include "etcpal/uuid.h"
 
 /*!
- * \defgroup etcpal_root_layer_pdu root_layer_pdu (ACN Root Layer PDUs)
- * \ingroup etcpal_pdu
- * \brief Parse or pack a Root Layer PDU block.
+ * \defgroup etcpal_acn_rlp acn_rlp (ACN Root Layer Protocol)
+ * \brief Parse or pack an ACN Root Layer PDU block.
  *
  * ```c
- * #include "etcpal/root_layer_pdu.h"
+ * #include "etcpal/acn_rlp.h"
  * ```
  *
  * This module handles building and parsing the ACN Root Layer Protocol, as defined in ANSI E1.17,
@@ -74,25 +73,25 @@
  */
 
 /*! Holds the information contained in an ACN TCP Preamble. */
-typedef struct EtcPalTcpPreamble
+typedef struct AcnTcpPreamble
 {
   /*! Pointer to the beginning of the Root Layer PDU block */
   const uint8_t* rlp_block;
   /*! Length of the Root Layer PDU block */
   size_t rlp_block_len;
-} EtcPalTcpPreamble;
+} AcnTcpPreamble;
 
 /*! Holds the information contained in an ACN UDP Preamble. */
-typedef struct EtcPalUdpPreamble
+typedef struct AcnUdpPreamble
 {
   /*! Pointer to the beginning of the Root Layer PDU block */
   const uint8_t* rlp_block;
   /*! Length of the Root Layer PDU block */
   size_t rlp_block_len;
-} EtcPalUdpPreamble;
+} AcnUdpPreamble;
 
 /*! Holds the information contained in an ACN Root Layer PDU. */
-typedef struct EtcPalRootLayerPdu
+typedef struct AcnRootLayerPdu
 {
   /*! The CID of the component that sent this Root Layer PDU. */
   EtcPalUuid sender_cid;
@@ -102,23 +101,22 @@ typedef struct EtcPalRootLayerPdu
   const uint8_t* pdata;
   /*! The length of the Data segment of this PDU. */
   size_t datalen;
-} EtcPalRootLayerPdu;
+} AcnRootLayerPdu;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool etcpal_parse_tcp_preamble(const uint8_t* buf, size_t buflen, EtcPalTcpPreamble* preamble);
-bool etcpal_parse_udp_preamble(const uint8_t* buf, size_t buflen, EtcPalUdpPreamble* preamble);
-bool etcpal_parse_root_layer_header(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu,
-                                    EtcPalRootLayerPdu* last_pdu);
-bool etcpal_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, EtcPalRootLayerPdu* pdu, EtcPalPdu* last_pdu);
+bool acn_parse_tcp_preamble(const uint8_t* buf, size_t buflen, AcnTcpPreamble* preamble);
+bool acn_parse_udp_preamble(const uint8_t* buf, size_t buflen, AcnUdpPreamble* preamble);
+bool acn_parse_root_layer_header(const uint8_t* buf, size_t buflen, AcnRootLayerPdu* pdu, AcnRootLayerPdu* last_pdu);
+bool acn_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, AcnRootLayerPdu* pdu, AcnPdu* last_pdu);
 
-size_t etcpal_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len);
-size_t etcpal_pack_udp_preamble(uint8_t* buf, size_t buflen);
-size_t etcpal_root_layer_buf_size(const EtcPalRootLayerPdu* pdu_block, size_t num_pdus);
-size_t etcpal_pack_root_layer_header(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu);
-size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRootLayerPdu* pdu_block, size_t num_pdus);
+size_t acn_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len);
+size_t acn_pack_udp_preamble(uint8_t* buf, size_t buflen);
+size_t acn_root_layer_buf_size(const AcnRootLayerPdu* pdu_block, size_t num_pdus);
+size_t acn_pack_root_layer_header(uint8_t* buf, size_t buflen, const AcnRootLayerPdu* pdu);
+size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayerPdu* pdu_block, size_t num_pdus);
 
 #ifdef __cplusplus
 }
@@ -128,4 +126,4 @@ size_t etcpal_pack_root_layer_block(uint8_t* buf, size_t buflen, const EtcPalRoo
  * @}
  */
 
-#endif /* ETCPAL_ROOT_LAYER_PDU_H_ */
+#endif /* ETCPAL_ACN_RLP_H_ */

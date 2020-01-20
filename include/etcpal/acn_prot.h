@@ -17,6 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+/* etcpal/acn_prot.h: ACN protocol constants. */
+
 #ifndef ETCPAL_ACN_PROT_H_
 #define ETCPAL_ACN_PROT_H_
 

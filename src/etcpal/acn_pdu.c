@@ -17,13 +17,13 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/pdu.h"
+#include "etcpal/acn_pdu.h"
 
 /*!
  * \brief Parse a generic ACN PDU.
  *
  * A function to parse a generic ACN PDU. The specific PDU info needed for parsing is contained in
- * a struct pdu_constraints. Uses EtcPalPdu to maintain state across multiple PDUs in a block.
+ * a struct AcnPduConstraints. Uses AcnPdu to maintain state across multiple PDUs in a block.
  *
  * \param[in] buf Byte buffer containing a PDU.
  * \param[in] buflen Size in bytes of buf.
@@ -32,7 +32,7 @@
  *                    with data from this PDU.
  * \return true (PDU was parsed successfully) or false (parse error or no more PDUs in the block).
  */
-bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstraints* constraints, EtcPalPdu* pdu)
+bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* constraints, AcnPdu* pdu)
 {
   if (!buf || !buflen || !constraints || !pdu)
     return false;
@@ -58,10 +58,10 @@ bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstrai
 
   // Check the inheritance and the size of the length field
   uint8_t flags_byte = *this_pdu;
-  bool extlength = ETCPAL_PDU_L_FLAG_SET(flags_byte);
-  bool inheritvect = !ETCPAL_PDU_V_FLAG_SET(flags_byte);
-  bool inherithead = !ETCPAL_PDU_H_FLAG_SET(flags_byte);
-  bool inheritdata = !ETCPAL_PDU_D_FLAG_SET(flags_byte);
+  bool extlength = ACN_PDU_L_FLAG_SET(flags_byte);
+  bool inheritvect = !ACN_PDU_V_FLAG_SET(flags_byte);
+  bool inherithead = !ACN_PDU_H_FLAG_SET(flags_byte);
+  bool inheritdata = !ACN_PDU_D_FLAG_SET(flags_byte);
 
   const uint8_t* cur_ptr = this_pdu;
   if (cur_ptr + (extlength ? 3 : 2) >= buf_end)
@@ -70,7 +70,7 @@ bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstrai
     return false;
   }
 
-  uint32_t pdu_len = ETCPAL_PDU_LENGTH(this_pdu);
+  uint32_t pdu_len = ACN_PDU_LENGTH(this_pdu);
   uint32_t min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : constraints->vector_size) +
                                     (inherithead ? 0 : constraints->header_size));
 
@@ -82,22 +82,26 @@ bool etcpal_parse_pdu(const uint8_t* buf, size_t buflen, const EtcPalPduConstrai
 
   // Now fill in the pdu structure with the current PDU info
   cur_ptr += extlength ? 3 : 2;
+
   if (!inheritvect)
   {
     pdu->pvector = cur_ptr;
     cur_ptr += constraints->vector_size;
   }
+
   if (!inherithead)
   {
     pdu->pheader = cur_ptr;
     cur_ptr += constraints->header_size;
   }
+
   if (!inheritdata)
   {
     pdu->pdata = cur_ptr;
     pdu->datalen = pdu_len - (uint32_t)(cur_ptr - this_pdu);
     cur_ptr += pdu->datalen;
   }
+
   pdu->pnextpdu = cur_ptr;
   return true;
 }
