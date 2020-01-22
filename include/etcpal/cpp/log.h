@@ -75,33 +75,43 @@ namespace etcpal
 ///   }
 /// };
 ///
-/// MyLogHandler log_handler;
-/// etcpal::Logger logger;
+/// int main()
+/// {
+///   etcpal_init(ETCPAL_FEATURE_LOGGING);
 ///
-/// // Set parameters and start logging using the method-chaining setters:
-/// logger.SetLogMask(ETCPAL_LOG_UPTO(ETCPAL_LOG_INFO))
-///       .SetLogAction(kEtcPalLogCreateBoth)
-///       .SetSyslogFacility(ETCPAL_LOG_LOCAL1)
-///       .SetSyslogHostname(my_hostname)
-///       .SetSyslogAppName("My App")
-///       .SetSyslogProcId(0)
-///       .Startup(log_handler);
+///   MyLogHandler log_handler;
+///   etcpal::Logger logger;
 ///
-/// // By default, a background thread is started to dispatch the log messages.
+///   // Set parameters and start logging using the method-chaining setters:
+///   logger.SetLogMask(ETCPAL_LOG_UPTO(ETCPAL_LOG_INFO))
+///         .SetLogAction(kEtcPalLogCreateBoth)
+///         .SetSyslogFacility(ETCPAL_LOG_LOCAL1)
+///         .SetSyslogHostname(my_hostname)
+///         .SetSyslogAppName("My App")
+///         .SetSyslogProcId(0)
+///         .Startup(log_handler);
 ///
-/// logger.Log(ETCPAL_LOG_INFO, "Starting up!");
+///   // By default, a background thread is started to dispatch the log messages.
 ///
-/// // Use the shortcuts to log at a specific priority level:
+///   logger.Log(ETCPAL_LOG_INFO, "Starting up!");
 ///
-/// logger.Warning("Uh oh...");
-/// logger.Debug("We've reached line 250");
+///   // Use the shortcuts to log at a specific priority level:
 ///
-/// // All log functions accept printf-style format specifiers and arguments
-/// logger.Info("This module has gone %d days without an accident", -1);
+///   logger.Warning("Uh oh...");
+///   logger.Debug("We've reached line 250");
 ///
-/// // Use the log_params() getter to add logging output from other libraries with C APIs that
-/// // support it.
-/// somelib_init(&logger.log_params());
+///   // All log functions accept printf-style format specifiers and arguments
+///   logger.Info("This module has gone %d days without an accident", -1);
+///
+///   // Use the log_params() getter to add logging output from other libraries with C APIs that
+///   // support it.
+///   somelib_init(&logger.log_params());
+///
+///   // Shut down the logger when done to join the thread, if applicable.
+///   logger.Shutdown();
+///   etcpal_deinit(ETCPAL_FEATURE_LOGGING);
+///   return 0;
+/// }
 /// \endcode
 
 /// \ingroup etcpal_cpp_log
