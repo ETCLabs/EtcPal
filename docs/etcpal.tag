@@ -520,6 +520,13 @@
       <anchor>a8129637af8920bc9328bbce2a00bfeb4</anchor>
       <arglist></arglist>
     </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>priority</name>
+      <anchorfile>struct_etc_pal_log_strings.html</anchorfile>
+      <anchor>acec9ce2df15222151ad66fcb1d74eb9f</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>EtcPalLogTimestamp</name>

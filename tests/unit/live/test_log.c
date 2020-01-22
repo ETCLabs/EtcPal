@@ -222,6 +222,24 @@ TEST(etcpal_log, context_pointer_is_passed_unmodified)
   TEST_ASSERT_EQUAL_PTR(log_callback_fake.arg0_val, 0x01020304);
 }
 
+TEST(etcpal_log, priority_is_passed_unmodified)
+{
+  EtcPalLogParams lparams;
+  lparams.action = kEtcPalLogCreateHumanReadable;
+  lparams.log_fn = log_callback;
+  memset(&lparams.syslog_params, 0, sizeof(EtcPalSyslogParams));
+  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn = NULL;
+  lparams.context = NULL;
+
+  // Test each priority value
+  for (int pri = 0; pri < ETCPAL_LOG_DEBUG + 1; ++pri)
+  {
+    etcpal_log(&lparams, pri, "Test message");
+    TEST_ASSERT_EQUAL(last_log_strings_received.priority, pri);
+  }
+}
+
 // Test valid, weird, and missing values in the syslog header
 TEST(etcpal_log, syslog_header_is_well_formed)
 {
@@ -613,6 +631,7 @@ TEST_GROUP_RUNNER(etcpal_log)
   RUN_TEST_CASE(etcpal_log, validate_log_params_works);
   RUN_TEST_CASE(etcpal_log, log_action_is_honored);
   RUN_TEST_CASE(etcpal_log, context_pointer_is_passed_unmodified);
+  RUN_TEST_CASE(etcpal_log, priority_is_passed_unmodified);
   RUN_TEST_CASE(etcpal_log, syslog_header_is_well_formed);
   RUN_TEST_CASE(etcpal_log, syslog_prival_is_correct);
   RUN_TEST_CASE(etcpal_log, log_mask_is_honored);

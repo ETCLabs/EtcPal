@@ -274,6 +274,9 @@ typedef struct EtcPalLogStrings
   /*! The original log string that was passed to etcpal_log() or etcpal_vlog(). Will overlap with
    *  one of syslog_str or human_str. */
   const char* raw;
+  /*! The original log priority that was passed to etcpal_log() or etcpal_vlog(). Useful if this
+   *  log message is being passed to a system syslog daemon. */
+  int priority;
 } EtcPalLogStrings;
 
 /*!

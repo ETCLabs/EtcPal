@@ -394,6 +394,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     static char syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
     static char humanlogmsg[ETCPAL_LOG_STR_MAX_LEN + 1];
     EtcPalLogStrings strings = {NULL, NULL, NULL};
+    strings.priority = pri;
 
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateSyslog)
     {
