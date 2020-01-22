@@ -66,6 +66,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *   printf("The counter is: %d\n", shared_counter); // Prints "The counter is: 50000"
  *
  *   etcpal_mutex_destroy(&mutex);
+ *   return 0;
  * }
  * \endcode
  *
@@ -171,6 +172,55 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  *
  * Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
  * call to etcpal_signal_wait() blocks until etcpal_signal_post() is called.
+ *
+ * Mutexes are used to synchronize different threads around some event. For example:
+ * \code
+ * Event event_queue[EVENT_QUEUE_SIZE];
+ * size_t event_queue_current_size;
+ * etcpal_signal_t signal;
+ *
+ * void event_thread(void* arg)
+ * {
+ *   while (keep_running)
+ *   {
+ *     // Wait until we have queue items to process
+ *     // Note this is a simplified example; in real code you would probably want a mutex or
+ *     // critical section here as well.
+ *     if (etcpal_signal_wait(&signal))
+ *     {
+ *       // Handle all events currently in the queue
+ *       for (size_t i = 0; i < event_queue_current_size; ++i)
+ *       {
+ *         Event* event = &event_queue[i];
+ *         // Handle event somehow
+ *       }
+ *       event_queue_current_size = 0;
+ *     }
+ *   }
+ * }
+ *
+ * int main(void)
+ * {
+ *   etcpal_signal_create(&signal);
+ *   
+ *   EtcPalThreadParams thread_params = { ETCPAL_THREAD_DEFAULT_PARAMS_INIT };
+ *   etcpal_thread_t event_thread_handle;
+ *   etcpal_thread_create(&event_thread_handle, &params, event_thread, NULL);
+ *
+ *   // At shutdown time...
+ *   keep_running = false;
+ *   etcpal_thread_join(&event_thread_handle);
+ *   etcpal_signal_destroy(&signal);
+ *   return 0;
+ * }
+ *
+ * void interrupt_handler(void)
+ * {
+ *   // Add some event to the queue
+ *   event_queue[event_queue_current_size++] = new_event;
+ *   etcpal_signal_post_from_isr(&signal);
+ * }
+ * \endcode
  *
  * etcpal_signal implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
@@ -287,6 +337,44 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
  * Sometimes also referred to as a shared-exclusive lock or multi-reader lock. When implemented to
  * protect a resource, allows multiple "readers" to access the resource at the same time for
  * read-only purposes.
+ *
+ * For example:
+ * \code
+ * // Must be initialized before use with etcpal_rwlock_create().
+ * etcpal_rwlock_t lock;
+ * char device_name[DEVICE_NAME_LENGTH];
+ * 
+ * bool get_device_name(char* buffer)
+ * {
+ *   if (etcpal_rwlock_readlock(&lock))
+ *   {
+ *     // Multiple threads can be in this block simultaneously, which is fine.
+ *     strncpy(buffer, device_name, DEVICE_NAME_LENGTH);
+ *     etcpal_rwlock_readunlock(&lock);
+ *     return true;
+ *   }
+ *   else
+ *   {
+ *     return false;
+ *   }
+ * }
+ *
+ * bool set_device_name(const char* new_name)
+ * {
+ *   if (etcpal_rwlock_writelock(&lock))
+ *   {
+ *     // Only one thread can be in this block at a time. It also locks all threads out of the read
+ *     // lock block above.
+ *     strncpy(device_name, new_name, DEVICE_NAME_LENGTH);
+ *     etcpal_rwlock_writeunlock(&lock);
+ *     return true;
+ *   }
+ *   else
+ *   {
+ *     return false;
+ *   }
+ * }
+ * \endcode
  *
  * These are implemented as "write-preferring" reader-writer locks; this means that new readers are
  * blocked from acquiring a read lock if any context is currently waiting for a write lock.
@@ -451,6 +539,39 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
  * decreases, unless the count is zero, in which case the task waiting for it is blocked until it
  * is posted again. This is often used for tracking events that can occur multiple times before
  * being serviced or pools of resources. 
+ *
+ * Usage example:
+ * \code
+ * static etcpal_sem_t sem;
+ * #define SEM_MAX_COUNT 20
+ * 
+ * void main(void)
+ * {
+ *   etcpal_sem_create(&sem, 0, SEM_MAX_COUNT);
+ *
+ *   // Enable interrupts
+ *
+ *   while (1)
+ *   {
+ *     if (etcpal_sem_wait(&sem))
+ *     {
+ *       // Service the interrupt.
+ *       // Because this is a counting semaphore, we will enter this block once for each time the
+ *       // interrupt is received.
+ *     }
+ *   }
+ *   
+ *   etcpal_sem_destroy(&sem);
+ *   return 0;
+ * }
+ *
+ * void interrupt_handler(void)
+ * {
+ *   // We've received some event via interrupt.
+ *   // Notify the service thread that a new event has occurred.
+ *   etcpal_sem_post_from_isr(&sem);
+ * }
+ * \endcode
  *
  * etcpal_sem implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.

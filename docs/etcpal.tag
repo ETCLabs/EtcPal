@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
@@ -21,16 +21,16 @@
   </compound>
   <compound kind="file">
     <name>error.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
-    <class kind="class">etcpal::Result</class>
+    <class kind="class">etcpal::Error</class>
     <class kind="class">etcpal::BadExpectedAccess</class>
     <class kind="class">etcpal::Expected</class>
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
@@ -49,18 +49,19 @@
   </compound>
   <compound kind="file">
     <name>lock.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
     <class kind="class">etcpal::RwLock</class>
+    <class kind="class">etcpal::Semaphore</class>
     <class kind="class">etcpal::MutexGuard</class>
     <class kind="class">etcpal::ReadGuard</class>
     <class kind="class">etcpal::WriteGuard</class>
   </compound>
   <compound kind="file">
     <name>log.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
@@ -79,7 +80,7 @@
   </compound>
   <compound kind="file">
     <name>thread.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
@@ -87,7 +88,7 @@
   </compound>
   <compound kind="file">
     <name>timer.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2timer_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::TimePoint</class>
@@ -95,15 +96,153 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
     <class kind="class">etcpal::Uuid</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>UuidVersion</name>
+      <anchorfile>cpp_2uuid_8h.html</anchorfile>
+      <anchor>ac6e0bea8f4b482fd8ab17250626a3cf4</anchor>
+      <arglist></arglist>
+      <enumvalue file="cpp_2uuid_8h.html" anchor="ac6e0bea8f4b482fd8ab17250626a3cf4ab4daca084ad9eabfc8de231929477ed6">V1</enumvalue>
+      <enumvalue file="cpp_2uuid_8h.html" anchor="ac6e0bea8f4b482fd8ab17250626a3cf4aec765f1adc3b4253f2d3b131a4a8618f">V2</enumvalue>
+      <enumvalue file="cpp_2uuid_8h.html" anchor="ac6e0bea8f4b482fd8ab17250626a3cf4ad5b50b8cf96bcc8aba90f306f5e6189c">V3</enumvalue>
+      <enumvalue file="cpp_2uuid_8h.html" anchor="ac6e0bea8f4b482fd8ab17250626a3cf4ab354cab57768c7d4c1106eb4e82c75dc">V4</enumvalue>
+      <enumvalue file="cpp_2uuid_8h.html" anchor="ac6e0bea8f4b482fd8ab17250626a3cf4a8cff5423006469332e8ae5e3a8c8559c">V5</enumvalue>
+      <enumvalue file="cpp_2uuid_8h.html" anchor="ac6e0bea8f4b482fd8ab17250626a3cf4a88183b946cc5f0e8c96b2e66e1c74a7e">Unknown</enumvalue>
+    </member>
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
+  </compound>
+  <compound kind="struct">
+    <name>AcnPdu</name>
+    <filename>struct_acn_pdu.html</filename>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>pvector</name>
+      <anchorfile>struct_acn_pdu.html</anchorfile>
+      <anchor>a106ad8e138ad9d47e5ed03680c6ac6ff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>pheader</name>
+      <anchorfile>struct_acn_pdu.html</anchorfile>
+      <anchor>a89e577801ef19d4cdca129391395ad8d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>pdata</name>
+      <anchorfile>struct_acn_pdu.html</anchorfile>
+      <anchor>a2f9eb29aa10e0d64f27f69db1e90bd07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>datalen</name>
+      <anchorfile>struct_acn_pdu.html</anchorfile>
+      <anchor>a3d12e161726566d24a1d0cf6c6b416bb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>pnextpdu</name>
+      <anchorfile>struct_acn_pdu.html</anchorfile>
+      <anchor>a5af45b626c13232f152d7548f29f9f58</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>AcnPduConstraints</name>
+    <filename>struct_acn_pdu_constraints.html</filename>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>vector_size</name>
+      <anchorfile>struct_acn_pdu_constraints.html</anchorfile>
+      <anchor>a28e18243c88fd99888246e855cc116fd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>header_size</name>
+      <anchorfile>struct_acn_pdu_constraints.html</anchorfile>
+      <anchor>a64f1d0c53909f30b0aac882348cd32f2</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>AcnRootLayerPdu</name>
+    <filename>struct_acn_root_layer_pdu.html</filename>
+    <member kind="variable">
+      <type>EtcPalUuid</type>
+      <name>sender_cid</name>
+      <anchorfile>struct_acn_root_layer_pdu.html</anchorfile>
+      <anchor>a341064da4798492e212c14a9aeede58d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>vector</name>
+      <anchorfile>struct_acn_root_layer_pdu.html</anchorfile>
+      <anchor>a513d751c7097b43b3968ac81f3a5715b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>pdata</name>
+      <anchorfile>struct_acn_root_layer_pdu.html</anchorfile>
+      <anchor>a2f9eb29aa10e0d64f27f69db1e90bd07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>datalen</name>
+      <anchorfile>struct_acn_root_layer_pdu.html</anchorfile>
+      <anchor>a3d12e161726566d24a1d0cf6c6b416bb</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>AcnTcpPreamble</name>
+    <filename>struct_acn_tcp_preamble.html</filename>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>rlp_block</name>
+      <anchorfile>struct_acn_tcp_preamble.html</anchorfile>
+      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>rlp_block_len</name>
+      <anchorfile>struct_acn_tcp_preamble.html</anchorfile>
+      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>AcnUdpPreamble</name>
+    <filename>struct_acn_udp_preamble.html</filename>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>rlp_block</name>
+      <anchorfile>struct_acn_udp_preamble.html</anchorfile>
+      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>rlp_block_len</name>
+      <anchorfile>struct_acn_udp_preamble.html</anchorfile>
+      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>etcpal::BadExpectedAccess</name>
@@ -112,15 +251,75 @@
       <type></type>
       <name>BadExpectedAccess</name>
       <anchorfile>classetcpal_1_1_bad_expected_access.html</anchorfile>
-      <anchor>ae32d1ca3903371ac073eacb510ce597d</anchor>
-      <arglist>(Result res)</arglist>
+      <anchor>a408f3d0470d7f1a3330830eb96db77d9</anchor>
+      <arglist>(Error res)</arglist>
     </member>
     <member kind="function">
-      <type>Result</type>
+      <type>Error</type>
       <name>result</name>
       <anchorfile>classetcpal_1_1_bad_expected_access.html</anchorfile>
-      <anchor>a099c8aae8a56b9f1278b39c45ddb2269</anchor>
+      <anchor>a4c03ebceb6c40fe7f2ee3c215daa8c8d</anchor>
       <arglist>() const noexcept</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::Error</name>
+    <filename>classetcpal_1_1_error.html</filename>
+    <member kind="function">
+      <type>constexpr</type>
+      <name>Error</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>acde5c53cc825c9794ffa980ea163a39a</anchor>
+      <arglist>(etcpal_error_t code) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>Error &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>a3c9c46279e5c973e70c51c57cfcaede9</anchor>
+      <arglist>(etcpal_error_t code) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr bool</type>
+      <name>IsOk</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>a030d244ccd9a40a9f9ac813ea912a639</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr etcpal_error_t</type>
+      <name>code</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>a65e890bf700cdd8262c552690a03baad</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::string</type>
+      <name>ToString</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>ToCString</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>aa4d860f883bc4c6bc997eb61f218a27e</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr</type>
+      <name>operator bool</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>a7990d8e87d9eab2383f94c88c23a6488</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static constexpr Error</type>
+      <name>Ok</name>
+      <anchorfile>classetcpal_1_1_error.html</anchorfile>
+      <anchor>acbb5c12c9926c6fc2722da18881b8a49</anchor>
+      <arglist>() noexcept</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -465,63 +664,6 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>EtcPalPdu</name>
-    <filename>struct_etc_pal_pdu.html</filename>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>pvector</name>
-      <anchorfile>struct_etc_pal_pdu.html</anchorfile>
-      <anchor>a106ad8e138ad9d47e5ed03680c6ac6ff</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>pheader</name>
-      <anchorfile>struct_etc_pal_pdu.html</anchorfile>
-      <anchor>a89e577801ef19d4cdca129391395ad8d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>pdata</name>
-      <anchorfile>struct_etc_pal_pdu.html</anchorfile>
-      <anchor>a2f9eb29aa10e0d64f27f69db1e90bd07</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>datalen</name>
-      <anchorfile>struct_etc_pal_pdu.html</anchorfile>
-      <anchor>a3d12e161726566d24a1d0cf6c6b416bb</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>pnextpdu</name>
-      <anchorfile>struct_etc_pal_pdu.html</anchorfile>
-      <anchor>a5af45b626c13232f152d7548f29f9f58</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>EtcPalPduConstraints</name>
-    <filename>struct_etc_pal_pdu_constraints.html</filename>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>vector_size</name>
-      <anchorfile>struct_etc_pal_pdu_constraints.html</anchorfile>
-      <anchor>a28e18243c88fd99888246e855cc116fd</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>header_size</name>
-      <anchorfile>struct_etc_pal_pdu_constraints.html</anchorfile>
-      <anchor>a64f1d0c53909f30b0aac882348cd32f2</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
     <name>EtcPalPollEvent</name>
     <filename>struct_etc_pal_poll_event.html</filename>
     <member kind="variable">
@@ -664,38 +806,6 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>EtcPalRootLayerPdu</name>
-    <filename>struct_etc_pal_root_layer_pdu.html</filename>
-    <member kind="variable">
-      <type>EtcPalUuid</type>
-      <name>sender_cid</name>
-      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
-      <anchor>a341064da4798492e212c14a9aeede58d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint32_t</type>
-      <name>vector</name>
-      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
-      <anchor>a513d751c7097b43b3968ac81f3a5715b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>pdata</name>
-      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
-      <anchor>a2f9eb29aa10e0d64f27f69db1e90bd07</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>datalen</name>
-      <anchorfile>struct_etc_pal_root_layer_pdu.html</anchorfile>
-      <anchor>a3d12e161726566d24a1d0cf6c6b416bb</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
     <name>EtcPalSockAddr</name>
     <filename>struct_etc_pal_sock_addr.html</filename>
     <member kind="variable">
@@ -746,24 +856,6 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>EtcPalTcpPreamble</name>
-    <filename>struct_etc_pal_tcp_preamble.html</filename>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>rlp_block</name>
-      <anchorfile>struct_etc_pal_tcp_preamble.html</anchorfile>
-      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>rlp_block_len</name>
-      <anchorfile>struct_etc_pal_tcp_preamble.html</anchorfile>
-      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
     <name>EtcPalThreadParams</name>
     <filename>struct_etc_pal_thread_params.html</filename>
     <member kind="variable">
@@ -810,24 +902,6 @@
       <name>interval</name>
       <anchorfile>struct_etc_pal_timer.html</anchorfile>
       <anchor>acd9ed1ccc44de55e1d3eff5569663695</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>EtcPalUdpPreamble</name>
-    <filename>struct_etc_pal_udp_preamble.html</filename>
-    <member kind="variable">
-      <type>const uint8_t *</type>
-      <name>rlp_block</name>
-      <anchorfile>struct_etc_pal_udp_preamble.html</anchorfile>
-      <anchor>a6df9d0f27538da177c52996a97e0a1d8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>rlp_block_len</name>
-      <anchorfile>struct_etc_pal_udp_preamble.html</anchorfile>
-      <anchor>ab27f79ca664937f91e64f868ad233935</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -1016,16 +1090,16 @@
     </member>
     <member kind="function">
       <type>constexpr etcpal_error_t</type>
-      <name>error</name>
+      <name>error_code</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a50623f3a6e41cdc3b27d8658808797c8</anchor>
+      <anchor>ad74bb8607bbb3705c22342bd852e16b8</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr Result</type>
-      <name>result</name>
+      <type>constexpr Error</type>
+      <name>error</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>a28c72c40e1a8ff5c26c86ffd8b3220df</anchor>
+      <anchor>a60850b440a4ff7f769627b46d79043f6</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -1898,66 +1972,6 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>etcpal::Result</name>
-    <filename>classetcpal_1_1_result.html</filename>
-    <member kind="function">
-      <type>constexpr</type>
-      <name>Result</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>af1913dbf20908a83085407f633807fe3</anchor>
-      <arglist>(etcpal_error_t code) noexcept</arglist>
-    </member>
-    <member kind="function">
-      <type>Result &amp;</type>
-      <name>operator=</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>aa17ae9a95db6d0224d2280bbb1f8667d</anchor>
-      <arglist>(etcpal_error_t code) noexcept</arglist>
-    </member>
-    <member kind="function">
-      <type>constexpr bool</type>
-      <name>IsOk</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a030d244ccd9a40a9f9ac813ea912a639</anchor>
-      <arglist>() const noexcept</arglist>
-    </member>
-    <member kind="function">
-      <type>constexpr etcpal_error_t</type>
-      <name>code</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a65e890bf700cdd8262c552690a03baad</anchor>
-      <arglist>() const noexcept</arglist>
-    </member>
-    <member kind="function">
-      <type>std::string</type>
-      <name>ToString</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a19c380b03cea21d7ac7325136a131ff0</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>const char *</type>
-      <name>ToCString</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>aa4d860f883bc4c6bc997eb61f218a27e</anchor>
-      <arglist>() const noexcept</arglist>
-    </member>
-    <member kind="function">
-      <type>constexpr</type>
-      <name>operator bool</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a7990d8e87d9eab2383f94c88c23a6488</anchor>
-      <arglist>() const noexcept</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static constexpr Result</type>
-      <name>Ok</name>
-      <anchorfile>classetcpal_1_1_result.html</anchorfile>
-      <anchor>a466e2e4a2b6c74e6f7c7140579d10a09</anchor>
-      <arglist>() noexcept</arglist>
-    </member>
-  </compound>
-  <compound kind="class">
     <name>etcpal::RwLock</name>
     <filename>classetcpal_1_1_rw_lock.html</filename>
     <member kind="function">
@@ -2032,6 +2046,66 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>etcpal::Semaphore</name>
+    <filename>classetcpal_1_1_semaphore.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Semaphore</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>a7afb6e444c74ed583a47dc7bc8bd45e3</anchor>
+      <arglist>(unsigned int initial_count=0, unsigned int max_count=kDefaultMaxCount)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~Semaphore</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>a5e0394d4ca6109ccb52b3c1e5cf6c9b5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>Wait</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>ae5ccc0d2886026ce37e12604173a131d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>TryWait</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>aa5139da6cf3fc487370524d466cdadd7</anchor>
+      <arglist>(int timeout_ms=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>Post</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>a26bb434223a472d5c8abb371db0d88ed</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>PostFromIsr</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>ac6fc730736f2756d8c87e81ab5be1dc7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_sem_t &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>a35238d018ce1903b9713675b075f2e38</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr unsigned int</type>
+      <name>kDefaultMaxCount</name>
+      <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
+      <anchor>a3486903fdf2712a41832d21fdfd5bc0b</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>etcpal::Signal</name>
     <filename>classetcpal_1_1_signal.html</filename>
     <member kind="function">
@@ -2057,17 +2131,10 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>WaitFor</name>
+      <name>TryWait</name>
       <anchorfile>classetcpal_1_1_signal.html</anchorfile>
-      <anchor>a068797d0788994c507c4a9b55e0b1840</anchor>
-      <arglist>(int timeout_ms)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>Poll</name>
-      <anchorfile>classetcpal_1_1_signal.html</anchorfile>
-      <anchor>a86acd23bf483d12b47cedfe52333e643</anchor>
-      <arglist>()</arglist>
+      <anchor>aa5139da6cf3fc487370524d466cdadd7</anchor>
+      <arglist>(int timeout_ms=0)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -2274,17 +2341,17 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>Result</type>
+      <type>Error</type>
       <name>Start</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a1a4d94c5a8d7aa7536c61e4ca4854907</anchor>
+      <anchor>a63e85f031a9b180d9e932df21f7a2e64</anchor>
       <arglist>(Function &amp;&amp;func, Args &amp;&amp;... args)</arglist>
     </member>
     <member kind="function">
-      <type>Result</type>
+      <type>Error</type>
       <name>Join</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>ae781d3e549a84cebb2c463ba12df8cbf</anchor>
+      <anchor>a0fe525fdb9bcaccc319c79e1c74ee62e</anchor>
       <arglist>() noexcept</arglist>
     </member>
     <member kind="function">
@@ -2594,6 +2661,20 @@
       <arglist>()=default</arglist>
     </member>
     <member kind="function">
+      <type></type>
+      <name>Uuid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>aa2f1033714bf728e62eafbc880d502b6</anchor>
+      <arglist>(const uint8_t *data) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Uuid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a65228b364866048f39a365f5aaabcccb</anchor>
+      <arglist>(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version, const uint8_t clock_seq_and_node[8])</arglist>
+    </member>
+    <member kind="function">
       <type>constexpr</type>
       <name>Uuid</name>
       <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
@@ -2615,6 +2696,13 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
+      <type>const uint8_t *</type>
+      <name>data</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a21b8e060baa6eeed3e5e45e6d760b54c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
       <type>std::string</type>
       <name>ToString</name>
       <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
@@ -2626,6 +2714,41 @@
       <name>IsNull</name>
       <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
       <anchor>a27909eb1d61b8b261d259be7c70c58dd</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>UuidVersion</type>
+      <name>version</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>ad844a4829fe094c9603211c8d13c37bb</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>time_low</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a197e772363eb4fb42ca981f6690cc6eb</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>time_mid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a5a3534e539c75eb5add173f7f660d45a</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>time_hi_and_version</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a0fd84d72db93c35ce9d86a1fff1b1067</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::array&lt; uint8_t, 8 &gt;</type>
+      <name>clock_seq_and_node</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>ad1c7dfeea57e4e696bca56b1cb172292</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function" static="yes">
@@ -2739,16 +2862,256 @@
     </member>
   </compound>
   <compound kind="group">
+    <name>etcpal_acn_pdu</name>
+    <title>acn_pdu (ACN Protocol Family PDUs)</title>
+    <filename>group__etcpal__acn__pdu.html</filename>
+    <class kind="struct">AcnPdu</class>
+    <class kind="struct">AcnPduConstraints</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_LENGTH</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gae56bb8381a08d26f7a124eb82a65ce70</anchor>
+      <arglist>(pdu_buf)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_PACK_NORMAL_LEN</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga0c52657116f8cbc6376e4185aa10ed4e</anchor>
+      <arglist>(pdu_buf, length)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_PACK_EXT_LEN</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gaf63c612f16b76b5d1f56d569aa06de39</anchor>
+      <arglist>(pdu_buf, length)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_INIT</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga408e2eafbb588ee9138013a62c412e4c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_INIT_PDU</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga9c8ce768d1162956568cf55f2c42d6bb</anchor>
+      <arglist>(pduptr)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct AcnPdu</type>
+      <name>AcnPdu</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga3628638e45db8db2868d39815491d690</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct AcnPduConstraints</type>
+      <name>AcnPduConstraints</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga30e387a60bcb97095e371f5fca5b5962</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>acn_parse_pdu</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gab277ac11752967a19ded43f02e8bf0d4</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, const AcnPduConstraints *constraints, AcnPdu *pdu)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_L_FLAG_SET</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gaff1b6f9a3c23b53b3dc32b8fba814e84</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_V_FLAG_SET</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gabee5ccd32aebcd51a251a606c1059e6a</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_H_FLAG_SET</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga4e16a5ba393080866e3bf05184bdd8cc</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_D_FLAG_SET</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gabfbc18cb41624f62faf120c756e15a93</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_SET_L_FLAG</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gadb9812c9527ce0e9990ef2f4a7ba7384</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_SET_V_FLAG</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>gaf4b41a1aef5cd04be19b8dcb747445f5</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_SET_H_FLAG</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga242de4c8a855bf849a2571f4f959f39c</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_PDU_SET_D_FLAG</name>
+      <anchorfile>group__etcpal__acn__pdu.html</anchorfile>
+      <anchor>ga81c687ecab08faeb07309f0a105427fd</anchor>
+      <arglist>(flags_byte)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_acn_rlp</name>
+    <title>acn_rlp (ACN Root Layer Protocol)</title>
+    <filename>group__etcpal__acn__rlp.html</filename>
+    <class kind="struct">AcnTcpPreamble</class>
+    <class kind="struct">AcnUdpPreamble</class>
+    <class kind="struct">AcnRootLayerPdu</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_TCP_PREAMBLE_SIZE</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>gab879b13847509e3bbd4b12a5e2cda0e7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_UDP_PREAMBLE_SIZE</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga86207e41512354a1a6e321d95afe8ab0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_RLP_HEADER_SIZE_NORMAL_LEN</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga29ae7e116cd77cc00366461415bf54a7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ACN_RLP_HEADER_SIZE_EXT_LEN</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga9d9a7bd4498a28d5b0de8ed598141c66</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct AcnTcpPreamble</type>
+      <name>AcnTcpPreamble</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga548213c8a55f62ef6d1aaebebf5d9d92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct AcnUdpPreamble</type>
+      <name>AcnUdpPreamble</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>gac581ac5bbc25e6c544f10a718bb6a6d2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct AcnRootLayerPdu</type>
+      <name>AcnRootLayerPdu</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga1f5c4d94231529fba7aa1c852cde9665</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>acn_parse_tcp_preamble</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>gab2edaace9af15cb4dd54bfb8ad36fe88</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, AcnTcpPreamble *preamble)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>acn_parse_udp_preamble</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga14db47bbc1098cb4dfa4826f7a121d92</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, AcnUdpPreamble *preamble)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>acn_parse_root_layer_header</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga0174e7b359b079e56c0ac114f43d4161</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, AcnRootLayerPdu *pdu, AcnRootLayerPdu *last_pdu)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>acn_parse_root_layer_pdu</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>gabf21b75d1b5bfe26178b328c3cd2fa8d</anchor>
+      <arglist>(const uint8_t *buf, size_t buflen, AcnRootLayerPdu *pdu, AcnPdu *last_pdu)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>acn_pack_tcp_preamble</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga615060ff8e3ed0811418b60498872177</anchor>
+      <arglist>(uint8_t *buf, size_t buflen, size_t rlp_block_len)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>acn_pack_udp_preamble</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>gad1ebc44ac8675cea86bd5fa4a2f5a530</anchor>
+      <arglist>(uint8_t *buf, size_t buflen)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>acn_root_layer_buf_size</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga76d83773df9894ecbaf8b505647c32e5</anchor>
+      <arglist>(const AcnRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>acn_pack_root_layer_header</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>gaf4281e58f075ee0e14f2e6fa50f059b9</anchor>
+      <arglist>(uint8_t *buf, size_t buflen, const AcnRootLayerPdu *pdu)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>acn_pack_root_layer_block</name>
+      <anchorfile>group__etcpal__acn__rlp.html</anchorfile>
+      <anchor>ga3b7afd5a73e12e1acd650455c7e22997</anchor>
+      <arglist>(uint8_t *buf, size_t buflen, const AcnRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
     <name>etcpal</name>
     <title>etcpal (Core Modules)</title>
     <filename>group__etcpal.html</filename>
+    <subgroup>etcpal_acn_pdu</subgroup>
+    <subgroup>etcpal_acn_rlp</subgroup>
     <subgroup>etcpal_error</subgroup>
     <subgroup>etcpal_inet</subgroup>
     <subgroup>etcpal_log</subgroup>
     <subgroup>etcpal_mempool</subgroup>
     <subgroup>etcpal_netint</subgroup>
     <subgroup>etcpal_pack</subgroup>
-    <subgroup>etcpal_pdu</subgroup>
     <subgroup>etcpal_rbtree</subgroup>
     <subgroup>etcpal_socket</subgroup>
     <subgroup>etcpal_thread</subgroup>
@@ -4082,126 +4445,6 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_pdu</name>
-    <title>pdu (ACN Protocol Family PDUs)</title>
-    <filename>group__etcpal__pdu.html</filename>
-    <subgroup>etcpal_root_layer_pdu</subgroup>
-    <class kind="struct">EtcPalPdu</class>
-    <class kind="struct">EtcPalPduConstraints</class>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_LENGTH</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gaa6aa65e575ec892582f10af1a312064e</anchor>
-      <arglist>(pdu_buf)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_PACK_NORMAL_LEN</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>ga6c795b26ea3e1c78b545a54e2599c7f9</anchor>
-      <arglist>(pdu_buf, length)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_PACK_EXT_LEN</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gabb06693a6eb3ed13c253c8324f3efbb5</anchor>
-      <arglist>(pdu_buf, length)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_INIT</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gafb7d5c94b80a01d37fa4ec4edcc833c7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_INIT_PDU</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>ga0c0d07635b8236c97bb21bbd1eb61c8f</anchor>
-      <arglist>(pduptr)</arglist>
-    </member>
-    <member kind="typedef">
-      <type>struct EtcPalPdu</type>
-      <name>EtcPalPdu</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gafd2b4bca589bf922a6458962a1fa1b49</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>struct EtcPalPduConstraints</type>
-      <name>EtcPalPduConstraints</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gaffe297ca0b89d8b738dad159ccae904c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_parse_pdu</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>ga9a351fdaedcae30ce8999e4d9fbaf15e</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, const EtcPalPduConstraints *constraints, EtcPalPdu *pdu)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_L_FLAG_SET</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gaadfa588e12322808723c598fef9b2509</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_V_FLAG_SET</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>ga183303aee9717e2c0e662bbfb98dcc1f</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_H_FLAG_SET</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gac6bd98193bb97a1745a87ef1eddec36e</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_D_FLAG_SET</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>ga8395f03212e738c67fee8f6e458617a2</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_SET_L_FLAG</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>ga0aff4c299ef1edd12a62a94791787b05</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_SET_V_FLAG</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gafd5bbef88b8bf08ead91ccf04f44123a</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_SET_H_FLAG</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>ga895f3f23d5fc24feeaf6b9222960a7c0</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_PDU_SET_D_FLAG</name>
-      <anchorfile>group__etcpal__pdu.html</anchorfile>
-      <anchor>gac7b3e21b8c080aea188a2d577fd31d31</anchor>
-      <arglist>(flags_byte)</arglist>
-    </member>
-  </compound>
-  <compound kind="group">
     <name>etcpal_rbtree</name>
     <title>rbtree (Red-Black Trees)</title>
     <filename>group__etcpal__rbtree.html</filename>
@@ -4375,126 +4618,6 @@
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
       <anchor>gab04d15dd62a53956d6ea4b1e5dcbe930</anchor>
       <arglist>)(EtcPalRbNode *node)</arglist>
-    </member>
-  </compound>
-  <compound kind="group">
-    <name>etcpal_root_layer_pdu</name>
-    <title>root_layer_pdu (ACN Root Layer PDUs)</title>
-    <filename>group__etcpal__root__layer__pdu.html</filename>
-    <class kind="struct">EtcPalTcpPreamble</class>
-    <class kind="struct">EtcPalUdpPreamble</class>
-    <class kind="struct">EtcPalRootLayerPdu</class>
-    <member kind="define">
-      <type>#define</type>
-      <name>ACN_TCP_PREAMBLE_SIZE</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>gab879b13847509e3bbd4b12a5e2cda0e7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ACN_UDP_PREAMBLE_SIZE</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga86207e41512354a1a6e321d95afe8ab0</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ACN_RLP_HEADER_SIZE_NORMAL_LEN</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga29ae7e116cd77cc00366461415bf54a7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ACN_RLP_HEADER_SIZE_EXT_LEN</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga9d9a7bd4498a28d5b0de8ed598141c66</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>struct EtcPalTcpPreamble</type>
-      <name>EtcPalTcpPreamble</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga479d29909ff291c75531e5e45de4af11</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>struct EtcPalUdpPreamble</type>
-      <name>EtcPalUdpPreamble</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>gabceea25a6773878d73d5c73cff3413db</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>struct EtcPalRootLayerPdu</type>
-      <name>EtcPalRootLayerPdu</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>gafcee66c76b1dec0bbaf93f9589c0a8dd</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_parse_tcp_preamble</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga9d42879935ab912ec15d30e9415f5c4b</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, EtcPalTcpPreamble *preamble)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_parse_udp_preamble</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga9c5fe31670c57a02311d3d23f6b96904</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, EtcPalUdpPreamble *preamble)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_parse_root_layer_header</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>gaa454f9d1af3e45a1eefb61c3d4fd9496</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, EtcPalRootLayerPdu *pdu, EtcPalRootLayerPdu *last_pdu)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_parse_root_layer_pdu</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>gac604ba1761a3126ddf9095338ec2d4a4</anchor>
-      <arglist>(const uint8_t *buf, size_t buflen, EtcPalRootLayerPdu *pdu, EtcPalPdu *last_pdu)</arglist>
-    </member>
-    <member kind="function">
-      <type>size_t</type>
-      <name>etcpal_pack_tcp_preamble</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga83602488410ff9d31fb781afd5898463</anchor>
-      <arglist>(uint8_t *buf, size_t buflen, size_t rlp_block_len)</arglist>
-    </member>
-    <member kind="function">
-      <type>size_t</type>
-      <name>etcpal_pack_udp_preamble</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga205a77f2284495f4b9a16f07dcd43f83</anchor>
-      <arglist>(uint8_t *buf, size_t buflen)</arglist>
-    </member>
-    <member kind="function">
-      <type>size_t</type>
-      <name>etcpal_root_layer_buf_size</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga0d9d71dfeb84b94149e146292144615b</anchor>
-      <arglist>(const EtcPalRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
-    </member>
-    <member kind="function">
-      <type>size_t</type>
-      <name>etcpal_pack_root_layer_header</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>ga8d5021cdeed9c03dcc28d7f29fbac7d9</anchor>
-      <arglist>(uint8_t *buf, size_t buflen, const EtcPalRootLayerPdu *pdu)</arglist>
-    </member>
-    <member kind="function">
-      <type>size_t</type>
-      <name>etcpal_pack_root_layer_block</name>
-      <anchorfile>group__etcpal__root__layer__pdu.html</anchorfile>
-      <anchor>gabdadb9de2e41045c2010e6085f6ff456</anchor>
-      <arglist>(uint8_t *buf, size_t buflen, const EtcPalRootLayerPdu *pdu_block, size_t num_pdus)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -5262,7 +5385,7 @@
     <name>etcpal_cpp_error</name>
     <title>error (Error Handling)</title>
     <filename>group__etcpal__cpp__error.html</filename>
-    <class kind="class">etcpal::Result</class>
+    <class kind="class">etcpal::Error</class>
     <class kind="class">etcpal::BadExpectedAccess</class>
     <class kind="class">etcpal::Expected</class>
   </compound>
@@ -5291,6 +5414,7 @@
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
     <class kind="class">etcpal::RwLock</class>
+    <class kind="class">etcpal::Semaphore</class>
     <class kind="class">etcpal::MutexGuard</class>
     <class kind="class">etcpal::ReadGuard</class>
     <class kind="class">etcpal::WriteGuard</class>
@@ -5337,6 +5461,7 @@
     <subgroup>etcpal_mutex</subgroup>
     <subgroup>etcpal_signal</subgroup>
     <subgroup>etcpal_rwlock</subgroup>
+    <subgroup>etcpal_sem</subgroup>
   </compound>
   <compound kind="group">
     <name>etcpal_mutex</name>
@@ -5426,17 +5551,17 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>etcpal_signal_try_wait</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gaae6c46b47ab125aeac18bf0a27bc6f9d</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>etcpal_signal_timed_wait</name>
       <anchorfile>group__etcpal__signal.html</anchorfile>
       <anchor>ga770f7b128af027172c866a765f50f4fb</anchor>
       <arglist>(etcpal_signal_t *id, int timeout_ms)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_signal_poll</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gad04fbc96ac93defb7ea545c81a880f12</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5547,6 +5672,67 @@
       <anchorfile>group__etcpal__rwlock.html</anchorfile>
       <anchor>ga2d4feb63613ff8dfb1f106f5ed63dee5</anchor>
       <arglist>(etcpal_rwlock_t *id)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_sem</name>
+    <title>Counting Semaphores</title>
+    <filename>group__etcpal__sem.html</filename>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_sem_t</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>ga90664f75ae59f03b85b45cc19d3a55ef</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_sem_create</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>ga5f8de05c22efb1e25bf24890b4afb21d</anchor>
+      <arglist>(etcpal_sem_t *id, unsigned int initial_count, unsigned int max_count)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_sem_wait</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>gadf3cdb9d9d92dfde1b9933d6076e63aa</anchor>
+      <arglist>(etcpal_sem_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_sem_try_wait</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>ga4e6901853d69d55f97717f14bb6eb290</anchor>
+      <arglist>(etcpal_sem_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_sem_timed_wait</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>gad2f3af8fc26a2d028edd4c1341304061</anchor>
+      <arglist>(etcpal_sem_t *id, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_sem_post</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>ga9e39fbcf982a2d058c7b3f1c598d6aac</anchor>
+      <arglist>(etcpal_sem_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_sem_post_from_isr</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>gacd9bdeefdee24e47f40090840665c4fb</anchor>
+      <arglist>(etcpal_sem_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_sem_destroy</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>gaa4d8fce64dfa93c4c2f7bd08100ef8b0</anchor>
+      <arglist>(etcpal_sem_t *id)</arglist>
     </member>
   </compound>
   <compound kind="group">
