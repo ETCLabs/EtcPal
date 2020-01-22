@@ -2077,17 +2077,17 @@
       <arglist>(int timeout_ms=0)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>bool</type>
       <name>Post</name>
       <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
-      <anchor>a26bb434223a472d5c8abb371db0d88ed</anchor>
+      <anchor>a75b89ae344bccade98754cd1fedb13ac</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>bool</type>
       <name>PostFromIsr</name>
       <anchorfile>classetcpal_1_1_semaphore.html</anchorfile>
-      <anchor>ac6fc730736f2756d8c87e81ab5be1dc7</anchor>
+      <anchor>a4e8596ce5216d9d86625212982825670</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -2675,6 +2675,13 @@
       <arglist>(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version, const uint8_t clock_seq_and_node[8])</arglist>
     </member>
     <member kind="function">
+      <type></type>
+      <name>Uuid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a3682e9b132ceba22426927fefdafdeb3</anchor>
+      <arglist>(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version, const std::array&lt; uint8_t, 8 &gt; &amp;clock_seq_and_node)</arglist>
+    </member>
+    <member kind="function">
       <type>constexpr</type>
       <name>Uuid</name>
       <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
@@ -2834,6 +2841,34 @@
       <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
       <anchor>a1044c778e7f7ece83888dcf35c7613c3</anchor>
       <arglist>(const std::string &amp;device_str, const MacAddr &amp;mac_addr, uint32_t uuid_num) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>time_low</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a197e772363eb4fb42ca981f6690cc6eb</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>time_mid</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a5a3534e539c75eb5add173f7f660d45a</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>time_hi_and_version</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>a0fd84d72db93c35ce9d86a1fff1b1067</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::array&lt; uint8_t, 8 &gt;</type>
+      <name>clock_seq_and_node</name>
+      <anchorfile>classetcpal_1_1_uuid.html</anchorfile>
+      <anchor>ad1c7dfeea57e4e696bca56b1cb172292</anchor>
+      <arglist>() const noexcept</arglist>
     </member>
   </compound>
   <compound kind="class">

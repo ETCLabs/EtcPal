@@ -164,9 +164,53 @@ TEST(etcpal_uuid, generates_correct_v1_uuids)
   }
 }
 
+typedef struct UuidTestStruct
+{
+  int value_1;
+  int value_2;
+} UuidTestStruct;
+
 TEST(etcpal_uuid, generates_correct_v3_uuids)
 {
-  // TODO
+  EtcPalUuid namespace_1 = {
+      {0x4b, 0xb2, 0x6e, 0x1a, 0x91, 0x9d, 0x48, 0x53, 0x8c, 0x34, 0xc3, 0xc6, 0xf2, 0xfb, 0x4c, 0x68}};
+  EtcPalUuid namespace_2 = {
+      {0x5d, 0xe8, 0x7a, 0x3f, 0x35, 0x32, 0x47, 0x43, 0x86, 0xc4, 0x61, 0x8b, 0xd5, 0x6c, 0xbd, 0xb1}};
+  UuidTestStruct name_1 = {20, 40};
+  UuidTestStruct name_2 = {20, 60};
+
+  EtcPalUuid uuid_ns1_name1;
+  EtcPalUuid uuid_ns1_name1_dup;
+  EtcPalUuid uuid_ns2_name1;
+  EtcPalUuid uuid_ns1_name2;
+  EtcPalUuid uuid_ns2_name2;
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&namespace_1, &name_1, sizeof name_1, &uuid_ns1_name1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&namespace_1, &name_1, sizeof name_1, &uuid_ns1_name1_dup));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&namespace_2, &name_1, sizeof name_1, &uuid_ns2_name1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&namespace_1, &name_2, sizeof name_2, &uuid_ns1_name2));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v3_uuid(&namespace_2, &name_2, sizeof name_2, &uuid_ns2_name2));
+
+  // UUIDs with the same name from different namespaces should not be equal
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns1_name1, &uuid_ns2_name1));
+  // UUIDs with different names from the same namespace should not be equal
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns1_name1, &uuid_ns1_name2));
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns2_name1, &uuid_ns2_name2));
+  // UUIDs with the same name from the same namespace should be equal
+  TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns1_name1, &uuid_ns1_name1_dup));
+
+  // Make sure the Variant Version bits are correct.
+  // We should always have Variant 1, Version 3.
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name2.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name2.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name1.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name1.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name2.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name2.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1_dup.data[6] & 0xf0u), 0x30u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1_dup.data[8] & 0xc0u), 0x80u);
 }
 
 TEST(etcpal_uuid, generates_correct_v4_uuids)
@@ -206,7 +250,45 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
 
 TEST(etcpal_uuid, generates_correct_v5_uuids)
 {
-  // TODO
+  EtcPalUuid namespace_1 = {
+      {0x11, 0x82, 0xb6, 0x0f, 0xe6, 0xbe, 0x4c, 0xc5, 0x82, 0xc9, 0x20, 0x0d, 0xd7, 0x5f, 0xe7, 0xa5}};
+  EtcPalUuid namespace_2 = {
+      {0x2e, 0xb2, 0xbb, 0x77, 0x75, 0xdd, 0x41, 0xdf, 0x9f, 0xaf, 0x63, 0x02, 0xc0, 0x32, 0xd2, 0x48}};
+  UuidTestStruct name_1 = {20, 40};
+  UuidTestStruct name_2 = {20, 60};
+
+  EtcPalUuid uuid_ns1_name1;
+  EtcPalUuid uuid_ns1_name1_dup;
+  EtcPalUuid uuid_ns2_name1;
+  EtcPalUuid uuid_ns1_name2;
+  EtcPalUuid uuid_ns2_name2;
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v5_uuid(&namespace_1, &name_1, sizeof name_1, &uuid_ns1_name1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v5_uuid(&namespace_1, &name_1, sizeof name_1, &uuid_ns1_name1_dup));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v5_uuid(&namespace_2, &name_1, sizeof name_1, &uuid_ns2_name1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v5_uuid(&namespace_1, &name_2, sizeof name_2, &uuid_ns1_name2));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_generate_v5_uuid(&namespace_2, &name_2, sizeof name_2, &uuid_ns2_name2));
+
+  // UUIDs with the same name from different namespaces should not be equal
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns1_name1, &uuid_ns2_name1));
+  // UUIDs with different names from the same namespace should not be equal
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns1_name1, &uuid_ns1_name2));
+  TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns2_name1, &uuid_ns2_name2));
+  // UUIDs with the same name from the same namespace should be equal
+  TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid_ns1_name1, &uuid_ns1_name1_dup));
+
+  // Make sure the Variant Version bits are correct.
+  // We should always have Variant 1, Version 5.
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1.data[6] & 0xf0u), 0x50u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name2.data[6] & 0xf0u), 0x50u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name2.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name1.data[6] & 0xf0u), 0x50u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name1.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name2.data[6] & 0xf0u), 0x50u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns2_name2.data[8] & 0xc0u), 0x80u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1_dup.data[6] & 0xf0u), 0x50u);
+  TEST_ASSERT_EQUAL_UINT8((uuid_ns1_name1_dup.data[8] & 0xc0u), 0x80u);
 }
 
 TEST(etcpal_uuid, generates_os_preferred_uuids)
@@ -261,19 +343,6 @@ TEST(etcpal_uuid, generates_correct_device_uuids)
   TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid2, &uuid4));
   TEST_ASSERT_NOT_EQUAL(0, ETCPAL_UUID_CMP(&uuid3, &uuid4));
   TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid1_dup));
-
-  // Make sure the Variant Version bits are correct.
-  // We should always have Variant 1, Version 3.
-  TEST_ASSERT_EQUAL_UINT8((uuid1.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid1.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid2.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid2.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid3.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid3.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid4.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid4.data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL_UINT8((uuid1_dup.data[6] & 0xf0u), 0x30u);
-  TEST_ASSERT_EQUAL_UINT8((uuid1_dup.data[8] & 0xc0u), 0x80u);
 }
 
 TEST_GROUP_RUNNER(etcpal_uuid)

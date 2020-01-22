@@ -74,9 +74,7 @@ TEST(mutex_integration, mutex_thread_test)
 {
   etcpal_thread_t threads[NUM_THREADS];
 
-  EtcPalThreadParams params;
-  ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);
-
+  EtcPalThreadParams params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
   for (size_t i = 0; i < NUM_THREADS; ++i)
   {
     char error_msg[50];

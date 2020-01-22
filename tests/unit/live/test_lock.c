@@ -105,9 +105,33 @@ TEST(etcpal_lock, signal_create_and_destroy_works)
   TEST_ASSERT_FALSE(etcpal_signal_wait(&signal));
 }
 
+TEST(etcpal_lock, sem_create_and_destroy_works)
+{
+  etcpal_sem_t sem;
+
+  // Basic creation, with an initial count of 1
+  TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 1, 10));
+
+  // Wait should decrement the count to 0
+  TEST_ASSERT_TRUE(etcpal_sem_wait(&sem));
+
+  // Now wait should fail
+  TEST_ASSERT_FALSE(etcpal_sem_try_wait(&sem));
+
+  // After posting, wait should work again
+  TEST_ASSERT_TRUE(etcpal_sem_post(&sem));
+  TEST_ASSERT_TRUE(etcpal_sem_wait(&sem));
+
+  // Wait should fail on a destroyed semaphore
+  TEST_ASSERT_TRUE(etcpal_sem_post(&sem));
+  etcpal_sem_destroy(&sem);
+  TEST_ASSERT_FALSE(etcpal_sem_wait(&sem));
+}
+
 TEST_GROUP_RUNNER(etcpal_lock)
 {
   RUN_TEST_CASE(etcpal_lock, mutex_create_and_destroy_works);
   RUN_TEST_CASE(etcpal_lock, rwlock_create_and_destroy_works);
   RUN_TEST_CASE(etcpal_lock, signal_create_and_destroy_works);
+  RUN_TEST_CASE(etcpal_lock, sem_create_and_destroy_works);
 }

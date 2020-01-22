@@ -522,8 +522,8 @@ public:
 
   bool Wait();
   bool TryWait(int timeout_ms = 0);
-  void Post();
-  void PostFromIsr();
+  bool Post();
+  bool PostFromIsr();
 
   etcpal_sem_t& get();
 
@@ -567,9 +567,9 @@ inline bool Semaphore::TryWait(int timeout_ms)
 /// \brief Post the semaphore.
 ///
 /// See etcpal_sem_post().
-inline void Semaphore::Post()
+inline bool Semaphore::Post()
 {
-  etcpal_sem_post(&sem_);
+  return etcpal_sem_post(&sem_);
 }
 
 /// \brief Post the semaphore from an interrupt context.
@@ -577,9 +577,9 @@ inline void Semaphore::Post()
 /// **NOTE**: Only meaningful on some platforms. See the table in \ref etcpal_sem and
 /// etcpal_sem_post_from_isr() for more information. On platforms on which it is not meaningful,
 /// executes the equivalent of Post().
-inline void Semaphore::PostFromIsr()
+inline bool Semaphore::PostFromIsr()
 {
-  etcpal_sem_post_from_isr(&sem_);
+  return etcpal_sem_post_from_isr(&sem_);
 }
 
 /// \brief Get a reference to the underlying etcpal_sem_t type.
