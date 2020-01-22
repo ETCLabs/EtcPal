@@ -56,7 +56,7 @@ namespace etcpal
 /// // This class handles the log messages gathered by the Logger class.
 /// class MyLogHandler : public etcpal::LogMessageHandler
 /// {
-///   EtcPalLogTimeParams GetLogTimestamp() override
+///   EtcPalLogTimestamp GetLogTimestamp() override
 ///   {
 ///     // Grab a timestamp from the local system and return it
 ///   }
@@ -123,8 +123,8 @@ namespace etcpal
 class LogMessageHandler
 {
 public:
-  /// Return an EtcPalLogTimeParams representing the current local time.
-  virtual EtcPalLogTimeParams GetLogTimestamp() = 0;
+  /// Return an EtcPalLogTimestamp representing the current local time.
+  virtual EtcPalLogTimestamp GetLogTimestamp() = 0;
 
   /// \brief Define this function to handle log messages and determine what to do with them.
   ///

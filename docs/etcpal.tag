@@ -522,61 +522,61 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>EtcPalLogTimeParams</name>
-    <filename>struct_etc_pal_log_time_params.html</filename>
+    <name>EtcPalLogTimestamp</name>
+    <filename>struct_etc_pal_log_timestamp.html</filename>
     <member kind="variable">
       <type>int</type>
       <name>year</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>abeac221e38b7b9ce7df8722c842bf671</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>month</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>aedb06abe5aff12fa3e7e0e71a374edfb</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>day</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>a4c11afc03fc3ee49bab660def6558f2a</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>hour</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>a15df9ba285cfd842f284025f904edc9c</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>minute</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>a5edffad982a0566ad01d95005474eae3</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>second</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>a6cf35be1947a62f134392fcb1b3c54d2</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>msec</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>ad957f34cd6e8272740bc231865080b22</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>int</type>
       <name>utc_offset</name>
-      <anchorfile>struct_etc_pal_log_time_params.html</anchorfile>
+      <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
       <anchor>a0d5ceb6295477b5931bf54c002e36fe9</anchor>
       <arglist></arglist>
     </member>
@@ -1766,10 +1766,10 @@
     <name>etcpal::LogMessageHandler</name>
     <filename>classetcpal_1_1_log_message_handler.html</filename>
     <member kind="function" virtualness="pure">
-      <type>virtual EtcPalLogTimeParams</type>
+      <type>virtual EtcPalLogTimestamp</type>
       <name>GetLogTimestamp</name>
       <anchorfile>classetcpal_1_1_log_message_handler.html</anchorfile>
-      <anchor>a7decf0de3a269411596b20905a8c8664</anchor>
+      <anchor>a9639d904b20db4a1e7a85e8d7901703f</anchor>
       <arglist>()=0</arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -3769,7 +3769,7 @@
     <name>etcpal_log</name>
     <title>log (Logging)</title>
     <filename>group__etcpal__log.html</filename>
-    <class kind="struct">EtcPalLogTimeParams</class>
+    <class kind="struct">EtcPalLogTimestamp</class>
     <class kind="struct">EtcPalLogStrings</class>
     <class kind="struct">EtcPalSyslogParams</class>
     <class kind="struct">EtcPalLogParams</class>
@@ -3886,10 +3886,10 @@
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>struct EtcPalLogTimeParams</type>
-      <name>EtcPalLogTimeParams</name>
+      <type>struct EtcPalLogTimestamp</type>
+      <name>EtcPalLogTimestamp</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga3cfc242617ad25826b445fce64b800a0</anchor>
+      <anchor>ga6ce3e6fd83a776f1696163386ed4fde0</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -3910,8 +3910,8 @@
       <type>void(*</type>
       <name>EtcPalLogTimeFn</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga3e3f125146999063f5d25dc98686744d</anchor>
-      <arglist>)(void *context, EtcPalLogTimeParams *time_params)</arglist>
+      <anchor>gae62cd1cd05e3e42c5df41cab8df8e9e3</anchor>
+      <arglist>)(void *context, EtcPalLogTimestamp *timestamp)</arglist>
     </member>
     <member kind="typedef">
       <type>struct EtcPalSyslogParams</type>
@@ -3956,15 +3956,15 @@
       <type>bool</type>
       <name>etcpal_create_syslog_str</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga066f11ddd10e75d38a379a648d2dcba4</anchor>
-      <arglist>(char *buf, size_t buflen, const EtcPalLogTimeParams *time, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</arglist>
+      <anchor>gaa2365ff7f93fa95a0ca2522505d94879</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *time, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>etcpal_create_log_str</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga9e67b13d5afeb1049caecdbf9fbf5171</anchor>
-      <arglist>(char *buf, size_t buflen, const EtcPalLogTimeParams *time, int pri, const char *format,...)</arglist>
+      <anchor>gac6729f206b5d6267dc0cd42a4150ff56</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *time, int pri, const char *format,...)</arglist>
     </member>
     <member kind="function">
       <type>void</type>

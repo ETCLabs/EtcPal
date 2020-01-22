@@ -26,17 +26,17 @@
 class TestLogMessageHandler : public etcpal::LogMessageHandler
 {
 public:
-  void WillReturnTimestamp(const EtcPalLogTimeParams& timestamp) { timestamp_to_return_ = timestamp; }
+  void WillReturnTimestamp(const EtcPalLogTimestamp& timestamp) { timestamp_to_return_ = timestamp; }
   void OnLogEvent(const std::function<void(const EtcPalLogStrings&)>& func) { log_event_ = func; }
 
   int LogEventCallCount() const { return log_event_call_count_; }
   void ResetLogEventCallCount() { log_event_call_count_ = 0; }
 
 private:
-  EtcPalLogTimeParams GetLogTimestamp() override { return timestamp_to_return_; }
+  EtcPalLogTimestamp GetLogTimestamp() override { return timestamp_to_return_; }
   void HandleLogMessage(const EtcPalLogStrings& strings) override;
 
-  EtcPalLogTimeParams timestamp_to_return_{};
+  EtcPalLogTimestamp timestamp_to_return_{};
   std::function<void(const EtcPalLogStrings&)> log_event_;
   int log_event_call_count_{0};
 };
@@ -234,7 +234,7 @@ TEST(etcpal_cpp_log, timestamps_work)
                        .Startup(test_log_handler));
 
   // January 22, 2020 16:57:33.123 UTC-06:00
-  EtcPalLogTimeParams timestamp = {2020, 1, 22, 16, 57, 33, 123, -360};
+  EtcPalLogTimestamp timestamp = {2020, 1, 22, 16, 57, 33, 123, -360};
   test_log_handler.WillReturnTimestamp(timestamp);
 
   test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {

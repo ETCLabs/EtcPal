@@ -52,7 +52,7 @@
  *
  * \code
  * char msg_buf[ETCPAL_LOG_STR_MAX_LEN];
- * EtcPalLogTimeParams current_time; // Fill in with current time...
+ * EtcPalLogTimestamp current_time; // Fill in with current time...
  * etcpal_create_log_str(msg_buf, ETCPAL_LOG_STR_MAX_LEN, &current_time, ETCPAL_LOG_WARNING,
  *                       "Something bad has happened: error code %d!", 42);
  * \endcode
@@ -90,9 +90,9 @@
  * #EtcPalLogTimeFn which is called to get the current time for each log message.
  *
  * \code
- * void my_time_callback(void* context, EtcPalLogTimeParams* time_params)
+ * void my_time_callback(void* context, EtcPalLogTimestamp* timestamp)
  * {
- *   // Fill in time_params with the current time...
+ *   // Fill in timestamp with the current time...
  * }
  *
  * void my_log_callback(void* context, EtcPalLogStrings* log_strings)
@@ -251,7 +251,7 @@
 #define ETCPAL_LOG_STR_MAX_LEN (8u + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) + ETCPAL_RAW_LOG_MSG_MAX_LEN)
 
 /*! A set of parameters which represent the current local time with millisecond resolution. */
-typedef struct EtcPalLogTimeParams
+typedef struct EtcPalLogTimestamp
 {
   int year;       /*!< Absolute year. Valid range 0-9999. */
   int month;      /*!< Month of the year. Valid range 1-12 (starting with 1 for January). */
@@ -261,7 +261,7 @@ typedef struct EtcPalLogTimeParams
   int second;     /*!< Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
   int msec;       /*!< Milliseconds past the current second. Valid range 0-999. */
   int utc_offset; /*!< The local offset from UTC in minutes. */
-} EtcPalLogTimeParams;
+} EtcPalLogTimestamp;
 
 /*! The set of log strings passed with a call to an etcpal_log_callback function. Any members not
  *  requested in the corresponding EtcPalLogParams struct will be NULL. */
@@ -304,9 +304,9 @@ typedef void (*EtcPalLogCallback)(void* context, const EtcPalLogStrings* strings
  *
  * \param[in] context Optional application-provided value that was previously passed to the library
  *                    module.
- * \param[out] time_params Fill this in with the current local time.
+ * \param[out] timestamp Fill this in with the current local time.
  */
-typedef void (*EtcPalLogTimeFn)(void* context, EtcPalLogTimeParams* time_params);
+typedef void (*EtcPalLogTimeFn)(void* context, EtcPalLogTimestamp* timestamp);
 
 /*! Which types of log message(s) the etcpal_log() and etcpal_vlog() functions create. */
 typedef enum
@@ -364,7 +364,7 @@ extern "C" {
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time,
+bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* time,
                               const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 6, 7)))
@@ -374,7 +374,7 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimeParam
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimeParams* time, int pri, const char* format, ...)
+bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* time, int pri, const char* format, ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 5, 6)))
 #endif

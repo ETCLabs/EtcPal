@@ -33,20 +33,20 @@
 #endif
 
 FAKE_VOID_FUNC(log_callback, void*, const EtcPalLogStrings*);
-FAKE_VOID_FUNC(time_callback, void*, EtcPalLogTimeParams*);
+FAKE_VOID_FUNC(time_callback, void*, EtcPalLogTimestamp*);
 
-EtcPalLogTimeParams cur_time;
+EtcPalLogTimestamp cur_time;
 EtcPalLogStrings last_log_strings_received;
 
 // Buffers for tests of the create_*_str functions
 static char syslog_buf[ETCPAL_SYSLOG_STR_MAX_LEN];
 static char human_buf[ETCPAL_LOG_STR_MAX_LEN];
 
-static void fill_time_params(void* context, EtcPalLogTimeParams* time_params)
+static void fill_timestamp(void* context, EtcPalLogTimestamp* timestamp)
 {
   (void)context;
-  TEST_ASSERT_TRUE(time_params);
-  *time_params = cur_time;
+  TEST_ASSERT_TRUE(timestamp);
+  *timestamp = cur_time;
 }
 
 static void save_log_strings(void* context, const EtcPalLogStrings* strings)
@@ -56,16 +56,16 @@ static void save_log_strings(void* context, const EtcPalLogStrings* strings)
   last_log_strings_received = *strings;
 }
 
-static void fill_default_time(EtcPalLogTimeParams* time_params)
+static void fill_default_time(EtcPalLogTimestamp* timestamp)
 {
-  time_params->year = 1970;     // absolute year
-  time_params->month = 1;       // month of the year - [1, 12]
-  time_params->day = 1;         // day of the month - [1, 31]
-  time_params->hour = 0;        // hours since midnight - [0, 23]
-  time_params->minute = 0;      // minutes after the hour - [0, 59]
-  time_params->second = 0;      // seconds after the minute - [0, 60] including leap second
-  time_params->msec = 0;        // milliseconds after the second - [0, 999]
-  time_params->utc_offset = 0;  // Local offset from UTC in minutes
+  timestamp->year = 1970;     // absolute year
+  timestamp->month = 1;       // month of the year - [1, 12]
+  timestamp->day = 1;         // day of the month - [1, 31]
+  timestamp->hour = 0;        // hours since midnight - [0, 23]
+  timestamp->minute = 0;      // minutes after the hour - [0, 59]
+  timestamp->second = 0;      // seconds after the minute - [0, 60] including leap second
+  timestamp->msec = 0;        // milliseconds after the second - [0, 999]
+  timestamp->utc_offset = 0;  // Local offset from UTC in minutes
 }
 
 TEST_GROUP(etcpal_log);
@@ -79,7 +79,7 @@ TEST_SETUP(etcpal_log)
   RESET_FAKE(log_callback);
   RESET_FAKE(time_callback);
   log_callback_fake.custom_fake = save_log_strings;
-  time_callback_fake.custom_fake = fill_time_params;
+  time_callback_fake.custom_fake = fill_timestamp;
 }
 
 TEST_TEAR_DOWN(etcpal_log)
@@ -248,13 +248,13 @@ TEST(etcpal_log, syslog_header_is_well_formed)
 #define SYSLOG_HEADER_TEST_MESSAGE "Test Message"
 
   // For each set of parameters, test both the etcpal_log() and etcpal_create_syslog_str() functions.
-#define SYSLOG_HEADER_TEST_AND_ASSERT(time_params)                                                     \
-  etcpal_log(&lparams, ETCPAL_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                                  \
-  etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, time_params, &lparams.syslog_params, \
-                           ETCPAL_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                              \
-  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);                                             \
-  TEST_ASSERT_EQUAL_STRING(last_log_strings_received.syslog, expect_syslog_str);                       \
-  TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);                                             \
+#define SYSLOG_HEADER_TEST_AND_ASSERT(timestamp)                                                                       \
+  etcpal_log(&lparams, ETCPAL_LOG_EMERG, SYSLOG_HEADER_TEST_MESSAGE);                                                  \
+  etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, timestamp, &lparams.syslog_params, ETCPAL_LOG_EMERG, \
+                           SYSLOG_HEADER_TEST_MESSAGE);                                                                \
+  TEST_ASSERT_EQUAL_UINT(log_callback_fake.call_count, 1);                                                             \
+  TEST_ASSERT_EQUAL_STRING(last_log_strings_received.syslog, expect_syslog_str);                                       \
+  TEST_ASSERT_EQUAL_STRING(syslog_buf, expect_syslog_str);                                                             \
   RESET_FAKE(log_callback)
 
   // Validate (and also sanitize) the log params
