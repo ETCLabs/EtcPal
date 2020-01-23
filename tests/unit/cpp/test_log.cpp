@@ -49,6 +49,7 @@ void TestLogMessageHandler::HandleLogMessage(const EtcPalLogStrings& strings)
 }
 
 static TestLogMessageHandler test_log_handler;
+static etcpal::Logger logger;
 
 extern "C" {
 TEST_GROUP(etcpal_cpp_log);
@@ -56,6 +57,7 @@ TEST_GROUP(etcpal_cpp_log);
 TEST_SETUP(etcpal_cpp_log)
 {
   etcpal_init(ETCPAL_FEATURE_LOGGING);
+  logger = etcpal::Logger{};
   test_log_handler = TestLogMessageHandler{};
 }
 
@@ -70,7 +72,6 @@ TEST(etcpal_cpp_log, startup_works)
     TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [DBUG] Test Message");
   });
 
-  etcpal::Logger logger;
   // Logging should not work if the logger has not been started
   logger.Debug("Test Message");
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 0);
@@ -89,7 +90,6 @@ TEST(etcpal_cpp_log, startup_works)
 // Test the dispatch_policy and log_action setters/getters
 TEST(etcpal_cpp_log, basic_getters_work)
 {
-  etcpal::Logger logger;
   logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct).SetLogAction(kEtcPalLogCreateSyslog);
 
   TEST_ASSERT_EQUAL(logger.dispatch_policy(), etcpal::LogDispatchPolicy::Direct);
@@ -99,7 +99,6 @@ TEST(etcpal_cpp_log, basic_getters_work)
 // Test the functionality of the log mask.
 TEST(etcpal_cpp_log, log_mask_works)
 {
-  etcpal::Logger logger;
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
                        .SetLogAction(kEtcPalLogCreateHumanReadable)
                        .Startup(test_log_handler));
@@ -145,7 +144,6 @@ TEST(etcpal_cpp_log, log_mask_works)
 // Test the functionality of the Log() and log shortcut functions.
 TEST(etcpal_cpp_log, log_functions_work)
 {
-  etcpal::Logger logger;
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
                        .SetLogAction(kEtcPalLogCreateHumanReadable)
                        .Startup(test_log_handler));
@@ -228,7 +226,6 @@ TEST(etcpal_cpp_log, log_functions_work)
 
 TEST(etcpal_cpp_log, timestamps_work)
 {
-  etcpal::Logger logger;
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
                        .SetLogAction(kEtcPalLogCreateHumanReadable)
                        .Startup(test_log_handler));
@@ -248,7 +245,6 @@ TEST(etcpal_cpp_log, timestamps_work)
 
 TEST(etcpal_cpp_log, syslog_params_work)
 {
-  etcpal::Logger logger;
   TEST_ASSERT_TRUE(logger.SetSyslogFacility(ETCPAL_LOG_LOCAL1)
                        .SetSyslogHostname("MyHost")
                        .SetSyslogAppName("TestApp")
