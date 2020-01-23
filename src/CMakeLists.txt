@@ -51,6 +51,8 @@ add_library(EtcPal
   ${ETCPAL_ROOT}/src/etcpal/mempool.c
   ${ETCPAL_ROOT}/src/etcpal/pack.c
   ${ETCPAL_ROOT}/src/etcpal/rbtree.c
+  ${ETCPAL_ROOT}/src/etcpal/sha1.h
+  ${ETCPAL_ROOT}/src/etcpal/sha1.c
   ${ETCPAL_ROOT}/src/etcpal/timer.c
   ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
@@ -138,6 +140,8 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal/mempool.c
     ${ETCPAL_ROOT}/src/etcpal/pack.c
     ${ETCPAL_ROOT}/src/etcpal/rbtree.c
+    ${ETCPAL_ROOT}/src/etcpal/sha1.h
+    ${ETCPAL_ROOT}/src/etcpal/sha1.c
     ${ETCPAL_ROOT}/src/etcpal/timer.c
     ${ETCPAL_ROOT}/src/etcpal/uuid.c
 

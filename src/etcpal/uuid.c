@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include "etcpal/pack.h"
 #include "md5.h"
+#include "sha1.h"
 
 /****************************** Private macros *******************************/
 
@@ -140,21 +141,6 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
  * \return #kEtcPalErrSys: An internal library of system call error occurred.
  */
 
-/* Quick utility for generating a uuid out of a md5 hash buffer */
-static void generate_from_hash(MD5_CTX* pmd5, EtcPalUuid* uuid_out)
-{
-  uint8_t buffer[ETCPAL_UUID_BYTES];
-  MD5Final(buffer, pmd5);
-
-  /* Add the UUID flags into the buffer */
-  /* The Version bits to say this is a name-based UUID using MD5 */
-  buffer[6] = (uint8_t)(0x30 | (buffer[6] & 0x0f));
-  /* The variant bits to say this is encoded via RFC 4122 */
-  buffer[8] = (uint8_t)(0x80 | (buffer[8] & 0x3f));
-
-  memcpy(uuid_out->data, buffer, ETCPAL_UUID_BYTES);
-}
-
 /*!
  * \brief Generate a Version 3 UUID.
  *
@@ -184,8 +170,14 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
   MD5Init(&md5);
   MD5Update(&md5, ns->data, ETCPAL_UUID_BYTES);
   MD5Update(&md5, (const uint8_t*)name, (unsigned int)name_len);
+  MD5Final(uuid->data, &md5);
 
-  generate_from_hash(&md5, uuid);
+  // Add the UUID flags into the buffer
+  // The Version bits to say this is a name-based UUID using MD5
+  uuid->data[6] = (uint8_t)(0x30 | (uuid->data[6] & 0x0f));
+  // The variant bits to say this is encoded via RFC 4122
+  uuid->data[8] = (uint8_t)(0x80 | (uuid->data[8] & 0x3f));
+
   return kEtcPalErrOk;
 }
 
@@ -230,7 +222,25 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
  */
 etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid)
 {
-  return kEtcPalErrNotImpl;
+  if (!ns || !name || name_len == 0 || !uuid)
+    return kEtcPalErrInvalid;
+
+  SHA1_CTX sha1;
+  unsigned char hash[20];
+
+  SHA1Init(&sha1);
+  SHA1Update(&sha1, ns->data, ETCPAL_UUID_BYTES);
+  SHA1Update(&sha1, name, (uint32_t)name_len);
+  SHA1Final(hash, &sha1);
+
+  // Add the UUID flags into the buffer
+  // The Version bits to say this is a name-based UUID using SHA-1
+  hash[6] = (uint8_t)(0x50 | (hash[6] & 0x0f));
+  // The variant bits to say this is encoded via RFC 4122
+  hash[8] = (uint8_t)(0x80 | (hash[8] & 0x3f));
+
+  memcpy(uuid->data, hash, ETCPAL_UUID_BYTES);
+  return kEtcPalErrOk;
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
@@ -255,7 +265,7 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
  * \brief Generate a UUID from a combination of a custom string and MAC address.
  *
  * This function is for use by embedded devices that want to create UUIDs representing themselves,
- * and create the same UUIDs each time. It creates a Version 3 UUID (defined in RFC 4122) within a
+ * and create the same UUIDs each time. It creates a Version 5 UUID (defined in RFC 4122) within a
  * constant, hardcoded namespace. The UUID output is deterministic for each combination of dev_str,
  * mac_addr and uuid_num inputs.
  *
@@ -289,5 +299,5 @@ etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const EtcPalMacA
   memcpy(&name[ETCPAL_UUID_DEV_STR_MAX_LEN], mac_addr->data, ETCPAL_MAC_BYTES);
   etcpal_pack_u32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + ETCPAL_MAC_BYTES], uuid_num);
 
-  return etcpal_generate_v3_uuid(&namespace, name, TOTAL_NAME_LEN, uuid);
+  return etcpal_generate_v5_uuid(&namespace, name, TOTAL_NAME_LEN, uuid);
 }
