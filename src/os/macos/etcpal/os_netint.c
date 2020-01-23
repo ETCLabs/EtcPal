@@ -194,8 +194,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
-    strncpy(current_info->name, ifaddr->ifa_name, ETCPAL_NETINTINFO_NAME_LEN);
-    current_info->name[ETCPAL_NETINTINFO_NAME_LEN - 1] = '\0';
+    strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
+    current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
     strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
     current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
 

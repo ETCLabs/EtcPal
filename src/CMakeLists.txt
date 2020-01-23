@@ -19,19 +19,17 @@ target_include_directories(EtcPalInterface INTERFACE
 
 add_library(EtcPal
   # EtcPal headers
+  ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
   ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
-  ${ETCPAL_ROOT}/include/etcpal/bool.h
+  ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
   ${ETCPAL_ROOT}/include/etcpal/uuid.h
   ${ETCPAL_ROOT}/include/etcpal/common.h
   ${ETCPAL_ROOT}/include/etcpal/error.h
   ${ETCPAL_ROOT}/include/etcpal/inet.h
-  ${ETCPAL_ROOT}/include/etcpal/int.h
   ${ETCPAL_ROOT}/include/etcpal/log.h
   ${ETCPAL_ROOT}/include/etcpal/mempool.h
   ${ETCPAL_ROOT}/include/etcpal/pack.h
-  ${ETCPAL_ROOT}/include/etcpal/pdu.h
   ${ETCPAL_ROOT}/include/etcpal/rbtree.h
-  ${ETCPAL_ROOT}/include/etcpal/root_layer_pdu.h
   ${ETCPAL_ROOT}/include/etcpal/socket.h
   ${ETCPAL_ROOT}/include/etcpal/timer.h
 
@@ -42,6 +40,8 @@ add_library(EtcPal
   ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal/os_inet.h
 
   # EtcPal sources
+  ${ETCPAL_ROOT}/src/etcpal/acn_pdu.c
+  ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
   ${ETCPAL_ROOT}/src/etcpal/common.c
   ${ETCPAL_ROOT}/src/etcpal/error.c
   ${ETCPAL_ROOT}/src/etcpal/inet.c
@@ -50,9 +50,7 @@ add_library(EtcPal
   ${ETCPAL_ROOT}/src/etcpal/md5.c
   ${ETCPAL_ROOT}/src/etcpal/mempool.c
   ${ETCPAL_ROOT}/src/etcpal/pack.c
-  ${ETCPAL_ROOT}/src/etcpal/pdu.c
   ${ETCPAL_ROOT}/src/etcpal/rbtree.c
-  ${ETCPAL_ROOT}/src/etcpal/root_layer_pdu.c
   ${ETCPAL_ROOT}/src/etcpal/timer.c
   ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
@@ -105,18 +103,16 @@ install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal DESTINAT
 if(ETCPAL_BUILD_MOCK_LIB)
   add_library(EtcPalMock
     # EtcPal headers
+    ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
     ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
-    ${ETCPAL_ROOT}/include/etcpal/bool.h
+    ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
     ${ETCPAL_ROOT}/include/etcpal/uuid.h
     ${ETCPAL_ROOT}/include/etcpal/error.h
     ${ETCPAL_ROOT}/include/etcpal/inet.h
-    ${ETCPAL_ROOT}/include/etcpal/int.h
     ${ETCPAL_ROOT}/include/etcpal/log.h
     ${ETCPAL_ROOT}/include/etcpal/mempool.h
     ${ETCPAL_ROOT}/include/etcpal/pack.h
-    ${ETCPAL_ROOT}/include/etcpal/pdu.h
     ${ETCPAL_ROOT}/include/etcpal/rbtree.h
-    ${ETCPAL_ROOT}/include/etcpal/root_layer_pdu.h
 
     ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_lock.h
     ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal/os_thread.h
@@ -132,6 +128,8 @@ if(ETCPAL_BUILD_MOCK_LIB)
 
     # EtcPal sources
     # We will gradually substitute these with mocks as needed
+    ${ETCPAL_ROOT}/src/etcpal/acn_pdu.c
+    ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
     ${ETCPAL_ROOT}/src/etcpal/error.c
     ${ETCPAL_ROOT}/src/etcpal/inet.c
     ${ETCPAL_ROOT}/src/etcpal/log.c
@@ -139,9 +137,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal/md5.c
     ${ETCPAL_ROOT}/src/etcpal/mempool.c
     ${ETCPAL_ROOT}/src/etcpal/pack.c
-    ${ETCPAL_ROOT}/src/etcpal/pdu.c
     ${ETCPAL_ROOT}/src/etcpal/rbtree.c
-    ${ETCPAL_ROOT}/src/etcpal/root_layer_pdu.c
     ${ETCPAL_ROOT}/src/etcpal/timer.c
     ${ETCPAL_ROOT}/src/etcpal/uuid.c
 

@@ -75,7 +75,7 @@ size_t etcpal_netint_get_num_interfaces()
  *
  * For NICs with multiple IP addresses assigned, this module separates each address into its own
  * entry in the netint array. Because of this, multiple array entries could have the same value
- * for the index, mac and name parameters.
+ * for the index, mac and id parameters.
  *
  * \return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
  *         or NULL if there are no interfaces present or the module is not initialized.
@@ -83,29 +83,6 @@ size_t etcpal_netint_get_num_interfaces()
 const EtcPalNetintInfo* etcpal_netint_get_interfaces()
 {
   return (init_count ? netint_cache.netints : NULL);
-}
-
-/*!
- * \brief Copy the list of network interfaces on the system into an array.
- *
- * For NICs with multiple IP addresses assigned, this module separates each address into its own
- * entry in the netint array. Because of this, multiple array entries could have the same value
- * for the index, mac and name parameters.
- *
- * \param[out] netint_arr Array of network interface description structs to fill in with interface
- *                        info.
- * \param[in] netint_arr_size Size of the netint array.
- * \return Number of network interfaces that were copied, up to a maximum of netint_arr_size,
- *         or 0 if there are no interfaces present or the module is not initialized.
- */
-size_t etcpal_netint_copy_interfaces(EtcPalNetintInfo* netint_arr, size_t netint_arr_size)
-{
-  if (!init_count || !netint_arr || netint_arr_size == 0)
-    return 0;
-
-  size_t addrs_copied = (netint_arr_size < netint_cache.num_netints ? netint_arr_size : netint_cache.num_netints);
-  memcpy(netint_arr, netint_cache.netints, addrs_copied * sizeof(EtcPalNetintInfo));
-  return addrs_copied;
 }
 
 /*!
@@ -118,6 +95,7 @@ size_t etcpal_netint_copy_interfaces(EtcPalNetintInfo* netint_arr, size_t netint
  * \param[out] netint_arr_size Filled in on success with the size of the matching interface array.
  * \return #kEtcPalErrOk: netint_arr and netint_arr_size were filled in.
  * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \return #kEtcPalErrNotInit: Module not initialized.
  * \return #kEtcPalErrNotFound: No interfaces found for this index.
  */
 etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const EtcPalNetintInfo** netint_arr,
@@ -125,6 +103,8 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const E
 {
   if (index == 0 || !netint_arr || !netint_arr_size)
     return kEtcPalErrInvalid;
+  if (!init_count)
+    return kEtcPalErrNotInit;
 
   size_t arr_size = 0;
   for (const EtcPalNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
@@ -173,35 +153,38 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const E
  * \param[out] netint_index Pointer to value to fill with the index of the default interface.
  * \return #kEtcPalErrOk: netint was filled in.
  * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * \return #kEtcPalErrNotInit: Module not initialized.
  * \return #kEtcPalErrNotFound: No default interface found for this type.
  */
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index)
 {
-  if (init_count && netint_index)
+  if (!netint_index)
+    return kEtcPalErrInvalid;
+  if (!init_count)
+    return kEtcPalErrNotInit;
+
+  if (type == kEtcPalIpTypeV4)
   {
-    if (type == kEtcPalIpTypeV4)
+    if (netint_cache.def.v4_valid)
     {
-      if (netint_cache.def.v4_valid)
-      {
-        *netint_index = netint_cache.def.v4_index;
-        return kEtcPalErrOk;
-      }
-      else
-      {
-        return kEtcPalErrNotFound;
-      }
+      *netint_index = netint_cache.def.v4_index;
+      return kEtcPalErrOk;
     }
-    else if (type == kEtcPalIpTypeV6)
+    else
     {
-      if (netint_cache.def.v6_valid)
-      {
-        *netint_index = netint_cache.def.v6_index;
-        return kEtcPalErrOk;
-      }
-      else
-      {
-        return kEtcPalErrNotFound;
-      }
+      return kEtcPalErrNotFound;
+    }
+  }
+  else if (type == kEtcPalIpTypeV6)
+  {
+    if (netint_cache.def.v6_valid)
+    {
+      *netint_index = netint_cache.def.v6_index;
+      return kEtcPalErrOk;
+    }
+    else
+    {
+      return kEtcPalErrNotFound;
     }
   }
   return kEtcPalErrInvalid;
@@ -237,4 +220,23 @@ int compare_netints(const void* a, const void* b)
   EtcPalNetintInfo* netint2 = (EtcPalNetintInfo*)b;
 
   return (netint1->index > netint2->index) - (netint1->index < netint2->index);
+}
+
+/*!
+ * \brief Refresh the list of network interfaces.
+ *
+ * Rebuilds the cached array of network interfaces that is returned via the
+ * etcpal_netint_get_interfaces() function. If the refresh operation results in a different list
+ * (there is a different number of network interfaces, or any interface has changed IP settings),
+ * *list_changed is set to true.
+ *
+ * \param[out] list_changed Set to true if the set of interfaces has changed in any way.
+ * \return #kEtcPalErrOk: Interfaces refreshed.
+ * \return Other error codes from the underlying platform are possible here.
+ */
+etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)
+{
+  // TODO
+  (void)list_changed;
+  return kEtcPalErrNotImpl;
 }

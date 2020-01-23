@@ -20,10 +20,10 @@
 #ifndef ETCPAL_OS_LOCK_H_
 #define ETCPAL_OS_LOCK_H_
 
+#include <stdbool.h>
 #include <mqx.h>
 #include <lwevent.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +41,7 @@ typedef LWEVENT_STRUCT etcpal_signal_t;
 
 #define etcpal_signal_create(idptr) (MQX_OK == _lwevent_create((idptr), LWEVENT_AUTO_CLEAR))
 #define etcpal_signal_wait(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 0u))
-#define etcpal_signal_poll(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 1u))
+#define etcpal_signal_try_wait(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 1u))
 #define etcpal_signal_post(idptr) ((void)_lwevent_set((idptr), 1u))
 #define etcpal_signal_destroy(idptr) ((void)_lwevent_destroy(idptr))
 

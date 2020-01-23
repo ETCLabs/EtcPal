@@ -34,9 +34,9 @@ etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
   UUID os_uuid;
   if (RPC_S_OK == UuidCreateSequential(&os_uuid))
   {
-    etcpal_pack_32b(&uuid->data[0], os_uuid.Data1);
-    etcpal_pack_16b(&uuid->data[4], os_uuid.Data2);
-    etcpal_pack_16b(&uuid->data[6], os_uuid.Data3);
+    etcpal_pack_u32b(&uuid->data[0], os_uuid.Data1);
+    etcpal_pack_u16b(&uuid->data[4], os_uuid.Data2);
+    etcpal_pack_u16b(&uuid->data[6], os_uuid.Data3);
     memcpy(&uuid->data[8], os_uuid.Data4, 8);
     return kEtcPalErrOk;
   }
@@ -54,9 +54,9 @@ etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
   UUID os_uuid;
   if (RPC_S_OK == UuidCreate(&os_uuid))
   {
-    etcpal_pack_32b(&uuid->data[0], os_uuid.Data1);
-    etcpal_pack_16b(&uuid->data[4], os_uuid.Data2);
-    etcpal_pack_16b(&uuid->data[6], os_uuid.Data3);
+    etcpal_pack_u32b(&uuid->data[0], os_uuid.Data1);
+    etcpal_pack_u16b(&uuid->data[4], os_uuid.Data2);
+    etcpal_pack_u16b(&uuid->data[6], os_uuid.Data3);
     memcpy(&uuid->data[8], os_uuid.Data4, 8);
     return kEtcPalErrOk;
   }

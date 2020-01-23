@@ -50,10 +50,21 @@ bool etcpal_mutex_try_take(etcpal_mutex_t* id)
   return false;
 }
 
+bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
+}
+
 void etcpal_mutex_give(etcpal_mutex_t* id)
 {
   if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
+}
+
+void etcpal_mutex_give_from_isr(etcpal_mutex_t* id)
+{
+  // TODO
 }
 
 void etcpal_mutex_destroy(etcpal_mutex_t* id)
@@ -75,15 +86,26 @@ bool etcpal_signal_wait(etcpal_signal_t* id)
   return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY)) : false;
 }
 
-bool etcpal_signal_poll(etcpal_signal_t* id)
+bool etcpal_signal_try_wait(etcpal_signal_t* id)
 {
   return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0)) : false;
+}
+
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
 }
 
 void etcpal_signal_post(etcpal_signal_t* id)
 {
   if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
+}
+
+void etcpal_signal_post_from_isr(etcpal_signal_t* id)
+{
+  // TODO
 }
 
 void etcpal_signal_destroy(etcpal_signal_t* id)
@@ -139,6 +161,12 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
   return false;
 }
 
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
+}
+
 void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
@@ -185,10 +213,21 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
   return false;
 }
 
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
+}
+
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
     xSemaphoreGive(id->sem);
+}
+
+void etcpal_rwlock_writeunlock_from_isr(etcpal_rwlock_t* id)
+{
+  // TODO
 }
 
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
@@ -199,6 +238,47 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
     id->sem = NULL;
     id->valid = false;
   }
+}
+
+bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_wait(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_try_wait(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_post(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+bool etcpal_sem_post_from_isr(etcpal_sem_t* id)
+{
+  // TODO
+  return false;
+}
+
+void etcpal_sem_destroy(etcpal_sem_t* id)
+{
+  // TODO
 }
 
 void reader_atomic_increment(etcpal_rwlock_t* id)

@@ -19,8 +19,7 @@
 
 #include "etcpal/common.h"
 
-#include "etcpal/bool.h"
-
+#include <stdbool.h>
 #include "etcpal/private/log.h"
 #include "etcpal/private/netint.h"
 #include "etcpal/private/socket.h"
@@ -62,6 +61,12 @@ typedef struct EtcPalModuleInit
 
 /*!
  * \brief Initialize the EtcPal library.
+ *
+ * Use a bitwise OR to select from the set of modules which require initialization; for example:
+ *
+ * \code
+ * etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS);
+ * \endcode
  *
  * This function can be called multiple times from the same application. Each call to etcpal_init()
  * must be paired with a call to etcpal_deinit() with the same argument for features.

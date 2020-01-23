@@ -22,17 +22,60 @@
 #ifndef ETCPAL_TIMER_H_
 #define ETCPAL_TIMER_H_
 
-#include "etcpal/int.h"
-#include "etcpal/bool.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /*!
- * \defgroup etcpal_timer Timers (timer)
+ * \defgroup etcpal_timer timer (Timers)
  * \ingroup etcpal
  * \brief Platform-neutral system timers.
  *
  * ```c
  * #include "etcpal/timer.h"
  * ```
+ *
+ * **WARNING:** This module must be explicitly initialized before use. Initialize the module by
+ * calling etcpal_init() with the relevant feature mask:
+ * \code
+ * etcpal_init(ETCPAL_FEATURE_TIMERS);
+ * \endcode
+ *
+ * Provides an implementation of a passive monotonic timer, as well as a way to get monotonic time
+ * points. Time points and intervals are represented in milliseconds by a 32-bit unsigned int. To
+ * get a time point, use etcpal_getms().
+ *
+ * \code
+ * uint32_t time_point = etcpal_getms();
+ * \endcode
+ *
+ * A time point represents the time elapsed in milliseconds since an arbitrary fixed point in the
+ * past, independent of any changes in system "wall clock" time. Time points provided by this
+ * module wrap every 4,294,967,295 milliseconds, or approximately 49.7 days. Because of this, it's
+ * recommended to only use this module to time events which occur on time scales which are shorter
+ * than that by at least an order of magnitude. This reduces the likelihood that wrapping will be
+ * an issue.
+ *
+ * Note that this problem only applies to wraparound past an original time point; absolute
+ * wraparound of the integer type is handled. For example, using an EtcPalTimer to time a
+ * 10-millisecond interval that begins at time point 4,294,967,290 and ends at time point 5 will
+ * work as expected.
+ *
+ * To time an interval, use an EtcPalTimer.
+ *
+ * \code
+ * EtcPalTimer timer;
+ * etcpal_timer_start(&timer, 100); // Start a 100-millisecond timer
+ *
+ * // Some time later...
+ *
+ * uint32_t elapsed = etcpal_timer_elapsed(&timer); // How many milliseconds since the timer was started
+ * uint32_t remaining = etcpal_timer_remaining(&timer); // How much time is remaining in the interval
+ * bool is_expired = etcpal_timer_is_expired(&timer); // Whether the interval has expired
+ *
+ * etcpal_timer_reset(&timer); // Reset the timer for another 100-millisecond interval
+ * // Or
+ * etcpal_timer_start(&timer, 1000); // Reuse the timer for a different interval, in this case 1 second.
+ * \endcode
  *
  * @{
  */

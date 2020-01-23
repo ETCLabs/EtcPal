@@ -17,47 +17,46 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/timer.h"
+#include "etcpal/cpp/timer.h"
 #include "unity_fixture.h"
-#include "fff.h"
 
-DEFINE_FFF_GLOBALS;
+extern "C" {
 
-TEST_GROUP(etcpal_timer_wraparound);
+TEST_GROUP(etcpal_time_point);
 
-TEST_SETUP(etcpal_timer_wraparound)
+TEST_SETUP(etcpal_time_point)
 {
 }
 
-TEST_TEAR_DOWN(etcpal_timer_wraparound)
+TEST_TEAR_DOWN(etcpal_time_point)
 {
 }
 
-FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
-
-TEST(etcpal_timer_wraparound, wraparound_works_as_expected)
+TEST(etcpal_time_point, placeholder)
 {
-  EtcPalTimer t1;
-
-  // Test the wraparound case by forcing a wraparound value returned from etcpal_getms()
-  etcpal_getms_fake.return_val = 0xfffffff0u;
-  etcpal_timer_start(&t1, 0x20);
-
-  // We've wrapped around but have not exceeded the interval yet
-  etcpal_getms_fake.return_val = 0x0f;
-  TEST_ASSERT_FALSE(etcpal_timer_is_expired(&t1));
-  TEST_ASSERT_EQUAL_UINT32(etcpal_timer_elapsed(&t1), 0x1fu);
-
-  etcpal_getms_fake.return_val = 0x11;
-  TEST_ASSERT_TRUE(etcpal_timer_is_expired(&t1));
+  etcpal::TimePoint p{20};
+  etcpal::TimePoint u = 20;
+  TEST_ASSERT_TRUE(p == u);
 }
 
-TEST_GROUP_RUNNER(etcpal_timer_wraparound)
+TEST_GROUP(etcpal_cpp_timer);
+
+TEST_SETUP(etcpal_cpp_timer)
 {
-  RUN_TEST_CASE(etcpal_timer_wraparound, wraparound_works_as_expected);
 }
 
-void run_all_tests(void)
+TEST_TEAR_DOWN(etcpal_cpp_timer)
 {
-  RUN_TEST_GROUP(etcpal_timer_wraparound);
+}
+
+TEST(etcpal_cpp_timer, placeholder)
+{
+  etcpal::Timer t(20);
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_timer)
+{
+  RUN_TEST_CASE(etcpal_time_point, placeholder);
+  RUN_TEST_CASE(etcpal_cpp_timer, placeholder);
+}
 }

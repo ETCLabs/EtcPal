@@ -22,20 +22,24 @@
 #ifndef ETCPAL_INET_H_
 #define ETCPAL_INET_H_
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
-#include "etcpal/bool.h"
 #include "etcpal/error.h"
-#include "etcpal/int.h"
 #include "etcpal/os_inet.h"
 
 /*!
- * \defgroup etcpal_inet Internet Addressing (inet)
+ * \defgroup etcpal_inet inet (Internet Addressing)
  * \ingroup etcpal
  * \brief Identifiers for IP addresses and network interfaces.
  *
  * ```c
  * #include "etcpal/inet.h"
  * ```
+ *
+ * Provides types representing internet addressing constructs. Many of these functions and types
+ * mimic those found in POSIX's `arpa/inet.h`, with some quality-of-life improvements. Several
+ * functions and macros are provided to inspect, compare and manipulate these types.
  *
  * @{
  */
@@ -241,8 +245,8 @@ extern const EtcPalMacAddr kEtcPalNullMacAddr;
  */
 #define ETCPAL_MAC_IS_NULL(macptr) (memcmp((macptr)->data, kEtcPalNullMacAddr.data, ETCPAL_MAC_BYTES) == 0)
 
-/*! The maximum length of a network interface name. */
-#define ETCPAL_NETINTINFO_NAME_LEN 64
+/*! The maximum length of a network interface id. */
+#define ETCPAL_NETINTINFO_ID_LEN 64
 /*! The maximum length of a user-friendly network interface name. */
 #define ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN 64
 
@@ -261,10 +265,13 @@ typedef struct EtcPalNetintInfo
   EtcPalIpAddr mask;
   /*! The adapter MAC address. */
   EtcPalMacAddr mac;
-  /*! The system name for the interface. This name will not change unless the adapter is removed or
-   *  reconfigured. */
-  char name[ETCPAL_NETINTINFO_NAME_LEN];
-  /*! A user-friendly name for the interface. On some systems, this is the same as the name field.
+  /*! The system name for the interface. This name can be used as a primary key to identify a
+   *  single network adapter. It will not change unless the adapter is removed or reconfigured.
+   *  Since interfaces can have multiple IPv4 and IPv6 addresses assigned simultaneously, there can
+   *  be a one-to-many relationship between physical network interfaces and EtcPalNetintInfo
+   *  structures on the same system, all of which have the same value for this field. */
+  char id[ETCPAL_NETINTINFO_ID_LEN];
+  /*! A user-friendly name for the interface. On some systems, this is the same as the id field.
    *  Others allow users to create and change a friendly name for network interfaces that's
    *  different than the system name. This field should be used when printing the adapter list in a
    *  UI. */

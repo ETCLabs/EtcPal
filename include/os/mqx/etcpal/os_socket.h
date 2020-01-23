@@ -21,8 +21,8 @@
 #define ETCPAL_OS_SOCKET_H_
 
 #include <rtcs.h>
+#include <stdint.h>
 #include "etcpal/inet.h"
-#include "etcpal/int.h"
 
 #ifdef __cplusplus
 extern "C" {

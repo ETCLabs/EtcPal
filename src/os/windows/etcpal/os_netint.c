@@ -19,6 +19,7 @@
 
 #include "etcpal/netint.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <WinSock2.h>
@@ -26,7 +27,6 @@
 #include <Ws2tcpip.h>
 #include <iphlpapi.h>
 
-#include "etcpal/int.h"
 #include "etcpal/socket.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"
@@ -232,7 +232,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
           continue;
       }
 
-      strncpy_s(info->name, ETCPAL_NETINTINFO_NAME_LEN, pcur->AdapterName, _TRUNCATE);
+      strncpy_s(info->id, ETCPAL_NETINTINFO_ID_LEN, pcur->AdapterName, _TRUNCATE);
 
       // The friendly name requires special handling because it must be converted to UTF-8
       memset(info->friendly_name, 0, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);

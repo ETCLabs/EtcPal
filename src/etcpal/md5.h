@@ -25,10 +25,10 @@ documentation and/or software.
 
 /* MD5 context. */
 
-#ifndef _MD5_H_
-#define _MD5_H_
+#ifndef MD5_H_
+#define MD5_H_
 
-#include "etcpal/int.h"
+#include <stdint.h>
 
 typedef struct
 {
@@ -41,4 +41,4 @@ void MD5Init(MD5_CTX* context);
 void MD5Update(MD5_CTX* context, const uint8_t* input, unsigned int inputLen);
 void MD5Final(uint8_t digest[16], MD5_CTX* context);
 
-#endif  //_MD5_H_
+#endif /* MD5_H_ */

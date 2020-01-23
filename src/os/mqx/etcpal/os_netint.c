@@ -23,7 +23,7 @@
 #include <bsp.h>
 #include <rtcs.h>
 
-#include "etcpal/int.h"
+#include <stdint.h>
 #include "etcpal/private/netint.h"
 
 static EtcPalNetintInfo netints[BSP_ENET_DEVICE_COUNT];
@@ -45,7 +45,7 @@ static void copy_interface_info(uint32_t mqx_index, EtcPalNetintInfo* netint)
   ETCPAL_IP_SET_V4_ADDRESS(&netint->mask, ip_data.mask);
 
   ipcfg_get_mac(mqx_index, netint->mac.data);
-  sprintf(netint->name, "en%d", mqx_index);
+  sprintf(netint->id, "en%d", mqx_index);
   sprintf(netint->friendly_name, "en%d", mqx_index);
   if (mqx_index == BSP_DEFAULT_ENET_DEVICE)
     netint->is_default = true;

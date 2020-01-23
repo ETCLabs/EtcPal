@@ -17,18 +17,19 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* etcpal/uuid.h: A type and.helper functions for a Universally Unique Identifier (UUID) */
+/* etcpal/uuid.h: A type and helper functions for a Universally Unique Identifier (UUID) */
 
 #ifndef ETCPAL_UUID_H_
 #define ETCPAL_UUID_H_
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
-#include "etcpal/int.h"
-#include "etcpal/bool.h"
 #include "etcpal/error.h"
+#include "etcpal/inet.h"
 
 /*!
- * \defgroup etcpal_uuid UUIDs (uuid)
+ * \defgroup etcpal_uuid uuid (UUIDs)
  * \ingroup etcpal
  * \brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
@@ -38,6 +39,42 @@
  * ```c
  * #include "etcpal/uuid.h"
  * ```
+ *
+ * The basic UUID type is quite simple - an array of 16 data bytes. Functions are provided to
+ * generate every current UUID type except Version 2, which is very rarely used. Additionally,
+ * etcpal_generate_os_preferred_uuid() generates the UUID type preferred by the underlying OS, and
+ * etcpal_generate_device_uuid() generates a special type of V5 UUID which can be used to identify
+ * embedded devices.
+ *
+ * The basic form of UUID generation is:
+ * \code
+ * EtcPalUuid uuid;
+ * if (etcpal_generate_v1_uuid(&uuid) == kEtcPalErrOk)
+ * {
+ *   // uuid now contains a valid Version 1 UUID.
+ * }
+ * \endcode
+ *
+ * **Note:** Not all UUID types are available on all systems. V3, V5 and Device UUIDs are
+ * guaranteed to be available in all ports of EtcPal, but V1, V4 and os_preferred UUIDs are
+ * generally not available on embedded systems:
+ *
+ * EtcPal Platform | V1  | V3  | V4  | V5  | os_preferred | device |
+ * ----------------|-----|-----|-----|-----|--------------|--------|
+ * FreeRTOS        | No  | Yes | No  | Yes | No           | Yes    |
+ * Linux           | Yes | Yes | Yes | Yes | Yes          | Yes    |
+ * macOS           | Yes | Yes | Yes | Yes | Yes          | Yes    |
+ * MQX             | No  | Yes | No  | Yes | No           | Yes    |
+ * Windows         | Yes | Yes | Yes | Yes | Yes          | Yes    |
+ *
+ * You can also convert UUIDs to and from strings:
+ * \code
+ * EtcPalUuid uuid;
+ * etcpal_string_to_uuid("39713ce1-2320-46aa-b602-4977be36e155", &uuid);
+ *
+ * char str_buf[ETCPAL_UUID_STRING_BYTES];
+ * etcpal_uuid_to_string(&uuid, str_buf);
+ * \endcode
  *
  * @{
  */
@@ -81,15 +118,21 @@ extern const EtcPalUuid kEtcPalNullUuid;
 /*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
 #define ETCPAL_UUID_STRING_BYTES 37
 
+/*! The maximum length of a device string used as an input to etcpal_generate_device_uuid(). */
+#define ETCPAL_UUID_DEV_STR_MAX_LEN 32
+
 bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf);
-bool etcpal_string_to_uuid(const char* buf, EtcPalUuid* uuid);
+bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid);
 
 /************************ UUID Generation Functions **************************/
 
 etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid);
-etcpal_error_t etcpal_generate_v3_uuid(const char* devstr, const uint8_t* macaddr, uint32_t uuidnum, EtcPalUuid* uuid);
+etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid);
+etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid);
+etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const EtcPalMacAddr* mac_addr, uint32_t uuid_num,
+                                           EtcPalUuid* uuid);
 
 #ifdef __cplusplus
 }

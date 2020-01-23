@@ -41,7 +41,7 @@ static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNet
   char lwip_name[NETIF_NAMESIZE];
   if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
   {
-    strncpy(netint->name, lwip_name, ETCPAL_NETINTINFO_NAME_LEN);
+    strncpy(netint->id, lwip_name, ETCPAL_NETINTINFO_ID_LEN);
     strncpy(netint->friendly_name, lwip_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
   }
 }

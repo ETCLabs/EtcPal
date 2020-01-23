@@ -19,8 +19,8 @@
 
 #include "etcpal/mempool.h"
 
+#include <stdbool.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 #include "etcpal/lock.h"
 
 static bool mempool_lock_initted = false;

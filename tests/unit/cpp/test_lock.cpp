@@ -76,7 +76,7 @@ TEST(etcpal_cpp_lock, signal_create_and_destroy_works)
   etcpal::Signal sig;
 
   // Signals shouldn't be created in the signaled state.
-  TEST_ASSERT_FALSE(sig.Poll());
+  TEST_ASSERT_FALSE(sig.TryWait());
 
   sig.Notify();
   TEST_ASSERT_TRUE(sig.Wait());
@@ -156,6 +156,21 @@ TEST(etcpal_cpp_lock, write_guard_works)
   rwlock.WriteUnlock();
 }
 
+TEST(etcpal_cpp_lock, sem_create_and_destroy_works)
+{
+  // The semaphore has an initial count of 1
+  etcpal::Semaphore sem(1);
+
+  TEST_ASSERT_TRUE(sem.Wait());
+
+  // The count should now be zero - wait should fail
+  TEST_ASSERT_FALSE(sem.TryWait());
+
+  TEST_ASSERT_TRUE(sem.Post());
+  // The count should be 1 again. Wait should succeed.
+  TEST_ASSERT_TRUE(sem.TryWait());
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_lock)
 {
   RUN_TEST_CASE(etcpal_cpp_lock, mutex_create_and_destroy_works);
@@ -164,5 +179,6 @@ TEST_GROUP_RUNNER(etcpal_cpp_lock)
   RUN_TEST_CASE(etcpal_cpp_lock, rwlock_create_and_destroy_works);
   RUN_TEST_CASE(etcpal_cpp_lock, read_guard_works);
   RUN_TEST_CASE(etcpal_cpp_lock, write_guard_works);
+  RUN_TEST_CASE(etcpal_cpp_lock, sem_create_and_destroy_works);
 }
 }

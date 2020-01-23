@@ -29,10 +29,10 @@
  * \ingroup etcpal
  * \brief Compile-time configuration options for EtcPal
  *
- * Options starting with "ETCPAL_EMBOS_" (currently all of them) are ignored on Windows, macOS and
- * Linux.
+ * Options starting with "ETCPAL_EMBOS_" are ignored on Windows, macOS and Linux.
  *
- * To override any of these options, provide a file called etcpal_config.h and:
+ * To override any of these options, either define them on your compiler command line, or provide a
+ * file called etcpal_config.h and:
  *   * If not building EtcPal with CMake: add ETCPAL_HAVE_CONFIG_H to your preprocessor
  *     definitions, and add the path to etcpal_config.h as an include path
  *   * If building with CMake: use the CMake option ETCPAL_CONFIG_FILE_LOC

@@ -23,14 +23,21 @@
 #ifndef ETCPAL_CPP_COMMON_H_
 #define ETCPAL_CPP_COMMON_H_
 
-/// \defgroup etcpal_cpp EtcPal C++ Wrappers
+/// \defgroup etcpal_cpp etcpal/cpp (C++ Wrappers)
 /// \brief C++ Wrappers for EtcPal modules.
 ///
-/// EtcPal is primarly a C-language library, but C++ language wrappers for certain modules are
+/// EtcPal is primarily a C-language library, but C++ language wrappers for certain modules are
 /// provided for convenience when writing C++ code that uses EtcPal. To include a C++ wrapper for a
-/// given module, where you would normally include "etcpal/[module].h", instead include
-/// "etcpal/cpp/[module].h".
-/// 
+/// given module, where you would normally include `"etcpal/[module].h"`, instead include
+/// `"etcpal/cpp/[module].h"`.
+///
+/// Some C++ wrapper modules contain types that directly wrap a type defined in a core EtcPal
+/// module. These types follow a C++ namespace convention which matches the C-style namespacing
+/// of the items they are wrapping. For example, the struct EtcPalIpAddr has a C++ wrapper class
+/// called etcpal::IpAddr. It takes up the same space in memory as an EtcPalIpAddr and can be
+/// compared to and converted implicitly from EtcPalIpAddr. Explicit conversions can be made in the
+/// opposite direction using etcpal::IpAddr::get().
+///
 /// @{
 
 /// \def ETCPAL_CONSTEXPR_14
@@ -48,4 +55,21 @@
 
 /// @}
 
-#endif // ETCPAL_CPP_COMMON_H_
+namespace etcpal
+{
+/// \cond detail
+
+namespace detail
+{
+enum class enabler
+{
+};
+
+#define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
+#define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
+}  // namespace detail
+
+/// \endcond
+}  // namespace etcpal
+
+#endif  // ETCPAL_CPP_COMMON_H_
