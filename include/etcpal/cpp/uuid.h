@@ -282,8 +282,7 @@ inline Uuid Uuid::V3(const Uuid& ns, const void* name, size_t name_len) noexcept
 /// See etcpal_generate_v3_uuid() for more information.
 inline Uuid Uuid::V3(const Uuid& ns, const char* name) noexcept
 {
-  // TODO
-  return Uuid{};
+  return V3(ns, name, std::strlen(name));
 }
 
 /// \brief Generate and return a Version 3 UUID.
@@ -293,8 +292,7 @@ inline Uuid Uuid::V3(const Uuid& ns, const char* name) noexcept
 /// See etcpal_generate_v3_uuid() for more information.
 inline Uuid Uuid::V3(const Uuid& ns, const std::string& name) noexcept
 {
-  // TODO
-  return Uuid{};
+  return V3(ns, name.c_str(), name.length());
 }
 
 /// \brief Generate and return a Version 4 UUID.
@@ -324,8 +322,7 @@ inline Uuid Uuid::V5(const Uuid& ns, const void* name, size_t name_len) noexcept
 /// See etcpal_generate_v5_uuid() for more information.
 inline Uuid Uuid::V5(const Uuid& ns, const char* name) noexcept
 {
-  // TODO
-  return Uuid{};
+  return V5(ns, name, std::strlen(name));
 }
 
 /// \brief Generate and return a Version 5 UUID.
@@ -335,8 +332,7 @@ inline Uuid Uuid::V5(const Uuid& ns, const char* name) noexcept
 /// See etcpal_generate_v5_uuid() for more information.
 inline Uuid Uuid::V5(const Uuid& ns, const std::string& name) noexcept
 {
-  // TODO
-  return Uuid{};
+  return V5(ns, name.c_str(), name.length());
 }
 
 /// \brief Generate and return a UUID of the version preferred by the underlying OS.

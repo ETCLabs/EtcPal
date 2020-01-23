@@ -160,8 +160,8 @@ TEST(etcpal_cpp_uuid, generates_v3_correctly)
   const auto ns1_name1 = etcpal::Uuid::V3(namespace1, "name1");
   const auto ns1_name1_dup = etcpal::Uuid::V3(namespace1, "name1");
   const auto ns1_name2 = etcpal::Uuid::V3(namespace1, "name2");
-  const auto ns2_name1 = etcpal::Uuid::V3(namespace1, "name1");
-  const auto ns2_name2 = etcpal::Uuid::V3(namespace1, "name2");
+  const auto ns2_name1 = etcpal::Uuid::V3(namespace2, "name1");
+  const auto ns2_name2 = etcpal::Uuid::V3(namespace2, "name2");
 
   TEST_ASSERT_FALSE(ns1_name1 == ns2_name1);
   TEST_ASSERT_FALSE(ns1_name1 == ns1_name2);
@@ -216,8 +216,8 @@ TEST(etcpal_cpp_uuid, generates_v5_correctly)
   const auto ns1_name1 = etcpal::Uuid::V5(namespace1, "name1");
   const auto ns1_name1_dup = etcpal::Uuid::V5(namespace1, "name1");
   const auto ns1_name2 = etcpal::Uuid::V5(namespace1, "name2");
-  const auto ns2_name1 = etcpal::Uuid::V5(namespace1, "name1");
-  const auto ns2_name2 = etcpal::Uuid::V5(namespace1, "name2");
+  const auto ns2_name1 = etcpal::Uuid::V5(namespace2, "name1");
+  const auto ns2_name2 = etcpal::Uuid::V5(namespace2, "name2");
 
   TEST_ASSERT_FALSE(ns1_name1 == ns2_name1);
   TEST_ASSERT_FALSE(ns1_name1 == ns1_name2);
