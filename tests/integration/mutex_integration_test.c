@@ -41,9 +41,9 @@ static void mutex_test_thread(void* arg)
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    (void)etcpal_mutex_take(&mutex);
+    (void)etcpal_mutex_lock(&mutex);
     ++shared_var;
-    etcpal_mutex_give(&mutex);
+    etcpal_mutex_unlock(&mutex);
     // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
     // This ensures that each thread runs for long enough to get time-sliced multiple times.
     for (volatile size_t j = 0; j < 100; ++j)

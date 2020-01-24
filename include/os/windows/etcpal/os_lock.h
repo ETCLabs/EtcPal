@@ -45,15 +45,13 @@ typedef struct
   CRITICAL_SECTION cs;
 } etcpal_mutex_t;
 
-#define ETCPAL_MUTEX_HAS_TIMED_TAKE 0
-#define ETCPAL_MUTEX_HAS_GIVE_FROM_ISR 0
+#define ETCPAL_MUTEX_HAS_TIMED_LOCK 0
 
 bool etcpal_mutex_create(etcpal_mutex_t* id);
-bool etcpal_mutex_take(etcpal_mutex_t* id);
-bool etcpal_mutex_try_take(etcpal_mutex_t* id);
-bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms);
-void etcpal_mutex_give(etcpal_mutex_t* id);
-#define etcpal_mutex_give_from_isr etcpal_mutex_give
+bool etcpal_mutex_lock(etcpal_mutex_t* id);
+bool etcpal_mutex_try_lock(etcpal_mutex_t* id);
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
+void etcpal_mutex_unlock(etcpal_mutex_t* id);
 void etcpal_mutex_destroy(etcpal_mutex_t* id);
 
 typedef HANDLE etcpal_signal_t;
@@ -77,7 +75,6 @@ typedef struct
 } etcpal_rwlock_t;
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 0
-#define ETCPAL_RWLOCK_HAS_UNLOCK_FROM_ISR 0
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id);
 bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
@@ -88,7 +85,6 @@ bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
 bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
-#define etcpal_rwlock_writeunlock_from_isr etcpal_rwlock_writeunlock
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 typedef HANDLE etcpal_sem_t;
@@ -102,7 +98,7 @@ bool etcpal_sem_wait(etcpal_sem_t* id);
 bool etcpal_sem_try_wait(etcpal_sem_t* id);
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
 bool etcpal_sem_post(etcpal_sem_t* id);
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
+#define etcpal_sem_post_from_isr etcpal_sem_post
 void etcpal_sem_destroy(etcpal_sem_t* id);
 
 #ifdef __cplusplus

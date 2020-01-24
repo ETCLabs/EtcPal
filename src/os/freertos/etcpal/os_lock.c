@@ -29,10 +29,14 @@ static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 bool etcpal_mutex_create(etcpal_mutex_t* id)
 {
-  return id ? ((*id = (etcpal_mutex_t)xSemaphoreCreateMutex()) != NULL) : false;
+  if (id)
+  {
+    return ((*id = (etcpal_mutex_t)xSemaphoreCreateMutex()) != NULL);
+  }
+  return false;
 }
 
-bool etcpal_mutex_take(etcpal_mutex_t* id)
+bool etcpal_mutex_lock(etcpal_mutex_t* id)
 {
   if (id && *id)
   {
@@ -41,7 +45,7 @@ bool etcpal_mutex_take(etcpal_mutex_t* id)
   return false;
 }
 
-bool etcpal_mutex_try_take(etcpal_mutex_t* id)
+bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
 {
   if (id && *id)
   {
@@ -50,21 +54,19 @@ bool etcpal_mutex_try_take(etcpal_mutex_t* id)
   return false;
 }
 
-bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms)
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {
-  // TODO
+  if (id && *id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
+  }
   return false;
 }
 
-void etcpal_mutex_give(etcpal_mutex_t* id)
+void etcpal_mutex_unlock(etcpal_mutex_t* id)
 {
   if (id && *id)
     xSemaphoreGive((SemaphoreHandle_t)*id);
-}
-
-void etcpal_mutex_give_from_isr(etcpal_mutex_t* id)
-{
-  // TODO
 }
 
 void etcpal_mutex_destroy(etcpal_mutex_t* id)
@@ -78,22 +80,37 @@ void etcpal_mutex_destroy(etcpal_mutex_t* id)
 
 bool etcpal_signal_create(etcpal_signal_t* id)
 {
-  return id ? ((*id = (etcpal_signal_t)xSemaphoreCreateBinary()) != NULL) : false;
+  if (id)
+  {
+    return ((*id = (etcpal_signal_t)xSemaphoreCreateBinary()) != NULL);
+  }
+  return false;
 }
 
 bool etcpal_signal_wait(etcpal_signal_t* id)
 {
-  return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY)) : false;
+  if (id && *id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY));
+  }
+  return false;
 }
 
 bool etcpal_signal_try_wait(etcpal_signal_t* id)
 {
-  return (id && *id) ? (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0)) : false;
+  if (id && *id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0));
+  }
+  return false;
 }
 
 bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
 {
-  // TODO
+  if (id && *id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
+  }
   return false;
 }
 
@@ -105,7 +122,12 @@ void etcpal_signal_post(etcpal_signal_t* id)
 
 void etcpal_signal_post_from_isr(etcpal_signal_t* id)
 {
-  // TODO
+  if (id && *id)
+  {
+    BaseType_t higherPriorityTaskWoken;
+    xSemaphoreGiveFromISR((SemaphoreHandle_t)*id, &higherPriorityTaskWoken);
+    portYIELD_FROM_ISR(higherPriorityTaskWoken);
+  }
 }
 
 void etcpal_signal_destroy(etcpal_signal_t* id)
@@ -163,7 +185,17 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  // TODO
+  if (!id || !id->valid)
+    return false;
+
+  if (pdTRUE == xSemaphoreTake(id->sem, pdMS_TO_TICKS(timeout_ms)))
+  {
+    // Add one to the reader count
+    reader_atomic_increment(id);
+    // Allow other readers to access
+    xSemaphoreGive(id->sem);
+    return true;
+  }
   return false;
 }
 
@@ -215,7 +247,25 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  // TODO
+  if (timeout_ms < 0)
+  {
+    return etcpal_rwlock_writelock(id);
+  }
+  else if (id && id->valid)
+  {
+    TickType_t start_time = xTaskGetTickCount();
+
+    if (pdTRUE == xSemaphoreTake(id->sem, pdMS_TO_TICKS(timeout_ms)))
+    {
+      // Wait until there are no readers, keeping the lock so that no new readers can get in.
+      while (id->reader_count > 0 && xTaskGetTickCount() - start_time < pdMS_TO_TICKS(timeout_ms))
+      {
+        vTaskDelay(1);  // Wait one tick at a time
+      }
+      // Hold on to the lock until writeunlock() is called
+      return true;
+    }
+  }
   return false;
 }
 
@@ -223,11 +273,6 @@ void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
     xSemaphoreGive(id->sem);
-}
-
-void etcpal_rwlock_writeunlock_from_isr(etcpal_rwlock_t* id)
-{
-  // TODO
 }
 
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
@@ -242,43 +287,63 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
-  // TODO
+  if (id)
+  {
+    return ((*id = (etcpal_sem_t)xSemaphoreCreateCounting(max_count, initial_count)) != NULL);
+  }
   return false;
 }
 
 bool etcpal_sem_wait(etcpal_sem_t* id)
 {
-  // TODO
+  if (id && *id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY));
+  }
   return false;
 }
 
 bool etcpal_sem_try_wait(etcpal_sem_t* id)
 {
-  // TODO
+  if (id && *id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0));
+  }
   return false;
 }
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  // TODO
+  if (id && *id)
+  {
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
+  }
   return false;
 }
 
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
-  // TODO
-  return false;
+  if (id && *id)
+    xSemaphoreGive((SemaphoreHandle_t)*id);
 }
 
 bool etcpal_sem_post_from_isr(etcpal_sem_t* id)
 {
-  // TODO
-  return false;
+  if (id && *id)
+  {
+    BaseType_t higherPriorityTaskWoken;
+    xSemaphoreGiveFromISR((SemaphoreHandle_t)*id, &higherPriorityTaskWoken);
+    portYIELD_FROM_ISR(higherPriorityTaskWoken);
+  }
 }
 
 void etcpal_sem_destroy(etcpal_sem_t* id)
 {
-  // TODO
+  if (id && *id)
+  {
+    vSemaphoreDelete((SemaphoreHandle_t)*id);
+    *id = (etcpal_signal_t)NULL;
+  }
 }
 
 void reader_atomic_increment(etcpal_rwlock_t* id)

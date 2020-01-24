@@ -712,7 +712,7 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_
     return kEtcPalErrInvalid;
 
   etcpal_error_t res = kEtcPalErrSys;
-  if (etcpal_mutex_take(&context->lock))
+  if (etcpal_mutex_lock(&context->lock))
   {
     if (etcpal_rbtree_size(&context->sockets) >= ETCPAL_SOCKET_MAX_POLL_SIZE)
     {
@@ -741,7 +741,7 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_
         res = kEtcPalErrNoMem;
       }
     }
-    etcpal_mutex_give(&context->lock);
+    etcpal_mutex_unlock(&context->lock);
   }
   return res;
 }
@@ -754,7 +754,7 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_sock
     return kEtcPalErrInvalid;
 
   etcpal_error_t res = kEtcPalErrSys;
-  if (etcpal_mutex_take(&context->lock))
+  if (etcpal_mutex_lock(&context->lock))
   {
     EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
     if (sock_desc)
@@ -769,7 +769,7 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_sock
     {
       res = kEtcPalErrNotFound;
     }
-    etcpal_mutex_give(&context->lock);
+    etcpal_mutex_unlock(&context->lock);
   }
   return res;
 }
@@ -779,7 +779,7 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
   if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID)
     return;
 
-  if (etcpal_mutex_take(&context->lock))
+  if (etcpal_mutex_lock(&context->lock))
   {
     EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
     if (sock_desc)
@@ -787,7 +787,7 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
       clear_in_fd_sets(context, sock_desc);
       etcpal_rbtree_remove(&context->sockets, sock_desc);
     }
-    etcpal_mutex_give(&context->lock);
+    etcpal_mutex_unlock(&context->lock);
   }
 }
 
@@ -801,7 +801,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
   ETCPAL_FD_ZERO(&readfds);
   ETCPAL_FD_ZERO(&writefds);
   ETCPAL_FD_ZERO(&exceptfds);
-  if (etcpal_mutex_take(&context->lock))
+  if (etcpal_mutex_lock(&context->lock))
   {
     if (etcpal_rbtree_size(&context->sockets) > 0)
     {
@@ -809,7 +809,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
       writefds = context->writefds;
       exceptfds = context->exceptfds;
     }
-    etcpal_mutex_give(&context->lock);
+    etcpal_mutex_unlock(&context->lock);
   }
 
   // No valid sockets are currently added to the context.
@@ -842,10 +842,10 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
   else
   {
     etcpal_error_t res = kEtcPalErrSys;
-    if (context->valid && etcpal_mutex_take(&context->lock))
+    if (context->valid && etcpal_mutex_lock(&context->lock))
     {
       res = handle_select_result(context, event, &readfds, &writefds, &exceptfds);
-      etcpal_mutex_give(&context->lock);
+      etcpal_mutex_unlock(&context->lock);
     }
     return res;
   }

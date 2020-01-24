@@ -98,7 +98,6 @@ public:
   bool Lock();
   bool TryLock(int timeout_ms = 0);
   void Unlock();
-  void UnlockFromIsr();
 
   etcpal_mutex_t& get();
 
@@ -119,10 +118,10 @@ inline Mutex::~Mutex()
 }
 
 /// \brief Lock the mutex.
-/// \return The result of etcpal_mutex_take() on the underlying mutex.
+/// \return The result of etcpal_mutex_lock() on the underlying mutex.
 inline bool Mutex::Lock()
 {
-  return etcpal_mutex_take(&mutex_);
+  return etcpal_mutex_lock(&mutex_);
 }
 
 /// \brief Attempt to lock the mutex.
@@ -135,10 +134,10 @@ inline bool Mutex::Lock()
 ///
 /// \param timeout_ms How long to wait to acquire the mutex, in milliseconds. Default is to poll
 ///                   and return immediately.
-/// \return The result of etcpal_mutex_timed_take() on the underlying mutex.
+/// \return The result of etcpal_mutex_timed_lock() on the underlying mutex.
 inline bool Mutex::TryLock(int timeout_ms)
 {
-  return etcpal_mutex_timed_take(&mutex_, timeout_ms);
+  return etcpal_mutex_timed_lock(&mutex_, timeout_ms);
 }
 
 /// \brief Unlock the mutex.
@@ -146,17 +145,7 @@ inline bool Mutex::TryLock(int timeout_ms)
 /// See etcpal_mutex_give().
 inline void Mutex::Unlock()
 {
-  etcpal_mutex_give(&mutex_);
-}
-
-/// \brief Unlock the mutex from an interrupt context.
-///
-/// **NOTE**: Only meaningful on some platforms. See the table in \ref etcpal_mutex and
-/// etcpal_mutex_give_from_isr() for more information. On platforms on which it is not meaningful,
-/// executes the equivalent of Unlock().
-inline void Mutex::UnlockFromIsr()
-{
-  etcpal_mutex_give_from_isr(&mutex_);
+  etcpal_mutex_unlock(&mutex_);
 }
 
 /// \brief Get a reference to the underlying etcpal_mutex_t type.
@@ -376,7 +365,6 @@ public:
   bool WriteLock();
   bool TryWriteLock(int timeout_ms = 0);
   void WriteUnlock();
-  void WriteUnlockFromIsr();
 
   etcpal_rwlock_t& get();
 
@@ -456,16 +444,6 @@ inline bool RwLock::TryWriteLock(int timeout_ms)
 inline void RwLock::WriteUnlock()
 {
   etcpal_rwlock_writeunlock(&rwlock_);
-}
-
-/// \brief Release a write lock on the read-write lock from an interrupt context.
-///
-/// **NOTE**: Only meaningful on some platforms. See the table in \ref etcpal_rwlock and
-/// etcpal_rwlock_writeunlock_from_isr() for more information. On platforms on which it is not
-/// meaningful, executes the equivalent of WriteUnlock().
-inline void RwLock::WriteUnlockFromIsr()
-{
-  etcpal_rwlock_writeunlock_from_isr(&rwlock_);
 }
 
 /// \brief Get a reference to the underlying etcpal_rwlock_t type.
@@ -642,13 +620,13 @@ inline MutexGuard::MutexGuard(etcpal_mutex_t& mutex) : mutex_(mutex)
 /// \brief Release the lock upon going out-of-scope.
 inline MutexGuard::~MutexGuard()
 {
-  etcpal_mutex_give(&mutex_);
+  etcpal_mutex_unlock(&mutex_);
 }
 
 inline void MutexGuard::GetLock()
 {
-  if (!etcpal_mutex_take(&mutex_))
-    throw std::runtime_error("etcpal_mutex_take failed.");
+  if (!etcpal_mutex_lock(&mutex_))
+    throw std::runtime_error("etcpal_mutex_lock failed.");
 }
 
 /// \ingroup etcpal_cpp_lock

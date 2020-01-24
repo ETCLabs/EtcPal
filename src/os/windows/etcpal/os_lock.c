@@ -36,7 +36,7 @@ bool etcpal_mutex_create(etcpal_mutex_t* id)
   return false;
 }
 
-bool etcpal_mutex_take(etcpal_mutex_t* id)
+bool etcpal_mutex_lock(etcpal_mutex_t* id)
 {
   if (id && id->valid)
   {
@@ -46,7 +46,7 @@ bool etcpal_mutex_take(etcpal_mutex_t* id)
   return false;
 }
 
-bool etcpal_mutex_try_take(etcpal_mutex_t* id)
+bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
 {
   if (id && id->valid)
   {
@@ -55,13 +55,12 @@ bool etcpal_mutex_try_take(etcpal_mutex_t* id)
   return false;
 }
 
-bool etcpal_mutex_timed_take(etcpal_mutex_t* id, int timeout_ms)
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {
-  // TODO
-  return false;
+  return (timeout_ms == 0) ? etcpal_mutex_try_lock(id) : etcpal_mutex_lock(id);
 }
 
-void etcpal_mutex_give(etcpal_mutex_t* id)
+void etcpal_mutex_unlock(etcpal_mutex_t* id)
 {
   if (id && id->valid)
   {
@@ -173,8 +172,7 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  // TODO
-  return false;
+  return (timeout_ms == 0) ? etcpal_rwlock_try_readlock(id) : etcpal_rwlock_readlock(id);
 }
 
 void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
@@ -223,8 +221,7 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  // TODO
-  return false;
+  return (timeout_ms == 0) ? etcpal_rwlock_try_writelock(id) : etcpal_rwlock_writelock(id);
 }
 
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
@@ -267,12 +264,6 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 }
 
 bool etcpal_sem_post(etcpal_sem_t* id)
-{
-  // TODO
-  return false;
-}
-
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id)
 {
   // TODO
   return false;

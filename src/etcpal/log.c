@@ -389,7 +389,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
   EtcPalLogTimestamp timestamp;
   bool have_time = get_time(params, &timestamp);
 
-  if (etcpal_mutex_take(&buf_lock))
+  if (etcpal_mutex_lock(&buf_lock))
   {
     static char syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
     static char humanlogmsg[ETCPAL_LOG_STR_MAX_LEN + 1];
@@ -433,6 +433,6 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
 
     params->log_fn(params->context, &strings);
 
-    etcpal_mutex_give(&buf_lock);
+    etcpal_mutex_unlock(&buf_lock);
   }
 }

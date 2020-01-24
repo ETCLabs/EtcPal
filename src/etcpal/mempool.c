@@ -38,7 +38,7 @@ etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
       return res;
   }
 
-  if (etcpal_mutex_take(&mempool_lock))
+  if (etcpal_mutex_lock(&mempool_lock))
   {
     size_t i;
     for (i = 0; i < desc->pool_size - 1; ++i)
@@ -47,7 +47,7 @@ etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
     desc->freelist = desc->list;
     desc->current_used = 0;
     res = kEtcPalErrOk;
-    etcpal_mutex_give(&mempool_lock);
+    etcpal_mutex_unlock(&mempool_lock);
   }
   return res;
 }
@@ -56,7 +56,7 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
 {
   void* elem = NULL;
 
-  if (etcpal_mutex_take(&mempool_lock))
+  if (etcpal_mutex_lock(&mempool_lock))
   {
     char* c_pool = (char*)desc->pool;
     EtcPalMempool* elem_desc = desc->freelist;
@@ -70,7 +70,7 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
         ++desc->current_used;
       }
     }
-    etcpal_mutex_give(&mempool_lock);
+    etcpal_mutex_unlock(&mempool_lock);
   }
 
   return elem;
@@ -83,14 +83,14 @@ void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
   ptrdiff_t offset = (char*)elem - c_pool;
   if (offset >= 0)
   {
-    if (((size_t)offset % desc->elem_size == 0) && etcpal_mutex_take(&mempool_lock))
+    if (((size_t)offset % desc->elem_size == 0) && etcpal_mutex_lock(&mempool_lock))
     {
       size_t index = (size_t)offset / desc->elem_size;
       EtcPalMempool* elem_desc = &desc->list[index];
       elem_desc->next = desc->freelist;
       desc->freelist = elem_desc;
       --desc->current_used;
-      etcpal_mutex_give(&mempool_lock);
+      etcpal_mutex_unlock(&mempool_lock);
     }
   }
 }
@@ -98,10 +98,10 @@ void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
 size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc)
 {
   size_t res = 0;
-  if (etcpal_mutex_take(&mempool_lock))
+  if (etcpal_mutex_lock(&mempool_lock))
   {
     res = desc->current_used;
-    etcpal_mutex_give(&mempool_lock);
+    etcpal_mutex_unlock(&mempool_lock);
   }
   return res;
 }
