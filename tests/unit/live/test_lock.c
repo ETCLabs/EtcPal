@@ -55,13 +55,8 @@ TEST(etcpal_lock, mutex_try_lock_works)
   // try_lock() should succeed when the mutex is not locked.
   TEST_ASSERT_TRUE(etcpal_mutex_try_lock(&mutex));
 
-  // On Windows, the mutex implementation is currently recursive. ETCPAL-32 tracks fixing this.
-#ifdef WIN32
-  TEST_ASSERT_TRUE(etcpal_mutex_try_lock(&mutex));
-#else
   // try_lock() should fail when attempting to lock the mutex again.
   TEST_ASSERT_FALSE(etcpal_mutex_try_lock(&mutex));
-#endif
 
   etcpal_mutex_unlock(&mutex);
   etcpal_mutex_destroy(&mutex);
@@ -90,12 +85,7 @@ TEST(etcpal_lock, mutex_timed_lock_works)
   // lock() if timeout_ms != 0.
   TEST_ASSERT_TRUE(etcpal_mutex_timed_lock(&mutex, 10));
 
-  // On Windows, the mutex implementation is currently recursive. ETCPAL-32 tracks fixing this.
-#ifdef WIN32
-  TEST_ASSERT_TRUE(etcpal_mutex_timed_lock(&mutex, 0));
-#else
   TEST_ASSERT_FALSE(etcpal_mutex_timed_lock(&mutex, 0));
-#endif
 
   etcpal_mutex_unlock(&mutex);
 #endif

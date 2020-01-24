@@ -42,7 +42,7 @@ extern "C" {
 typedef struct
 {
   bool valid;
-  CRITICAL_SECTION cs;
+  SRWLOCK lock;
 } etcpal_mutex_t;
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 0
@@ -70,7 +70,7 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
 typedef struct
 {
   bool valid;
-  CRITICAL_SECTION cs;
+  SRWLOCK lock;
   LONG reader_count;
 } etcpal_rwlock_t;
 

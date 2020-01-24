@@ -29,7 +29,7 @@ bool etcpal_mutex_create(etcpal_mutex_t* id)
 {
   if (id)
   {
-    InitializeCriticalSection(&id->cs);
+    InitializeSRWLock(&id->lock);
     id->valid = true;
     return true;
   }
@@ -40,7 +40,7 @@ bool etcpal_mutex_lock(etcpal_mutex_t* id)
 {
   if (id && id->valid)
   {
-    EnterCriticalSection(&id->cs);
+    AcquireSRWLockExclusive(&id->lock);
     return true;
   }
   return false;
@@ -50,7 +50,7 @@ bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
 {
   if (id && id->valid)
   {
-    return TryEnterCriticalSection(&id->cs);
+    return TryAcquireSRWLockExclusive(&id->lock);
   }
   return false;
 }
@@ -64,7 +64,7 @@ void etcpal_mutex_unlock(etcpal_mutex_t* id)
 {
   if (id && id->valid)
   {
-    LeaveCriticalSection(&id->cs);
+    ReleaseSRWLockExclusive(&id->lock);
   }
 }
 
@@ -72,7 +72,7 @@ void etcpal_mutex_destroy(etcpal_mutex_t* id)
 {
   if (id && id->valid)
   {
-    DeleteCriticalSection(&id->cs);
+    // SRWLocks do not need to be destroyed.
     id->valid = false;
   }
 }
@@ -128,7 +128,7 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
   if (id)
   {
-    InitializeCriticalSection(&id->cs);
+    InitializeSRWLock(&id->lock);
     id->valid = true;
     id->reader_count = 0;
     return true;
@@ -141,13 +141,13 @@ bool etcpal_rwlock_readlock(etcpal_rwlock_t* id)
   bool res = false;
   if (id && id->valid)
   {
-    EnterCriticalSection(&id->cs);
+    AcquireSRWLockExclusive(&id->lock);
     if (id->reader_count < MAX_READERS)
     {
       InterlockedIncrement(&id->reader_count);  // Add one to the reader count
       res = true;
     }
-    LeaveCriticalSection(&id->cs);
+    ReleaseSRWLockExclusive(&id->lock);
   }
   return res;
 }
@@ -157,14 +157,14 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
   bool res = false;
   if (id && id->valid)
   {
-    if (TryEnterCriticalSection(&id->cs))
+    if (TryAcquireSRWLockExclusive(&id->lock))
     {
       if (id->reader_count < MAX_READERS)
       {
         InterlockedIncrement(&id->reader_count);
         res = true;
       }
-      LeaveCriticalSection(&id->cs);
+      ReleaseSRWLockExclusive(&id->lock);
     }
   }
   return res;
@@ -185,7 +185,7 @@ bool etcpal_rwlock_writelock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    EnterCriticalSection(&id->cs);
+    AcquireSRWLockExclusive(&id->lock);
     // Wait until there are no readers, keeping the lock so that no new readers can get in.
     while (id->reader_count > 0)
     {
@@ -201,13 +201,13 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    if (TryEnterCriticalSection(&id->cs))
+    if (TryAcquireSRWLockExclusive(&id->lock))
     {
       // Just check once to see if there are still readers
       if (id->reader_count > 0)
       {
         // Readers are present, give up the lock and return false below
-        LeaveCriticalSection(&id->cs);
+        ReleaseSRWLockExclusive(&id->lock);
       }
       else
       {
@@ -227,14 +227,14 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
-    LeaveCriticalSection(&id->cs);
+    ReleaseSRWLockExclusive(&id->lock);
 }
 
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    DeleteCriticalSection(&id->cs);
+    // SRWLocks do not need to be destroyed.
     id->valid = false;
   }
 }
