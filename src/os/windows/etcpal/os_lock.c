@@ -241,35 +241,50 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
-  // TODO
+  if (id)
+  {
+    *id = CreateSemaphore(NULL, initial_count, max_count, NULL);
+    if (*id)
+      return true;
+  }
   return false;
 }
 
 bool etcpal_sem_wait(etcpal_sem_t* id)
 {
-  // TODO
+  if (id)
+    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, INFINITE));
   return false;
 }
 
 bool etcpal_sem_try_wait(etcpal_sem_t* id)
 {
-  // TODO
+  if (id)
+    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, 0));
   return false;
 }
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  // TODO
+  if (id)
+  {
+    DWORD wait_time = (timeout_ms < 0 ? INFINITE : timeout_ms);
+    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, wait_time));
+  }
   return false;
 }
 
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
-  // TODO
+  if (id)
+  {
+    return ReleaseSemaphore(*id, 1, NULL);
+  }
   return false;
 }
 
 void etcpal_sem_destroy(etcpal_sem_t* id)
 {
-  // TODO
+  if (id)
+    CloseHandle(*id);
 }

@@ -596,7 +596,7 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
  * | Linux    | No                         | No                            | No                        | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
  * | macOS    | No                         | No                            | No                        | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
  * | MQX      | Yes                        | No                            | No                        | Lightweight Semaphores |
- * | Windows  | Yes                        | No                            | No                        | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
+ * | Windows  | Yes                        | No                            | Yes                       | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
  *
  * @{
  */
