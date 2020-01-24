@@ -105,7 +105,11 @@ bool etcpal_signal_try_wait(etcpal_signal_t* id)
 
 bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
 {
-  // TODO
+  if (id)
+  {
+    DWORD wait_time = (timeout_ms < 0 ? INFINITE : timeout_ms);
+    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, wait_time));
+  }
   return false;
 }
 

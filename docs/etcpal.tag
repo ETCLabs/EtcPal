@@ -5509,6 +5509,20 @@
     <name>etcpal_mutex</name>
     <title>Mutexes</title>
     <filename>group__etcpal__mutex.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_MUTEX_HAS_TIMED_TAKE</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga38ea8a3249dd005850d8d6497ce2f4bf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_MUTEX_HAS_GIVE_FROM_ISR</name>
+      <anchorfile>group__etcpal__mutex.html</anchorfile>
+      <anchor>ga5ce41e0cf113e1d483a7967cda7e2fc3</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
       <name>etcpal_mutex_t</name>
@@ -5570,6 +5584,20 @@
     <name>etcpal_signal</name>
     <title>Signals</title>
     <filename>group__etcpal__signal.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SIGNAL_HAS_TIMED_WAIT</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gae27ec551b3bcdeb4c72e6ecea9ba3ca8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SIGNAL_HAS_POST_FROM_ISR</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga29bf79c6470cde2c5bdc45ab90f4d826</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
       <name>etcpal_signal_t</name>
@@ -5631,6 +5659,20 @@
     <name>etcpal_rwlock</name>
     <title>Read-Write Locks</title>
     <filename>group__etcpal__rwlock.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_RWLOCK_HAS_TIMED_LOCK</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga076630adff898bb71a4aaca77a73aefc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_RWLOCK_HAS_UNLOCK_FROM_ISR</name>
+      <anchorfile>group__etcpal__rwlock.html</anchorfile>
+      <anchor>ga1302eeb3ddf61d21378256995cf8d95c</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
       <name>etcpal_rwlock_t</name>
@@ -5720,6 +5762,27 @@
     <name>etcpal_sem</name>
     <title>Counting Semaphores</title>
     <filename>group__etcpal__sem.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SEM_HAS_TIMED_WAIT</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>gaada2b485228c5c702f240abd8d42c836</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SEM_HAS_POST_FROM_ISR</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>ga297a9999fd042d5dc38a1d4956c1cb50</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SEM_HAS_MAX_COUNT</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>ga6c5d81a112726041fbdc0836eeb86896</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
       <name>etcpal_sem_t</name>

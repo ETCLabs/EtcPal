@@ -73,13 +73,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * etcpal_mutex implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
  *
- * | Platform | timed_take honored | give_from_isr meaningful | Underlying Type    |
- * |----------|--------------------|--------------------------|--------------------|
- * | FreeRTOS | Yes                | Yes                      | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
- * | Linux    | No                 | No                       | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
- * | macOS    | No                 | No                       | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
- * | MQX      | Yes                | No                       | Lightweight Semaphores |
- * | Windows  | No                 | No                       | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ * | Platform | #ETCPAL_MUTEX_HAS_TIMED_TAKE | #ETCPAL_MUTEX_HAS_GIVE_FROM_ISR | Underlying Type    |
+ * |----------|------------------------------|---------------------------------|--------------------|
+ * | FreeRTOS | Yes                          | Yes                             | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
+ * | Linux    | No                           | No                              | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
+ * | macOS    | No                           | No                              | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
+ * | MQX      | Yes                          | No                              | Lightweight Semaphores |
+ * | Windows  | No                           | No                              | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
  *
  * @{
  */
@@ -90,6 +90,22 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_mutex_t;
+
+/*!
+ * \brief Whether etcpal_mutex_timed_take() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_mutex_timed_take() executes the equivalent of etcpal_mutex_try_take() if
+ * given a timeout of 0, or etcpal_mutex_take() otherwise.
+ */
+#define ETCPAL_MUTEX_HAS_TIMED_TAKE /* platform-defined */
+
+/*!
+ * \brief Whether etcpal_mutex_give_from_isr() is meaningful on this platform.
+ *
+ * Some platforms have a different method for releasing a mutex from an interrupt context. If
+ * defined to 0, etcpal_mutex_give_from_isr() executes the equivalent of etcpal_mutex_give().
+ */
+#define ETCPAL_MUTEX_HAS_GIVE_FROM_ISR /* platform-defined */
 
 /*!
  * \brief Create a new mutex.
@@ -125,9 +141,10 @@ bool etcpal_mutex_try_take(etcpal_mutex_t *id);
 /*!
  * \brief Try to acquire a mutex, giving up after a timeout.
  *
- * This function is not honored on all platforms. See the table in the overview above for more
- * information. On platforms on which it is not honored, this function executes the equivalent of
- * etcpal_mutex_try_take() if timeout_ms is 0, or etcpal_mutex_take() otherwise.
+ * This function is not honored on all platforms. The value of #ETCPAL_MUTEX_HAS_TIMED_TAKE can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_mutex_try_take() if timeout_ms is 0, or
+ * etcpal_mutex_take() otherwise.
  *
  * \param[in] id Identifier for the mutex to try to acquire.
  * \param[in] timeout_ms Maximum amount of time to wait for the mutex to become available, in
@@ -148,9 +165,9 @@ void etcpal_mutex_give(etcpal_mutex_t *id);
  * \brief Release a mutex from an interrupt context.
  *
  * This function is only meaningful on some platforms; namely, those which have a different method
- * for releasing a mutex from an interrupt context. See the table in the overview above for more
- * information. On platforms on which it is not meaningful, this function simply executes the
- * equivalent of etcpal_mutex_give().
+ * for releasing a mutex from an interrupt context. The value of #ETCPAL_MUTEX_HAS_GIVE_FROM_ISR
+ * can be used to determine whether this function is meaningful on the current platform. If it is
+ * defined to 0, this function simply executes the equivalent of etcpal_mutex_give().
  *
  * \param[in] id Identifier for the mutex to release.
  */
@@ -225,13 +242,13 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  * etcpal_signal implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
  *
- * | Platform | timed_wait honored | post_from_isr meaningful | Underlying Type    |
- * |----------|--------------------|--------------------------|--------------------|
- * | FreeRTOS | Yes                | Yes                      | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
- * | Linux    | No                 | No                       | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
- * | macOS    | No                 | No                       | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
- * | MQX      | Yes                | No                       | Lightweight Events |
- * | Windows  | No                 | No                       | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
+ * | Platform | #ETCPAL_SIGNAL_HAS_TIMED_WAIT | #ETCPAL_SIGNAL_HAS_POST_FROM_ISR | Underlying Type    |
+ * |----------|-------------------------------|----------------------------------|--------------------|
+ * | FreeRTOS | Yes                           | Yes                              | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
+ * | Linux    | No                            | No                               | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
+ * | macOS    | No                            | No                               | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
+ * | MQX      | Yes                           | No                               | Lightweight Events |
+ * | Windows  | Yes                           | No                               | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
  *
  * @{
  */
@@ -242,6 +259,22 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_signal_t;
+
+/*!
+ * \brief Whether etcpal_signal_timed_wait() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_signal_timed_wait() executes the equivalent of etcpal_signal_try_wait()
+ * if given a timeout of 0, or etcpal_signal_wait() otherwise.
+ */
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT /* platform-defined */
+
+/*!
+ * \brief Whether etcpal_signal_post_from_isr() is meaningful on this platform.
+ *
+ * Some platforms have a different method for posting a signal from an interrupt context. If
+ * defined to 0, etcpal_signal_post_from_isr() executes the equivalent of etcpal_signal_post().
+ */
+#define ETCPAL_SIGNAL_HAS_POST_FROM_ISR /* platform-defined */
 
 /*!
  * \brief Create a new signal.
@@ -284,9 +317,10 @@ bool etcpal_signal_try_wait(etcpal_signal_t* id);
 /*!
  * \brief Wait for a signal, giving up after a timeout.
  *
- * This function is not honored on all platforms. See the table in the overview above for more
- * information. On platforms on which it is not honored, this function executes the equivalent of
- * etcpal_signal_try_wait() if timeout_ms is 0, or etcpal_signal_wait() otherwise.
+ * This function is not honored on all platforms. The value of #ETCPAL_SIGNAL_HAS_TIMED_WAIT can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_signal_try_wait() if timeout_ms is 0, or
+ * etcpal_signal_wait() otherwise.
  *
  * \param[in] id Identifier for the signal for which to wait.
  * \param[in] timeout_ms Maximum amount of time to wait for the signal, in milliseconds. If
@@ -312,9 +346,9 @@ void etcpal_signal_post(etcpal_signal_t* id);
  * \brief Post a signal from an interrupt context.
  *
  * This function is only meaningful on some platforms; namely, those which have a different method
- * for posting a signal from an interrupt context. See the table in the overview above for more
- * information. On platforms on which it is not meaningful, this function simply executes the
- * equivalent of etcpal_signal_post().
+ * for posting a signal from an interrupt context. The value of #ETCPAL_SIGNAL_HAS_POST_FROM_ISR
+ * can be used to determine whether this function is meaningful on the current platform. If it is
+ * defined to 0, this function simply executes the equivalent of etcpal_signal_post().
  *
  * \param[in] id Identifier for the signal to post.
  */
@@ -382,13 +416,13 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
  * EtcPal read-write locks are typically implemented using multiple OS synchronization constructs
  * under the hood.
 
- * | Platform | timed_read/writelock honored | writeunlock_from_isr meaningful |
- * |----------|------------------------------|---------------------------------|
- * | FreeRTOS | Yes                          | Yes                             |
- * | Linux    | No                           | No                              |
- * | macOS    | No                           | No                              |
- * | MQX      | Yes                          | No                              |
- * | Windows  | No                           | No                              |
+ * | Platform | #ETCPAL_RWLOCK_HAS_TIMED_LOCK | #ETCPAL_RWLOCK_HAS_UNLOCK_FROM_ISR |
+ * |----------|-------------------------------|------------------------------------|
+ * | FreeRTOS | Yes                           | Yes                                |
+ * | Linux    | No                            | No                                 |
+ * | macOS    | No                            | No                                 |
+ * | MQX      | Yes                           | No                                 |
+ * | Windows  | No                            | No                                 |
  *
  * @{
  */
@@ -399,6 +433,24 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
  * This is highly likely to be a struct.
  */
 typedef PLATFORM_DEFINED etcpal_rwlock_t;
+
+/*!
+ * \brief Whether etcpal_rwlock_timed_readlock() and etcpal_rwlock_timed_writelock() are meaningful
+ *        on this platform.
+ * 
+ * If defined to 0, the etcpal_rwlock_timed_*lock() functions execute the equivalent of
+ * etcpal_rwlock_try_*lock() if given a timeout of 0, or etcpal_rwlock_*lock() otherwise.
+ */
+#define ETCPAL_RWLOCK_HAS_TIMED_LOCK /* platform-defined */
+
+/*!
+ * \brief Whether etcpal_rwlock_writeunlock_from_isr() is meaningful on this platform.
+ *
+ * Some platforms have a different method for unlocking a read-write lock from an interrupt
+ * context. If defined to 0, etcpal_rwlock_writeunlock_from_isr() executes the equivalent of
+ * etcpal_rwlock_writeunlock().
+ */
+#define ETCPAL_RWLOCK_HAS_UNLOCK_FROM_ISR /* platform-defined */
 
 /*!
  * \brief Create a new read-write lock.
@@ -439,9 +491,10 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
 /*!
  * \brief Try to access a read-write lock for reading, giving up after a timeout.
  *
- * This function is not honored on all platforms. See the table in the overview above for more
- * information. On platforms on which it is not honored, this function executes the equivalent of
- * etcpal_rwlock_try_readlock() if timeout_ms is 0, or etcpal_rwlock_readlock() otherwise.
+ * This function is not honored on all platforms. The value of #ETCPAL_RWLOCK_HAS_TIMED_LOCK can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_rwlock_try_readlock() if timeout_ms is 0, or
+ * etcpal_rwlock_readlock() otherwise.
  *
  * In typical usage, the resource protected by this lock should only be read, not modified, while
  * inside a read lock.
@@ -489,9 +542,10 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
 /*!
  * \brief Try to access a read-write lock for writing, giving up after a timeout.
  *
- * This function is not honored on all platforms. See the table in the overview above for more
- * information. On platforms on which it is not honored, this function executes the equivalent of
- * etcpal_rwlock_try_writelock() if timeout_ms is 0, or etcpal_rwlock_writelock() otherwise.
+ * This function is not honored on all platforms. The value of #ETCPAL_RWLOCK_HAS_TIMED_LOCK can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_rwlock_try_writelock() if timeout_ms is 0, or
+ * etcpal_rwlock_writelock() otherwise.
  *
  * \param[in] id Identifier for the read-write lock on which to acquire a write lock.
  * \param[in] timeout_ms Maximum amount of time to wait to acquire a write lock, in milliseconds.
@@ -512,9 +566,9 @@ void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
  * \brief Release a write lock on a read-write lock object from an interrupt context.
  *
  * This function is only meaningful on some platforms; namely, those which have a different method
- * for releasing a lock from an interrupt context. See the table in the overview above for more
- * information. On platforms on which it is not meaningful, this function simply executes the
- * equivalent of etcpal_rwlock_writeunlock().
+ * for releasing a lock from an interrupt context. The value of #ETCPAL_RWLOCK_HAS_UNLOCK_FROM_ISR
+ * can be used to determine whether this function is meaningful on the current platform. If it is
+ * defined to 0, this function simply executes the equivalent of etcpal_rwlock_writeunlock().
  *
  * \param[in] id Identifier for the read-write lock on which to release the write lock.
  */
@@ -576,13 +630,13 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
  * etcpal_sem implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
  *
- * | Platform | timed_wait honored | post_from_isr meaningful | max_count meaningful | Underlying Type    |
- * |----------|--------------------|--------------------------|----------------------|--------------------|
- * | FreeRTOS | Yes                | Yes                      | Yes                  | [Counting Semaphores](https://www.freertos.org/Real-time-embedded-RTOS-Counting-Semaphores.html) |
- * | Linux    | No                 | No                       | No                   | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
- * | macOS    | No                 | No                       | No                   | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
- * | MQX      | Yes                | No                       | No                   | Lightweight Semaphores |
- * | Windows  | Yes                | No                       | No                   | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
+ * | Platform | #ETCPAL_SEM_HAS_TIMED_WAIT | #ETCPAL_SEM_HAS_POST_FROM_ISR | #ETCPAL_SEM_HAS_MAX_COUNT | Underlying Type    |
+ * |----------|----------------------------|-------------------------------|---------------------------|--------------------|
+ * | FreeRTOS | Yes                        | Yes                           | Yes                       | [Counting Semaphores](https://www.freertos.org/Real-time-embedded-RTOS-Counting-Semaphores.html) |
+ * | Linux    | No                         | No                            | No                        | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
+ * | macOS    | No                         | No                            | No                        | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
+ * | MQX      | Yes                        | No                            | No                        | Lightweight Semaphores |
+ * | Windows  | Yes                        | No                            | No                        | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
  *
  * @{
  */
@@ -595,6 +649,30 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 typedef PLATFORM_DEFINED etcpal_sem_t;
 
 /*!
+ * \brief Whether etcpal_sem_timed_wait() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_sem_timed_wait() executes the equivalent of etcpal_sem_try_wait() if
+ * given a timeout of 0, or etcpal_sem_wait() otherwise.
+ */
+#define ETCPAL_SEM_HAS_TIMED_WAIT /* platform-defined */
+
+/*!
+ * \brief Whether etcpal_sem_post_from_isr() is meaningful on this platform.
+ *
+ * Some platforms have a different method for posting a signal from an interrupt context. If
+ * defined to 0, etcpal_sem_post_from_isr() executes the equivalent of etcpal_sem_post().
+ */
+#define ETCPAL_SEM_HAS_POST_FROM_ISR /* platform-defined */
+
+/*!
+ * \brief Whether counting semaphores have a maximum count on this platform.
+ *
+ * Some platforms have a maximum count after which a counting semaphore can no longer be posted. If
+ * defined to 0, the max_count argument to etcpal_sem_create() is ignored.
+ */
+#define ETCPAL_SEM_HAS_MAX_COUNT /* platform-defined */
+
+/*!
  * \brief Create a new counting semaphore.
  *
  * If initial_count is 0, calls to etcpal_sem_wait() will block until the first call is made to
@@ -604,9 +682,8 @@ typedef PLATFORM_DEFINED etcpal_sem_t;
  *                true, *id becomes valid for calls to other etcpal_sem API functions.
  * \param[in] initial_count The count value assigned to the semaphore when it is created.
  * \param[in] max_count The maximum count that the semaphore can have. This is not meaningful on
- *                      all platforms - see the table in the module overview for details. If it is
- *                      meaningful, once the count reaches this value, the semaphore can no longer
- *                      be posted.
+ *                      all platforms - see #ETCPAL_SEM_HAS_MAX_COUNT. If it is meaningful, once
+ *                      the count reaches this value, the semaphore can no longer be posted.
  * \return true: The semaphore was created.
  * \return false: The semaphore was not created.
  */
@@ -642,9 +719,10 @@ bool etcpal_sem_try_wait(etcpal_sem_t* id);
  * If the semaphore's count is nonzero, decrements the count and returns true. Otherwise, waits up
  * to timeout_ms for the semaphore to be posted, returning false if this timeout expires.
  *
- * This function is not honored on all platforms. See the table in the overview above for more
- * information. On platforms on which it is not honored, this function executes the equivalent of
- * etcpal_sem_try_wait() if timeout_ms is 0, or etcpal_sem_wait() otherwise.
+ * This function is not honored on all platforms. The value of #ETCPAL_SEM_HAS_TIMED_WAIT can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_sem_try_wait() if timeout_ms is 0, or
+ * etcpal_sem_wait() otherwise.
  *
  * \param[in] id Identifier for the semaphore for which to wait.
  * \param[in] timeout_ms Maximum amount of time to wait for the semaphore, in milliseconds. If
@@ -676,9 +754,9 @@ bool etcpal_sem_post(etcpal_sem_t* id);
  * \brief Post a semaphore from an interrupt context.
  *
  * This function is only meaningful on some platforms; namely, those which have a different method
- * for posting a semaphore from an interrupt context. See the table in the overview above for more
- * information. On platforms on which it is not meaningful, this function simply executes the
- * equivalent of etcpal_sem_post().
+ * for posting a semaphore from an interrupt context. The value of #ETCPAL_SEM_HAS_POST_FROM_ISR
+ * can be used to determine whether this function is meaningful on the current platform. If it is
+ * defined to 0, this function simply executes the equivalent of etcpal_sem_post().
  *
  * \param[in] id Identifier for the semaphore to post.
  * \return true: The semaphore was posted.
