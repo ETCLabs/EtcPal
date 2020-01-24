@@ -19,6 +19,7 @@
 
 #include "etcpal/lock.h"
 #include <unistd.h>
+#include <semaphore.h>
 
 /**************************** Private constants ******************************/
 
@@ -253,39 +254,9 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
   }
 }
 
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
-{
-  // TODO
-  return false;
-}
-
-bool etcpal_sem_wait(etcpal_sem_t* id)
-{
-  // TODO
-  return false;
-}
-
-bool etcpal_sem_try_wait(etcpal_sem_t* id)
-{
-  // TODO
-  return false;
-}
-
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  // TODO
-  return false;
-}
-
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id)
-{
-  // TODO
-  return false;
-}
-
-void etcpal_sem_destroy(etcpal_sem_t* id)
-{
-  // TODO
+  return (timeout_ms == 0 ? etcpal_sem_try_wait(id) : etcpal_sem_wait(id));
 }
 
 // TODO investigate C11 atomics for this

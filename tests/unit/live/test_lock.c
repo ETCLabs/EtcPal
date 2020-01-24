@@ -42,9 +42,6 @@ TEST(etcpal_lock, mutex_create_and_destroy_works)
   TEST_ASSERT_TRUE(etcpal_mutex_lock(&mutex));
   etcpal_mutex_unlock(&mutex);
   etcpal_mutex_destroy(&mutex);
-
-  // lock() should fail on a destroyed mutex.
-  TEST_ASSERT_FALSE(etcpal_mutex_lock(&mutex));
 }
 
 TEST(etcpal_lock, mutex_try_lock_works)
@@ -102,11 +99,8 @@ TEST(etcpal_lock, signal_create_and_destroy_works)
 
   etcpal_signal_post(&signal);
   TEST_ASSERT_TRUE(etcpal_signal_wait(&signal));
-
-  // Wait should fail on a destroyed signal.
   etcpal_signal_post(&signal);
   etcpal_signal_destroy(&signal);
-  TEST_ASSERT_FALSE(etcpal_signal_wait(&signal));
 }
 
 TEST(etcpal_lock, signal_try_wait_works)
@@ -158,10 +152,7 @@ TEST(etcpal_lock, rwlock_create_and_destroy_works)
   etcpal_rwlock_readunlock(&rwlock);
   TEST_ASSERT_TRUE(etcpal_rwlock_writelock(&rwlock));
   etcpal_rwlock_writeunlock(&rwlock);
-
-  // Take should fail on a destroyed rwlock.
   etcpal_rwlock_destroy(&rwlock);
-  TEST_ASSERT_FALSE(etcpal_rwlock_writelock(&rwlock));
 }
 
 TEST(etcpal_lock, rwlock_read_and_write_interaction)
@@ -244,10 +235,7 @@ TEST(etcpal_lock, sem_create_and_destroy_works)
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 1, 10));
   TEST_ASSERT_TRUE(etcpal_sem_wait(&sem));
   TEST_ASSERT_TRUE(etcpal_sem_post(&sem));
-
-  // Wait should fail on a destroyed semaphore
   etcpal_sem_destroy(&sem);
-  TEST_ASSERT_FALSE(etcpal_sem_wait(&sem));
 }
 
 TEST(etcpal_lock, sem_counting_works)
