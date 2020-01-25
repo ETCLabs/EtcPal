@@ -262,8 +262,15 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
       {
         vTaskDelay(1);  // Wait one tick at a time
       }
-      // Hold on to the lock until writeunlock() is called
-      return true;
+      if (id->reader_count == 0)
+      {
+        // Hold on to the lock until writeunlock() is called
+        return true;
+      }
+      else
+      {
+        xSemaphoreGive(id->sem);
+      }
     }
   }
   return false;
@@ -324,17 +331,22 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
   if (id && *id)
-    xSemaphoreGive((SemaphoreHandle_t)*id);
+  {
+    return (pdTRUE == xSemaphoreGive((SemaphoreHandle_t)*id));
+  }
+  return false;
 }
 
 bool etcpal_sem_post_from_isr(etcpal_sem_t* id)
 {
+  bool result = false;
   if (id && *id)
   {
     BaseType_t higherPriorityTaskWoken;
-    xSemaphoreGiveFromISR((SemaphoreHandle_t)*id, &higherPriorityTaskWoken);
+    result = (pdTRUE == xSemaphoreGiveFromISR((SemaphoreHandle_t)*id, &higherPriorityTaskWoken));
     portYIELD_FROM_ISR(higherPriorityTaskWoken);
   }
+  return result;
 }
 
 void etcpal_sem_destroy(etcpal_sem_t* id)
