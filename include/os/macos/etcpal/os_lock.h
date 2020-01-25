@@ -22,7 +22,7 @@
 
 #include <stdbool.h>
 #include <pthread.h>
-#include <semaphore.h>
+#include <dispatch/dispatch.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,9 +79,13 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
-typedef sem_t etcpal_sem_t;
+typedef struct
+{
+  bool valid;
+  dispatch_semaphore_t sem;
+} etcpal_sem_t;
 
-#define ETCPAL_SEM_HAS_TIMED_WAIT 0
+#define ETCPAL_SEM_HAS_TIMED_WAIT 1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 0
 #define ETCPAL_SEM_HAS_MAX_COUNT 0
 

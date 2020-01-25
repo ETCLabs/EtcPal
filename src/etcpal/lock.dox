@@ -590,13 +590,13 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
  * etcpal_sem implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
  *
- * | Platform | #ETCPAL_SEM_HAS_TIMED_WAIT | #ETCPAL_SEM_HAS_POST_FROM_ISR | #ETCPAL_SEM_HAS_MAX_COUNT | Underlying Type    |
- * |----------|----------------------------|-------------------------------|---------------------------|--------------------|
- * | FreeRTOS | Yes                        | Yes                           | Yes                       | [Counting Semaphores](https://www.freertos.org/Real-time-embedded-RTOS-Counting-Semaphores.html) |
- * | Linux    | No                         | No                            | No                        | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
- * | macOS    | No                         | No                            | No                        | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
- * | MQX      | Yes                        | No                            | No                        | Lightweight Semaphores |
- * | Windows  | Yes                        | No                            | Yes                       | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
+ * | Platform | #ETCPAL_SEM_HAS_TIMED_WAIT | #ETCPAL_SEM_HAS_POST_FROM_ISR | #ETCPAL_SEM_HAS_MAX_COUNT | #ETCPAL_SEM_MUST_BE_BALANCED | Underlying Type    |
+ * |----------|----------------------------|-------------------------------|---------------------------|------------------------------|--------------------|
+ * | FreeRTOS | Yes                        | Yes                           | Yes                       | No                           | [Counting Semaphores](https://www.freertos.org/Real-time-embedded-RTOS-Counting-Semaphores.html) |
+ * | Linux    | No                         | No                            | No                        | No                           | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
+ * | macOS    | No                         | No                            | No                        | Yes                          | [Dispatch Semaphores](https://developer.apple.com/documentation/dispatch/dispatch_semaphore?language=objc)
+ * | MQX      | Yes                        | No                            | No                        | No                           | Lightweight Semaphores |
+ * | Windows  | Yes                        | No                            | Yes                       | No                           | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
  *
  * @{
  */
@@ -631,6 +631,15 @@ typedef PLATFORM_DEFINED etcpal_sem_t;
  * defined to 0, the max_count argument to etcpal_sem_create() is ignored.
  */
 #define ETCPAL_SEM_HAS_MAX_COUNT /* platform-defined */
+
+/*!
+ * \brief Whether the semaphore must have its initial count before being destroyed.
+ *
+ * Currently the only platform for which this is true is macOS. Calls to etcpal_sem_wait() and
+ * friends must be balanced with calls to etcpal_sem_post() and friends. If the semaphore does not
+ * have its initial count when being destroyed, an EXC_BAD_INSTRUCTION exception is raised.
+ */
+#define ETCPAL_SEM_MUST_BE_BALANCED /* platform-defined */
 
 /*!
  * \brief Create a new counting semaphore.
@@ -727,6 +736,10 @@ bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
 
 /*!
  * \brief Destroy a semaphore object.
+ *
+ * **NOTE:** if #ETCPAL_SEM_MUST_BE_BALANCED is defined to 1, the semaphore must have its initial
+ * count before being destroyed.
+ *
  * \param[in] id Identifier for the semaphore to destroy.
  */
 void etcpal_sem_destroy(etcpal_sem_t* id);
