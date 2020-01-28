@@ -28,7 +28,6 @@
 class TestLogMessageHandler : public etcpal::LogMessageHandler
 {
 public:
-  TestLogMessageHandler() { UnityPrint("*** CONSTRUCTOR ***"); }
   void WillReturnTimestamp(const EtcPalLogTimestamp& timestamp) { timestamp_to_return_ = timestamp; }
   void OnLogEvent(const std::function<void(const EtcPalLogStrings&)>& func) { log_event_ = func; }
 

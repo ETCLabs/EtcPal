@@ -288,7 +288,10 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
   if (id && id->valid)
-    return !dispatch_semaphore_signal(id->sem);
+  {
+    dispatch_semaphore_signal(id->sem);
+    return true;
+  }
   return false;
 }
 

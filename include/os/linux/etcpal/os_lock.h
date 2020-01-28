@@ -84,6 +84,7 @@ typedef sem_t etcpal_sem_t;
 #define ETCPAL_SEM_HAS_TIMED_WAIT 0
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 0
 #define ETCPAL_SEM_HAS_MAX_COUNT 0
+#define ETCPAL_SEM_MUST_BE_BALANCED 0
 
 #define etcpal_sem_create(idptr, initial_count, max_count) ((bool)(!sem_init(idptr, 0, initial_count)))
 #define etcpal_sem_wait(idptr) ((bool)(!sem_wait(idptr)))

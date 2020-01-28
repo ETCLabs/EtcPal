@@ -143,6 +143,8 @@ TEST(etcpal_cpp_lock, sem_create_and_destroy_works)
   TEST_ASSERT_TRUE(sem.Post());
   // The count should be 1 again. Wait should succeed.
   TEST_ASSERT_TRUE(sem.TryWait());
+
+  TEST_ASSERT_TRUE(sem.Post());
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_lock)

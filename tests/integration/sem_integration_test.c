@@ -48,21 +48,20 @@ TEST_GROUP(sem_integration);
 
 TEST_SETUP(sem_integration)
 {
-  TEST_ASSERT_TRUE(etcpal_sem_create(&sem, NUM_THREADS, NUM_THREADS * NUM_ITERATIONS));
 }
 
 TEST_TEAR_DOWN(sem_integration)
 {
-  etcpal_sem_destroy(&sem);
 }
 
-// Initialize the semaphore with a count of NUM_THREADS; each thread should be able to take the semaphore once.
-// Each thread just tries to take the semaphore NUM_ITERATIONS times. Post the semaphore
-// (NUM_ITERATIONS - 1) * NUM_THREADS times to wake up each thread the correct number of threads. Each thread should
-// then terminate. The failure mode is that one or more threads hang and the test times out.
-TEST(sem_integration, sem_thread_test)
+// Initialize the semaphore with a count of 0. Each thread just tries to take the semaphore NUM_ITERATIONS times. Post
+// the semaphore (NUM_ITERATIONS * NUM_THREADS) times to wake up each thread the correct number of threads. Each thread
+// should then terminate. The failure mode is that one or more threads hang and the test times out.
+TEST(sem_integration, sem_thread_test_initial_zero)
 {
   etcpal_thread_t threads[NUM_THREADS];
+
+  TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 0, NUM_THREADS * NUM_ITERATIONS));
 
   EtcPalThreadParams params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
   for (int i = 0; i < NUM_THREADS; ++i)
@@ -73,11 +72,13 @@ TEST(sem_integration, sem_thread_test)
                               error_msg);
   }
 
-  for (int i = 0; i < NUM_ITERATIONS - 1; ++i)
+  for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
     for (int j = 0; j < NUM_THREADS; ++j)
     {
-      TEST_ASSERT_TRUE(etcpal_sem_post(&sem));
+      char error_msg[50];
+      sprintf(error_msg, "Failed on external loop %d, internal loop %d", i, j);
+      TEST_ASSERT_TRUE_MESSAGE(etcpal_sem_post(&sem), error_msg);
     }
   }
 
@@ -85,9 +86,45 @@ TEST(sem_integration, sem_thread_test)
     TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
 
   // The pass case here is that the test does not hang/timeout
+  etcpal_sem_destroy(&sem);
+}
+
+// Initialize the semaphore with a count of (NUM_ITERATIONS * NUM_THREADS). Each thread just tries to take the
+// semaphore NUM_ITERATIONS times, and should succeed each time. Each thread should then terminate. The failure mode is
+// that one or more threads hang and the test times out.
+TEST(sem_integration, sem_thread_test_initial_full)
+{
+  etcpal_thread_t threads[NUM_THREADS];
+
+  TEST_ASSERT_TRUE(etcpal_sem_create(&sem, NUM_THREADS * NUM_ITERATIONS, NUM_THREADS * NUM_ITERATIONS));
+
+  EtcPalThreadParams params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  for (int i = 0; i < NUM_THREADS; ++i)
+  {
+    char error_msg[50];
+    sprintf(error_msg, "Failed on iteration %d", i);
+    TEST_ASSERT_EQUAL_MESSAGE(etcpal_thread_create(&threads[i], &params, sem_test_thread, NULL), kEtcPalErrOk,
+                              error_msg);
+  }
+
+  for (int i = 0; i < NUM_THREADS; ++i)
+    TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
+
+#if ETCPAL_SEM_MUST_BE_BALANCED
+  for (int i = 0; i < (NUM_ITERATIONS * NUM_THREADS); ++i)
+  {
+    char error_msg[50];
+    sprintf(error_msg, "Failed on iteration %d", i);
+    TEST_ASSERT_TRUE_MESSAGE(etcpal_sem_post(&sem), error_msg);
+  }
+#endif
+
+  // The pass case here is that the test does not hang/timeout
+  etcpal_sem_destroy(&sem);
 }
 
 TEST_GROUP_RUNNER(sem_integration)
 {
-  RUN_TEST_CASE(sem_integration, sem_thread_test);
+  RUN_TEST_CASE(sem_integration, sem_thread_test_initial_zero);
+  RUN_TEST_CASE(sem_integration, sem_thread_test_initial_full);
 }
