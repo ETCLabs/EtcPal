@@ -21,11 +21,14 @@
 #include "unity_fixture.h"
 
 #include <functional>
+#include <string>
+#include <vector>
 
 // It would be nice to have GoogleMock available, but alas...
 class TestLogMessageHandler : public etcpal::LogMessageHandler
 {
 public:
+  TestLogMessageHandler() { UnityPrint("*** CONSTRUCTOR ***"); }
   void WillReturnTimestamp(const EtcPalLogTimestamp& timestamp) { timestamp_to_return_ = timestamp; }
   void OnLogEvent(const std::function<void(const EtcPalLogStrings&)>& func) { log_event_ = func; }
 
@@ -36,7 +39,7 @@ private:
   EtcPalLogTimestamp GetLogTimestamp() override { return timestamp_to_return_; }
   void HandleLogMessage(const EtcPalLogStrings& strings) override;
 
-  EtcPalLogTimestamp timestamp_to_return_{};
+  EtcPalLogTimestamp timestamp_to_return_{1970, 1, 1, 0, 0, 0, 0, 0};
   std::function<void(const EtcPalLogStrings&)> log_event_;
   int log_event_call_count_{0};
 };
@@ -68,9 +71,8 @@ TEST_TEAR_DOWN(etcpal_cpp_log)
 
 TEST(etcpal_cpp_log, startup_works)
 {
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [DBUG] Test Message");
-  });
+  std::string human_str;
+  test_log_handler.OnLogEvent([&human_str](const EtcPalLogStrings& strings) { human_str = strings.human_readable; });
 
   // Logging should not work if the logger has not been started
   logger.Debug("Test Message");
@@ -83,17 +85,19 @@ TEST(etcpal_cpp_log, startup_works)
 
   logger.Debug("Test Message");
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 1);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [DBUG] Test Message");
 
   logger.Shutdown();
 }
 
-// Test the dispatch_policy and log_action setters/getters
+// Test the dispatch_policy, log_action and log_params setters/getters
 TEST(etcpal_cpp_log, basic_getters_work)
 {
   logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct).SetLogAction(kEtcPalLogCreateSyslog);
 
   TEST_ASSERT_EQUAL(logger.dispatch_policy(), etcpal::LogDispatchPolicy::Direct);
   TEST_ASSERT_EQUAL(logger.log_action(), kEtcPalLogCreateSyslog);
+  TEST_ASSERT_EQUAL(logger.log_params().action, kEtcPalLogCreateSyslog);
 }
 
 // Test the functionality of the log mask.
@@ -148,78 +152,65 @@ TEST(etcpal_cpp_log, log_functions_work)
                        .SetLogAction(kEtcPalLogCreateHumanReadable)
                        .Startup(test_log_handler));
 
+  std::string human_str;
+  test_log_handler.OnLogEvent([&human_str](const EtcPalLogStrings& strings) { human_str = strings.human_readable; });
+
   // Test the Log() function and corresponding shortcut for each priority:
 
   // Debug
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [DBUG] Test Message 1");
-  });
   logger.Log(ETCPAL_LOG_DEBUG, "Test message %d", 1);
   logger.Debug("Test Message %d", 1);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [DBUG] Test Message 1");
   test_log_handler.ResetLogEventCallCount();
 
   // Info
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [INFO] Test Message 2");
-  });
   logger.Log(ETCPAL_LOG_INFO, "Test message %d", 2);
   logger.Info("Test Message %d", 2);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [INFO] Test Message 2");
   test_log_handler.ResetLogEventCallCount();
 
   // Notice
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [NOTI] Test Message 3");
-  });
   logger.Log(ETCPAL_LOG_NOTICE, "Test message %d", 3);
   logger.Notice("Test Message %d", 3);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [NOTI] Test Message 3");
   test_log_handler.ResetLogEventCallCount();
 
   // Warning
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [WARN] Test Message 4");
-  });
   logger.Log(ETCPAL_LOG_WARNING, "Test message %d", 4);
   logger.Warning("Test Message %d", 4);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [WARN] Test Message 4");
   test_log_handler.ResetLogEventCallCount();
 
   // Error
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [ERR ] Test Message 5");
-  });
   logger.Log(ETCPAL_LOG_ERR, "Test message %d", 5);
   logger.Error("Test Message %d", 5);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [ERR ] Test Message 5");
   test_log_handler.ResetLogEventCallCount();
 
   // Critical
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [CRIT] Test Message 6");
-  });
   logger.Log(ETCPAL_LOG_CRIT, "Test message %d", 6);
   logger.Critical("Test Message %d", 6);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [CRIT] Test Message 6");
   test_log_handler.ResetLogEventCallCount();
 
   // Alert
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [ALRT] Test Message 7");
-  });
   logger.Log(ETCPAL_LOG_ALERT, "Test message %d", 7);
   logger.Alert("Test Message %d", 7);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [ALRT] Test Message 7");
   test_log_handler.ResetLogEventCallCount();
 
   // Emergency
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "1970-01-01 00:00:00.000Z [ALRT] Test Message 8");
-  });
   logger.Log(ETCPAL_LOG_EMERG, "Test message %d", 8);
   logger.Emergency("Test Message %d", 8);
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "1970-01-01 00:00:00.000Z [EMRG] Test Message 8");
 
   logger.Shutdown();
 }
@@ -258,10 +249,37 @@ TEST(etcpal_cpp_log, syslog_params_work)
   TEST_ASSERT_EQUAL_STRING(logger.syslog_app_name(), "TestApp");
   TEST_ASSERT_EQUAL_STRING(logger.syslog_procid(), "200");
 
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.syslog, "<142>1 1970-01-01T00:00:00.000Z MyHost TestApp 200 - - Test Message");
-  });
+  std::string syslog_str;
+  test_log_handler.OnLogEvent([&syslog_str](const EtcPalLogStrings& strings) { syslog_str = strings.syslog; });
   logger.Log(ETCPAL_LOG_INFO, "Test Message");
+  TEST_ASSERT_EQUAL_STRING(syslog_str.c_str(), "<142>1 1970-01-01T00:00:00.000Z MyHost TestApp 200 - - Test Message");
+}
+
+TEST(etcpal_cpp_log, queued_dispatch_works)
+{
+  std::vector<std::string> log_strs;
+  log_strs.reserve(3);
+  test_log_handler.OnLogEvent(
+      [&log_strs](const EtcPalLogStrings& strings) { log_strs.push_back(strings.human_readable); });
+
+  // Startup should work - after starting, logging should work
+  TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Queued)
+                       .SetLogAction(kEtcPalLogCreateHumanReadable)
+                       .SetLogMask(ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG))
+                       .Startup(test_log_handler));
+
+  logger.Debug("Test Message 1");
+  logger.Debug("Test Message 2");
+  logger.Debug("Test Message 3");
+
+  // Wait for the thread to dispatch the log messages and stop
+  logger.Shutdown();
+
+  TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 3);
+  TEST_ASSERT_EQUAL(log_strs.size(), 3);
+  TEST_ASSERT_EQUAL_STRING(log_strs[0].c_str(), "1970-01-01 00:00:00.000Z [DBUG] Test Message 1");
+  TEST_ASSERT_EQUAL_STRING(log_strs[1].c_str(), "1970-01-01 00:00:00.000Z [DBUG] Test Message 2");
+  TEST_ASSERT_EQUAL_STRING(log_strs[2].c_str(), "1970-01-01 00:00:00.000Z [DBUG] Test Message 3");
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_log)
@@ -272,5 +290,6 @@ TEST_GROUP_RUNNER(etcpal_cpp_log)
   RUN_TEST_CASE(etcpal_cpp_log, log_functions_work);
   RUN_TEST_CASE(etcpal_cpp_log, timestamps_work);
   RUN_TEST_CASE(etcpal_cpp_log, syslog_params_work);
+  RUN_TEST_CASE(etcpal_cpp_log, queued_dispatch_works);
 }
 }

@@ -23,6 +23,8 @@
 #ifndef ETCPAL_CPP_LOG_H_
 #define ETCPAL_CPP_LOG_H_
 
+#include <cstdarg>
+#include <cstring>
 #include <memory>
 #include <queue>
 #include <string>
@@ -155,6 +157,8 @@ enum class LogDispatchPolicy
 class Logger
 {
 public:
+  Logger();
+
   bool Startup(LogMessageHandler& message_handler);
   void Shutdown();
 
@@ -201,38 +205,99 @@ public:
   /// @}
 
 private:
+  void LogInternal(int pri, const char* format, std::va_list args);
+  void LogThreadRun();
+  void EmptyLogQueue();
+
   LogDispatchPolicy dispatch_policy_{LogDispatchPolicy::Queued};
-
-  LogMessageHandler* handler_{nullptr};
-
   EtcPalLogParams log_params_{};
 
-  // TODO explore ways to optimize memory usage
-  struct LogStrings
+  struct LogMessage
   {
-    char human_readable[ETCPAL_LOG_STR_MAX_LEN];
-    char syslog[ETCPAL_SYSLOG_STR_MAX_LEN];
-    char raw[ETCPAL_RAW_LOG_MSG_MAX_LEN];
+    int pri;
+    char buf[ETCPAL_RAW_LOG_MSG_MAX_LEN];
   };
 
   // Used when dispatch_policy_ == Queued
-  std::queue<LogStrings> msg_q_;
+  // This implementation will become more elegant with the addition of new queue APIs. This is
+  // being tracked with ETCPAL-43 and ETCPAL-46.
+  std::queue<LogMessage> msg_q_;
   std::unique_ptr<etcpal::Signal> signal_;
   std::unique_ptr<etcpal::Mutex> mutex_;
   etcpal::Thread thread_;
-  bool keep_running_{false};
+  bool running_{false};
 };
+
+/// \cond Internal log callback functions
+
+extern "C" inline void LogCallbackFn(void* context, const EtcPalLogStrings* strings)
+{
+  if (context && strings)
+  {
+    static_cast<LogMessageHandler*>(context)->HandleLogMessage(*strings);
+  }
+}
+
+extern "C" inline void LogTimestampFn(void* context, EtcPalLogTimestamp* timestamp)
+{
+  if (context && timestamp)
+  {
+    *timestamp = static_cast<LogMessageHandler*>(context)->GetLogTimestamp();
+  }
+}
+
+/// \endcond
+
+inline Logger::Logger()
+{
+  // Default logging parameters
+  log_params_.action = kEtcPalLogCreateHumanReadable;
+  log_params_.log_fn = LogCallbackFn;
+  log_params_.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  log_params_.time_fn = LogTimestampFn;
+  log_params_.context = nullptr;
+}
 
 /// \brief Start logging.
 ///
 /// Spawns a thread to dispatch log messages unless SetDispatchPolicy(LogDispatchPolicy::Direct)
-/// has been called.
+/// has been called. Do not call more than once between calls to Shutdown().
 ///
 /// \param message_handler The class instance that will handle log messages from this logger.
 inline bool Logger::Startup(LogMessageHandler& message_handler)
 {
-  // TODO
-  return false;
+  if (etcpal_init(ETCPAL_FEATURE_LOGGING) != kEtcPalErrOk)
+    return false;
+
+  if (!etcpal_validate_log_params(&log_params_))
+  {
+    etcpal_deinit(ETCPAL_FEATURE_LOGGING);
+    return false;
+  }
+
+  log_params_.context = &message_handler;
+
+  if (dispatch_policy_ == LogDispatchPolicy::Queued)
+  {
+    // Start the log dispatch thread
+    running_ = true;
+    signal_.reset(new etcpal::Signal);
+    mutex_.reset(new etcpal::Mutex);
+    if (thread_.SetName("EtcPalLoggerThread").Start(&Logger::LogThreadRun, this))
+    {
+      return true;
+    }
+    else
+    {
+      etcpal_deinit(ETCPAL_FEATURE_LOGGING);
+      return false;
+    }
+  }
+  else
+  {
+    running_ = true;
+    return true;
+  }
 }
 
 /// \brief Stop logging.
@@ -241,7 +306,17 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
 /// of the log messages and wait for the dispatch thread to join.
 inline void Logger::Shutdown()
 {
-  // TODO
+  if (running_)
+  {
+    running_ = false;
+    if (dispatch_policy_ == LogDispatchPolicy::Queued)
+    {
+      signal_->Notify();
+      thread_.Join();
+    }
+    etcpal_deinit(ETCPAL_FEATURE_LOGGING);
+    log_params_.context = nullptr;
+  }
 }
 
 /// \brief Determine whether a priority level can be logged using the mask given via SetLogMask().
@@ -249,8 +324,7 @@ inline void Logger::Shutdown()
 /// See etcpal_can_log() for more information.
 inline bool Logger::CanLog(int pri) const noexcept
 {
-  // TODO
-  return false;
+  return etcpal_can_log(&log_params_, pri);
 }
 
 /// \brief Log a message.
@@ -262,55 +336,82 @@ inline bool Logger::CanLog(int pri) const noexcept
 ///               appropriate.
 inline void Logger::Log(int pri, const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(pri, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at debug priority.
 inline void Logger::Debug(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_DEBUG, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at informational priority.
 inline void Logger::Info(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_INFO, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at notice priority.
 inline void Logger::Notice(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_NOTICE, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at warning priority.
 inline void Logger::Warning(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_WARNING, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at error priority.
 inline void Logger::Error(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_ERR, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at critical priority.
 inline void Logger::Critical(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_CRIT, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at alert priority.
 inline void Logger::Alert(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_ALERT, format, args);
+  va_end(args);
 }
 
 /// \brief Log a message at emergency priority.
 inline void Logger::Emergency(const char* format, ...)
 {
-  // TODO
+  std::va_list args;
+  va_start(args, format);
+  LogInternal(ETCPAL_LOG_EMERG, format, args);
+  va_end(args);
 }
 
 /// \brief Get the current log dispatch policy.
@@ -322,43 +423,37 @@ inline LogDispatchPolicy Logger::dispatch_policy() const noexcept
 /// \brief Get the current log mask.
 inline int Logger::log_mask() const noexcept
 {
-  // TODO
-  return 0;
+  return log_params_.log_mask;
 }
 
 /// \brief Get the current log action.
 inline etcpal_log_action_t Logger::log_action() const noexcept
 {
-  // TODO
-  return kEtcPalLogCreateHumanReadable;
+  return log_params_.action;
 }
 
 /// \brief Get the current Syslog facility value.
 inline int Logger::syslog_facility() const noexcept
 {
-  // TODO
-  return 0;
+  return log_params_.syslog_params.facility;
 }
 
 /// \brief Get the current Syslog HOSTNAME.
 inline const char* Logger::syslog_hostname() const noexcept
 {
-  // TODO
-  return "";
+  return log_params_.syslog_params.hostname;
 }
 
 /// \brief Get the current Syslog APP-NAME.
 inline const char* Logger::syslog_app_name() const noexcept
 {
-  // TODO
-  return "";
+  return log_params_.syslog_params.app_name;
 }
 
 /// \brief Get the current Syslog PROCID.
 inline const char* Logger::syslog_procid() const noexcept
 {
-  // TODO
-  return "";
+  return log_params_.syslog_params.procid;
 }
 
 /// \brief Get the log params used by this logger.
@@ -368,7 +463,6 @@ inline const char* Logger::syslog_procid() const noexcept
 /// logger instance.
 inline const EtcPalLogParams& Logger::log_params() const noexcept
 {
-  // TODO
   return log_params_;
 }
 
@@ -379,7 +473,7 @@ inline const EtcPalLogParams& Logger::log_params() const noexcept
 /// \param new_policy The new dispatch policy.
 inline Logger& Logger::SetDispatchPolicy(LogDispatchPolicy new_policy) noexcept
 {
-  // TODO
+  dispatch_policy_ = new_policy;
   return *this;
 }
 
@@ -392,71 +486,123 @@ inline Logger& Logger::SetDispatchPolicy(LogDispatchPolicy new_policy) noexcept
 /// \param log_mask The new log mask.
 inline Logger& Logger::SetLogMask(int log_mask) noexcept
 {
-  // TODO
+  log_params_.log_mask = log_mask;
   return *this;
 }
 
 /// \brief Set the types of log messages to create and dispatch to the LogMessageHandler.
 inline Logger& Logger::SetLogAction(etcpal_log_action_t log_action) noexcept
 {
-  // TODO
+  log_params_.action = log_action;
   return *this;
 }
 
 /// \brief Set the Syslog facility value; see RFC 5424 &sect; 6.2.1.
 inline Logger& Logger::SetSyslogFacility(int facility) noexcept
 {
-  // TODO
+  log_params_.syslog_params.facility = facility;
   return *this;
 }
 
 /// \brief Set the Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4.
 inline Logger& Logger::SetSyslogHostname(const char* hostname) noexcept
 {
-  // TODO
+  strncpy(log_params_.syslog_params.hostname, hostname, ETCPAL_LOG_HOSTNAME_MAX_LEN - 1);
+  log_params_.syslog_params.hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN - 1] = '\0';
   return *this;
 }
 
 /// \brief Set the Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4.
 inline Logger& Logger::SetSyslogHostname(const std::string& hostname) noexcept
 {
-  // TODO
+  SetSyslogHostname(hostname.c_str());
   return *this;
 }
 
 /// \brief Set the Syslog APP-NAME; see RFC 5424 &sect; 6.2.5.
 inline Logger& Logger::SetSyslogAppName(const char* app_name) noexcept
 {
-  // TODO
+  strncpy(log_params_.syslog_params.app_name, app_name, ETCPAL_LOG_APP_NAME_MAX_LEN - 1);
+  log_params_.syslog_params.app_name[ETCPAL_LOG_APP_NAME_MAX_LEN - 1] = '\0';
   return *this;
 }
 
 /// \brief Set the Syslog APP-NAME; see RFC 5424 &sect; 6.2.5.
 inline Logger& Logger::SetSyslogAppName(const std::string& app_name) noexcept
 {
-  // TODO
+  SetSyslogAppName(app_name.c_str());
   return *this;
 }
 
 /// \brief Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6.
 inline Logger& Logger::SetSyslogProcId(const char* proc_id) noexcept
 {
-  // TODO
+  strncpy(log_params_.syslog_params.procid, proc_id, ETCPAL_LOG_PROCID_MAX_LEN - 1);
+  log_params_.syslog_params.procid[ETCPAL_LOG_PROCID_MAX_LEN - 1] = '\0';
   return *this;
 }
 
 /// \brief Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6.
 inline Logger& Logger::SetSyslogProcId(const std::string& proc_id) noexcept
 {
-  // TODO
+  SetSyslogProcId(proc_id.c_str());
   return *this;
 }
 
 /// \brief Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6.
 inline Logger& Logger::SetSyslogProcId(int proc_id) noexcept
 {
-  // TODO
+  sprintf(log_params_.syslog_params.procid, "%d", proc_id);
   return *this;
+}
+
+// Private functions
+
+inline void Logger::LogInternal(int pri, const char* format, std::va_list args)
+{
+  if (running_)
+  {
+    if (dispatch_policy_ == LogDispatchPolicy::Direct)
+    {
+      etcpal_vlog(&log_params_, pri, format, args);
+    }
+    else
+    {
+      {
+        etcpal::MutexGuard lock(*mutex_);
+        msg_q_.emplace();
+        msg_q_.back().pri = pri;
+        vsnprintf(msg_q_.back().buf, ETCPAL_RAW_LOG_MSG_MAX_LEN, format, args);
+      }
+      signal_->Notify();
+    }
+  }
+}
+
+inline void Logger::LogThreadRun()
+{
+  while (running_)
+  {
+    EmptyLogQueue();
+    signal_->Wait();
+  }
+  // Bail the queue one last time on exit
+  EmptyLogQueue();
+}
+
+inline void Logger::EmptyLogQueue()
+{
+  std::queue<LogMessage> to_log;
+  {
+    etcpal::MutexGuard lock(*mutex_);
+    to_log.swap(msg_q_);
+  }
+
+  while (!to_log.empty())
+  {
+    etcpal_log(&log_params_, to_log.front().pri, to_log.front().buf);
+    to_log.pop();
+  }
 }
 
 };  // namespace etcpal
