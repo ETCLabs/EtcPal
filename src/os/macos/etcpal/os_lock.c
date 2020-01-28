@@ -255,37 +255,50 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
-  // TODO
+  if (id)
+  {
+    id->sem = dispatch_semaphore_create(initial_count);
+    id->valid = true;
+    return true;
+  }
   return false;
 }
 
 bool etcpal_sem_wait(etcpal_sem_t* id)
 {
-  // TODO
+  if (id && id->valid)
+    return !dispatch_semaphore_wait(id->sem, DISPATCH_TIME_FOREVER);
   return false;
 }
 
 bool etcpal_sem_try_wait(etcpal_sem_t* id)
 {
-  // TODO
+  if (id && id->valid)
+    return !dispatch_semaphore_wait(id->sem, DISPATCH_TIME_NOW);
   return false;
 }
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  // TODO
+  if (id && id->valid)
+    return !dispatch_semaphore_wait(id->sem, dispatch_time(DISPATCH_TIME_NOW, timeout_ms * NSEC_PER_MSEC));
   return false;
 }
 
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
-  // TODO
+  if (id && id->valid)
+    return !dispatch_semaphore_signal(id->sem);
   return false;
 }
 
 void etcpal_sem_destroy(etcpal_sem_t* id)
 {
-  // TODO
+  if (id && id->valid)
+  {
+    dispatch_release(id->sem);
+    id->valid = false;
+  }
 }
 
 // TODO investigate C11 atomics for this

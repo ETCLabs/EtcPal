@@ -21,6 +21,7 @@
 #include "unity_fixture.h"
 
 #include <stddef.h>
+#include "etcpal/common.h"
 #include "etcpal/timer.h"
 
 TEST_GROUP(etcpal_lock);
@@ -252,6 +253,10 @@ TEST(etcpal_lock, sem_counting_works)
   TEST_ASSERT_TRUE(etcpal_sem_post(&sem));
   TEST_ASSERT_TRUE(etcpal_sem_wait(&sem));
 
+  // Some platforms require that semaphores start and end on the same count.
+  for (int i = 0; i < 5; ++i)
+    TEST_ASSERT_TRUE(etcpal_sem_post(&sem));
+
   etcpal_sem_destroy(&sem);
 }
 
@@ -266,6 +271,7 @@ TEST(etcpal_lock, sem_try_wait_works)
   // Count is 0, wait should not work
   TEST_ASSERT_FALSE(etcpal_sem_try_wait(&sem));
 
+  TEST_ASSERT_TRUE(etcpal_sem_post(&sem));
   etcpal_sem_destroy(&sem);
 }
 
@@ -319,6 +325,8 @@ TEST(etcpal_lock, sem_max_count)
 
 TEST_GROUP_RUNNER(etcpal_lock)
 {
+  etcpal_init(ETCPAL_FEATURE_TIMERS);
+
   RUN_TEST_CASE(etcpal_lock, mutex_create_and_destroy_works);
   RUN_TEST_CASE(etcpal_lock, mutex_try_lock_works);
   RUN_TEST_CASE(etcpal_lock, mutex_timed_lock_works);
@@ -335,4 +343,6 @@ TEST_GROUP_RUNNER(etcpal_lock)
 #if ETCPAL_SEM_HAS_MAX_COUNT
   RUN_TEST_CASE(etcpal_lock, sem_max_count);
 #endif
+
+  etcpal_deinit(ETCPAL_FEATURE_TIMERS);
 }
