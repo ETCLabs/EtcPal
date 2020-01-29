@@ -224,11 +224,12 @@ TEST(etcpal_cpp_log, timestamps_work)
   EtcPalLogTimestamp timestamp = {2020, 1, 22, 16, 57, 33, 123, -360};
   test_log_handler.WillReturnTimestamp(timestamp);
 
-  test_log_handler.OnLogEvent([](const EtcPalLogStrings& strings) {
-    TEST_ASSERT_EQUAL_STRING(strings.human_readable, "2020-01-22 16:57:33.123-06:00 [INFO] Test Message");
-  });
+  std::string human_str;
+  test_log_handler.OnLogEvent([&human_str](const EtcPalLogStrings& strings) { human_str = strings.human_readable; });
+
   logger.Info("Test Message");
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 1);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "2020-01-22 16:57:33.123-06:00 [INFO] Test Message");
 
   logger.Shutdown();
 }
