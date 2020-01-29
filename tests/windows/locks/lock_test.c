@@ -48,7 +48,16 @@
 #include <WinSock2.h>
 #include <Windows.h>
 #include <synchapi.h>
+
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
+
+// Suppress unused local variable warning in MSVC. We are using asserts which are disabled in
+// release mode.
+
+#ifdef _MSC_VER
+#pragma warning(disable : 4189)
+#endif
 
 #define NUM_TEST_ITERATIONS 5
 
@@ -60,6 +69,8 @@ HANDLE mutex;
 
 void test_mutex_worker(void* arg)
 {
+  ETCPAL_UNUSED_ARG(arg);
+
   while (keep_running)
   {
     DWORD wait_res = WaitForSingleObject(mutex, INFINITE);
@@ -105,6 +116,8 @@ unsigned long test_mutex(DWORD core_count)
 
 void test_critical_section_worker(void* arg)
 {
+  ETCPAL_UNUSED_ARG(arg);
+
   while (keep_running)
   {
     EnterCriticalSection(&cs);
@@ -149,6 +162,8 @@ unsigned long test_critical_section(DWORD core_count)
 
 void test_srw_lock_worker(void* arg)
 {
+  ETCPAL_UNUSED_ARG(arg);
+
   while (keep_running)
   {
     AcquireSRWLockExclusive(&srw_lock);
