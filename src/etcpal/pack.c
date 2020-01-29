@@ -20,6 +20,10 @@
 #include "etcpal/pack.h"
 #include "etcpal/private/opts.h"
 
+#if ETCPAL_INCLUDE_PACK_64
+#include "etcpal/pack64.h"
+#endif
+
 /*************************** Function definitions ****************************/
 
 /*!
@@ -29,8 +33,7 @@
  */
 int16_t etcpal_unpack_i16b(const uint8_t* buf)
 {
-  // TODO
-  return 0;
+  return (int16_t)etcpal_unpack_u16b(buf);
 }
 
 /*!
@@ -40,7 +43,7 @@ int16_t etcpal_unpack_i16b(const uint8_t* buf)
  */
 void etcpal_pack_i16b(uint8_t* buf, int16_t val)
 {
-  // TODO
+  etcpal_pack_u16b(buf, (uint16_t)val);
 }
 
 /*!
@@ -50,8 +53,7 @@ void etcpal_pack_i16b(uint8_t* buf, int16_t val)
  */
 int16_t etcpal_unpack_i16l(const uint8_t* buf)
 {
-  // TODO
-  return 0;
+  return (int16_t)etcpal_unpack_u16l(buf);
 }
 
 /*!
@@ -61,7 +63,7 @@ int16_t etcpal_unpack_i16l(const uint8_t* buf)
  */
 void etcpal_pack_i16l(uint8_t* buf, int16_t val)
 {
-  // TODO
+  etcpal_pack_u16l(buf, (uint16_t)val);
 }
 
 /*!
@@ -131,8 +133,7 @@ void etcpal_pack_u16l(uint8_t* buf, uint16_t val)
  */
 int32_t etcpal_unpack_i32b(const uint8_t* buf)
 {
-  // TODO
-  return 0;
+  return (int32_t)etcpal_unpack_u32b(buf);
 }
 
 /*!
@@ -142,7 +143,7 @@ int32_t etcpal_unpack_i32b(const uint8_t* buf)
  */
 void etcpal_pack_i32b(uint8_t* buf, int32_t val)
 {
-  // TODO
+  etcpal_pack_u32b(buf, (uint32_t)val);
 }
 
 /*!
@@ -152,8 +153,7 @@ void etcpal_pack_i32b(uint8_t* buf, int32_t val)
  */
 int32_t etcpal_unpack_i32l(const uint8_t* buf)
 {
-  // TODO
-  return 0;
+  return (int32_t)etcpal_unpack_u32l(buf);
 }
 
 /*!
@@ -163,7 +163,7 @@ int32_t etcpal_unpack_i32l(const uint8_t* buf)
  */
 void etcpal_pack_i32l(uint8_t* buf, int32_t val)
 {
-  // TODO
+  etcpal_pack_u32l(buf, (uint32_t)val);
 }
 
 /*!
@@ -243,8 +243,7 @@ void etcpal_pack_u32l(uint8_t* buf, uint32_t val)
  */
 int64_t etcpal_unpack_i64b(const uint8_t* buf)
 {
-  // TODO
-  return 0;
+  return (int64_t)etcpal_unpack_u64b(buf);
 }
 
 /*!
@@ -254,7 +253,7 @@ int64_t etcpal_unpack_i64b(const uint8_t* buf)
  */
 void etcpal_pack_i64b(uint8_t* buf, int64_t val)
 {
-  // TODO
+  etcpal_pack_u64b(buf, (uint64_t)val);
 }
 
 /*!
@@ -264,8 +263,7 @@ void etcpal_pack_i64b(uint8_t* buf, int64_t val)
  */
 int64_t etcpal_unpack_i64l(const uint8_t* buf)
 {
-  // TODO
-  return 0;
+  return (int64_t)etcpal_unpack_u64l(buf);
 }
 
 /*!
@@ -275,7 +273,7 @@ int64_t etcpal_unpack_i64l(const uint8_t* buf)
  */
 void etcpal_pack_i64l(uint8_t* buf, int64_t val)
 {
-  // TODO
+  etcpal_pack_u64l(buf, (uint64_t)val);
 }
 
 /*!
