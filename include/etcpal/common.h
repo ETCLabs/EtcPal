@@ -63,6 +63,32 @@
 extern "C" {
 #endif
 
+/*! \cond utilities used by library implementation */
+
+/* Suppress deprecated function warnings on Windows/MSVC. This is mostly used in situations where
+ * Microsoft warns us that a function like strncpy() could be unsafe, but we want to be portable
+ * and have made sure that we're using it in a safe way (e.g. by manually inserting null
+ * terminators). */
+#ifdef _MSC_VER
+
+#define ETCPAL_MSVC_NO_DEP_WRN __pragma(warning(suppress : 4996))
+
+#define ETCPAL_MSVC_BEGIN_NO_DEP_WARNINGS() __pragma(warning(push)) __pragma(warning(disable : 4996))
+#define ETCPAL_MSVC_END_NO_DEP_WARNINGS() __pragma(warning(pop))
+
+#else /* _MSC_VER */
+
+#define ETCPAL_MSVC_NO_DEP_WRN
+#define ETCPAL_MSVC_BEGIN_NO_DEP_WARNINGS()
+#define ETCPAL_MSVC_END_NO_DEP_WARNINGS()
+
+#endif /* _MSC_VER */
+
+/* Meaningful macro to suppress warnings on unused arguments */
+#define ETCPAL_UNUSED_ARG(arg) ((void)arg)
+
+/*! \endcond */
+
 /*! For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely. */
 #define ETCPAL_WAIT_FOREVER -1
 

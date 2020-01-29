@@ -23,18 +23,18 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
-etcpal_error_t etcpal_timer_init()
+etcpal_error_t etcpal_timer_init(void)
 {
   // No initialization necessary on this platform
   return kEtcPalErrOk;
 }
 
-void etcpal_timer_deinit()
+void etcpal_timer_deinit(void)
 {
   // No deinitialization necessary on this platform
 }
 
-uint32_t etcpal_getms()
+uint32_t etcpal_getms(void)
 {
   return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
 }

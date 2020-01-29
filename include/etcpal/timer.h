@@ -103,7 +103,7 @@ extern "C" {
  * \brief Get a monotonically-increasing millisecond value
  * \return The current timestamp in milliseconds.
  */
-uint32_t etcpal_getms();
+uint32_t etcpal_getms(void);
 
 /* Functions with platform-neutral definitions */
 

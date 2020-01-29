@@ -21,6 +21,7 @@
 #include "unity_fixture.h"
 
 #include <stdio.h>
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
 
 // Disable sprintf() warning on Windows/MSVC
@@ -33,7 +34,7 @@ static etcpal_signal_t sig;
 
 static void signal_test_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   for (size_t i = 0; i < 3; ++i)
     etcpal_signal_wait(&sig);

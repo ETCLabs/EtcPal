@@ -18,9 +18,12 @@
  ******************************************************************************/
 
 #include "etcpal/socket.h"
+
 #include <string.h>
 #include <lwip/sockets.h>
 #include <lwip/netdb.h>
+
+#include "etcpal/common.h"
 #include "os_error.h"
 
 /***************************** Private macros ********************************/
@@ -131,14 +134,13 @@ static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPol
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t etcpal_socket_init(etcpal_socket_t os_data)
+etcpal_error_t etcpal_socket_init(void)
 {
   /* No initialization is necessary on this os. */
-  (void)os_data;
   return kEtcPalErrOk;
 }
 
-void etcpal_socket_deinit()
+void etcpal_socket_deinit(void)
 {
   /* No deinitialization is necessary on this os. */
 }
@@ -202,8 +204,8 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   // TODO
-  (void)id;
-  (void)address;
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(address);
   return kEtcPalErrNotImpl;
 }
 
@@ -270,7 +272,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
 {
-  (void)flags;
+  ETCPAL_UNUSED_ARG(flags);
 
   if (!message)
     return (int)kEtcPalErrInvalid;
@@ -281,7 +283,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
 
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr)
 {
-  (void)flags;
+  ETCPAL_UNUSED_ARG(flags);
 
   if (!dest_addr || !message)
     return (int)kEtcPalErrInvalid;

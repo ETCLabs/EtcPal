@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include "etcpal/common.h"
 #include "etcpal/netint.h"
 #include "etcpal/thread.h"
 
@@ -157,7 +158,7 @@ TEST_TEAR_DOWN(socket_integration_udp)
 
 static void send_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
     etcpal_sendto(send_sock, (const uint8_t*)kSocketTestMessage, SOCKET_TEST_MESSAGE_LENGTH, 0, &send_addr);

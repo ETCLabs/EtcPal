@@ -21,6 +21,7 @@
 #include "unity_fixture.h"
 
 #include <stdio.h>
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
 
 // Disable sprintf() warning on Windows/MSVC
@@ -37,7 +38,7 @@ static bool read_thread_pass;
 
 static void write_test_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   for (size_t i = 0; i < NUM_ITERATIONS; ++i)
   {
@@ -53,7 +54,7 @@ static void write_test_thread(void* arg)
 
 static void read_test_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   read_thread_pass = true;
   for (int i = 0; i < 10; ++i)

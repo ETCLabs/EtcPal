@@ -18,7 +18,6 @@
  ******************************************************************************/
 
 #include "etcpal/socket.h"
-#include "etcpal/private/socket.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -26,6 +25,8 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 
+#include "etcpal/common.h"
+#include "etcpal/private/socket.h"
 #include "os_error.h"
 
 /*************************** Private constants *******************************/
@@ -134,14 +135,14 @@ static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPol
                                            const EtcPalPollFdSet* exceptfds);
 
 static int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
-static EtcPalRbNode* poll_socket_alloc();
+static EtcPalRbNode* poll_socket_alloc(void);
 static void poll_socket_free(EtcPalRbNode* node);
 
 /*************************** Function definitions ****************************/
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
-etcpal_error_t etcpal_socket_init()
+etcpal_error_t etcpal_socket_init(void)
 {
   WSADATA wsdata;
   WORD wsver = MAKEWORD(2, 2);
@@ -153,7 +154,7 @@ etcpal_error_t etcpal_socket_init()
   return kEtcPalErrOk;
 }
 
-void etcpal_socket_deinit()
+void etcpal_socket_deinit(void)
 {
   WSACleanup();
 }
@@ -225,8 +226,8 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   /* TODO */
-  (void)id;
-  (void)address;
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(address);
   return kEtcPalErrNotImpl;
 }
 
@@ -252,11 +253,11 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
   /* TODO */
-  (void)id;
-  (void)level;
-  (void)option_name;
-  (void)option_value;
-  (void)option_len;
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(level);
+  ETCPAL_UNUSED_ARG(option_name);
+  ETCPAL_UNUSED_ARG(option_value);
+  ETCPAL_UNUSED_ARG(option_len);
   return kEtcPalErrNotImpl;
 }
 
@@ -304,27 +305,26 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
 {
-  int res;
-  (void)flags;
+  ETCPAL_UNUSED_ARG(flags);
 
   if (!message)
     return kEtcPalErrInvalid;
 
-  res = send(id, message, (int)length, 0);
+  int res = send(id, message, (int)length, 0);
   return (res >= 0 ? res : (int)err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr)
 {
-  int res = -1;
-  size_t ss_size;
-  struct sockaddr_storage ss;
-  (void)flags;
+  ETCPAL_UNUSED_ARG(flags);
 
   if (!dest_addr || !message)
     return (int)kEtcPalErrInvalid;
 
-  if ((ss_size = sockaddr_etcpal_to_os(dest_addr, (etcpal_os_sockaddr_t*)&ss)) > 0)
+  int res = -1;
+  struct sockaddr_storage ss;
+  size_t ss_size = sockaddr_etcpal_to_os(dest_addr, (etcpal_os_sockaddr_t*)&ss);
+  if (ss_size > 0)
     res = sendto(id, message, (int)length, 0, (struct sockaddr*)&ss, (int)ss_size);
 
   return (res >= 0 ? res : (int)err_winsock_to_etcpal(WSAGetLastError()));
@@ -642,8 +642,8 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
 
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
 {
-  (void)id;
-  (void)blocking;
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(blocking);
   return kEtcPalErrNotImpl;
 }
 
@@ -921,7 +921,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent*
 
 int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
 {
-  (void)tree;
+  ETCPAL_UNUSED_ARG(tree);
 
   EtcPalPollSocket* a = (EtcPalPollSocket*)node_a->value;
   EtcPalPollSocket* b = (EtcPalPollSocket*)node_b->value;
@@ -929,7 +929,7 @@ int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, co
   return (a->sock > b->sock) - (a->sock < b->sock);
 }
 
-EtcPalRbNode* poll_socket_alloc()
+EtcPalRbNode* poll_socket_alloc(void)
 {
   return (EtcPalRbNode*)malloc(sizeof(EtcPalRbNode));
 }

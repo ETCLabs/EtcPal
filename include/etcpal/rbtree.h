@@ -175,7 +175,7 @@ typedef void (*EtcPalRbTreeNodeFunc)(const EtcPalRbTree* self, EtcPalRbNode* nod
  *
  * \return Pointer to the newly allocated node.
  */
-typedef EtcPalRbNode* (*EtcPalRbNodeAllocFunc)();
+typedef EtcPalRbNode* (*EtcPalRbNodeAllocFunc)(void);
 
 /*!
  * \brief A function type to deallocate a node.

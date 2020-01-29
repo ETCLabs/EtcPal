@@ -52,6 +52,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "etcpal/common.h"
 #include "etcpal/socket.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"
@@ -89,9 +90,9 @@ RoutingTable routing_table_v6;
 /*********************** Private function prototypes *************************/
 
 // Functions for building the routing tables
-static etcpal_error_t build_routing_tables();
+static etcpal_error_t build_routing_tables(void);
 static etcpal_error_t build_routing_table(int family, RoutingTable* table);
-static void free_routing_tables();
+static void free_routing_tables(void);
 static void free_routing_table(RoutingTable* table);
 
 // Interacting with RTNETLINK
@@ -245,7 +246,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
 
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
-  (void)cache;  // unused
+  ETCPAL_UNUSED_ARG(cache);
 
   RoutingTable* table_to_use = (ETCPAL_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
@@ -278,7 +279,7 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   }
 }
 
-etcpal_error_t build_routing_tables()
+etcpal_error_t build_routing_tables(void)
 {
   etcpal_error_t res = build_routing_table(AF_INET, &routing_table_v4);
   if (res == kEtcPalErrOk)
@@ -544,7 +545,7 @@ int compare_routing_table_entries(const void* a, const void* b)
   }
 }
 
-void free_routing_tables()
+void free_routing_tables(void)
 {
   free_routing_table(&routing_table_v4);
   free_routing_table(&routing_table_v6);

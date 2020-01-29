@@ -21,6 +21,7 @@
 #include "unity_fixture.h"
 
 #include <stdio.h>
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
 
 // Disable sprintf() warning on Windows/MSVC
@@ -36,7 +37,7 @@ static etcpal_sem_t sem;
 
 static void sem_test_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {

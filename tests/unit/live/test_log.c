@@ -18,14 +18,16 @@
  ******************************************************************************/
 
 #include "etcpal/log.h"
-#include "unity_fixture.h"
-#include "fff.h"
 
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "etcpal/common.h"
+#include "unity_fixture.h"
+#include "fff.h"
 
 // Disable strcpy() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -44,14 +46,14 @@ static char human_buf[ETCPAL_LOG_STR_MAX_LEN];
 
 static void fill_timestamp(void* context, EtcPalLogTimestamp* timestamp)
 {
-  (void)context;
+  ETCPAL_UNUSED_ARG(context);
   TEST_ASSERT_TRUE(timestamp);
   *timestamp = cur_time;
 }
 
 static void save_log_strings(void* context, const EtcPalLogStrings* strings)
 {
-  (void)context;
+  ETCPAL_UNUSED_ARG(context);
   TEST_ASSERT_TRUE(strings);
   last_log_strings_received = *strings;
 }

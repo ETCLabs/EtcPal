@@ -18,9 +18,11 @@
  ******************************************************************************/
 
 #include "etcpal/thread.h"
-#include "unity_fixture.h"
 
 #include <stdbool.h>
+
+#include "etcpal/common.h"
+#include "unity_fixture.h"
 
 TEST_GROUP(etcpal_thread);
 
@@ -36,7 +38,7 @@ volatile bool waitthread_run;
 
 void wait_and_exit(void* param)
 {
-  (void)param;
+  ETCPAL_UNUSED_ARG(param);
 
   while (waitthread_run)
     etcpal_thread_sleep(5);
@@ -66,7 +68,7 @@ volatile bool spin_task_ran;
 
 void increment_and_spin(void* param)
 {
-  (void)param;
+  ETCPAL_UNUSED_ARG(param);
 
   spin_task_ran = true;
   while (spin_task_run)
@@ -78,7 +80,7 @@ volatile bool oneshot_task_ran;
 
 void oneshot(void* param)
 {
-  (void)param;
+  ETCPAL_UNUSED_ARG(param);
 
   if (oneshot_task_run)
     oneshot_task_ran = true;

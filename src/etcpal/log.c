@@ -74,7 +74,7 @@ static void sanitize_str(char* str);
 
 /* Initialize the etcpal_log module. Creates the mutex which locks the static buffers that log
  * messages are written into. */
-etcpal_error_t etcpal_log_init()
+etcpal_error_t etcpal_log_init(void)
 {
   if (init_count == 0)
   {
@@ -88,7 +88,7 @@ etcpal_error_t etcpal_log_init()
 }
 
 /* Deinitialize the etcpal_log module. */
-void etcpal_log_deinit()
+void etcpal_log_deinit(void)
 {
   if (--init_count == 0)
   {

@@ -39,8 +39,8 @@ typedef struct CachedNetintInfo
   DefaultNetint def;
 } CachedNetintInfo;
 
-etcpal_error_t etcpal_netint_init();
-void etcpal_netint_deinit();
+etcpal_error_t etcpal_netint_init(void);
+void etcpal_netint_deinit(void);
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
 void os_free_interfaces(CachedNetintInfo* cache);

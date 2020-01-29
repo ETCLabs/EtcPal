@@ -84,8 +84,8 @@
 extern "C" {
 #endif
 
-size_t etcpal_netint_get_num_interfaces();
-const EtcPalNetintInfo* etcpal_netint_get_interfaces();
+size_t etcpal_netint_get_num_interfaces(void);
+const EtcPalNetintInfo* etcpal_netint_get_interfaces(void);
 etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const EtcPalNetintInfo** netint_arr,
                                                      size_t* netint_arr_size);
 

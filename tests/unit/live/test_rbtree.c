@@ -18,12 +18,14 @@
  ******************************************************************************/
 
 #include "etcpal/rbtree.h"
-#include "unity_fixture.h"
-#include "fff.h"
 
 #include <math.h>
 #include <stddef.h>
 #include <stdio.h>
+
+#include "etcpal/common.h"
+#include "unity_fixture.h"
+#include "fff.h"
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -58,7 +60,7 @@ EtcPalRbNode* get_node(void)
 
 int int_compare(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
 {
-  (void)self;
+  ETCPAL_UNUSED_ARG(self);
   int a = *(int*)node_a->value;
   int b = *(int*)node_b->value;
   return a - b;

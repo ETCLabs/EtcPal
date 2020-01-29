@@ -27,6 +27,7 @@
 #include <Ws2tcpip.h>
 #include <iphlpapi.h>
 
+#include "etcpal/common.h"
 #include "etcpal/socket.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"
@@ -42,7 +43,7 @@ static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNet
 
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
-  (void)cache;  // unused
+  ETCPAL_UNUSED_ARG(cache);  // unused
 
   struct sockaddr_storage os_addr;
   if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))

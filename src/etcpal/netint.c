@@ -18,9 +18,10 @@
  ******************************************************************************/
 
 #include "etcpal/netint.h"
-#include "etcpal/private/netint.h"
 
 #include <stdlib.h>
+#include "etcpal/common.h"
+#include "etcpal/private/netint.h"
 
 /**************************** Private variables ******************************/
 
@@ -33,7 +34,7 @@ static int compare_netints(const void* a, const void* b);
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t etcpal_netint_init()
+etcpal_error_t etcpal_netint_init(void)
 {
   etcpal_error_t res = kEtcPalErrOk;
   if (init_count == 0)
@@ -52,7 +53,7 @@ etcpal_error_t etcpal_netint_init()
   return res;
 }
 
-void etcpal_netint_deinit()
+void etcpal_netint_deinit(void)
 {
   if (--init_count == 0)
   {
@@ -65,7 +66,7 @@ void etcpal_netint_deinit()
  * \brief Get the number of network interfaces present on the system.
  * \return Number of interfaces present.
  */
-size_t etcpal_netint_get_num_interfaces()
+size_t etcpal_netint_get_num_interfaces(void)
 {
   return (init_count ? netint_cache.num_netints : 0);
 }
@@ -80,7 +81,7 @@ size_t etcpal_netint_get_num_interfaces()
  * \return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
  *         or NULL if there are no interfaces present or the module is not initialized.
  */
-const EtcPalNetintInfo* etcpal_netint_get_interfaces()
+const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
 {
   return (init_count ? netint_cache.netints : NULL);
 }
@@ -237,6 +238,6 @@ int compare_netints(const void* a, const void* b)
 etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)
 {
   // TODO
-  (void)list_changed;
+  ETCPAL_UNUSED_ARG(list_changed);
   return kEtcPalErrNotImpl;
 }

@@ -22,8 +22,9 @@
 #include <mqx.h>
 #include <bsp.h>
 #include <rtcs.h>
-
 #include <stdint.h>
+
+#include "etcpal/common.h"
 #include "etcpal/private/netint.h"
 
 static EtcPalNetintInfo netints[BSP_ENET_DEVICE_COUNT];
@@ -76,7 +77,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
 
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
-  (void)cache;  // unused
+  ETCPAL_UNUSED_ARG(cache);  // unused
 
   unsigned int index_found = 0;
 

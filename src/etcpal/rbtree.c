@@ -38,6 +38,7 @@
 #include "etcpal/rbtree.h"
 
 #include <stdbool.h>
+#include "etcpal/common.h"
 
 /* etcpal_rbnode */
 
@@ -123,7 +124,7 @@ static EtcPalRbNode* rb_node_rotate2(EtcPalRbNode* self, int dir)
  */
 int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const EtcPalRbNode* a, const EtcPalRbNode* b)
 {
-  (void)self;
+  ETCPAL_UNUSED_ARG(self);
   return (a->value > b->value) - (a->value < b->value);
 }
 

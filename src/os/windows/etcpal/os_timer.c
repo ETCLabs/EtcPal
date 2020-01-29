@@ -24,7 +24,7 @@
 
 #define ETCPAL_WINDOWS_TIMER_RESOLUTION 1  // ms
 
-etcpal_error_t etcpal_timer_init()
+etcpal_error_t etcpal_timer_init(void)
 {
   if (TIMERR_NOERROR == timeBeginPeriod(ETCPAL_WINDOWS_TIMER_RESOLUTION))
     return kEtcPalErrOk;
@@ -32,12 +32,12 @@ etcpal_error_t etcpal_timer_init()
     return kEtcPalErrSys;
 }
 
-void etcpal_timer_deinit()
+void etcpal_timer_deinit(void)
 {
   timeEndPeriod(ETCPAL_WINDOWS_TIMER_RESOLUTION);
 }
 
-uint32_t etcpal_getms()
+uint32_t etcpal_getms(void)
 {
   return timeGetTime();
 }

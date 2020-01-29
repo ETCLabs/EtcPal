@@ -24,10 +24,12 @@
 #define ETCPAL_CPP_LOG_H_
 
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <memory>
 #include <queue>
 #include <string>
+#include "etcpal/common.h"
 #include "etcpal/log.h"
 #include "etcpal/cpp/lock.h"
 #include "etcpal/cpp/inet.h"
@@ -507,7 +509,7 @@ inline Logger& Logger::SetSyslogFacility(int facility) noexcept
 /// \brief Set the Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4.
 inline Logger& Logger::SetSyslogHostname(const char* hostname) noexcept
 {
-  strncpy(log_params_.syslog_params.hostname, hostname, ETCPAL_LOG_HOSTNAME_MAX_LEN - 1);
+  ETCPAL_MSVC_NO_DEP_WRN strncpy(log_params_.syslog_params.hostname, hostname, ETCPAL_LOG_HOSTNAME_MAX_LEN - 1);
   log_params_.syslog_params.hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN - 1] = '\0';
   return *this;
 }
@@ -522,7 +524,7 @@ inline Logger& Logger::SetSyslogHostname(const std::string& hostname) noexcept
 /// \brief Set the Syslog APP-NAME; see RFC 5424 &sect; 6.2.5.
 inline Logger& Logger::SetSyslogAppName(const char* app_name) noexcept
 {
-  strncpy(log_params_.syslog_params.app_name, app_name, ETCPAL_LOG_APP_NAME_MAX_LEN - 1);
+  ETCPAL_MSVC_NO_DEP_WRN strncpy(log_params_.syslog_params.app_name, app_name, ETCPAL_LOG_APP_NAME_MAX_LEN - 1);
   log_params_.syslog_params.app_name[ETCPAL_LOG_APP_NAME_MAX_LEN - 1] = '\0';
   return *this;
 }
@@ -537,7 +539,7 @@ inline Logger& Logger::SetSyslogAppName(const std::string& app_name) noexcept
 /// \brief Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6.
 inline Logger& Logger::SetSyslogProcId(const char* proc_id) noexcept
 {
-  strncpy(log_params_.syslog_params.procid, proc_id, ETCPAL_LOG_PROCID_MAX_LEN - 1);
+  ETCPAL_MSVC_NO_DEP_WRN strncpy(log_params_.syslog_params.procid, proc_id, ETCPAL_LOG_PROCID_MAX_LEN - 1);
   log_params_.syslog_params.procid[ETCPAL_LOG_PROCID_MAX_LEN - 1] = '\0';
   return *this;
 }
@@ -552,7 +554,7 @@ inline Logger& Logger::SetSyslogProcId(const std::string& proc_id) noexcept
 /// \brief Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6.
 inline Logger& Logger::SetSyslogProcId(int proc_id) noexcept
 {
-  sprintf(log_params_.syslog_params.procid, "%d", proc_id);
+  ETCPAL_MSVC_NO_DEP_WRN sprintf(log_params_.syslog_params.procid, "%d", proc_id);
   return *this;
 }
 
