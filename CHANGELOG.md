@@ -18,6 +18,10 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 - Extra documentation page for network interface indexes.
 - Addition of a C++ wrapper layer over EtcPal. Added wrapper classes for error,
   inet, lock, log, thread, timer and uuid.
+- etcpal/lock: A counting semaphore API.
+- etcpal/lock: Functions for posting signals and semaphores from an interrupt
+  context.
+- etcpal/uuid: Functions to generate version 3 and version 5 UUIDs.
 
 ### Changed
 - Naming: Library name changed from lwpa to EtcPal. All API names updated
@@ -28,8 +32,12 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
   addition of meaningful return information, better function naming, etc.
 - Modified etcpal_netint and etcpal_inet to make more meaningful use of network
   interface indexes, for portability and compatibility with IPv6.
+- etcpal/pdu -> etcpal/acn_pdu, etcpal/root_layer_pdu -> etcpal/acn_rlp. API
+  constructs have prefixes changed from `etcpal_` to `acn_` for clarity.
 
 ### Removed
+- etcpal/bool module. This module is not necessary given our target platform
+  and toolchain requirements.
 - etcpal/int module. This module is not necessary given our target platform and
   toolchain requirements.
 

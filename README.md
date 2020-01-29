@@ -25,6 +25,11 @@ portable. The EtcPal library serves this purpose in two main ways:
   of platform-neutral software libraries.
 * Provides a common location for utilities that are used by multiple other software libraries.
 
+## Docs
+
+EtcPal's API documentation is located [here](https://etclabs.github.io/EtcPal/docs/head). The
+"modules" entry on the sidebar provides module-by-module documentation.
+
 ## Platform Ports
 
 EtcPal is currently ported for the following platforms:

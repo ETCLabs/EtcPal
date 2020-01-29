@@ -58,14 +58,12 @@ TEST_GROUP(etcpal_cpp_log);
 
 TEST_SETUP(etcpal_cpp_log)
 {
-  etcpal_init(ETCPAL_FEATURE_LOGGING);
   logger = etcpal::Logger{};
   test_log_handler = TestLogMessageHandler{};
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_log)
 {
-  etcpal_deinit(ETCPAL_FEATURE_LOGGING);
 }
 
 TEST(etcpal_cpp_log, startup_works)

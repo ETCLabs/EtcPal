@@ -41,12 +41,6 @@ namespace etcpal
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_log module.
 ///
-/// **WARNING:** This module must be explicitly initialized before use. Initialize the module by
-/// calling etcpal_init() with the relevant feature mask:
-/// \code
-/// etcpal_init(ETCPAL_FEATURE_LOGGING);
-/// \endcode
-///
 /// This module contains a class Logger which is used to gather log messages dispatched from
 /// different portions of an application into a single stream with a unified format. It wraps the C
 /// logging module, which provides the core of this functionality, in a convenience layer which can

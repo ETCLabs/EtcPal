@@ -45,3 +45,7 @@ src/etcpal/sha1.h
 src/etcpal/sha1.c
 
 See the license information at the top of those source files for more details.
+
+NOTE: This software states that it is released to the public domain - the
+author is credited here as a courtesy, but software which includes EtcPal does
+not need to provide attribution for clibs/sha1 if not desired. 
