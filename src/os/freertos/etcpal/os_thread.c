@@ -30,38 +30,42 @@ static void thread_func_internal(void* pvParameters)
   vTaskDelete(NULL);
 }
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+                                    void* thread_arg)
 {
   if (!id || !params || !thread_fn)
-    return false;
+    return kEtcPalErrInvalid;
 
   id->sig = xSemaphoreCreateBinary();
   if (!id->sig)
-    return false;
+  {
+    // Per the FreeRTOS docs, NULL means there was not enough FreeRTOS heap available
+    return kEtcPalErrNoMem;
+  }
 
   id->fn = thread_fn;
   id->arg = thread_arg;
   if (pdPASS == xTaskCreate(thread_func_internal, params->thread_name ? params->thread_name : "etcpal_thread",
-                            (uint16_t)params->stack_size, id, params->thread_priority, &id->tid))
+                            (uint16_t)params->stack_size, id, params->priority, &id->tid))
   {
-    return true;
+    return kEtcPalErrOk;
   }
-  return false;
+  // Per the FreeRTOS docs, the only failure mode for xTaskCreate is errCOULD_NOT_ALLOCATE_REQUIRED_MEMORY
+  return kEtcPalErrNoMem;
 }
 
-bool etcpal_thread_join(etcpal_thread_t* id)
+etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
-  bool res;
-
   if (!id)
-    return false;
+    return kEtcPalErrInvalid;
 
-  res = (pdTRUE == xSemaphoreTake(id->sig, portMAX_DELAY));
-  if (res)
+  if (pdTRUE == xSemaphoreTake(id->sig, portMAX_DELAY))
   {
     vSemaphoreDelete(id->sig);
     id->sig = NULL;
     id->tid = NULL;
+    return kEtcPalErrOk;
   }
-  return res;
+  // Should never happen
+  return kEtcPalErrSys;
 }

@@ -20,9 +20,9 @@
 #ifndef ETCPAL_OS_THREAD_H_
 #define ETCPAL_OS_THREAD_H_
 
+#include <stdbool.h>
 #include <mqx.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +40,8 @@ typedef struct EtcPalThreadParamsMqx
 #define ETCPAL_THREAD_MQX_DEFAULT_ATTRIBUTES NULL
 #define ETCPAL_THREAD_MQX_DEFAULT_TIME_SLICE 0
 
+typedef _task_id etcpal_thread_id_t;
+
 typedef struct
 {
   void (*fn)(void*);
@@ -48,7 +50,7 @@ typedef struct
   _task_id tid;
 } etcpal_thread_t;
 
-#define etcpal_thread_sleep(sleep_ms) _time_delay(sleep_ms)
+#define etcpal_thread_sleep(sleep_ms) _time_delay((uint32_t)sleep_ms)
 
 #ifdef __cplusplus
 }

@@ -31,6 +31,11 @@ static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
 
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
+{
+  return (timeout_ms == 0 ? etcpal_mutex_try_lock(id) : etcpal_mutex_lock(id));
+}
+
 bool etcpal_signal_create(etcpal_signal_t* id)
 {
   if (id)
@@ -73,7 +78,7 @@ bool etcpal_signal_wait(etcpal_signal_t* id)
   return false;
 }
 
-bool etcpal_signal_poll(etcpal_signal_t* id)
+bool etcpal_signal_try_wait(etcpal_signal_t* id)
 {
   bool res = false;
   if (id && id->valid)
@@ -89,6 +94,11 @@ bool etcpal_signal_poll(etcpal_signal_t* id)
     }
   }
   return res;
+}
+
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
+{
+  return (timeout_ms == 0 ? etcpal_signal_try_wait(id) : etcpal_signal_wait(id));
 }
 
 void etcpal_signal_post(etcpal_signal_t* id)
@@ -171,6 +181,11 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
   return res;
 }
 
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  return (timeout_ms == 0 ? etcpal_rwlock_try_readlock(id) : etcpal_rwlock_readlock(id));
+}
+
 void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
@@ -217,6 +232,11 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
   return false;
 }
 
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  return (timeout_ms == 0 ? etcpal_rwlock_try_writelock(id) : etcpal_rwlock_writelock(id));
+}
+
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
@@ -229,6 +249,57 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
   {
     pthread_mutex_destroy(&id->mutex);
     pthread_mutex_destroy(&id->readcount_mutex);
+    id->valid = false;
+  }
+}
+
+bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
+{
+  if (id)
+  {
+    id->sem = dispatch_semaphore_create(initial_count);
+    id->valid = true;
+    return true;
+  }
+  return false;
+}
+
+bool etcpal_sem_wait(etcpal_sem_t* id)
+{
+  if (id && id->valid)
+    return !dispatch_semaphore_wait(id->sem, DISPATCH_TIME_FOREVER);
+  return false;
+}
+
+bool etcpal_sem_try_wait(etcpal_sem_t* id)
+{
+  if (id && id->valid)
+    return !dispatch_semaphore_wait(id->sem, DISPATCH_TIME_NOW);
+  return false;
+}
+
+bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
+{
+  if (id && id->valid)
+    return !dispatch_semaphore_wait(id->sem, dispatch_time(DISPATCH_TIME_NOW, timeout_ms * NSEC_PER_MSEC));
+  return false;
+}
+
+bool etcpal_sem_post(etcpal_sem_t* id)
+{
+  if (id && id->valid)
+  {
+    dispatch_semaphore_signal(id->sem);
+    return true;
+  }
+  return false;
+}
+
+void etcpal_sem_destroy(etcpal_sem_t* id)
+{
+  if (id && id->valid)
+  {
+    dispatch_release(id->sem);
     id->valid = false;
   }
 }

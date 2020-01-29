@@ -22,6 +22,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include "etcpal/common.h"
 #include "etcpal/netint.h"
 #include "etcpal/thread.h"
 
@@ -71,7 +72,7 @@ static void select_network_interface_v4()
     const EtcPalNetintInfo* netint_arr;
     size_t netint_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
-        NULL == strstr(netint_arr->name, "utun"))
+        NULL == strstr(netint_arr->id, "utun"))
     {
       run_ipv4_mcast_test = true;
     }
@@ -84,7 +85,7 @@ static void select_network_interface_v4()
       for (const EtcPalNetintInfo* netint = arr; netint < arr + etcpal_netint_get_num_interfaces(); ++netint)
       {
         if (ETCPAL_IP_IS_V4(&netint->addr) && !etcpal_ip_is_link_local(&netint->addr) &&
-            !etcpal_ip_is_loopback(&netint->addr) && NULL == strstr(netint->name, "utun"))
+            !etcpal_ip_is_loopback(&netint->addr) && NULL == strstr(netint->id, "utun"))
         {
           v4_netint = netint->index;
           run_ipv4_mcast_test = true;
@@ -107,7 +108,7 @@ static void select_network_interface_v6()
     const EtcPalNetintInfo* netint_arr;
     size_t netint_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
-        NULL == strstr(netint_arr->name, "utun"))
+        NULL == strstr(netint_arr->id, "utun"))
     {
       run_ipv6_mcast_test = true;
     }
@@ -120,7 +121,7 @@ static void select_network_interface_v6()
       for (const EtcPalNetintInfo* netint = arr; netint < arr + etcpal_netint_get_num_interfaces(); ++netint)
       {
         if (ETCPAL_IP_IS_V6(&netint->addr) && !etcpal_ip_is_loopback(&netint->addr) &&
-            NULL == strstr(netint->name, "utun"))
+            NULL == strstr(netint->id, "utun"))
         {
           v6_netint = netint->index;
           run_ipv6_mcast_test = true;
@@ -157,7 +158,7 @@ TEST_TEAR_DOWN(socket_integration_udp)
 
 static void send_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
     etcpal_sendto(send_sock, (const uint8_t*)kSocketTestMessage, SOCKET_TEST_MESSAGE_LENGTH, 0, &send_addr);
@@ -189,7 +190,7 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
   etcpal_thread_t send_thr_handle;
-  TEST_ASSERT(etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
@@ -224,7 +225,7 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
   TEST_ASSERT_LESS_OR_EQUAL_INT(0, etcpal_recvfrom(recv_socks[1], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr));
 
   // Let the send thread end
-  TEST_ASSERT_TRUE(etcpal_thread_join(&send_thr_handle));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_join(&send_thr_handle));
 }
 
 TEST(socket_integration_udp, unicast_udp_ipv4)
@@ -279,7 +280,7 @@ void multicast_udp_test(void)
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
   etcpal_thread_t send_thr_handle;
-  TEST_ASSERT(etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
@@ -312,7 +313,7 @@ void multicast_udp_test(void)
   TEST_ASSERT_LESS_OR_EQUAL_INT(0, etcpal_recvfrom(recv_socks[1], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr));
 
   // Let the send thread end
-  TEST_ASSERT(etcpal_thread_join(&send_thr_handle));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_join(&send_thr_handle));
 }
 
 TEST(socket_integration_udp, multicast_udp_ipv4)

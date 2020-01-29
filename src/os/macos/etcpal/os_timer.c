@@ -24,7 +24,7 @@
 
 double ticks_to_ms = 0;
 
-etcpal_error_t etcpal_timer_init()
+etcpal_error_t etcpal_timer_init(void)
 {
   mach_timebase_info_data_t timebase;
   mach_timebase_info(&timebase);
@@ -33,12 +33,12 @@ etcpal_error_t etcpal_timer_init()
   return kEtcPalErrOk;
 }
 
-void etcpal_timer_deinit()
+void etcpal_timer_deinit(void)
 {
   // No deinitialization necessary on this platform.
 }
 
-uint32_t etcpal_getms()
+uint32_t etcpal_getms(void)
 {
   uint64_t ticks = mach_absolute_time();
   return ((uint32_t)(ticks * ticks_to_ms));

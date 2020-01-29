@@ -55,6 +55,7 @@
 #include <sys/socket.h>
 #include <sys/sysctl.h>
 
+#include "etcpal/common.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"
 
@@ -194,8 +195,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
-    strncpy(current_info->name, ifaddr->ifa_name, ETCPAL_NETINTINFO_NAME_LEN);
-    current_info->name[ETCPAL_NETINTINFO_NAME_LEN - 1] = '\0';
+    strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
+    current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
     strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
     current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
 
@@ -250,7 +251,7 @@ void os_free_interfaces(CachedNetintInfo* cache)
 
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
-  (void)cache;  // unused
+  ETCPAL_UNUSED_ARG(cache);
 
   RoutingTable* table_to_use = (ETCPAL_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 

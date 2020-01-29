@@ -42,7 +42,7 @@
 #include "etcpal/error.h"
 
 /*!
- * \defgroup etcpal_rbtree Red-Black Trees (rbtree)
+ * \defgroup etcpal_rbtree rbtree (Red-Black Trees)
  * \ingroup etcpal
  * \brief A red-black tree implementation.
  *
@@ -52,6 +52,72 @@
  *
  * A red-black tree is a popular design for a self-balancing binary search tree. Based on a
  * public-domain red-black tree implementation; see the header file for details.
+ *
+ * *If you have access to C++, just use std::map or std::set. They're much nicer than this module.*
+ *
+ * Red-black tree nodes store arbitrary data as a `void*` pointer, which are compared with a
+ * user-provided #EtcPalRbTreeNodeCmpFunc. The module user must also manage memory allocation for
+ * each node of the red-black tree by providing an #EtcPalRbNodeAllocFunc and
+ * #EtcPalRbNodeDeallocFunc, which must allocate and deallocate #EtcPalRbNode instances. Note: if
+ * you don't have access to a malloc() implementation, \ref etcpal_mempool is a convenient way to
+ * allocate nodes.
+ *
+ * \code
+ * typedef struct MyStruct
+ * {
+ *   int key;
+ * } MyStruct;
+ *
+ * int compare_func(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
+ * {
+ *   MyStruct* a = (MyStruct*)node_a->value;
+ *   MyStruct* b = (MyStruct*)node_b->value;
+ *   return (a->key > b->key) - (a->key < b->key);
+ * }
+ *
+ * EtcPalRbNode* node_alloc_func()
+ * {
+ *   return (EtcPalRbNode*)malloc(sizeof(EtcPalRbNode)); // Or some other method you define
+ * }
+ *
+ * void node_dealloc_func(EtcPalRbNode* node)
+ * {
+ *   free(node); // Or some other method you define
+ * }
+ *
+ * EtcPalRbTree tree;
+ * etcpal_rbtree_init(&tree, compare_func, node_alloc_func, node_dealloc_func);
+ *
+ * MyStruct struct_1;
+ * struct_1.key = 20;
+ * etcpal_rbtree_insert(&tree, &struct_1);
+ *
+ * MyStruct struct_2;
+ * struct_2.key = 30;
+ * etcpal_rbtree_insert(&tree, &struct_2);
+ *
+ * EXPECT_EQ(etcpal_rbtree_size(&tree), 2);
+ *
+ * MyStruct* found = etcpal_rbtree_find(&struct_1); // found == &struct_1
+ * found = etcpal_rbtree_find(&struct_2); // found == &struct_2
+ *
+ * etcpal_error_t insert_res = etcpal_rbtree_insert(&tree, &struct_1); // insert_res == kEtcPalErrExists
+ *
+ * EtcPalRbIter tree_iter;
+ * etcpal_rbiter_init(&tree_iter);
+ * MyStruct* iter_val = etcpal_rbiter_first(&iter, &tree); // iter_val == &struct_1
+ * iter_val = etcpal_rbiter_next(&tree_iter); // iter_val == &struct_2
+ * iter_val = etcpal_rbiter_next(&tree_iter); // iter_val == NULL
+ *
+ * etcpal_rbtree_remove(&tree, &struct_1);
+ * found = etcpal_rbtree_find(&tree, &struct_1); // found == NULL
+ * EXPECT_EQ(etcpal_rbtree_size(&tree), 1);
+ *
+ * etcpal_rbtree_clear(&tree);
+ * found = etcpal_rbtree_find(&tree, &struct_2); // found == NULL
+ * EXPECT_EQ(etcpal_rbtree_size(&tree), 0);
+ *
+ * \endcode
  *
  * @{
  */
@@ -109,7 +175,7 @@ typedef void (*EtcPalRbTreeNodeFunc)(const EtcPalRbTree* self, EtcPalRbNode* nod
  *
  * \return Pointer to the newly allocated node.
  */
-typedef EtcPalRbNode* (*EtcPalRbNodeAllocFunc)();
+typedef EtcPalRbNode* (*EtcPalRbNodeAllocFunc)(void);
 
 /*!
  * \brief A function type to deallocate a node.

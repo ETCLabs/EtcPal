@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/thread.h"
+#include "os_error.h"
 
 /*********************** Private function prototypes *************************/
 
@@ -25,10 +26,10 @@ static void* thread_func_internal(void* arg);
 
 /*************************** Function definitions ****************************/
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
 {
   if (!id || !params || !thread_fn)
-    return false;
+    return kEtcPalErrInvalid;
 
   pthread_attr_t thread_attr;
   pthread_attr_t* p_thread_attr = NULL;
@@ -42,7 +43,9 @@ bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params,
 
   id->fn = thread_fn;
   id->arg = thread_arg;
-  bool res = (0 == pthread_create(&id->handle, p_thread_attr, thread_func_internal, id));
+  etcpal_error_t res = kEtcPalErrOk;
+  if (0 != pthread_create(&id->handle, p_thread_attr, thread_func_internal, id))
+    res = errno_os_to_etcpal(errno);
 
   if (p_thread_attr)
     pthread_attr_destroy(p_thread_attr);
@@ -50,13 +53,16 @@ bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params,
   return res;
 }
 
-bool etcpal_thread_join(etcpal_thread_t* id)
+etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
   if (id)
   {
-    return (0 == pthread_join(id->handle, NULL));
+    if (0 == pthread_join(id->handle, NULL))
+      return kEtcPalErrOk;
+    else
+      return errno_os_to_etcpal(errno);
   }
-  return false;
+  return kEtcPalErrInvalid;
 }
 
 void* thread_func_internal(void* arg)

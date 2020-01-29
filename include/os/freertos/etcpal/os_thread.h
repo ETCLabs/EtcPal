@@ -24,7 +24,6 @@
 #include <task.h>
 #include <semphr.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,6 +32,8 @@ extern "C" {
 #define ETCPAL_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
 #define ETCPAL_THREAD_DEFAULT_STACK 500
 #define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
+
+typedef TaskHandle_t etcpal_thread_id_t;
 
 typedef struct
 {

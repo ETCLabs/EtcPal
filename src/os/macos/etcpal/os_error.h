@@ -20,6 +20,7 @@
 #ifndef ETCPAL_OS_ERROR_H_
 #define ETCPAL_OS_ERROR_H_
 
+#include <errno.h>
 #include "etcpal/error.h"
 
 etcpal_error_t errno_os_to_etcpal(int os_errno);

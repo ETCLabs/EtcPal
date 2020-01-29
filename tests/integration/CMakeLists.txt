@@ -5,6 +5,7 @@
 etcpal_add_live_test(etcpal_integration_tests C
   mutex_integration_test.c
   rwlock_integration_test.c
+  sem_integration_test.c
   signal_integration_test.c
   test_main.c
 )

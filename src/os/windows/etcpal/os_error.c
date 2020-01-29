@@ -19,10 +19,9 @@
 
 #include "os_error.h"
 
+#include <errno.h>
 #include <WinSock2.h>
 #include <Windows.h>
-
-#include "etcpal/int.h"
 
 // Convert Windows sockets errors to etcpal_error_t values.
 etcpal_error_t err_winsock_to_etcpal(int wsaerror)
@@ -97,6 +96,41 @@ etcpal_error_t err_winsock_to_etcpal(int wsaerror)
     case WSAEPFNOSUPPORT:
     case WSAEAFNOSUPPORT:
     case WSASYSCALLFAILURE:
+    default:
+      return kEtcPalErrSys;
+  }
+}
+
+etcpal_error_t err_os_to_etcpal(int error)
+{
+  switch (error)
+  {
+    case EPERM:
+    case EACCES:
+      return kEtcPalErrPerm;
+    case ENOENT:
+    case ESRCH:
+    case ENXIO:
+    case ENODEV:
+      return kEtcPalErrNotFound;
+    case E2BIG:
+    case EBADF:
+    case ENOTDIR:
+    case EISDIR:
+    case EINVAL:
+    case ENAMETOOLONG:
+      return kEtcPalErrInvalid;
+    case EAGAIN:
+      return kEtcPalErrWouldBlock;
+    case ENOMEM:
+    case ENOSPC:
+      return kEtcPalErrNoMem;
+    case EBUSY:
+      return kEtcPalErrBusy;
+    case EEXIST:
+      return kEtcPalErrExists;
+    case ENOSYS:
+      return kEtcPalErrNotImpl;
     default:
       return kEtcPalErrSys;
   }

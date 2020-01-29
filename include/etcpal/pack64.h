@@ -22,7 +22,7 @@
 #ifndef ETCPAL_PACK64_H_
 #define ETCPAL_PACK64_H_
 
-#include "etcpal/int.h"
+#include <stdint.h>
 
 /*!
  * \addtogroup etcpal_pack
@@ -33,10 +33,15 @@
 extern "C" {
 #endif
 
-uint64_t etcpal_upack_64b(const uint8_t* buf);
-void etcpal_pack_64b(uint8_t* buf, uint64_t val);
-uint64_t etcpal_upack_64l(const uint8_t* buf);
-void etcpal_pack_64l(uint8_t* buf, uint64_t val);
+int64_t etcpal_unpack_i64b(const uint8_t* buf);
+void etcpal_pack_i64b(uint8_t* buf, int64_t val);
+int64_t etcpal_unpack_i64l(const uint8_t* buf);
+void etcpal_pack_i64l(uint8_t* buf, int64_t val);
+
+uint64_t etcpal_unpack_u64b(const uint8_t* buf);
+void etcpal_pack_u64b(uint8_t* buf, uint64_t val);
+uint64_t etcpal_unpack_u64l(const uint8_t* buf);
+void etcpal_pack_u64l(uint8_t* buf, uint64_t val);
 
 #ifdef __cplusplus
 }

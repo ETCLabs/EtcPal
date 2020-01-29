@@ -20,9 +20,9 @@
 #ifndef ETCPAL_OS_THREAD_H_
 #define ETCPAL_OS_THREAD_H_
 
+#include <stdbool.h>
 #include <pthread.h>
 #include <unistd.h>
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {

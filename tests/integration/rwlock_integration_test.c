@@ -21,6 +21,7 @@
 #include "unity_fixture.h"
 
 #include <stdio.h>
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
 
 // Disable sprintf() warning on Windows/MSVC
@@ -37,7 +38,7 @@ static bool read_thread_pass;
 
 static void write_test_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   for (size_t i = 0; i < NUM_ITERATIONS; ++i)
   {
@@ -53,7 +54,7 @@ static void write_test_thread(void* arg)
 
 static void read_test_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   read_thread_pass = true;
   for (int i = 0; i < 10; ++i)
@@ -103,21 +104,22 @@ TEST(rwlock_integration, rwlock_thread_test)
   EtcPalThreadParams params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);
 
-  TEST_ASSERT_TRUE(etcpal_thread_create(&read_thread, &params, read_test_thread, NULL));
+  TEST_ASSERT_EQUAL(etcpal_thread_create(&read_thread, &params, read_test_thread, NULL), kEtcPalErrOk);
 
   for (size_t i = 0; i < NUM_WRITE_THREADS; ++i)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
-    TEST_ASSERT_TRUE_MESSAGE(etcpal_thread_create(&write_threads[i], &params, write_test_thread, NULL), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(etcpal_thread_create(&write_threads[i], &params, write_test_thread, NULL), kEtcPalErrOk,
+                              error_msg);
   }
 
   for (size_t i = 0; i < NUM_WRITE_THREADS; ++i)
   {
-    TEST_ASSERT_TRUE(etcpal_thread_join(&write_threads[i]));
+    TEST_ASSERT_EQUAL(etcpal_thread_join(&write_threads[i]), kEtcPalErrOk);
   }
 
-  TEST_ASSERT_TRUE(etcpal_thread_join(&read_thread));
+  TEST_ASSERT_EQUAL(etcpal_thread_join(&read_thread), kEtcPalErrOk);
 
   TEST_ASSERT(read_thread_pass);
   TEST_ASSERT_EQUAL(shared_var, (NUM_WRITE_THREADS * NUM_ITERATIONS));

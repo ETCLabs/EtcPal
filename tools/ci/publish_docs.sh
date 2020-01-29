@@ -35,7 +35,7 @@ git config user.email "noreply.etclabs@etcconnect.com"
 ################################################################################
 ##### Generate the Doxygen code documentation and log the output.          #####
 cd ../..
-python doxygen_generate_from_ci.py
+python generate_doxygen.py
 cd build/${GH_REPO_NAME}
 
 ################################################################################

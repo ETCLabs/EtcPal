@@ -83,3 +83,7 @@ endfunction()
 
 add_subdirectory(unit)
 add_subdirectory(integration)
+
+if(WIN32)
+  add_subdirectory(windows)
+endif()

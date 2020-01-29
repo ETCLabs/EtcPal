@@ -26,7 +26,7 @@
 #include "etcpal/error.h"
 
 /*!
- * \defgroup etcpal_mempool Memory Pools (mempool)
+ * \defgroup etcpal_mempool mempool (Memory Pools)
  * \ingroup etcpal
  * \brief Memory pools with fixed-size elements.
  *
@@ -36,9 +36,44 @@
  *
  * This module can be used to declare memory pools containing some number of elements of an
  * arbitrary type. Only elements of that type can be allocated from the pool or freed back into it.
- * A pool element can be a single object (e.g. int) or a fixed-size array of objects
- * (e.g. int[60]). Allocations and deallocations are ensured to be thread_safe by an
- * \ref etcpal_mutex internally.
+ * A pool element can be a singular type (e.g. `MyStruct`) or a fixed-size array (e.g.
+ * `uint8_t[100]`). Allocations and deallocations are ensured to be thread_safe by an
+ * #etcpal_mutex_t internally.
+ *
+ * For example:
+ * \code
+ * typedef struct
+ * {
+ *   int data1;
+ *   int data2;
+ * } MyStruct;
+ *
+ * // Create a memory pool of 20 MyStruct instances
+ * // This line typically appears at file scope
+ * ETCPAL_MEMPOOL_DEFINE(my_struct_pool, MyStruct, 20);
+ *
+ * // Then, at function scope...
+ *
+ * // Initialize the pool
+ * etcpal_mempool_init(my_struct_pool);
+ *
+ * // Get an item from the pool
+ * MyStruct* val = (MyStruct*)etcpal_mempool_alloc(my_struct_pool);
+ *
+ * if (val)
+ * {
+ *   // Do something with the item
+ * }
+ *
+ * // Check the status of the pool
+ * printf("my_struct_pool status: %zu used out of %zu total\n", etcpal_mempool_used(my_struct_pool),
+ *        etcpal_mempool_size(my_struct_pool));
+ *
+ * // Free the item back to the pool
+ * etcpal_mempool_free(my_struct_pool, val);
+ *
+ * // No deinitialization required
+ * \endcode
  *
  * @{
  */
@@ -59,10 +94,8 @@ struct EtcPalMempool
   EtcPalMempool* next;
 };
 
-/*! \endcond */
-
 /*!
- * \brief (Not for direct usage) A memory pool description structure.
+ * (Not for direct usage) A memory pool description structure.
  *
  * Do not declare or use this structure directly; instead, use ETCPAL_MEMPOOL_DECLARE(),
  * ETCPAL_MEMPOOL_DEFINE(), ETCPAL_MEMPOOL_DEFINE_ARRAY(), and the etcpal_mempool_* macros to
@@ -77,6 +110,8 @@ typedef struct EtcPalMempoolDesc
   size_t current_used;       /*!< The number of pool elements that have currently been allocated. */
   void* const pool;          /*!< The actual pool memory. */
 } EtcPalMempoolDesc;
+
+/*! \endcond */
 
 /*!
  * \brief Declare a pool as an external variable.

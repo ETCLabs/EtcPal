@@ -20,7 +20,22 @@
 #ifndef ETCPAL_OS_SOCKET_H_
 #define ETCPAL_OS_SOCKET_H_
 
+#include <lwip/opt.h>
+
+/* Avoid header clashes caused by the definition of the macro bind() in lwIP headers when the
+ * LWIP_COMPAT_SOCKETS option is set to 1. Restores the value of LWIP_COMPAT_SOCKETS for future
+ * inclusion of lwIP headers.
+ *
+ * Note: header clashes could still occur if library users include lwIP headers before other C++
+ * EtcPal headers which use <functional>.
+ */
+#if (LWIP_COMPAT_SOCKETS == 1)
+#undef LWIP_COMPAT_SOCKETS
+#define LWIP_COMPAT_SOCKETS 0
 #include <lwip/sockets.h>
+#undef LWIP_COMPAT_SOCKETS
+#define LWIP_COMPAT_SOCKETS 1
+#endif /* (LWIP_COMPAT_SOCKETS == 1) */
 
 #ifdef __cplusplus
 extern "C" {

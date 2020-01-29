@@ -22,14 +22,14 @@
 #ifndef ETCPAL_SOCKET_H_
 #define ETCPAL_SOCKET_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 #include "etcpal/error.h"
 #include "etcpal/inet.h"
 
 /*!
- * \defgroup etcpal_socket Network Socket Interface (socket)
+ * \defgroup etcpal_socket socket (Network Socket Interface)
  * \ingroup etcpal
  * \brief Platform-neutral BSD-modeled network socket implementation.
  *
@@ -37,10 +37,18 @@
  * #include "etcpal/socket.h"
  * ```
  *
+ * **WARNING:** This module must be explicitly initialized before use. Initialize the module by
+ * calling etcpal_init() with the relevant feature mask:
+ * \code
+ * etcpal_init(ETCPAL_FEATURE_SOCKETS);
+ * \endcode
+ *
  * This module attempts to abstract the network socket interface from various platforms into one
  * platform-neutral interface. The functions and flags are modeled after the BSD sockets
- * interface. <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner,
- * and Rudoff is highly recommended reading for those unfamiliar with this interface.
+ * interface. This API is too large and complex to provide a concise how-to here; users of this
+ * module are assumed to already be familiar with some version of the BSD interface. If not,
+ * <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner, and Rudoff is
+ * highly recommended reading.
  *
  * @{
  */
@@ -48,7 +56,7 @@
 /*! Event flags for the etcpal_poll_*() API functions. */
 typedef uint32_t etcpal_poll_events_t;
 
-#include "etcpal/os_socket.h" /* .he os-specific socket definitions */
+#include "etcpal/os_socket.h" /* The os-specific socket definitions */
 
 /* clang-format off */
 

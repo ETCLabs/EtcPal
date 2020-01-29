@@ -184,20 +184,20 @@ TEST(etcpal_socket, poll_user_data_works)
   EtcPalPollEvent event;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_1);
-  TEST_ASSERT_EQUAL(event.user_data, user_data_1);
+  TEST_ASSERT_EQUAL_PTR(event.user_data, user_data_1);
 
   etcpal_poll_remove_socket(&context, sock_1);
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_2, ETCPAL_POLL_OUT, user_data_2));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_2);
-  TEST_ASSERT_EQUAL(event.user_data, user_data_2);
+  TEST_ASSERT_EQUAL_PTR(event.user_data, user_data_2);
 
   // Modify and make sure we get the updated user data
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_modify_socket(&context, sock_2, ETCPAL_POLL_OUT, user_data_1));
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
   TEST_ASSERT_EQUAL(event.socket, sock_2);
-  TEST_ASSERT_EQUAL(event.user_data, user_data_1);
+  TEST_ASSERT_EQUAL_PTR(event.user_data, user_data_1);
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock_1));
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock_2));

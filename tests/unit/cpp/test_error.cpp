@@ -17,11 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/cpp/error.h"
+
 #include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
-#include "etcpal/cpp/error.h"
 #include "etcpal/common.h"
 #include "unity_fixture.h"
 
@@ -40,7 +41,7 @@ TEST_TEAR_DOWN(etcpal_result)
 TEST(etcpal_result, constructors_function_correctly)
 {
   // Explicit constructor from "OK" error code
-  etcpal::Result exp_ok(kEtcPalErrOk);
+  etcpal::Error exp_ok(kEtcPalErrOk);
   TEST_ASSERT_TRUE(exp_ok);
   TEST_ASSERT_TRUE(exp_ok.IsOk());
   TEST_ASSERT_EQUAL(exp_ok.code(), kEtcPalErrOk);
@@ -48,7 +49,7 @@ TEST(etcpal_result, constructors_function_correctly)
   TEST_ASSERT_FALSE(exp_ok.ToString().empty());
 
   // Explicit constructor from non-"OK" error code
-  etcpal::Result exp_not_ok(kEtcPalErrSys);
+  etcpal::Error exp_not_ok(kEtcPalErrSys);
   TEST_ASSERT_FALSE(exp_not_ok);
   TEST_ASSERT_FALSE(exp_not_ok.IsOk());
   TEST_ASSERT_EQUAL(exp_not_ok.code(), kEtcPalErrSys);
@@ -58,17 +59,17 @@ TEST(etcpal_result, constructors_function_correctly)
 
 TEST(etcpal_result, static_ok_works)
 {
-  auto result = etcpal::Result::Ok();
+  auto result = etcpal::Error::Ok();
   TEST_ASSERT_TRUE(result);
   TEST_ASSERT_EQUAL(result.code(), kEtcPalErrOk);
 
-  etcpal::Result result_2(kEtcPalErrOk);
+  etcpal::Error result_2(kEtcPalErrOk);
   TEST_ASSERT(result_2 == result);
 }
 
 TEST(etcpal_result, assignment_operators)
 {
-  etcpal::Result result = kEtcPalErrOk;
+  etcpal::Error result = kEtcPalErrOk;
   TEST_ASSERT_TRUE(result);
   TEST_ASSERT_EQUAL(result.code(), kEtcPalErrOk);
 
@@ -85,15 +86,15 @@ TEST(etcpal_result, assignment_operators)
 
 TEST(etcpal_result, equality_operators)
 {
-  etcpal::Result result(kEtcPalErrOk);
+  etcpal::Error result(kEtcPalErrOk);
   TEST_ASSERT(result == kEtcPalErrOk);
   TEST_ASSERT(kEtcPalErrOk == result);
 
-  etcpal::Result result_2(kEtcPalErrOk);
+  etcpal::Error result_2(kEtcPalErrOk);
   TEST_ASSERT(result_2 == result);
   TEST_ASSERT(result == result_2);
 
-  etcpal::Result result_3(kEtcPalErrSys);
+  etcpal::Error result_3(kEtcPalErrSys);
   TEST_ASSERT_UNLESS(result_3 == result);
   TEST_ASSERT_UNLESS(result == result_3);
 }
@@ -102,7 +103,7 @@ TEST(etcpal_result, strings_exist_for_all_codes)
 {
   for (int i = 0; i > 0 - ETCPAL_NUM_ERROR_CODES; --i)
   {
-    etcpal::Result result(static_cast<etcpal_error_t>(i));
+    etcpal::Error result(static_cast<etcpal_error_t>(i));
     TEST_ASSERT_UNLESS_MESSAGE(result.ToString().empty(),
                                std::string("Failed on iteration " + std::to_string(i)).c_str());
     TEST_ASSERT_NOT_NULL_MESSAGE(result.ToCString(), std::string("Failed on iteration " + std::to_string(i)).c_str());
@@ -259,7 +260,7 @@ TEST(etcpal_expected, conversion_copy_constructor_works)
 
   etcpal::Expected<int> v2 = etcpal::Expected<unsigned int>(kEtcPalErrAlready);
   TEST_ASSERT_FALSE(v2.has_value());
-  TEST_ASSERT_EQUAL(v2.error(), kEtcPalErrAlready);
+  TEST_ASSERT_EQUAL(v2.error_code(), kEtcPalErrAlready);
 
   // Explicit conversion
   class ExplicitFromInt
@@ -285,7 +286,7 @@ TEST(etcpal_expected, conversion_move_constructor_works)
 
   etcpal::Expected<int> v2 = std::move(etcpal::Expected<unsigned int>(kEtcPalErrAlready));
   TEST_ASSERT_FALSE(v2.has_value());
-  TEST_ASSERT_EQUAL(v2.error(), kEtcPalErrAlready);
+  TEST_ASSERT_EQUAL(v2.error_code(), kEtcPalErrAlready);
 
   // Explicit conversion
   class ExplicitFromInt
@@ -333,8 +334,8 @@ TEST(etcpal_expected, observers_are_correct)
 TEST(etcpal_expected, error_is_correct)
 {
   etcpal::Expected<int> e = kEtcPalErrNoMem;
-  TEST_ASSERT_EQUAL(e.error(), kEtcPalErrNoMem);
-  TEST_ASSERT_EQUAL(e.result().code(), kEtcPalErrNoMem);
+  TEST_ASSERT_EQUAL(e.error_code(), kEtcPalErrNoMem);
+  TEST_ASSERT_EQUAL(e.error().code(), kEtcPalErrNoMem);
 }
 
 TEST(etcpal_expected, value_throws_on_error)

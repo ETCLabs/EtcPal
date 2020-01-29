@@ -33,9 +33,12 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_inet Internet Addressing (inet)
+/// \defgroup etcpal_cpp_inet inet (Internet Addressing)
 /// \ingroup etcpal_cpp
 /// \brief C++ utilities for the \ref etcpal_inet module.
+///
+/// Provides C++ wrappers for IP addresses (IpAddr), socket addresses (SockAddr) and MAC addresses
+/// (MacAddr).
 
 /// \ingroup etcpal_cpp_inet
 /// \brief Indicates an IP address family, or an invalid IP address.
@@ -85,6 +88,7 @@ public:
   void SetAddress(const uint8_t* v6_data) noexcept;
   void SetAddress(const uint8_t* v6_data, unsigned long scope_id) noexcept;
 
+  static IpAddr FromString(const char* ip_str) noexcept;
   static IpAddr FromString(const std::string& ip_str) noexcept;
   static IpAddr WildcardV4() noexcept;
   static IpAddr WildcardV6() noexcept;
@@ -302,14 +306,22 @@ inline void IpAddr::SetAddress(const uint8_t* v6_data, unsigned long scope_id) n
 /// \brief Construct an IpAddr from a string representation.
 ///
 /// See etcpal_inet_pton() for more information.
-inline IpAddr IpAddr::FromString(const std::string& ip_str) noexcept
+inline IpAddr IpAddr::FromString(const char* ip_str) noexcept
 {
   IpAddr result;
-  if (etcpal_inet_pton(kEtcPalIpTypeV4, ip_str.c_str(), &result.addr_) != kEtcPalErrOk)
+  if (etcpal_inet_pton(kEtcPalIpTypeV4, ip_str, &result.addr_) != kEtcPalErrOk)
   {
-    etcpal_inet_pton(kEtcPalIpTypeV6, ip_str.c_str(), &result.addr_);
+    etcpal_inet_pton(kEtcPalIpTypeV6, ip_str, &result.addr_);
   }
   return result;
+}
+
+/// \brief Construct an IpAddr from a string representation.
+///
+/// See etcpal_inet_pton() for more information.
+inline IpAddr IpAddr::FromString(const std::string& ip_str) noexcept
+{
+  return FromString(ip_str.c_str());
 }
 
 /// \brief Construct a wildcard IPv4 address.
@@ -562,6 +574,7 @@ public:
 
   bool IsNull() const noexcept;
 
+  static MacAddr FromString(const char* mac_str) noexcept;
   static MacAddr FromString(const std::string& mac_str) noexcept;
 
 private:
@@ -636,11 +649,19 @@ inline bool MacAddr::IsNull() const noexcept
 /// \brief Construct a MacAddr from a string representation.
 ///
 /// See etcpal_string_to_mac() for more information.
-inline MacAddr MacAddr::FromString(const std::string& mac_str) noexcept
+inline MacAddr MacAddr::FromString(const char* mac_str) noexcept
 {
   MacAddr result;
-  etcpal_string_to_mac(mac_str.c_str(), &result.addr_);
+  etcpal_string_to_mac(mac_str, &result.addr_);
   return result;
+}
+
+/// \brief Construct a MacAddr from a string representation.
+///
+/// See etcpal_string_to_mac() for more information.
+inline MacAddr MacAddr::FromString(const std::string& mac_str) noexcept
+{
+  return FromString(mac_str.c_str());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

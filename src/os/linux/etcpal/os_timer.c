@@ -23,19 +23,19 @@
 #include <time.h>
 #include <unistd.h>
 
-etcpal_error_t etcpal_timer_init()
+etcpal_error_t etcpal_timer_init(void)
 {
   if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
     return kEtcPalErrSys;
   return kEtcPalErrOk;
 }
 
-void etcpal_timer_deinit()
+void etcpal_timer_deinit(void)
 {
   // No deinitialization necessary on this platform.
 }
 
-uint32_t etcpal_getms()
+uint32_t etcpal_getms(void)
 {
   struct timespec os_time;
   if (0 == clock_gettime(CLOCK_MONOTONIC, &os_time))

@@ -30,8 +30,8 @@
 #include <windows.h>
 #endif
 
+#include <stdbool.h>
 #include "etcpal/common.h"
-#include "etcpal/bool.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,7 +54,11 @@ typedef struct
   char name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
 
-#define etcpal_thread_sleep(sleep_ms) Sleep(sleep_ms)
+#ifdef __cplusplus
+#define etcpal_thread_sleep(sleep_ms) ::Sleep(static_cast<DWORD>(sleep_ms))
+#else
+#define etcpal_thread_sleep(sleep_ms) Sleep((DWORD)sleep_ms)
+#endif
 
 #ifdef __cplusplus
 }

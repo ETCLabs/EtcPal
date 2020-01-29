@@ -166,13 +166,13 @@ static etcpal_error_t err_os_to_etcpal(uint32_t rtcserr)
   }
 }
 
-etcpal_error_t etcpal_socket_init()
+etcpal_error_t etcpal_socket_init(void)
 {
   // No initialization is necessary on this platform.
   return kEtcPalErrOk;
 }
 
-void etcpal_socket_deinit()
+void etcpal_socket_deinit(void)
 {
   // No deinitialization is necessary on this platform.
 }

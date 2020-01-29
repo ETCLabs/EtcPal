@@ -18,8 +18,11 @@
  ******************************************************************************/
 
 #include "os_error.h"
+
 #include <lwip/netdb.h>
 #include <lwip/errno.h>
+
+#include "etcpal/common.h"
 
 #if !LWIP_PROVIDE_ERRNO && !LWIP_ERRNO_STDINCLUDE
 #if defined(LWIP_ERRNO_INCLUDE)
@@ -124,7 +127,7 @@ etcpal_error_t err_gai_to_etcpal(int gai_error)
       return kEtcPalErrSys;
   }
 #else
-  (void)gai_error;  // unused
+  ETCPAL_UNUSED_ARG(gai_error);
   return kEtcPalErrSys;
 #endif
 }

@@ -18,9 +18,11 @@
  ******************************************************************************/
 
 #include "etcpal/thread.h"
-#include "unity_fixture.h"
 
-#include "etcpal/bool.h"
+#include <stdbool.h>
+
+#include "etcpal/common.h"
+#include "unity_fixture.h"
 
 TEST_GROUP(etcpal_thread);
 
@@ -36,7 +38,7 @@ volatile bool waitthread_run;
 
 void wait_and_exit(void* param)
 {
-  (void)param;
+  ETCPAL_UNUSED_ARG(param);
 
   while (waitthread_run)
     etcpal_thread_sleep(5);
@@ -46,19 +48,19 @@ void wait_and_exit(void* param)
 TEST(etcpal_thread, create_and_destroy_functions_work)
 {
   EtcPalThreadParams params = {
-      ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
-      ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
+      ETCPAL_THREAD_DEFAULT_PRIORITY,  // priority
+      ETCPAL_THREAD_DEFAULT_STACK,     // stack_size
       "cd_thread",                     // thread_name
       NULL                             // platform_data
   };
   etcpal_thread_t wait_thread;
 
   waitthread_run = true;
-  TEST_ASSERT(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL));
+  TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL), kEtcPalErrOk);
 
   // Stop should work if the thread has exited.
   waitthread_run = false;
-  TEST_ASSERT(etcpal_thread_join(&wait_thread));
+  TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
 }
 
 volatile bool spin_task_run;
@@ -66,7 +68,7 @@ volatile bool spin_task_ran;
 
 void increment_and_spin(void* param)
 {
-  (void)param;
+  ETCPAL_UNUSED_ARG(param);
 
   spin_task_ran = true;
   while (spin_task_run)
@@ -78,7 +80,7 @@ volatile bool oneshot_task_ran;
 
 void oneshot(void* param)
 {
-  (void)param;
+  ETCPAL_UNUSED_ARG(param);
 
   if (oneshot_task_run)
     oneshot_task_ran = true;
@@ -89,8 +91,8 @@ void oneshot(void* param)
 TEST(etcpal_thread, threads_are_time_sliced)
 {
   EtcPalThreadParams params = {
-      ETCPAL_THREAD_DEFAULT_PRIORITY,  // thread_priority
-      ETCPAL_THREAD_DEFAULT_STACK,     // thread_stack
+      ETCPAL_THREAD_DEFAULT_PRIORITY,  // priority
+      ETCPAL_THREAD_DEFAULT_STACK,     // stack_size
       "ts_thread",                     // thread_name
       NULL                             // platform_data
   };
@@ -99,16 +101,16 @@ TEST(etcpal_thread, threads_are_time_sliced)
   oneshot_task_run = true;
 
   // Create the spin task.
-  TEST_ASSERT_TRUE(etcpal_thread_create(&spin_task, &params, increment_and_spin, NULL));
+  TEST_ASSERT_EQUAL(etcpal_thread_create(&spin_task, &params, increment_and_spin, NULL), kEtcPalErrOk);
   // Create the oneshot task.
-  TEST_ASSERT_TRUE(etcpal_thread_create(&oneshot_task, &params, oneshot, NULL));
+  TEST_ASSERT_EQUAL(etcpal_thread_create(&oneshot_task, &params, oneshot, NULL), kEtcPalErrOk);
   // Give both tasks time to run.
   etcpal_thread_sleep(100);
   // Stop the tasks
   oneshot_task_run = false;
-  TEST_ASSERT_TRUE(etcpal_thread_join(&oneshot_task));
+  TEST_ASSERT_EQUAL(etcpal_thread_join(&oneshot_task), kEtcPalErrOk);
   spin_task_run = false;
-  TEST_ASSERT_TRUE(etcpal_thread_join(&spin_task));
+  TEST_ASSERT_EQUAL(etcpal_thread_join(&spin_task), kEtcPalErrOk);
   TEST_ASSERT_TRUE(spin_task_ran);
   TEST_ASSERT_TRUE(oneshot_task_ran);
 }

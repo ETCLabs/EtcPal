@@ -21,6 +21,7 @@
 #include "unity_fixture.h"
 
 #include <stdio.h>
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
 
 // Disable sprintf() warning on Windows/MSVC
@@ -37,13 +38,13 @@ static etcpal_mutex_t mutex;
 
 static void mutex_test_thread(void* arg)
 {
-  (void)arg;
+  ETCPAL_UNUSED_ARG(arg);
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    etcpal_mutex_take(&mutex);
+    (void)etcpal_mutex_lock(&mutex);
     ++shared_var;
-    etcpal_mutex_give(&mutex);
+    etcpal_mutex_unlock(&mutex);
     // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
     // This ensures that each thread runs for long enough to get time-sliced multiple times.
     for (volatile size_t j = 0; j < 100; ++j)
@@ -74,18 +75,17 @@ TEST(mutex_integration, mutex_thread_test)
 {
   etcpal_thread_t threads[NUM_THREADS];
 
-  EtcPalThreadParams params;
-  ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);
-
+  EtcPalThreadParams params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
   for (size_t i = 0; i < NUM_THREADS; ++i)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
-    TEST_ASSERT_TRUE_MESSAGE(etcpal_thread_create(&threads[i], &params, mutex_test_thread, NULL), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(etcpal_thread_create(&threads[i], &params, mutex_test_thread, NULL), kEtcPalErrOk,
+                              error_msg);
   }
 
   for (size_t i = 0; i < NUM_THREADS; ++i)
-    TEST_ASSERT_TRUE(etcpal_thread_join(&threads[i]));
+    TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
 
   TEST_ASSERT_EQUAL(shared_var, (NUM_THREADS * NUM_ITERATIONS));
 }

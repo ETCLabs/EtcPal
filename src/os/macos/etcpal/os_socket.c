@@ -16,6 +16,7 @@
  * This file is a part of EtcPal. For more information, go to:
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
+
 #include "etcpal/socket.h"
 #include "etcpal/private/socket.h"
 
@@ -33,6 +34,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "etcpal/common.h"
 #include "os_error.h"
 
 /**************************** Private constants ******************************/
@@ -125,18 +127,18 @@ static int events_etcpal_to_kqueue(etcpal_socket_t socket, etcpal_poll_events_t 
 static etcpal_poll_events_t events_kqueue_to_etcpal(const struct kevent* kevent, const EtcPalPollSocket* sock_desc);
 
 static int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
-static EtcPalRbNode* poll_socket_alloc();
+static EtcPalRbNode* poll_socket_alloc(void);
 static void poll_socket_free(EtcPalRbNode* node);
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t etcpal_socket_init()
+etcpal_error_t etcpal_socket_init(void)
 {
   // No initialization necessary on this platform
   return kEtcPalErrOk;
 }
 
-void etcpal_socket_deinit()
+void etcpal_socket_deinit(void)
 {
   // No deinitialization necessary on this platform
 }
@@ -200,8 +202,8 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   /* TODO */
-  (void)id;
-  (void)address;
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(address);
   return kEtcPalErrNotImpl;
 }
 
@@ -225,11 +227,11 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
   /* TODO */
-  (void)id;
-  (void)level;
-  (void)option_name;
-  (void)option_value;
-  (void)option_len;
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(level);
+  ETCPAL_UNUSED_ARG(option_name);
+  ETCPAL_UNUSED_ARG(option_value);
+  ETCPAL_UNUSED_ARG(option_len);
   return kEtcPalErrNotImpl;
 }
 
@@ -273,7 +275,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
 {
-  (void)flags;
+  ETCPAL_UNUSED_ARG(flags);
 
   if (!message)
     return (int)kEtcPalErrInvalid;
@@ -284,7 +286,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
 
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr)
 {
-  (void)flags;
+  ETCPAL_UNUSED_ARG(flags);
 
   if (!dest_addr || !message)
     return (int)kEtcPalErrInvalid;
@@ -880,7 +882,7 @@ int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, co
   return (a->sock > b->sock) - (a->sock < b->sock);
 }
 
-EtcPalRbNode* poll_socket_alloc()
+EtcPalRbNode* poll_socket_alloc(void)
 {
   return (EtcPalRbNode*)malloc(sizeof(EtcPalRbNode));
 }
