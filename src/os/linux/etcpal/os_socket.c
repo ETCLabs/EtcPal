@@ -127,7 +127,7 @@ static void events_etcpal_to_epoll(etcpal_poll_events_t events, struct epoll_eve
 static void events_epoll_to_etcpal(const struct epoll_event* epoll_evt, const EtcPalPollSocket* sock_desc,
                                    etcpal_poll_events_t* events);
 
-static int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
+static int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b);
 static EtcPalRbNode* poll_socket_alloc(void);
 static void poll_socket_free(EtcPalRbNode* node);
 
@@ -822,10 +822,10 @@ void events_epoll_to_etcpal(const struct epoll_event* epoll_evt, const EtcPalPol
     *events_out |= (ETCPAL_POLL_ERR);
 }
 
-int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
+int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b)
 {
-  EtcPalPollSocket* a = (EtcPalPollSocket*)node_a->value;
-  EtcPalPollSocket* b = (EtcPalPollSocket*)node_b->value;
+  const EtcPalPollSocket* a = (const EtcPalPollSocket*)value_a;
+  const EtcPalPollSocket* b = (const EtcPalPollSocket*)value_b;
 
   return (a->sock > b->sock) - (a->sock < b->sock);
 }

@@ -68,10 +68,10 @@
  *   int key;
  * } MyStruct;
  *
- * int compare_func(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
+ * int compare_func(const EtcPalRbTree* self, const void* value_a, const void* value_b)
  * {
- *   MyStruct* a = (MyStruct*)node_a->value;
- *   MyStruct* b = (MyStruct*)node_b->value;
+ *   const MyStruct* a = (const MyStruct*)value_a;
+ *   const MyStruct* b = (const MyStruct*)value_b;
  *   return (a->key > b->key) - (a->key < b->key);
  * }
  *
@@ -138,20 +138,19 @@ typedef struct EtcPalRbTree EtcPalRbTree;
  */
 
 /*!
- * \brief A function type that compares two nodes in a tree.
+ * \brief A function type that compares two value instances contained in a tree.
  *
  * A default, etcpal_rbtree_node_cmp_ptr_cb(), is provided which simply compares the pointer (address) of
- * the value member of each node.
+ * each value.
  *
- * \param[in] self The tree in which two nodes are being compared.
- * \param[in] node_a The first node being compared.
- * \param[in] node_b The second node being compared.
- * \return < 0: node_a's value is less than node_b's value
- * \return 0: node_a's value is equal to node_b's value
- * \return > 0: node_a's value is greater than node_b's value
+ * \param[in] self The tree in which two values are being compared.
+ * \param[in] value_a The first node being compared.
+ * \param[in] value_b The second node being compared.
+ * \return < 0: value_a is less than value_b
+ * \return 0: value_a is equal to value_b
+ * \return > 0: value_a is greater than value_b
  */
-typedef int (*EtcPalRbTreeNodeCmpFunc)(const EtcPalRbTree* self, const EtcPalRbNode* node_a,
-                                       const EtcPalRbNode* node_b);
+typedef int (*EtcPalRbTreeNodeCmpFunc)(const EtcPalRbTree* self, const void* value_a, const void* value_b);
 
 /*!
  * \brief A function type to be called for each node in a tree.
@@ -233,21 +232,21 @@ typedef struct EtcPalRbIter
 extern "C" {
 #endif
 
-int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const EtcPalRbNode* a, const EtcPalRbNode* b);
+int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const void* a, const void* b);
 void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node);
 
 EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value);
 
 EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, EtcPalRbTreeNodeCmpFunc cmp, EtcPalRbNodeAllocFunc alloc_f,
                                  EtcPalRbNodeDeallocFunc dealloc_f);
-void* etcpal_rbtree_find(EtcPalRbTree* self, void* value);
+void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value);
 etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value);
-etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value);
+etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, const void* value);
 etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree* self);
 size_t etcpal_rbtree_size(EtcPalRbTree* self);
 
 etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node);
-etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, EtcPalRbTreeNodeFunc node_cb);
+etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* value, EtcPalRbTreeNodeFunc node_cb);
 etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, EtcPalRbTreeNodeFunc node_cb);
 
 int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root);
