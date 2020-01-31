@@ -134,7 +134,7 @@ static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPol
                                            const EtcPalPollFdSet* readfds, const EtcPalPollFdSet* writefds,
                                            const EtcPalPollFdSet* exceptfds);
 
-static int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
+static int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b);
 static EtcPalRbNode* poll_socket_alloc(void);
 static void poll_socket_free(EtcPalRbNode* node);
 
@@ -919,12 +919,12 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent*
   return res;
 }
 
-int poll_socket_compare(const EtcPalRbTree* tree, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
+int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b)
 {
   ETCPAL_UNUSED_ARG(tree);
 
-  EtcPalPollSocket* a = (EtcPalPollSocket*)node_a->value;
-  EtcPalPollSocket* b = (EtcPalPollSocket*)node_b->value;
+  EtcPalPollSocket* a = (EtcPalPollSocket*)value_a;
+  EtcPalPollSocket* b = (EtcPalPollSocket*)value_b;
 
   return (a->sock > b->sock) - (a->sock < b->sock);
 }

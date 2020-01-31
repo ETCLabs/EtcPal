@@ -44,7 +44,7 @@ size_t next_node_index;
 // Private function prototypes
 
 static EtcPalRbNode* get_node();
-static int int_compare(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b);
+static int int_compare(const EtcPalRbTree* self, const void* value_a, const void* value_b);
 static void populate_int_arrays();
 
 FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
@@ -58,12 +58,12 @@ EtcPalRbNode* get_node(void)
   return &node_pool[next_node_index++];
 }
 
-int int_compare(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
+int int_compare(const EtcPalRbTree* self, const void* value_a, const void* value_b)
 {
   ETCPAL_UNUSED_ARG(self);
-  int a = *(int*)node_a->value;
-  int b = *(int*)node_b->value;
-  return a - b;
+  int a = *(int*)value_a;
+  int b = *(int*)value_b;
+  return (a > b) - (a < b);
 }
 
 void populate_int_arrays()

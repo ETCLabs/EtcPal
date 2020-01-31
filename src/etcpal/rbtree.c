@@ -122,10 +122,10 @@ static EtcPalRbNode* rb_node_rotate2(EtcPalRbNode* self, int dir)
  * This function can be supplied as an argument to any function that takes a
  * #EtcPalRbTreeNodeCmpFunc. Simply compares the pointer addresses of the two node values.
  */
-int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const EtcPalRbNode* a, const EtcPalRbNode* b)
+int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree* self, const void* a, const void* b)
 {
   ETCPAL_UNUSED_ARG(self);
-  return (a->value > b->value) - (a->value < b->value);
+  return (a > b) - (a < b);
 }
 
 /*!
@@ -177,19 +177,17 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, EtcPalRbTreeNodeCmpFunc nod
  * \param[in] value Value to find.
  * \return Pointer to the value (value found) or NULL (value not found).
  */
-void* etcpal_rbtree_find(EtcPalRbTree* self, void* value)
+void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value)
 {
   void* result = NULL;
   if (self)
   {
-    EtcPalRbNode node;
     EtcPalRbNode* it = self->root;
     int cmp = 0;
 
-    node.value = value;
     while (it)
     {
-      if ((cmp = self->cmp(self, it, &node)) != 0)
+      if ((cmp = self->cmp(self, it->value, value)) != 0)
       {
         /* If the tree supports duplicates, they should be chained to the right subtree for this to
          * work */
@@ -311,14 +309,14 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
         }
 
         /* Stop working if we inserted a node. This check also disallows duplicates in the tree */
-        if (self->cmp(self, q, node) == 0)
+        if (self->cmp(self, q->value, node->value) == 0)
         {
           result = inserted ? kEtcPalErrOk : kEtcPalErrExists;
           break;
         }
 
         last = dir;
-        dir = self->cmp(self, q, node) < 0;
+        dir = self->cmp(self, q->value, node->value) < 0;
 
         /* Move the helpers down */
         if (g != NULL)
@@ -354,7 +352,7 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
  * \return #kEtcPalErrInvalid: Invalid argument provided.
  * \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
-etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value)
+etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, const void* value)
 {
   etcpal_error_t result = kEtcPalErrInvalid;
   if (self)
@@ -377,10 +375,9 @@ etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, void* value)
  * \return #kEtcPalErrInvalid: Invalid argument provided.
  * \return #kEtcPalErrNotFound: The value did not exist in the tree.
  */
-etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, EtcPalRbTreeNodeFunc node_cb)
+etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* value, EtcPalRbTreeNodeFunc node_cb)
 {
   EtcPalRbNode head = {0}; /* False tree root */
-  EtcPalRbNode node;       /* Value wrapper node */
   EtcPalRbNode *q, *p, *g; /* Helpers */
   EtcPalRbNode* f = NULL;  /* Found item */
   int dir = 1;
@@ -396,7 +393,6 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, Etc
     return kEtcPalErrNotFound;
 
   /* Set up our helpers */
-  node.value = value;
   q = &head;
   g = p = NULL;
   q->link[1] = self->root;
@@ -409,10 +405,10 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, void* value, Etc
     /* Move the helpers down */
     g = p, p = q;
     q = q->link[dir];
-    dir = self->cmp(self, q, &node) < 0;
+    dir = self->cmp(self, q->value, value) < 0;
 
     /* Save the node with matching value and keep going; we'll do removal tasks at the end */
-    if (self->cmp(self, q, &node) == 0)
+    if (self->cmp(self, q->value, value) == 0)
       f = q;
 
     /* Push the red node down with rotations and color flips */
@@ -593,7 +589,8 @@ int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
     rh = etcpal_rbtree_test(self, rn);
 
     /* Invalid binary search tree */
-    if ((ln != NULL && self->cmp(self, ln, root) >= 0) || (rn != NULL && self->cmp(self, rn, root) <= 0))
+    if ((ln != NULL && self->cmp(self, ln->value, root->value) >= 0) ||
+        (rn != NULL && self->cmp(self, rn->value, root->value) <= 0))
     {
       return 0;
     }
