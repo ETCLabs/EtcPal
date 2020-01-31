@@ -68,10 +68,10 @@
  *   int key;
  * } MyStruct;
  *
- * int compare_func(const EtcPalRbTree* self, const EtcPalRbNode* node_a, const EtcPalRbNode* node_b)
+ * int compare_func(const EtcPalRbTree* self, const void* value_a, const void* value_b)
  * {
- *   MyStruct* a = (MyStruct*)node_a->value;
- *   MyStruct* b = (MyStruct*)node_b->value;
+ *   const MyStruct* a = (const MyStruct*)value_a;
+ *   const MyStruct* b = (const MyStruct*)value_b;
  *   return (a->key > b->key) - (a->key < b->key);
  * }
  *
