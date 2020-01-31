@@ -923,8 +923,8 @@ int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const voi
 {
   ETCPAL_UNUSED_ARG(tree);
 
-  EtcPalPollSocket* a = (EtcPalPollSocket*)value_a;
-  EtcPalPollSocket* b = (EtcPalPollSocket*)value_b;
+  const EtcPalPollSocket* a = (const EtcPalPollSocket*)value_a;
+  const EtcPalPollSocket* b = (const EtcPalPollSocket*)value_b;
 
   return (a->sock > b->sock) - (a->sock < b->sock);
 }

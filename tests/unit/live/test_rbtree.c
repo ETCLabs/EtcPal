@@ -61,8 +61,8 @@ EtcPalRbNode* get_node(void)
 int int_compare(const EtcPalRbTree* self, const void* value_a, const void* value_b)
 {
   ETCPAL_UNUSED_ARG(self);
-  int a = *(int*)value_a;
-  int b = *(int*)value_b;
+  int a = *(const int*)value_a;
+  int b = *(const int*)value_b;
   return (a > b) - (a < b);
 }
 
