@@ -1,9 +1,26 @@
 # FreeRTOS compilation support for EtcPal
-set(ETCPAL_FREERTOS_INCLUDE_DIRS "" CACHE STRING "The include directory for the FreeRTOS headers")
-set(ETCPAL_FREERTOSCONFIG_DIR "" CACHE STRING "The directory of the project's FreeRTOSConfig.h file")
-if(NOT ETCPAL_FREERTOS_INCLUDE_DIRS OR NOT ETCPAL_FREERTOSCONFIG_DIR)
-  message(FATAL_ERROR "You must provide the options ETCPAL_FREERTOS_INCLUDE_DIRS to specify the FreeRTOS include directories "
-                      "and ETCPAL_FREERTOSCONFIG_DIR to specify the location of the FreeRTOSConfig.h.")
+
+# Since FreeRTOS is an OS microkernel rather than a full-featured OS, its include paths must be
+# added as those of a traditional library rather than being available automatically as default
+# settings of the compiler toolchain.
+#
+# The way this is implemented in EtcPal is by looking for a CMake target called FreeRTOS which has
+# the header paths for FreeRTOS and the project's FreeRTOSConfig.h as PUBLIC or INTERFACE include
+# directories.
+#
+# If your project does not use CMake natively, this can just be an interface library target, added
+# like so:
+#
+# add_library(FreeRTOS INTERFACE)
+# target_include_directories(FreeRTOS INTERFACE [freertos/include/paths/...])
+#
+# If you are consuming this library from a CMake project, the FreeRTOS target can be what actually
+# builds the FreeRTOS sources as well. In either case, the target must be created before adding
+# EtcPal's subdirectory.
+
+if(NOT TARGET FreeRTOS)
+  message(FATAL_ERROR "You must provide a target called FreeRTOS to allow EtcPal to find the FreeRTOS headers."
+                      "See the comment in this file for more information.")
 endif()
 
-set(ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS ${ETCPAL_FREERTOS_INCLUDE_DIRS} ${ETCPAL_FREERTOSCONFIG_DIR})
+set(ETCPAL_OS_ADDITIONAL_LIBS FreeRTOS)
