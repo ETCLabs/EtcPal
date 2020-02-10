@@ -1914,13 +1914,6 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>UnlockFromIsr</name>
-      <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
-      <anchor>a6a56038338a788f77ce41b0dc75177df</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
       <type>etcpal_mutex_t &amp;</type>
       <name>get</name>
       <anchorfile>classetcpal_1_1_mutex.html</anchorfile>
@@ -2035,13 +2028,6 @@
       <name>WriteUnlock</name>
       <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
       <anchor>abfc3bd44b6252464c577c5ed8389dbd4</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>WriteUnlockFromIsr</name>
-      <anchorfile>classetcpal_1_1_rw_lock.html</anchorfile>
-      <anchor>abcb023c04e0fe7353d40bc79b762b657</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -4274,15 +4260,15 @@
       <type>size_t</type>
       <name>etcpal_netint_get_num_interfaces</name>
       <anchorfile>group__etcpal__netint.html</anchorfile>
-      <anchor>ga14c0e51d047bc84b5c4f783c640fc030</anchor>
-      <arglist>()</arglist>
+      <anchor>ga4b952bf9d2c5c21e62c691c722730a39</anchor>
+      <arglist>(void)</arglist>
     </member>
     <member kind="function">
       <type>const EtcPalNetintInfo *</type>
       <name>etcpal_netint_get_interfaces</name>
       <anchorfile>group__etcpal__netint.html</anchorfile>
-      <anchor>gafc68a9f3fc1342e3d747ab0b17029ee5</anchor>
-      <arglist>()</arglist>
+      <anchor>ga32d2c099254727efd5a2d8208a7a88e4</anchor>
+      <arglist>(void)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -4511,8 +4497,8 @@
       <type>int</type>
       <name>etcpal_rbtree_node_cmp_ptr_cb</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>ga2c7b10e007e2221402426393cbbc3461</anchor>
-      <arglist>(const EtcPalRbTree *self, const EtcPalRbNode *a, const EtcPalRbNode *b)</arglist>
+      <anchor>gabda4a5620ad7cddcc09ef71d4d8222c7</anchor>
+      <arglist>(const EtcPalRbTree *self, const void *a, const void *b)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -4539,8 +4525,8 @@
       <type>void *</type>
       <name>etcpal_rbtree_find</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>ga4e42141273a433aad5e854780e321004</anchor>
-      <arglist>(EtcPalRbTree *self, void *value)</arglist>
+      <anchor>ga4d3d93cb20130fc9d34fc13d1ea92316</anchor>
+      <arglist>(EtcPalRbTree *self, const void *value)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -4553,8 +4539,8 @@
       <type>etcpal_error_t</type>
       <name>etcpal_rbtree_remove</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>ga948b09a65cbe24eefcfb5823641f39f1</anchor>
-      <arglist>(EtcPalRbTree *self, void *value)</arglist>
+      <anchor>ga46d80469b4a700447b2721589cbec3d9</anchor>
+      <arglist>(EtcPalRbTree *self, const void *value)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -4581,8 +4567,8 @@
       <type>etcpal_error_t</type>
       <name>etcpal_rbtree_remove_with_cb</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>gaa2d2391c36849d9a9cd32a0a131f6341</anchor>
-      <arglist>(EtcPalRbTree *self, void *value, EtcPalRbTreeNodeFunc node_cb)</arglist>
+      <anchor>gae9045e863548f8051541f3f054bbf4be</anchor>
+      <arglist>(EtcPalRbTree *self, const void *value, EtcPalRbTreeNodeFunc node_cb)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_error_t</type>
@@ -4637,8 +4623,8 @@
       <type>int(*</type>
       <name>EtcPalRbTreeNodeCmpFunc</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>gaa92041a856567f1d411d6e2b74233ddc</anchor>
-      <arglist>)(const EtcPalRbTree *self, const EtcPalRbNode *node_a, const EtcPalRbNode *node_b)</arglist>
+      <anchor>ga0f5fd5d6b8505a1e408a8f22fb3ede2b</anchor>
+      <arglist>)(const EtcPalRbTree *self, const void *value_a, const void *value_b)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
@@ -4651,8 +4637,8 @@
       <type>EtcPalRbNode *(*</type>
       <name>EtcPalRbNodeAllocFunc</name>
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
-      <anchor>ga0f5e94b3a86c36a4a4af25b167cc2990</anchor>
-      <arglist>)()</arglist>
+      <anchor>ga7e715765639ff5a6b66065858541b083</anchor>
+      <arglist>)(void)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*</type>
@@ -5247,8 +5233,8 @@
       <type>uint32_t</type>
       <name>etcpal_getms</name>
       <anchorfile>group__etcpal__timer.html</anchorfile>
-      <anchor>ga9d277421b68caa9f0ad6f23bd775d5d6</anchor>
-      <arglist>()</arglist>
+      <anchor>gad9f192bf100bebdab2d0169c44af066a</anchor>
+      <arglist>(void)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5511,16 +5497,9 @@
     <filename>group__etcpal__mutex.html</filename>
     <member kind="define">
       <type>#define</type>
-      <name>ETCPAL_MUTEX_HAS_TIMED_TAKE</name>
+      <name>ETCPAL_MUTEX_HAS_TIMED_LOCK</name>
       <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga38ea8a3249dd005850d8d6497ce2f4bf</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_MUTEX_HAS_GIVE_FROM_ISR</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga5ce41e0cf113e1d483a7967cda7e2fc3</anchor>
+      <anchor>ga8c452b6fbbfffb5071cbb62c2011cd68</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -5539,37 +5518,30 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_mutex_take</name>
+      <name>etcpal_mutex_lock</name>
       <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>gac56c0f48e3bfc5e8e0d321a711816f67</anchor>
+      <anchor>gab53dcdc649c23fb797228f414bb67e34</anchor>
       <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_mutex_try_take</name>
+      <name>etcpal_mutex_try_lock</name>
       <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga26e7c3d33f3ab2dd5a82de3cbc36d39e</anchor>
+      <anchor>gac3095a52d1afa4b44ffa066a9dde05a5</anchor>
       <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_mutex_timed_take</name>
+      <name>etcpal_mutex_timed_lock</name>
       <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga7395e6caae116fafaf61f44a7383aae5</anchor>
+      <anchor>ga94809c21d2ddd2ab62bbb7c7d3f7f576</anchor>
       <arglist>(etcpal_mutex_t *id, int timeout_ms)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_mutex_give</name>
+      <name>etcpal_mutex_unlock</name>
       <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>ga5a1ceebcbb5856a98dab50a13f894bcf</anchor>
-      <arglist>(etcpal_mutex_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>etcpal_mutex_give_from_isr</name>
-      <anchorfile>group__etcpal__mutex.html</anchorfile>
-      <anchor>gade6bb83c220224890734bbe9ac9f16e4</anchor>
+      <anchor>ga8468c318f6d0737460888bfd6ddd3fe5</anchor>
       <arglist>(etcpal_mutex_t *id)</arglist>
     </member>
     <member kind="function">
@@ -5666,13 +5638,6 @@
       <anchor>ga076630adff898bb71a4aaca77a73aefc</anchor>
       <arglist></arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_RWLOCK_HAS_UNLOCK_FROM_ISR</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga1302eeb3ddf61d21378256995cf8d95c</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="typedef">
       <type>PLATFORM_DEFINED</type>
       <name>etcpal_rwlock_t</name>
@@ -5745,13 +5710,6 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_rwlock_writeunlock_from_isr</name>
-      <anchorfile>group__etcpal__rwlock.html</anchorfile>
-      <anchor>ga1fd9f75d14e0340d80d26583ce8343fe</anchor>
-      <arglist>(etcpal_rwlock_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
       <name>etcpal_rwlock_destroy</name>
       <anchorfile>group__etcpal__rwlock.html</anchorfile>
       <anchor>ga2d4feb63613ff8dfb1f106f5ed63dee5</anchor>
@@ -5781,6 +5739,13 @@
       <name>ETCPAL_SEM_HAS_MAX_COUNT</name>
       <anchorfile>group__etcpal__sem.html</anchorfile>
       <anchor>ga6c5d81a112726041fbdc0836eeb86896</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SEM_MUST_BE_BALANCED</name>
+      <anchorfile>group__etcpal__sem.html</anchorfile>
+      <anchor>ga30a5fee3bf1f93fdb589fe2a99055b0c</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -5872,9 +5837,29 @@
     <filename>additional_docs</filename>
   </compound>
   <compound kind="page">
+    <name>building_etcpal</name>
+    <title>Building EtcPal</title>
+    <filename>building_etcpal</filename>
+  </compound>
+  <compound kind="page">
+    <name>building_for_embedded</name>
+    <title>Building EtcPal for an embedded target</title>
+    <filename>building_for_embedded</filename>
+  </compound>
+  <compound kind="page">
     <name>interface_indexes</name>
     <title>Network Interface Indexes</title>
     <filename>interface_indexes</filename>
+  </compound>
+  <compound kind="page">
+    <name>targeting_freertos</name>
+    <title>Targeting FreeRTOS</title>
+    <filename>targeting_freertos</filename>
+  </compound>
+  <compound kind="page">
+    <name>targeting_lwip</name>
+    <title>Targeting lwIP</title>
+    <filename>targeting_lwip</filename>
   </compound>
   <compound kind="page">
     <name>index</name>

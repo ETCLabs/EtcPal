@@ -1,21 +1,13 @@
-# An example CMake toolchain file for cross-compiling for NXP Kinetis K61 (ARM Cortex-M4) with MQX
-# RTOS and the CodeWarrior 10.6 gcc toolchain.
+# An example CMake toolchain file for cross-compiling using the CodeWarrior 10.6 gcc toolchain.
 #
-# You need to pick the type of build files that CMake generates (the Generator). If you have a
-# build system already that uses GNU Make, or are building on a macOS or Unix-based host,
-# "Unix Makefiles" will cover most cases. On Windows, you need to use a non-Visual-Studio generator.
-# This requires you to have some kind of non-VS build system installed. Some options are:
-# - MinGW64 (must be available on PATH)
-# - Strawberry Perl (use 'Unix Makefiles' generator)
-# - NMake (comes with VS, but must be in a developer command prompt)
+# You need to pick the type of build files that CMake generates (the Generator). CodeWarrior 10.6
+# comes with a GNU Make utility, so it's convenient to use the "Unix Makefiles" generator in most
+# cases; a line below tells CMake where to find CodeWarrior's make utility.
 #
-# Usage: cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=path/to/this/file ..
+# Usage: cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=[path/to/this/file] [path/to/sources] 
 
-# Setting these names causes CMake to look in the Platform subdirectory for files called:
-# Platform/MQX.cmake
-# Platform/MQX-GNU-C-K61F120M.cmake
-set(CMAKE_SYSTEM_NAME MQX)
-set(CMAKE_SYSTEM_PROCESSOR K61F120M)
+set(CMAKE_SYSTEM_NAME Generic) # This is CMake's name for 'bare-metal' or RTOS environments
+set(CMAKE_SYSTEM_PROCESSOR arm)
 
 if(NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL Windows)
   message(FATAL_ERROR "CodeWarrior is Windows-only.")
@@ -27,6 +19,7 @@ set(CODEWARRIOR_INSTALL_DIR "C:/Freescale/CW MCU v10.6" CACHE STRING "The CodeWa
 set(TOOLS_DIR ${CODEWARRIOR_INSTALL_DIR}/Cross_Tools/arm-none-eabi-gcc-4_7_3)
 set(CMAKE_C_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-gcc.exe CACHE FILEPATH "CodeWarrior/gcc C Compiler")
 set(CMAKE_CXX_COMPILER ${TOOLS_DIR}/bin/arm-none-eabi-g++.exe CACHE FILEPATH "CodeWarrior/gcc C++ Compiler")
+set(CMAKE_MAKE_PROGRAM ${CODEWARRIOR_INSTALL_DIR}/gnu/bin CACHE FILEPATH "CodeWarrior Make utility")
 
 # This tells CMake to use a static library program to do its minimal compiler
 # test instead of an executable - this translates well to embedded toolchains.
@@ -36,3 +29,18 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 # this line to bypass the compiler checks.
 # set(CMAKE_C_COMPILER_WORKS 1)
 # set(CMAKE_CXX_COMPILER_WORKS 1)
+
+# These are global compile definitions and compile options that will be applied to every build step
+# when building the libraries. It's highly recommended that you make these match your project's
+# build settings as closely as possible. My preferred approach to this is to just grab a line of
+# build output and add all the flags I see to these lines. Here are some examples from a project
+# that builds for a NXP Kinetis K61 processor using MQX.
+add_compile_definitions(_EWL_C99 _DEBUG)
+add_compile_options(
+  -nostdinc
+  -ffunction-sections
+  -fdata-sections
+  -fno-strict-aliasing
+  -fmessage-length=0
+  -specs=ewl_c9x.specs
+)
