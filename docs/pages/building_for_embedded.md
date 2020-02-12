@@ -53,23 +53,56 @@ add_subdirectory([path/to/EtcPal/root] EtcPal)
 ### If your project is not a CMake project
 
 If your project does not use CMake, you can still consume EtcPal and dependent libraries using
-CMake. Typically this is done by placing EtcPal alongside any dependent libraries in your project's
-source tree, and adding a root CMakeLists.txt one level up from them. An example directory
-structure:
+CMake. Typically this is done by adding a root CMakeLists.txt one level up from the CMake libraries
+you are building. A few common configurations with example directory structures are listed below.
+
+**1. You are including EtcPal on its own.**
 
 ```
 |- my_project/
 |--- external/
 |----- EtcPal/
-|----- OtherEtcLib/
 |----- CMakeLists.txt
-|----- toolchain_file.cmake
+|----- toolchain.cmake
 ```
 
-This CMakeLists.txt contains enough information to build and install the libraries for use by your
-main project toolchain. In the example directory structure above, "OtherEtcLib" is another ETC
-library that depends on EtcPal. In this example, we are targeting FreeRTOS and lwIP. The
-CMakeLists.txt would contain the following:
+**2. You are including a library that depends on EtcPal from GitHub.**
+
+In this case, the other library's CMake configuration will have brought EtcPal in as a Git
+submodule and added it to the build using `add_subdirectory()`:
+
+```
+|- my_project/
+|--- external/
+|----- OtherEtcLib/
+|------- external/
+|--------- EtcPal/
+|----- CMakeLists.txt
+|----- toolchain.cmake
+```
+
+**3. You are including a library that depends on EtcPal which has been mirrored or copied into
+     another source control provider.**
+
+In this case, Git submodules are not available and you must copy the library and EtcPal at the same
+level in the directory structure. The dependent library's CMake configuration will find EtcPal in
+this location.
+
+```
+|- my_project/
+|--- external/
+|----- OtherEtcLib/
+|----- EtcPal/
+|----- CMakeLists.txt
+|----- toolchain.cmake
+```
+
+The above configuration is also useful when you are using multiple libraries which all depend on
+EtcPal.
+
+The CMakeLists.txt contains enough information to build and install the libraries for use by your
+main project toolchain. In this example, we are targeting FreeRTOS and lwIP. The CMakeLists.txt
+would contain the following:
 
 ```cmake
 cmake_minimum_required(VERSION 3.3)
@@ -87,11 +120,11 @@ target_include_directories(FreeRTOS PUBLIC [freertos/include/paths...])
 add_library(lwIP INTERFACE)
 target_include_directories(lwIP PUBLIC [lwip/include/paths...])
 
-add_subdirectory(EtcPal)
-add_subdirectory(OtherEtcLib)
+add_subdirectory(EtcPal) # If using scenario 2 above, this line is omitted.
+add_subdirectory(OtherEtcLib) # If using scenario 1 above, this line is omitted.
 ```
 
-toolchain_file.cmake would contain information on your build toolchain as described above.
+toolchain.cmake would contain information on your build toolchain as described above.
 
 To integrate building these libraries into your project, it's convenient to configure and build the
 libraries as a pre-build step in your existing toolchain. This example uses NXP's MCUXpresso IDE,
