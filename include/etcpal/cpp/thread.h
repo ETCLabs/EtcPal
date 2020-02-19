@@ -99,7 +99,8 @@ namespace etcpal
 ///
 /// You can even use lambdas for quick-and-dirty operations:
 /// \code
-/// etcpal::Thread thread([]() { std::cout << "Hello from a thread!\n"; });
+/// int value = 42;
+/// etcpal::Thread thread([=]() { std::cout << "The value is " << value << '\n'; });
 /// \endcode
 ///
 /// The Thread class also provides static Sleep() functions, which can be used as a

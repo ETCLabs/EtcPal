@@ -348,7 +348,7 @@ TEST(etcpal_expected, value_throws_on_error)
   }
   catch (const etcpal::BadExpectedAccess& e)
   {
-    TEST_ASSERT_EQUAL_INT(e.result().code(), kEtcPalErrSys);
+    TEST_ASSERT_EQUAL_INT(e.error().code(), kEtcPalErrSys);
   }
 }
 

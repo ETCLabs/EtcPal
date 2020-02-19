@@ -129,7 +129,6 @@ inline Error& Error::operator=(etcpal_error_t code) noexcept
 
 /// \brief Whether this Error contains the code #kEtcPalErrOk.
 /// \details #kEtcPalErrOk is the only #etcpal_error_t code that does not indicate an error.
-/// \return Whether the result is OK (not an error).
 constexpr bool Error::IsOk() const noexcept
 {
   return code_ == kEtcPalErrOk;
@@ -153,14 +152,14 @@ inline const char* Error::ToCString() const noexcept
   return etcpal_strerror(code_);
 }
 
-/// \brief Evaluate the Error inline - evaluates true if the result is #kEtcPalErrOk, false
+/// \brief Evaluate the Error inline - evaluates true if the Error is #kEtcPalErrOk, false
 ///        otherwise.
 constexpr Error::operator bool() const noexcept
 {
   return IsOk();
 }
 
-/// \brief Construct a result containing #kEtcPalErrOk.
+/// \brief Construct an Error containing #kEtcPalErrOk.
 constexpr Error Error::Ok() noexcept
 {
   return Error(kEtcPalErrOk);
@@ -172,24 +171,24 @@ constexpr Error Error::Ok() noexcept
 /// \name Error Relational Operators
 /// @{
 
-constexpr bool operator==(etcpal_error_t code, const Error& result)
+constexpr bool operator==(etcpal_error_t code, const Error& error)
 {
-  return code == result.code();
+  return code == error.code();
 }
 
-constexpr bool operator!=(etcpal_error_t code, const Error& result)
+constexpr bool operator!=(etcpal_error_t code, const Error& error)
 {
-  return !(code == result);
+  return !(code == error);
 }
 
-constexpr bool operator==(const Error& result, etcpal_error_t code)
+constexpr bool operator==(const Error& error, etcpal_error_t code)
 {
-  return result.code() == code;
+  return error.code() == code;
 }
 
-constexpr bool operator!=(const Error& result, etcpal_error_t code)
+constexpr bool operator!=(const Error& error, etcpal_error_t code)
 {
-  return !(result == code);
+  return !(error == code);
 }
 
 constexpr bool operator==(const Error& a, const Error& b)
@@ -219,25 +218,25 @@ class BadExpectedAccess : public std::logic_error
 {
 public:
   explicit BadExpectedAccess(Error res);
-  Error result() const noexcept;
+  Error error() const noexcept;
 
 private:
-  Error res_;
+  Error err_;
 };
 
 /// \brief Construct from a Error.
 /// \throw May throw std::bad_alloc.
-inline BadExpectedAccess::BadExpectedAccess(Error res)
+inline BadExpectedAccess::BadExpectedAccess(Error err)
     : std::logic_error("Bad access to etcpal::Expected::value(); the Expected instance contained error '" +
-                       res.ToString() + "'.")
-    , res_(res)
+                       err.ToString() + "'.")
+    , err_(err)
 {
 }
 
 /// \brief Get the error code which was contained in the associated Expected when the exception occurred.
-inline Error BadExpectedAccess::result() const noexcept
+inline Error BadExpectedAccess::error() const noexcept
 {
-  return res_;
+  return err_;
 }
 
 /// \cond detail_expected

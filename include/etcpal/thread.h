@@ -58,6 +58,26 @@ extern "C" {
  * }
  * \endcode
  *
+ * Manipulate the EtcPalThreadParams structure to change parameters about the thread to be created:
+ *
+ * \code
+ * EtcPalThreadParams params;
+ *
+ * // The meaning of these numbers is platform-defined, and they are not honored on all platforms. See the description
+ * // of the EtcPalThreadParams struct for more information.
+ * params.priority = 8;
+ * params.stack_size = 1500;
+ *
+ * params.thread_name = "My Thread";
+ * \endcode
+ *
+ * You can also use the etcpal_thread_sleep() function to sleep for a given number of milliseconds
+ * from any valid thread context:
+ *
+ * \code
+ * etcpal_thread_sleep(200); // Sleep for 200 milliseconds
+ * \endcode
+ *
  * @{
  */
 

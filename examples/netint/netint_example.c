@@ -79,7 +79,7 @@ void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interf
            longest_netmask);
 }
 
-int main()
+int main(void)
 {
   etcpal_error_t init_res = etcpal_init(ETCPAL_FEATURE_NETINTS);
   if (init_res != kEtcPalErrOk)

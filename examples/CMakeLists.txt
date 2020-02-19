@@ -1,3 +1,13 @@
+function(etcpal_add_example target_name)
+  add_executable(${target_name} ${ARGN})
+  target_link_libraries(${target_name} PRIVATE EtcPal)
+  set_target_properties(${target_name} PROPERTIES FOLDER examples)
+endfunction()
+
 if(NOT IOS)
   add_subdirectory(netint)
+  add_subdirectory(thread)
+  add_subdirectory(thread_cpp)
+  add_subdirectory(timer)
+  add_subdirectory(timer_cpp)
 endif()
