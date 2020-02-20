@@ -46,7 +46,7 @@ extern "C" {
  *   etcpal_thread_sleep(10); // Sleep for 10 milliseconds
  * }
  *
- * EtcPalThreadParams params = { ETCPAL_THREAD_DEFAULT_PARAMS_INIT };
+ * EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
  * int arg = 42;
  * etcpal_thread_t handle;
  * etcpal_error_t result = etcpal_thread_create(&handle, &params, thread_function, &arg);
@@ -130,15 +130,28 @@ typedef struct EtcPalThreadParams
   } while (0)
 
 /*!
+ * \brief The set of default values for an EtcPalThreadParamsStructure.
+ *
+ * Suitable for using in a bracket initializer, e.g.:
+ * \code
+ * EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT_VALUES;
+ * \endcode
+ */
+#define ETCPAL_THREAD_PARAMS_INIT_VALUES \
+  ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, ETCPAL_THREAD_DEFAULT_NAME, NULL
+
+/*!
  * \brief A default initializer value for an EtcPalThreadParams structure.
  *
  * Usage:
  * \code
- * EtcPalThreadParams params = { ETCPAL_THREAD_DEFAULT_PARAMS_INIT };
+ * EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
  * \endcode
  */
-#define ETCPAL_THREAD_DEFAULT_PARAMS_INIT \
-  ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, ETCPAL_THREAD_DEFAULT_NAME, NULL
+#define ETCPAL_THREAD_PARAMS_INIT    \
+  {                                  \
+    ETCPAL_THREAD_PARAMS_INIT_VALUES \
+  }
 
 etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
                                     void* thread_arg);

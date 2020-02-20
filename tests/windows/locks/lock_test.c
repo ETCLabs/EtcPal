@@ -89,7 +89,7 @@ unsigned long test_mutex(DWORD core_count)
   shared_counter = 0;
   keep_running = true;
 
-  EtcPalThreadParams thread_params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
 
   etcpal_thread_t* threads = (etcpal_thread_t*)calloc(core_count, sizeof(etcpal_thread_t));
   for (DWORD i = 0; i < core_count; ++i)
@@ -135,7 +135,7 @@ unsigned long test_critical_section(DWORD core_count)
   shared_counter = 0;
   keep_running = true;
 
-  EtcPalThreadParams thread_params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
 
   etcpal_thread_t* threads = (etcpal_thread_t*)calloc(core_count, sizeof(etcpal_thread_t));
   for (DWORD i = 0; i < core_count; ++i)
@@ -181,7 +181,7 @@ unsigned long test_srw_lock(DWORD core_count)
   shared_counter = 0;
   keep_running = true;
 
-  EtcPalThreadParams thread_params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
 
   etcpal_thread_t* threads = (etcpal_thread_t*)calloc(core_count, sizeof(etcpal_thread_t));
   for (DWORD i = 0; i < core_count; ++i)

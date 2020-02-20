@@ -49,7 +49,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * {
  *   etcpal_mutex_create(&mutex);
  *
- *   EtcPalThreadParams thread_params = { ETCPAL_THREAD_DEFAULT_PARAMS_INIT };
+ *   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
  *   etcpal_thread_t thread_handles[5];
  *   for (int i = 0; i < 5; ++i)
  *   {
@@ -201,7 +201,7 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  * {
  *   etcpal_signal_create(&signal);
  *   
- *   EtcPalThreadParams thread_params = { ETCPAL_THREAD_DEFAULT_PARAMS_INIT };
+ *   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
  *   etcpal_thread_t event_thread_handle;
  *   etcpal_thread_create(&event_thread_handle, &params, event_thread, NULL);
  *

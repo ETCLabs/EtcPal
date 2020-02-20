@@ -184,7 +184,7 @@ public:
 
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
-  EtcPalThreadParams params_{ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  EtcPalThreadParams params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
 };
 
 /// \cond Internal thread function

@@ -65,7 +65,7 @@ int main(void)
   int thread_2_count = 0;
   int thread_3_count = 0;
 
-  EtcPalThreadParams thread_params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
 
   // Start thread 1
   etcpal_thread_t thread_1_handle;

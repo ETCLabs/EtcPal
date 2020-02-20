@@ -64,7 +64,7 @@ TEST(sem_integration, sem_thread_test_initial_zero)
 
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 0, NUM_THREADS * NUM_ITERATIONS));
 
-  EtcPalThreadParams params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
   for (int i = 0; i < NUM_THREADS; ++i)
   {
     char error_msg[50];
@@ -99,7 +99,7 @@ TEST(sem_integration, sem_thread_test_initial_full)
 
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, NUM_THREADS * NUM_ITERATIONS, NUM_THREADS * NUM_ITERATIONS));
 
-  EtcPalThreadParams params = {ETCPAL_THREAD_DEFAULT_PARAMS_INIT};
+  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
   for (int i = 0; i < NUM_THREADS; ++i)
   {
     char error_msg[50];

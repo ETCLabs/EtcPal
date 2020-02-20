@@ -190,7 +190,7 @@ typedef struct AcnPdu
     (pduptr)->pnextpdu = NULL; \
   } while (0)
 
-/*! Contains specific PDU info used by the generic helper etcpal_parse_acn_pdu(). */
+/*! Contains specific PDU info used by the generic helper acn_parse_pdu(). */
 typedef struct AcnPduConstraints
 {
   size_t vector_size; /*!< The size of the Vector segment of this PDU. */
