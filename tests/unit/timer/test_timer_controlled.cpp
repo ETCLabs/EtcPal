@@ -25,8 +25,8 @@
 DEFINE_FFF_GLOBALS;
 
 extern "C" {
+
 FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
-}
 
 TEST_GROUP(timer_controlled);
 
@@ -95,7 +95,8 @@ TEST_GROUP_RUNNER(timer_controlled)
   RUN_TEST_CASE(timer_controlled, time_point_now_works);
 }
 
-extern "C" void run_all_tests(void)
+void run_all_tests(void)
 {
   RUN_TEST_GROUP(timer_controlled);
+}
 }
