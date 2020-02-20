@@ -627,6 +627,51 @@ TEST(etcpal_log, logging_maximum_length_string_works)
   TEST_ASSERT_EQUAL_STRING(last_log_strings_received.raw, expect_raw_str);
 }
 
+#define VCREATE_TEST_PRI ETCPAL_LOG_WARNING
+#define VCREATE_TEST_FORMAT_STR_AND_ARGS "Here are some random values: %s %d %x", "hey", 25, 0x3d5
+#define VCREATE_TEST_EXPECTED_RESULT "1970-01-01 00:00:00.000Z [WARN] Here are some random values: hey 25 3d5"
+
+static bool vcreate_test_helper(const char* format, ...)
+{
+  va_list args;
+  bool res;
+  va_start(args, format);
+  res = etcpal_vcreate_log_str(human_buf, ETCPAL_LOG_STR_MAX_LEN, &cur_time, VCREATE_TEST_PRI, format, args);
+  va_end(args);
+  return res;
+}
+
+TEST(etcpal_log, vcreate_log_str_works)
+{
+  TEST_ASSERT_TRUE(vcreate_test_helper(VCREATE_TEST_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT_EQUAL_STRING(human_buf, VCREATE_TEST_EXPECTED_RESULT);
+}
+
+#define VCREATE_SYSLOG_TEST_PRI ETCPAL_LOG_EMERG
+#define VCREATE_SYSLOG_TEST_FORMAT_STR_AND_ARGS "Here are some random values: %s %d %x", "hey", 25, 0x3d5
+
+static const EtcPalSyslogParams vcreate_syslog_params = {ETCPAL_LOG_DAEMON, "test_host", "test_app", "test_proc"};
+
+#define VCREATE_SYSLOG_TEST_EXPECTED_RESULT \
+  "<24>1 1970-01-01T00:00:00.000Z test_host test_app test_proc - - Here are some random values: hey 25 3d5"
+
+static bool vcreate_syslog_test_helper(const char* format, ...)
+{
+  va_list args;
+  bool res;
+  va_start(args, format);
+  res = etcpal_vcreate_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &vcreate_syslog_params,
+                                  VCREATE_SYSLOG_TEST_PRI, format, args);
+  va_end(args);
+  return res;
+}
+
+TEST(etcpal_log, vcreate_syslog_str_works)
+{
+  TEST_ASSERT_TRUE(vcreate_syslog_test_helper(VCREATE_SYSLOG_TEST_FORMAT_STR_AND_ARGS));
+  TEST_ASSERT_EQUAL_STRING(syslog_buf, VCREATE_SYSLOG_TEST_EXPECTED_RESULT);
+}
+
 TEST_GROUP_RUNNER(etcpal_log)
 {
   RUN_TEST_CASE(etcpal_log, sanitize_syslog_params_works);
@@ -641,4 +686,6 @@ TEST_GROUP_RUNNER(etcpal_log)
   RUN_TEST_CASE(etcpal_log, formatting_int_values_works);
   RUN_TEST_CASE(etcpal_log, formatting_string_values_works);
   RUN_TEST_CASE(etcpal_log, logging_maximum_length_string_works);
+  RUN_TEST_CASE(etcpal_log, vcreate_log_str_works);
+  RUN_TEST_CASE(etcpal_log, vcreate_syslog_str_works);
 }

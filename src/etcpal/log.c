@@ -68,7 +68,16 @@ static etcpal_mutex_t buf_lock;
 
 /*********************** Private function prototypes *************************/
 
+static char* create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
+                            va_list args);
+static char* create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
+                               const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args);
+
 static void sanitize_str(char* str);
+static bool validate_time(const EtcPalLogTimestamp* timestamp);
+
+static void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable);
+static bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestamp);
 
 /*************************** Function definitions ****************************/
 
@@ -96,43 +105,104 @@ void etcpal_log_deinit(void)
   }
 }
 
-/* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
-void sanitize_str(char* str)
-{
-  // C library functions like isprint()/isgraph() are not used here because their behavior is not
-  // well-defined in the presence of non-ASCII characters.
-  unsigned char* cp;
-  for (cp = (unsigned char*)str; *cp != '\0'; ++cp)
-  {
-    if (*cp < 33 || *cp == 127)
-      *cp = '_';
-    else if (*cp > 127)
-      *cp = '?';
-  }
-}
-
 /*!
- * \brief Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them
- *        if necessary).
+ * \brief Create a log message with a human-readable prefix in the given buffer.
  *
- * Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
- * are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
- * within the correct range (#ETCPAL_LOG_NFACILITIES).
+ * Buffer must be at least #ETCPAL_LOG_STR_MIN_LEN in length.
  *
- * \param[in,out] params Syslog params to sanitize.
+ * \param[out] buf Buffer in which to build the log message.
+ * \param[in] buflen Length in bytes of buf.
+ * \param[in] timestamp A timestamp representing the current time. If NULL, no timestamp will be
+ *                      added to the log message.
+ * \param[in] pri Priority of this log message.
+ * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
  */
-void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
+bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
+                           ...)
 {
-  if (ETCPAL_LOG_FAC(params->facility) >= ETCPAL_LOG_NFACILITIES)
-    params->facility = DEFAULT_FACILITY;
-
-  sanitize_str(params->hostname);
-  sanitize_str(params->app_name);
-  sanitize_str(params->procid);
+  va_list args;
+  bool res;
+  va_start(args, format);
+  res = (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
+  va_end(args);
+  return res;
 }
 
 /*!
- * \brief Ensure that the given etcpal_log_params are valid.
+ * \brief Create a log a message with a human-readable prefix in the given buffer, with a list of
+ *        format arguments already generated.
+ *
+ * Buffer must be at least #ETCPAL_LOG_STR_MIN_LEN in length. This function is useful if you want
+ * to create a wrapper function around etcpal_create_log_str() which also takes variable format
+ * arguments.
+ *
+ * \param[out] buf Buffer in which to build the log message.
+ * \param[in] buflen Length in bytes of buf.
+ * \param[in] timestamp A timestamp representing the current time. If NULL, no timestamp will be
+ *                      added to the log message.
+ * \param[in] pri Priority of this log message.
+ * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
+ * \param[in] args Argument list for the format specifiers in format.
+ */
+bool etcpal_vcreate_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
+                            va_list args)
+{
+  return (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
+}
+
+/*!
+ * \brief Create a log message with syslog header in the given buffer.
+ *
+ * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length.
+ *
+ * \param[out] buf Buffer in which to build the syslog message.
+ * \param[in] buflen Length in bytes of buf.
+ * \param[in] timestamp A timestamp representing the current time. If NULL, no timestamp will be
+ *                      added to the log message.
+ * \param[in] syslog_params A set of parameters for the syslog header.
+ * \param[in] pri Priority of this log message.
+ * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
+ */
+bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
+                              const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
+{
+  va_list args;
+  bool res;
+  va_start(args, format);
+  res = (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
+  va_end(args);
+  return res;
+}
+
+/*!
+ * \brief Create a log a message with syslog header in the given buffer, with a list of format
+ *        arguments already generated.
+ *
+ * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length. This function is useful if you
+ * want to create a wrapper function around etcpal_create_syslog_str() which also takes variable
+ * format arguments.
+ *
+ * \param[out] buf Buffer in which to build the syslog message.
+ * \param[in] buflen Length in bytes of buf.
+ * \param[in] timestamp A timestamp representing the current time. If NULL, no timestamp will be
+ *                      added to the log message.
+ * \param[in] syslog_params A set of parameters for the syslog header.
+ * \param[in] pri Priority of this log message.
+ * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
+ * \param[in] args Argument list for the format specifiers in format.
+ */
+bool etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
+                               const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args)
+{
+  return (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
+}
+
+/*!
+ * \brief Ensure that the given EtcPalLogParams are valid.
  *
  * This also sanitizes the syslog params using etcpal_sanitize_syslog_params() if action is set to
  * kEtcPalLogCreateSyslog or kEtcPalLogCreateBoth.
@@ -154,183 +224,24 @@ bool etcpal_validate_log_params(EtcPalLogParams* params)
   return true;
 }
 
-/* Enforce the range rules defined in the EtcPalLogTimestamp struct definition. */
-static bool validate_time(const EtcPalLogTimestamp* timestamp)
-{
-  return (timestamp->year >= 0 && timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 &&
-          timestamp->day >= 1 && timestamp->day <= 31 && timestamp->hour >= 0 && timestamp->hour <= 23 &&
-          timestamp->minute >= 0 && timestamp->minute <= 59 && timestamp->second >= 0 && timestamp->second <= 60 &&
-          timestamp->msec >= 0 && timestamp->msec <= 999);
-}
-
-/* Build the current timestamp. Buffer must be of length ETCPAL_LOG_TIMESTAMP_LEN. */
-static void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable)
-{
-  bool timestamp_created = false;
-
-  if (timestamp && validate_time(timestamp))
-  {
-    // Print the basic timestamp
-    int print_res = snprintf(
-        buf, ETCPAL_LOG_TIMESTAMP_LEN,
-        human_readable ? "%04d-%02d-%02d %02d:%02d:%02d.%03d" : "%04d-%02d-%02dT%02d:%02d:%02d.%03d", timestamp->year,
-        timestamp->month, timestamp->day, timestamp->hour, timestamp->minute, timestamp->second, timestamp->msec);
-
-    if (print_res > 0 && print_res < ETCPAL_LOG_TIMESTAMP_LEN - 1)
-    {
-      // Add the UTC offset
-      if (timestamp->utc_offset == 0)
-      {
-        buf[print_res] = 'Z';
-        buf[print_res + 1] = '\0';
-      }
-      else
-      {
-        snprintf(&buf[print_res], ETCPAL_LOG_TIMESTAMP_LEN - (size_t)print_res, "%s%02d:%02d",
-                 timestamp->utc_offset > 0 ? "+" : "-", abs(timestamp->utc_offset) / 60,
-                 abs(timestamp->utc_offset) % 60);
-      }
-
-      timestamp_created = true;
-    }
-  }
-
-  if (!timestamp_created)
-  {
-    if (!human_readable)
-      strcpy(buf, NILVALUE_STR);
-    else
-      buf[0] = '\0';
-  }
-}
-
-/* Get the current time via either the standard C library or a time callback. */
-static bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestamp)
-{
-  if (params->time_fn)
-  {
-    memset(timestamp, 0, sizeof(EtcPalLogTimestamp));
-    params->time_fn(params->context, timestamp);
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-/* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
- * original message within the syslog message, or NULL on failure. */
-static char* etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
-                                       const EtcPalSyslogParams* syslog_params, int pri, const char* format,
-                                       va_list args)
-{
-  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
-    return NULL;
-
-  char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
-  make_timestamp(timestamp, timestamp_str, false);
-
-  int prival = ETCPAL_LOG_PRI(pri) | syslog_params->facility;
-  int syslog_header_size =
-      snprintf(buf, ETCPAL_SYSLOG_HEADER_MAX_LEN, "<%d>%d %s %s %s %s %s %s ", prival, SYSLOG_PROT_VERSION,
-               timestamp_str, syslog_params->hostname[0] ? syslog_params->hostname : NILVALUE_STR,
-               syslog_params->app_name[0] ? syslog_params->app_name : NILVALUE_STR,
-               syslog_params->procid[0] ? syslog_params->procid : NILVALUE_STR, MSGID_STR, STRUCTURED_DATA_STR);
-
-  if (syslog_header_size >= 0)
-  {
-    // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
-    // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
-    vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
-    return &buf[syslog_header_size];
-  }
-  else
-  {
-    return NULL;
-  }
-}
-
 /*!
- * \brief Create a log message with syslog header in the given buffer.
+ * \brief Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them
+ *        if necessary).
  *
- * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length.
+ * Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
+ * are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
+ * within the correct range (#ETCPAL_LOG_NFACILITIES).
  *
- * \param[out] buf Buffer in which to build the syslog message.
- * \param[in] buflen Length in bytes of buf.
- * \param[in] time A timestamp representing the current time. If NULL, no timestamp will be added
- *                 to the log message.
- * \param[in] syslog_params A set of parameters for the syslog header.
- * \param[in] pri Priority of this log message.
- * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
- *                   as appropriate for format specifiers.
+ * \param[in,out] params Syslog params to sanitize.
  */
-bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* time,
-                              const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
+void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
 {
-  va_list args;
-  bool res;
-  va_start(args, format);
-  res = (NULL != etcpal_vcreate_syslog_str(buf, buflen, time, syslog_params, pri, format, args));
-  va_end(args);
-  return res;
-}
+  if (ETCPAL_LOG_FAC(params->facility) >= ETCPAL_LOG_NFACILITIES)
+    params->facility = DEFAULT_FACILITY;
 
-/* Create a log message with a human-readable header given the appropriate va_list. Returns a
- * pointer to the original message within the log message, or NULL on failure. */
-static char* etcpal_vcreate_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* time, int pri,
-                                    const char* format, va_list args)
-{
-  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
-    return NULL;
-
-  char timestamp[ETCPAL_LOG_TIMESTAMP_LEN];
-  make_timestamp(time, timestamp, true);
-
-  int header_size;
-  if (timestamp[0] == '\0')
-  {
-    header_size = snprintf(buf, ETCPAL_LOG_STR_MIN_LEN + 1, "[%s] ", kLogSeverityStrings[pri]);
-  }
-  else
-  {
-    header_size = snprintf(buf, ETCPAL_LOG_STR_MIN_LEN + 1, "%s [%s] ", timestamp, kLogSeverityStrings[pri]);
-  }
-
-  if (header_size >= 0)
-  {
-    // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
-    // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
-    vsnprintf(&buf[header_size], buflen - (size_t)header_size, format, args);
-    return &buf[header_size];
-  }
-  else
-  {
-    return NULL;
-  }
-}
-
-/*!
- * \brief Create a log message with a human-readable prefix in the given buffer.
- *
- * Buffer must be at least #ETCPAL_LOG_STR_MIN_LEN in length.
- *
- * \param[out] buf Buffer in which to build the log message.
- * \param[in] buflen Length in bytes of buf.
- * \param[in] time A timestamp representing the current time. If NULL, no timestamp will be added
- *                 to the log message.
- * \param[in] pri Priority of this log message.
- * \param[in] format Log message with printf-style format specifiers. Provide additional arguments
- *                   as appropriate for format specifiers.
- */
-bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* time, int pri, const char* format, ...)
-{
-  va_list args;
-  bool res;
-  va_start(args, format);
-  res = (NULL != etcpal_vcreate_log_str(buf, buflen, time, pri, format, args));
-  va_end(args);
-  return res;
+  sanitize_str(params->hostname);
+  sanitize_str(params->app_name);
+  sanitize_str(params->procid);
 }
 
 /*!
@@ -406,14 +317,14 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
       {
         va_list args_copy;
         va_copy(args_copy, args);
-        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
-                                                &params->syslog_params, pri, format, args_copy);
+        strings.raw = create_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
+                                        &params->syslog_params, pri, format, args_copy);
         va_end(args_copy);
       }
       else
       {
-        strings.raw = etcpal_vcreate_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
-                                                &params->syslog_params, pri, format, args);
+        strings.raw = create_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
+                                        &params->syslog_params, pri, format, args);
       }
       if (strings.raw)
       {
@@ -423,8 +334,8 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
 
     if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadable)
     {
-      strings.raw = etcpal_vcreate_log_str(humanlogmsg, ETCPAL_LOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL, pri,
-                                           format, args);
+      strings.raw =
+          create_log_str(humanlogmsg, ETCPAL_LOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL, pri, format, args);
       if (strings.raw)
       {
         strings.human_readable = humanlogmsg;
@@ -434,5 +345,150 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     params->log_fn(params->context, &strings);
 
     etcpal_mutex_unlock(&buf_lock);
+  }
+}
+
+/* Create a log message with a human-readable header given the appropriate va_list. Returns a
+ * pointer to the original message within the log message, or NULL on failure. */
+char* create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
+                     va_list args)
+{
+  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
+    return NULL;
+
+  char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
+  make_timestamp(timestamp, timestamp_str, true);
+
+  int header_size;
+  if (timestamp_str[0] == '\0')
+  {
+    header_size = snprintf(buf, ETCPAL_LOG_STR_MIN_LEN + 1, "[%s] ", kLogSeverityStrings[pri]);
+  }
+  else
+  {
+    header_size = snprintf(buf, ETCPAL_LOG_STR_MIN_LEN + 1, "%s [%s] ", timestamp_str, kLogSeverityStrings[pri]);
+  }
+
+  if (header_size >= 0)
+  {
+    // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
+    // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
+    vsnprintf(&buf[header_size], buflen - (size_t)header_size, format, args);
+    return &buf[header_size];
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
+/* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
+ * original message within the syslog message, or NULL on failure. */
+char* create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
+                        const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args)
+{
+  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+    return NULL;
+
+  char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
+  make_timestamp(timestamp, timestamp_str, false);
+
+  int prival = ETCPAL_LOG_PRI(pri) | syslog_params->facility;
+  int syslog_header_size =
+      snprintf(buf, ETCPAL_SYSLOG_HEADER_MAX_LEN, "<%d>%d %s %s %s %s %s %s ", prival, SYSLOG_PROT_VERSION,
+               timestamp_str, syslog_params->hostname[0] ? syslog_params->hostname : NILVALUE_STR,
+               syslog_params->app_name[0] ? syslog_params->app_name : NILVALUE_STR,
+               syslog_params->procid[0] ? syslog_params->procid : NILVALUE_STR, MSGID_STR, STRUCTURED_DATA_STR);
+
+  if (syslog_header_size >= 0)
+  {
+    // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
+    // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
+    vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
+    return &buf[syslog_header_size];
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
+/* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
+void sanitize_str(char* str)
+{
+  // C library functions like isprint()/isgraph() are not used here because their behavior is not
+  // well-defined in the presence of non-ASCII characters.
+  unsigned char* cp;
+  for (cp = (unsigned char*)str; *cp != '\0'; ++cp)
+  {
+    if (*cp < 33 || *cp == 127)
+      *cp = '_';
+    else if (*cp > 127)
+      *cp = '?';
+  }
+}
+
+/* Enforce the range rules defined in the EtcPalLogTimestamp struct definition. */
+bool validate_time(const EtcPalLogTimestamp* timestamp)
+{
+  return (timestamp->year >= 0 && timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 &&
+          timestamp->day >= 1 && timestamp->day <= 31 && timestamp->hour >= 0 && timestamp->hour <= 23 &&
+          timestamp->minute >= 0 && timestamp->minute <= 59 && timestamp->second >= 0 && timestamp->second <= 60 &&
+          timestamp->msec >= 0 && timestamp->msec <= 999);
+}
+
+/* Build the current timestamp. Buffer must be of length ETCPAL_LOG_TIMESTAMP_LEN. */
+void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable)
+{
+  bool timestamp_created = false;
+
+  if (timestamp && validate_time(timestamp))
+  {
+    // Print the basic timestamp
+    int print_res = snprintf(
+        buf, ETCPAL_LOG_TIMESTAMP_LEN,
+        human_readable ? "%04d-%02d-%02d %02d:%02d:%02d.%03d" : "%04d-%02d-%02dT%02d:%02d:%02d.%03d", timestamp->year,
+        timestamp->month, timestamp->day, timestamp->hour, timestamp->minute, timestamp->second, timestamp->msec);
+
+    if (print_res > 0 && print_res < ETCPAL_LOG_TIMESTAMP_LEN - 1)
+    {
+      // Add the UTC offset
+      if (timestamp->utc_offset == 0)
+      {
+        buf[print_res] = 'Z';
+        buf[print_res + 1] = '\0';
+      }
+      else
+      {
+        snprintf(&buf[print_res], ETCPAL_LOG_TIMESTAMP_LEN - (size_t)print_res, "%s%02d:%02d",
+                 timestamp->utc_offset > 0 ? "+" : "-", abs(timestamp->utc_offset) / 60,
+                 abs(timestamp->utc_offset) % 60);
+      }
+
+      timestamp_created = true;
+    }
+  }
+
+  if (!timestamp_created)
+  {
+    if (!human_readable)
+      strcpy(buf, NILVALUE_STR);
+    else
+      buf[0] = '\0';
+  }
+}
+
+/* Attempt to get the current time via a time callback. */
+bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestamp)
+{
+  if (params->time_fn)
+  {
+    memset(timestamp, 0, sizeof(EtcPalLogTimestamp));
+    params->time_fn(params->context, timestamp);
+    return true;
+  }
+  else
+  {
+    return false;
   }
 }

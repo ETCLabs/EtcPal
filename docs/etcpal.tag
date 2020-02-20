@@ -256,9 +256,9 @@
     </member>
     <member kind="function">
       <type>Error</type>
-      <name>result</name>
+      <name>error</name>
       <anchorfile>classetcpal_1_1_bad_expected_access.html</anchorfile>
-      <anchor>a4c03ebceb6c40fe7f2ee3c215daa8c8d</anchor>
+      <anchor>aa64e8d28a7a913372edd18c2d6a15ab7</anchor>
       <arglist>() const noexcept</arglist>
     </member>
   </compound>
@@ -3947,17 +3947,31 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_create_syslog_str</name>
+      <name>etcpal_create_log_str</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gaa2365ff7f93fa95a0ca2522505d94879</anchor>
-      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *time, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</arglist>
+      <anchor>gacf54b7ce272d89f2a35a83c4cd3bda4f</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, int pri, const char *format,...)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_create_log_str</name>
+      <name>etcpal_vcreate_log_str</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gac6729f206b5d6267dc0cd42a4150ff56</anchor>
-      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *time, int pri, const char *format,...)</arglist>
+      <anchor>gadec7b676650d22a5315d97f3aeee1dd0</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, int pri, const char *format, va_list args)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_create_syslog_str</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaac4f27cd13defcb0fbd39516b5d5844d</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_vcreate_syslog_str</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga943bb13f1d71efce45b30b466e757138</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format, va_list args)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5148,9 +5162,16 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>ETCPAL_THREAD_DEFAULT_PARAMS_INIT</name>
+      <name>ETCPAL_THREAD_PARAMS_INIT_VALUES</name>
       <anchorfile>group__etcpal__thread.html</anchorfile>
-      <anchor>ga2a086e640c72d82dacd9c8f466479eff</anchor>
+      <anchor>gacbaaaa3fb12075714725a11874b6b4ad</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_PARAMS_INIT</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga7f21ced82782c355a30a8ad011aa5b91</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
