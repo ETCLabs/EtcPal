@@ -43,7 +43,7 @@ int main(void)
   // Do some busy work until a 1-second timer is expired
   unsigned long i = 0;
   std::cout << "Seeing how many times we can increment an integer in one second...\n";
-  etcpal::Timer timer(1000);
+  etcpal::Timer timer(1s);
   while (!timer.IsExpired())
   {
     ++i;

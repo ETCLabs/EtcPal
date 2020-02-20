@@ -2580,6 +2580,13 @@
       <arglist>(uint32_t interval) noexcept</arglist>
     </member>
     <member kind="function">
+      <type></type>
+      <name>Timer</name>
+      <anchorfile>classetcpal_1_1_timer.html</anchorfile>
+      <anchor>a300613c1ac94259feced37fe034e1430</anchor>
+      <arglist>(const std::chrono::duration&lt; Rep, Period &gt; &amp;interval) noexcept</arglist>
+    </member>
+    <member kind="function">
       <type>constexpr const EtcPalTimer &amp;</type>
       <name>get</name>
       <anchorfile>classetcpal_1_1_timer.html</anchorfile>
@@ -2634,6 +2641,13 @@
       <anchorfile>classetcpal_1_1_timer.html</anchorfile>
       <anchor>ac3e8095b413fff42c74287c5b8fcf17d</anchor>
       <arglist>(uint32_t interval) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>Start</name>
+      <anchorfile>classetcpal_1_1_timer.html</anchorfile>
+      <anchor>a5128bf0001713abf0599593ac6eba81d</anchor>
+      <arglist>(const std::chrono::duration&lt; Rep, Period &gt; &amp;interval) noexcept</arglist>
     </member>
     <member kind="function">
       <type>void</type>

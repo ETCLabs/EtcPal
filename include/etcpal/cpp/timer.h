@@ -23,6 +23,9 @@
 #ifndef ETCPAL_CPP_TIMER_H_
 #define ETCPAL_CPP_TIMER_H_
 
+#include <algorithm>
+#include <chrono>
+#include <limits>
 #include "etcpal/timer.h"
 #include "etcpal/cpp/common.h"
 
@@ -174,6 +177,8 @@ public:
   constexpr Timer(const EtcPalTimer& c_timer) noexcept;
   Timer& operator=(const EtcPalTimer& c_timer) noexcept;
   explicit Timer(uint32_t interval) noexcept;
+  template <typename Rep, typename Period>
+  explicit Timer(const std::chrono::duration<Rep, Period>& interval) noexcept;
 
   constexpr const EtcPalTimer& get() const noexcept;
   ETCPAL_CONSTEXPR_14 EtcPalTimer& get() noexcept;
@@ -185,6 +190,8 @@ public:
   bool IsExpired() const noexcept;
 
   void Start(uint32_t interval) noexcept;
+  template <typename Rep, typename Period>
+  void Start(const std::chrono::duration<Rep, Period>& interval) noexcept;
   void Reset() noexcept;
 
 private:
@@ -205,6 +212,15 @@ inline Timer& Timer::operator=(const EtcPalTimer& c_timer) noexcept
 
 /// \brief Create and start a timer with the given interval in milliseconds.
 inline Timer::Timer(uint32_t interval) noexcept
+{
+  Start(interval);
+}
+
+/// \brief Create and start a timer with the given interval.
+///
+/// Note: interval will be clamped to [0, UINT32_MAX] milliseconds.
+template <typename Rep, typename Period>
+Timer::Timer(const std::chrono::duration<Rep, Period>& interval) noexcept
 {
   Start(interval);
 }
@@ -257,6 +273,18 @@ inline bool Timer::IsExpired() const noexcept
 inline void Timer::Start(uint32_t interval) noexcept
 {
   etcpal_timer_start(&timer_, interval);
+}
+
+/// \brief Start the timer with a new interval.
+/// \param interval Interval to time. Will be clamped to [0, UINT32_MAX] milliseconds. An interval
+///                 of 0 will result in a timer that is always expired.
+template <typename Rep, typename Period>
+void Timer::Start(const std::chrono::duration<Rep, Period>& interval) noexcept
+{
+  uint32_t interval_clamped = static_cast<uint32_t>(
+      std::min(std::chrono::milliseconds(interval).count(),
+               static_cast<std::chrono::milliseconds::rep>(std::numeric_limits<uint32_t>::max())));
+  etcpal_timer_start(&timer_, interval_clamped);
 }
 
 /// \brief Reset the timer while keeping the same interval.

@@ -18,12 +18,15 @@
  ******************************************************************************/
 
 #include "etcpal/timer.h"
+#include "etcpal/cpp/timer.h"
 #include "unity_fixture.h"
 #include "fff.h"
 
 DEFINE_FFF_GLOBALS;
 
+extern "C" {
 FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
+}
 
 TEST_GROUP(timer_controlled);
 
@@ -74,13 +77,25 @@ TEST(timer_controlled, remaining_works_as_expected)
   TEST_ASSERT_EQUAL_UINT32(etcpal_timer_remaining(&t1), 0u);
 }
 
+TEST(timer_controlled, time_point_now_works)
+{
+  etcpal_getms_fake.return_val = 0;
+  auto tp = etcpal::TimePoint::Now();
+  TEST_ASSERT_EQUAL_UINT32(tp.value(), 0u);
+
+  etcpal_getms_fake.return_val = 0xffffffffu;
+  tp = etcpal::TimePoint::Now();
+  TEST_ASSERT_EQUAL_UINT32(tp.value(), 0xffffffffu);
+}
+
 TEST_GROUP_RUNNER(timer_controlled)
 {
   RUN_TEST_CASE(timer_controlled, uint32_wraparound_works_as_expected);
   RUN_TEST_CASE(timer_controlled, remaining_works_as_expected);
+  RUN_TEST_CASE(timer_controlled, time_point_now_works);
 }
 
-void run_all_tests(void)
+extern "C" void run_all_tests(void)
 {
   RUN_TEST_GROUP(timer_controlled);
 }
