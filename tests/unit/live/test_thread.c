@@ -96,6 +96,15 @@ TEST(etcpal_thread, threads_are_time_sliced)
       "ts_thread",                     // thread_name
       NULL                             // platform_data
   };
+
+  // MQX requires explicit setup to time-slice tasks
+#ifdef __MQX__
+  EtcPalThreadParamsMqx mqx_params;
+  mqx_params.task_attributes = MQX_TIME_SLICE_TASK;
+  mqx_params.time_slice = 0;
+  params.platform_data = &mqx_params;
+#endif
+
   etcpal_thread_t spin_task, oneshot_task;
   spin_task_run = true;
   oneshot_task_run = true;

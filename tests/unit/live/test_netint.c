@@ -22,7 +22,16 @@
 
 #include <string.h>
 #include <stddef.h>
+
+#ifdef __MQX__
+#define MQX_PROVIDES_STDIO !MQX_SUPPRESS_STDIO_MACROS
+#else
+#define MQX_PROVIDES_STDIO 0
+#endif
+
+#if !MQX_PROVIDES_STDIO
 #include <stdio.h>
+#endif
 
 static size_t num_netints;
 

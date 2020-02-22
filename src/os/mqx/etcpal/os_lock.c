@@ -23,12 +23,38 @@
 
 #define MAX_READERS 20000
 
+/****************************** Private macros *******************************/
+
+#define TIME_STRUCT_TO_MS(tsptr) ((tsptr)->SECONDS * 1000 + (tsptr)->MILLISECONDS)
+
 /*********************** Private function prototypes *************************/
 
 static void reader_atomic_increment(etcpal_rwlock_t* id);
 static void reader_atomic_decrement(etcpal_rwlock_t* id);
+static bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct);
+static bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms);
 
 /*************************** Function definitions ****************************/
+
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
+{
+  return lwsem_timed_wait(id, timeout_ms);
+}
+
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
+{
+  if (timeout_ms < 0)
+  {
+    return (MQX_OK == _lwevent_wait_ticks(id, 1u, true, 0u));
+  }
+  else
+  {
+    MQX_TICK_STRUCT ticks_to_wait;
+    if (milliseconds_to_ticks(timeout_ms, &ticks_to_wait))
+      return (MQX_OK == _lwevent_wait_for(id, 1u, true, &ticks_to_wait));
+    return false;
+  }
+}
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
@@ -70,6 +96,26 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
     {
       if (id->reader_count < MAX_READERS)
       {
+        reader_atomic_increment(id);
+        res = true;
+      }
+      _lwsem_post(&id->sem);
+    }
+  }
+  return res;
+}
+
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  bool res = false;
+  if (id && id->valid)
+  {
+    if (lwsem_timed_wait(&id->sem, timeout_ms))
+    {
+      // We have the lock
+      if (id->reader_count < MAX_READERS)
+      {
+        // Add one to the reader count.
         reader_atomic_increment(id);
         res = true;
       }
@@ -125,6 +171,43 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
   return false;
 }
 
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  if (timeout_ms < 0)
+  {
+    return etcpal_rwlock_writelock(id);
+  }
+  else if (id && id->valid)
+  {
+    TIME_STRUCT start_time;
+    _time_get_elapsed(&start_time);
+    if (lwsem_timed_wait(&id->sem, timeout_ms))
+    {
+      // Wait until there are no readers, keeping the lock so that no new readers can get in.
+      while (id->reader_count > 0)
+      {
+        TIME_STRUCT cur_time;
+        _time_get_elapsed(&cur_time);
+        if (TIME_STRUCT_TO_MS(&cur_time) - TIME_STRUCT_TO_MS(&start_time) >= timeout_ms)
+        {
+          break;
+        }
+        _time_delay(1);
+      }
+      if (id->reader_count == 0)
+      {
+        // Hold on to the lock until writeunlock() is called
+        return true;
+      }
+      else
+      {
+        _lwsem_post(&id->sem);
+      }
+    }
+  }
+  return false;
+}
+
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
@@ -140,6 +223,11 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
   }
 }
 
+bool etcpal_sem_timed_wait(etcpal_mutex_t* id, int timeout_ms)
+{
+  return lwsem_timed_wait(id, timeout_ms);
+}
+
 void reader_atomic_increment(etcpal_rwlock_t* id)
 {
   _int_disable();
@@ -152,4 +240,27 @@ void reader_atomic_decrement(etcpal_rwlock_t* id)
   _int_disable();
   --id->reader_count;
   _int_enable();
+}
+
+bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct)
+{
+  TIME_STRUCT ts;
+  ts.SECONDS = (ms < 0 ? 0 : (ms / 1000));
+  ts.MILLISECONDS = (ms <= 0 ? 1 : (ms % 1000));
+  return _time_to_ticks(&ts, tick_struct);
+}
+
+bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms)
+{
+  if (timeout_ms < 0)
+  {
+    return (MQX_OK == _lwsem_wait(sem));
+  }
+  else
+  {
+    MQX_TICK_STRUCT ticks_to_wait;
+    if (milliseconds_to_ticks(timeout_ms, &ticks_to_wait))
+      return (MQX_OK == _lwsem_wait_for(sem, &ticks_to_wait));
+    return false;
+  }
 }

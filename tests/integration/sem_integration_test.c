@@ -41,7 +41,7 @@ static void sem_test_thread(void* arg)
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    etcpal_sem_wait(&sem);
+    (void)etcpal_sem_wait(&sem);
   }
 }
 

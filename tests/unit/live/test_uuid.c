@@ -21,7 +21,16 @@
 #include "unity_fixture.h"
 
 #include <stddef.h>
+
+#ifdef __MQX__
+#define MQX_PROVIDES_STDIO !MQX_SUPPRESS_STDIO_MACROS
+#else
+#define MQX_PROVIDES_STDIO 0
+#endif
+
+#if !MQX_PROVIDES_STDIO
 #include <stdio.h>
+#endif
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER

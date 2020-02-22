@@ -108,7 +108,7 @@ private:
 /// \brief Create a new mutex.
 inline Mutex::Mutex()
 {
-  etcpal_mutex_create(&mutex_);
+  (void)etcpal_mutex_create(&mutex_);
 }
 
 /// \brief Destroy the mutex.
@@ -227,7 +227,7 @@ private:
 /// \brief Create a new signal.
 inline Signal::Signal()
 {
-  etcpal_signal_create(&signal_);
+  (void)etcpal_signal_create(&signal_);
 }
 
 /// \brief Destroy the signal.
@@ -375,7 +375,7 @@ private:
 /// \brief Create a new read-write lock.
 inline RwLock::RwLock()
 {
-  etcpal_rwlock_create(&rwlock_);
+  (void)etcpal_rwlock_create(&rwlock_);
 }
 
 /// \brief Destroy the read-write lock.
@@ -512,7 +512,7 @@ private:
 /// \brief Create a new semaphore.
 inline Semaphore::Semaphore(unsigned int initial_count, unsigned int max_count)
 {
-  etcpal_sem_create(&sem_, initial_count, max_count);
+  (void)etcpal_sem_create(&sem_, initial_count, max_count);
 }
 
 /// \brief Destroy the semaphore.

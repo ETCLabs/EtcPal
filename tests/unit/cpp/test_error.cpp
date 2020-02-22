@@ -19,7 +19,6 @@
 
 #include "etcpal/cpp/error.h"
 
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <type_traits>

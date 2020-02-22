@@ -125,10 +125,12 @@ stages:
   # Build and test EtcPal against FreeRTOS, lwIP for ARM Cortex-M4 using arm-gcc
   - job: freertos_lwip_build
     displayName: 'FreeRTOS/lwIP'
-    pool: OnTargetTesting
+    pool:
+      name: OnTargetTesting
+      demands: freertos_lwip_k65
     steps:
     - script: |
-        python C:\Scripts\build_and_test_on_target.py etcpal $(Build.SourcesDirectory) freertos_lwip
+        python $(Agent.HomeDirectory)\build_and_test_freertos_lwip_k65.py etcpal $(Build.SourcesDirectory)
       displayName: 'Build Project and Run Tests'
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
@@ -139,6 +141,26 @@ stages:
         searchFolder: '$(Build.SourcesDirectory)'
         mergeTestResults: true
         testRunTitle: 'FreeRTOS_lwIP'
+  # Build and test EtcPal against MQX for ARM Cortex-M4 using IAR
+  - job: mqx
+    displayName: 'MQX'
+    pool:
+      name: OnTargetTesting
+      demands: mqx_k61
+    steps:
+    - script: |
+        python $(Agent.HomeDirectory)\build_and_test_mqx_k61.py etcpal $(Build.SourcesDirectory)
+      displayName: 'Build Project and Run Tests'
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'test_results_*.xml'
+        searchFolder: '$(Build.SourcesDirectory)'
+        mergeTestResults: true
+        testRunTitle: 'MQX'
+
   # Generate documentation with doxygen. Documentation is generated from the
   # develop branch and posted to the 'head' portion of the Github page
   # (etclabs.github.io/EtcPal)

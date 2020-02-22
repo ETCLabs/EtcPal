@@ -27,7 +27,7 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
   if (os_ip->sa_family == AF_INET)
   {
     const struct sockaddr_in* sin = (const struct sockaddr_in*)os_ip;
-    ETCPAL_IP_SET_V4_ADDRESS(ip, ntohl(sin->sin_addr.s_addr));
+    ETCPAL_IP_SET_V4_ADDRESS(ip, sin->sin_addr.s_addr);
     return true;
   }
   else if (os_ip->sa_family == AF_INET6)

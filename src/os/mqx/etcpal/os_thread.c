@@ -29,11 +29,11 @@ static void thread_func_internal(uint32_t initial_data)
   }
 }
 
-bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
-                          void* thread_arg)
+etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+                                    void* thread_arg)
 {
   if (!id || !params || !thread_fn || (MQX_OK != _lwsem_create(&id->sig, 0)))
-    return false;
+    return kEtcPalErrInvalid;
 
   TASK_TEMPLATE_STRUCT template;
   template.TASK_ADDRESS = thread_func_internal;
@@ -53,29 +53,27 @@ bool etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params,
   }
   id->fn = thread_fn;
   id->arg = thread_arg;
-  /* This cast is OK for now, because we only use MQX on 32-bit processors.
-   * It may need to be reexamined in the future. */
   template.CREATION_PARAMETER = (uint32_t)id;
 
   _task_id t_id = _task_create(0, 0, (uint32_t) & template);
   if (t_id != MQX_NULL_TASK_ID)
   {
     id->tid = t_id;
-    return true;
+    return kEtcPalErrOk;
   }
-  return false;
+  return kEtcPalErrSys;
 }
 
-bool etcpal_thread_join(etcpal_thread_t* id)
+etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
   if (!id)
-    return false;
+    return kEtcPalErrInvalid;
 
   _mqx_uint res = _lwsem_wait(&id->sig);
   if (res == MQX_OK)
   {
     _lwsem_destroy(&id->sig);
-    return true;
+    return kEtcPalErrOk;
   }
-  return false;
+  return kEtcPalErrSys;
 }
