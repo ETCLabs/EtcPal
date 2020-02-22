@@ -19,7 +19,6 @@
 
 #include "etcpal/uuid.h"
 
-#include <stdio.h>
 #include <stddef.h>
 #include "etcpal/pack.h"
 #include "md5.h"
@@ -29,6 +28,16 @@
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
+#endif
+
+#ifdef __MQX__
+#define MQX_PROVIDES_STDIO !MQX_SUPPRESS_STDIO_MACROS
+#else
+#define MQX_PROVIDES_STDIO 0
+#endif
+
+#if !MQX_PROVIDES_STDIO
+#include <stdio.h>
 #endif
 
 /**************************** Private variables ******************************/

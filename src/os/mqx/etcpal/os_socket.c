@@ -546,6 +546,49 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
   return kEtcPalErrSys;
 }
 
+etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
+{
+  if (blocking)
+  {
+    uint32_t sock_type;
+    socklen_t uint32_size = sizeof(uint32_t);
+    if (RTCS_OK == getsockopt(id, SOL_SOCKET, OPT_SOCKET_TYPE, &sock_type, &uint32_size))
+    {
+      if (sock_type == SOCK_STREAM)
+      {
+        uint32_t rcv_nowait;
+        uint32_t send_nowait;
+        int32_t res = getsockopt(id, SOL_TCP, OPT_RECEIVE_NOWAIT, &rcv_nowait, &uint32_size);
+        if (res == RTCS_OK)
+          res = getsockopt(id, SOL_TCP, OPT_SEND_NOWAIT, &send_nowait, &uint32_size);
+        if (res == RTCS_OK)
+          *blocking = !(rcv_nowait && send_nowait);
+        return err_os_to_etcpal((uint32_t)res);
+      }
+      else if (sock_type == SOCK_DGRAM)
+      {
+        uint32_t rcv_nowait;
+        uint32_t send_nowait;
+        int32_t res = getsockopt(id, SOL_UDP, OPT_RECEIVE_NOWAIT, &rcv_nowait, &uint32_size);
+        if (res == RTCS_OK)
+          res = getsockopt(id, SOL_UDP, OPT_SEND_NOWAIT, &send_nowait, &uint32_size);
+        if (res == RTCS_OK)
+          *blocking = !(rcv_nowait && send_nowait);
+        return err_os_to_etcpal((uint32_t)res);
+      }
+      else
+      {
+        return kEtcPalErrInvalid;
+      }
+    }
+    else
+    {
+      return kEtcPalErrSys;
+    }
+  }
+  return kEtcPalErrInvalid;
+}
+
 etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
 {
   if (!context)

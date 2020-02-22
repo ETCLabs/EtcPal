@@ -19,7 +19,6 @@
 
 #include "etcpal/cpp/thread.h"
 
-#include <cstdio>
 #include <vector>
 #include "unity_fixture.h"
 

@@ -212,6 +212,8 @@ static void test_unpacku32l(uint8_t* buffer, const char* error_msg)
   TEST_ASSERT_EQUAL_UINT32_MESSAGE(tst, var, error_msg);
 }
 
+#ifdef UNITY_SUPPORT_64
+
 static void test_packi64b(uint8_t* buffer, const char* error_msg)
 {
   const int64_t tst = 0xfedcba9876543210;
@@ -320,6 +322,8 @@ static void test_unpacku64l(uint8_t* buffer, const char* error_msg)
   TEST_ASSERT_EQUAL_UINT64_MESSAGE(tst, var, error_msg);
 }
 
+#endif  // UNITY_SUPPORT_64
+
 // The tests themselves
 
 TEST_GROUP(etcpal_pack);
@@ -392,6 +396,8 @@ TEST(etcpal_pack, unsigned_pack_32_functions_work)
   }
 }
 
+#ifdef UNITY_SUPPORT_64
+
 TEST(etcpal_pack, signed_pack_64_functions_work)
 {
   // Test packing and unpacking values at varying memory offsets.
@@ -422,12 +428,16 @@ TEST(etcpal_pack, unsigned_pack_64_functions_work)
   }
 }
 
+#endif  // UNITY_SUPPORT_64
+
 TEST_GROUP_RUNNER(etcpal_pack)
 {
   RUN_TEST_CASE(etcpal_pack, signed_pack_16_functions_work);
   RUN_TEST_CASE(etcpal_pack, unsigned_pack_16_functions_work);
   RUN_TEST_CASE(etcpal_pack, signed_pack_32_functions_work);
   RUN_TEST_CASE(etcpal_pack, unsigned_pack_32_functions_work);
+#ifdef UNITY_SUPPORT_64
   RUN_TEST_CASE(etcpal_pack, signed_pack_64_functions_work);
   RUN_TEST_CASE(etcpal_pack, unsigned_pack_64_functions_work);
+#endif  // UNITY_SUPPORT_64
 }

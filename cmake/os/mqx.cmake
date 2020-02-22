@@ -1,28 +1,24 @@
 # MQX compilation support for EtcPal
-set(MQX_BOARD_DIR "" CACHE STRING "Location of the MQX compiled libraries, e.g. \"MQX/v4.2.0/lib/[your board name]\"")
-if(NOT MQX_BOARD_DIR)
-  message(FATAL_ERROR "You must provide the option MQX_BOARD_DIR to indicate the location of your MQX libraries.")
+
+# MQX's include paths must be added as those of a traditional library rather than being available
+# automatically as default settings of the compiler toolchain.
+#
+# The way this is implemented in EtcPal is by looking for a CMake target called MQX which has the
+# header paths for MQX as PUBLIC or INTERFACE include directories.
+#
+# If your project does not use CMake natively, this can just be an interface library target, added
+# like so:
+#
+# add_library(MQX INTERFACE)
+# target_include_directories(MQX INTERFACE [mqx/include/paths/...])
+#
+# If you are consuming this library from a CMake project, the MQX target can be what actually
+# builds the MQX sources as well. In either case, the target must be created before adding EtcPal's
+# subdirectory.
+
+if(NOT TARGET MQX)
+  message(FATAL_ERROR "You must provide a target called MQX to allow EtcPal to find the MQX headers."
+                      "See the comment in this file for more information.")
 endif()
 
-# Include the debug versions of the MQX libs if a Debug configuration is specified.
-# I think there's probably a better way of doing this and I'm missing something here.
-if(CMAKE_BUILD_TYPE STREQUAL Debug)
-  set(MQX_BOARD_INT_DIR debug)
-else()
-  set(MQX_BOARD_INT_DIR release)
-endif()
-
-# Depend on the MQX libs.
-set(ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Generated_Code
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Sources
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/psp
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/rtcs
-)
-set(ETCPAL_OS_ADDITIONAL_LIBS
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/bsp.a
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/psp/psp.a
-  ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/rtcs/rtcs.a
-)
+set(ETCPAL_OS_ADDITIONAL_LIBS MQX)

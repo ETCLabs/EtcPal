@@ -37,7 +37,7 @@ static void signal_test_thread(void* arg)
   ETCPAL_UNUSED_ARG(arg);
 
   for (size_t i = 0; i < 3; ++i)
-    etcpal_signal_wait(&sig);
+    (void)etcpal_signal_wait(&sig);
 }
 
 TEST_GROUP(signal_integration);

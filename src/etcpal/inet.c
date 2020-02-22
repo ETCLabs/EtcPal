@@ -19,8 +19,6 @@
 
 #include "etcpal/inet.h"
 
-#include <stdio.h>
-
 /***************************** Global variables ******************************/
 
 const EtcPalMacAddr kEtcPalNullMacAddr = {{0}};
@@ -31,6 +29,16 @@ const EtcPalMacAddr kEtcPalNullMacAddr = {{0}};
 #define ETCPAL_SPRINTF __pragma(warning(suppress : 4996)) sprintf
 #else
 #define ETCPAL_SPRINTF sprintf
+#endif
+
+#ifdef __MQX__
+#define MQX_PROVIDES_STDIO !MQX_SUPPRESS_STDIO_MACROS
+#else
+#define MQX_PROVIDES_STDIO 0
+#endif
+
+#if !MQX_PROVIDES_STDIO
+#include <stdio.h>
 #endif
 
 /**************************** Private variables ******************************/
