@@ -139,6 +139,25 @@ stages:
         searchFolder: '$(Build.SourcesDirectory)'
         mergeTestResults: true
         testRunTitle: 'FreeRTOS_lwIP'
+
+  # Build and test EtcPal against MQX for ARM Cortex-M4 using IAR
+  - job: mqx
+    displayName: 'MQX'
+    pool: OnTargetTesting
+    steps:
+    - script: |
+        python C:\Scripts\build_and_test_on_target.py etcpal $(Build.SourcesDirectory) mqx
+      displayName: 'Build Project and Run Tests'
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      condition: always()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: 'test_results_*.xml'
+        searchFolder: '$(Build.SourcesDirectory)'
+        mergeTestResults: true
+        testRunTitle: 'MQX'
+
   # Generate documentation with doxygen. Documentation is generated from the
   # develop branch and posted to the 'head' portion of the Github page
   # (etclabs.github.io/EtcPal)
