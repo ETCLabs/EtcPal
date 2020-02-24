@@ -8,15 +8,6 @@ endif()
 # Core EtcPal library
 ###############################################################################
 
-add_library(EtcPalInterface INTERFACE)
-target_include_directories(EtcPalInterface INTERFACE 
-  ${ETCPAL_ROOT}/include
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}
-  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}
-  ${ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS}
-  ${ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS}
-)
-
 add_library(EtcPal
   # EtcPal headers
   ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
@@ -80,13 +71,21 @@ else()
 endif()
 
 # EtcPal public include directories and library dependencies
-target_include_directories(EtcPal PUBLIC ${ETCPAL_CONFIG_FILE_DIR})
+target_include_directories(EtcPal PUBLIC
+  ${ETCPAL_CONFIG_FILE_DIR}
+  ${ETCPAL_ROOT}/include
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}
+  ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}
+  ${ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS}
+  ${ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS}
+)
+
 target_include_directories(EtcPal PRIVATE ${ETCPAL_ROOT}/src)
 target_compile_definitions(EtcPal PRIVATE ${ETCPAL_HAVE_CONFIG_H})
 if(ETCPAL_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(EtcPal PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
 endif()
-target_link_libraries(EtcPal PUBLIC EtcPalInterface ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
+target_link_libraries(EtcPal PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
 
 if(NOT MSVC)
   set_target_properties(EtcPal PROPERTIES C_STANDARD 99)
