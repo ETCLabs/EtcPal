@@ -8,7 +8,9 @@ endif()
 # Core EtcPal library
 ###############################################################################
 
-add_library(EtcPal
+set(ETCPAL_LIB_TARGET_NAME EtcPal)
+
+add_library(${ETCPAL_LIB_TARGET_NAME}
   # EtcPal headers
   ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
   ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
@@ -61,9 +63,9 @@ add_library(EtcPal
 
 # Temporary - TODO fix netints on iOS
 if(IOS)
-  target_compile_definitions(EtcPal PRIVATE ETCPAL_NO_NETINTS)
+  target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE ETCPAL_NO_NETINTS)
 else()
-  target_sources(EtcPal PRIVATE
+  target_sources(${ETCPAL_LIB_TARGET_NAME} PRIVATE
     ${ETCPAL_ROOT}/include/etcpal/netint.h
     ${ETCPAL_ROOT}/src/etcpal/netint.c
     ${ETCPAL_ROOT}/src/os/${ETCPAL_NET_TARGET}/etcpal/os_netint.c
@@ -71,7 +73,7 @@ else()
 endif()
 
 # EtcPal public include directories and library dependencies
-target_include_directories(EtcPal PUBLIC
+target_include_directories(${ETCPAL_LIB_TARGET_NAME} PUBLIC
   ${ETCPAL_CONFIG_FILE_DIR}
   ${ETCPAL_ROOT}/include
   ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}
@@ -80,23 +82,28 @@ target_include_directories(EtcPal PUBLIC
   ${ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS}
 )
 
-target_include_directories(EtcPal PRIVATE ${ETCPAL_ROOT}/src)
-target_compile_definitions(EtcPal PRIVATE ${ETCPAL_HAVE_CONFIG_H})
+target_include_directories(${ETCPAL_LIB_TARGET_NAME} PRIVATE ${ETCPAL_ROOT}/src)
+target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE ${ETCPAL_HAVE_CONFIG_H})
 if(ETCPAL_NETINT_DEBUG_OUTPUT)
-  target_compile_definitions(EtcPal PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
+  target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
 endif()
-target_link_libraries(EtcPal PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
+target_link_libraries(${ETCPAL_LIB_TARGET_NAME} PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
 
 if(NOT MSVC)
-  set_target_properties(EtcPal PROPERTIES C_STANDARD 99)
+  set_target_properties(${ETCPAL_LIB_TARGET_NAME} PROPERTIES C_STANDARD 99)
 endif()
 
+# Write a pkg-config file
+set(ETCPAL_PKGCONFIG_INTERMEDIATE_FILE ${CMAKE_BINARY_DIR}/${ETCPAL_LIB_TARGET_NAME}.pc)
+configure_file(${ETCPAL_ROOT}/cmake/EtcPal.pc.in ${ETCPAL_PKGCONFIG_INTERMEDIATE_FILE} @ONLY)
+
 # Installation
-install(TARGETS EtcPal ARCHIVE DESTINATION lib)
+install(TARGETS ${ETCPAL_LIB_TARGET_NAME} ARCHIVE DESTINATION lib)
 install(DIRECTORY ${ETCPAL_ROOT}/include/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_OS_TARGET}/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY ${ETCPAL_ROOT}/include/os/${ETCPAL_NET_TARGET}/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY ${ETCPAL_ROOT}/include/etcpal/cpp DESTINATION include/etcpal FILES_MATCHING PATTERN "*.h")
+install(FILES ${ETCPAL_PKGCONFIG_INTERMEDIATE_FILE} DESTINATION lib/pkgconfig)
 
 ###############################################################################
 # Mock EtcPal library

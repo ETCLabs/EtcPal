@@ -20,9 +20,5 @@ if(NOT TARGET ThrowTheSwitch::Unity)
     target_include_directories(unity PUBLIC ${UNITY_CONFIG_FILE_DIR})
   endif()
 
-  install(TARGETS unity ARCHIVE DESTINATION lib)
-  install(DIRECTORY src/ DESTINATION include/unity FILES_MATCHING PATTERN "*.h")
-  install(DIRECTORY extras/fixture/src/ DESTINATION include/unity FILES_MATCHING PATTERN "*.h")
-
   add_library(ThrowTheSwitch::Unity ALIAS unity)
 endif()
