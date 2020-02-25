@@ -15,6 +15,7 @@
 [freertos-lwip-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=FreeRTOS%2FlwIP
 [azure-devops-link]: https://dev.azure.com/ETCLabs/EtcPal/_build/latest?definitionId=4&branchName=develop 
 
+Outside PR to test security settings
 
 This repository contains ETC's Platform Abstraction Layer (PAL), which supports other open-source
 libraries by [ETC](http://www.etcconnect.com).
