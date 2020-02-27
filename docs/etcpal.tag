@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
@@ -21,7 +21,7 @@
   </compound>
   <compound kind="file">
     <name>error.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Error</class>
@@ -30,7 +30,7 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
@@ -49,7 +49,7 @@
   </compound>
   <compound kind="file">
     <name>lock.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
@@ -61,11 +61,13 @@
   </compound>
   <compound kind="file">
     <name>log.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
-    <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
+    <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
     <includes id="cpp_2thread_8h" name="thread.h" local="yes" imported="no">etcpal/cpp/thread.h</includes>
+    <class kind="class">etcpal::LogTimestamp</class>
     <class kind="class">etcpal::LogMessageHandler</class>
     <class kind="class">etcpal::Logger</class>
     <member kind="enumeration">
@@ -80,7 +82,7 @@
   </compound>
   <compound kind="file">
     <name>thread.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
@@ -88,7 +90,7 @@
   </compound>
   <compound kind="file">
     <name>timer.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2timer_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::TimePoint</class>
@@ -96,7 +98,7 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
     <class kind="class">etcpal::Uuid</class>
@@ -116,7 +118,7 @@
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="struct">
@@ -532,52 +534,52 @@
     <name>EtcPalLogTimestamp</name>
     <filename>struct_etc_pal_log_timestamp.html</filename>
     <member kind="variable">
-      <type>int</type>
+      <type>unsigned int</type>
       <name>year</name>
       <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
-      <anchor>abeac221e38b7b9ce7df8722c842bf671</anchor>
+      <anchor>a9c83bbc97dcf2390b043382b4dfe3c98</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>unsigned int</type>
       <name>month</name>
       <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
-      <anchor>aedb06abe5aff12fa3e7e0e71a374edfb</anchor>
+      <anchor>a8c07e017c7b80f536d05c6134cae89ef</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>unsigned int</type>
       <name>day</name>
       <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
-      <anchor>a4c11afc03fc3ee49bab660def6558f2a</anchor>
+      <anchor>a2398ea43f7d25f677616371d3b545f59</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>unsigned int</type>
       <name>hour</name>
       <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
-      <anchor>a15df9ba285cfd842f284025f904edc9c</anchor>
+      <anchor>aa64c18c25aeef9a0d7c92d89fa24a636</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>unsigned int</type>
       <name>minute</name>
       <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
-      <anchor>a5edffad982a0566ad01d95005474eae3</anchor>
+      <anchor>a7ff63df03ff6549639b712d24a94adef</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>unsigned int</type>
       <name>second</name>
       <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
-      <anchor>a6cf35be1947a62f134392fcb1b3c54d2</anchor>
+      <anchor>a7ab95bf164c7490d2855a7efcea6784a</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>int</type>
+      <type>unsigned int</type>
       <name>msec</name>
       <anchorfile>struct_etc_pal_log_timestamp.html</anchorfile>
-      <anchor>ad957f34cd6e8272740bc231865080b22</anchor>
+      <anchor>ab7174bcdc6006eb03894beaa8664521c</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -1772,12 +1774,12 @@
   <compound kind="class">
     <name>etcpal::LogMessageHandler</name>
     <filename>classetcpal_1_1_log_message_handler.html</filename>
-    <member kind="function" virtualness="pure">
-      <type>virtual EtcPalLogTimestamp</type>
+    <member kind="function" virtualness="virtual">
+      <type>virtual LogTimestamp</type>
       <name>GetLogTimestamp</name>
       <anchorfile>classetcpal_1_1_log_message_handler.html</anchorfile>
-      <anchor>a9639d904b20db4a1e7a85e8d7901703f</anchor>
-      <arglist>()=0</arglist>
+      <anchor>aecfa86ca440c2005c89f7181678eac94</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual void</type>
@@ -1785,6 +1787,52 @@
       <anchorfile>classetcpal_1_1_log_message_handler.html</anchorfile>
       <anchor>a9d89d39c4e9149f340fe950da112ec6c</anchor>
       <arglist>(const EtcPalLogStrings &amp;strings)=0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::LogTimestamp</name>
+    <filename>classetcpal_1_1_log_timestamp.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>LogTimestamp</name>
+      <anchorfile>classetcpal_1_1_log_timestamp.html</anchorfile>
+      <anchor>aafc4ef91f7842e34f28549c8b9191376</anchor>
+      <arglist>()=default</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr</type>
+      <name>LogTimestamp</name>
+      <anchorfile>classetcpal_1_1_log_timestamp.html</anchorfile>
+      <anchor>a92d160221d22c19ccf9e027ad770a563</anchor>
+      <arglist>(unsigned int year, unsigned int month, unsigned int day, unsigned int hour, unsigned int minute, unsigned int second, unsigned int msec=0, int utc_offset=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>IsValid</name>
+      <anchorfile>classetcpal_1_1_log_timestamp.html</anchorfile>
+      <anchor>a472f705194218179e9cf26ffb288da6c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr const EtcPalLogTimestamp &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_log_timestamp.html</anchorfile>
+      <anchor>a45b0c3e59f7392736d9a1f7a91ab6e7e</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>ETCPAL_CONSTEXPR_14 EtcPalLogTimestamp &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_log_timestamp.html</anchorfile>
+      <anchor>a64e9febebf141fb0bc4184c13959ce80</anchor>
+      <arglist>() noexcept</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static LogTimestamp</type>
+      <name>Invalid</name>
+      <anchorfile>classetcpal_1_1_log_timestamp.html</anchorfile>
+      <anchor>ad9fe329da06c0386ffc6fd84b840dcc9</anchor>
+      <arglist>()</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -4003,6 +4051,13 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>etcpal_validate_log_timestamp</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga8bdf4e7812a1fe1d3b2c5da3ffc4f028</anchor>
+      <arglist>(const EtcPalLogTimestamp *timestamp)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>etcpal_can_log</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
       <anchor>gac44c39be61d1bf95239f9bd6fb1f11ad</anchor>
@@ -5486,6 +5541,7 @@
     <name>etcpal_cpp_log</name>
     <title>log (Logging)</title>
     <filename>group__etcpal__cpp__log.html</filename>
+    <class kind="class">etcpal::LogTimestamp</class>
     <class kind="class">etcpal::LogMessageHandler</class>
     <class kind="class">etcpal::Logger</class>
     <member kind="enumeration">

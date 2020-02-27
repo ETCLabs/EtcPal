@@ -74,7 +74,6 @@ static char* create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestam
                                const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args);
 
 static void sanitize_str(char* str);
-static bool validate_time(const EtcPalLogTimestamp* timestamp);
 
 static void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable);
 static bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestamp);
@@ -202,6 +201,26 @@ bool etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestam
 }
 
 /*!
+ * \brief Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them
+ *        if necessary).
+ *
+ * Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
+ * are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
+ * within the correct range (#ETCPAL_LOG_NFACILITIES).
+ *
+ * \param[in,out] params Syslog params to sanitize.
+ */
+void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
+{
+  if (ETCPAL_LOG_FAC(params->facility) >= ETCPAL_LOG_NFACILITIES)
+    params->facility = DEFAULT_FACILITY;
+
+  sanitize_str(params->hostname);
+  sanitize_str(params->app_name);
+  sanitize_str(params->procid);
+}
+
+/*!
  * \brief Ensure that the given EtcPalLogParams are valid.
  *
  * This also sanitizes the syslog params using etcpal_sanitize_syslog_params() if action is set to
@@ -225,23 +244,23 @@ bool etcpal_validate_log_params(EtcPalLogParams* params)
 }
 
 /*!
- * \brief Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them
- *        if necessary).
+ * \brief Determine whether the given EtcPalLogTimestamp is valid.
  *
- * Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that
- * are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is
- * within the correct range (#ETCPAL_LOG_NFACILITIES).
+ * Enforces the range rules defined in the structure documentation.
  *
- * \param[in,out] params Syslog params to sanitize.
+ * \param[in] timestamp Timestamp to validate.
+ * \return Whether the timestamp represents a valid time.
  */
-void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
+bool etcpal_validate_log_timestamp(const EtcPalLogTimestamp* timestamp)
 {
-  if (ETCPAL_LOG_FAC(params->facility) >= ETCPAL_LOG_NFACILITIES)
-    params->facility = DEFAULT_FACILITY;
-
-  sanitize_str(params->hostname);
-  sanitize_str(params->app_name);
-  sanitize_str(params->procid);
+  if (timestamp)
+  {
+    return (timestamp->year >= 0 && timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 &&
+            timestamp->day >= 1 && timestamp->day <= 31 && timestamp->hour >= 0 && timestamp->hour <= 23 &&
+            timestamp->minute >= 0 && timestamp->minute <= 59 && timestamp->second >= 0 && timestamp->second <= 60 &&
+            timestamp->msec >= 0 && timestamp->msec <= 999);
+  }
+  return false;
 }
 
 /*!
@@ -428,26 +447,17 @@ void sanitize_str(char* str)
   }
 }
 
-/* Enforce the range rules defined in the EtcPalLogTimestamp struct definition. */
-bool validate_time(const EtcPalLogTimestamp* timestamp)
-{
-  return (timestamp->year >= 0 && timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 &&
-          timestamp->day >= 1 && timestamp->day <= 31 && timestamp->hour >= 0 && timestamp->hour <= 23 &&
-          timestamp->minute >= 0 && timestamp->minute <= 59 && timestamp->second >= 0 && timestamp->second <= 60 &&
-          timestamp->msec >= 0 && timestamp->msec <= 999);
-}
-
 /* Build the current timestamp. Buffer must be of length ETCPAL_LOG_TIMESTAMP_LEN. */
 void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable)
 {
   bool timestamp_created = false;
 
-  if (timestamp && validate_time(timestamp))
+  if (etcpal_validate_log_timestamp(timestamp))
   {
     // Print the basic timestamp
     int print_res = snprintf(
         buf, ETCPAL_LOG_TIMESTAMP_LEN,
-        human_readable ? "%04d-%02d-%02d %02d:%02d:%02d.%03d" : "%04d-%02d-%02dT%02d:%02d:%02d.%03d", timestamp->year,
+        human_readable ? "%04u-%02u-%02u %02u:%02u:%02u.%03u" : "%04u-%02u-%02uT%02u:%02u:%02u.%03u", timestamp->year,
         timestamp->month, timestamp->day, timestamp->hour, timestamp->minute, timestamp->second, timestamp->msec);
 
     if (print_res > 0 && print_res < ETCPAL_LOG_TIMESTAMP_LEN - 1)

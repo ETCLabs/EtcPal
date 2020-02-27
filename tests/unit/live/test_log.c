@@ -19,6 +19,7 @@
 
 #include "etcpal/log.h"
 
+#include <limits.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -143,6 +144,55 @@ TEST(etcpal_log, validate_log_params_works)
   lparams.log_fn = log_callback;
   lparams.time_fn = NULL;
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
+}
+
+// Make sure etcpal_validate_log_timestamp() returns correct values for valid and invalid time
+TEST(etcpal_log, validate_log_timestamp_works)
+{
+  // Start with a valid time
+  EtcPalLogTimestamp timestamp;
+  fill_default_time(&timestamp);
+  TEST_ASSERT_TRUE(etcpal_validate_log_timestamp(&timestamp));
+
+  // Invalid years
+  timestamp.year = 10000;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.year = UINT_MAX;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.year = 1970;
+
+  // Invalid months
+  timestamp.month = 0;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.month = 13;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.month = 1;
+
+  // Invalid days
+  timestamp.day = 0;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.day = 32;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.day = 1;
+
+  // Invalid hours
+  timestamp.hour = 24;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.hour = 0;
+
+  // Invalid minutes
+  timestamp.minute = 60;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.minute = 0;
+
+  // Invalid seconds
+  timestamp.second = 61;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
+  timestamp.second = 0;
+
+  // Invalid milliseconds
+  timestamp.msec = 1000;
+  TEST_ASSERT_FALSE(etcpal_validate_log_timestamp(&timestamp));
 }
 
 // Make sure the "action" member in the EtcPalLogParams struct works as expected.
@@ -676,6 +726,7 @@ TEST_GROUP_RUNNER(etcpal_log)
 {
   RUN_TEST_CASE(etcpal_log, sanitize_syslog_params_works);
   RUN_TEST_CASE(etcpal_log, validate_log_params_works);
+  RUN_TEST_CASE(etcpal_log, validate_log_timestamp_works);
   RUN_TEST_CASE(etcpal_log, log_action_is_honored);
   RUN_TEST_CASE(etcpal_log, context_pointer_is_passed_unmodified);
   RUN_TEST_CASE(etcpal_log, priority_is_passed_unmodified);

@@ -31,8 +31,9 @@
 #include <string>
 #include "etcpal/common.h"
 #include "etcpal/log.h"
-#include "etcpal/cpp/lock.h"
+#include "etcpal/cpp/common.h"
 #include "etcpal/cpp/inet.h"
+#include "etcpal/cpp/lock.h"
 #include "etcpal/cpp/thread.h"
 
 namespace etcpal
@@ -54,9 +55,11 @@ namespace etcpal
 /// // This class handles the log messages gathered by the Logger class.
 /// class MyLogHandler : public etcpal::LogMessageHandler
 /// {
-///   EtcPalLogTimestamp GetLogTimestamp() override
+///   etcpal::LogTimestamp GetLogTimestamp() override
 ///   {
 ///     // Grab a timestamp from the local system and return it
+///     // This function can also be omitted if you can't easily obtain system time. No timestamps
+///     // will be prepended to log messages in that case.
 ///   }
 ///
 ///   void HandleLogMessage(const EtcPalLogStrings& strings) override
@@ -113,6 +116,67 @@ namespace etcpal
 /// \endcode
 
 /// \ingroup etcpal_cpp_log
+/// \brief An object representing the current local time with millisecond resolution for logging purposes.
+/// \details Can also be invalid, which means it does not hold a valid timestamp.
+class LogTimestamp
+{
+public:
+  /// Construct an invalid timestamp by default.
+  LogTimestamp() = default;
+  constexpr LogTimestamp(unsigned int year, unsigned int month, unsigned int day, unsigned int hour,
+                         unsigned int minute, unsigned int second, unsigned int msec = 0, int utc_offset = 0);
+
+  bool IsValid() const noexcept;
+
+  constexpr const EtcPalLogTimestamp& get() const noexcept;
+  ETCPAL_CONSTEXPR_14 EtcPalLogTimestamp& get() noexcept;
+
+  static LogTimestamp Invalid();
+
+private:
+  EtcPalLogTimestamp timestamp_{};
+};
+
+/// \brief Create a timestamp representing the current time.
+/// \param year Absolute year. Valid range 0-9999.
+/// \param month Month of the year. Valid range 1-12 (starting with 1 for January).
+/// \param day Day of the month. Valid range 1-31.
+/// \param hour Hours since midnight. Valid range 0-23.
+/// \param minute Minutes past the current hour. Valid range 0-59.
+/// \param second Seconds past the current minute. Valid range 0-60 (to handle leap seconds).
+/// \param msec Milliseconds past the current second. Valid range 0-999.
+/// \param utc_offset The local offset from UTC in minutes.
+constexpr LogTimestamp::LogTimestamp(unsigned int year, unsigned int month, unsigned int day, unsigned int hour,
+                                     unsigned int minute, unsigned int second, unsigned int msec, int utc_offset)
+    : timestamp_{year, month, day, hour, minute, second, msec, utc_offset}
+{
+}
+
+/// \brief Whether this timestamp represents a valid time.
+inline bool LogTimestamp::IsValid() const noexcept
+{
+  return etcpal_validate_log_timestamp(&timestamp_);
+}
+
+/// \brief Get a const reference to the underlying C type.
+constexpr const EtcPalLogTimestamp& LogTimestamp::get() const noexcept
+{
+  return timestamp_;
+}
+
+/// \brief Get a mutable reference to the underlying C type.
+ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalLogTimestamp& LogTimestamp::get() noexcept
+{
+  return timestamp_;
+}
+
+/// \brief Construct an invalid timestamp.
+inline LogTimestamp LogTimestamp::Invalid()
+{
+  return LogTimestamp{};
+}
+
+/// \ingroup etcpal_cpp_log
 /// \brief An interface which handles log messages.
 ///
 /// Users of the Logger class must provide a class that derives from LogMessageHandler to handle
@@ -121,8 +185,7 @@ namespace etcpal
 class LogMessageHandler
 {
 public:
-  /// Return an EtcPalLogTimestamp representing the current local time.
-  virtual EtcPalLogTimestamp GetLogTimestamp() = 0;
+  virtual LogTimestamp GetLogTimestamp();
 
   /// \brief Define this function to handle log messages and determine what to do with them.
   ///
@@ -136,6 +199,13 @@ public:
   ///                corresponding to the log actions requested using Logger::SetLogAction().
   virtual void HandleLogMessage(const EtcPalLogStrings& strings) = 0;
 };
+
+/// \brief Return a LogTimestamp representing the current local time.
+/// \details Optional; the default implementation does not append a timestamp to log messages.
+inline LogTimestamp LogMessageHandler::GetLogTimestamp()
+{
+  return LogTimestamp::Invalid();
+}
 
 /// \ingroup etcpal_cpp_log
 /// \brief Options for the method by which the Logger dispatches log messages.
@@ -238,7 +308,7 @@ extern "C" inline void LogTimestampFn(void* context, EtcPalLogTimestamp* timesta
 {
   if (context && timestamp)
   {
-    *timestamp = static_cast<LogMessageHandler*>(context)->GetLogTimestamp();
+    *timestamp = static_cast<LogMessageHandler*>(context)->GetLogTimestamp().get();
   }
 }
 
