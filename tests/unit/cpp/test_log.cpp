@@ -28,17 +28,17 @@
 class TestLogMessageHandler : public etcpal::LogMessageHandler
 {
 public:
-  void WillReturnTimestamp(const EtcPalLogTimestamp& timestamp) { timestamp_to_return_ = timestamp; }
+  void WillReturnTimestamp(const etcpal::LogTimestamp& timestamp) { timestamp_to_return_ = timestamp; }
   void OnLogEvent(const std::function<void(const EtcPalLogStrings&)>& func) { log_event_ = func; }
 
   int LogEventCallCount() const { return log_event_call_count_; }
   void ResetLogEventCallCount() { log_event_call_count_ = 0; }
 
 private:
-  EtcPalLogTimestamp GetLogTimestamp() override { return timestamp_to_return_; }
+  etcpal::LogTimestamp GetLogTimestamp() override { return timestamp_to_return_; }
   void HandleLogMessage(const EtcPalLogStrings& strings) override;
 
-  EtcPalLogTimestamp timestamp_to_return_{1970, 1, 1, 0, 0, 0, 0, 0};
+  etcpal::LogTimestamp timestamp_to_return_{1970, 1, 1, 0, 0, 0, 0, 0};
   std::function<void(const EtcPalLogStrings&)> log_event_;
   int log_event_call_count_{0};
 };
@@ -54,6 +54,52 @@ static TestLogMessageHandler test_log_handler;
 static etcpal::Logger logger;
 
 extern "C" {
+TEST_GROUP(etcpal_cpp_log_timestamp);
+
+TEST_SETUP(etcpal_cpp_log_timestamp)
+{
+}
+
+TEST_TEAR_DOWN(etcpal_cpp_log_timestamp)
+{
+}
+
+// Default-constructed LogTimestamp should be invalid.
+TEST(etcpal_cpp_log_timestamp, default_constructor_works)
+{
+  etcpal::LogTimestamp timestamp;
+  TEST_ASSERT_FALSE(timestamp.IsValid());
+}
+
+// Timestamp returned from the LogTimestamp::Invalid() function should be invalid
+TEST(etcpal_cpp_log_timestamp, invalid_works)
+{
+  auto timestamp = etcpal::LogTimestamp::Invalid();
+  TEST_ASSERT_FALSE(timestamp.IsValid());
+}
+
+TEST(etcpal_cpp_log_timestamp, value_constructor_works)
+{
+  etcpal::LogTimestamp timestamp(1970, 1, 1, 2, 3, 4, 500, -60);
+  TEST_ASSERT_TRUE(timestamp.IsValid());
+
+  TEST_ASSERT_EQUAL_UINT(timestamp.get().year, 1970);
+  TEST_ASSERT_EQUAL_UINT(timestamp.get().month, 1);
+  TEST_ASSERT_EQUAL_UINT(timestamp.get().day, 1);
+  TEST_ASSERT_EQUAL_UINT(timestamp.get().hour, 2);
+  TEST_ASSERT_EQUAL_UINT(timestamp.get().minute, 3);
+  TEST_ASSERT_EQUAL_UINT(timestamp.get().second, 4);
+  TEST_ASSERT_EQUAL_UINT(timestamp.get().msec, 500);
+  TEST_ASSERT_EQUAL_INT(timestamp.get().utc_offset, -60);
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_log_timestamp)
+{
+  RUN_TEST_CASE(etcpal_cpp_log_timestamp, default_constructor_works);
+  RUN_TEST_CASE(etcpal_cpp_log_timestamp, invalid_works);
+  RUN_TEST_CASE(etcpal_cpp_log_timestamp, value_constructor_works);
+}
+
 TEST_GROUP(etcpal_cpp_log);
 
 TEST_SETUP(etcpal_cpp_log)
@@ -219,7 +265,7 @@ TEST(etcpal_cpp_log, timestamps_work)
                        .Startup(test_log_handler));
 
   // January 22, 2020 16:57:33.123 UTC-06:00
-  EtcPalLogTimestamp timestamp = {2020, 1, 22, 16, 57, 33, 123, -360};
+  etcpal::LogTimestamp timestamp(2020, 1, 22, 16, 57, 33, 123, -360);
   test_log_handler.WillReturnTimestamp(timestamp);
 
   std::string human_str;
@@ -228,6 +274,12 @@ TEST(etcpal_cpp_log, timestamps_work)
   logger.Info("Test Message");
   TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 1);
   TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "2020-01-22 16:57:33.123-06:00 [INFO] Test Message");
+
+  // Returning LogTimestamp::Invalid() should omit the timestamp.
+  test_log_handler.WillReturnTimestamp(etcpal::LogTimestamp::Invalid());
+  logger.Info("Test Message");
+  TEST_ASSERT_EQUAL_INT(test_log_handler.LogEventCallCount(), 2);
+  TEST_ASSERT_EQUAL_STRING(human_str.c_str(), "[INFO] Test Message");
 
   logger.Shutdown();
 }

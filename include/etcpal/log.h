@@ -250,17 +250,20 @@
  *  EtcPalLogStrings struct. */
 #define ETCPAL_LOG_STR_MAX_LEN (8u + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) + ETCPAL_RAW_LOG_MSG_MAX_LEN)
 
-/*! A set of parameters which represent the current local time with millisecond resolution. */
+/*!
+ * \brief A set of parameters which represent the current local time with millisecond resolution.
+ * \details The valid ranges for each member can be validated using etcpal_validate_log_timestamp().
+ */
 typedef struct EtcPalLogTimestamp
 {
-  int year;       /*!< Absolute year. Valid range 0-9999. */
-  int month;      /*!< Month of the year. Valid range 1-12 (starting with 1 for January). */
-  int day;        /*!< Day of the month. Valid range 1-31.  */
-  int hour;       /*!< Hours since midnight. Valid range 0-23. */
-  int minute;     /*!< Minutes past the current hour. Valid range 0-59. */
-  int second;     /*!< Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
-  int msec;       /*!< Milliseconds past the current second. Valid range 0-999. */
-  int utc_offset; /*!< The local offset from UTC in minutes. */
+  unsigned int year;   /*!< Absolute year. Valid range 0-9999. */
+  unsigned int month;  /*!< Month of the year. Valid range 1-12 (starting with 1 for January). */
+  unsigned int day;    /*!< Day of the month. Valid range 1-31.  */
+  unsigned int hour;   /*!< Hours since midnight. Valid range 0-23. */
+  unsigned int minute; /*!< Minutes past the current hour. Valid range 0-59. */
+  unsigned int second; /*!< Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
+  unsigned int msec;   /*!< Milliseconds past the current second. Valid range 0-999. */
+  int utc_offset;      /*!< The local offset from UTC in minutes. */
 } EtcPalLogTimestamp;
 
 /*! The set of log strings passed with a call to an etcpal_log_callback function. Any members not
@@ -392,6 +395,7 @@ bool etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestam
 
 void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params);
 bool etcpal_validate_log_params(EtcPalLogParams* params);
+bool etcpal_validate_log_timestamp(const EtcPalLogTimestamp* timestamp);
 
 bool etcpal_can_log(const EtcPalLogParams* params, int pri);
 
