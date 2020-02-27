@@ -163,7 +163,7 @@ typedef struct AcnPdu
   const uint8_t* pvector;  /*!< Pointer to the most recent PDU's vector. */
   const uint8_t* pheader;  /*!< Pointer to the most recent PDU's header. */
   const uint8_t* pdata;    /*!< Pointer to the most recent PDU's data. */
-  size_t datalen;          /*!< Length of the PDU's data section. */
+  size_t data_len;         /*!< Length of the PDU's data section. */
   const uint8_t* pnextpdu; /*!< Pointer to the beginning of the next PDU. */
 } AcnPdu;
 
@@ -186,7 +186,7 @@ typedef struct AcnPdu
     (pduptr)->pvector = NULL;  \
     (pduptr)->pheader = NULL;  \
     (pduptr)->pdata = NULL;    \
-    (pduptr)->datalen = 0;     \
+    (pduptr)->data_len = 0;    \
     (pduptr)->pnextpdu = NULL; \
   } while (0)
 

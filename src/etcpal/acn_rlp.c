@@ -25,8 +25,8 @@
 #define ACN_RLP_HEADER_SIZE 16u
 #define RLP_VECTOR_SIZE 4u
 
-#define RLP_EXTENDED_LENGTH(inheritvec, inherithead, datalen) \
-  ((datalen + (inheritvec ? 0 : RLP_VECTOR_SIZE) + (inherithead ? 0 : ACN_RLP_HEADER_SIZE)) > 4095)
+#define RLP_EXTENDED_LENGTH(inheritvec, inherithead, data_len) \
+  ((data_len + (inheritvec ? 0 : RLP_VECTOR_SIZE) + (inherithead ? 0 : ACN_RLP_HEADER_SIZE)) > 4095)
 
 #define PROT_MANDATES_L_FLAG(vector)                                                                            \
   ((vector == ACN_VECTOR_ROOT_LLRP) || (vector == ACN_VECTOR_ROOT_BROKER) || (vector == ACN_VECTOR_ROOT_RPT) || \
@@ -159,12 +159,12 @@ bool acn_parse_root_layer_header(const uint8_t* buf, size_t buflen, AcnRootLayer
   if (inheritdata)
   {
     pdu->pdata = last_pdu->pdata;
-    pdu->datalen = last_pdu->datalen;
+    pdu->data_len = last_pdu->data_len;
   }
   else
   {
     pdu->pdata = cur_ptr;
-    pdu->datalen = (size_t)(pdu_len - (size_t)(cur_ptr - buf));
+    pdu->data_len = (size_t)(pdu_len - (size_t)(cur_ptr - buf));
   }
 
   return true;
@@ -220,7 +220,7 @@ bool acn_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, AcnRootLayerPdu
     pdu->vector = etcpal_unpack_u32b(last_pdu->pvector);
     memcpy(pdu->sender_cid.data, last_pdu->pheader, ETCPAL_UUID_BYTES);
     pdu->pdata = last_pdu->pdata;
-    pdu->datalen = last_pdu->datalen;
+    pdu->data_len = last_pdu->data_len;
     return true;
   }
   return false;
@@ -295,9 +295,9 @@ size_t acn_root_layer_buf_size(const AcnRootLayerPdu* pdu_block, size_t num_pdus
 
   for (pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
-    block_size += pdu->datalen;
+    block_size += pdu->data_len;
     // We assume no inheritance here, so the largest possible buffer is allocated.
-    block_size += (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->datalen))
+    block_size += (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->data_len))
                       ? ACN_RLP_HEADER_SIZE_EXT_LEN
                       : ACN_RLP_HEADER_SIZE_NORMAL_LEN;
   }
@@ -323,15 +323,15 @@ size_t acn_pack_root_layer_header(uint8_t* buf, size_t buflen, const AcnRootLaye
   uint8_t* cur_ptr = buf;
   *cur_ptr = 0x70;
 
-  if (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->datalen))
+  if (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->data_len))
   {
     ACN_PDU_SET_L_FLAG(*cur_ptr);
-    ACN_PDU_PACK_EXT_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_EXT_LEN + pdu->datalen);
+    ACN_PDU_PACK_EXT_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_EXT_LEN + pdu->data_len);
     cur_ptr += 3;
   }
   else
   {
-    ACN_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->datalen);
+    ACN_PDU_PACK_NORMAL_LEN(cur_ptr, ACN_RLP_HEADER_SIZE_NORMAL_LEN + pdu->data_len);
     cur_ptr += 2;
   }
 
@@ -383,7 +383,7 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
       ACN_PDU_SET_D_FLAG(*cur_ptr);
       inheritdata = false;
       last_pdu.pdata = pdu->pdata;
-      last_pdu.datalen = pdu->datalen;
+      last_pdu.data_len = pdu->data_len;
     }
     else
     {
@@ -402,22 +402,22 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
         last_pdu.sender_cid = pdu->sender_cid;
       }
 
-      if ((pdu->datalen != last_pdu.datalen) || (0 != memcmp(pdu->pdata, last_pdu.pdata, last_pdu.datalen)))
+      if ((pdu->data_len != last_pdu.data_len) || (0 != memcmp(pdu->pdata, last_pdu.pdata, last_pdu.data_len)))
       {
         ACN_PDU_SET_D_FLAG(*cur_ptr);
         inheritdata = false;
         last_pdu.pdata = pdu->pdata;
-        last_pdu.datalen = pdu->datalen;
+        last_pdu.data_len = pdu->data_len;
       }
     }
 
     // Check if we are required to use the 3-byte length field, either by the higher-level protocol
     // or because the length is greater than 4096
     if (PROT_MANDATES_L_FLAG(pdu->vector) ||
-        RLP_EXTENDED_LENGTH(inheritvec, inherithead, inheritdata ? 0 : pdu->datalen))
+        RLP_EXTENDED_LENGTH(inheritvec, inherithead, inheritdata ? 0 : pdu->data_len))
     {
       size_t len = 3u + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
-                   (inheritdata ? 0u : pdu->datalen);
+                   (inheritdata ? 0u : pdu->data_len);
       ACN_PDU_SET_L_FLAG(*cur_ptr);
       ACN_PDU_PACK_EXT_LEN(cur_ptr, len);
       cur_ptr += 3;
@@ -425,7 +425,7 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
     else
     {
       size_t len = 2 + (inheritvec ? 0u : RLP_VECTOR_SIZE) + (inherithead ? 0u : ACN_RLP_HEADER_SIZE) +
-                   (inheritdata ? 0u : pdu->datalen);
+                   (inheritdata ? 0u : pdu->data_len);
       ACN_PDU_PACK_NORMAL_LEN(cur_ptr, len);
       cur_ptr += 2;
     }
@@ -444,8 +444,8 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
 
     if (!inheritdata)
     {
-      memcpy(cur_ptr, pdu->pdata, pdu->datalen);
-      cur_ptr += pdu->datalen;
+      memcpy(cur_ptr, pdu->pdata, pdu->data_len);
+      cur_ptr += pdu->data_len;
     }
   }
   return (size_t)(cur_ptr - buf);

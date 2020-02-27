@@ -98,8 +98,8 @@ bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* c
   if (!inheritdata)
   {
     pdu->pdata = cur_ptr;
-    pdu->datalen = pdu_len - (uint32_t)(cur_ptr - this_pdu);
-    cur_ptr += pdu->datalen;
+    pdu->data_len = pdu_len - (uint32_t)(cur_ptr - this_pdu);
+    cur_ptr += pdu->data_len;
   }
 
   pdu->pnextpdu = cur_ptr;

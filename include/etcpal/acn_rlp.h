@@ -101,7 +101,7 @@ typedef struct AcnRootLayerPdu
   /*! A pointer to the Data segment of this PDU. */
   const uint8_t* pdata;
   /*! The length of the Data segment of this PDU. */
-  size_t datalen;
+  size_t data_len;
 } AcnRootLayerPdu;
 
 #ifdef __cplusplus
