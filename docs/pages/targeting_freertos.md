@@ -1,7 +1,7 @@
 # Targeting FreeRTOS                                                          {#targeting_freertos}
 
 FreeRTOS is a real-time OS microkernel used as an OS target by EtcPal. To use EtcPal with FreeRTOS,
-you must set the `ETCPAL_OS_TARGET` variable to `FreeRTOS`.
+you must set the `ETCPAL_OS_TARGET` variable to `freertos`.
 
 ```cmake
 set(ETCPAL_OS_TARGET freertos CACHE STRING "The OS target for EtcPal")

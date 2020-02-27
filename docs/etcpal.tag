@@ -5897,6 +5897,11 @@
     <filename>targeting_lwip</filename>
   </compound>
   <compound kind="page">
+    <name>targeting_mqx</name>
+    <title>Targeting MQX</title>
+    <filename>targeting_mqx</filename>
+  </compound>
+  <compound kind="page">
     <name>index</name>
     <title>ETC Platform Abstraction Layer</title>
     <filename>index</filename>

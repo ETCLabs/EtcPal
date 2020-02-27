@@ -20,8 +20,9 @@ Eclipse-based IDE with an arm-gcc toolchain (a common setup), the file
 When using CMake to build EtcPal, some target platforms require special targets or configuration to
 allow EtcPal to find headers from external libraries. Special requirements for specific platforms
 are found on the pages below:
-* @subpage targeting_lwip
 * @subpage targeting_freertos
+* @subpage targeting_lwip
+* @subpage targeting_mqx
 
 The method for including EtcPal via CMake is different depending on if your project already uses
 CMake or not.
