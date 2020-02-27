@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
@@ -21,7 +21,7 @@
   </compound>
   <compound kind="file">
     <name>error.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Error</class>
@@ -30,7 +30,7 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
@@ -49,7 +49,7 @@
   </compound>
   <compound kind="file">
     <name>lock.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
@@ -61,7 +61,7 @@
   </compound>
   <compound kind="file">
     <name>log.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
@@ -80,7 +80,7 @@
   </compound>
   <compound kind="file">
     <name>thread.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
@@ -88,7 +88,7 @@
   </compound>
   <compound kind="file">
     <name>timer.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2timer_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::TimePoint</class>
@@ -96,7 +96,7 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
     <class kind="class">etcpal::Uuid</class>
@@ -116,7 +116,7 @@
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>D:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>C:/git/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="struct">
