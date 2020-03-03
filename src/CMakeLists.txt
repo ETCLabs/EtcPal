@@ -10,40 +10,49 @@ endif()
 
 set(ETCPAL_LIB_TARGET_NAME EtcPal)
 
-add_library(${ETCPAL_LIB_TARGET_NAME}
+set(ETCPAL_CORE_SOURCES
   # EtcPal headers
-  ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
-  ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
-  ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
   ${ETCPAL_ROOT}/include/etcpal/uuid.h
   ${ETCPAL_ROOT}/include/etcpal/common.h
   ${ETCPAL_ROOT}/include/etcpal/error.h
-  ${ETCPAL_ROOT}/include/etcpal/inet.h
   ${ETCPAL_ROOT}/include/etcpal/log.h
   ${ETCPAL_ROOT}/include/etcpal/mempool.h
   ${ETCPAL_ROOT}/include/etcpal/pack.h
   ${ETCPAL_ROOT}/include/etcpal/rbtree.h
-  ${ETCPAL_ROOT}/include/etcpal/socket.h
   ${ETCPAL_ROOT}/include/etcpal/timer.h
 
   # EtcPal sources
-  ${ETCPAL_ROOT}/src/etcpal/acn_pdu.c
-  ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
   ${ETCPAL_ROOT}/src/etcpal/common.c
   ${ETCPAL_ROOT}/src/etcpal/error.c
-  ${ETCPAL_ROOT}/src/etcpal/inet.c
   ${ETCPAL_ROOT}/src/etcpal/log.c
   ${ETCPAL_ROOT}/src/etcpal/md5.h
   ${ETCPAL_ROOT}/src/etcpal/md5.c
   ${ETCPAL_ROOT}/src/etcpal/mempool.c
-  ${ETCPAL_ROOT}/src/etcpal/netint.c
   ${ETCPAL_ROOT}/src/etcpal/pack.c
   ${ETCPAL_ROOT}/src/etcpal/rbtree.c
   ${ETCPAL_ROOT}/src/etcpal/sha1.h
   ${ETCPAL_ROOT}/src/etcpal/sha1.c
   ${ETCPAL_ROOT}/src/etcpal/timer.c
   ${ETCPAL_ROOT}/src/etcpal/uuid.c
+)
 
+if(ETCPAL_NET_TARGET)
+  set(ETCPAL_CORE_SOURCES ${ETCPAL_CORE_SOURCES}
+    ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
+    ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
+    ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
+    ${ETCPAL_ROOT}/include/etcpal/inet.h
+    ${ETCPAL_ROOT}/include/etcpal/netint.h
+    ${ETCPAL_ROOT}/include/etcpal/socket.h
+    ${ETCPAL_ROOT}/src/etcpal/acn_pdu.c
+    ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
+    ${ETCPAL_ROOT}/src/etcpal/inet.c
+    ${ETCPAL_ROOT}/src/etcpal/netint.c
+  )
+endif()
+
+add_library(${ETCPAL_LIB_TARGET_NAME}
+  ${ETCPAL_CORE_SOURCES}
   ${ETCPAL_OS_ADDITIONAL_SOURCES}
   ${ETCPAL_NET_ADDITIONAL_SOURCES}
 )
@@ -60,6 +69,7 @@ target_include_directories(${ETCPAL_LIB_TARGET_NAME} PRIVATE ${ETCPAL_ROOT}/src)
 target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE 
   ${ETCPAL_HAVE_CONFIG_H}
   ${ETCPAL_OS_ADDITIONAL_DEFINES}
+  ${ETCPAL_NET_ADDITIONAL_DEFINES}
 )
 if(ETCPAL_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)

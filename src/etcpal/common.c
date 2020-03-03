@@ -21,9 +21,12 @@
 
 #include <stdbool.h>
 #include "etcpal/private/log.h"
+#include "etcpal/private/timer.h"
+
+#ifndef ETCPAL_NO_NETWORKING_SUPPORT
 #include "etcpal/private/netint.h"
 #include "etcpal/private/socket.h"
-#include "etcpal/private/timer.h"
+#endif
 
 /****************************** Private types ********************************/
 
@@ -38,6 +41,13 @@ typedef struct EtcPalModuleInit
 
 #define ETCPAL_MODULE_INIT(module_name) { false, module_name##_init, module_name##_deinit }
 
+#ifdef ETCPAL_NO_NETWORKING_SUPPORT
+#define ETCPAL_MODULE_INIT_ARRAY       \
+  {                                    \
+    ETCPAL_MODULE_INIT(etcpal_timer),  \
+    ETCPAL_MODULE_INIT(etcpal_log)     \
+  }
+#else
 #define ETCPAL_MODULE_INIT_ARRAY       \
   {                                    \
     ETCPAL_MODULE_INIT(etcpal_socket), \
@@ -45,6 +55,7 @@ typedef struct EtcPalModuleInit
     ETCPAL_MODULE_INIT(etcpal_timer),  \
     ETCPAL_MODULE_INIT(etcpal_log)     \
   }
+#endif
 
 /* clang-format on */
 

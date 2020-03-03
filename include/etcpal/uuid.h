@@ -26,7 +26,6 @@
 #include <stdint.h>
 #include <string.h>
 #include "etcpal/error.h"
-#include "etcpal/inet.h"
 
 /*!
  * \defgroup etcpal_uuid uuid (UUIDs)
@@ -131,7 +130,7 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
 etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid);
-etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const EtcPalMacAddr* mac_addr, uint32_t uuid_num,
+etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const uint8_t* mac_addr, uint32_t uuid_num,
                                            EtcPalUuid* uuid);
 
 #ifdef __cplusplus
