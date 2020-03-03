@@ -36,6 +36,9 @@ static int compare_netints(const void* a, const void* b);
 
 etcpal_error_t etcpal_netint_init(void)
 {
+#ifdef ETCPAL_NO_NETINTS
+  return kEtcPalNotImpl;
+#else
   etcpal_error_t res = kEtcPalErrOk;
   if (init_count == 0)
   {
@@ -51,15 +54,18 @@ etcpal_error_t etcpal_netint_init(void)
     ++init_count;
 
   return res;
+#endif
 }
 
 void etcpal_netint_deinit(void)
 {
+#ifndef ETCPAL_NO_NETINTS
   if (--init_count == 0)
   {
     os_free_interfaces(&netint_cache);
     memset(&netint_cache, 0, sizeof(netint_cache));
   }
+#endif
 }
 
 /*!
@@ -212,7 +218,11 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, un
   if (netint_cache.num_netints == 0)
     return kEtcPalErrNoNetints;
 
+#ifdef ETCPAL_NO_NETINTS
+  return kEtcPalNotImpl;
+#else
   return os_resolve_route(dest, &netint_cache, netint_index);
+#endif
 }
 
 int compare_netints(const void* a, const void* b)

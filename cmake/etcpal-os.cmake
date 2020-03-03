@@ -2,12 +2,14 @@
 # The set of supported target OS
 set(VALID_ETCPAL_OS_TARGETS
   freertos
+  ios
   linux
   macos
   mqx
   windows
 )
 set(VALID_ETCPAL_NET_TARGETS
+  ios
   linux
   lwip
   macos
@@ -24,13 +26,17 @@ if(NOT ETCPAL_OS_TARGET)
   if(APPLE AND IOS)
     message(STATUS "Assuming cross-compile for iOS and similar based on CMAKE_SYSTEM_NAME...")
   else()
-   message(STATUS "Assuming native compile by default...")
+    message(STATUS "Assuming native compile by default...")
   endif()
 
   if(WIN32)
     set(ETCPAL_OS_TARGET windows)
   elseif(APPLE)
-    set(ETCPAL_OS_TARGET macos)
+    if(IOS)
+      set(ETCPAL_OS_TARGET ios)
+    else()
+      set(ETCPAL_OS_TARGET macos)
+    endif()
   elseif(UNIX)
     set(ETCPAL_OS_TARGET linux)
   else()
@@ -45,19 +51,24 @@ if(NOT ETCPAL_NET_TARGET)
   endif()
 endif()
 
-if(NOT ${ETCPAL_OS_TARGET} IN_LIST VALID_ETCPAL_OS_TARGETS)
+# ETCPAL_OS_TARGET is required.
+if((NOT ETCPAL_OS_TARGET) OR (NOT ${ETCPAL_OS_TARGET} IN_LIST VALID_ETCPAL_OS_TARGETS))
   message(FATAL_ERROR "${ETCPAL_OS_TARGET} is not a valid target OS. "
           "Specify ETCPAL_OS_TARGET from these options: ${VALID_ETCPAL_OS_TARGETS}")
-endif()
-
-if(NOT ${ETCPAL_NET_TARGET} IN_LIST VALID_ETCPAL_NET_TARGETS)
-  message(FATAL_ERROR "${ETCPAL_NET_TARGET} is not a valid target network stack. "
-          "Specify ETCPAL_NET_TARGET from these options: ${VALID_ETCPAL_NET_TARGETS}")
 endif()
 
 if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/os/${ETCPAL_OS_TARGET}.cmake)
   include(${CMAKE_CURRENT_LIST_DIR}/os/${ETCPAL_OS_TARGET}.cmake)
 endif()
-if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/net/${ETCPAL_NET_TARGET}.cmake)
-  include(${CMAKE_CURRENT_LIST_DIR}/net/${ETCPAL_NET_TARGET}.cmake)
+
+# ETCPAL_NET_TARGET is not required.
+if(ETCPAL_NET_TARGET)
+  if(NOT ${ETCPAL_NET_TARGET} IN_LIST VALID_ETCPAL_NET_TARGETS)
+    message(FATAL_ERROR "\"${ETCPAL_NET_TARGET}\" is not a valid target network stack. "
+            "Specify ETCPAL_NET_TARGET from these options: ${VALID_ETCPAL_NET_TARGETS}")
+  endif()
+
+  if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/net/${ETCPAL_NET_TARGET}.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/net/${ETCPAL_NET_TARGET}.cmake)
+  endif()
 endif()
