@@ -17,7 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/* The os_netint implementation for macOS.
+/*
+ * The os_netint implementation for macOS.
  *
  * Uses getifaddrs() to get an initial list of network interfaces. More info: man 3 getifaddrs
  *

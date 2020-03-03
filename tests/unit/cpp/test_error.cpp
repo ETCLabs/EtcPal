@@ -25,6 +25,12 @@
 #include "etcpal/common.h"
 #include "unity_fixture.h"
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-private-field"
+#pragma GCC diagnostic ignored "-Wpessimizing-move"
+#endif
+
 extern "C" {
 
 TEST_GROUP(etcpal_result);
@@ -431,3 +437,7 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
   RUN_TEST_CASE(etcpal_expected, relational_operators_work)
 }
 }
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
