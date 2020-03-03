@@ -23,4 +23,16 @@ if(NOT TARGET FreeRTOS)
                       "See the comment in this file for more information.")
 endif()
 
+set(ETCPAL_OS_ADDITIONAL_SOURCES
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_lock.h
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_thread.h
+
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_lock.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_thread.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_timer.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_uuid.c
+)
+set(ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS
+  ${ETCPAL_ROOT}/include/os/freertos
+)
 set(ETCPAL_OS_ADDITIONAL_LIBS FreeRTOS)

@@ -11,6 +11,7 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 ### Added
 - New port: Linux
 - New port: macOS
+- New port: iOS
 - New port: FreeRTOS
 - New port: lwIP
 - etcpal_init() in etcpal/common.h. etcpal_init() must be called before using
@@ -28,6 +29,7 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
   accordingly.
 - Naming: Separated the platform-specific sources into 'os' and 'net' targets
   to aid in targeting mix-and-match stack environments like FreeRTOS and lwIP.
+- Allow EtcPal to be built with no networking support.
 - Improvements in mnemonic consistency across the public APIs, including
   addition of meaningful return information, better function naming, etc.
 - Modified etcpal_netint and etcpal_inet to make more meaningful use of network

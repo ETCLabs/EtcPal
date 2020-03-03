@@ -283,14 +283,14 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
  * \param[in] dev_str The device-specific string, such as the model name. This should never change
  *                    on the device. It also allows different programs running on the device to
  *                    generate different UUID sets.
- * \param[in] mac_addr The device's MAC address.
+ * \param[in] mac_addr The device's MAC address; must be an array of 6 bytes.
  * \param[in] uuid_num Component number. By changing this number, multiple unique UUIDs can be
  *                     generated for the same device string-MAC address combination.
  * \param[out] uuid UUID to fill in with the generation result.
  * \return #kEtcPalErrOk: UUID generated successfully.
  * \return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const EtcPalMacAddr* mac_addr, uint32_t uuid_num,
+etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const uint8_t* mac_addr, uint32_t uuid_num,
                                            EtcPalUuid* uuid)
 {
   if (!dev_str || !mac_addr || !uuid)
@@ -300,13 +300,13 @@ etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const EtcPalMacA
   static const EtcPalUuid namespace = {
       {0x57, 0x32, 0x31, 0x03, 0xdb, 0x01, 0x44, 0xb3, 0xba, 0xfa, 0xab, 0xde, 0xe3, 0xf3, 0x7c, 0x1a}};
 
-#define TOTAL_NAME_LEN (ETCPAL_UUID_DEV_STR_MAX_LEN + ETCPAL_MAC_BYTES + 4)
+#define TOTAL_NAME_LEN (ETCPAL_UUID_DEV_STR_MAX_LEN + 6 + 4)
 
   /* Concatenate the input data into a buffer of the form "[dev_str][mac_addr][uuid_num]" */
   uint8_t name[TOTAL_NAME_LEN];
   strncpy((char*)name, dev_str, ETCPAL_UUID_DEV_STR_MAX_LEN);
-  memcpy(&name[ETCPAL_UUID_DEV_STR_MAX_LEN], mac_addr->data, ETCPAL_MAC_BYTES);
-  etcpal_pack_u32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + ETCPAL_MAC_BYTES], uuid_num);
+  memcpy(&name[ETCPAL_UUID_DEV_STR_MAX_LEN], mac_addr, 6);
+  etcpal_pack_u32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + 6], uuid_num);
 
   return etcpal_generate_v5_uuid(&namespace, name, TOTAL_NAME_LEN, uuid);
 }
