@@ -24,7 +24,7 @@
 
 #include "etcpal/common.h"
 
-#if !LWIP_PROVIDE_ERRNO && !LWIP_ERRNO_STDINCLUDE
+#if !defined(LWIP_PROVIDE_ERRNO) && !defined(LWIP_ERRNO_STDINCLUDE)
 #if defined(LWIP_ERRNO_INCLUDE)
 #include LWIP_ERRNO_INCLUDE
 #else

@@ -22,6 +22,7 @@
 #include <string.h>
 #include <lwip/sockets.h>
 #include <lwip/netdb.h>
+#include <lwip/netif.h>
 
 #include "etcpal/common.h"
 #include "os_error.h"
