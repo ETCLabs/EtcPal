@@ -29,7 +29,6 @@
 #include <string>
 #include "etcpal/pack.h"
 #include "etcpal/uuid.h"
-#include "etcpal/cpp/inet.h"
 
 namespace etcpal
 {
@@ -125,7 +124,8 @@ public:
   static Uuid V5(const Uuid& ns, const char* name) noexcept;
   static Uuid V5(const Uuid& ns, const std::string& name) noexcept;
   static Uuid OsPreferred() noexcept;
-  static Uuid Device(const std::string& device_str, const MacAddr& mac_addr, uint32_t uuid_num) noexcept;
+  static Uuid Device(const std::string& device_str, const uint8_t* mac_addr, uint32_t uuid_num) noexcept;
+  static Uuid Device(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr, uint32_t uuid_num) noexcept;
 
 private:
   EtcPalUuid uuid_{kEtcPalNullUuid};
@@ -349,10 +349,21 @@ inline Uuid Uuid::OsPreferred() noexcept
 /// \brief Generate and return a Device UUID.
 ///
 /// See etcpal_generate_device_uuid() for more information.
-inline Uuid Uuid::Device(const std::string& device_str, const MacAddr& mac_addr, uint32_t uuid_num) noexcept
+inline Uuid Uuid::Device(const std::string& device_str, const uint8_t* mac_addr, uint32_t uuid_num) noexcept
 {
   Uuid uuid;
-  etcpal_generate_device_uuid(device_str.c_str(), &mac_addr.get(), uuid_num, &uuid.uuid_);
+  etcpal_generate_device_uuid(device_str.c_str(), mac_addr, uuid_num, &uuid.uuid_);
+  return uuid;
+}
+
+/// \brief Generate and return a Device UUID.
+///
+/// See etcpal_generate_device_uuid() for more information.
+inline Uuid Uuid::Device(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr,
+                         uint32_t uuid_num) noexcept
+{
+  Uuid uuid;
+  etcpal_generate_device_uuid(device_str.c_str(), mac_addr.data(), uuid_num, &uuid.uuid_);
   return uuid;
 }
 

@@ -259,10 +259,11 @@ TEST(etcpal_cpp_uuid, generates_os_preferred_correctly)
 
 TEST(etcpal_cpp_uuid, generates_device_correctly)
 {
-  const etcpal::MacAddr mac({0x00, 0xc0, 0x16, 0x01, 0x02, 0x03});
+  const uint8_t mac[6]{0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
+  const std::array<uint8_t, 6> mac_array{0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
 
   const etcpal::Uuid dev_1 = etcpal::Uuid::Device("Test Device", mac, 20);
-  const etcpal::Uuid dev_1_dup = etcpal::Uuid::Device("Test Device", mac, 20);
+  const etcpal::Uuid dev_1_dup = etcpal::Uuid::Device("Test Device", mac_array, 20);
   const etcpal::Uuid dev_2 = etcpal::Uuid::Device("Test Device", mac, 21);
 
   TEST_ASSERT_FALSE(dev_1.IsNull());
