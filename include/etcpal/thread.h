@@ -78,6 +78,11 @@ extern "C" {
  * etcpal_thread_sleep(200); // Sleep for 200 milliseconds
  * \endcode
  *
+ * **IMPORTANT NOTE FOR RTOS USERS:** The EtcPal threading API does not initialize the scheduler on
+ * real-time systems (e.g. it does not call vTaskStartScheduler() on FreeRTOS or _mqx() on MQX).
+ * The application writer is responsible for managing the interaction between starting the
+ * scheduler and starting EtcPal threads, just like when starting native RTOS tasks.
+ *
  * @{
  */
 
