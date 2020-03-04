@@ -35,7 +35,5 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_uuid.c
 )
-set(ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS
-  ${ETCPAL_ROOT}/include/os/mqx
-)
+set(ETCPAL_OS_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/mqx)
 set(ETCPAL_OS_ADDITIONAL_LIBS MQX)

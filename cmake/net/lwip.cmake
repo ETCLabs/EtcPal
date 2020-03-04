@@ -32,7 +32,5 @@ set(ETCPAL_NET_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/lwip/etcpal/os_netint.c
   ${ETCPAL_ROOT}/src/os/lwip/etcpal/os_socket.c
 )
-set(ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS
-  ${ETCPAL_ROOT}/include/os/lwip
-)
+set(ETCPAL_NET_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/lwip)
 set(ETCPAL_NET_ADDITIONAL_LIBS lwIP)

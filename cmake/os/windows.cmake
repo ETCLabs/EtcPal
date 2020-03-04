@@ -16,7 +16,5 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/windows/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/windows/etcpal/os_uuid.c
 )
-set(ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS
-  ${ETCPAL_ROOT}/include/os/windows
-)
+set(ETCPAL_OS_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/windows)
 set(ETCPAL_OS_ADDITIONAL_LIBS winmm ws2_32 Iphlpapi Rpcrt4)

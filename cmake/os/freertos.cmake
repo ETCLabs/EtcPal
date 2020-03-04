@@ -32,7 +32,5 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_uuid.c
 )
-set(ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS
-  ${ETCPAL_ROOT}/include/os/freertos
-)
+set(ETCPAL_OS_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/freertos)
 set(ETCPAL_OS_ADDITIONAL_LIBS FreeRTOS)
