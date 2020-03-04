@@ -143,8 +143,8 @@ if(ETCPAL_BUILD_MOCK_LIB)
   )
   target_include_directories(EtcPalMock PUBLIC
     ${ETCPAL_ROOT}/include
-    ${ETCPAL_OS_ADDITIONAL_INCLUDE_DIRS}
-    ${ETCPAL_NET_ADDITIONAL_INCLUDE_DIRS}
+    ${ETCPAL_OS_INCLUDE_DIR}
+    ${ETCPAL_NET_INCLUDE_DIR}
   )
   target_include_directories(EtcPalMock PRIVATE ${ETCPAL_ROOT}/src)
   target_compile_definitions(EtcPalMock PRIVATE ETCPAL_BUILDING_MOCK_LIB)
