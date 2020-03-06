@@ -335,6 +335,9 @@ TEST(etcpal_cpp_inet, ip_is_link_local_works)
 {
   const auto ip = etcpal::IpAddr::FromString("169.254.1.2");
   TEST_ASSERT_TRUE(ip.IsLinkLocal());
+  TEST_ASSERT_FALSE(ip.IsLoopback());
+  TEST_ASSERT_FALSE(ip.IsMulticast());
+  TEST_ASSERT_FALSE(ip.IsWildcard());
 }
 
 // More rigorous testing is done in the C unit tests, we just do one test here
@@ -342,6 +345,9 @@ TEST(etcpal_cpp_inet, ip_is_loopback_works)
 {
   const auto ip = etcpal::IpAddr::FromString("127.0.0.1");
   TEST_ASSERT_TRUE(ip.IsLoopback());
+  TEST_ASSERT_FALSE(ip.IsLinkLocal());
+  TEST_ASSERT_FALSE(ip.IsMulticast());
+  TEST_ASSERT_FALSE(ip.IsWildcard());
 }
 
 // More rigorous testing is done in the C unit tests, we just do one test here
@@ -349,6 +355,9 @@ TEST(etcpal_cpp_inet, ip_is_multicast_works)
 {
   const auto ip = etcpal::IpAddr::FromString("239.154.2.3");
   TEST_ASSERT_TRUE(ip.IsMulticast());
+  TEST_ASSERT_FALSE(ip.IsLinkLocal());
+  TEST_ASSERT_FALSE(ip.IsLoopback());
+  TEST_ASSERT_FALSE(ip.IsWildcard());
 }
 
 // More rigorous testing is done in the C unit tests, we just do a few tests here
@@ -356,12 +365,27 @@ TEST(etcpal_cpp_inet, ip_is_wildcard_works)
 {
   auto wildcard = etcpal::IpAddr::WildcardV4();
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  TEST_ASSERT_FALSE(wildcard.IsLinkLocal());
+  TEST_ASSERT_FALSE(wildcard.IsLoopback());
+  TEST_ASSERT_FALSE(wildcard.IsMulticast());
+
   wildcard = etcpal::IpAddr::WildcardV6();
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  TEST_ASSERT_FALSE(wildcard.IsLinkLocal());
+  TEST_ASSERT_FALSE(wildcard.IsLoopback());
+  TEST_ASSERT_FALSE(wildcard.IsMulticast());
+
   wildcard = etcpal::IpAddr::Wildcard(etcpal::IpAddrType::V4);
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  TEST_ASSERT_FALSE(wildcard.IsLinkLocal());
+  TEST_ASSERT_FALSE(wildcard.IsLoopback());
+  TEST_ASSERT_FALSE(wildcard.IsMulticast());
+
   wildcard = etcpal::IpAddr::Wildcard(etcpal::IpAddrType::V6);
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  TEST_ASSERT_FALSE(wildcard.IsLinkLocal());
+  TEST_ASSERT_FALSE(wildcard.IsLoopback());
+  TEST_ASSERT_FALSE(wildcard.IsMulticast());
 }
 
 // More rigorous testing is done in the C unit tests, we just do a few tests here
@@ -482,26 +506,41 @@ TEST(etcpal_cpp_inet, sockaddr_is_link_local_works)
 {
   const auto sockaddr = etcpal::SockAddr(etcpal::IpAddr::FromString("169.254.20.40"), 8888);
   TEST_ASSERT_TRUE(sockaddr.IsLinkLocal());
+  TEST_ASSERT_FALSE(sockaddr.IsLoopback());
+  TEST_ASSERT_FALSE(sockaddr.IsMulticast());
+  TEST_ASSERT_FALSE(sockaddr.IsWildcard());
 }
 
 TEST(etcpal_cpp_inet, sockaddr_is_loopback_works)
 {
   const auto sockaddr = etcpal::SockAddr(etcpal::IpAddr::FromString("::1"), 4000);
   TEST_ASSERT_TRUE(sockaddr.IsLoopback());
+  TEST_ASSERT_FALSE(sockaddr.IsLinkLocal());
+  TEST_ASSERT_FALSE(sockaddr.IsMulticast());
+  TEST_ASSERT_FALSE(sockaddr.IsWildcard());
 }
 
 TEST(etcpal_cpp_inet, sockaddr_is_multicast_works)
 {
   const auto sockaddr = etcpal::SockAddr(etcpal::IpAddr::FromString("224.127.0.1"), 1234);
   TEST_ASSERT_TRUE(sockaddr.IsMulticast());
+  TEST_ASSERT_FALSE(sockaddr.IsLinkLocal());
+  TEST_ASSERT_FALSE(sockaddr.IsLoopback());
+  TEST_ASSERT_FALSE(sockaddr.IsWildcard());
 }
 
 TEST(etcpal_cpp_inet, sockaddr_is_wildcard_works)
 {
   auto wildcard = etcpal::SockAddr(etcpal::IpAddr::WildcardV4(), 2000);
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  TEST_ASSERT_FALSE(wildcard.IsLinkLocal());
+  TEST_ASSERT_FALSE(wildcard.IsLoopback());
+  TEST_ASSERT_FALSE(wildcard.IsMulticast());
   wildcard = etcpal::SockAddr(etcpal::IpAddr::WildcardV6(), 3000);
   TEST_ASSERT_TRUE(wildcard.IsWildcard());
+  TEST_ASSERT_FALSE(wildcard.IsLinkLocal());
+  TEST_ASSERT_FALSE(wildcard.IsLoopback());
+  TEST_ASSERT_FALSE(wildcard.IsMulticast());
 }
 
 TEST(etcpal_cpp_inet, sockaddr_to_ip_works)
