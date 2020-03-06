@@ -67,10 +67,7 @@ TEST(etcpal_inet, ipaddr_init_macros_work)
   TEST_ASSERT_TRUE(ETCPAL_IP_IS_V4(&v4));
   TEST_ASSERT_EQUAL_UINT32(ETCPAL_IP_V4_ADDRESS(&v4), 0x12345678);
 
-#define V6_INITIALIZER                                   \
-                                                        \
-    15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 \
-  
+#define V6_INITIALIZER 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 
   const uint8_t v6_val[] = {V6_INITIALIZER};
   const EtcPalIpAddr v6 = ETCPAL_IPV6_INIT(V6_INITIALIZER);
