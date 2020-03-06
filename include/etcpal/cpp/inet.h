@@ -98,7 +98,7 @@ public:
   static IpAddr Netmask(IpAddrType type, unsigned int mask_length) noexcept;
 
 private:
-  EtcPalIpAddr addr_{};
+  EtcPalIpAddr addr_{ETCPAL_IP_INVALID_INIT_VALUES};
 };
 
 /// \brief Constructs an invalid IP address by default.
@@ -406,7 +406,7 @@ public:
   void SetPort(uint16_t port) noexcept;
 
 private:
-  EtcPalSockAddr addr_{};
+  EtcPalSockAddr addr_{0, ETCPAL_IP_INVALID_INIT};
 };
 
 /// \brief Constructs an invalid SockAddr by default.
