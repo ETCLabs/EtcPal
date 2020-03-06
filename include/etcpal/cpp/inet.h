@@ -607,7 +607,7 @@ inline bool SockAddr::IsMulticast() const noexcept
   return etcpal_ip_is_multicast(&addr_.ip);
 }
 
-/// \brief Whether a SockAddr contains a multicast address.
+/// \brief Whether a SockAddr contains a wildcard address.
 ///
 /// See etcpal_ip_is_wildcard() for more information.
 inline bool SockAddr::IsWildcard() const noexcept

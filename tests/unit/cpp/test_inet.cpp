@@ -506,10 +506,12 @@ TEST(etcpal_cpp_inet, sockaddr_is_wildcard_works)
 
 TEST(etcpal_cpp_inet, sockaddr_to_ip_works)
 {
-  const auto sockaddr = etcpal::SockAddr(0x0a0b0c0d, 8888);
+  constexpr uint32_t ipv4_addr_val = 0x0a0b0c0d;
+
+  const auto sockaddr = etcpal::SockAddr(ipv4_addr_val, 8888);
   const auto ip = sockaddr.ip();
   TEST_ASSERT_TRUE(ip.IsV4());
-  TEST_ASSERT_EQUAL_UINT32(ip.v4_data(), 0x0a0b0c0d);
+  TEST_ASSERT_EQUAL_UINT32(ip.v4_data(), ipv4_addr_val);
 }
 
 TEST(etcpal_cpp_inet, mac_default_constructor_works)
