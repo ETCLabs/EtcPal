@@ -25,10 +25,10 @@
 #include "etcpal/common.h"
 #include "unity_fixture.h"
 
-#if defined(__clang__) || defined(__GNUC__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-private-field"
-#pragma GCC diagnostic ignored "-Wpessimizing-move"
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-private-field"
+#pragma clang diagnostic ignored "-Wpessimizing-move"
 #endif
 
 extern "C" {
@@ -438,6 +438,6 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
 }
 }
 
-#if defined(__clang__) || defined(__GNUC__)
-#pragma GCC diagnostic pop
+#if defined(__clang__)
+#pragma clang diagnostic pop
 #endif
