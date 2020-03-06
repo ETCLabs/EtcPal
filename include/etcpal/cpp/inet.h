@@ -211,7 +211,7 @@ inline std::array<uint8_t, ETCPAL_IPV6_BYTES> IpAddr::ToV6Array() const
 /// \return The scope ID.
 constexpr unsigned long IpAddr::scope_id() const noexcept
 {
-  return addr_.addr.v6.scope_id;
+  return ETCPAL_IP_V6_SCOPE_ID(&addr_);
 }
 
 /// \brief Whether an IpAddr contains a valid IPv4 or IPv6 address.
@@ -256,7 +256,7 @@ inline bool IpAddr::IsMulticast() const noexcept
   return etcpal_ip_is_multicast(&addr_);
 }
 
-/// \brief Whether an IpAddr contains a multicast address.
+/// \brief Whether an IpAddr contains a wildcard address.
 ///
 /// See etcpal_ip_is_wildcard() for more information.
 inline bool IpAddr::IsWildcard() const noexcept
@@ -399,6 +399,20 @@ public:
   constexpr IpAddr ip() const noexcept;
   constexpr uint16_t port() const noexcept;
 
+  constexpr uint32_t v4_data() const noexcept;
+  constexpr const uint8_t* v6_data() const noexcept;
+  std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
+  constexpr unsigned long scope_id() const noexcept;
+
+  constexpr bool IsValid() const noexcept;
+  constexpr IpAddrType type() const noexcept;
+  constexpr bool IsV4() const noexcept;
+  constexpr bool IsV6() const noexcept;
+  bool IsLinkLocal() const noexcept;
+  bool IsLoopback() const noexcept;
+  bool IsMulticast() const noexcept;
+  bool IsWildcard() const noexcept;
+
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
   void SetAddress(const uint8_t* v6_data, unsigned long scope_id) noexcept;
@@ -504,6 +518,101 @@ constexpr IpAddr SockAddr::ip() const noexcept
 constexpr uint16_t SockAddr::port() const noexcept
 {
   return addr_.port;
+}
+
+/// \brief Get the raw 32-bit representation of the SockAddr's IPv4 address.
+///
+/// This function will return undefined data if the SockAddr's type is V6 or Invalid.
+///
+/// \return The address data in host byte order.
+constexpr uint32_t SockAddr::v4_data() const noexcept
+{
+  return ETCPAL_IP_V4_ADDRESS(&addr_.ip);
+}
+
+/// \brief Get the raw 16-byte array representation of the SockAddr's IPv6 address.
+///
+/// The returned pointer has the same lifetime as this SockAddr instance. This function will return
+/// undefined data if the SockAddr's type is V4 or Invalid.
+constexpr const uint8_t* SockAddr::v6_data() const noexcept
+{
+  return ETCPAL_IP_V6_ADDRESS(&addr_.ip);
+}
+
+/// \brief Get a 16-byte std::array representation of the SockAddr's IPv6 address.
+///
+/// Copies the data into a new array. This function will return undefined data if the SockAddr's
+/// type is V4 or Invalid.
+inline std::array<uint8_t, ETCPAL_IPV6_BYTES> SockAddr::ToV6Array() const
+{
+  // RVO should hopefully make this only a single copy
+  std::array<uint8_t, ETCPAL_IPV6_BYTES> arr;
+  std::memcpy(arr.data(), ETCPAL_IP_V6_ADDRESS(&addr_.ip), ETCPAL_IPV6_BYTES);
+  return arr;
+}
+
+/// \brief Get the scope ID of the SockAddr's IPv6 address.
+///
+/// Scope IDs (sometimes referred to as Zone IDs or Zone Indices) are a lightly-documented portion
+/// of IPv6 addressing, but one concrete use is to indicate the network interface index of a
+/// link-local IPv6 address. See also \ref interface_indexes.
+///
+/// This function will return undefined data if the SockAddr's type is V4 or Invalid.
+///
+/// \return The scope ID.
+constexpr unsigned long SockAddr::scope_id() const noexcept
+{
+  return ETCPAL_IP_V6_SCOPE_ID(&addr_.ip);
+}
+
+/// \brief Whether a SockAddr contains a valid IPv4 or IPv6 address.
+constexpr bool SockAddr::IsValid() const noexcept
+{
+  return !ETCPAL_IP_IS_INVALID(&addr_.ip);
+}
+
+/// \brief Get the type of the SockAddr's IP address.
+constexpr IpAddrType SockAddr::type() const noexcept
+{
+  return static_cast<IpAddrType>(addr_.ip.type);
+}
+
+/// \brief Whether a SockAddr contains a valid IPv4 address.
+constexpr bool SockAddr::IsV4() const noexcept
+{
+  return ETCPAL_IP_IS_V4(&addr_.ip);
+}
+
+/// \brief Whether a SockAddr contains a valid IPv6 address.
+constexpr bool SockAddr::IsV6() const noexcept
+{
+  return ETCPAL_IP_IS_V6(&addr_.ip);
+}
+
+/// \brief Whether a SockAddr contains a link-local address.
+inline bool SockAddr::IsLinkLocal() const noexcept
+{
+  return etcpal_ip_is_link_local(&addr_.ip);
+}
+
+/// \brief Whether a SockAddr contains a loopback address.
+inline bool SockAddr::IsLoopback() const noexcept
+{
+  return etcpal_ip_is_loopback(&addr_.ip);
+}
+
+/// \brief Whether a SockAddr contains a multicast address.
+inline bool SockAddr::IsMulticast() const noexcept
+{
+  return etcpal_ip_is_multicast(&addr_.ip);
+}
+
+/// \brief Whether a SockAddr contains a multicast address.
+///
+/// See etcpal_ip_is_wildcard() for more information.
+inline bool SockAddr::IsWildcard() const noexcept
+{
+  return etcpal_ip_is_wildcard(&addr_.ip);
 }
 
 /// \brief Set the IPv4 address data.
