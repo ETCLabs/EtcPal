@@ -58,8 +58,26 @@ TEST(etcpal_inet, invalid_calls_fail)
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(&mac, mac_str_buf, ETCPAL_MAC_STRING_BYTES - 1));
 }
 
+TEST(etcpal_inet, ipaddr_init_macros_work)
+{
+  const EtcPalIpAddr invalid = ETCPAL_IP_INVALID_INIT;
+  TEST_ASSERT_TRUE(ETCPAL_IP_IS_INVALID(&invalid));
+
+  const EtcPalIpAddr v4 = ETCPAL_IPV4_INIT(0x12345678);
+  TEST_ASSERT_TRUE(ETCPAL_IP_IS_V4(&v4));
+  TEST_ASSERT_EQUAL_UINT32(ETCPAL_IP_V4_ADDRESS(&v4), 0x12345678);
+
+#define V6_INITIALIZER 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+
+  const uint8_t v6_val[] = {V6_INITIALIZER};
+  const EtcPalIpAddr v6 = ETCPAL_IPV6_INIT(V6_INITIALIZER);
+
+  TEST_ASSERT_TRUE(ETCPAL_IP_IS_V6(&v6));
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(ETCPAL_IP_V6_ADDRESS(&v6), v6_val, 16);
+}
+
 // Test the EtcPalIpAddr struct and macros
-TEST(etcpal_inet, ipaddr_macros_work)
+TEST(etcpal_inet, ipaddr_set_macros_work)
 {
   EtcPalIpAddr test_addr;
 
@@ -449,7 +467,8 @@ TEST(etcpal_inet, string_to_mac_conversion_works)
 TEST_GROUP_RUNNER(etcpal_inet)
 {
   RUN_TEST_CASE(etcpal_inet, invalid_calls_fail);
-  RUN_TEST_CASE(etcpal_inet, ipaddr_macros_work);
+  RUN_TEST_CASE(etcpal_inet, ipaddr_init_macros_work);
+  RUN_TEST_CASE(etcpal_inet, ipaddr_set_macros_work);
   RUN_TEST_CASE(etcpal_inet, ip_is_loopback_works);
   RUN_TEST_CASE(etcpal_inet, ip_is_multicast_works);
   RUN_TEST_CASE(etcpal_inet, ip_is_wildcard_works);

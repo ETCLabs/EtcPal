@@ -2,8 +2,8 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2common_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
       <name>ETCPAL_CONSTEXPR_14</name>
@@ -21,8 +21,8 @@
   </compound>
   <compound kind="file">
     <name>error.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2error_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Error</class>
     <class kind="class">etcpal::BadExpectedAccess</class>
@@ -30,8 +30,8 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2inet_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
     <class kind="class">etcpal::SockAddr</class>
@@ -49,8 +49,8 @@
   </compound>
   <compound kind="file">
     <name>lock.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2lock_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2lock_8h</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
     <class kind="class">etcpal::RwLock</class>
@@ -61,8 +61,8 @@
   </compound>
   <compound kind="file">
     <name>log.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2log_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2log_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
     <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
@@ -82,24 +82,24 @@
   </compound>
   <compound kind="file">
     <name>thread.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2thread_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
     <class kind="class">etcpal::Thread</class>
   </compound>
   <compound kind="file">
     <name>timer.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2timer_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2timer_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::TimePoint</class>
     <class kind="class">etcpal::Timer</class>
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2uuid_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2uuid_8h</filename>
     <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
     <class kind="class">etcpal::Uuid</class>
     <member kind="enumeration">
@@ -118,8 +118,8 @@
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>/Users/etcnetworkdev/git/ETCLabs/EtcPal/include/etcpal/</path>
-    <filename>version_8h.html</filename>
+    <path>E:/git/ETCLabs/RDMnet/external/EtcPal/include/etcpal/</path>
+    <filename>version_8h</filename>
   </compound>
   <compound kind="struct">
     <name>AcnPdu</name>
@@ -3664,6 +3664,48 @@
       <anchorfile>group__etcpal__inet.html</anchorfile>
       <anchor>gae648df0d068e3335073224fb0fb45512</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_IP_INVALID_INIT_VALUES</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gaeffa39a3f4885c198b5ed7f49463d0b0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_IP_INVALID_INIT</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gad8ef4406c72bd87baad2ce085fb29daf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_IPV4_INIT_VALUES</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga19607012ab4fcba516b8f59d8d1df840</anchor>
+      <arglist>(v4_val)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_IPV4_INIT</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga5a003e68fd0875858bf7dcdfad05db3f</anchor>
+      <arglist>(addr_val)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_IPV6_INIT_VALUES</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>gab26d4b7b0dd23818f02a54be33fa2bd2</anchor>
+      <arglist>(...)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_IPV6_INIT</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga66c5a1296b2777b56a9caa013a6a67aa</anchor>
+      <arglist>(...)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>

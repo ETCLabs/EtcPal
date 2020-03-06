@@ -98,6 +98,106 @@ typedef struct EtcPalIpAddr
  */
 
 /*!
+ * \brief A set of initializer values for an invalid EtcPalIpAddr.
+ *
+ * Usage:
+ * \code
+ * EtcPalIpAddr invalid_ip = { ETCPAL_IP_INVALID_INIT_VALUES };
+ * \endcode
+ *
+ * To omit the enclosing brackets, use #ETCPAL_IP_INVALID_INIT.
+ */
+#define ETCPAL_IP_INVALID_INIT_VALUES \
+  kEtcPalIpTypeInvalid, { 0 }
+
+/*!
+ * \brief An initializer for an invalid EtcPalIpAddr.
+ *
+ * Usage:
+ * \code
+ * EtcPalIpAddr invalid_ip = ETCPAL_IP_INVALID_INIT;
+ * \endcode
+ */
+#define ETCPAL_IP_INVALID_INIT    \
+  {                               \
+    ETCPAL_IP_INVALID_INIT_VALUES \
+  }
+
+/*!
+ * \brief A set of initializer values for an EtcPalIpAddr representing an IPv4 address.
+ *
+ * Usage:
+ * \code
+ * EtcPalIpAddr v4 = { ETCPAL_IPV4_INIT_VALUES(0xc0a80101) }; // 192.168.1.1
+ * \endcode
+ *
+ * Note: Using this macro requires support for C99 designated initializers in your compiler.
+ *
+ * To omit the enclosing brackets, use #ETCPAL_IPV4_INIT().
+ */
+#define ETCPAL_IPV4_INIT_VALUES(v4_val) \
+  kEtcPalIpTypeV4, { .v4 = v4_val }
+
+/*!
+ * \brief An initializer for an EtcPalIpAddr representing an IPv4 address.
+ *
+ * Usage:
+ * \code
+ * EtcPalIpAddr v4 = ETCPAL_IPV4_INIT(0xc0a80101); // 192.168.1.1
+ * \endcode
+ *
+ * Note: Using this macro requires support for C99 designated initializers in your compiler.
+ */
+#define ETCPAL_IPV4_INIT(addr_val)    \
+  {                                   \
+    ETCPAL_IPV4_INIT_VALUES(addr_val) \
+  }
+
+/*!
+ * \brief A set of initializer values for an EtcPalIpAddr representing an IPv6 address.
+ *
+ * Usage:
+ * \code
+ * // 2001:db8::1234:5678
+ * EtcPalIpAddr v6 = {
+ *   ETCPAL_IPV6_INIT_VALUES(0x20, 0x01, 0x0d, 0xb8, 0x00, 0x00, 0x00, 0x00,
+ *                           0x00, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78)
+ * };
+ * \endcode
+ *
+ * Any number of initializer values can be used (the remaining IPv6 bytes will be initialized to 0).
+ * To omit the enclosing brackets, use #ETCPAL_IPV6_INIT().
+ *
+ * Note: Using this macro requires support for variadic macros and C99 designated initializers in
+ * your compiler.
+ */
+#define ETCPAL_IPV6_INIT_VALUES(...)                  \
+  kEtcPalIpTypeV6,                                    \
+  {                                                   \
+    .v6 = {.addr_buf = {__VA_ARGS__}, .scope_id = 0 } \
+  }
+
+/*!
+ * \brief An initializer for an EtcPalIpAddr representing an IPv6 address.
+ *
+ * Usage:
+ * \code
+ * // 2001:db8::1234:5678
+ * EtcPalIpAddr v6 = ETCPAL_IPV6_INIT(0x20, 0x01, 0x0d, 0xb8, 0x00, 0x00, 0x00, 0x00,
+ *                                    0x00, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78);
+ * \endcode
+ *
+ * Any number of initializer values can be used (the remaining IPv6 bytes will be initialized to 0).
+ *
+ * Note: Using this macro requires support for variadic macros and C99 designated initializers in
+ * your compiler.
+ */
+#define ETCPAL_IPV6_INIT(...)            \
+  {                                      \
+    ETCPAL_IPV6_INIT_VALUES(__VA_ARGS__) \
+  }
+
+/*!
  * \brief Determine whether a EtcPalIpAddr contains an IPv4 address.
  * \param etcpal_ip_ptr Pointer to a EtcPalIpAddr.
  * \return true (contains an IPv4 address) or false (does not contain an IPv4 address).
