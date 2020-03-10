@@ -39,6 +39,12 @@ TEST_TEAR_DOWN(etcpal_time_point)
   etcpal_deinit(ETCPAL_FEATURE_TIMERS);
 }
 
+TEST(etcpal_time_point, default_constructor_works)
+{
+  etcpal::TimePoint tp;
+  TEST_ASSERT_EQUAL_UINT32(tp.value(), 0u);
+}
+
 TEST(etcpal_time_point, equality_operators_work)
 {
   etcpal::TimePoint tp1(20);
@@ -184,6 +190,7 @@ TEST(etcpal_cpp_timer, duration_interval_works)
 
 TEST_GROUP_RUNNER(etcpal_cpp_timer)
 {
+  RUN_TEST_CASE(etcpal_time_point, default_constructor_works);
   RUN_TEST_CASE(etcpal_time_point, equality_operators_work);
   RUN_TEST_CASE(etcpal_time_point, comparison_operators_work);
   RUN_TEST_CASE(etcpal_time_point, value_getter_works);

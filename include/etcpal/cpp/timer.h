@@ -101,8 +101,12 @@ namespace etcpal
 class TimePoint
 {
 public:
-  /// No default TimePoint value is meaningful; therefore this class cannot be default-constructed.
-  TimePoint() = delete;
+  /// \brief Construct a TimePoint with a value of 0 by default.
+  ///
+  /// Be careful when default-constructing TimePoints; since TimePoints store the number of
+  /// milliseconds elapsed since an arbitrary point in the past, a default-constructed TimePoint
+  /// will compare equal to etcpal::TimePoint::Now() every 49.7 days.
+  TimePoint() = default;
   constexpr TimePoint(uint32_t ms);
 
   constexpr uint32_t value() const noexcept;
