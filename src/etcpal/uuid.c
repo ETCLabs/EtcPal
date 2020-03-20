@@ -54,7 +54,7 @@ const EtcPalUuid kEtcPalNullUuid = {{0}};
  *
  * \param[in] uuid UUID to convert to a string.
  * \param[out] buf Character buffer to which to write the resulting string. To avoid undefined
- *                 behavior, this buffer should be at least of size #ETCPAL_UUID_STRING_BYTES.
+ *                 behavior, this buffer must be at least of size #ETCPAL_UUID_STRING_BYTES.
  * \return true (conversion successful) or false (invalid argument).
  */
 bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf)

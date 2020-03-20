@@ -26,8 +26,8 @@
 #include "fff.h"
 
 // We don't mock:
-// etcpal_inet_pton()
-// etcpal_inet_ntop()
+// etcpal_ip_to_string()
+// etcpal_string_to_ip()
 // sockaddr_os_to_etcpal()
 // sockaddr_etcpal_to_os()
 

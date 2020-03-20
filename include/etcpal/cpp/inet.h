@@ -158,11 +158,11 @@ ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalIpAddr& IpAddr::get() noexcept
 
 /// \brief Convert the IP address to a string representation.
 ///
-/// See etcpal_inet_ntop() for more information.
+/// See etcpal_ip_to_string() for more information.
 inline std::string IpAddr::ToString() const
 {
-  char str_buf[ETCPAL_INET6_ADDRSTRLEN];
-  auto result = etcpal_inet_ntop(&addr_, str_buf, ETCPAL_INET6_ADDRSTRLEN);
+  char str_buf[ETCPAL_IP_STRING_BYTES];
+  auto result = etcpal_ip_to_string(&addr_, str_buf);
   if (result == kEtcPalErrOk)
     return str_buf;
   else
@@ -305,20 +305,20 @@ inline void IpAddr::SetAddress(const uint8_t* v6_data, unsigned long scope_id) n
 
 /// \brief Construct an IpAddr from a string representation.
 ///
-/// See etcpal_inet_pton() for more information.
+/// See etcpal_string_to_ip() for more information.
 inline IpAddr IpAddr::FromString(const char* ip_str) noexcept
 {
   IpAddr result;
-  if (etcpal_inet_pton(kEtcPalIpTypeV4, ip_str, &result.addr_) != kEtcPalErrOk)
+  if (etcpal_string_to_ip(kEtcPalIpTypeV4, ip_str, &result.addr_) != kEtcPalErrOk)
   {
-    etcpal_inet_pton(kEtcPalIpTypeV6, ip_str, &result.addr_);
+    etcpal_string_to_ip(kEtcPalIpTypeV6, ip_str, &result.addr_);
   }
   return result;
 }
 
 /// \brief Construct an IpAddr from a string representation.
 ///
-/// See etcpal_inet_pton() for more information.
+/// See etcpal_string_to_ip() for more information.
 inline IpAddr IpAddr::FromString(const std::string& ip_str) noexcept
 {
   return FromString(ip_str.c_str());
@@ -727,7 +727,7 @@ ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalMacAddr& MacAddr::get() noexcept
 inline std::string MacAddr::ToString() const
 {
   char str_buf[ETCPAL_MAC_STRING_BYTES];
-  etcpal_mac_to_string(&addr_, str_buf, ETCPAL_MAC_STRING_BYTES);
+  etcpal_mac_to_string(&addr_, str_buf);
   return str_buf;
 }
 

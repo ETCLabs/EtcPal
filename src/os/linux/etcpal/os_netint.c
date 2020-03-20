@@ -567,22 +567,22 @@ void debug_print_routing_table(RoutingTable* table)
   printf("%-40s %-40s %-40s %-10s %s\n", "Address", "Mask", "Gateway", "Metric", "Index");
   for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
   {
-    char addr_str[ETCPAL_INET6_ADDRSTRLEN];
-    char mask_str[ETCPAL_INET6_ADDRSTRLEN];
-    char gw_str[ETCPAL_INET6_ADDRSTRLEN];
+    char addr_str[ETCPAL_IP_STRING_BYTES];
+    char mask_str[ETCPAL_IP_STRING_BYTES];
+    char gw_str[ETCPAL_IP_STRING_BYTES];
 
     if (!ETCPAL_IP_IS_INVALID(&entry->addr))
-      etcpal_inet_ntop(&entry->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
+      etcpal_ip_to_string(&entry->addr, addr_str);
     else
       strcpy(addr_str, "0.0.0.0");
 
     if (!ETCPAL_IP_IS_INVALID(&entry->mask))
-      etcpal_inet_ntop(&entry->mask, mask_str, ETCPAL_INET6_ADDRSTRLEN);
+      etcpal_ip_to_string(&entry->mask, mask_str);
     else
       strcpy(mask_str, "0.0.0.0");
 
     if (!ETCPAL_IP_IS_INVALID(&entry->gateway))
-      etcpal_inet_ntop(&entry->gateway, gw_str, ETCPAL_INET6_ADDRSTRLEN);
+      etcpal_ip_to_string(&entry->gateway, gw_str);
     else
       strcpy(gw_str, "0.0.0.0");
 

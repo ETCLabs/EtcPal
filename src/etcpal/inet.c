@@ -456,16 +456,14 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
  */
 
 /*!
- * \fn etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size)
+ * \fn etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
  * \brief Convert IPv4 and IPv6 addresses from binary to text form.
  *
- * Refer to your favorite inet_ntop() man page for more information.
- *
- * Differences from POSIX: af parameter is omitted because that information is contained in the
- * EtcPalIpAddr.
+ * This function uses each platform's inet_ntop() function under the hood.
  *
  * \param[in] src Address to convert to string form.
- * \param[out] dest Filled in on success with the string-represented address.
+ * \param[out] dest Filled in on success with the string-represented address. To avoid undefined
+ *                  behavior, this buffer must be at least of size #ETCPAL_IP_STRING_BYTES.
  * \param[in] size Size in bytes of dest buf.
  * \return #kEtcPalErrOk: Success.
  * \return #kEtcPalErrInvalid: Invalid parameter.
@@ -474,13 +472,10 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_inet.c */
 /*!
- * \fn etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
+ * \fn etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
  * \brief Convert IPv4 and IPv6 addresses from text to binary form.
  *
- * Refer to your favorite inet_pton() man page for more information.
- *
- * Differences from POSIX: etcpal_iptype_t used instead of AF_* value, since this function is only
- * used for IP addresses.
+ * This function uses each platform's inet_pton() function under the hood.
  *
  * \param[in] type Type of string-represented IP address pointed to by src.
  * \param[in] src Character string containing a string-represented IP address.
@@ -499,13 +494,12 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
  * \param[in] src MAC address to convert to a string.
  * \param[out] dest Character buffer to which to write the resulting string. Must be at least of
  *                  size #ETCPAL_MAC_STRING_BYTES.
- * \param[in] size Size of destination buffer.
  * \return #kEtcPalErrOk: Conversion successful.
  * \return #kEtcPalErrInvalid: Invalid argument.
  */
-etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest, size_t size)
+etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest)
 {
-  if (!src || !dest || size < ETCPAL_MAC_STRING_BYTES)
+  if (!src || !dest)
     return kEtcPalErrInvalid;
 
   ETCPAL_SPRINTF(dest, "%02x:%02x:%02x:%02x:%02x:%02x", src->data[0], src->data[1], src->data[2], src->data[3],

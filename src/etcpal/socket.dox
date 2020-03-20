@@ -418,8 +418,8 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext *context, EtcPalPollEvent *eve
  * {
  *   do
  *   {
- *     char inet_str[ETCPAL_INET6_ADDRSTRLEN];
- *     if (kEtcPalErrOk == etcpal_inet_ntop(&info.ai_addr.ip, inet_str, ETCPAL_INET6_ADDRSTRLEN))
+ *     char inet_str[ETCPAL_IP_STRING_BYTES];
+ *     if (kEtcPalErrOk == etcpal_ip_to_string(&info.ai_addr.ip, inet_str))
  *     {
  *       printf("Address: %s\n", inet_str);
  *     }

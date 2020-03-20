@@ -48,11 +48,11 @@ void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interf
 
   for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
-    char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
+    char addr_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
+    char netmask_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
 
-    etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
-    etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
+    etcpal_ip_to_string(&netint->addr, addr_str);
+    etcpal_ip_to_string(&netint->mask, netmask_str);
 
     size_t id_len = strlen(netint->id);
     size_t addr_len = strlen(addr_str);
@@ -106,12 +106,12 @@ int main(void)
 
   for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
-    char netmask_str[ETCPAL_INET6_ADDRSTRLEN] = {'\0'};
+    char addr_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
+    char netmask_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
     char mac_str[ETCPAL_MAC_STRING_BYTES];
-    etcpal_inet_ntop(&netint->addr, addr_str, ETCPAL_INET6_ADDRSTRLEN);
-    etcpal_inet_ntop(&netint->mask, netmask_str, ETCPAL_INET6_ADDRSTRLEN);
-    etcpal_mac_to_string(&netint->mac, mac_str, ETCPAL_MAC_STRING_BYTES);
+    etcpal_ip_to_string(&netint->addr, addr_str);
+    etcpal_ip_to_string(&netint->mask, netmask_str);
+    etcpal_mac_to_string(&netint->mac, mac_str);
     printf(line_format, netint->id, addr_str, netmask_str, mac_str, netint->index);
   }
 

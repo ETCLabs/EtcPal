@@ -109,7 +109,7 @@ size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, struct sockaddr* os_sa)
   return ret;
 }
 
-etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size)
+etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
 {
   if (!src || !dest)
     return kEtcPalErrInvalid;
@@ -120,14 +120,14 @@ etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size
       struct in_addr addr;
       /* RTCS expects host byte order in their in_addrs. Thus no htonl is needed. */
       addr.s_addr = ETCPAL_IP_V4_ADDRESS(src);
-      if (NULL != inet_ntop(AF_INET, &addr, dest, size))
+      if (NULL != inet_ntop(AF_INET, &addr, dest, ETCPAL_IP_STRING_BYTES))
         return kEtcPalErrOk;
       return kEtcPalErrSys;
     }
     case kEtcPalIpTypeV6: {
       struct in6_addr addr;
       memcpy(addr.s6_addr, ETCPAL_IP_V6_ADDRESS(src), ETCPAL_IPV6_BYTES);
-      if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
+      if (NULL != inet_ntop(AF_INET6, &addr, dest, ETCPAL_IP_STRING_BYTES))
         return kEtcPalErrOk;
       return kEtcPalErrSys;
     }
@@ -136,7 +136,7 @@ etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size
   }
 }
 
-etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
+etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
 {
   if (!src || !dest)
     return kEtcPalErrInvalid;
