@@ -464,7 +464,6 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
  * \param[in] src Address to convert to string form.
  * \param[out] dest Filled in on success with the string-represented address. To avoid undefined
  *                  behavior, this buffer must be at least of size #ETCPAL_IP_STRING_BYTES.
- * \param[in] size Size in bytes of dest buf.
  * \return #kEtcPalErrOk: Success.
  * \return #kEtcPalErrInvalid: Invalid parameter.
  * \return #kEtcPalErrSys: System call failed.
