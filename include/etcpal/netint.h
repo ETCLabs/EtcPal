@@ -68,7 +68,7 @@
  *
  * \code
  * EtcPalIpAddr dest;
- * etcpal_inet_pton(kEtcPalIpTypeV4, "192.168.200.35", &dest);
+ * etcpal_string_to_ip(kEtcPalIpTypeV4, "192.168.200.35", &dest);
  *
  * unsigned int index;
  * etcpal_netint_get_interface_for_dest(&dest, &index); // Index now holds the interface that will be used

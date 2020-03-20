@@ -64,7 +64,7 @@ TEST(etcpal_netint_no_init, api_does_not_work_before_initialization)
   TEST_ASSERT_EQUAL(etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &index), kEtcPalErrNotInit);
 
   EtcPalIpAddr dest;
-  etcpal_inet_pton(kEtcPalIpTypeV4, "8.8.8.8", &dest);
+  etcpal_string_to_ip(kEtcPalIpTypeV4, "8.8.8.8", &dest);
   TEST_ASSERT_EQUAL(etcpal_netint_get_interface_for_dest(&dest, &index), kEtcPalErrNotInit);
 }
 
@@ -215,8 +215,8 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
     TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
     // Put addresses in print form to test meaningful information in case of test failure
-    char test_addr_str[ETCPAL_INET6_ADDRSTRLEN];
-    etcpal_inet_ntop(&test_addr, test_addr_str, ETCPAL_INET6_ADDRSTRLEN);
+    char test_addr_str[ETCPAL_IP_STRING_BYTES];
+    etcpal_ip_to_string(&test_addr, test_addr_str);
     char test_msg[150];
     snprintf(test_msg, 150, "Address tried: %s (interface %u), interface returned: %u", test_addr_str, netint->index,
              netint_index_res);

@@ -92,7 +92,7 @@ size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_
   return ret;
 }
 
-etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size)
+etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
 {
   if (!src || !dest)
     return kEtcPalErrInvalid;
@@ -102,14 +102,14 @@ etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size
     case kEtcPalIpTypeV4: {
       struct in_addr addr;
       addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(src));
-      if (NULL != inet_ntop(AF_INET, &addr, dest, size))
+      if (NULL != inet_ntop(AF_INET, &addr, dest, ETCPAL_IP_STRING_BYTES))
         return kEtcPalErrOk;
       return err_winsock_to_etcpal(WSAGetLastError());
     }
     case kEtcPalIpTypeV6: {
       struct in6_addr addr;
       memcpy(addr.s6_addr, ETCPAL_IP_V6_ADDRESS(src), ETCPAL_IPV6_BYTES);
-      if (NULL != inet_ntop(AF_INET6, &addr, dest, size))
+      if (NULL != inet_ntop(AF_INET6, &addr, dest, ETCPAL_IP_STRING_BYTES))
         return kEtcPalErrOk;
       return err_winsock_to_etcpal(WSAGetLastError());
     }
@@ -118,7 +118,7 @@ etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size
   }
 }
 
-etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
+etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
 {
   if (!src || !dest)
     return kEtcPalErrInvalid;

@@ -381,10 +381,8 @@ typedef struct EtcPalNetintInfo
   bool is_default;
 } EtcPalNetintInfo;
 
-/*! Maximum length of the string representation of an IPv4 address. */
-#define ETCPAL_INET_ADDRSTRLEN 16
-/*! Maximum length of the string representation of an IPv6 address. */
-#define ETCPAL_INET6_ADDRSTRLEN 46
+/*! Maximum length of the string representation of an IP address. */
+#define ETCPAL_IP_STRING_BYTES 46
 /*! Maximum length of the string representation of a MAC address. */
 #define ETCPAL_MAC_STRING_BYTES 18
 
@@ -407,9 +405,9 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip);
 bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa);
 size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_sa);
 
-etcpal_error_t etcpal_inet_ntop(const EtcPalIpAddr* src, char* dest, size_t size);
-etcpal_error_t etcpal_inet_pton(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest);
-etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest, size_t size);
+etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest);
+etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest);
+etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest);
 etcpal_error_t etcpal_string_to_mac(const char* src, EtcPalMacAddr* dest);
 
 #ifdef __cplusplus
