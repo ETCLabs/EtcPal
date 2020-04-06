@@ -112,14 +112,16 @@ set(ETCPAL_OS_TARGET freertos CACHE STRING "The OS target for EtcPal")
 set(ETCPAL_NET_TARGET lwip CACHE STRING "The network target for EtcPal")
 
 # The "freertos" target platform requires a target called FreeRTOS, which EtcPal uses to find the
-# FreeRTOS headers.
+# FreeRTOS headers. Replace "[freertos/include/paths/...]" with the actual paths (relative or
+# absolute) to your FreeRTOS headers.
 add_library(FreeRTOS INTERFACE)
-target_include_directories(FreeRTOS PUBLIC [freertos/include/paths...])
+target_include_directories(FreeRTOS INTERFACE [freertos/include/paths...])
 
 # The "lwip" target platform requires a target called lwIP, which EtcPal uses to find the lwIP
-# headers.
+# headers. Replace "[lwip/include/paths/...]" with the actual paths (relative or absolute) to your
+# lwIP headers.
 add_library(lwIP INTERFACE)
-target_include_directories(lwIP PUBLIC [lwip/include/paths...])
+target_include_directories(lwIP INTERFACE [lwip/include/paths...])
 
 add_subdirectory(EtcPal) # If using scenario 2 above, this line is omitted.
 add_subdirectory(OtherEtcLib) # If using scenario 1 above, this line is omitted.
