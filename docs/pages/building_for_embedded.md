@@ -135,9 +135,20 @@ Unix Makefiles CMake generator.
 
 ![MCUXpresso Pre-Build Step Example](mcuxpresso_pre_build.png)
 
-The pre-build step does the following:
+The pre-build step is:
+
+```
+mkdir -p external
+cd external
+cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=../../external/toolchain_file.cmake -DCMAKE_BUILD_TYPE=${ConfigName} -DCMAKE_INSTALL_PREFIX=. ../../external
+make
+make install
+```
+
+and does the following:
 * Creates a new directory called "external" in the current build directory
-* Configures EtcPal and its dependent libraries and generates build files in the new directory
+* Configures EtcPal and its dependent libraries using your toolchain file and generates build files
+  in the new directory
 * Builds EtcPal and its dependent libraries
 * Installs the built headers and artifacts in the new directory
 
