@@ -15,6 +15,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * * Mutexes: A mutual-exclusion lock that can only be held by a single thread at a time.
  * * Signals: A method of synchronizing two or more threads around an event.
  * * Read-Write Locks: A lock which can be held either for shared or exclusive access.
+ * * Counting Semaphores: A synchronization value used for tracking events that can occur multiple times.
  *
  * @{
  */
