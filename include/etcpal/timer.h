@@ -60,6 +60,13 @@
  * 10-millisecond interval that begins at time point 4,294,967,290 and ends at time point 5 will
  * work as expected.
  *
+ * Use the ETCPAL_TIME_ELAPSED_SINCE() macro to determine how much time has elapsed since a time
+ * point.
+ *
+ * \code
+ * uint32_t ms_elapsed = ETCPAL_TIME_ELAPSED_SINCE(time_point);
+ * \endcode
+ *
  * To time an interval, use an EtcPalTimer.
  *
  * \code

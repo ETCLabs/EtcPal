@@ -57,7 +57,7 @@ uint32_t etcpal_timer_elapsed(const EtcPalTimer* timer)
 {
   if (timer)
   {
-    return etcpal_getms() - timer->reset_time;
+    return ETCPAL_TIME_ELAPSED_SINCE(timer->reset_time);
   }
   return 0;
 }
