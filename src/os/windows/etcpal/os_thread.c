@@ -23,6 +23,8 @@
 #include <string.h>
 #include "os_error.h"
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 /* THIS IS WINDOWS BLACK MAGIC, and copied from the sample code at Microsoft
  * Lasciate ogne speranza, voi ch'intrate
  * Abandon all hope, ye who enter here.
@@ -102,3 +104,5 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   }
   return kEtcPalErrInvalid;
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

@@ -133,6 +133,8 @@ static void poll_socket_free(EtcPalRbNode* node);
 
 /*************************** Function definitions ****************************/
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 etcpal_error_t etcpal_socket_init(void)
 {
   // No initialization necessary on this platform
@@ -916,3 +918,5 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
   if (ai)
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

@@ -24,6 +24,8 @@
 
 #define ETCPAL_WINDOWS_TIMER_RESOLUTION 1  // ms
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 etcpal_error_t etcpal_timer_init(void)
 {
   if (TIMERR_NOERROR == timeBeginPeriod(ETCPAL_WINDOWS_TIMER_RESOLUTION))
@@ -41,3 +43,5 @@ uint32_t etcpal_getms(void)
 {
   return timeGetTime();
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

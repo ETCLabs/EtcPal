@@ -135,6 +135,8 @@ static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPol
 
 /*************************** Function definitions ****************************/
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 etcpal_error_t etcpal_socket_init(void)
 {
   /* No initialization is necessary on this os. */
@@ -911,3 +913,5 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
     lwip_freeaddrinfo((struct addrinfo*)ai->pd[0]);
 #endif  // LWIP_DNS
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

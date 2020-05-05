@@ -140,6 +140,9 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
     ${ETCPAL_ROOT}/src/etcpal_mock/timer.c
     ${ETCPAL_ROOT}/src/etcpal_mock/thread.c
+
+    ${ETCPAL_OS_ADDITIONAL_SOURCES}
+    ${ETCPAL_NET_ADDITIONAL_SOURCES}
   )
   target_include_directories(EtcPalMock PUBLIC
     ${ETCPAL_ROOT}/include

@@ -20,6 +20,8 @@
 #include "etcpal/thread.h"
 #include "os_error.h"
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 /*********************** Private function prototypes *************************/
 
 static void* thread_func_internal(void* arg);
@@ -74,3 +76,5 @@ void* thread_func_internal(void* arg)
   }
   return NULL;
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

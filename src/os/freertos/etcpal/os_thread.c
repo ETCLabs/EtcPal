@@ -19,6 +19,8 @@
 
 #include "etcpal/thread.h"
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 static void thread_func_internal(void* pvParameters)
 {
   etcpal_thread_t* thread_data = (etcpal_thread_t*)pvParameters;
@@ -69,3 +71,5 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   // Should never happen
   return kEtcPalErrSys;
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

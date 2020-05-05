@@ -23,6 +23,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 etcpal_error_t etcpal_timer_init(void)
 {
   if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
@@ -44,3 +46,5 @@ uint32_t etcpal_getms(void)
   }
   return 0;
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

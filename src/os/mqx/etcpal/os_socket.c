@@ -119,6 +119,8 @@ static int32_t join_leave_mcast_group_ipv4(etcpal_socket_t id, const struct EtcP
 
 /*************************** Function definitions ****************************/
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 static etcpal_error_t err_os_to_etcpal(uint32_t rtcserr)
 {
   switch (rtcserr)
@@ -890,3 +892,5 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
   if (ai)
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

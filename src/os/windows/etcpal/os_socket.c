@@ -1019,4 +1019,4 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
 }
 
-#endif /* !defined(ETCPAL_BUILDING_MOCK_LIB) */
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

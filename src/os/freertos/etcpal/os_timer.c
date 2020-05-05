@@ -23,6 +23,8 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 etcpal_error_t etcpal_timer_init(void)
 {
   // No initialization necessary on this platform
@@ -38,3 +40,5 @@ uint32_t etcpal_getms(void)
 {
   return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)

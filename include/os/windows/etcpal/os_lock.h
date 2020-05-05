@@ -37,8 +37,10 @@
 extern "C" {
 #endif
 
-/* Critical sections have been shown by empirical testing to provide a large efficiency boost over
- * Windows mutexes. */
+/*
+ * SRWLocks have been shown by empirical testing to provide a large efficiency boost over Windows
+ * mutexes and critical sections.
+ */
 typedef struct
 {
   bool valid;

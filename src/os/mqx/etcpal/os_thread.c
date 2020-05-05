@@ -19,6 +19,8 @@
 
 #include "etcpal/thread.h"
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 static void thread_func_internal(uint32_t initial_data)
 {
   etcpal_thread_t* thread_data = (etcpal_thread_t*)initial_data;
@@ -77,3 +79,5 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   }
   return kEtcPalErrSys;
 }
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
