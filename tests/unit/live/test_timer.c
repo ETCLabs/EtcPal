@@ -48,6 +48,13 @@ TEST(etcpal_timer, getms_gets_increasing_values)
   TEST_ASSERT_GREATER_OR_EQUAL_INT32(0, (int32_t)t2 - (int32_t)t1);
 }
 
+TEST(etcpal_timer, elapsed_since_works)
+{
+  uint32_t start_point = etcpal_getms();
+  etcpal_thread_sleep(110);
+  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(100u, ETCPAL_TIME_ELAPSED_SINCE(start_point));
+}
+
 TEST(etcpal_timer, timers_report_expired_properly)
 {
   EtcPalTimer t1, t2;
@@ -80,5 +87,6 @@ TEST(etcpal_timer, timers_report_expired_properly)
 TEST_GROUP_RUNNER(etcpal_timer)
 {
   RUN_TEST_CASE(etcpal_timer, getms_gets_increasing_values);
+  RUN_TEST_CASE(etcpal_timer, elapsed_since_works);
   RUN_TEST_CASE(etcpal_timer, timers_report_expired_properly);
 }

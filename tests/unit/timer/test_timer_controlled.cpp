@@ -39,7 +39,7 @@ TEST_TEAR_DOWN(timer_controlled)
 {
 }
 
-TEST(timer_controlled, uint32_wraparound_works_as_expected)
+TEST(timer_controlled, timer_wraparound_works_as_expected)
 {
   EtcPalTimer t1;
 
@@ -54,6 +54,13 @@ TEST(timer_controlled, uint32_wraparound_works_as_expected)
 
   etcpal_getms_fake.return_val = 0x11;
   TEST_ASSERT_TRUE(etcpal_timer_is_expired(&t1));
+}
+
+TEST(timer_controlled, elapsed_since_wraparound_works_as_expected)
+{
+  uint32_t start_time = 0xfffffff0u;
+  etcpal_getms_fake.return_val = 0x10;
+  TEST_ASSERT_EQUAL_UINT32(ETCPAL_TIME_ELAPSED_SINCE(start_time), 0x20u);
 }
 
 TEST(timer_controlled, remaining_works_as_expected)
@@ -90,7 +97,8 @@ TEST(timer_controlled, time_point_now_works)
 
 TEST_GROUP_RUNNER(timer_controlled)
 {
-  RUN_TEST_CASE(timer_controlled, uint32_wraparound_works_as_expected);
+  RUN_TEST_CASE(timer_controlled, timer_wraparound_works_as_expected);
+  RUN_TEST_CASE(timer_controlled, elapsed_since_wraparound_works_as_expected);
   RUN_TEST_CASE(timer_controlled, remaining_works_as_expected);
   RUN_TEST_CASE(timer_controlled, time_point_now_works);
 }

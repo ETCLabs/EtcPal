@@ -80,6 +80,10 @@
  * @{
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*!
  * \brief A millisecond-resolution timer.
  *
@@ -93,9 +97,12 @@ typedef struct EtcPalTimer
   uint32_t interval;   /*!< This timer's timeout interval. */
 } EtcPalTimer;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+/*!
+ * \brief Get the amount of time elapsed since the given time point in milliseconds.
+ * \param start_time (uint32_t) The start time to measure against.
+ * \return The number of milliseconds elapsed since the start time.
+ */
+#define ETCPAL_TIME_ELAPSED_SINCE(start_time) (uint32_t)(etcpal_getms() - (uint32_t)start_time)
 
 /* Function with platform-specific definition */
 
