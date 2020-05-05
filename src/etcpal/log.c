@@ -255,10 +255,9 @@ bool etcpal_validate_log_timestamp(const EtcPalLogTimestamp* timestamp)
 {
   if (timestamp)
   {
-    return (timestamp->year >= 0 && timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 &&
-            timestamp->day >= 1 && timestamp->day <= 31 && timestamp->hour >= 0 && timestamp->hour <= 23 &&
-            timestamp->minute >= 0 && timestamp->minute <= 59 && timestamp->second >= 0 && timestamp->second <= 60 &&
-            timestamp->msec >= 0 && timestamp->msec <= 999);
+    return (timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 && timestamp->day >= 1 &&
+            timestamp->day <= 31 && timestamp->hour <= 23 && timestamp->minute <= 59 && timestamp->second <= 60 &&
+            timestamp->msec <= 999);
   }
   return false;
 }
