@@ -232,7 +232,12 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
   // TODO
-  return -1;
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(level);
+  ETCPAL_UNUSED_ARG(option_name);
+  ETCPAL_UNUSED_ARG(option_value);
+  ETCPAL_UNUSED_ARG(option_len);
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
@@ -541,7 +546,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
     int res = lwip_shutdown(id, shutmap[how]);
     return (res == 0 ? kEtcPalErrOk : errno_lwip_to_etcpal(errno));
   }
-  return -1;
+  return kEtcPalErrInvalid;
 }
 
 etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t* id)
@@ -843,7 +848,7 @@ etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, con
   struct addrinfo pf_hints;
 
   if ((!hostname && !service) || !result)
-    return -1;
+    return kEtcPalErrInvalid;
 
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
@@ -914,4 +919,4 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
 #endif  // LWIP_DNS
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
