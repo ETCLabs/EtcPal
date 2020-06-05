@@ -99,7 +99,7 @@ TEST(etcpal_uuid, uuid_compare_works)
 
 TEST(etcpal_uuid, uuid_to_string_conversion_works)
 {
-  char str_buf[ETCPAL_UUID_STRING_BYTES];
+  char       str_buf[ETCPAL_UUID_STRING_BYTES];
   EtcPalUuid uuid = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
 
   etcpal_uuid_to_string(&uuid, str_buf);
@@ -112,8 +112,8 @@ TEST(etcpal_uuid, uuid_to_string_conversion_works)
 
 TEST(etcpal_uuid, string_to_uuid_conversion_works)
 {
-  EtcPalUuid uuid;
-  const char* good_str = "08090a0b-0C0D-0e0f-1011-121314151617";
+  EtcPalUuid       uuid;
+  const char*      good_str = "08090a0b-0C0D-0e0f-1011-121314151617";
   const EtcPalUuid good_str_uuid = {{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}};
   // clang-format off
   const char* bad_strings[] = {
@@ -148,7 +148,7 @@ TEST(etcpal_uuid, generates_correct_v1_uuids)
   for (int i = 0; i < NUM_V1_UUID_GENERATIONS; ++i)
   {
     EtcPalUuid uuid;
-    char error_msg[100];
+    char       error_msg[100];
     sprintf(error_msg, "This failure occurred on UUID attempt %d of %d", i + 1, NUM_V1_UUID_GENERATIONS);
 
     etcpal_error_t generate_result = etcpal_generate_v1_uuid(&uuid);
@@ -232,7 +232,7 @@ TEST(etcpal_uuid, generates_correct_v4_uuids)
   for (int i = 0; i < NUM_V4_UUID_GENERATIONS; ++i)
   {
     EtcPalUuid uuid;
-    char error_msg[100];
+    char       error_msg[100];
     sprintf(error_msg, "This failure occurred on UUID attempt %d of %d", i + 1, NUM_V4_UUID_GENERATIONS);
 
     etcpal_error_t generate_result = etcpal_generate_v4_uuid(&uuid);
@@ -310,7 +310,7 @@ TEST(etcpal_uuid, generates_os_preferred_uuids)
   for (int i = 0; i < NUM_OS_PREFERRED_UUID_GENERATIONS; ++i)
   {
     EtcPalUuid uuid;
-    char error_msg[100];
+    char       error_msg[100];
     sprintf(error_msg, "This failure occurred on UUID attempt %d of %d", i + 1, NUM_OS_PREFERRED_UUID_GENERATIONS);
 
     etcpal_error_t generate_result = etcpal_generate_os_preferred_uuid(&uuid);
@@ -335,7 +335,7 @@ TEST(etcpal_uuid, generates_correct_device_uuids)
 {
   const uint8_t mac1[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x12};
   const uint8_t mac2[6] = {0x00, 0xc0, 0x16, 0xff, 0xef, 0x13};
-  EtcPalUuid uuid1, uuid2, uuid3, uuid4, uuid1_dup;
+  EtcPalUuid    uuid1, uuid2, uuid3, uuid4, uuid1_dup;
 
   // Device UUIDs should be deterministic for the same combination of the three possible input
   // arguments. If any of the arguments is different, a different UUID should result.

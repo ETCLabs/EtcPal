@@ -41,8 +41,8 @@ typedef int etcpal_socket_t;
 
 typedef struct EtcPalPollContext
 {
-  bool valid;
-  int epoll_fd;
+  bool         valid;
+  int          epoll_fd;
   EtcPalRbTree sockets;
 } EtcPalPollContext;
 

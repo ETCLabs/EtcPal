@@ -55,9 +55,9 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
 
 typedef struct
 {
-  bool valid;
+  bool              valid;
   SemaphoreHandle_t sem;
-  unsigned int reader_count;
+  unsigned int      reader_count;
 } etcpal_rwlock_t;
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1

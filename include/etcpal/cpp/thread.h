@@ -159,10 +159,10 @@ public:
 
   /// @name Getters
   /// @{
-  unsigned int priority() const noexcept;
-  unsigned int stack_size() const noexcept;
-  const char* name() const noexcept;
-  void* platform_data() const noexcept;
+  unsigned int              priority() const noexcept;
+  unsigned int              stack_size() const noexcept;
+  const char*               name() const noexcept;
+  void*                     platform_data() const noexcept;
   const EtcPalThreadParams& params() const noexcept;
   /// @}
 
@@ -189,7 +189,7 @@ public:
 
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
-  EtcPalThreadParams params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
+  EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
 };
 
 /// @cond Internal thread function

@@ -153,7 +153,9 @@ void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree* self, EtcPalRbNode* node)
  * @param[in] dealloc_f A function to use for deallocating node structures.
  * @return Pointer to the tree that was initialized.
  */
-EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree* self, EtcPalRbTreeNodeCmpFunc node_cmp_cb, EtcPalRbNodeAllocFunc alloc_f,
+EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree*           self,
+                                 EtcPalRbTreeNodeCmpFunc node_cmp_cb,
+                                 EtcPalRbNodeAllocFunc   alloc_f,
                                  EtcPalRbNodeDeallocFunc dealloc_f)
 {
   if (self)
@@ -183,7 +185,7 @@ void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value)
   if (self)
   {
     EtcPalRbNode* it = self->root;
-    int cmp = 0;
+    int           cmp = 0;
 
     while (it)
     {
@@ -269,10 +271,10 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
     }
     else
     {
-      EtcPalRbNode head = {0}; /* False tree root */
-      EtcPalRbNode *g, *t;     /* Grandparent & parent */
-      EtcPalRbNode *p, *q;     /* Iterator & parent */
-      int dir = 0, last = 0;
+      EtcPalRbNode  head = {0}; /* False tree root */
+      EtcPalRbNode *g, *t;      /* Grandparent & parent */
+      EtcPalRbNode *p, *q;      /* Iterator & parent */
+      int           dir = 0, last = 0;
 
       /* Set up our helpers */
       t = &head;
@@ -377,10 +379,10 @@ etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, const void* value)
  */
 etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* value, EtcPalRbTreeNodeFunc node_cb)
 {
-  EtcPalRbNode head = {0}; /* False tree root */
-  EtcPalRbNode *q, *p, *g; /* Helpers */
-  EtcPalRbNode* f = NULL;  /* Found item */
-  int dir = 1;
+  EtcPalRbNode  head = {0}; /* False tree root */
+  EtcPalRbNode *q, *p, *g;  /* Helpers */
+  EtcPalRbNode* f = NULL;   /* Found item */
+  int           dir = 1;
 
   if (!self)
     return kEtcPalErrInvalid;

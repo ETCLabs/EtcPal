@@ -34,14 +34,14 @@ extern "C" {
 #endif
 
 int64_t etcpal_unpack_i64b(const uint8_t* buf);
-void etcpal_pack_i64b(uint8_t* buf, int64_t val);
+void    etcpal_pack_i64b(uint8_t* buf, int64_t val);
 int64_t etcpal_unpack_i64l(const uint8_t* buf);
-void etcpal_pack_i64l(uint8_t* buf, int64_t val);
+void    etcpal_pack_i64l(uint8_t* buf, int64_t val);
 
 uint64_t etcpal_unpack_u64b(const uint8_t* buf);
-void etcpal_pack_u64b(uint8_t* buf, uint64_t val);
+void     etcpal_pack_u64b(uint8_t* buf, uint64_t val);
 uint64_t etcpal_unpack_u64l(const uint8_t* buf);
-void etcpal_pack_u64l(uint8_t* buf, uint64_t val);
+void     etcpal_pack_u64l(uint8_t* buf, uint64_t val);
 
 #ifdef __cplusplus
 }

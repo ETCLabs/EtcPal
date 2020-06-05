@@ -35,10 +35,10 @@ const DWORD MS_VC_EXCEPTION = 0x406D1388;
 #pragma pack(push, 8)
 typedef struct tagTHREADNAME_INFO
 {
-  DWORD dwType;     /* Must be 0x1000. */
-  LPCSTR szName;    /* Pointer to name (in user addr space). */
-  DWORD dwThreadID; /* Thread ID (-1=caller thread). */
-  DWORD dwFlags;    /* Reserved for future use, must be zero. */
+  DWORD  dwType;     /* Must be 0x1000. */
+  LPCSTR szName;     /* Pointer to name (in user addr space). */
+  DWORD  dwThreadID; /* Thread ID (-1=caller thread). */
+  DWORD  dwFlags;    /* Reserved for future use, must be zero. */
 } THREADNAME_INFO;
 #pragma pack(pop)
 void SetThreadName(DWORD dwThreadID, const char* threadName)
@@ -73,7 +73,9 @@ unsigned __stdcall thread_func_internal(void* pthread)
   return 1;
 }
 
-etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
+                                    const EtcPalThreadParams* params,
+                                    void (*thread_fn)(void*),
                                     void* thread_arg)
 {
   if (!id || !params || !thread_fn)
@@ -105,4 +107,4 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrInvalid;
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

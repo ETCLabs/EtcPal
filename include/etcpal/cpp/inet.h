@@ -67,22 +67,22 @@ public:
   IpAddr(const uint8_t* v6_data, unsigned long scope_id) noexcept;
 
   constexpr const EtcPalIpAddr& get() const noexcept;
-  ETCPAL_CONSTEXPR_14 EtcPalIpAddr& get() noexcept;
-  std::string ToString() const;
-  constexpr uint32_t v4_data() const noexcept;
-  constexpr const uint8_t* v6_data() const noexcept;
+  ETCPAL_CONSTEXPR_14 EtcPalIpAddr&      get() noexcept;
+  std::string                            ToString() const;
+  constexpr uint32_t                     v4_data() const noexcept;
+  constexpr const uint8_t*               v6_data() const noexcept;
   std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
-  constexpr unsigned long scope_id() const noexcept;
+  constexpr unsigned long                scope_id() const noexcept;
 
-  constexpr bool IsValid() const noexcept;
+  constexpr bool       IsValid() const noexcept;
   constexpr IpAddrType type() const noexcept;
-  constexpr bool IsV4() const noexcept;
-  constexpr bool IsV6() const noexcept;
-  bool IsLinkLocal() const noexcept;
-  bool IsLoopback() const noexcept;
-  bool IsMulticast() const noexcept;
-  bool IsWildcard() const noexcept;
-  unsigned int MaskLength() const noexcept;
+  constexpr bool       IsV4() const noexcept;
+  constexpr bool       IsV6() const noexcept;
+  bool                 IsLinkLocal() const noexcept;
+  bool                 IsLoopback() const noexcept;
+  bool                 IsMulticast() const noexcept;
+  bool                 IsWildcard() const noexcept;
+  unsigned int         MaskLength() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -395,23 +395,23 @@ public:
 
   constexpr const EtcPalSockAddr& get() const noexcept;
   ETCPAL_CONSTEXPR_14 EtcPalSockAddr& get() noexcept;
-  std::string ToString() const;
-  constexpr IpAddr ip() const noexcept;
-  constexpr uint16_t port() const noexcept;
+  std::string                         ToString() const;
+  constexpr IpAddr                    ip() const noexcept;
+  constexpr uint16_t                  port() const noexcept;
 
-  constexpr uint32_t v4_data() const noexcept;
-  constexpr const uint8_t* v6_data() const noexcept;
+  constexpr uint32_t                     v4_data() const noexcept;
+  constexpr const uint8_t*               v6_data() const noexcept;
   std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
-  constexpr unsigned long scope_id() const noexcept;
+  constexpr unsigned long                scope_id() const noexcept;
 
-  constexpr bool IsValid() const noexcept;
+  constexpr bool       IsValid() const noexcept;
   constexpr IpAddrType type() const noexcept;
-  constexpr bool IsV4() const noexcept;
-  constexpr bool IsV6() const noexcept;
-  bool IsLinkLocal() const noexcept;
-  bool IsLoopback() const noexcept;
-  bool IsMulticast() const noexcept;
-  bool IsWildcard() const noexcept;
+  constexpr bool       IsV4() const noexcept;
+  constexpr bool       IsV6() const noexcept;
+  bool                 IsLinkLocal() const noexcept;
+  bool                 IsLoopback() const noexcept;
+  bool                 IsMulticast() const noexcept;
+  bool                 IsWildcard() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -676,9 +676,9 @@ public:
   explicit MacAddr(const uint8_t* mac_data) noexcept;
 
   constexpr const EtcPalMacAddr& get() const noexcept;
-  ETCPAL_CONSTEXPR_14 EtcPalMacAddr& get() noexcept;
-  std::string ToString() const;
-  constexpr const uint8_t* data() const noexcept;
+  ETCPAL_CONSTEXPR_14 EtcPalMacAddr&    get() noexcept;
+  std::string                           ToString() const;
+  constexpr const uint8_t*              data() const noexcept;
   std::array<uint8_t, ETCPAL_MAC_BYTES> ToArray() const noexcept;
 
   bool IsNull() const noexcept;

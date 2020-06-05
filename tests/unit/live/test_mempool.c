@@ -29,7 +29,7 @@
 
 typedef struct TestElem
 {
-  int val1;
+  int  val1;
   char val2;
 } TestElem;
 
@@ -37,7 +37,7 @@ ETCPAL_MEMPOOL_DEFINE(alloc_test, TestElem, ALLOC_TEST_MEMP_SIZE);
 ETCPAL_MEMPOOL_DEFINE_ARRAY(alloc_array_test, TestElem, ALLOC_TEST_MEMP_ARR_SIZE, ALLOC_TEST_MEMP_SIZE);
 
 TestElem* test_arr[ALLOC_TEST_MEMP_SIZE];
-size_t index_arr[ALLOC_TEST_MEMP_SIZE];
+size_t    index_arr[ALLOC_TEST_MEMP_SIZE];
 
 static void create_shuffled_index_array(size_t* array, size_t size)
 {

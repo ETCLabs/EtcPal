@@ -91,7 +91,9 @@ public:
 
   Uuid(const uint8_t* data) noexcept;
   Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version, const uint8_t clock_seq_and_node[8]);
-  Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version,
+  Uuid(uint32_t                      time_low,
+       uint16_t                      time_mid,
+       uint16_t                      time_hi_and_version,
        const std::array<uint8_t, 8>& clock_seq_and_node);
 
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
@@ -100,16 +102,16 @@ public:
   Uuid& operator=(const EtcPalUuid& c_uuid) noexcept;
 
   constexpr const EtcPalUuid& get() const noexcept;
-  const uint8_t* data() const noexcept;
-  std::string ToString() const;
-  bool IsNull() const noexcept;
-  UuidVersion version() const noexcept;
+  const uint8_t*              data() const noexcept;
+  std::string                 ToString() const;
+  bool                        IsNull() const noexcept;
+  UuidVersion                 version() const noexcept;
 
   /// @name UUID field accessors
   /// @{
-  uint32_t time_low() const noexcept;
-  uint16_t time_mid() const noexcept;
-  uint16_t time_hi_and_version() const noexcept;
+  uint32_t               time_low() const noexcept;
+  uint16_t               time_mid() const noexcept;
+  uint16_t               time_hi_and_version() const noexcept;
   std::array<uint8_t, 8> clock_seq_and_node() const noexcept;
   /// @}
 
@@ -148,7 +150,9 @@ inline Uuid::Uuid(const uint8_t* data) noexcept
 /// @param time_mid The time_mid portion of the UUID.
 /// @param time_hi_and_version The time_hi_and_version portion of the UUID.
 /// @param clock_seq_and_node The clock_seq and node portions of the UUID.
-inline Uuid::Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version,
+inline Uuid::Uuid(uint32_t      time_low,
+                  uint16_t      time_mid,
+                  uint16_t      time_hi_and_version,
                   const uint8_t clock_seq_and_node[8])
 {
   etcpal_pack_u32b(&uuid_.data[0], time_low);
@@ -162,7 +166,9 @@ inline Uuid::Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_ver
 /// @param time_mid The time_mid portion of the UUID.
 /// @param time_hi_and_version The time_hi_and_version portion of the UUID.
 /// @param clock_seq_and_node The clock_seq and node portions of the UUID.
-inline Uuid::Uuid(uint32_t time_low, uint16_t time_mid, uint16_t time_hi_and_version,
+inline Uuid::Uuid(uint32_t                      time_low,
+                  uint16_t                      time_mid,
+                  uint16_t                      time_hi_and_version,
                   const std::array<uint8_t, 8>& clock_seq_and_node)
     : Uuid(time_low, time_mid, time_hi_and_version, clock_seq_and_node.data())
 {
@@ -359,8 +365,9 @@ inline Uuid Uuid::Device(const std::string& device_str, const uint8_t* mac_addr,
 /// @brief Generate and return a Device UUID.
 ///
 /// See etcpal_generate_device_uuid() for more information.
-inline Uuid Uuid::Device(const std::string& device_str, const std::array<uint8_t, 6>& mac_addr,
-                         uint32_t uuid_num) noexcept
+inline Uuid Uuid::Device(const std::string&            device_str,
+                         const std::array<uint8_t, 6>& mac_addr,
+                         uint32_t                      uuid_num) noexcept
 {
   Uuid uuid;
   etcpal_generate_device_uuid(device_str.c_str(), mac_addr.data(), uuid_num, &uuid.uuid_);

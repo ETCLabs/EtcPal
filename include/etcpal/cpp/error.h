@@ -102,10 +102,10 @@ public:
   constexpr Error(etcpal_error_t code) noexcept;
   Error& operator=(etcpal_error_t code) noexcept;
 
-  constexpr bool IsOk() const noexcept;
+  constexpr bool           IsOk() const noexcept;
   constexpr etcpal_error_t code() const noexcept;
-  std::string ToString() const;
-  const char* ToCString() const noexcept;
+  std::string              ToString() const;
+  const char*              ToCString() const noexcept;
 
   constexpr explicit operator bool() const noexcept;
 
@@ -271,12 +271,12 @@ public:
 
   void DestructValue() { value_.~ValueType(); }
 
-  constexpr const ValueType& value() const& { return value_; }
-  ValueType& value() & { return value_; }
+  constexpr const ValueType&  value() const& { return value_; }
+  ValueType&                  value() & { return value_; }
   constexpr const ValueType&& value() const&& { return std::move(value_); }
   ETCPAL_CONSTEXPR_14 ValueType&& value() && { return std::move(value_); }
-  const ValueType* value_ptr() const { return &value_; }
-  ValueType* value_ptr() { return &value_; }
+  const ValueType*                value_ptr() const { return &value_; }
+  ValueType*                      value_ptr() { return &value_; }
 
   etcpal_error_t error() const { return error_; }
 
@@ -287,7 +287,7 @@ private:
   bool has_value_{false};
   union
   {
-    ValueType value_;
+    ValueType      value_;
     etcpal_error_t error_;
   };
 };
@@ -651,20 +651,20 @@ public:
   ETCPAL_CONSTEXPR_14 Expected(etcpal_error_t error);
   ~Expected();
 
-  constexpr const T* operator->() const;
-  T* operator->();
-  constexpr const T& operator*() const&;
-  T& operator*() &;
+  constexpr const T*  operator->() const;
+  T*                  operator->();
+  constexpr const T&  operator*() const&;
+  T&                  operator*() &;
   constexpr const T&& operator*() const&&;
   ETCPAL_CONSTEXPR_14 T&& operator*() &&;
-  constexpr explicit operator bool() const noexcept;
-  constexpr bool has_value() const noexcept;
-  constexpr const T& value() const&;
-  T& value() &;
-  constexpr const T&& value() const&&;
-  ETCPAL_CONSTEXPR_14 T&& value() &&;
+  constexpr explicit      operator bool() const noexcept;
+  constexpr bool          has_value() const noexcept;
+  constexpr const T&      value() const&;
+  T&                      value() &;
+  constexpr const T&&     value() const&&;
+  ETCPAL_CONSTEXPR_14 T&&  value() &&;
   constexpr etcpal_error_t error_code() const noexcept;
-  constexpr Error error() const noexcept;
+  constexpr Error          error() const noexcept;
 
   // clang-format off
 

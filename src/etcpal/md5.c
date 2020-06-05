@@ -147,7 +147,7 @@ the message digest and zeroizing the context.
 */
 void MD5Final(uint8_t digest[16], MD5_CTX* context)
 {
-  uint8_t bits[8];
+  uint8_t      bits[8];
   unsigned int index, padLen;
 
   /* Save number of bits */

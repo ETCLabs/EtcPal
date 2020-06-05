@@ -58,10 +58,10 @@ bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* c
 
   // Check the inheritance and the size of the length field
   uint8_t flags_byte = *this_pdu;
-  bool extlength = ACN_PDU_L_FLAG_SET(flags_byte);
-  bool inheritvect = !ACN_PDU_V_FLAG_SET(flags_byte);
-  bool inherithead = !ACN_PDU_H_FLAG_SET(flags_byte);
-  bool inheritdata = !ACN_PDU_D_FLAG_SET(flags_byte);
+  bool    extlength = ACN_PDU_L_FLAG_SET(flags_byte);
+  bool    inheritvect = !ACN_PDU_V_FLAG_SET(flags_byte);
+  bool    inherithead = !ACN_PDU_H_FLAG_SET(flags_byte);
+  bool    inheritdata = !ACN_PDU_D_FLAG_SET(flags_byte);
 
   const uint8_t* cur_ptr = this_pdu;
   if (cur_ptr + (extlength ? 3 : 2) >= buf_end)

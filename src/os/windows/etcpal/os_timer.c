@@ -44,4 +44,4 @@ uint32_t etcpal_getms(void)
   return timeGetTime();
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

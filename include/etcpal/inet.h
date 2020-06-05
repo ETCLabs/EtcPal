@@ -83,8 +83,8 @@ typedef struct EtcPalIpAddr
     /** The IPv6 address value containing the address and scope ID. */
     struct EtcPalIpv6Addr
     {
-      uint8_t addr_buf[ETCPAL_IPV6_BYTES]; /**< The IPv6 address. */
-      unsigned long scope_id;              /**< The IPv6 scope ID. */
+      uint8_t       addr_buf[ETCPAL_IPV6_BYTES]; /**< The IPv6 address. */
+      unsigned long scope_id;                    /**< The IPv6 scope ID. */
     } v6;
   } addr;
 } EtcPalIpAddr;
@@ -309,8 +309,8 @@ typedef struct EtcPalIpAddr
 /** An IP address with associated interface and port. Ports are in host byte order. */
 typedef struct EtcPalSockAddr
 {
-  uint16_t port;   /**< TCP or UDP port. */
-  EtcPalIpAddr ip; /**< IP address. */
+  uint16_t     port; /**< TCP or UDP port. */
+  EtcPalIpAddr ip;   /**< IP address. */
 } EtcPalSockAddr;
 
 /** The number of bytes in a MAC address. */
@@ -392,17 +392,17 @@ bool etcpal_ip_is_multicast(const EtcPalIpAddr* ip);
 bool etcpal_ip_is_wildcard(const EtcPalIpAddr* ip);
 void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip);
 
-int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
+int  etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
 bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr* sock2);
 
 unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask);
 EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length);
 bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2, const EtcPalIpAddr* netmask);
 
-bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip);
+bool   ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip);
 size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip);
 
-bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa);
+bool   sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa);
 size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_sa);
 
 etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest);

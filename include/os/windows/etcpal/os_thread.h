@@ -49,9 +49,9 @@ extern "C" {
 typedef struct
 {
   void (*fn)(void*);
-  void* arg;
+  void*  arg;
   HANDLE tid;
-  char name[ETCPAL_THREAD_NAME_MAX_LENGTH];
+  char   name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
 
 #ifdef __cplusplus

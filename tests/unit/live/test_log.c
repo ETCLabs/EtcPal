@@ -39,7 +39,7 @@ FAKE_VOID_FUNC(log_callback, void*, const EtcPalLogStrings*);
 FAKE_VOID_FUNC(time_callback, void*, EtcPalLogTimestamp*);
 
 EtcPalLogTimestamp cur_time;
-EtcPalLogStrings last_log_strings_received;
+EtcPalLogStrings   last_log_strings_received;
 
 // Buffers for tests of the create_*_str functions
 static char syslog_buf[ETCPAL_SYSLOG_STR_MAX_LEN];
@@ -93,7 +93,7 @@ TEST_TEAR_DOWN(etcpal_log)
 // Test the etcpal_sanitize_syslog_params() function.
 TEST(etcpal_log, sanitize_syslog_params_works)
 {
-  EtcPalSyslogParams syslog_params;
+  EtcPalSyslogParams  syslog_params;
   const unsigned char special_char_array[] = {
       0x01, 0x10, 0x7f,  // Some non-printing chars
       0x41, 0x42, 0x43,  // "ABC"
@@ -115,7 +115,7 @@ TEST(etcpal_log, sanitize_syslog_params_works)
 // Test the etcpal_validate_log_params() function.
 TEST(etcpal_log, validate_log_params_works)
 {
-  EtcPalLogParams lparams;
+  EtcPalLogParams     lparams;
   const unsigned char special_char_array[] = {
       0x01, 0x10, 0x7f,  // Some non-printing chars
       0x41, 0x42, 0x43,  // "ABC"
@@ -376,7 +376,7 @@ TEST(etcpal_log, syslog_prival_is_correct)
     for (int priority = 0; priority < 8; ++priority)
     {
       const char error_format[] = "Testing facility %d, priority %d";
-      char error_msg[sizeof error_format + 20];
+      char       error_msg[sizeof error_format + 20];
       sprintf(error_msg, error_format, facility, priority);
 
       TEST_ASSERT_TRUE(etcpal_create_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, NULL, &syslog_params, priority,
@@ -684,7 +684,7 @@ TEST(etcpal_log, logging_maximum_length_string_works)
 static bool vcreate_test_helper(const char* format, ...)
 {
   va_list args;
-  bool res;
+  bool    res;
   va_start(args, format);
   res = etcpal_vcreate_log_str(human_buf, ETCPAL_LOG_STR_MAX_LEN, &cur_time, VCREATE_TEST_PRI, format, args);
   va_end(args);
@@ -708,7 +708,7 @@ static const EtcPalSyslogParams vcreate_syslog_params = {ETCPAL_LOG_DAEMON, "tes
 static bool vcreate_syslog_test_helper(const char* format, ...)
 {
   va_list args;
-  bool res;
+  bool    res;
   va_start(args, format);
   res = etcpal_vcreate_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &vcreate_syslog_params,
                                   VCREATE_SYSLOG_TEST_PRI, format, args);

@@ -32,7 +32,9 @@ static void thread_func_internal(void* pvParameters)
   vTaskDelete(NULL);
 }
 
-etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
+                                    const EtcPalThreadParams* params,
+                                    void (*thread_fn)(void*),
                                     void* thread_arg)
 {
   if (!id || !params || !thread_fn)
@@ -72,4 +74,4 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrSys;
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

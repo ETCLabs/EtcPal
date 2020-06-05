@@ -195,7 +195,7 @@ TEST(etcpal_cpp_inet, ip_copy_constructors_work)
 TEST(etcpal_cpp_inet, ip_assignment_operators_work)
 {
   etcpal::IpAddr ip;
-  EtcPalIpAddr c_ip;
+  EtcPalIpAddr   c_ip;
   ETCPAL_IP_SET_V4_ADDRESS(&c_ip, 0xdeadbeef);
 
   // Assign to an EtcPalIpAddr
@@ -290,7 +290,7 @@ TEST(etcpal_cpp_inet, ip_to_string_works)
   TEST_ASSERT_EQUAL_STRING(ip.ToString().c_str(), "222.173.190.239");
 
   const etcpal::IpAddr ip2(s_v6_data.data());
-  auto ip_str = ip2.ToString();
+  auto                 ip_str = ip2.ToString();
   ConvertStringToLowercase(ip_str);
   TEST_ASSERT_EQUAL_STRING(ip_str.c_str(), "2001:db8::1234:5678");
 }
@@ -438,7 +438,7 @@ TEST(etcpal_cpp_inet, sockaddr_copy_constructors_work)
 TEST(etcpal_cpp_inet, sockaddr_assignment_operators_work)
 {
   etcpal::SockAddr sockaddr;
-  EtcPalSockAddr c_sa;
+  EtcPalSockAddr   c_sa;
   ETCPAL_IP_SET_V4_ADDRESS(&c_sa.ip, 0xdeadbeef);
   c_sa.port = 0xfeed;
 
@@ -494,7 +494,7 @@ TEST(etcpal_cpp_inet, sockaddr_to_string_works)
   TEST_ASSERT_EQUAL_STRING(sockaddr_v4.ToString().c_str(), "10.101.2.3:5555");
 
   const etcpal::SockAddr sockaddr_v6(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 6666);
-  auto sockaddr_str = sockaddr_v6.ToString();
+  auto                   sockaddr_str = sockaddr_v6.ToString();
   ConvertStringToLowercase(sockaddr_str);
   TEST_ASSERT_EQUAL_STRING(sockaddr_str.c_str(), "[2001:db8::2222:3333]:6666");
 
@@ -561,7 +561,7 @@ TEST(etcpal_cpp_inet, mac_default_constructor_works)
 
 TEST(etcpal_cpp_inet, mac_copy_constructors_work)
 {
-  const EtcPalMacAddr c_mac = {{1, 2, 3, 4, 5, 6}};
+  const EtcPalMacAddr   c_mac = {{1, 2, 3, 4, 5, 6}};
   const etcpal::MacAddr mac(c_mac);
   TEST_ASSERT_FALSE(mac.IsNull());
   TEST_ASSERT_TRUE(mac.get() == c_mac);
@@ -576,7 +576,7 @@ TEST(etcpal_cpp_inet, mac_copy_constructors_work)
 
 TEST(etcpal_cpp_inet, mac_assignment_operators_work)
 {
-  etcpal::MacAddr mac;
+  etcpal::MacAddr     mac;
   const EtcPalMacAddr c_mac = {{1, 2, 3, 4, 5, 6}};
 
   // Assign to an EtcPalMacAddr
@@ -595,7 +595,7 @@ TEST(etcpal_cpp_inet, mac_assignment_operators_work)
 TEST(etcpal_cpp_inet, mac_custom_constructors_work)
 {
   const std::array<uint8_t, ETCPAL_MAC_BYTES> mac_data{6, 5, 4, 3, 2, 1};
-  const etcpal::MacAddr mac(mac_data.data());
+  const etcpal::MacAddr                       mac(mac_data.data());
 
   TEST_ASSERT_FALSE(mac.IsNull());
   TEST_ASSERT_EQUAL_UINT8_ARRAY(mac.data(), mac_data.data(), ETCPAL_MAC_BYTES);
@@ -615,7 +615,7 @@ TEST(etcpal_cpp_inet, mac_to_string_works)
 TEST(etcpal_cpp_inet, mac_from_string_works)
 {
   const std::array<uint8_t, ETCPAL_MAC_BYTES> mac_data{0, 1, 2, 0xab, 0xcd, 0xef};
-  const etcpal::MacAddr mac = etcpal::MacAddr::FromString("00:01:02:AB:cd:EF");
+  const etcpal::MacAddr                       mac = etcpal::MacAddr::FromString("00:01:02:AB:cd:EF");
   TEST_ASSERT_FALSE(mac.IsNull());
   TEST_ASSERT_EQUAL_UINT8_ARRAY(mac.data(), mac_data.data(), ETCPAL_MAC_BYTES);
 
@@ -626,7 +626,7 @@ TEST(etcpal_cpp_inet, mac_from_string_works)
 TEST(etcpal_cpp_inet, mac_to_array_works)
 {
   const std::array<uint8_t, ETCPAL_MAC_BYTES> mac_data{0x11, 0x22, 0x33, 0xaa, 0xbb, 0xcc};
-  const etcpal::MacAddr mac(mac_data.data());
+  const etcpal::MacAddr                       mac(mac_data.data());
   TEST_ASSERT_TRUE(mac.ToArray() == mac_data);
 }
 

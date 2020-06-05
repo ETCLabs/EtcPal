@@ -98,7 +98,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
 
   EtcPalModuleInit init_array[MODULE_INIT_ARRAY_SIZE] = ETCPAL_MODULE_INIT_ARRAY;
 
-  etcpal_error_t init_res = kEtcPalErrOk;
+  etcpal_error_t    init_res = kEtcPalErrOk;
   etcpal_features_t feature_mask = 1u;
 
   // Initialize each module in turn.

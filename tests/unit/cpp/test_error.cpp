@@ -133,7 +133,7 @@ struct ExpectedDummy
   bool has_value;
   union
   {
-    int value;
+    int            value;
     etcpal_error_t err;
   };
 };
@@ -207,7 +207,7 @@ TEST(etcpal_expected, default_constructor_default_init)
   etcpal::Expected<int> v;
   TEST_ASSERT_EQUAL_INT(v.value(), 0);
 
-  etcpal::Expected<void*> v2;
+  etcpal::Expected<void*>      v2;
   etcpal::Expected<RuleOfZero> v3;
 
   // etcpal::Expected<NoMoveConstructor> e;

@@ -118,7 +118,7 @@ static const int aiprotmap[ETCPAL_NUM_IPPROTO] =
 
 // Helpers for etcpal_setsockopt()
 static void ms_to_timeval(int ms, struct timeval* tv);
-static int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
+static int  setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 #if LWIP_IPV4
 static int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 #endif
@@ -127,13 +127,16 @@ static int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* optio
 #endif
 
 // Helper functions for the etcpal_poll API
-static void init_context_socket_array(EtcPalPollContext* context);
+static void              init_context_socket_array(EtcPalPollContext* context);
 static EtcPalPollSocket* find_socket(EtcPalPollContext* context, etcpal_socket_t sock);
 static EtcPalPollSocket* find_hole(EtcPalPollContext* context);
-static void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock);
-static void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock);
-static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent* event, const fd_set* readfds,
-                                           const fd_set* writefds, const fd_set* exceptfds);
+static void              set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock);
+static void              clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock);
+static etcpal_error_t    handle_select_result(EtcPalPollContext* context,
+                                              EtcPalPollEvent*   event,
+                                              const fd_set*      readfds,
+                                              const fd_set*      writefds,
+                                              const fd_set*      exceptfds);
 
 /*************************** Function definitions ****************************/
 
@@ -154,8 +157,8 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss;
-  socklen_t sa_size = sizeof ss;
-  int res = lwip_accept(id, (struct sockaddr*)&ss, &sa_size);
+  socklen_t               sa_size = sizeof ss;
+  int                     res = lwip_accept(id, (struct sockaddr*)&ss, &sa_size);
 
   if (res != -1)
   {
@@ -176,7 +179,7 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address)
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss;
-  socklen_t sa_size = (socklen_t)sockaddr_etcpal_to_os(address, (etcpal_os_sockaddr_t*)&ss);
+  socklen_t               sa_size = (socklen_t)sockaddr_etcpal_to_os(address, (etcpal_os_sockaddr_t*)&ss);
   if (sa_size == 0)
     return kEtcPalErrInvalid;
 
@@ -196,7 +199,7 @@ etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss;
-  socklen_t sa_size = (socklen_t)sockaddr_etcpal_to_os(address, (etcpal_os_sockaddr_t*)&ss);
+  socklen_t               sa_size = (socklen_t)sockaddr_etcpal_to_os(address, (etcpal_os_sockaddr_t*)&ss);
   if (sa_size == 0)
     return kEtcPalErrInvalid;
 
@@ -218,8 +221,8 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss;
-  socklen_t size = (socklen_t)sizeof ss;
-  int res = lwip_getsockname(id, (struct sockaddr*)&ss, &size);
+  socklen_t               size = (socklen_t)sizeof ss;
+  int                     res = lwip_getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
@@ -262,8 +265,8 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
     return (int)kEtcPalErrInvalid;
 
   struct sockaddr_storage fromaddr;
-  socklen_t fromlen = (socklen_t)sizeof fromaddr;
-  int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
+  socklen_t               fromlen = (socklen_t)sizeof fromaddr;
+  int                     impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
   int res = (int)lwip_recvfrom(id, buffer, length, impl_flags, (struct sockaddr*)&fromaddr, &fromlen);
 
   if (res >= 0)
@@ -297,7 +300,7 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
     return (int)kEtcPalErrInvalid;
 
   struct sockaddr_storage ss;
-  socklen_t ss_size = (socklen_t)sockaddr_etcpal_to_os(dest_addr, (etcpal_os_sockaddr_t*)&ss);
+  socklen_t               ss_size = (socklen_t)sockaddr_etcpal_to_os(dest_addr, (etcpal_os_sockaddr_t*)&ss);
   if (ss_size == 0)
     return (int)kEtcPalErrSys;
 
@@ -305,8 +308,11 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
   return (res >= 0 ? res : (int)errno_lwip_to_etcpal(errno));
 }
 
-etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void* option_value,
-                                 size_t option_len)
+etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
+                                 int             level,
+                                 int             option_name,
+                                 const void*     option_value,
+                                 size_t          option_len)
 {
   int res = -1;
 
@@ -350,7 +356,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
     case ETCPAL_SO_RCVTIMEO:
       if (option_len == sizeof(int))
       {
-        int ms = *(int*)option_value;
+        int            ms = *(int*)option_value;
         struct timeval val;
         ms_to_timeval(ms, &val);
         return lwip_setsockopt(id, SOL_SOCKET, SO_RCVTIMEO, &val, sizeof val);
@@ -359,7 +365,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
     case ETCPAL_SO_SNDTIMEO:
       if (option_len == sizeof(int))
       {
-        int ms = *(int*)option_value;
+        int            ms = *(int*)option_value;
         struct timeval val;
         ms_to_timeval(ms, &val);
         return lwip_setsockopt(id, SOL_SOCKET, SO_SNDTIMEO, &val, sizeof val);
@@ -443,7 +449,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       if (option_len == sizeof(EtcPalGroupReq))
       {
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
-        struct ip_mreq val;
+        struct ip_mreq  val;
         val.imr_multiaddr.s_addr = lwip_htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
         if (!netif_index_to_ipv4_addr(greq->ifindex, &val.imr_interface))
           return -1;
@@ -454,7 +460,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       if (option_len == sizeof(EtcPalGroupReq))
       {
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
-        struct ip_mreq val;
+        struct ip_mreq  val;
         val.imr_multiaddr.s_addr = lwip_htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
         if (!netif_index_to_ipv4_addr(greq->ifindex, &val.imr_interface))
           return -1;
@@ -466,7 +472,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
     case ETCPAL_IP_MULTICAST_IF:
       if (option_len == sizeof(unsigned int))
       {
-        unsigned int netint_index = *((unsigned int*)option_value);
+        unsigned int   netint_index = *((unsigned int*)option_value);
         struct in_addr val;
         if (!netif_index_to_ipv4_addr(netint_index, &val))
           return -1;
@@ -621,8 +627,10 @@ void etcpal_poll_context_deinit(EtcPalPollContext* context)
   context->valid = false;
 }
 
-etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_t socket, etcpal_poll_events_t events,
-                                      void* user_data)
+etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
+                                      etcpal_socket_t      socket,
+                                      etcpal_poll_events_t events,
+                                      void*                user_data)
 {
   if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID || !(events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
     return kEtcPalErrInvalid;
@@ -650,8 +658,10 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext* context, etcpal_socket_
   }
 }
 
-etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext* context, etcpal_socket_t socket,
-                                         etcpal_poll_events_t new_events, void* new_user_data)
+etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
+                                         etcpal_socket_t      socket,
+                                         etcpal_poll_events_t new_events,
+                                         void*                new_user_data)
 {
   if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID ||
       !(new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
@@ -732,8 +742,11 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
   }
 }
 
-etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent* event, const fd_set* readfds,
-                                    const fd_set* writefds, const fd_set* exceptfds)
+etcpal_error_t handle_select_result(EtcPalPollContext* context,
+                                    EtcPalPollEvent*   event,
+                                    const fd_set*      readfds,
+                                    const fd_set*      writefds,
+                                    const fd_set*      exceptfds)
 {
   // Init the event data.
   event->socket = ETCPAL_SOCKET_INVALID;
@@ -772,7 +785,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPollEvent*
       if (FD_ISSET(sock_desc->sock, exceptfds))
       {
         event->events |= ETCPAL_POLL_ERR;
-        int err;
+        int       err;
         socklen_t err_size = (socklen_t)sizeof err;
         if (lwip_getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &err, &err_size) == 0)
           event->err = errno_lwip_to_etcpal(err);
@@ -839,13 +852,15 @@ void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* poll_s
   ETCPAL_FD_CLEAR(poll_sock->sock, &context->exceptfds);
 }
 
-etcpal_error_t etcpal_getaddrinfo(const char* hostname, const char* service, const EtcPalAddrinfo* hints,
-                                  EtcPalAddrinfo* result)
+etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
+                                  const char*           service,
+                                  const EtcPalAddrinfo* hints,
+                                  EtcPalAddrinfo*       result)
 {
 #if LWIP_DNS
-  int res;
+  int              res;
   struct addrinfo* pf_res;
-  struct addrinfo pf_hints;
+  struct addrinfo  pf_hints;
 
   if ((!hostname && !service) || !result)
     return kEtcPalErrInvalid;

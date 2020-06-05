@@ -33,8 +33,8 @@
 #define NUM_ITERATIONS 10000
 
 static etcpal_rwlock_t rwlock;
-static int shared_var;
-static bool read_thread_pass;
+static int             shared_var;
+static bool            read_thread_pass;
 
 static void write_test_thread(void* arg)
 {

@@ -31,7 +31,9 @@ static void thread_func_internal(uint32_t initial_data)
   }
 }
 
-etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
+                                    const EtcPalThreadParams* params,
+                                    void (*thread_fn)(void*),
                                     void* thread_arg)
 {
   if (!id || !params || !thread_fn || (MQX_OK != _lwsem_create(&id->sig, 0)))
@@ -80,4 +82,4 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrSys;
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

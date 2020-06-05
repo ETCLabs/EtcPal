@@ -119,7 +119,7 @@ int main(void)
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &default_v4))
   {
     const EtcPalNetintInfo* addr_arr;
-    size_t addr_arr_size;
+    size_t                  addr_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv4 interface: %s (%u)\n", addr_arr->friendly_name, default_v4);
@@ -130,7 +130,7 @@ int main(void)
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &default_v6))
   {
     const EtcPalNetintInfo* addr_arr;
-    size_t addr_arr_size;
+    size_t                  addr_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv6 interface: %s (%u)\n", addr_arr->friendly_name, default_v6);

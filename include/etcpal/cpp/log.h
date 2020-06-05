@@ -123,8 +123,14 @@ class LogTimestamp
 public:
   /// Construct an invalid timestamp by default.
   LogTimestamp() = default;
-  constexpr LogTimestamp(unsigned int year, unsigned int month, unsigned int day, unsigned int hour,
-                         unsigned int minute, unsigned int second, unsigned int msec = 0, int utc_offset = 0);
+  constexpr LogTimestamp(unsigned int year,
+                         unsigned int month,
+                         unsigned int day,
+                         unsigned int hour,
+                         unsigned int minute,
+                         unsigned int second,
+                         unsigned int msec = 0,
+                         int          utc_offset = 0);
 
   bool IsValid() const noexcept;
 
@@ -146,8 +152,14 @@ private:
 /// @param second Seconds past the current minute. Valid range 0-60 (to handle leap seconds).
 /// @param msec Milliseconds past the current second. Valid range 0-999.
 /// @param utc_offset The local offset from UTC in minutes.
-constexpr LogTimestamp::LogTimestamp(unsigned int year, unsigned int month, unsigned int day, unsigned int hour,
-                                     unsigned int minute, unsigned int second, unsigned int msec, int utc_offset)
+constexpr LogTimestamp::LogTimestamp(unsigned int year,
+                                     unsigned int month,
+                                     unsigned int day,
+                                     unsigned int hour,
+                                     unsigned int minute,
+                                     unsigned int second,
+                                     unsigned int msec,
+                                     int          utc_offset)
     : timestamp_{year, month, day, hour, minute, second, msec, utc_offset}
 {
 }
@@ -245,13 +257,13 @@ public:
 
   /// @name Getters
   /// @{
-  LogDispatchPolicy dispatch_policy() const noexcept;
-  int log_mask() const noexcept;
-  etcpal_log_action_t log_action() const noexcept;
-  int syslog_facility() const noexcept;
-  const char* syslog_hostname() const noexcept;
-  const char* syslog_app_name() const noexcept;
-  const char* syslog_procid() const noexcept;
+  LogDispatchPolicy      dispatch_policy() const noexcept;
+  int                    log_mask() const noexcept;
+  etcpal_log_action_t    log_action() const noexcept;
+  int                    syslog_facility() const noexcept;
+  const char*            syslog_hostname() const noexcept;
+  const char*            syslog_app_name() const noexcept;
+  const char*            syslog_procid() const noexcept;
   const EtcPalLogParams& log_params() const noexcept;
   /// @}
 
@@ -276,22 +288,22 @@ private:
   void EmptyLogQueue();
 
   LogDispatchPolicy dispatch_policy_{LogDispatchPolicy::Queued};
-  EtcPalLogParams log_params_{};
+  EtcPalLogParams   log_params_{};
 
   struct LogMessage
   {
-    int pri;
+    int  pri;
     char buf[ETCPAL_RAW_LOG_MSG_MAX_LEN];
   };
 
   // Used when dispatch_policy_ == Queued
   // This implementation will become more elegant with the addition of new queue APIs. This is
   // being tracked with ETCPAL-43 and ETCPAL-46.
-  std::queue<LogMessage> msg_q_;
+  std::queue<LogMessage>          msg_q_;
   std::unique_ptr<etcpal::Signal> signal_;
-  std::unique_ptr<etcpal::Mutex> mutex_;
-  etcpal::Thread thread_;
-  bool running_{false};
+  std::unique_ptr<etcpal::Mutex>  mutex_;
+  etcpal::Thread                  thread_;
+  bool                            running_{false};
 };
 
 /// @cond Internal log callback functions

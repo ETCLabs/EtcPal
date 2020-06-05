@@ -32,7 +32,10 @@ extern "C" {
 DECLARE_FAKE_VALUE_FUNC(size_t, etcpal_netint_get_num_interfaces);
 DECLARE_FAKE_VALUE_FUNC(const EtcPalNetintInfo*, etcpal_netint_get_interfaces);
 DECLARE_FAKE_VALUE_FUNC(size_t, etcpal_netint_copy_interfaces, EtcPalNetintInfo*, size_t);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interfaces_by_index, unsigned int, const EtcPalNetintInfo**,
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t,
+                        etcpal_netint_get_interfaces_by_index,
+                        unsigned int,
+                        const EtcPalNetintInfo**,
                         size_t*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_default_interface, etcpal_iptype_t, unsigned int*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interface_for_dest, const EtcPalIpAddr*, unsigned int*);

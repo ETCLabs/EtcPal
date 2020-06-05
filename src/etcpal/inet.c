@@ -273,7 +273,7 @@ unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask)
     else if (ETCPAL_IP_IS_V6(netmask))
     {
       const uint8_t* addr_buf = ETCPAL_IP_V6_ADDRESS(netmask);
-      size_t addr_index = 0;
+      size_t         addr_index = 0;
       while (addr_index < ETCPAL_IPV6_BYTES && addr_buf[addr_index] == 0xffu)
       {
         length += 8;
@@ -315,8 +315,8 @@ EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_
 
   if (type == kEtcPalIpTypeV4)
   {
-    uint32_t mask_val = 0;
-    uint32_t bit_mask = 0x80000000u;
+    uint32_t     mask_val = 0;
+    uint32_t     bit_mask = 0x80000000u;
     unsigned int adjusted_length = (mask_length > 32 ? 32 : mask_length);
     for (unsigned int i = 0; i < adjusted_length; ++i, bit_mask >>= 1)
     {
@@ -386,7 +386,7 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
   }
   else if (ETCPAL_IP_IS_V6(ip1) && ETCPAL_IP_IS_V6(ip2) && ETCPAL_IP_IS_V6(netmask))
   {
-    size_t i;
+    size_t          i;
     const uint32_t* p1 = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(ip1);
     const uint32_t* p2 = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(ip2);
     const uint32_t* pm = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(netmask);
@@ -524,9 +524,9 @@ etcpal_error_t etcpal_string_to_mac(const char* src, EtcPalMacAddr* dest)
     return kEtcPalErrInvalid;
 
   const char* from_ptr = src;
-  uint8_t to_buf[ETCPAL_MAC_BYTES];
-  uint8_t* to_ptr = to_buf;
-  bool first = true; /* Whether we are doing the first or second nibble of the byte */
+  uint8_t     to_buf[ETCPAL_MAC_BYTES];
+  uint8_t*    to_ptr = to_buf;
+  bool        first = true; /* Whether we are doing the first or second nibble of the byte */
 
   while ((to_ptr - to_buf < ETCPAL_MAC_BYTES) && (*from_ptr != '\0'))
   {

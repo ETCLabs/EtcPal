@@ -23,6 +23,6 @@
 #include "etcpal/error.h"
 
 etcpal_error_t etcpal_socket_init(void);
-void etcpal_socket_deinit(void);
+void           etcpal_socket_deinit(void);
 
 #endif /* ETCPAL_PRIVATE_SOCKET_H_ */

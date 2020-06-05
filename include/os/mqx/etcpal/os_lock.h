@@ -57,7 +57,7 @@ bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
 
 typedef struct
 {
-  bool valid;
+  bool         valid;
   LWSEM_STRUCT sem;
   unsigned int reader_count;
 } etcpal_rwlock_t;

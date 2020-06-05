@@ -41,9 +41,9 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
 
 typedef struct
 {
-  bool valid;
-  bool signaled;
-  pthread_cond_t cond;
+  bool            valid;
+  bool            signaled;
+  pthread_cond_t  cond;
   pthread_mutex_t mutex;
 } etcpal_signal_t;
 
@@ -60,8 +60,8 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
 
 typedef struct
 {
-  bool valid;
-  unsigned int reader_count;
+  bool            valid;
+  unsigned int    reader_count;
   pthread_mutex_t readcount_mutex;
   pthread_mutex_t mutex;
 } etcpal_rwlock_t;
@@ -81,7 +81,7 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 typedef struct
 {
-  bool valid;
+  bool                 valid;
   dispatch_semaphore_t sem;
 } etcpal_sem_t;
 

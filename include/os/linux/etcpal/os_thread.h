@@ -37,7 +37,7 @@ extern "C" {
 typedef struct
 {
   void (*fn)(void*);
-  void* arg;
+  void*     arg;
   pthread_t handle;
 } etcpal_thread_t;
 

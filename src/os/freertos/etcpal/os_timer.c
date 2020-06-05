@@ -41,4 +41,4 @@ uint32_t etcpal_getms(void)
   return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

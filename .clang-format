@@ -24,7 +24,8 @@ BraceWrapping:
 # Misc other options
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
-AlignConsecutiveDeclarations: false
+AlignConsecutiveDeclarations: true
+BinPackParameters: false
 AlignOperands: true
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false

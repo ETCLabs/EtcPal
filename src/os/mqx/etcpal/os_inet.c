@@ -33,7 +33,7 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
   else if (os_ip->sa_family == AF_INET6)
   {
     const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)os_ip;
-    unsigned int scope_id = 0;
+    unsigned int               scope_id = 0;
     // Translate the scope ID if nonzero
     if (sin6->sin6_scope_id != 0)
     {

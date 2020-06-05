@@ -19,8 +19,12 @@
 
 #include "etcpal_mock/thread.h"
 
-DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_create, etcpal_thread_t*, const EtcPalThreadParams*,
-                       EtcPalThreadFunc, void*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
+                       etcpal_thread_create,
+                       etcpal_thread_t*,
+                       const EtcPalThreadParams*,
+                       EtcPalThreadFunc,
+                       void*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_join, etcpal_thread_t*);
 
 void etcpal_thread_reset_all_fakes(void)

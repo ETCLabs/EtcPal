@@ -130,8 +130,10 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
 etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid);
 etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid);
-etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const uint8_t* mac_addr, uint32_t uuid_num,
-                                           EtcPalUuid* uuid);
+etcpal_error_t etcpal_generate_device_uuid(const char*    dev_str,
+                                           const uint8_t* mac_addr,
+                                           uint32_t       uuid_num,
+                                           EtcPalUuid*    uuid);
 
 #ifdef __cplusplus
 }

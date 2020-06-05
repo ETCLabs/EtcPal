@@ -23,7 +23,7 @@
 #include "etcpal/common.h"
 #include "etcpal/lock.h"
 
-static bool mempool_lock_initted = false;
+static bool           mempool_lock_initted = false;
 static etcpal_mutex_t mempool_lock;
 
 etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
@@ -58,7 +58,7 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
 
   if (etcpal_mutex_lock(&mempool_lock))
   {
-    char* c_pool = (char*)desc->pool;
+    char*          c_pool = (char*)desc->pool;
     EtcPalMempool* elem_desc = desc->freelist;
     if (elem_desc)
     {
@@ -85,7 +85,7 @@ void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
   {
     if (((size_t)offset % desc->elem_size == 0) && etcpal_mutex_lock(&mempool_lock))
     {
-      size_t index = (size_t)offset / desc->elem_size;
+      size_t         index = (size_t)offset / desc->elem_size;
       EtcPalMempool* elem_desc = &desc->list[index];
       elem_desc->next = desc->freelist;
       desc->freelist = elem_desc;

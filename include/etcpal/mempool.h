@@ -103,12 +103,12 @@ struct EtcPalMempool
  */
 typedef struct EtcPalMempoolDesc
 {
-  const size_t elem_size;    /**< The size of each element. */
-  const size_t pool_size;    /**< The number of elements in the pool. */
-  EtcPalMempool* freelist;   /**< The current freelist. */
-  EtcPalMempool* const list; /**< The array of mempool list structs. */
-  size_t current_used;       /**< The number of pool elements that have currently been allocated. */
-  void* const pool;          /**< The actual pool memory. */
+  const size_t         elem_size;    /**< The size of each element. */
+  const size_t         pool_size;    /**< The number of elements in the pool. */
+  EtcPalMempool*       freelist;     /**< The current freelist. */
+  EtcPalMempool* const list;         /**< The array of mempool list structs. */
+  size_t               current_used; /**< The number of pool elements that have currently been allocated. */
+  void* const          pool;         /**< The actual pool memory. */
 } EtcPalMempoolDesc;
 
 /** @endcond */
@@ -135,8 +135,8 @@ typedef struct EtcPalMempoolDesc
  * @param size The number of elements in the memory pool.
  */
 #define ETCPAL_MEMPOOL_DEFINE(name, type, size)                                     \
-  type name##_pool[size];                                                           \
-  struct EtcPalMempool name##_pool_list[size];                                      \
+  type                     name##_pool[size];                                       \
+  struct EtcPalMempool     name##_pool_list[size];                                  \
   struct EtcPalMempoolDesc name##_pool_desc = {sizeof(type),     /* elem_size */    \
                                                size,             /* pool_size */    \
                                                NULL,             /* freelist */     \
@@ -156,8 +156,8 @@ typedef struct EtcPalMempoolDesc
  * @param pool_size The number of arrays in the memory pool.
  */
 #define ETCPAL_MEMPOOL_DEFINE_ARRAY(name, type, array_size, pool_size)                      \
-  type name##_pool[array_size][pool_size];                                                  \
-  struct EtcPalMempool name##_pool_list[pool_size];                                         \
+  type                     name##_pool[array_size][pool_size];                              \
+  struct EtcPalMempool     name##_pool_list[pool_size];                                     \
   struct EtcPalMempoolDesc name##_pool_desc = {sizeof(type[array_size]), /* elem_size */    \
                                                pool_size,                /* pool_size */    \
                                                NULL,                     /* freelist */     \
@@ -217,9 +217,9 @@ typedef struct EtcPalMempoolDesc
 /** @cond internal_mempool_functions */
 
 etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc);
-void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc);
-void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem);
-size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc);
+void*          etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc);
+void           etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem);
+size_t         etcpal_mempool_used_priv(EtcPalMempoolDesc* desc);
 
 /** @endcond */
 

@@ -64,22 +64,22 @@ typedef struct RoutingTableEntry
   EtcPalIpAddr addr;
   EtcPalIpAddr mask;
   EtcPalIpAddr gateway;
-  int interface_index;
-  int metric;
+  int          interface_index;
+  int          metric;
 } RoutingTableEntry;
 
 typedef struct RoutingTable
 {
   RoutingTableEntry* entries;
   RoutingTableEntry* default_route;
-  size_t size;
+  size_t             size;
 } RoutingTable;
 
 /* A composite struct representing an RT_NETLINK request sent over a netlink socket. */
 typedef struct RtNetlinkRequest
 {
   struct nlmsghdr nl_header;
-  struct rtmsg rt_msg;
+  struct rtmsg    rt_msg;
 } RtNetlinkRequest;
 
 /**************************** Private variables ******************************/
@@ -92,18 +92,20 @@ RoutingTable routing_table_v6;
 // Functions for building the routing tables
 static etcpal_error_t build_routing_tables(void);
 static etcpal_error_t build_routing_table(int family, RoutingTable* table);
-static void free_routing_tables(void);
-static void free_routing_table(RoutingTable* table);
+static void           free_routing_tables(void);
+static void           free_routing_table(RoutingTable* table);
 
 // Interacting with RTNETLINK
 static etcpal_error_t send_netlink_route_request(int socket, int family);
 static etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
-static etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size,
+static etcpal_error_t parse_netlink_route_reply(int           family,
+                                                const char*   buffer,
+                                                size_t        nl_msg_size,
                                                 RoutingTable* table);
 
 // Manipulating routing table entries
 static void init_routing_table_entry(RoutingTableEntry* entry);
-static int compare_routing_table_entries(const void* a, const void* b);
+static int  compare_routing_table_entries(const void* a, const void* b);
 
 #if ETCPAL_NETINT_DEBUG_OUTPUT
 static void debug_print_routing_table(RoutingTable* table);
@@ -305,8 +307,8 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
   // often received partial messages that must be discarded)
 
   etcpal_error_t result = kEtcPalErrOk;
-  bool done = false;
-  size_t recv_buf_size = 2048;  // Tests show this is usually enough for small routing tables
+  bool           done = false;
+  size_t         recv_buf_size = 2048;  // Tests show this is usually enough for small routing tables
   while (result == kEtcPalErrOk && !done)
   {
     struct sockaddr_nl addr;
@@ -375,12 +377,12 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
 {
   // Allocate slightly larger than buf_size, so we can detect when more room is needed
   size_t real_size = buf_size + 20;
-  char* buffer = (char*)malloc(real_size);
+  char*  buffer = (char*)malloc(real_size);
   if (!buffer)
     return kEtcPalErrNoMem;
   memset(buffer, 0, real_size);
 
-  char* cur_ptr = buffer;
+  char*  cur_ptr = buffer;
   size_t nl_msg_size = 0;
 
   // Read from the socket until the NLMSG_DONE is returned in the type of the RTNETLINK message
@@ -443,7 +445,7 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     {
       // inner loop: loop thru all the attributes of one route entry.
       struct rtattr* rt_attributes = (struct rtattr*)RTM_RTA(rt_message);
-      unsigned int rt_attr_size = (unsigned int)RTM_PAYLOAD(nl_header);
+      unsigned int   rt_attr_size = (unsigned int)RTM_PAYLOAD(nl_header);
       for (; RTA_OK(rt_attributes, rt_attr_size); rt_attributes = RTA_NEXT(rt_attributes, rt_attr_size))
       {
         // We only care about the gateway and DST attribute

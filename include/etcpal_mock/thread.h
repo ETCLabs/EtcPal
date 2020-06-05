@@ -31,8 +31,12 @@ extern "C" {
 
 typedef void (*EtcPalThreadFunc)(void*);
 
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_create, etcpal_thread_t*, const EtcPalThreadParams*,
-                        EtcPalThreadFunc, void*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t,
+                        etcpal_thread_create,
+                        etcpal_thread_t*,
+                        const EtcPalThreadParams*,
+                        EtcPalThreadFunc,
+                        void*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_join, etcpal_thread_t*);
 // Not mocked: etcpal_thread_sleep()
 

@@ -25,25 +25,25 @@
 
 typedef struct DefaultNetint
 {
-  bool v4_valid;
+  bool         v4_valid;
   unsigned int v4_index;
 
-  bool v6_valid;
+  bool         v6_valid;
   unsigned int v6_index;
 } DefaultNetint;
 
 typedef struct CachedNetintInfo
 {
-  size_t num_netints;
+  size_t            num_netints;
   EtcPalNetintInfo* netints;
-  DefaultNetint def;
+  DefaultNetint     def;
 } CachedNetintInfo;
 
 etcpal_error_t etcpal_netint_init(void);
-void etcpal_netint_deinit(void);
+void           etcpal_netint_deinit(void);
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
-void os_free_interfaces(CachedNetintInfo* cache);
+void           os_free_interfaces(CachedNetintInfo* cache);
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index);
 
 #endif /* ETCPAL_PRIVATE_NETINT_H_ */

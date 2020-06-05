@@ -28,12 +28,15 @@ static void* thread_func_internal(void* arg);
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*), void* thread_arg)
+etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
+                                    const EtcPalThreadParams* params,
+                                    void (*thread_fn)(void*),
+                                    void* thread_arg)
 {
   if (!id || !params || !thread_fn)
     return kEtcPalErrInvalid;
 
-  pthread_attr_t thread_attr;
+  pthread_attr_t  thread_attr;
   pthread_attr_t* p_thread_attr = NULL;
 
   if (params && params->stack_size != ETCPAL_THREAD_DEFAULT_STACK)
@@ -77,4 +80,4 @@ void* thread_func_internal(void* arg)
   return NULL;
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

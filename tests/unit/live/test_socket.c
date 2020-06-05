@@ -29,9 +29,9 @@ static const char* test_hostname = "www.google.com";
 static const char* test_service = "http";
 #endif
 
-static const char* test_gai_ip_str = "10.101.1.1";
+static const char*    test_gai_ip_str = "10.101.1.1";
 static const uint32_t test_gai_ip = 0x0a650101;
-static const char* test_gai_port_str = "8080";
+static const char*    test_gai_port_str = "8080";
 static const uint16_t test_gai_port = 8080;
 
 TEST_GROUP(etcpal_socket);
@@ -78,7 +78,7 @@ TEST(etcpal_socket, blocking_state_is_consistent)
 
   // Set the socket to non-blocking, make sure it reads as non-blocking
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setblocking(sock, false));
-  bool is_blocking;
+  bool           is_blocking;
   etcpal_error_t gb_result = etcpal_getblocking(sock, &is_blocking);
 
   // Special case - this function isn't implemented on all platforms, so we abort this test
@@ -167,8 +167,8 @@ TEST(etcpal_socket, poll_add_remove_socket_works)
 TEST(etcpal_socket, poll_user_data_works)
 {
   etcpal_socket_t sock_1, sock_2;
-  void* user_data_1 = (void*)1;
-  void* user_data_2 = (void*)2;
+  void*           user_data_1 = (void*)1;
+  void*           user_data_2 = (void*)2;
 
   EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
@@ -312,7 +312,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   // Receive data on the socket.
-  uint8_t recv_buf[POLL_UDP_IN_TEST_MESSAGE_LENGTH];
+  uint8_t        recv_buf[POLL_UDP_IN_TEST_MESSAGE_LENGTH];
   EtcPalSockAddr from_addr;
   TEST_ASSERT_EQUAL(POLL_UDP_IN_TEST_MESSAGE_LENGTH,
                     (size_t)etcpal_recvfrom(event.socket, recv_buf, POLL_UDP_IN_TEST_MESSAGE_LENGTH, 0, &from_addr));

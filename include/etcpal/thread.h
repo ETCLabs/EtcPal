@@ -107,7 +107,8 @@ typedef struct EtcPalThreadParams
   unsigned int stack_size;
   /** A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH. */
   const char* thread_name;
-  /** @brief Pointer to a platform-specific parameter structure.
+  /**
+   * @brief Pointer to a platform-specific parameter structure.
    *
    * This is used to set thread attributes that are not shared between platforms. Currently the
    * only platform that has a valid value for this member is MQX, which has the following
@@ -158,7 +159,9 @@ typedef struct EtcPalThreadParams
     ETCPAL_THREAD_PARAMS_INIT_VALUES \
   }
 
-etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void*),
+etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
+                                    const EtcPalThreadParams* params,
+                                    void (*thread_fn)(void*),
                                     void* thread_arg);
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
 

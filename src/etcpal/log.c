@@ -63,15 +63,24 @@ static const char* kLogSeverityStrings[] = {
 
 /**************************** Private variables ******************************/
 
-static unsigned int init_count;
+static unsigned int   init_count;
 static etcpal_mutex_t buf_lock;
 
 /*********************** Private function prototypes *************************/
 
-static char* create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
-                            va_list args);
-static char* create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
-                               const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args);
+static char* create_log_str(char*                     buf,
+                            size_t                    buflen,
+                            const EtcPalLogTimestamp* timestamp,
+                            int                       pri,
+                            const char*               format,
+                            va_list                   args);
+static char* create_syslog_str(char*                     buf,
+                               size_t                    buflen,
+                               const EtcPalLogTimestamp* timestamp,
+                               const EtcPalSyslogParams* syslog_params,
+                               int                       pri,
+                               const char*               format,
+                               va_list                   args);
 
 static void sanitize_str(char* str);
 
@@ -117,11 +126,15 @@ void etcpal_log_deinit(void)
  * @param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                   as appropriate for format specifiers.
  */
-bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
+bool etcpal_create_log_str(char*                     buf,
+                           size_t                    buflen,
+                           const EtcPalLogTimestamp* timestamp,
+                           int                       pri,
+                           const char*               format,
                            ...)
 {
   va_list args;
-  bool res;
+  bool    res;
   va_start(args, format);
   res = (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
   va_end(args);
@@ -145,8 +158,12 @@ bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* t
  *                   as appropriate for format specifiers.
  * @param[in] args Argument list for the format specifiers in format.
  */
-bool etcpal_vcreate_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
-                            va_list args)
+bool etcpal_vcreate_log_str(char*                     buf,
+                            size_t                    buflen,
+                            const EtcPalLogTimestamp* timestamp,
+                            int                       pri,
+                            const char*               format,
+                            va_list                   args)
 {
   return (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
 }
@@ -165,11 +182,16 @@ bool etcpal_vcreate_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* 
  * @param[in] format Log message with printf-style format specifiers. Provide additional arguments
  *                   as appropriate for format specifiers.
  */
-bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
-                              const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
+bool etcpal_create_syslog_str(char*                     buf,
+                              size_t                    buflen,
+                              const EtcPalLogTimestamp* timestamp,
+                              const EtcPalSyslogParams* syslog_params,
+                              int                       pri,
+                              const char*               format,
+                              ...)
 {
   va_list args;
-  bool res;
+  bool    res;
   va_start(args, format);
   res = (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
   va_end(args);
@@ -194,8 +216,13 @@ bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp
  *                   as appropriate for format specifiers.
  * @param[in] args Argument list for the format specifiers in format.
  */
-bool etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
-                               const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args)
+bool etcpal_vcreate_syslog_str(char*                     buf,
+                               size_t                    buflen,
+                               const EtcPalLogTimestamp* timestamp,
+                               const EtcPalSyslogParams* syslog_params,
+                               int                       pri,
+                               const char*               format,
+                               va_list                   args)
 {
   return (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
 }
@@ -316,12 +343,12 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     return;
 
   EtcPalLogTimestamp timestamp;
-  bool have_time = get_time(params, &timestamp);
+  bool               have_time = get_time(params, &timestamp);
 
   if (etcpal_mutex_lock(&buf_lock))
   {
-    static char syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
-    static char humanlogmsg[ETCPAL_LOG_STR_MAX_LEN + 1];
+    static char      syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
+    static char      humanlogmsg[ETCPAL_LOG_STR_MAX_LEN + 1];
     EtcPalLogStrings strings = {NULL, NULL, NULL};
     strings.priority = pri;
 
@@ -368,8 +395,12 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
 
 /* Create a log message with a human-readable header given the appropriate va_list. Returns a
  * pointer to the original message within the log message, or NULL on failure. */
-char* create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
-                     va_list args)
+char* create_log_str(char*                     buf,
+                     size_t                    buflen,
+                     const EtcPalLogTimestamp* timestamp,
+                     int                       pri,
+                     const char*               format,
+                     va_list                   args)
 {
   if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
     return NULL;
@@ -402,8 +433,13 @@ char* create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timesta
 
 /* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
  * original message within the syslog message, or NULL on failure. */
-char* create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
-                        const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args)
+char* create_syslog_str(char*                     buf,
+                        size_t                    buflen,
+                        const EtcPalLogTimestamp* timestamp,
+                        const EtcPalSyslogParams* syslog_params,
+                        int                       pri,
+                        const char*               format,
+                        va_list                   args)
 {
   if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
     return NULL;

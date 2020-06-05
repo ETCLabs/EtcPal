@@ -39,7 +39,7 @@ TEST(etcpal_cpp_uuid, default_constructor_works)
 
 TEST(etcpal_cpp_uuid, field_constructor_works)
 {
-  const etcpal::Uuid uuid(0x00001111, 0x2222, 0x3333, {0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb});
+  const etcpal::Uuid            uuid(0x00001111, 0x2222, 0x3333, {0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb});
   const std::array<uint8_t, 16> uuid_data{0x00, 0x00, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33,
                                           0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb};
 
@@ -59,7 +59,7 @@ TEST(etcpal_cpp_uuid, field_constructor_works)
 TEST(etcpal_cpp_uuid, copy_constructors_work)
 {
   // Copy from an EtcPalUuid
-  const EtcPalUuid c_uuid{UUID_INITIALIZER};
+  const EtcPalUuid   c_uuid{UUID_INITIALIZER};
   const etcpal::Uuid uuid1(c_uuid);
   TEST_ASSERT_TRUE(uuid1.get() == c_uuid);
 
@@ -77,7 +77,7 @@ TEST(etcpal_cpp_uuid, copy_constructors_work)
 TEST(etcpal_cpp_uuid, assignment_operators_work)
 {
   etcpal::Uuid uuid;
-  EtcPalUuid c_uuid{UUID_INITIALIZER};
+  EtcPalUuid   c_uuid{UUID_INITIALIZER};
 
   // Assign to an EtcPalUuid
   uuid = c_uuid;
@@ -105,7 +105,7 @@ TEST(etcpal_cpp_uuid, to_string_works)
 // will only test one bad string in this one.
 TEST(etcpal_cpp_uuid, from_string_works)
 {
-  auto uuid = etcpal::Uuid::FromString("00010203-0405-0607-0809-0a0b0c0d0e0f");
+  auto               uuid = etcpal::Uuid::FromString("00010203-0405-0607-0809-0a0b0c0d0e0f");
   const etcpal::Uuid uuid_cmp(UUID_INITIALIZER);
   TEST_ASSERT_TRUE(uuid == uuid_cmp);
   TEST_ASSERT_FALSE(uuid.IsNull());
@@ -259,7 +259,7 @@ TEST(etcpal_cpp_uuid, generates_os_preferred_correctly)
 
 TEST(etcpal_cpp_uuid, generates_device_correctly)
 {
-  const uint8_t mac[6]{0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
+  const uint8_t                mac[6]{0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
   const std::array<uint8_t, 6> mac_array{0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
 
   const etcpal::Uuid dev_1 = etcpal::Uuid::Device("Test Device", mac, 20);
@@ -318,8 +318,8 @@ TEST(etcpal_cpp_uuid, comparison_operators_work)
 TEST(etcpal_cpp_uuid, special_equality_operators_work)
 {
   const etcpal::Uuid uuid_1({20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35});
-  const EtcPalUuid c_uuid_1_dup = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
-  const EtcPalUuid c_uuid_2 = {0, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
+  const EtcPalUuid   c_uuid_1_dup = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
+  const EtcPalUuid   c_uuid_2 = {0, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
 
   TEST_ASSERT_TRUE(uuid_1 == c_uuid_1_dup);
   TEST_ASSERT_TRUE(c_uuid_1_dup == uuid_1);
@@ -335,7 +335,7 @@ TEST(etcpal_cpp_uuid, accessors_work)
 {
   const std::array<uint8_t, 16> uuid_data = {0x00, 0x00, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33,
                                              0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb};
-  const etcpal::Uuid uuid(uuid_data.data());
+  const etcpal::Uuid            uuid(uuid_data.data());
 
   TEST_ASSERT_EQUAL_UINT32(uuid.time_low(), 0x00001111u);
   TEST_ASSERT_EQUAL_UINT16(uuid.time_mid(), 0x2222u);

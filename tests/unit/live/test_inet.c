@@ -51,7 +51,7 @@ TEST_TEAR_DOWN(etcpal_inet)
 TEST(etcpal_inet, invalid_calls_fail)
 {
   // TODO fill this out with the rest of the functions
-  char mac_str_buf[ETCPAL_MAC_STRING_BYTES];
+  char                mac_str_buf[ETCPAL_MAC_STRING_BYTES];
   const EtcPalMacAddr mac = {0};
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(NULL, mac_str_buf));
   TEST_ASSERT_NOT_EQUAL(kEtcPalErrOk, etcpal_mac_to_string(&mac, NULL));
@@ -68,7 +68,7 @@ TEST(etcpal_inet, ipaddr_init_macros_work)
 
 #define V6_INITIALIZER 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 
-  const uint8_t v6_val[] = {V6_INITIALIZER};
+  const uint8_t      v6_val[] = {V6_INITIALIZER};
   const EtcPalIpAddr v6 = ETCPAL_IPV6_INIT(V6_INITIALIZER);
 
   TEST_ASSERT_TRUE(ETCPAL_IP_IS_V6(&v6));
@@ -192,7 +192,7 @@ TEST(etcpal_inet, ip_compare_functions_work)
   TEST_ASSERT_EQUAL_INT(0, etcpal_ip_cmp(&v4_copy, &v4));
 
   EtcPalIpAddr v6;
-  uint8_t v6_data[ETCPAL_IPV6_BYTES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+  uint8_t      v6_data[ETCPAL_IPV6_BYTES] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
   ETCPAL_IP_SET_V6_ADDRESS(&v6, v6_data);
 
   // Copied address should compare equal
@@ -208,7 +208,7 @@ TEST(etcpal_inet, ip_compare_functions_work)
   ETCPAL_IP_SET_V4_ADDRESS(&v4_less, 0x01020303);
 
   EtcPalIpAddr v6_less;
-  uint8_t v6_data_less[ETCPAL_IPV6_BYTES];
+  uint8_t      v6_data_less[ETCPAL_IPV6_BYTES];
   memcpy(v6_data_less, v6_data, ETCPAL_IPV6_BYTES);
   v6_data_less[15] = 14;
   ETCPAL_IP_SET_V6_ADDRESS(&v6_less, v6_data_less);
@@ -350,18 +350,18 @@ TEST(etcpal_inet, ip_mask_from_length_works)
 }
 
 // For ip/string functions
-char str[ETCPAL_IP_STRING_BYTES];
-const char* test_ip4_1 = "0.0.0.0";
-const char* test_ip4_2 = "255.255.255.255";
-const char* test_ip4_fail = "256.256.256.256";
-const char* test_ip6_1 = "::";
+char          str[ETCPAL_IP_STRING_BYTES];
+const char*   test_ip4_1 = "0.0.0.0";
+const char*   test_ip4_2 = "255.255.255.255";
+const char*   test_ip4_fail = "256.256.256.256";
+const char*   test_ip6_1 = "::";
 const uint8_t test_ip6_1_bin[ETCPAL_IPV6_BYTES] = {0};
-const char* test_ip6_2 = "::1";
+const char*   test_ip6_2 = "::1";
 const uint8_t test_ip6_2_bin[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-const char* test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
+const char*   test_ip6_3 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
 const uint8_t test_ip6_3_bin[ETCPAL_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
                                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-const char* test_ip6_fail = "abcd::ef01::2345";
+const char*   test_ip6_fail = "abcd::ef01::2345";
 
 TEST(etcpal_inet, ip_to_string_conversion_works)
 {
@@ -429,7 +429,7 @@ TEST(etcpal_inet, mac_compare_works)
 TEST(etcpal_inet, mac_to_string_conversion_works)
 {
   const EtcPalMacAddr mac = {{1, 2, 3, 4, 5, 6}};
-  char str_buf[ETCPAL_MAC_STRING_BYTES];
+  char                str_buf[ETCPAL_MAC_STRING_BYTES];
 
   etcpal_mac_to_string(&mac, str_buf);
   TEST_ASSERT_EQUAL_STRING(str_buf, "01:02:03:04:05:06");
@@ -437,8 +437,8 @@ TEST(etcpal_inet, mac_to_string_conversion_works)
 
 TEST(etcpal_inet, string_to_mac_conversion_works)
 {
-  EtcPalMacAddr mac;
-  const char* good_strings[] = {"0a:0b:cd:01:02:34", "0a0bcd010234"};
+  EtcPalMacAddr       mac;
+  const char*         good_strings[] = {"0a:0b:cd:01:02:34", "0a0bcd010234"};
   const EtcPalMacAddr good_str_mac = {{0x0a, 0x0b, 0xcd, 0x01, 0x02, 0x34}};
   // clang-format off
   const char* bad_strings[] = {

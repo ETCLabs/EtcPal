@@ -39,14 +39,26 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setblocking, etcpal_socket_t, bool
 
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_context_init, EtcPalPollContext*);
 DEFINE_FAKE_VOID_FUNC(etcpal_poll_context_deinit, EtcPalPollContext*);
-DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_add_socket, EtcPalPollContext*, etcpal_socket_t,
-                       etcpal_poll_events_t, void*);
-DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_modify_socket, EtcPalPollContext*, etcpal_socket_t,
-                       etcpal_poll_events_t, void*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
+                       etcpal_poll_add_socket,
+                       EtcPalPollContext*,
+                       etcpal_socket_t,
+                       etcpal_poll_events_t,
+                       void*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
+                       etcpal_poll_modify_socket,
+                       EtcPalPollContext*,
+                       etcpal_socket_t,
+                       etcpal_poll_events_t,
+                       void*);
 DEFINE_FAKE_VOID_FUNC(etcpal_poll_remove_socket, EtcPalPollContext*, etcpal_socket_t);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_wait, EtcPalPollContext*, EtcPalPollEvent*, int);
 
-DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getaddrinfo, const char*, const char*, const EtcPalAddrinfo*,
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
+                       etcpal_getaddrinfo,
+                       const char*,
+                       const char*,
+                       const EtcPalAddrinfo*,
                        EtcPalAddrinfo*);
 DEFINE_FAKE_VALUE_FUNC(bool, etcpal_nextaddr, EtcPalAddrinfo*);
 DEFINE_FAKE_VOID_FUNC(etcpal_freeaddrinfo, EtcPalAddrinfo*);

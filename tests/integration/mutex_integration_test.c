@@ -33,7 +33,7 @@
 #define NUM_THREADS 10
 #define NUM_ITERATIONS 10000
 
-static int shared_var;
+static int            shared_var;
 static etcpal_mutex_t mutex;
 
 static void mutex_test_thread(void* arg)

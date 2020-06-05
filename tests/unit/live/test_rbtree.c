@@ -39,13 +39,13 @@ static int incrementing_int_array[INT_ARRAY_SIZE];
 static int random_int_array[INT_ARRAY_SIZE];
 
 EtcPalRbNode node_pool[INT_ARRAY_SIZE];
-size_t next_node_index;
+size_t       next_node_index;
 
 // Private function prototypes
 
 static EtcPalRbNode* get_node();
-static int int_compare(const EtcPalRbTree* self, const void* value_a, const void* value_b);
-static void populate_int_arrays();
+static int           int_compare(const EtcPalRbTree* self, const void* value_a, const void* value_b);
+static void          populate_int_arrays();
 
 FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
 FAKE_VOID_FUNC(node_dealloc, EtcPalRbNode*);
@@ -280,8 +280,8 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
 
   // Get the height of the tree and compare it against the theoretical maximum.
   EtcPalRbIter iter;
-  size_t max_height = 0;
-  size_t theoretical_max_height;
+  size_t       max_height = 0;
+  size_t       theoretical_max_height;
   TEST_ASSERT_NOT_NULL(etcpal_rbiter_init(&iter));
   TEST_ASSERT_NOT_NULL(etcpal_rbiter_first(&iter, &tree));
   do

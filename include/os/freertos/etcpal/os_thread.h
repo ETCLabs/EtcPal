@@ -38,9 +38,9 @@ typedef TaskHandle_t etcpal_thread_id_t;
 typedef struct
 {
   void (*fn)(void*);
-  void* arg;
+  void*             arg;
   SemaphoreHandle_t sig;
-  TaskHandle_t tid;
+  TaskHandle_t      tid;
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms) vTaskDelay(pdMS_TO_TICKS(sleep_ms))

@@ -62,7 +62,7 @@ typedef struct EtcPalPollFdSet
 
 typedef struct EtcPalPollContext
 {
-  bool valid;
+  bool           valid;
   etcpal_mutex_t lock;
 
   EtcPalRbTree sockets;

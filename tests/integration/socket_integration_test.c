@@ -52,10 +52,10 @@
 #define NUM_TEST_PACKETS 1000
 
 static unsigned int v4_netint;
-bool run_ipv4_mcast_test;
+bool                run_ipv4_mcast_test;
 #if ETCPAL_TEST_IPV6
 static unsigned int v6_netint;
-bool run_ipv6_mcast_test;
+bool                run_ipv6_mcast_test;
 #endif
 
 static const char kSocketTestMessage[] = "testtesttest";
@@ -68,7 +68,7 @@ static const uint8_t kTestMcastAddrIPv6[ETCPAL_IPV6_BYTES] = {0xff, 0x12, 0x00, 
 #endif
 
 static etcpal_socket_t send_sock;
-static EtcPalSockAddr send_addr;
+static EtcPalSockAddr  send_addr;
 static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
 
 #if !ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS
@@ -79,7 +79,7 @@ static void select_network_interface_v4()
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &v4_netint))
   {
     const EtcPalNetintInfo* netint_arr;
-    size_t netint_arr_size;
+    size_t                  netint_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->id, "utun"))
     {
@@ -115,7 +115,7 @@ static void select_network_interface_v6()
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &v6_netint))
   {
     const EtcPalNetintInfo* netint_arr;
-    size_t netint_arr_size;
+    size_t                  netint_arr_size;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->id, "utun"))
     {
@@ -205,7 +205,7 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
   {
     EtcPalSockAddr from_addr;
-    uint8_t buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
+    uint8_t        buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
 
     int res = etcpal_recvfrom(recv_socks[0], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr);
     if (res == SOCKET_TEST_MESSAGE_LENGTH)
@@ -230,7 +230,7 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
   // recvfrom should time out because this socket is bound to a different port and we set the
   // timeout option on this socket.
   EtcPalSockAddr from_addr;
-  uint8_t buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
+  uint8_t        buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
   TEST_ASSERT_LESS_OR_EQUAL_INT(0, etcpal_recvfrom(recv_socks[1], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr));
 
   // Let the send thread end
@@ -295,7 +295,7 @@ void multicast_udp_test(void)
   for (size_t i = 0; i < NUM_TEST_PACKETS; ++i)
   {
     EtcPalSockAddr from_addr;
-    uint8_t buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
+    uint8_t        buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
 
     int res = etcpal_recvfrom(recv_socks[0], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr);
     if (res == SOCKET_TEST_MESSAGE_LENGTH)
@@ -316,7 +316,7 @@ void multicast_udp_test(void)
   TEST_ASSERT_GREATER_THAN(0u, num_packets_received);
 
   EtcPalSockAddr from_addr;
-  uint8_t buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
+  uint8_t        buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
   // recvfrom should time out because this socket is bound to a different port and we set the
   // timeout option on this socket.
   TEST_ASSERT_LESS_OR_EQUAL_INT(0, etcpal_recvfrom(recv_socks[1], buf, SOCKET_TEST_MESSAGE_LENGTH, 0, &from_addr));

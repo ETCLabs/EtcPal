@@ -81,7 +81,7 @@ bool acn_parse_udp_preamble(const uint8_t* buf, size_t buflen, AcnUdpPreamble* p
     return false;
 
   const uint8_t* pcur = buf;
-  uint16_t preamble_len = etcpal_unpack_u16b(pcur);
+  uint16_t       preamble_len = etcpal_unpack_u16b(pcur);
   pcur += 2;
   uint16_t postamble_len = etcpal_unpack_u16b(pcur);
   pcur += 2;
@@ -113,10 +113,10 @@ bool acn_parse_root_layer_header(const uint8_t* buf, size_t buflen, AcnRootLayer
     return false;
 
   uint8_t flags_byte = *buf;
-  bool extlength = ACN_PDU_L_FLAG_SET(flags_byte);
-  bool inheritvect = !ACN_PDU_V_FLAG_SET(flags_byte);
-  bool inherithead = !ACN_PDU_H_FLAG_SET(flags_byte);
-  bool inheritdata = !ACN_PDU_D_FLAG_SET(flags_byte);
+  bool    extlength = ACN_PDU_L_FLAG_SET(flags_byte);
+  bool    inheritvect = !ACN_PDU_V_FLAG_SET(flags_byte);
+  bool    inherithead = !ACN_PDU_H_FLAG_SET(flags_byte);
+  bool    inheritdata = !ACN_PDU_D_FLAG_SET(flags_byte);
 
   const uint8_t* cur_ptr = buf;
   const uint8_t* buf_end = buf + buflen;
@@ -291,7 +291,7 @@ size_t acn_pack_tcp_preamble(uint8_t* buf, size_t buflen, size_t rlp_block_len)
 size_t acn_root_layer_buf_size(const AcnRootLayerPdu* pdu_block, size_t num_pdus)
 {
   const AcnRootLayerPdu* pdu;
-  size_t block_size = 0;
+  size_t                 block_size = 0;
 
   for (pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
@@ -360,7 +360,7 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
   if (!buf || !pdu_block || (acn_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
     return 0;
 
-  uint8_t* cur_ptr = buf;
+  uint8_t*        cur_ptr = buf;
   AcnRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
   for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {

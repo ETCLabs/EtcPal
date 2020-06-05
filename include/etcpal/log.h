@@ -256,14 +256,14 @@
  */
 typedef struct EtcPalLogTimestamp
 {
-  unsigned int year;   /**< Absolute year. Valid range 0-9999. */
-  unsigned int month;  /**< Month of the year. Valid range 1-12 (starting with 1 for January). */
-  unsigned int day;    /**< Day of the month. Valid range 1-31.  */
-  unsigned int hour;   /**< Hours since midnight. Valid range 0-23. */
-  unsigned int minute; /**< Minutes past the current hour. Valid range 0-59. */
-  unsigned int second; /**< Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
-  unsigned int msec;   /**< Milliseconds past the current second. Valid range 0-999. */
-  int utc_offset;      /**< The local offset from UTC in minutes. */
+  unsigned int year;       /**< Absolute year. Valid range 0-9999. */
+  unsigned int month;      /**< Month of the year. Valid range 1-12 (starting with 1 for January). */
+  unsigned int day;        /**< Day of the month. Valid range 1-31.  */
+  unsigned int hour;       /**< Hours since midnight. Valid range 0-23. */
+  unsigned int minute;     /**< Minutes past the current hour. Valid range 0-59. */
+  unsigned int second;     /**< Seconds past the current minute. Valid range 0-60 (to handle leap seconds). */
+  unsigned int msec;       /**< Milliseconds past the current second. Valid range 0-999. */
+  int          utc_offset; /**< The local offset from UTC in minutes. */
 } EtcPalLogTimestamp;
 
 /** The set of log strings passed with a call to an etcpal_log_callback function. Any members not
@@ -370,28 +370,46 @@ extern "C" {
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool etcpal_create_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
+bool etcpal_create_log_str(char*                     buf,
+                           size_t                    buflen,
+                           const EtcPalLogTimestamp* timestamp,
+                           int                       pri,
+                           const char*               format,
                            ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 5, 6)))
 #endif
     ;
 
-bool etcpal_vcreate_log_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp, int pri, const char* format,
-                            va_list args);
+bool etcpal_vcreate_log_str(char*                     buf,
+                            size_t                    buflen,
+                            const EtcPalLogTimestamp* timestamp,
+                            int                       pri,
+                            const char*               format,
+                            va_list                   args);
 
 #ifdef __ICCARM__
 #pragma __printf_args
 #endif
-bool etcpal_create_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
-                              const EtcPalSyslogParams* syslog_params, int pri, const char* format, ...)
+bool etcpal_create_syslog_str(char*                     buf,
+                              size_t                    buflen,
+                              const EtcPalLogTimestamp* timestamp,
+                              const EtcPalSyslogParams* syslog_params,
+                              int                       pri,
+                              const char*               format,
+                              ...)
 #ifdef __GNUC__
     __attribute__((__format__(__printf__, 6, 7)))
 #endif
     ;
 
-bool etcpal_vcreate_syslog_str(char* buf, size_t buflen, const EtcPalLogTimestamp* timestamp,
-                               const EtcPalSyslogParams* syslog_params, int pri, const char* format, va_list args);
+bool etcpal_vcreate_syslog_str(char*                     buf,
+                               size_t                    buflen,
+                               const EtcPalLogTimestamp* timestamp,
+                               const EtcPalSyslogParams* syslog_params,
+                               int                       pri,
+                               const char*               format,
+                               va_list                   args);
 
 void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params);
 bool etcpal_validate_log_params(EtcPalLogParams* params);

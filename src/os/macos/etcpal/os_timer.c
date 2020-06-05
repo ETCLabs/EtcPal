@@ -46,4 +46,4 @@ uint32_t etcpal_getms(void)
   return ((uint32_t)(ticks * ticks_to_ms));
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

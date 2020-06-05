@@ -31,16 +31,16 @@ public:
   void WillReturnTimestamp(const etcpal::LogTimestamp& timestamp) { timestamp_to_return_ = timestamp; }
   void OnLogEvent(const std::function<void(const EtcPalLogStrings&)>& func) { log_event_ = func; }
 
-  int LogEventCallCount() const { return log_event_call_count_; }
+  int  LogEventCallCount() const { return log_event_call_count_; }
   void ResetLogEventCallCount() { log_event_call_count_ = 0; }
 
 private:
   etcpal::LogTimestamp GetLogTimestamp() override { return timestamp_to_return_; }
-  void HandleLogMessage(const EtcPalLogStrings& strings) override;
+  void                 HandleLogMessage(const EtcPalLogStrings& strings) override;
 
-  etcpal::LogTimestamp timestamp_to_return_{1970, 1, 1, 0, 0, 0, 0, 0};
+  etcpal::LogTimestamp                         timestamp_to_return_{1970, 1, 1, 0, 0, 0, 0, 0};
   std::function<void(const EtcPalLogStrings&)> log_event_;
-  int log_event_call_count_{0};
+  int                                          log_event_call_count_{0};
 };
 
 void TestLogMessageHandler::HandleLogMessage(const EtcPalLogStrings& strings)
@@ -51,7 +51,7 @@ void TestLogMessageHandler::HandleLogMessage(const EtcPalLogStrings& strings)
 }
 
 static TestLogMessageHandler test_log_handler;
-static etcpal::Logger logger;
+static etcpal::Logger        logger;
 
 extern "C" {
 TEST_GROUP(etcpal_cpp_log_timestamp);

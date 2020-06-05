@@ -23,6 +23,6 @@
 #include "etcpal/error.h"
 
 etcpal_error_t etcpal_timer_init(void);
-void etcpal_timer_deinit(void);
+void           etcpal_timer_deinit(void);
 
 #endif /* ETCPAL_PRIVATE_TIMER_H_ */

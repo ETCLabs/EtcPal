@@ -87,9 +87,9 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
     return false;
 
   const char* from_ptr = str;
-  uint8_t to_buf[ETCPAL_UUID_BYTES];
-  uint8_t* to_ptr = to_buf;
-  bool first = true; /* Whether we are doing the first or second nibble of the byte */
+  uint8_t     to_buf[ETCPAL_UUID_BYTES];
+  uint8_t*    to_ptr = to_buf;
+  bool        first = true; /* Whether we are doing the first or second nibble of the byte */
 
   while ((to_ptr - to_buf < ETCPAL_UUID_BYTES) && (*from_ptr != '\0'))
   {
@@ -234,7 +234,7 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
   if (!ns || !name || name_len == 0 || !uuid)
     return kEtcPalErrInvalid;
 
-  SHA1_CTX sha1;
+  SHA1_CTX      sha1;
   unsigned char hash[20];
 
   SHA1Init(&sha1);
@@ -290,8 +290,10 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
  * @return #kEtcPalErrOk: UUID generated successfully.
  * @return #kEtcPalErrInvalid: Invalid argument provided.
  */
-etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const uint8_t* mac_addr, uint32_t uuid_num,
-                                           EtcPalUuid* uuid)
+etcpal_error_t etcpal_generate_device_uuid(const char*    dev_str,
+                                           const uint8_t* mac_addr,
+                                           uint32_t       uuid_num,
+                                           EtcPalUuid*    uuid)
 {
   if (!dev_str || !mac_addr || !uuid)
     return kEtcPalErrInvalid;

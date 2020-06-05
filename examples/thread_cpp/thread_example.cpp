@@ -63,7 +63,7 @@ int main(void)
 
   // Or default construct and call start
   etcpal::Thread thread_2;
-  auto start_res = thread_2.SetName("Thread 2").Start(Thread2Func, std::ref(thread_2_count));
+  auto           start_res = thread_2.SetName("Thread 2").Start(Thread2Func, std::ref(thread_2_count));
   // This returns a result in the form of an etcpal::Error
   if (!start_res)
   {

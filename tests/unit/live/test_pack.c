@@ -38,7 +38,7 @@ uint8_t test_buf[100];
 
 static void test_packi16b(uint8_t* buffer, const char* error_msg)
 {
-  const int16_t tst = 0x8765;
+  const int16_t  tst = 0x8765;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int16_t));
 
@@ -49,7 +49,7 @@ static void test_packi16b(uint8_t* buffer, const char* error_msg)
 
 static void test_packi16l(uint8_t* buffer, const char* error_msg)
 {
-  const int16_t tst = 0x8765;
+  const int16_t  tst = 0x8765;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int16_t));
 
@@ -122,7 +122,7 @@ static void test_unpacku16l(uint8_t* buffer, const char* error_msg)
 
 static void test_packi32b(uint8_t* buffer, const char* error_msg)
 {
-  const int32_t tst = 0x87654321;
+  const int32_t  tst = 0x87654321;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int32_t));
 
@@ -135,7 +135,7 @@ static void test_packi32b(uint8_t* buffer, const char* error_msg)
 
 static void test_packi32l(uint8_t* buffer, const char* error_msg)
 {
-  const int32_t tst = 0x87654321;
+  const int32_t  tst = 0x87654321;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int32_t));
 
@@ -216,7 +216,7 @@ static void test_unpacku32l(uint8_t* buffer, const char* error_msg)
 
 static void test_packi64b(uint8_t* buffer, const char* error_msg)
 {
-  const int64_t tst = 0xfedcba9876543210;
+  const int64_t  tst = 0xfedcba9876543210;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int64_t));
 
@@ -233,7 +233,7 @@ static void test_packi64b(uint8_t* buffer, const char* error_msg)
 
 static void test_packi64l(uint8_t* buffer, const char* error_msg)
 {
-  const int64_t tst = 0xfedcba9876543210;
+  const int64_t  tst = 0xfedcba9876543210;
   const uint8_t* ptst = (const uint8_t*)(&tst);
   memset(buffer, 0, sizeof(int64_t));
 

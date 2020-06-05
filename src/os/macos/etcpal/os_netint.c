@@ -78,7 +78,7 @@ typedef struct RoutingTable
 {
   RoutingTableEntry* entries;
   RoutingTableEntry* default_route;
-  size_t size;
+  size_t             size;
 } RoutingTable;
 
 /**************************** Private variables ******************************/
@@ -91,8 +91,8 @@ RoutingTable routing_table_v6;
 // Functions for building the routing tables
 static etcpal_error_t build_routing_tables();
 static etcpal_error_t build_routing_table(int family, RoutingTable* table);
-static void free_routing_tables();
-static void free_routing_table(RoutingTable* table);
+static void           free_routing_tables();
+static void           free_routing_table(RoutingTable* table);
 
 // Interacting with the BSD routing stack
 static etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len);
@@ -100,7 +100,7 @@ static etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t 
 
 // Manipulating routing table entries
 static void init_routing_table_entry(RoutingTableEntry* entry);
-static int compare_routing_table_entries(const void* a, const void* b);
+static int  compare_routing_table_entries(const void* a, const void* b);
 
 #if ETCPAL_NETINT_DEBUG_OUTPUT
 static void debug_print_routing_table(RoutingTable* table);
@@ -166,8 +166,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
 
   // Pass 2: Fill in all the info about each address
-  size_t current_etcpal_index = 0;
-  char* link_name = NULL;
+  size_t              current_etcpal_index = 0;
+  char*               link_name = NULL;
   struct sockaddr_dl* link_addr = NULL;
 
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
@@ -311,7 +311,7 @@ etcpal_error_t build_routing_tables()
 etcpal_error_t build_routing_table(int family, RoutingTable* table)
 {
   uint8_t* buf = NULL;
-  size_t buf_len = 0;
+  size_t   buf_len = 0;
 
   etcpal_error_t res = get_routing_table_dump(family, &buf, &buf_len);
   if (res == kEtcPalErrOk)
@@ -452,7 +452,7 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
 {
   if (family == AF_INET)
   {
-    size_t mask_offset = offsetof(struct sockaddr_in, sin_addr);
+    size_t      mask_offset = offsetof(struct sockaddr_in, sin_addr);
     const char* mask_ptr = &((char*)os_netmask)[mask_offset];
 
     if (os_netmask->sa_len > mask_offset)
@@ -470,7 +470,7 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
   }
   else if (family == AF_INET6)
   {
-    size_t mask_offset = offsetof(struct sockaddr_in6, sin6_addr);
+    size_t      mask_offset = offsetof(struct sockaddr_in6, sin6_addr);
     const char* mask_ptr = &((char*)os_netmask)[mask_offset];
 
     if (os_netmask->sa_len > mask_offset)

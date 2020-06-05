@@ -188,10 +188,10 @@ public:
   ETCPAL_CONSTEXPR_14 EtcPalTimer& get() noexcept;
 
   TimePoint GetStartTime() const noexcept;
-  uint32_t GetInterval() const noexcept;
-  uint32_t GetElapsed() const noexcept;
-  uint32_t GetRemaining() const noexcept;
-  bool IsExpired() const noexcept;
+  uint32_t  GetInterval() const noexcept;
+  uint32_t  GetElapsed() const noexcept;
+  uint32_t  GetRemaining() const noexcept;
+  bool      IsExpired() const noexcept;
 
   void Start(uint32_t interval) noexcept;
   template <typename Rep, typename Period>

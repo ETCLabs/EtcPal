@@ -55,15 +55,15 @@ typedef int etcpal_socket_t;
 
 typedef struct EtcPalPollSocket
 {
-  etcpal_socket_t sock;
+  etcpal_socket_t      sock;
   etcpal_poll_events_t events;
-  void* user_data;
+  void*                user_data;
 } EtcPalPollSocket;
 
 typedef struct EtcPalPollFdSet
 {
   fd_set set;
-  int count;
+  int    count;
 } EtcPalPollFdSet;
 
 typedef struct EtcPalPollContext
@@ -71,8 +71,8 @@ typedef struct EtcPalPollContext
   bool valid;
 
   EtcPalPollSocket sockets[ETCPAL_SOCKET_MAX_POLL_SIZE];
-  size_t num_valid_sockets;
-  int max_fd;
+  size_t           num_valid_sockets;
+  int              max_fd;
 
   EtcPalPollFdSet readfds;
   EtcPalPollFdSet writefds;

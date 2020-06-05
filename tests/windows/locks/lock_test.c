@@ -61,11 +61,11 @@
 
 #define NUM_TEST_ITERATIONS 5
 
-bool keep_running;
-unsigned long shared_counter;
-SRWLOCK srw_lock;
+bool             keep_running;
+unsigned long    shared_counter;
+SRWLOCK          srw_lock;
 CRITICAL_SECTION cs;
-HANDLE mutex;
+HANDLE           mutex;
 
 void test_mutex_worker(void* arg)
 {

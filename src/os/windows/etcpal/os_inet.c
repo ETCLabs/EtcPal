@@ -127,7 +127,7 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
   {
     case kEtcPalIpTypeV4: {
       struct in_addr addr;
-      INT res = inet_pton(AF_INET, src, &addr);
+      INT            res = inet_pton(AF_INET, src, &addr);
       if (res == 0)
         return kEtcPalErrInvalid;
       else if (res < 0)
@@ -138,7 +138,7 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
     }
     case kEtcPalIpTypeV6: {
       struct in6_addr addr;
-      INT res = inet_pton(AF_INET6, src, &addr);
+      INT             res = inet_pton(AF_INET6, src, &addr);
       if (res == 0)
         return kEtcPalErrInvalid;
       else if (res < 0)

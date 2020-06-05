@@ -45,9 +45,9 @@ typedef _task_id etcpal_thread_id_t;
 typedef struct
 {
   void (*fn)(void*);
-  void* arg;
+  void*        arg;
   LWSEM_STRUCT sig;
-  _task_id tid;
+  _task_id     tid;
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms) _time_delay((uint32_t)sleep_ms)

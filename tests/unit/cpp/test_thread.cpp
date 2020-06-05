@@ -43,7 +43,7 @@ TEST(etcpal_cpp_thread, default_constructor_works)
 
 TEST(etcpal_cpp_thread, constructor_works_no_args)
 {
-  bool thread_ran = false;
+  bool           thread_ran = false;
   etcpal::Thread thrd([&]() {
     etcpal::Thread::Sleep(1);
     thread_ran = true;
@@ -56,7 +56,7 @@ TEST(etcpal_cpp_thread, constructor_works_no_args)
 
 TEST(etcpal_cpp_thread, constructor_works_with_args)
 {
-  bool thread_ran = false;
+  bool           thread_ran = false;
   etcpal::Thread thrd(
       [&](unsigned int ms) {
         etcpal::Thread::Sleep(ms);
@@ -71,7 +71,7 @@ TEST(etcpal_cpp_thread, constructor_works_with_args)
 
 TEST(etcpal_cpp_thread, start_works_no_args)
 {
-  bool thread_ran = false;
+  bool           thread_ran = false;
   etcpal::Thread thrd;
   TEST_ASSERT_TRUE(thrd.Start([&]() {
                          etcpal::Thread::Sleep(1);
@@ -86,7 +86,7 @@ TEST(etcpal_cpp_thread, start_works_no_args)
 
 TEST(etcpal_cpp_thread, start_works_with_args)
 {
-  bool thread_ran = false;
+  bool           thread_ran = false;
   etcpal::Thread thrd;
   TEST_ASSERT_TRUE(thrd.Start(
                            [&](unsigned int ms) {
@@ -113,7 +113,7 @@ struct Foo
 
 TEST(etcpal_cpp_thread, member_function)
 {
-  Foo foo;
+  Foo            foo;
   etcpal::Thread thrd(&Foo::Bar, &foo);
   TEST_ASSERT_TRUE(thrd.joinable());
   TEST_ASSERT_TRUE(thrd.Join().IsOk());
@@ -123,7 +123,7 @@ TEST(etcpal_cpp_thread, member_function)
 
 TEST(etcpal_cpp_thread, move_constructor_works)
 {
-  bool thread_ran = false;
+  bool           thread_ran = false;
   etcpal::Thread thrd;
   thrd.SetName("Test Thread Blah").Start([&]() {
     etcpal::Thread::Sleep(1);
@@ -147,7 +147,7 @@ TEST(etcpal_cpp_thread, move_constructor_works)
 
 TEST(etcpal_cpp_thread, move_assignment_operator_works)
 {
-  bool thread_ran = false;
+  bool           thread_ran = false;
   etcpal::Thread thrd;
   thrd.SetName("Test Thread Blah").Start([&]() {
     etcpal::Thread::Sleep(1);
@@ -171,7 +171,7 @@ TEST(etcpal_cpp_thread, move_assignment_operator_works)
 
 TEST(etcpal_cpp_thread, param_setters_work)
 {
-  bool thread_ran = false;
+  bool           thread_ran = false;
   etcpal::Thread thrd;
 
   thrd.SetName("My Thread")

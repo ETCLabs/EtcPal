@@ -138,7 +138,7 @@ typedef uint32_t etcpal_features_t;
  */
 
 etcpal_error_t etcpal_init(etcpal_features_t features);
-void etcpal_deinit(etcpal_features_t features);
+void           etcpal_deinit(etcpal_features_t features);
 
 #ifdef __cplusplus
 }

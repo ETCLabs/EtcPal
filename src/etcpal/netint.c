@@ -25,7 +25,7 @@
 
 /**************************** Private variables ******************************/
 
-static unsigned int init_count;
+static unsigned int     init_count;
 static CachedNetintInfo netint_cache;
 
 /*********************** Private function prototypes *************************/
@@ -99,8 +99,9 @@ const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
  * @return #kEtcPalErrNotInit: Module not initialized.
  * @return #kEtcPalErrNotFound: No interfaces found for this index.
  */
-etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const EtcPalNetintInfo** netint_arr,
-                                                     size_t* netint_arr_size)
+etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int             index,
+                                                     const EtcPalNetintInfo** netint_arr,
+                                                     size_t*                  netint_arr_size)
 {
   if (index == 0 || !netint_arr || !netint_arr_size)
     return kEtcPalErrInvalid;

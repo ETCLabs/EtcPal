@@ -35,9 +35,9 @@
 /*********************** Private function prototypes *************************/
 
 static IP_ADAPTER_ADDRESSES* get_windows_adapters();
-static void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
-static void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
-static void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache);
+static void                  copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
+static void                  copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
+static void                  copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache);
 
 /*************************** Function definitions ****************************/
 
@@ -172,7 +172,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
   const IP_ADAPTER_ADDRESSES* pcur = adapters;
 
   // Get the index of the default interface for IPv4
-  DWORD def_ifindex_v4;
+  DWORD              def_ifindex_v4;
   struct sockaddr_in v4_dest;
   memset(&v4_dest, 0, sizeof v4_dest);
   v4_dest.sin_family = AF_INET;
@@ -183,7 +183,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
   }
 
   // And the same for IPv6
-  DWORD def_ifindex_v6;
+  DWORD               def_ifindex_v6;
   struct sockaddr_in6 v6_dest;
   memset(&v6_dest, 0, sizeof v6_dest);
   v6_dest.sin6_family = AF_INET6;
