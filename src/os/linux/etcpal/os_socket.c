@@ -56,6 +56,8 @@ typedef struct EtcPalPollSocket
 
 /**************************** Private variables ******************************/
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 /* clang-format off */
 
 #define ETCPAL_NUM_SHUT 3
@@ -132,8 +134,6 @@ static EtcPalRbNode* poll_socket_alloc(void);
 static void poll_socket_free(EtcPalRbNode* node);
 
 /*************************** Function definitions ****************************/
-
-#if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
 etcpal_error_t etcpal_socket_init(void)
 {
@@ -919,4 +919,4 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

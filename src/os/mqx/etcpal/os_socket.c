@@ -44,6 +44,8 @@
 
 /**************************** Private variables ******************************/
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 /* clang-format off */
 
 #define ETCPAL_NUM_SHUT   3
@@ -118,8 +120,6 @@ static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPol
 static int32_t join_leave_mcast_group_ipv4(etcpal_socket_t id, const struct EtcPalMreq* mreq, bool join);
 
 /*************************** Function definitions ****************************/
-
-#if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
 static etcpal_error_t err_os_to_etcpal(uint32_t rtcserr)
 {
@@ -893,4 +893,4 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

@@ -45,6 +45,8 @@
 
 /**************************** Private variables ******************************/
 
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
 /* clang-format off */
 
 #define ETCPAL_NUM_SHUT   3
@@ -134,8 +136,6 @@ static etcpal_error_t handle_select_result(EtcPalPollContext* context, EtcPalPol
                                            const fd_set* writefds, const fd_set* exceptfds);
 
 /*************************** Function definitions ****************************/
-
-#if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
 etcpal_error_t etcpal_socket_init(void)
 {
