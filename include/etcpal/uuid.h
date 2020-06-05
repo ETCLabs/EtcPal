@@ -27,10 +27,10 @@
 #include <string.h>
 #include "etcpal/error.h"
 
-/*!
- * \defgroup etcpal_uuid uuid (UUIDs)
- * \ingroup etcpal
- * \brief Type and helper functions for a Universally Unique Identifier (UUID).
+/**
+ * @defgroup etcpal_uuid uuid (UUIDs)
+ * @ingroup etcpal
+ * @brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
  * UUIDs (per RFC 4122) are used in several libraries supported by EtcPal. This module contains a
  * type for a UUID and functions to generate, inspect and manipulate them.
@@ -46,13 +46,13 @@
  * embedded devices.
  *
  * The basic form of UUID generation is:
- * \code
+ * @code
  * EtcPalUuid uuid;
  * if (etcpal_generate_v1_uuid(&uuid) == kEtcPalErrOk)
  * {
  *   // uuid now contains a valid Version 1 UUID.
  * }
- * \endcode
+ * @endcode
  *
  * **Note:** Not all UUID types are available on all systems. V3, V5 and Device UUIDs are
  * guaranteed to be available in all ports of EtcPal, but V1, V4 and os_preferred UUIDs are
@@ -67,13 +67,13 @@
  * Windows         | Yes | Yes | Yes | Yes | Yes          | Yes    |
  *
  * You can also convert UUIDs to and from strings:
- * \code
+ * @code
  * EtcPalUuid uuid;
  * etcpal_string_to_uuid("39713ce1-2320-46aa-b602-4977be36e155", &uuid);
  *
  * char str_buf[ETCPAL_UUID_STRING_BYTES];
  * etcpal_uuid_to_string(&uuid, str_buf);
- * \endcode
+ * @endcode
  *
  * @{
  */
@@ -82,42 +82,42 @@
 extern "C" {
 #endif
 
-/*! The number of bytes that make up a UUID. */
+/** The number of bytes that make up a UUID. */
 #define ETCPAL_UUID_BYTES 16u
 
-/*! The UUID type. */
+/** The UUID type. */
 typedef struct EtcPalUuid
 {
-  uint8_t data[ETCPAL_UUID_BYTES]; /*!< The 16-byte UUID data. */
+  uint8_t data[ETCPAL_UUID_BYTES]; /**< The 16-byte UUID data. */
 } EtcPalUuid;
 
-/*!
- * \brief Compare two UUIDs.
- * \param uuid1ptr Pointer to first EtcPalUuid to compare.
- * \param uuid2ptr Pointer to second EtcPalUuid to compare.
- * \return < 0: uuid1ptr is less than uuid2ptr
- * \return 0: uuid1ptr is equal to uuid2ptr
- * \return > 0: uuid1ptr is greater than uuid2ptr
+/**
+ * @brief Compare two UUIDs.
+ * @param uuid1ptr Pointer to first EtcPalUuid to compare.
+ * @param uuid2ptr Pointer to second EtcPalUuid to compare.
+ * @return < 0: uuid1ptr is less than uuid2ptr
+ * @return 0: uuid1ptr is equal to uuid2ptr
+ * @return > 0: uuid1ptr is greater than uuid2ptr
  */
 #define ETCPAL_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)->data, (uuid2ptr)->data, ETCPAL_UUID_BYTES)
 
-/*! A null (all 0's) UUID, used by ETCPAL_UUID_IS_NULL() for comparison. */
+/** A null (all 0's) UUID, used by ETCPAL_UUID_IS_NULL() for comparison. */
 extern const EtcPalUuid kEtcPalNullUuid;
 
-/*!
- * \brief Determine if a UUID is null.
+/**
+ * @brief Determine if a UUID is null.
  *
  * A UUID is said to be 'null' when it is made up of all 0's.
  *
- * \param uuidptr Pointer to UUID to null-check.
- * \return true (UUID is null) or false (UUID is not null).
+ * @param uuidptr Pointer to UUID to null-check.
+ * @return true (UUID is null) or false (UUID is not null).
  */
 #define ETCPAL_UUID_IS_NULL(uuidptr) (memcmp((uuidptr)->data, kEtcPalNullUuid.data, ETCPAL_UUID_BYTES) == 0)
 
-/*! The maximum number of bytes required to hold an ASCII string representation of a UUID. */
+/** The maximum number of bytes required to hold an ASCII string representation of a UUID. */
 #define ETCPAL_UUID_STRING_BYTES 37
 
-/*! The maximum length of a device string used as an input to etcpal_generate_device_uuid(). */
+/** The maximum length of a device string used as an input to etcpal_generate_device_uuid(). */
 #define ETCPAL_UUID_DEV_STR_MAX_LEN 32
 
 bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf);
@@ -155,7 +155,7 @@ inline bool operator==(const EtcPalUuid& a, const EtcPalUuid& b)
 
 #endif
 
-/*!
+/**
  * @}
  */
 

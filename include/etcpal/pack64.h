@@ -24,8 +24,8 @@
 
 #include <stdint.h>
 
-/*!
- * \addtogroup etcpal_pack
+/**
+ * @addtogroup etcpal_pack
  * @{
  */
 
@@ -47,7 +47,7 @@ void etcpal_pack_u64l(uint8_t* buf, uint64_t val);
 }
 #endif
 
-/*!
+/**
  * @}
  */
 

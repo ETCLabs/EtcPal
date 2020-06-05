@@ -27,10 +27,10 @@
 #include "etcpal/common.h"
 #include "etcpal/inet.h"
 
-/*!
- * \defgroup etcpal_netint netint (Network Interfaces)
- * \ingroup etcpal
- * \brief A platform-neutral method for enumerating network interfaces.
+/**
+ * @defgroup etcpal_netint netint (Network Interfaces)
+ * @ingroup etcpal
+ * @brief A platform-neutral method for enumerating network interfaces.
  *
  * ```c
  * #include "etcpal/netint.h"
@@ -38,24 +38,24 @@
  *
  * **WARNING:** This module must be explicitly initialized before use. Initialize the module by
  * calling etcpal_init() with the relevant feature mask:
- * \code
+ * @code
  * etcpal_init(ETCPAL_FEATURE_NETINTS);
- * \endcode
+ * @endcode
  *
  * After initialization, an array of the set of network interfaces which were present on the system
  * at initialization time is kept internally. This array can be retrieved using
  * etcpal_netint_get_num_interfaces() and etcpal_netint_get_interfaces():
  *
- * \code
+ * @code
  * size_t num_netints = etcpal_netint_get_num_interfaces();
  * const EtcPalNetintInfo* netint_array = etcpal_netint_get_interfaces();
  * for (const EtcPalNetintInfo* netint = netint_array; netint < netint_array + num_netints; ++netint)
  * {
  *   // Record information or do something with each network interface in turn
  * }
- * \endcode
+ * @endcode
  *
- * The network interface array is sorted by interface index (see \ref interface_indexes); multiple
+ * The network interface array is sorted by interface index (see @ref interface_indexes); multiple
  * IP addresses assigned to the same physical interface are separated into different entries. This
  * means multiple entries in the array can have the same index.
  *
@@ -66,13 +66,13 @@
  * The routing information can also be used to determine which network interface will be used for a
  * given IP address destination, which can be handy for multicasting.
  *
- * \code
+ * @code
  * EtcPalIpAddr dest;
  * etcpal_string_to_ip(kEtcPalIpTypeV4, "192.168.200.35", &dest);
  *
  * unsigned int index;
  * etcpal_netint_get_interface_for_dest(&dest, &index); // Index now holds the interface that will be used
- * \endcode
+ * @endcode
  *
  * The list of network interfaces is cached and does not change at runtime, unless the
  * etcpal_netint_refresh_interfaces() function is called.
@@ -98,7 +98,7 @@ etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed);
 }
 #endif
 
-/*!
+/**
  * @}
  */
 

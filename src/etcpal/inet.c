@@ -48,14 +48,14 @@ static const uint8_t v6_loopback[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0
 
 /*************************** Function definitions ****************************/
 
-/*!
- * \brief Determine whether a EtcPalIpAddr contains a link-local address.
+/**
+ * @brief Determine whether a EtcPalIpAddr contains a link-local address.
  *
  * Works for both IPv4 and IPv6 addresses.
  *
- * \param[in] ip Address to check.
- * \return true: ip contains a link-local address.
- * \return false: ip does not contain a link-local address.
+ * @param[in] ip Address to check.
+ * @return true: ip contains a link-local address.
+ * @return false: ip does not contain a link-local address.
  */
 bool etcpal_ip_is_link_local(const EtcPalIpAddr* ip)
 {
@@ -76,14 +76,14 @@ bool etcpal_ip_is_link_local(const EtcPalIpAddr* ip)
   return false;
 }
 
-/*!
- * \brief Determine whether a EtcPalIpAddr contains a loopback address.
+/**
+ * @brief Determine whether a EtcPalIpAddr contains a loopback address.
  *
  * Works for both IPv4 and IPv6 addresses.
  *
- * \param[in] ip Address to check.
- * \return true: ip contains a loopback address.
- * \return false: ip does not contain a loopback address.
+ * @param[in] ip Address to check.
+ * @return true: ip contains a loopback address.
+ * @return false: ip does not contain a loopback address.
  */
 bool etcpal_ip_is_loopback(const EtcPalIpAddr* ip)
 {
@@ -103,14 +103,14 @@ bool etcpal_ip_is_loopback(const EtcPalIpAddr* ip)
   return false;
 }
 
-/*!
- * \brief Determine whether a EtcPalIpAddr contains a multicast address.
+/**
+ * @brief Determine whether a EtcPalIpAddr contains a multicast address.
  *
  * Works for both IPv4 and IPv6 addresses.
  *
- * \param[in] ip Address to check.
- * \return true: ip contains a multicast address.
- * \return false: ip does not contain a multicast address.
+ * @param[in] ip Address to check.
+ * @return true: ip contains a multicast address.
+ * @return false: ip does not contain a multicast address.
  */
 bool etcpal_ip_is_multicast(const EtcPalIpAddr* ip)
 {
@@ -131,17 +131,17 @@ bool etcpal_ip_is_multicast(const EtcPalIpAddr* ip)
   return false;
 }
 
-/*!
- * \brief Determine whether a EtcPalIpAddr contains a wildcard address.
+/**
+ * @brief Determine whether a EtcPalIpAddr contains a wildcard address.
  *
  * Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
  * etcpal_bind() to indicate that a socket should be bound to all available network interfaces. It
  * should not be used as a placeholder or invalid address - use ETCPAL_IP_SET_INVALID() and
  * ETCPAL_IP_IS_INVALID() for that.
  *
- * \param[in] ip Address to check.
- * \return true: ip contains a wildcard address.
- * \return false: ip does not contain a wildcard address.
+ * @param[in] ip Address to check.
+ * @return true: ip contains a wildcard address.
+ * @return false: ip does not contain a wildcard address.
  */
 bool etcpal_ip_is_wildcard(const EtcPalIpAddr* ip)
 {
@@ -160,16 +160,16 @@ bool etcpal_ip_is_wildcard(const EtcPalIpAddr* ip)
   return false;
 }
 
-/*!
- * \brief Initialize a EtcPalIpAddr with a wildcard address.
+/**
+ * @brief Initialize a EtcPalIpAddr with a wildcard address.
  *
  * Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to
  * etcpal_bind() to indicate that a socket should be bound to all available network interfaces. It
  * should not be used as a placeholder or invalid address - use ETCPAL_IP_SET_INVALID() and
  * ETCPAL_IP_IS_INVALID() for that.
  *
- * \param[in] type Type of wildcard to create, either IPv4 or IPv6.
- * \param[out] ip Address in which to store the wildcard value.
+ * @param[in] type Type of wildcard to create, either IPv4 or IPv6.
+ * @param[out] ip Address in which to store the wildcard value.
  */
 void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip)
 {
@@ -190,8 +190,8 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip)
   }
 }
 
-/*!
- * \brief Compare two EtcPalIpAddrs.
+/**
+ * @brief Compare two EtcPalIpAddrs.
  *
  * Rules for comparison:
  * * All Invalid addresses are considered to be equal to each other and < all IPv4 and IPv6
@@ -199,11 +199,11 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip)
  * * All IPv4 addresses are considered to be < all IPv6 addresses
  * * For two IPv4 or IPv6 addresses, the numerical address value is compared
  *
- * \param[in] ip1 First EtcPalIpAddr to compare.
- * \param[in] ip2 Second EtcPalIpAddr to compare.
- * \return < 0: ip1 < ip2
- * \return 0: ip1 == ip2
- * \return > 0: ip1 > ip2
+ * @param[in] ip1 First EtcPalIpAddr to compare.
+ * @param[in] ip2 Second EtcPalIpAddr to compare.
+ * @return < 0: ip1 < ip2
+ * @return 0: ip1 == ip2
+ * @return > 0: ip1 > ip2
  */
 int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2)
 {
@@ -226,12 +226,12 @@ int etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2)
   return 0;
 }
 
-/*!
- * \brief Determine whether two instances of EtcPalSockAddr contain identical IP addresses and ports.
- * \param[in] sock1 First EtcPalSockAddr to compare.
- * \param[in] sock2 Second EtcPalSockAddr to compare.
- * \return true: the IP address and port are identical.
- * \return false: the IP address and port are not identical.
+/**
+ * @brief Determine whether two instances of EtcPalSockAddr contain identical IP addresses and ports.
+ * @param[in] sock1 First EtcPalSockAddr to compare.
+ * @param[in] sock2 Second EtcPalSockAddr to compare.
+ * @return true: the IP address and port are identical.
+ * @return false: the IP address and port are not identical.
  */
 bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr* sock2)
 {
@@ -241,8 +241,8 @@ bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr*
     return false;
 }
 
-/*!
- * \brief Get the length in bits of a netmask.
+/**
+ * @brief Get the length in bits of a netmask.
  *
  * Counts the number of set ('1') bits in the netmask, starting from the MSB. Works for both IPv4
  * and IPv6 netmasks.
@@ -251,8 +251,8 @@ bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr*
  * netmask = 255.255.0.0 (0xffff0000); result = 16
  * netmask = ffff:ffff:ffff:ffff::; result = 64
  *
- * \param[in] netmask Netmask to count.
- * \return Number of set bits in the netmask.
+ * @param[in] netmask Netmask to count.
+ * @return Number of set bits in the netmask.
  */
 unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask)
 {
@@ -296,8 +296,8 @@ unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask)
   return length;
 }
 
-/*!
- * \brief Create a netmask given a length in bits.
+/**
+ * @brief Create a netmask given a length in bits.
  *
  * Creates either an IPv4 or IPv6 netmask, setting the most-significant mask_length bits.
  *
@@ -305,9 +305,9 @@ unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask)
  * type = kEtcPalIpTypeV4; mask_length = 16; result = 255.255.0.0
  * type = kEtcPalIpTypeV6; mask_length = 64; result = ffff:ffff:ffff:ffff::
  *
- * \param[in] type Type of netmask to create, either IPv4 or IPv6.
- * \param[in] mask_length Length in bits of the mask, counting from the MSB.
- * \return EtcPalIpAddr containing the netmask.
+ * @param[in] type Type of netmask to create, either IPv4 or IPv6.
+ * @param[in] mask_length Length in bits of the mask, counting from the MSB.
+ * @return EtcPalIpAddr containing the netmask.
  */
 EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length)
 {
@@ -357,8 +357,8 @@ EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_
   return result;
 }
 
-/*!
- * \brief Compare the network portions of two IP addresses using a netmask.
+/**
+ * @brief Compare the network portions of two IP addresses using a netmask.
  *
  * Returns true if the _network_ portions of the IP addresses match. The host portions are
  * disregarded.
@@ -369,13 +369,13 @@ EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_
  * ip1 = 2001:db8::1; ip2 = 2001:db8::2; netmask = ffff:ffff:ffff:ffff:: (/64); result = true
  * ip1 = 2001:db8:1::1; ip2 = 2001:db8:2::1; netmask = ffff:ffff:ffff:ffff:: (/64); result = false
  *
- * \param[in] ip1 First EtcPalIpAddr to compare.
- * \param[in] ip2 Second EtcPalIpAddr to compare.
- * \param[in] netmask The netmask to use for the comparison. This mask is used to determine the
+ * @param[in] ip1 First EtcPalIpAddr to compare.
+ * @param[in] ip2 Second EtcPalIpAddr to compare.
+ * @param[in] netmask The netmask to use for the comparison. This mask is used to determine the
  *                    network portion of each address. The etcpal_ip_mask_from_length() function can
  *                    be used to turn a mask or prefix bit length into a mask.
- * \return true: The network portions of the IP addresses are equal.
- * \return false: The network portions are not equal.
+ * @return true: The network portions of the IP addresses are equal.
+ * @return false: The network portions are not equal.
  */
 bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2, const EtcPalIpAddr* netmask)
 {
@@ -403,98 +403,98 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_inet.c */
 
-/*!
- * \fn bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
- * \brief Convert a platform-specific IP address to an EtcPalIpAddr.
+/**
+ * @fn bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
+ * @brief Convert a platform-specific IP address to an EtcPalIpAddr.
  *
  * Most of the time etcpal_os_ipaddr_t is defined as a struct sockaddr. Since most platforms use
  * struct sockaddr (which holds an IP address, port, and additional information) in functions which
  * only require IP addresses, this function will discard some information, including any port value
  * in the sockaddr.
  *
- * \param[in] os_ip Platform-specific IP address to convert from.
- * \param[out] ip Filled in on success with the EtcPalIpAddr.
- * \return true on success, false if an invalid argument was provided.
+ * @param[in] os_ip Platform-specific IP address to convert from.
+ * @param[out] ip Filled in on success with the EtcPalIpAddr.
+ * @return true on success, false if an invalid argument was provided.
  */
 
-/*!
- * \fn size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
- * \brief Convert an EtcPalIpAddr to a platform-specific IP address.
+/**
+ * @fn size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
+ * @brief Convert an EtcPalIpAddr to a platform-specific IP address.
  *
  * Most of the time etcpal_os_ipaddr_t is defined as a struct sockaddr. Since most platforms use
  * struct sockaddr (which holds an IP address, port, and additional information) in functions which
  * only require IP addresses, this function will fill in only part of the etcpal_os_ipaddr_t
  * (the address family, address, and for IPv6, the scope ID).
  *
- * \param[in] ip The EtcPalIpAddr to convert from.
- * \param[out] os_ip Filled in on success with the platform-specific IP address.
- * \return On success, the size of os_ip, for convenience. Returns 0 if an invalid argument was
+ * @param[in] ip The EtcPalIpAddr to convert from.
+ * @param[out] os_ip Filled in on success with the platform-specific IP address.
+ * @return On success, the size of os_ip, for convenience. Returns 0 if an invalid argument was
  *         provided.
  */
 
-/*!
- * \fn bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa)
- * \brief Convert a platform-specific socket address to an EtcPalSockAddr.
+/**
+ * @fn bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa)
+ * @brief Convert a platform-specific socket address to an EtcPalSockAddr.
  *
  * On most platforms, etcpal_os_sockaddr_t is defined to struct sockaddr.
  *
- * \param[in] os_sa Platform-specific socket address to convert from.
- * \param[out] sa Filled in on success with the EtcPalSockAddr.
- * \return true on success, false if an invalid argument was provided.
+ * @param[in] os_sa Platform-specific socket address to convert from.
+ * @param[out] sa Filled in on success with the EtcPalSockAddr.
+ * @return true on success, false if an invalid argument was provided.
  */
 
-/*!
- * \fn size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_sa)
- * \brief Convert an EtcPalSockAddr to a platform-specific socket address.
+/**
+ * @fn size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_sa)
+ * @brief Convert an EtcPalSockAddr to a platform-specific socket address.
  *
  * On most platforms, etcpal_os_sockaddr_t is defined to struct sockaddr.
  *
- * \param[in] sa The EtcPalSockAddr to convert from.
- * \param[out] os_sa Filled in on success with the platform-specific socket address.
- * \return On success, the size of os_sa, for convenience. Returns 0 if an invalid argument was
+ * @param[in] sa The EtcPalSockAddr to convert from.
+ * @param[out] os_sa Filled in on success with the platform-specific socket address.
+ * @return On success, the size of os_sa, for convenience. Returns 0 if an invalid argument was
  *         provided.
  */
 
-/*!
- * \fn etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
- * \brief Convert IPv4 and IPv6 addresses from binary to text form.
+/**
+ * @fn etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
+ * @brief Convert IPv4 and IPv6 addresses from binary to text form.
  *
  * This function uses each platform's inet_ntop() function under the hood.
  *
- * \param[in] src Address to convert to string form.
- * \param[out] dest Filled in on success with the string-represented address. To avoid undefined
+ * @param[in] src Address to convert to string form.
+ * @param[out] dest Filled in on success with the string-represented address. To avoid undefined
  *                  behavior, this buffer must be at least of size #ETCPAL_IP_STRING_BYTES.
- * \return #kEtcPalErrOk: Success.
- * \return #kEtcPalErrInvalid: Invalid parameter.
- * \return #kEtcPalErrSys: System call failed.
+ * @return #kEtcPalErrOk: Success.
+ * @return #kEtcPalErrInvalid: Invalid parameter.
+ * @return #kEtcPalErrSys: System call failed.
  */
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_inet.c */
-/*!
- * \fn etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
- * \brief Convert IPv4 and IPv6 addresses from text to binary form.
+/**
+ * @fn etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
+ * @brief Convert IPv4 and IPv6 addresses from text to binary form.
  *
  * This function uses each platform's inet_pton() function under the hood.
  *
- * \param[in] type Type of string-represented IP address pointed to by src.
- * \param[in] src Character string containing a string-represented IP address.
- * \param[out] dest Filled in on success with the address.
- * \return #kEtcPalErrOk: Success.
- * \return #kEtcPalErrInvalid: Invalid parameter.
- * \return #kEtcPalErrSys: System call failed.
+ * @param[in] type Type of string-represented IP address pointed to by src.
+ * @param[in] src Character string containing a string-represented IP address.
+ * @param[out] dest Filled in on success with the address.
+ * @return #kEtcPalErrOk: Success.
+ * @return #kEtcPalErrInvalid: Invalid parameter.
+ * @return #kEtcPalErrSys: System call failed.
  */
 
-/*!
- * \brief Create a string representation of a MAC address.
+/**
+ * @brief Create a string representation of a MAC address.
  *
  * The resulting string will be of the form xx:xx:xx:xx:xx:xx (lowercase is used for hexadecimal
  * letters per common convention).
  *
- * \param[in] src MAC address to convert to a string.
- * \param[out] dest Character buffer to which to write the resulting string. Must be at least of
+ * @param[in] src MAC address to convert to a string.
+ * @param[out] dest Character buffer to which to write the resulting string. Must be at least of
  *                  size #ETCPAL_MAC_STRING_BYTES.
- * \return #kEtcPalErrOk: Conversion successful.
- * \return #kEtcPalErrInvalid: Invalid argument.
+ * @return #kEtcPalErrOk: Conversion successful.
+ * @return #kEtcPalErrInvalid: Invalid argument.
  */
 etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest)
 {
@@ -506,17 +506,17 @@ etcpal_error_t etcpal_mac_to_string(const EtcPalMacAddr* src, char* dest)
   return kEtcPalErrOk;
 }
 
-/*!
- * \brief Create a MAC address from a string representation.
+/**
+ * @brief Create a MAC address from a string representation.
  *
  * Parses a string-represented MAC address and fills in an EtcPalMacAddr structure with the result.
  * The input should be of the form: xx:xx:xx:xx:xx:xx, or xxxxxxxxxxxx (hexadecimal letters can be
  * in upper- or lowercase).
  *
- * \param[in] src The null-terminated string to convert.
- * \param[out] dest MAC address structure to fill in with the parse result.
- * \return #kEtcPalErrOk: Parse successful.
- * \return #kEtcPalErrInvalid: Parse failed or invalid argument.
+ * @param[in] src The null-terminated string to convert.
+ * @param[out] dest MAC address structure to fill in with the parse result.
+ * @return #kEtcPalErrOk: Parse successful.
+ * @return #kEtcPalErrInvalid: Parse failed or invalid argument.
  */
 etcpal_error_t etcpal_string_to_mac(const char* src, EtcPalMacAddr* dest)
 {

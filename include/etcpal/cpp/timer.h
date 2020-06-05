@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/// \file etcpal/cpp/timer.h
-/// \brief C++ wrapper and utilities for etcpal/timer.h
+/// @file etcpal/cpp/timer.h
+/// @brief C++ wrapper and utilities for etcpal/timer.h
 
 #ifndef ETCPAL_CPP_TIMER_H_
 #define ETCPAL_CPP_TIMER_H_
@@ -31,15 +31,15 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_timer timer (Timers)
-/// \ingroup etcpal_cpp
-/// \brief C++ utilities for the \ref etcpal_timer module.
+/// @defgroup etcpal_cpp_timer timer (Timers)
+/// @ingroup etcpal_cpp
+/// @brief C++ utilities for the @ref etcpal_timer module.
 ///
 /// **WARNING:** This module must be explicitly initialized before use. Initialize the module by
 /// calling etcpal_init() with the relevant feature mask:
-/// \code
+/// @code
 /// etcpal_init(ETCPAL_FEATURE_TIMERS);
-/// \endcode
+/// @endcode
 ///
 /// **NOTE:** The constructs in this module are available in similar form in the C++ standard
 /// library using the &lt;chrono&gt; header, with the advantage that this module will work on any
@@ -50,8 +50,8 @@ namespace etcpal
 /// Provides a class for representing points in time (TimePoint) and one which implements a passive
 /// monotonic timer (Timer).
 
-/// \ingroup etcpal_cpp_timer
-/// \brief Represents a point in time.
+/// @ingroup etcpal_cpp_timer
+/// @brief Represents a point in time.
 ///
 /// More specifically, stores the number of milliseconds elapsed since an arbitrary point in the
 /// past. This number is stored as a 32-bit unsigned integer and thus wraps every 4,294,967,295
@@ -59,7 +59,7 @@ namespace etcpal
 /// TimePoints on a time scale which is shorter than that by at least an order of magnitude. This
 /// reduces the likelihood that wrapping will be an issue.
 ///
-/// \code
+/// @code
 /// auto start_time = etcpal::TimePoint::Now();
 ///
 /// // Do some work...
@@ -67,7 +67,7 @@ namespace etcpal
 /// auto end_time = etcpal::TimePoint::Now();
 /// EXPECT_GT(end_time, start_time);
 /// int32_t interval = end_time - start_time; // How long did it take, in milliseconds?
-/// \endcode
+/// @endcode
 ///
 /// TimePoints are compared by comparing the signed difference of their respective values with 0.
 /// This creates a "half the range" rule of thumb for comparison; TimePoints will compare
@@ -77,7 +77,7 @@ namespace etcpal
 /// This can be unintuitive to understand since TimePoints are based on unsigned 32-bit values
 /// which are compared as if they are signed. Here are some examples:
 ///
-/// \code
+/// @code
 /// etcpal::TimePoint(0u) < etcpal::TimePoint(0x7fffffffu) // true
 /// etcpal::TimePoint(0u) < etcpal::TimePoint(0x80000000u) // true
 /// etcpal::TimePoint(0u) < etcpal::TimePoint(0x80000001u) // false
@@ -94,14 +94,14 @@ namespace etcpal
 /// etcpal::TimePoint(0x7fffffffu) - etcpal::TimePoint(0u) // 2,147,483,647; makes sense
 /// etcpal::TimePoint(0x80000000u) - etcpal::TimePoint(0u) // -2,147,483,648; doesn't make sense
 /// etcpal::TimePoint(0x80000001u) - etcpal::TimePoint(0u) // -2,147,483,647; doesn't make sense
-/// \endcode
+/// @endcode
 ///
 /// In order to avoid headaches of the kind that often arise when thinking about two's complement,
 /// again, it's recommended to only compare TimePoints on a scale much less than days.
 class TimePoint
 {
 public:
-  /// \brief Construct a TimePoint with a value of 0 by default.
+  /// @brief Construct a TimePoint with a value of 0 by default.
   ///
   /// Be careful when default-constructing TimePoints; since TimePoints store the number of
   /// milliseconds elapsed since an arbitrary point in the past, a default-constructed TimePoint
@@ -120,46 +120,46 @@ private:
   uint32_t ms_{0};
 };
 
-/// \brief Construct a TimePoint from a number of milliseconds elapsed since a point in the past.
+/// @brief Construct a TimePoint from a number of milliseconds elapsed since a point in the past.
 constexpr TimePoint::TimePoint(uint32_t ms) : ms_(ms)
 {
 }
 
-/// \brief Get the raw millisecond value from a TimePoint.
+/// @brief Get the raw millisecond value from a TimePoint.
 constexpr uint32_t TimePoint::value() const noexcept
 {
   return ms_;
 }
 
-/// \brief Add a millisecond duration to a TimePoint.
+/// @brief Add a millisecond duration to a TimePoint.
 ETCPAL_CONSTEXPR_14_OR_INLINE TimePoint& TimePoint::operator+=(uint32_t duration) noexcept
 {
   ms_ += duration;
   return *this;
 }
 
-/// \brief Subtract a millisecond duration from a TimePoint.
+/// @brief Subtract a millisecond duration from a TimePoint.
 ETCPAL_CONSTEXPR_14_OR_INLINE TimePoint& TimePoint::operator-=(uint32_t duration) noexcept
 {
   ms_ -= duration;
   return *this;
 }
 
-/// \brief Get a TimePoint representing the current time.
+/// @brief Get a TimePoint representing the current time.
 inline TimePoint TimePoint::Now() noexcept
 {
   return etcpal_getms();
 }
 
-/// \ingroup etcpal_cpp_timer
-/// \brief A wrapper class for the EtcPal timer type.
+/// @ingroup etcpal_cpp_timer
+/// @brief A wrapper class for the EtcPal timer type.
 ///
-/// See the description for \ref etcpal_timer for details about the time points and intervals used
+/// See the description for @ref etcpal_timer for details about the time points and intervals used
 /// by this class.
 ///
 /// Use this class to time an interval.
 ///
-/// \code
+/// @code
 /// etcpal::Timer timer(100); // Start a 100-millisecond timer.
 ///
 /// // Some time later...
@@ -170,11 +170,11 @@ inline TimePoint TimePoint::Now() noexcept
 /// timer.Reset(); // Reset the timer for another 100-millisecond interval
 /// // Or
 /// timer.Start(1000); // Reuse the timer for a different interval, in this case 1 second.
-/// \endcode
+/// @endcode
 class Timer
 {
 public:
-  /// \brief Creates an expired timer with an interval of 0.
+  /// @brief Creates an expired timer with an interval of 0.
   Timer() = default;
   // Note: this constructor is not explicit by design, to allow implicit conversions e.g.
   //   etcpal::Timer timer = etcpal_c_function_that_returns_timer();
@@ -202,25 +202,25 @@ private:
   EtcPalTimer timer_{};
 };
 
-/// \brief Construct a timer copied from an instance of the C EtcPalTimer type.
+/// @brief Construct a timer copied from an instance of the C EtcPalTimer type.
 constexpr Timer::Timer(const EtcPalTimer& c_timer) noexcept : timer_(c_timer)
 {
 }
 
-/// \brief Assign an instance of the C EtcPalTimer type to an instance of this class.
+/// @brief Assign an instance of the C EtcPalTimer type to an instance of this class.
 inline Timer& Timer::operator=(const EtcPalTimer& c_timer) noexcept
 {
   timer_ = c_timer;
   return *this;
 }
 
-/// \brief Create and start a timer with the given interval in milliseconds.
+/// @brief Create and start a timer with the given interval in milliseconds.
 inline Timer::Timer(uint32_t interval) noexcept
 {
   Start(interval);
 }
 
-/// \brief Create and start a timer with the given interval.
+/// @brief Create and start a timer with the given interval.
 ///
 /// Note: interval will be clamped to [0, UINT32_MAX] milliseconds.
 template <typename Rep, typename Period>
@@ -229,58 +229,58 @@ Timer::Timer(const std::chrono::duration<Rep, Period>& interval) noexcept
   Start(interval);
 }
 
-/// \brief Get a const reference to the underlying C type.
+/// @brief Get a const reference to the underlying C type.
 constexpr const EtcPalTimer& Timer::get() const noexcept
 {
   return timer_;
 }
 
-/// \brief Get a mutable reference to the underlying C type.
+/// @brief Get a mutable reference to the underlying C type.
 ETCPAL_CONSTEXPR_14 EtcPalTimer& Timer::get() noexcept
 {
   return timer_;
 }
 
-/// \brief Get the time when this timer was started or reset.
+/// @brief Get the time when this timer was started or reset.
 inline TimePoint Timer::GetStartTime() const noexcept
 {
   return timer_.reset_time;
 }
 
-/// \brief Get the current interval being timed by the timer.
+/// @brief Get the current interval being timed by the timer.
 inline uint32_t Timer::GetInterval() const noexcept
 {
   return timer_.interval;
 }
 
-/// \brief Get the time since the timer was reset.
+/// @brief Get the time since the timer was reset.
 inline uint32_t Timer::GetElapsed() const noexcept
 {
   return etcpal_timer_elapsed(&timer_);
 }
 
-/// \brief Get the amount of time remaining in the timer's interval (returns 0 if the timer is expired).
+/// @brief Get the amount of time remaining in the timer's interval (returns 0 if the timer is expired).
 inline uint32_t Timer::GetRemaining() const noexcept
 {
   return etcpal_timer_remaining(&timer_);
 }
 
-/// \brief Whether the timer's interval is expired.
+/// @brief Whether the timer's interval is expired.
 inline bool Timer::IsExpired() const noexcept
 {
   return etcpal_timer_is_expired(&timer_);
 }
 
-/// \brief Start the timer with a new interval.
-/// \param interval Interval to time, in milliseconds. An interval of 0 will result in a timer that
+/// @brief Start the timer with a new interval.
+/// @param interval Interval to time, in milliseconds. An interval of 0 will result in a timer that
 ///                 is always expired.
 inline void Timer::Start(uint32_t interval) noexcept
 {
   etcpal_timer_start(&timer_, interval);
 }
 
-/// \brief Start the timer with a new interval.
-/// \param interval Interval to time. Will be clamped to [0, UINT32_MAX] milliseconds. An interval
+/// @brief Start the timer with a new interval.
+/// @param interval Interval to time. Will be clamped to [0, UINT32_MAX] milliseconds. An interval
 ///                 of 0 will result in a timer that is always expired.
 template <typename Rep, typename Period>
 void Timer::Start(const std::chrono::duration<Rep, Period>& interval) noexcept
@@ -291,16 +291,16 @@ void Timer::Start(const std::chrono::duration<Rep, Period>& interval) noexcept
   etcpal_timer_start(&timer_, interval_clamped);
 }
 
-/// \brief Reset the timer while keeping the same interval.
+/// @brief Reset the timer while keeping the same interval.
 inline void Timer::Reset() noexcept
 {
   etcpal_timer_reset(&timer_);
 }
 
-/// \addtogroup etcpal_cpp_timer
+/// @addtogroup etcpal_cpp_timer
 /// @{
 
-/// \name TimePoint operators
+/// @name TimePoint operators
 /// @{
 ///
 constexpr int32_t operator-(const TimePoint& a, const TimePoint& b) noexcept

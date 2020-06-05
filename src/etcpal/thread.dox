@@ -2,75 +2,75 @@ Whoa, this isn't a real source file! What's going on here? Well, the headers for
 platform-specific, and some of them implement types and functions differently (i.e. functions as
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
-/*!
- * \addtogroup etcpal_thread
+/**
+ * @addtogroup etcpal_thread
  * @{
  */
 
-/*!
- * \brief The platform-specific default priority for an etcpal_thread.
+/**
+ * @brief The platform-specific default priority for an etcpal_thread.
  *
  * Note that thread priority is not valid on all platforms.
  */
 #define ETCPAL_THREAD_DEFAULT_PRIORITY
 
-/*!
- * \brief The plaform-specific default stack size for an etcpal_thread.
+/**
+ * @brief The plaform-specific default stack size for an etcpal_thread.
  *
  * Note that thread stack size is not valid on all platforms.
  */
 #define ETCPAL_THREAD_DEFAULT_STACK
 
-/*! The default name for an etcpal_thread. */
+/** The default name for an etcpal_thread. */
 #define ETCPAL_THREAD_DEFAULT_NAME
 
-/*! The maximum length of an etcpal_thread name C-string. */
+/** The maximum length of an etcpal_thread name C-string. */
 #define ETCPAL_THREAD_NAME_MAX_LENGTH
 
-/*! 
- * \brief The thread handle.
+/** 
+ * @brief The thread handle.
  *
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_thread_t;
 
-/*! 
- * \brief Create a new thread.
+/** 
+ * @brief Create a new thread.
  *
  * If your application has exit/shutdown behavior (i.e. it is a non-embedded application), it's
  * good practice to always pair this with a call to etcpal_thread_join() on exit. On some platforms,
  * extra signaling resources are allocated when the thread is created that are not deallocated
  * unless etcpal_thread_join() is called.
  *
- * \param[out] id Identifier for the thread that was created.
- * \param[in] params Thread parameters for the thread to create
- * \param[in] thread_fn Pointer to function that should be called from the new thread. This
+ * @param[out] id Identifier for the thread that was created.
+ * @param[in] params Thread parameters for the thread to create
+ * @param[in] thread_fn Pointer to function that should be called from the new thread. This
  *                      function takes one void* argument and returns void.
- * \param[in] thread_arg Argument to the function called from the new thread.
- * \return #kEtcPalErrOk: The thread was created.
- * \return #kEtcPalErrInvalid: Invalid argument.
- * \return Other codes translated from system error codes are possible.
+ * @param[in] thread_arg Argument to the function called from the new thread.
+ * @return #kEtcPalErrOk: The thread was created.
+ * @return #kEtcPalErrInvalid: Invalid argument.
+ * @return Other codes translated from system error codes are possible.
  */
 etcpal_error_t etcpal_thread_create(etcpal_thread_t *id, const EtcPalThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
 
-/*!
- * \brief Wait for a thread to finish execution.
+/**
+ * @brief Wait for a thread to finish execution.
  *
  * Blocks until the thread has exited.
  *
- * \param[in] id Identifier for the thread to stop.
- * \return #kEtcPalErrOk: The thread was stopped.
- * \return #kEtcPalErrInvalid: id does not represent a joinable thread.
- * \return Other codes translated from system error codes are possible.
+ * @param[in] id Identifier for the thread to stop.
+ * @return #kEtcPalErrOk: The thread was stopped.
+ * @return #kEtcPalErrInvalid: id does not represent a joinable thread.
+ * @return Other codes translated from system error codes are possible.
  */
 etcpal_error_t etcpal_thread_join(etcpal_thread_t *id);
 
-/*!
- * \brief Provides a platform-neutral sleep.
- * \param[in] sleep_ms How long to sleep, in milliseconds.
+/**
+ * @brief Provides a platform-neutral sleep.
+ * @param[in] sleep_ms How long to sleep, in milliseconds.
  */
 void etcpal_thread_sleep(unsigned int sleep_ms);
 
-/*!
+/**
  * @}
  */

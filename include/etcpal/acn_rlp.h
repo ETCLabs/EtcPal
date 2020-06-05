@@ -30,10 +30,10 @@
 #include "etcpal/acn_prot.h"
 #include "etcpal/uuid.h"
 
-/*!
- * \defgroup etcpal_acn_rlp acn_rlp (ACN Root Layer Protocol)
- * \ingroup etcpal
- * \brief Parse or pack an ACN Root Layer PDU block.
+/**
+ * @defgroup etcpal_acn_rlp acn_rlp (ACN Root Layer Protocol)
+ * @ingroup etcpal
+ * @brief Parse or pack an ACN Root Layer PDU block.
  *
  * ```c
  * #include "etcpal/acn_rlp.h"
@@ -46,17 +46,17 @@
  * @{
  */
 
-/*! Size of an ACN family TCP preamble. */
+/** Size of an ACN family TCP preamble. */
 #define ACN_TCP_PREAMBLE_SIZE 16
-/*! Size of an ACN family UDP preamble. */
+/** Size of an ACN family UDP preamble. */
 #define ACN_UDP_PREAMBLE_SIZE 16
-/*! Size of a Root Layer PDU header when the length is less than 4096. */
+/** Size of a Root Layer PDU header when the length is less than 4096. */
 #define ACN_RLP_HEADER_SIZE_NORMAL_LEN 22
-/*! Size of the Root Layer PDU header when the length is 4096 or greater. */
+/** Size of the Root Layer PDU header when the length is 4096 or greater. */
 #define ACN_RLP_HEADER_SIZE_EXT_LEN 23
 
-/*!
- * \name Protocol Vectors
+/**
+ * @name Protocol Vectors
  * Each ACN family protocol is defined by a protocol vector in a Root Layer PDU. These values
  * occupy the vector field of a RootLayerPdu to identify the contents of its data segment.
  * @{
@@ -69,38 +69,38 @@
 #define ACN_VECTOR_ROOT_BROKER ACN_PROTOCOL_BROKER
 #define ACN_VECTOR_ROOT_RPT ACN_PROTOCOL_RPT
 #define ACN_VECTOR_ROOT_EPT ACN_PROTOCOL_EPT
-/*!
+/**
  * @}
  */
 
-/*! Holds the information contained in an ACN TCP Preamble. */
+/** Holds the information contained in an ACN TCP Preamble. */
 typedef struct AcnTcpPreamble
 {
-  /*! Pointer to the beginning of the Root Layer PDU block */
+  /** Pointer to the beginning of the Root Layer PDU block */
   const uint8_t* rlp_block;
-  /*! Length of the Root Layer PDU block */
+  /** Length of the Root Layer PDU block */
   size_t rlp_block_len;
 } AcnTcpPreamble;
 
-/*! Holds the information contained in an ACN UDP Preamble. */
+/** Holds the information contained in an ACN UDP Preamble. */
 typedef struct AcnUdpPreamble
 {
-  /*! Pointer to the beginning of the Root Layer PDU block */
+  /** Pointer to the beginning of the Root Layer PDU block */
   const uint8_t* rlp_block;
-  /*! Length of the Root Layer PDU block */
+  /** Length of the Root Layer PDU block */
   size_t rlp_block_len;
 } AcnUdpPreamble;
 
-/*! Holds the information contained in an ACN Root Layer PDU. */
+/** Holds the information contained in an ACN Root Layer PDU. */
 typedef struct AcnRootLayerPdu
 {
-  /*! The CID of the component that sent this Root Layer PDU. */
+  /** The CID of the component that sent this Root Layer PDU. */
   EtcPalUuid sender_cid;
-  /*! The Vector indicates the type of data contained in the Data segment. */
+  /** The Vector indicates the type of data contained in the Data segment. */
   uint32_t vector;
-  /*! A pointer to the Data segment of this PDU. */
+  /** A pointer to the Data segment of this PDU. */
   const uint8_t* pdata;
-  /*! The length of the Data segment of this PDU. */
+  /** The length of the Data segment of this PDU. */
   size_t data_len;
 } AcnRootLayerPdu;
 
@@ -123,7 +123,7 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
 }
 #endif
 
-/*!
+/**
  * @}
  */
 

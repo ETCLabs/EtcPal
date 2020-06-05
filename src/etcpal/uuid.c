@@ -46,16 +46,16 @@ const EtcPalUuid kEtcPalNullUuid = {{0}};
 
 /*************************** Function definitions ****************************/
 
-/*!
- * \brief Create a string representation of a UUID.
+/**
+ * @brief Create a string representation of a UUID.
  *
  * The resulting string will be of the form: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (lowercase is
  * used for hexadecimal letters per RFC 4122 and common convention).
  *
- * \param[in] uuid UUID to convert to a string.
- * \param[out] buf Character buffer to which to write the resulting string. To avoid undefined
+ * @param[in] uuid UUID to convert to a string.
+ * @param[out] buf Character buffer to which to write the resulting string. To avoid undefined
  *                 behavior, this buffer must be at least of size #ETCPAL_UUID_STRING_BYTES.
- * \return true (conversion successful) or false (invalid argument).
+ * @return true (conversion successful) or false (invalid argument).
  */
 bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf)
 {
@@ -70,16 +70,16 @@ bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf)
   return true;
 }
 
-/*!
- * \brief Create a UUID from a string representation.
+/**
+ * @brief Create a UUID from a string representation.
  *
  * Parses a string-represented UUID and fills in a EtcPalUuid structure with the result. The input
  * should be of the form: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (hexadecimal letters can be upper-
  * or lowercase).
  *
- * \param[in] str The null-terminated string to convert.
- * \param[out] uuid UUID to fill in with the parse result.
- * \return true (parse successful) or false (parse failure).
+ * @param[in] str The null-terminated string to convert.
+ * @param[out] uuid UUID to fill in with the parse result.
+ * @return true (parse successful) or false (parse failure).
  */
 bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
 {
@@ -128,9 +128,9 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
-/*!
- * \fn etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid *uuid)
- * \brief Generate a Version 1 UUID.
+/**
+ * @fn etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid *uuid)
+ * @brief Generate a Version 1 UUID.
  *
  * This function uses the underlying OS API to create a UUID that is based on a combination of a
  * local MAC address and the current system time. This method guarantees UUID uniqueness across
@@ -143,15 +143,15 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
  * This function may return #kEtcPalErrNotImpl on platforms that do not have this functionality
  * available (this is mostly a concern for RTOS-level embedded platforms).
  *
- * \param[out] uuid UUID to fill in with the generation result.
- * \return #kEtcPalErrOk: UUID generated successfully.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
- * \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
- * \return #kEtcPalErrSys: An internal library of system call error occurred.
+ * @param[out] uuid UUID to fill in with the generation result.
+ * @return #kEtcPalErrOk: UUID generated successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
+ * @return #kEtcPalErrSys: An internal library of system call error occurred.
  */
 
-/*!
- * \brief Generate a Version 3 UUID.
+/**
+ * @brief Generate a Version 3 UUID.
  *
  * Version 3 UUIDs are "name-based"; they deterministically convert a combination of a "namespace"
  * and "name" to a UUID. A namespace is another UUID of any type which represents a space within
@@ -162,12 +162,12 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
  * etcpal_generate_v5_uuid(), which uses the SHA-1 algorithm instead, if backward compatibility is
  * not an issue.
  *
- * \param[in] ns UUID to use as a namespace.
- * \param[in] name The name to convert into a UUID - opaque data.
- * \param[in] name_len The length in bytes of name.
- * \param[out] uuid UUID to fill in with the generation result.
- * \return #kEtcPalErrOk: UUID generated successfully.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * @param[in] ns UUID to use as a namespace.
+ * @param[in] name The name to convert into a UUID - opaque data.
+ * @param[in] name_len The length in bytes of name.
+ * @param[out] uuid UUID to fill in with the generation result.
+ * @return #kEtcPalErrOk: UUID generated successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid)
 {
@@ -191,9 +191,9 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
-/*!
- * \fn etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid *uuid)
- * \brief Generate a Version 4 UUID.
+/**
+ * @fn etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid *uuid)
+ * @brief Generate a Version 4 UUID.
  *
  * This function uses the underlying OS API to create a UUID that is based on random data. The
  * quality of the random data used may differ across platforms. If you want to generate UUIDs that
@@ -202,15 +202,15 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
  * This function may return #kEtcPalErrNotImpl on platforms that do not have this functionality
  * available (this is mostly a concern for RTOS-level embedded platforms).
  *
- * \param[out] uuid UUID to fill in with the generation result.
- * \return #kEtcPalErrOk: UUID generated successfully.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
- * \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
- * \return #kEtcPalErrSys: An internal library of system call error occurred.
+ * @param[out] uuid UUID to fill in with the generation result.
+ * @return #kEtcPalErrOk: UUID generated successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
+ * @return #kEtcPalErrSys: An internal library of system call error occurred.
  */
 
-/*!
- * \brief Generate a Version 5 UUID.
+/**
+ * @brief Generate a Version 5 UUID.
  *
  * Version 5 UUIDs are "name-based"; they deterministically convert a combination of a "namespace"
  * and "name" to a UUID. A namespace is another UUID of any type which represents a space within
@@ -222,12 +222,12 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
  * etcpal_generate_device_uuid() provides a specialized form of this function which embedded
  * devices can use to create UUIDs representing themselves.
  *
- * \param[in] ns UUID to use as a namespace.
- * \param[in] name The name to convert into a UUID - opaque data.
- * \param[in] name_len The length in bytes of name.
- * \param[out] uuid UUID to fill in with the generation result.
- * \return #kEtcPalErrOk: UUID generated successfully.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * @param[in] ns UUID to use as a namespace.
+ * @param[in] name The name to convert into a UUID - opaque data.
+ * @param[in] name_len The length in bytes of name.
+ * @param[out] uuid UUID to fill in with the generation result.
+ * @return #kEtcPalErrOk: UUID generated successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, size_t name_len, EtcPalUuid* uuid)
 {
@@ -253,9 +253,9 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
 }
 
 /* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
-/*!
- * \fn etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid *uuid)
- * \brief Generate the preferred UUID version of the underlying OS.
+/**
+ * @fn etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid *uuid)
+ * @brief Generate the preferred UUID version of the underlying OS.
  *
  * This function uses the underlying OS API to create a UUID of the recommended type per the
  * underlying OS API. In practice, this is often a V4 UUID, although this is not guaranteed.
@@ -263,15 +263,15 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
  * This function may return #kEtcPalErrNotImpl on platforms that do not have this functionality
  * available (this is mostly a concern for RTOS-level embedded platforms).
  *
- * \param[out] uuid UUID to fill in with the generation result.
- * \return #kEtcPalErrOk: UUID generated successfully.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
- * \return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
- * \return #kEtcPalErrSys: An internal library of system call error occurred.
+ * @param[out] uuid UUID to fill in with the generation result.
+ * @return #kEtcPalErrOk: UUID generated successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
+ * @return #kEtcPalErrSys: An internal library of system call error occurred.
  */
 
-/*!
- * \brief Generate a UUID from a combination of a custom string and MAC address.
+/**
+ * @brief Generate a UUID from a combination of a custom string and MAC address.
  *
  * This function is for use by embedded devices that want to create UUIDs representing themselves,
  * and create the same UUIDs each time. It creates a Version 5 UUID (defined in RFC 4122) within a
@@ -280,15 +280,15 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
  *
  * The namespace UUID used is: 57323103-db01-44b3-bafa-abdee3f37c1a
  *
- * \param[in] dev_str The device-specific string, such as the model name. This should never change
+ * @param[in] dev_str The device-specific string, such as the model name. This should never change
  *                    on the device. It also allows different programs running on the device to
  *                    generate different UUID sets.
- * \param[in] mac_addr The device's MAC address; must be an array of 6 bytes.
- * \param[in] uuid_num Component number. By changing this number, multiple unique UUIDs can be
+ * @param[in] mac_addr The device's MAC address; must be an array of 6 bytes.
+ * @param[in] uuid_num Component number. By changing this number, multiple unique UUIDs can be
  *                     generated for the same device string-MAC address combination.
- * \param[out] uuid UUID to fill in with the generation result.
- * \return #kEtcPalErrOk: UUID generated successfully.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
+ * @param[out] uuid UUID to fill in with the generation result.
+ * @return #kEtcPalErrOk: UUID generated successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
  */
 etcpal_error_t etcpal_generate_device_uuid(const char* dev_str, const uint8_t* mac_addr, uint32_t uuid_num,
                                            EtcPalUuid* uuid)

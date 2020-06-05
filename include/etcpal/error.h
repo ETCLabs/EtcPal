@@ -24,10 +24,10 @@
 
 #include <stdlib.h>
 
-/*!
- * \defgroup etcpal_error error (Error Handling)
- * \ingroup etcpal
- * \brief Platform-neutral error codes.
+/**
+ * @defgroup etcpal_error error (Error Handling)
+ * @ingroup etcpal
+ * @brief Platform-neutral error codes.
  *
  * ```c
  * include "etcpal/error.h"
@@ -44,79 +44,79 @@
 extern "C" {
 #endif
 
-/*! A set of error codes that can be returned by library functions. */
+/** A set of error codes that can be returned by library functions. */
 typedef enum
 {
-  /*! The call was successful, no error occurred. */
+  /** The call was successful, no error occurred. */
   kEtcPalErrOk = 0,
-  /*! An identifier or handle passed to a function was not valid or not previously initialized. */
+  /** An identifier or handle passed to a function was not valid or not previously initialized. */
   kEtcPalErrNotFound = -1,
-  /*! A dynamic memory allocation failed, or there is no space left in a statically allocated
+  /** A dynamic memory allocation failed, or there is no space left in a statically allocated
    *  array. */
   kEtcPalErrNoMem = -2,
-  /*! The resource being requested is temporarily unavailable. */
+  /** The resource being requested is temporarily unavailable. */
   kEtcPalErrBusy = -3,
-  /*! The item being created already exists. */
+  /** The item being created already exists. */
   kEtcPalErrExists = -4,
-  /*! An invalid argument was provided to an API function. */
+  /** An invalid argument was provided to an API function. */
   kEtcPalErrInvalid = -5,
-  /*! The requested operation would block. */
+  /** The requested operation would block. */
   kEtcPalErrWouldBlock = -6,
-  /*! Returned from a function that is meant to be called repeatedly to indicate that there is no
+  /** Returned from a function that is meant to be called repeatedly to indicate that there is no
    *  more data available. */
   kEtcPalErrNoData = -7,
-  /*! A protocol parsing function encountered a malformed packet. */
+  /** A protocol parsing function encountered a malformed packet. */
   kEtcPalErrProtocol = -8,
-  /*! Message too long. */
+  /** Message too long. */
   kEtcPalErrMsgSize = -9,
-  /*! The requested address is already in use. */
+  /** The requested address is already in use. */
   kEtcPalErrAddrInUse = -10,
-  /*! Cannot assign the requested address. */
+  /** Cannot assign the requested address. */
   kEtcPalErrAddrNotAvail = -11,
-  /*! The operation failed because a network was down or unreachable. */
+  /** The operation failed because a network was down or unreachable. */
   kEtcPalErrNetwork = -12,
-  /*! A connection was reset (hard/abortive close) by the remote peer. */
+  /** A connection was reset (hard/abortive close) by the remote peer. */
   kEtcPalErrConnReset = -13,
-  /*! A connection was gracefully closed by the remote peer. This code is only used for protocols
+  /** A connection was gracefully closed by the remote peer. This code is only used for protocols
    *  above the transport layer. */
   kEtcPalErrConnClosed = -14,
-  /*! Transport endpoint is already connected. */
+  /** Transport endpoint is already connected. */
   kEtcPalErrIsConn = -15,
-  /*! Transport endpoint is not connected. */
+  /** Transport endpoint is not connected. */
   kEtcPalErrNotConn = -16,
-  /*! Transport endpoint is shut down. */
+  /** Transport endpoint is shut down. */
   kEtcPalErrShutdown = -17,
-  /*! A connection timed out. */
+  /** A connection timed out. */
   kEtcPalErrTimedOut = -18,
-  /*! Host is unreachable. */
+  /** Host is unreachable. */
   kEtcPalErrHostUnreach = -19,
-  /*! A connection has been aborted. */
+  /** A connection has been aborted. */
   kEtcPalErrConnAborted = -20,
-  /*! A connection was refused. */
+  /** A connection was refused. */
   kEtcPalErrConnRefused = -21,
-  /*! The operation requested is already in progress. */
+  /** The operation requested is already in progress. */
   kEtcPalErrAlready = -22,
-  /*! The operation requested is now in progress and will complete later. */
+  /** The operation requested is now in progress and will complete later. */
   kEtcPalErrInProgress = -23,
-  /*! A buffer provided to a function was not big enough to hold the data that needed to be packed
+  /** A buffer provided to a function was not big enough to hold the data that needed to be packed
    *  into it. */
   kEtcPalErrBufSize = -24,
-  /*! An API function was called from a module that was not previously initialized. */
+  /** An API function was called from a module that was not previously initialized. */
   kEtcPalErrNotInit = -25,
-  /*! No network interfaces were found on the system, or there are no network interfaces of a type
+  /** No network interfaces were found on the system, or there are no network interfaces of a type
    *  that can satisfy the call being made. */
   kEtcPalErrNoNetints = -26,
-  /*! No sockets have been added to the context. */
+  /** No sockets have been added to the context. */
   kEtcPalErrNoSockets = -27,
-  /*! A function or specific use of a function is not implemented yet. */
+  /** A function or specific use of a function is not implemented yet. */
   kEtcPalErrNotImpl = -28,
-  /*! The operation is not permitted. */
+  /** The operation is not permitted. */
   kEtcPalErrPerm = -29,
-  /*! A system call or C library call failed in a way not covered by other errors. */
+  /** A system call or C library call failed in a way not covered by other errors. */
   kEtcPalErrSys = -30,
 } etcpal_error_t;
 
-/*! The total number of error codes currently defined. */
+/** The total number of error codes currently defined. */
 #define ETCPAL_NUM_ERROR_CODES 31
 
 const char* etcpal_strerror(etcpal_error_t code);
@@ -125,7 +125,7 @@ const char* etcpal_strerror(etcpal_error_t code);
 }
 #endif
 
-/*!
+/**
  * @}
  */
 

@@ -12,9 +12,9 @@ to be as thin a wrapper over the underlying OS functionality as possible.
 EtcPal also contains some header-only C++11 wrapper modules which wrap the functionality of a
 corresponding C module in a nicer API for C++ users.
 
-\htmlonly
+@htmlonly
 To jump right into the documentation, check out the <a href="modules.html">Modules Overview</a>.
-\endhtmlonly
+@endhtmlonly
 
 ## Supported Platforms
 

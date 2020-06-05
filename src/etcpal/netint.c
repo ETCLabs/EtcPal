@@ -62,23 +62,23 @@ void etcpal_netint_deinit(void)
   }
 }
 
-/*!
- * \brief Get the number of network interfaces present on the system.
- * \return Number of interfaces present.
+/**
+ * @brief Get the number of network interfaces present on the system.
+ * @return Number of interfaces present.
  */
 size_t etcpal_netint_get_num_interfaces(void)
 {
   return (init_count ? netint_cache.num_netints : 0);
 }
 
-/*!
- * \brief Get a list of network interfaces on the system.
+/**
+ * @brief Get a list of network interfaces on the system.
  *
  * For NICs with multiple IP addresses assigned, this module separates each address into its own
  * entry in the netint array. Because of this, multiple array entries could have the same value
  * for the index, mac and id parameters.
  *
- * \return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
+ * @return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
  *         or NULL if there are no interfaces present or the module is not initialized.
  */
 const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
@@ -86,18 +86,18 @@ const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
   return (init_count ? netint_cache.netints : NULL);
 }
 
-/*!
- * \brief Get a set of network interface addresses that have the index specified.
+/**
+ * @brief Get a set of network interface addresses that have the index specified.
  *
- * See \ref interface_indexes for more information.
+ * See @ref interface_indexes for more information.
  *
- * \param[in] index Index for which to get interfaces.
- * \param[out] netint_arr Filled in on success with the array of matching interfaces.
- * \param[out] netint_arr_size Filled in on success with the size of the matching interface array.
- * \return #kEtcPalErrOk: netint_arr and netint_arr_size were filled in.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
- * \return #kEtcPalErrNotInit: Module not initialized.
- * \return #kEtcPalErrNotFound: No interfaces found for this index.
+ * @param[in] index Index for which to get interfaces.
+ * @param[out] netint_arr Filled in on success with the array of matching interfaces.
+ * @param[out] netint_arr_size Filled in on success with the size of the matching interface array.
+ * @return #kEtcPalErrOk: netint_arr and netint_arr_size were filled in.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotInit: Module not initialized.
+ * @return #kEtcPalErrNotFound: No interfaces found for this index.
  */
 etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const EtcPalNetintInfo** netint_arr,
                                                      size_t* netint_arr_size)
@@ -139,23 +139,23 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int index, const E
   }
 }
 
-/*!
- * \brief Get information about the default network interface.
+/**
+ * @brief Get information about the default network interface.
  *
  * For our purposes, the 'default' network interface is defined as the interface that is chosen
  * for the default IP route. The default interface is given as an OS network interface index - see
- * \ref interface_indexes for more information. Note that since network interfaces can have
+ * @ref interface_indexes for more information. Note that since network interfaces can have
  * multiple IP addresses assigned, this index may be shared by many entries returned by
  * etcpal_netint_get_interfaces().
  *
- * \param[in] type The IP protocol for which to get the default network interface, either
+ * @param[in] type The IP protocol for which to get the default network interface, either
  *                 #kEtcPalIpTypeV4 or #kEtcPalIpTypeV6. A separate default interface is maintained for
  *                 each.
- * \param[out] netint_index Pointer to value to fill with the index of the default interface.
- * \return #kEtcPalErrOk: netint was filled in.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
- * \return #kEtcPalErrNotInit: Module not initialized.
- * \return #kEtcPalErrNotFound: No default interface found for this type.
+ * @param[out] netint_index Pointer to value to fill with the index of the default interface.
+ * @return #kEtcPalErrOk: netint was filled in.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotInit: Module not initialized.
+ * @return #kEtcPalErrNotFound: No default interface found for this type.
  */
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index)
 {
@@ -191,17 +191,17 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
   return kEtcPalErrInvalid;
 }
 
-/*!
- * \brief Get the network interface that the system will choose when routing an IP packet to the
+/**
+ * @brief Get the network interface that the system will choose when routing an IP packet to the
  *        specified destination.
  *
- * \param[in] dest IP address of the destination.
- * \param[out] netint_index Pointer to value to fill in with the index of the chosen interface.
- * \return #kEtcPalErrOk: Netint filled in successfully.
- * \return #kEtcPalErrInvalid: Invalid argument provided.
- * \return #kEtcPalErrNotInit: Module not initialized.
- * \return #kEtcPalErrNoNetints: No network interfaces found on system.
- * \return #kEtcPalErrNotFound: No route was able to be resolved to the destination.
+ * @param[in] dest IP address of the destination.
+ * @param[out] netint_index Pointer to value to fill in with the index of the chosen interface.
+ * @return #kEtcPalErrOk: Netint filled in successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotInit: Module not initialized.
+ * @return #kEtcPalErrNoNetints: No network interfaces found on system.
+ * @return #kEtcPalErrNotFound: No route was able to be resolved to the destination.
  */
 etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index)
 {
@@ -223,17 +223,17 @@ int compare_netints(const void* a, const void* b)
   return (netint1->index > netint2->index) - (netint1->index < netint2->index);
 }
 
-/*!
- * \brief Refresh the list of network interfaces.
+/**
+ * @brief Refresh the list of network interfaces.
  *
  * Rebuilds the cached array of network interfaces that is returned via the
  * etcpal_netint_get_interfaces() function. If the refresh operation results in a different list
  * (there is a different number of network interfaces, or any interface has changed IP settings),
  * *list_changed is set to true.
  *
- * \param[out] list_changed Set to true if the set of interfaces has changed in any way.
- * \return #kEtcPalErrOk: Interfaces refreshed.
- * \return Other error codes from the underlying platform are possible here.
+ * @param[out] list_changed Set to true if the set of interfaces has changed in any way.
+ * @return #kEtcPalErrOk: Interfaces refreshed.
+ * @return Other error codes from the underlying platform are possible here.
  */
 etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)
 {

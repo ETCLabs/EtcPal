@@ -25,9 +25,9 @@
 #include <stdint.h>
 #include "etcpal/error.h"
 
-/*!
- * \defgroup etcpal etcpal (Core Modules)
- * \brief ETC Platform Abstraction Layer (EtcPal): A set of platform abstraction and utility
+/**
+ * @defgroup etcpal etcpal (Core Modules)
+ * @brief ETC Platform Abstraction Layer (EtcPal): A set of platform abstraction and utility
  *        modules used by ETC software libraries.
  *
  * EtcPal supports the writing of platform-neutral C and C++ libraries by providing a set of
@@ -42,19 +42,19 @@
  * call etcpal_init() with a mask of your desired features. The feature masks can be combined with
  * a bitwise OR.
  *
- * \code
+ * @code
  * #include "etcpal/common.h"
  *
  * etcpal_error_t result = etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_LOGGING);
- * \endcode
+ * @endcode
  *
  * etcpal_init() can be called multiple times for the same or different sets of features, with no
  * adverse effects. At deinitialization time, there should be a paired call to etcpal_deinit() with
  * the same mask that was passed to the corresponding call to etcpal_init().
  *
- * \code
+ * @code
  * etcpal_deinit(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_LOGGING);
- * \endcode
+ * @endcode
  *
  * @{
  */
@@ -63,7 +63,7 @@
 extern "C" {
 #endif
 
-/*! \cond utilities used by library implementation */
+/** @cond utilities used by library implementation */
 
 /* Suppress deprecated function warnings on Windows/MSVC. This is mostly used in situations where
  * Microsoft warns us that a function like strncpy() could be unsafe, but we want to be portable
@@ -87,15 +87,15 @@ extern "C" {
 /* Meaningful macro to suppress warnings on unused arguments */
 #define ETCPAL_UNUSED_ARG(arg) ((void)arg)
 
-/*! \endcond */
+/** @endcond */
 
-/*! For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely. */
+/** For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely. */
 #define ETCPAL_WAIT_FOREVER -1
 
-/*! A mask of desired EtcPal features. See "EtcPal feature masks". */
+/** A mask of desired EtcPal features. See "EtcPal feature masks". */
 typedef uint32_t etcpal_features_t;
 
-/*! \cond feature_offset_values */
+/** @cond feature_offset_values */
 
 #define ETCPAL_FEATURE_SOCKETS_OFFSET 0
 #define ETCPAL_FEATURE_NETINTS_OFFSET 1
@@ -103,10 +103,10 @@ typedef uint32_t etcpal_features_t;
 #define ETCPAL_FEATURE_LOGGING_OFFSET 3
 #define ETCPAL_NUM_FEATURES 4
 
-/*! \endcond */
+/** @endcond */
 
-/*!
- * \name EtcPal feature masks
+/**
+ * @name EtcPal feature masks
  *
  * Pass one or more of these to etcpal_init() to initialize the relevant EtcPal feature. Multiple
  * features can be requested using logical OR.
@@ -117,23 +117,23 @@ typedef uint32_t etcpal_features_t;
  */
 
 #define ETCPAL_FEATURE_SOCKETS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /*!< Use the etcpal/socket module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /**< Use the etcpal/socket module. */
 #define ETCPAL_FEATURE_NETINTS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /*!< Use the etcpal/netint module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /**< Use the etcpal/netint module. */
 #define ETCPAL_FEATURE_TIMERS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET)) /*!< Use the etcpal/timer module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET)) /**< Use the etcpal/timer module. */
 #define ETCPAL_FEATURE_LOGGING \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /*!< Use the etcpal/log module. */
-#define ETCPAL_FEATURES_ALL 0xffffffffu                      /*!< Use every available module. */
+  ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /**< Use the etcpal/log module. */
+#define ETCPAL_FEATURES_ALL 0xffffffffu                      /**< Use every available module. */
 
-/*!
- * \brief Use every available module except the ones passed in mask.
- * \param mask Mask of ETCPAL_FEATURE_* macros to not include in the feature mask.
- * \return Resulting EtcPal feature mask to pass to etcpal_init().
+/**
+ * @brief Use every available module except the ones passed in mask.
+ * @param mask Mask of ETCPAL_FEATURE_* macros to not include in the feature mask.
+ * @return Resulting EtcPal feature mask to pass to etcpal_init().
  */
 #define ETCPAL_FEATURES_ALL_BUT(mask) (((uint32_t)ETCPAL_FEATURES_ALL) & ((uint32_t)(~((uint32_t)(mask)))))
 
-/*!
+/**
  * @}
  */
 
@@ -144,7 +144,7 @@ void etcpal_deinit(etcpal_features_t features);
 }
 #endif
 
-/*!
+/**
  * @}
  */
 

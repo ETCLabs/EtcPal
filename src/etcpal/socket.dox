@@ -2,19 +2,19 @@ Whoa, this isn't a real source file! What's going on here? Well, the sources for
 platform-specific, so the functions are documented here to avoid repeating documentation in each
 source file.
 
-/*! 
- * \addtogroup etcpal_socket
+/** 
+ * @addtogroup etcpal_socket
  * @{
  */
 
-/*! A socket handle. Typedefed to the system's socket identifier. */
+/** A socket handle. Typedefed to the system's socket identifier. */
 typedef PLATFORM_DEFINED etcpal_socket_t;
 
-/*! An identifier for an invalid socket handle. */
+/** An identifier for an invalid socket handle. */
 #define ETCPAL_SOCKET_INVALID [PLATFORM_DEFINED]
 
-/*!
- * \brief The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().
+/**
+ * @brief The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().
  *
  * Some systems have no compile-time limit on this value - it could be a runtime system-defined
  * limit (e.g. ulimit) or even limited only by the amount of available memory. In that case this
@@ -22,37 +22,37 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
  */
 #define ETCPAL_SOCKET_MAX_POLL_SIZE [PLATFORM_DEFINED]
 
-/*!
- * \brief Accept a connection on a socket.
+/**
+ * @brief Accept a connection on a socket.
  *
  * Refer to your favorite accept() man page for more information.
  *
  * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockAddr 
  * type. Connected socket is returned in an output parameter rather than the return value.
  *
- * \param[in] id Listening socket on which to accept a new connection.
- * \param[out] address Remote address from which the connection was accepted.
- * \param[out] conn_sock Filled in on success with handle to connected socket.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (failure).
+ * @param[in] id Listening socket on which to accept a new connection.
+ * @param[out] address Remote address from which the connection was accepted.
+ * @param[out] conn_sock Filled in on success with handle to connected socket.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (failure).
  */
 etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr *address, etcpal_socket_t *conn_sock);
 
-/*!
- * \brief Bind a name to a socket.
+/**
+ * @brief Bind a name to a socket.
  *
  * Refer to your favorite bind() man page for more information.
  *
  * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPalSockAddr
  * type.
  *
- * \param[in] id Socket to which to bind an address (traditionally called a 'name').
- * \param[in] address Address to assign to the socket.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket to which to bind an address (traditionally called a 'name').
+ * @param[in] address Address to assign to the socket.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr *address);
 
-/*!
- * \brief Close a socket.
+/**
+ * @brief Close a socket.
  *
  * Refer to your favorite close() man page for more information.
  *
@@ -60,55 +60,55 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr *address);
  * sockets; however, for portability it should only be used on identifiers that were returned from
  * an etcpal_* function.
  *
- * \param[in] id Socket to close.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket to close.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_close(etcpal_socket_t id);
 
-/*!
- * \brief Initiate a connection on a socket.
+/**
+ * @brief Initiate a connection on a socket.
  *
  * Refer to your favorite connect() man page for more information.
  *
  * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  * type.
  *
- * \param[in] id Socket to connect.
- * \param[in] address Address to which to connect.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket to connect.
+ * @param[in] address Address to which to connect.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr *address);
 
-/*!
- * \brief Get the name of the connected peer socket.
+/**
+ * @brief Get the name of the connected peer socket.
  *
  * Refer to your favorite getpeername() man page for more information.
  *
  * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  * type.
  *
- * \param[in] id Connected socket for which to get the peer address.
- * \param[in] address Filled in with peer address on success.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Connected socket for which to get the peer address.
+ * @param[in] address Filled in with peer address on success.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr *address);
 
-/*!
- * \brief Get socket name.
+/**
+ * @brief Get socket name.
  *
  * Refer to your favorite getsockname() man page for more information.
  *
  * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  * type.
  *
- * \param[in] id Connected socket for which to get the bound address.
- * \param[in] address Filled in with bound address on success.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Connected socket for which to get the bound address.
+ * @param[in] address Filled in with bound address on success.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr *address);
 
-/*!
- * \brief Get an option value for a socket.
+/**
+ * @brief Get an option value for a socket.
  *
  * Refer to your favorite getsockopt() man page for more information.
  *
@@ -116,92 +116,92 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr *address);
  * values are not included. Some value types are different; see the documentation of each possible
  * option value.
  *
- * \param[in] id Socket for which to get the option value.
- * \param[in] level Protocol level of the option for which to get the value.
- * \param[in] option_name Name of the option for which to get the value.
- * \param[out] option_value Filled in with option value on success.
- * \param[in,out] option_len Contains size of buffer pointed to by option_value, filled in with
+ * @param[in] id Socket for which to get the option value.
+ * @param[in] level Protocol level of the option for which to get the value.
+ * @param[in] option_name Name of the option for which to get the value.
+ * @param[out] option_value Filled in with option value on success.
+ * @param[in,out] option_len Contains size of buffer pointed to by option_value, filled in with
  *                           actual size of value returned.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void *option_value, size_t *option_len);
 
-/*!
- * \brief Listen for connections on a socket.
+/**
+ * @brief Listen for connections on a socket.
  *
  * Refer to your favorite listen() man page for more information.
  *
- * \param[in] id ETCPAL_STREAM socket on which to listen.
- * \param[in] backlog Maximum length of pending connection queue.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id ETCPAL_STREAM socket on which to listen.
+ * @param[in] backlog Maximum length of pending connection queue.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog);
 
-/*!
- * \brief Receive data on a connected socket.
+/**
+ * @brief Receive data on a connected socket.
  *
  * Refer to your favorite recv() man page for more information.
  *
- * \param[in] id Socket on which to receive.
- * \param[out] buffer Buffer in which to place received data.
- * \param[in] length Size in bytes of buffer.
- * \param[in] flags Receive flags.
- * \return Number of bytes received (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket on which to receive.
+ * @param[out] buffer Buffer in which to place received data.
+ * @param[in] length Size in bytes of buffer.
+ * @param[in] flags Receive flags.
+ * @return Number of bytes received (success) or #etcpal_error_t code from system (error occurred).
  */
 int etcpal_recv(etcpal_socket_t id, void *buffer, size_t length, int flags);
 
-/*!
- * \brief Receive data on a socket.
+/**
+ * @brief Receive data on a socket.
  *
  * Refer to your favorite recvfrom() man page for more information.
  *
  * Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr
  * type.
  *
- * \param[in] id Socket on which to receive.
- * \param[out] buffer Buffer in which to place received data.
- * \param[in] length Size in bytes of buffer.
- * \param[in] flags Receive flags.
- * \param[out] address If provided, filled in on success with peer address from which the data was
+ * @param[in] id Socket on which to receive.
+ * @param[out] buffer Buffer in which to place received data.
+ * @param[in] length Size in bytes of buffer.
+ * @param[in] flags Receive flags.
+ * @param[out] address If provided, filled in on success with peer address from which the data was
  *                     received.
- * \return Number of bytes received (success) or #etcpal_error_t code from system (error occurred).
+ * @return Number of bytes received (success) or #etcpal_error_t code from system (error occurred).
  */
 int etcpal_recvfrom(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockAddr *address);
 
-/*! 
- * \brief Send data on a connected socket.
+/** 
+ * @brief Send data on a connected socket.
  *
  * Refer to your favorite send() man page for more information.
  *
  * Differences from POSIX: Returns int rather than nonstandard ssize_t.
  *
- * \param[in] id Socket on which to send.
- * \param[in] message Message to send.
- * \param[in] length Size in bytes of message.
- * \param[in] flags Send flags.
- * \return Number of bytes sent (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket on which to send.
+ * @param[in] message Message to send.
+ * @param[in] length Size in bytes of message.
+ * @param[in] flags Send flags.
+ * @return Number of bytes sent (success) or #etcpal_error_t code from system (error occurred).
  */
 int etcpal_send(etcpal_socket_t id, const void *message, size_t length, int flags);
 
-/*! 
- * \brief Send data on a socket.
+/** 
+ * @brief Send data on a socket.
  *
  * Refer to your favorite sendto() man page for more information.
  *
  * Differences from POSIX: Returns int rather than nonstandard ssize_t. addrlen parameter is
  * omitted because there is only one EtcPal sockaddr type.
  *
- * \param[in] id Socket on which to send.
- * \param[in] message Message to send.
- * \param[in] length Size in bytes of message.
- * \param[in] flags Send flags.
- * \param[in] dest_addr Address to which to send the message.
- * \return Number of bytes sent (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket on which to send.
+ * @param[in] message Message to send.
+ * @param[in] length Size in bytes of message.
+ * @param[in] flags Send flags.
+ * @param[in] dest_addr Address to which to send the message.
+ * @return Number of bytes sent (success) or #etcpal_error_t code from system (error occurred).
  */
 int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockAddr *dest_addr);
 
-/*!
- * \brief Set an option value on a socket.
+/**
+ * @brief Set an option value on a socket.
  *
  * Refer to your favorite setsockopt() man page for more information.
  *
@@ -209,83 +209,83 @@ int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int fl
  * values are not included. Some value types are different; see the documentation of each possible
  * option value.
  *
- * \param[in] id Socket for which to set the option value.
- * \param[in] level Protocol level of the option for which to set the value.
- * \param[in] option_name Name of the option for which to set the value.
- * \param[out] option_value Value to set for the option.
- * \param[in,out] option_len Size of value pointed to by option_value.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket for which to set the option value.
+ * @param[in] level Protocol level of the option for which to set the value.
+ * @param[in] option_name Name of the option for which to set the value.
+ * @param[out] option_value Value to set for the option.
+ * @param[in,out] option_len Size of value pointed to by option_value.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id, int level, int option_name, const void *option_value, size_t option_len);
 
-/*!
- * \brief Shut down part of a full-duplex connection.
+/**
+ * @brief Shut down part of a full-duplex connection.
  *
  * Refer to your favorite shutdown() man page for more information.
  *
- * \param[in] id Socket to be shut down.
- * \param[in] how How to shut down the socket, one of the ETCPAL_SHUT_* values.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket to be shut down.
+ * @param[in] how How to shut down the socket, one of the ETCPAL_SHUT_* values.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how);
 
-/*!
- * \brief Create a socket.
+/**
+ * @brief Create a socket.
  *
  * Refer to your favorite socket() man page for more information.
  *
  * Differences from POSIX: Returns an error code and fills in an output parameter for the socket
  * handle instead of returning the socket handle. Rarely-used 'protocol' parameter is omitted.
  *
- * \param[in] family Protocol family that the socket should use.
- * \param[in] type Socket communication type.
- * \param[out] id Filled in with socket handle on success. Filled in with #ETCPAL_SOCKET_INVALID on
+ * @param[in] family Protocol family that the socket should use.
+ * @param[in] type Socket communication type.
+ * @param[out] id Filled in with socket handle on success. Filled in with #ETCPAL_SOCKET_INVALID on
  *                failure.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_socket_t *id);
 
-/*!
- * \brief Change the blocking behavior of a socket.
+/**
+ * @brief Change the blocking behavior of a socket.
  *
  * This is similar to manipulating the O_NONBLOCK flag through the fcntl() function on a BSD
  * socket.
  *
- * \param[in] id Socket for which to change the blocking behavior.
- * \param[in] blocking true (socket should block) or false (socket should not block).
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket for which to change the blocking behavior.
+ * @param[in] blocking true (socket should block) or false (socket should not block).
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking);
 
-/*!
- * \brief Get the current blocking behavior of a socket.
+/**
+ * @brief Get the current blocking behavior of a socket.
  *
  * This is similar to checking the state of the O_NONBLOCK flag through the fcntl() function on a
  * BSD socket.
  *
- * \param[in] id Socket for which to read the blocking behavior.
- * \param[out] blocking Filled in with whether the socket is currently blocking or not.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
+ * @param[in] id Socket for which to read the blocking behavior.
+ * @param[out] blocking Filled in with whether the socket is currently blocking or not.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
 
-/*!
- * \name etcpal_poll API
+/**
+ * @name etcpal_poll API
  *
  * The etcpal_poll functions enable monitoring several sockets at once.
  *
  * @{
  */
 
-/*!
- * \brief A structure that holds context information for poll operations on multiple sockets.
+/**
+ * @brief A structure that holds context information for poll operations on multiple sockets.
  *  
  * See the documentation for etcpal_poll_context_init() and etcpal_poll_wait() for more information.
  */
 typedef PLATFORM_DEFINED EtcPalPollContext;
 
-/*!
- * \brief Create a new context for waiting on events on multiple sockets.
+/**
+ * @brief Create a new context for waiting on events on multiple sockets.
  *
  * EtcPalPollContext structures contain information about an application's interest in events on a
  * set of sockets. The etcpal_poll_wait() function can then be used to block the calling thread until 
@@ -294,25 +294,25 @@ typedef PLATFORM_DEFINED EtcPalPollContext;
  * This function must be called on an EtcPalPollContext structure before using it with any other
  * etcpal_poll_* function.
  *
- * \param[in,out] context Pointer to EtcPalPollContext to initialize.
- * \return #kEtcPalErrOk: Init successful.
- * \return #kEtcPalErrInvalid: Invalid argument.
- * \return #kEtcPalErrSys: System call failed.
+ * @param[in,out] context Pointer to EtcPalPollContext to initialize.
+ * @return #kEtcPalErrOk: Init successful.
+ * @return #kEtcPalErrInvalid: Invalid argument.
+ * @return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_poll_context_init(EtcPalPollContext *context);
 
-/*!
- * \brief Invalidate a previously-initialized EtcPalPollContext structure.
+/**
+ * @brief Invalidate a previously-initialized EtcPalPollContext structure.
  * 
  * This must be called at shutdown or when the EtcPalPollContext is no longer needed to free any
  * resources being used to track polling context.
  *
- * \param[in] context Pointer to EtcPalPollContext to deinitialize.
+ * @param[in] context Pointer to EtcPalPollContext to deinitialize.
  */
 void etcpal_poll_context_deinit(EtcPalPollContext *context);
 
-/*!
- * \brief Add a new socket to an EtcPalPollContext.
+/**
+ * @brief Add a new socket to an EtcPalPollContext.
  *
  * This socket will be monitored on future calls to etcpal_poll_wait() for the events specified in
  * the 'events' parameter. See the definitions of the ETCPAL_POLL_* flag values for more information.
@@ -324,49 +324,49 @@ void etcpal_poll_context_deinit(EtcPalPollContext *context);
  * in a single call. If there is a limit, it is defined as the positive value
  * #ETCPAL_SOCKET_MAX_POLL_SIZE. Otherwise, that constant is set to -1.
  *
- * \param[in,out] context Pointer to EtcPalPollContext to which to add new socket.
- * \param[in] socket Socket to start monitoring.
- * \param[in] events Events to monitor for on this socket.
- * \param[in] user_data Opaque data pointer that is passed back with events on this socket.
- * \return #kEtcPalErrOk: Socket added successfully.
- * \return #kEtcPalErrExists: The socket has already been added to this context.
- * \return #kEtcPalErrInvalid: Invalid argument.
- * \return #kEtcPalErrNoMem: #ETCPAL_SOCKET_MAX_POLL_SIZE is exceeded in this context.
- * \return #kEtcPalErrSys: System call failed.
+ * @param[in,out] context Pointer to EtcPalPollContext to which to add new socket.
+ * @param[in] socket Socket to start monitoring.
+ * @param[in] events Events to monitor for on this socket.
+ * @param[in] user_data Opaque data pointer that is passed back with events on this socket.
+ * @return #kEtcPalErrOk: Socket added successfully.
+ * @return #kEtcPalErrExists: The socket has already been added to this context.
+ * @return #kEtcPalErrInvalid: Invalid argument.
+ * @return #kEtcPalErrNoMem: #ETCPAL_SOCKET_MAX_POLL_SIZE is exceeded in this context.
+ * @return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t events, void *user_data);
 
-/*! 
- * \brief Change the set of events or user data associated with a monitored socket.
+/** 
+ * @brief Change the set of events or user data associated with a monitored socket.
  *
  * The new events and/or user data will be used on the next call to etcpal_poll_wait().
  *
- * \param[in,out] context Pointer to EtcPalPollContext on which to modify socket parameters.
- * \param[in] socket Socket to modify.
- * \param[in] new_events New set of events to monitor for on this socket. Passing the same events as
+ * @param[in,out] context Pointer to EtcPalPollContext on which to modify socket parameters.
+ * @param[in] socket Socket to modify.
+ * @param[in] new_events New set of events to monitor for on this socket. Passing the same events as
  *                       before is also valid if only the user data is being changed.
- * \param[in] new_user_data New opaque data pointer that is passed back with events on this socket.
+ * @param[in] new_user_data New opaque data pointer that is passed back with events on this socket.
  *                          Passing the same pointer as before is also valid if only the events are
  *                          being changed.
- * \return #kEtcPalErrOk: Socket modified successfully.
- * \return #kEtcPalErrInvalid: Invalid argument.
- * \return #kEtcPalErrNotFound: Socket was not previously added to this context.
- * \return #kEtcPalErrSys: System call failed.
+ * @return #kEtcPalErrOk: Socket modified successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument.
+ * @return #kEtcPalErrNotFound: Socket was not previously added to this context.
+ * @return #kEtcPalErrSys: System call failed.
  */
 etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext *context, etcpal_socket_t socket, etcpal_poll_events_t new_events, void *new_user_data);
 
-/*!
- * \brief Remove a monitored socket from an EtcPalPollContext.
+/**
+ * @brief Remove a monitored socket from an EtcPalPollContext.
  *
  * This socket will no longer be monitored on future calls to etcpal_poll_wait().
  *
- * \param[in,out] context Pointer to EtcPalPollContext from which to remove socket.
- * \param[in] socket Socket to remove.
+ * @param[in,out] context Pointer to EtcPalPollContext from which to remove socket.
+ * @param[in] socket Socket to remove.
  */
 void etcpal_poll_remove_socket(EtcPalPollContext *context, etcpal_socket_t socket);
 
-/*!
- * \brief Wait for an event on a set of sockets defined by an EtcPalPollContext.
+/**
+ * @brief Wait for an event on a set of sockets defined by an EtcPalPollContext.
  *
  * Waits for events defined by previous calls to etcpal_poll_add_socket() on this context structure.
  * Reports one event at a time in the output 'event' parameter. Waits up to timeout_ms
@@ -387,32 +387,32 @@ void etcpal_poll_remove_socket(EtcPalPollContext *context, etcpal_socket_t socke
  * | MQX (RTCS)        | select()  | #ETCPAL_SOCKET_MAX_POLL_SIZE is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE. |
  * | Microsoft Windows | select()  | #ETCPAL_SOCKET_MAX_POLL_SIZE defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition. |
  *
- * \param[in] context Pointer to EtcPalPollContext for which to wait for events.
- * \param[out] event On success, contains information about the event that occurred.
- * \param[in] timeout_ms How long to wait for an event, in milliseconds. Use #ETCPAL_WAIT_FOREVER to
+ * @param[in] context Pointer to EtcPalPollContext for which to wait for events.
+ * @param[out] event On success, contains information about the event that occurred.
+ * @param[in] timeout_ms How long to wait for an event, in milliseconds. Use #ETCPAL_WAIT_FOREVER to
  *                       wait indefinitely.
- * \return #kEtcPalErrOk: An event occurred, and information is available in the event argument.
- * \return #kEtcPalErrInvalid: Invalid argument.
- * \return #kEtcPalErrNoSockets: The context has no sockets added to it.
- * \return #kEtcPalErrTimedOut: Timed out waiting for an event to occur.
- * \return #kEtcPalErrSys: System or socket call failed.
- * \return Other #etcpal_error_t values are possible from underlying socket calls.
+ * @return #kEtcPalErrOk: An event occurred, and information is available in the event argument.
+ * @return #kEtcPalErrInvalid: Invalid argument.
+ * @return #kEtcPalErrNoSockets: The context has no sockets added to it.
+ * @return #kEtcPalErrTimedOut: Timed out waiting for an event to occur.
+ * @return #kEtcPalErrSys: System or socket call failed.
+ * @return Other #etcpal_error_t values are possible from underlying socket calls.
  */
 etcpal_error_t etcpal_poll_wait(EtcPalPollContext *context, EtcPalPollEvent *event, int timeout_ms);
 
-/*!
+/**
  * @}
  */
 
-/*!
- * \brief Get address information for a named internet host and/or service.
+/**
+ * @brief Get address information for a named internet host and/or service.
  *
  * Refer to your favorite getaddrinfo() man page for more information. One difference between this
  * and the POSIX function is the way that multiple addresses are iterated. EtcPal uses the
  * etcpal_nextaddr() function instead of a next pointer to iterate over multiple addresses. For
  * example:
  *
- * \code
+ * @code
  * EtcPalAddrinfo info;
  * if (0 == etcpal_getaddrinfo("www.google.com", "http", NULL, &info))
  * {
@@ -431,29 +431,29 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext *context, EtcPalPollEvent *eve
  *
  *   etcpal_freeaddrinfo(&info);
  * }
- * \endcode
+ * @endcode
  *
  * On an internet-connected machine with DNS resolution capability, the above code should print
  * something like:
- * \code
+ * @code
  * Address: 172.217.4.196
  * Address: 172.217.4.196
  * Address: 2607:f8b0:4009:806::2004
  * Address: 2607:f8b0:4009:806::2004
- * \endcode
+ * @endcode
  *
- * \param[in] hostname Either a string-represented numerical network address or a network hostname
+ * @param[in] hostname Either a string-represented numerical network address or a network hostname
  *                     to resolve.
- * \param[in] service Either a string-represented numerical port number or a service name.
- * \param[in] hints Structure containing hints restricting the address types that can be returned.
- * \param[out] result On success, filled in with the first address result.
- * \return #kEtcPalErrOk (success) or #etcpal_error_t code from system (an error occurred).
+ * @param[in] service Either a string-represented numerical port number or a service name.
+ * @param[in] hints Structure containing hints restricting the address types that can be returned.
+ * @param[out] result On success, filled in with the first address result.
+ * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (an error occurred).
  */
 etcpal_error_t etcpal_getaddrinfo(const char *hostname, const char *service, const EtcPalAddrinfo *hints,
                                   EtcPalAddrinfo *result);
 
-/*!
- * \brief Get the next address from the list returned by etcpal_getaddrinfo().
+/**
+ * @brief Get the next address from the list returned by etcpal_getaddrinfo().
  *
  * Most platforms allocate and return a linked list of address info structs in their getaddrinfo()
  * implementation. To avoid further memory allocation in the abstraction layer, this non-POSIX-like
@@ -461,24 +461,24 @@ etcpal_error_t etcpal_getaddrinfo(const char *hostname, const char *service, con
  * returned from a etcpal_getaddrinfo() call, keep calling this on the result struct until it returns
  * false.
  *
- * \param[in,out] ai Pointer to last EtcPalAddrinfo struct, filled in with values of the next
+ * @param[in,out] ai Pointer to last EtcPalAddrinfo struct, filled in with values of the next
  *                   address.
- * \return true (next address was filled in) or false (no more addresses or error).
+ * @return true (next address was filled in) or false (no more addresses or error).
  */
 bool etcpal_nextaddr(EtcPalAddrinfo *ai);
 
-/*!
- * \brief Free an addrinfo list returned by etcpal_getaddrinfo().
+/**
+ * @brief Free an addrinfo list returned by etcpal_getaddrinfo().
  *
  * Most platforms allocate memory when getaddrinfo() is called. This must always be called after
  * any call to etcpal_getaddrinfo() to free that memory. It can be called with any of the
  * EtcPalAddrinfo instances in the list, and the whole list will be freed. See the example usage in
  * the description of etcpal_getaddrinfo().
  *
- * \param[in] ai Pointer to EtcPalAddrinfo struct for which to free the platform memory.
+ * @param[in] ai Pointer to EtcPalAddrinfo struct for which to free the platform memory.
  */
 void etcpal_freeaddrinfo(EtcPalAddrinfo *ai);
 
-/*!
+/**
  * @}
  */

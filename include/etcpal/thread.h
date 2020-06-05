@@ -27,10 +27,10 @@
 extern "C" {
 #endif
 
-/*!
- * \defgroup etcpal_thread thread (Threading)
- * \ingroup etcpal
- * \brief Platform-neutral threads.
+/**
+ * @defgroup etcpal_thread thread (Threading)
+ * @ingroup etcpal
+ * @brief Platform-neutral threads.
  *
  * ```c
  * #include "etcpal/thread.h"
@@ -38,7 +38,7 @@ extern "C" {
  *
  * Provides a platform-neutral threading API with an interface similar to pthread.
  *
- * \code
+ * @code
  * void thread_function(void* arg)
  * {
  *   int val = *(int*)arg;
@@ -56,11 +56,11 @@ extern "C" {
  *   etcpal_thread_join(&handle);
  *   // The thread is no longer running.
  * }
- * \endcode
+ * @endcode
  *
  * Manipulate the EtcPalThreadParams structure to change parameters about the thread to be created:
  *
- * \code
+ * @code
  * EtcPalThreadParams params;
  *
  * // The meaning of these numbers is platform-defined, and they are not honored on all platforms. See the description
@@ -69,14 +69,14 @@ extern "C" {
  * params.stack_size = 1500;
  *
  * params.thread_name = "My Thread";
- * \endcode
+ * @endcode
  *
  * You can also use the etcpal_thread_sleep() function to sleep for a given number of milliseconds
  * from any valid thread context:
  *
- * \code
+ * @code
  * etcpal_thread_sleep(200); // Sleep for 200 milliseconds
- * \endcode
+ * @endcode
  *
  * **IMPORTANT NOTE FOR RTOS USERS:** The EtcPal threading API does not initialize the scheduler on
  * real-time systems (e.g. it does not call vTaskStartScheduler() on FreeRTOS or _mqx() on MQX).
@@ -86,8 +86,8 @@ extern "C" {
  * @{
  */
 
-/*!
- * \brief A set of parameters for an etcpal_thread.
+/**
+ * @brief A set of parameters for an etcpal_thread.
  *
  * The members of this structure are not all honored on all platforms. Here is a breakdown:
  *
@@ -101,30 +101,30 @@ extern "C" {
  */
 typedef struct EtcPalThreadParams
 {
-  /*! The priority of the thread. Note that thread priority is not valid on all platforms. */
+  /** The priority of the thread. Note that thread priority is not valid on all platforms. */
   unsigned int priority;
-  /*! The stack size of the thread. Note that thread stack size is not valid on all platforms. */
+  /** The stack size of the thread. Note that thread stack size is not valid on all platforms. */
   unsigned int stack_size;
-  /*! A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH. */
+  /** A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH. */
   const char* thread_name;
-  /*! \brief Pointer to a platform-specific parameter structure.
+  /** @brief Pointer to a platform-specific parameter structure.
    *
    * This is used to set thread attributes that are not shared between platforms. Currently the
    * only platform that has a valid value for this member is MQX, which has the following
    * structure:
    *
-   * \code
+   * @code
    * typedef struct EtcPalThreadParamsMqx
    * {
    *   _mqx_uint task_attributes; // Corresponds to the TASK_ATTRIBUTES member of TASK_TEMPLATE_STRUCT
    *   _mqx_uint time_slice; // Corresponds to the DEFAULT_TIME_SLICE member of TASK_TEMPLATE_STRUCT
    * } EtcPalThreadParamsMqx;
-   * \endcode
+   * @endcode
    */
   void* platform_data;
 } EtcPalThreadParams;
 
-/*! Set the platform-default values for the EtcPalThreadParams struct. */
+/** Set the platform-default values for the EtcPalThreadParams struct. */
 #define ETCPAL_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)         \
   do                                                              \
   {                                                               \
@@ -134,24 +134,24 @@ typedef struct EtcPalThreadParams
     (threadparamsptr)->platform_data = NULL;                      \
   } while (0)
 
-/*!
- * \brief The set of default values for an EtcPalThreadParamsStructure.
+/**
+ * @brief The set of default values for an EtcPalThreadParamsStructure.
  *
  * Suitable for using in a bracket initializer, e.g.:
- * \code
+ * @code
  * EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT_VALUES;
- * \endcode
+ * @endcode
  */
 #define ETCPAL_THREAD_PARAMS_INIT_VALUES \
   ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, ETCPAL_THREAD_DEFAULT_NAME, NULL
 
-/*!
- * \brief A default initializer value for an EtcPalThreadParams structure.
+/**
+ * @brief A default initializer value for an EtcPalThreadParams structure.
  *
  * Usage:
- * \code
+ * @code
  * EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
- * \endcode
+ * @endcode
  */
 #define ETCPAL_THREAD_PARAMS_INIT    \
   {                                  \
@@ -166,7 +166,7 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
 void etcpal_thread_sleep(unsigned int sleep_ms);
 #endif
 
-/*!
+/**
  * @}
  */
 

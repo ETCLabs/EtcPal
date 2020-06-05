@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/// \file etcpal/cpp/lock.h
-/// \brief C++ wrapper and utilities for etcpal/lock.h
+/// @file etcpal/cpp/lock.h
+/// @brief C++ wrapper and utilities for etcpal/lock.h
 
 #ifndef ETCPAL_CPP_LOCK_H_
 #define ETCPAL_CPP_LOCK_H_
@@ -28,9 +28,9 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_lock lock (Locks and Synchronization)
-/// \ingroup etcpal_cpp
-/// \brief C++ utilities for the \ref etcpal_lock module.
+/// @defgroup etcpal_cpp_lock lock (Locks and Synchronization)
+/// @ingroup etcpal_cpp
+/// @brief C++ utilities for the @ref etcpal_lock module.
 ///
 /// Provides C++ wrappers for mutexes (Mutex), signals (Signal) and read-write locks (RwLock). Also
 /// provides RAII guard classes for these types (MutexGuard, ReadGuard, WriteGuard), which should
@@ -41,14 +41,14 @@ namespace etcpal
 /// including the embedded RTOS platforms. If your application or library does not need to run on
 /// these platforms, consider using the STL versions instead.
 
-/// \ingroup etcpal_cpp_lock
-/// \brief A wrapper class for the EtcPal mutex type.
+/// @ingroup etcpal_cpp_lock
+/// @brief A wrapper class for the EtcPal mutex type.
 ///
 /// Note: The etcpal::Mutex functions are not normally used directly - prefer usage of the RAII
 /// type etcpal::MutexGuard to manage locking and unlocking of an etcpal::Mutex.
 ///
 /// Example usage:
-/// \code
+/// @code
 /// static int shared_counter;
 /// etcpal::Mutex mutex;
 ///
@@ -81,9 +81,9 @@ namespace etcpal
 ///
 ///   return 0;
 /// }
-/// \endcode
+/// @endcode
 ///
-/// See \ref etcpal_mutex for more information.
+/// See @ref etcpal_mutex for more information.
 class Mutex
 {
 public:
@@ -105,42 +105,42 @@ private:
   etcpal_mutex_t mutex_{};
 };
 
-/// \brief Create a new mutex.
+/// @brief Create a new mutex.
 inline Mutex::Mutex()
 {
   (void)etcpal_mutex_create(&mutex_);
 }
 
-/// \brief Destroy the mutex.
+/// @brief Destroy the mutex.
 inline Mutex::~Mutex()
 {
   etcpal_mutex_destroy(&mutex_);
 }
 
-/// \brief Lock the mutex.
-/// \return The result of etcpal_mutex_lock() on the underlying mutex.
+/// @brief Lock the mutex.
+/// @return The result of etcpal_mutex_lock() on the underlying mutex.
 inline bool Mutex::Lock()
 {
   return etcpal_mutex_lock(&mutex_);
 }
 
-/// \brief Attempt to lock the mutex.
+/// @brief Attempt to lock the mutex.
 ///
 /// Returns when either the mutex is acquired or the timeout expires. **NOTE**: Timeout values
 /// other than 0 or ETCPAL_WAIT_FOREVER are typically only honored on real-time platforms. See the
-/// table in \ref etcpal_mutex for more information. On platforms where timeouts are not honored,
+/// table in @ref etcpal_mutex for more information. On platforms where timeouts are not honored,
 /// passing 0 for timeout_ms executes a poll for the mutex returning immediately, while any other
 /// value executes the equivalent of Lock().
 ///
-/// \param timeout_ms How long to wait to acquire the mutex, in milliseconds. Default is to poll
+/// @param timeout_ms How long to wait to acquire the mutex, in milliseconds. Default is to poll
 ///                   and return immediately.
-/// \return The result of etcpal_mutex_timed_lock() on the underlying mutex.
+/// @return The result of etcpal_mutex_timed_lock() on the underlying mutex.
 inline bool Mutex::TryLock(int timeout_ms)
 {
   return etcpal_mutex_timed_lock(&mutex_, timeout_ms);
 }
 
-/// \brief Unlock the mutex.
+/// @brief Unlock the mutex.
 ///
 /// See etcpal_mutex_give().
 inline void Mutex::Unlock()
@@ -148,17 +148,17 @@ inline void Mutex::Unlock()
   etcpal_mutex_unlock(&mutex_);
 }
 
-/// \brief Get a reference to the underlying etcpal_mutex_t type.
+/// @brief Get a reference to the underlying etcpal_mutex_t type.
 inline etcpal_mutex_t& Mutex::get()
 {
   return mutex_;
 }
 
-/// \ingroup etcpal_cpp_lock
-/// \brief A wrapper class for the EtcPal signal type.
+/// @ingroup etcpal_cpp_lock
+/// @brief A wrapper class for the EtcPal signal type.
 ///
 /// Example usage:
-/// \code
+/// @code
 /// etcpal::Signal sig;
 /// std::string data;
 ///
@@ -191,7 +191,7 @@ inline etcpal_mutex_t& Mutex::get()
 ///   worker.Join();
 ///   return 0;
 /// }
-/// \endcode
+/// @endcode
 ///
 /// The output of the above would be:
 /// ```
@@ -201,7 +201,7 @@ inline etcpal_mutex_t& Mutex::get()
 /// Back in main(), data = Example data after processing
 /// ```
 ///
-/// See \ref etcpal_signal for more information.
+/// See @ref etcpal_signal for more information.
 class Signal
 {
 public:
@@ -224,40 +224,40 @@ private:
   etcpal_signal_t signal_{};
 };
 
-/// \brief Create a new signal.
+/// @brief Create a new signal.
 inline Signal::Signal()
 {
   (void)etcpal_signal_create(&signal_);
 }
 
-/// \brief Destroy the signal.
+/// @brief Destroy the signal.
 inline Signal::~Signal()
 {
   etcpal_signal_destroy(&signal_);
 }
 
-/// \brief Wait for the signal.
-/// \return The result of etcpal_signal_wait() on the underlying signal.
+/// @brief Wait for the signal.
+/// @return The result of etcpal_signal_wait() on the underlying signal.
 inline bool Signal::Wait()
 {
   return etcpal_signal_wait(&signal_);
 }
 
-/// \brief Wait for the signal until either it is received or a timeout expires.
+/// @brief Wait for the signal until either it is received or a timeout expires.
 ///
 /// **NOTE**: Timeouts other than 0 or ETCPAL_WAIT_FOREVER are typically only honored on real-time
-/// platforms. See the table in \ref etcpal_signal for more information. On platforms where
+/// platforms. See the table in @ref etcpal_signal for more information. On platforms where
 /// timeouts are not honored, passing 0 for timeout_ms returns immediately whether the signal is in
 /// the signaled or unsignaled state, while any other value executes the equivalent of Wait().
 ///
-/// \param timeout_ms How long to wait for the signal, in milliseconds.
-/// \return The result of etcpal_signal_timed_wait() on the underlying signal.
+/// @param timeout_ms How long to wait for the signal, in milliseconds.
+/// @return The result of etcpal_signal_timed_wait() on the underlying signal.
 inline bool Signal::TryWait(int timeout_ms)
 {
   return etcpal_signal_timed_wait(&signal_, timeout_ms);
 }
 
-/// \brief Notify those waiting on the signal.
+/// @brief Notify those waiting on the signal.
 ///
 /// See etcpal_signal_post().
 inline void Signal::Notify()
@@ -265,9 +265,9 @@ inline void Signal::Notify()
   etcpal_signal_post(&signal_);
 }
 
-/// \brief Notify those waiting on the signal from an interrupt context.
+/// @brief Notify those waiting on the signal from an interrupt context.
 ///
-/// **NOTE**: Only meaningful on some platforms. See the table in \ref etcpal_signal and
+/// **NOTE**: Only meaningful on some platforms. See the table in @ref etcpal_signal and
 /// etcpal_signal_post_from_isr() for more information. On platforms on which it is not meaningful,
 /// executes the equivalent of Notify().
 inline void Signal::NotifyFromIsr()
@@ -275,21 +275,21 @@ inline void Signal::NotifyFromIsr()
   etcpal_signal_post_from_isr(&signal_);
 }
 
-/// \brief Get a reference to the underlying etcpal_signal_t type.
+/// @brief Get a reference to the underlying etcpal_signal_t type.
 inline etcpal_signal_t& Signal::get()
 {
   return signal_;
 }
 
-/// \ingroup etcpal_cpp_lock
-/// \brief A wrapper class for the EtcPal read-write lock type.
+/// @ingroup etcpal_cpp_lock
+/// @brief A wrapper class for the EtcPal read-write lock type.
 ///
 /// Note: The etcpal::RwLock functions are not normally used directly - prefer usage of the RAII
 /// types etcpal::ReadGuard and etcpal::WriteGuard to manage locking and unlocking of an
 /// etcpal::RwLock.
 ///
 /// Example usage:
-/// \code
+/// @code
 /// class ThreadSafeCounter
 /// {
 /// public:
@@ -344,9 +344,9 @@ inline etcpal_signal_t& Signal::get()
 ///
 ///   return 0;
 /// }
-/// \endcode
+/// @endcode
 ///
-/// See \ref etcpal_rwlock for more information.
+/// See @ref etcpal_rwlock for more information.
 class RwLock
 {
 public:
@@ -372,42 +372,42 @@ private:
   etcpal_rwlock_t rwlock_{};
 };
 
-/// \brief Create a new read-write lock.
+/// @brief Create a new read-write lock.
 inline RwLock::RwLock()
 {
   (void)etcpal_rwlock_create(&rwlock_);
 }
 
-/// \brief Destroy the read-write lock.
+/// @brief Destroy the read-write lock.
 inline RwLock::~RwLock()
 {
   etcpal_rwlock_destroy(&rwlock_);
 }
 
-/// \brief Access the read-write lock for reading.
-/// \return The result of etcpal_rwlock_readlock() on the underlying read-write lock.
+/// @brief Access the read-write lock for reading.
+/// @return The result of etcpal_rwlock_readlock() on the underlying read-write lock.
 inline bool RwLock::ReadLock()
 {
   return etcpal_rwlock_readlock(&rwlock_);
 }
 
-/// \brief Try to access the read-write lock for reading.
+/// @brief Try to access the read-write lock for reading.
 ///
 /// Returns when either the read lock is acquired or the timeout expires. **NOTE**: Timeout values
 /// other than 0 or ETCPAL_WAIT_FOREVER are typically only honored on real-time platforms. See the
-/// table in \ref etcpal_rwlock for more information. On platforms where timeouts are not honored,
+/// table in @ref etcpal_rwlock for more information. On platforms where timeouts are not honored,
 /// passing 0 for timeout_ms executes a poll for the lock returning immediately, while any other
 /// value executes the equivalent of ReadLock().
 ///
-/// \param timeout_ms How long to wait to acquire the read lock, in milliseconds. Default is to
+/// @param timeout_ms How long to wait to acquire the read lock, in milliseconds. Default is to
 ///                   poll and return immediately.
-/// \return The result of etcpal_rwlock_timed_readlock() on the underlying read-write lock.
+/// @return The result of etcpal_rwlock_timed_readlock() on the underlying read-write lock.
 inline bool RwLock::TryReadLock(int timeout_ms)
 {
   return etcpal_rwlock_timed_readlock(&rwlock_, timeout_ms);
 }
 
-/// \brief Release a read lock on the read-write lock.
+/// @brief Release a read lock on the read-write lock.
 ///
 /// See etcpal_rwlock_readunlock().
 inline void RwLock::ReadUnlock()
@@ -415,30 +415,30 @@ inline void RwLock::ReadUnlock()
   etcpal_rwlock_readunlock(&rwlock_);
 }
 
-/// \brief Access the read-write lock for writing.
-/// \return The result of etcpal_rwlock_writelock() on the underlying read-write lock.
+/// @brief Access the read-write lock for writing.
+/// @return The result of etcpal_rwlock_writelock() on the underlying read-write lock.
 inline bool RwLock::WriteLock()
 {
   return etcpal_rwlock_writelock(&rwlock_);
 }
 
-/// \brief Try to access the read-write lock for writing.
+/// @brief Try to access the read-write lock for writing.
 ///
 /// Returns when either the read lock is acquired or the timeout expires. **NOTE**: Timeout values
 /// other than 0 or ETCPAL_WAIT_FOREVER are typically only honored on real-time platforms. See the
-/// table in \ref etcpal_rwlock for more information. On platforms where timeouts are not honored,
+/// table in @ref etcpal_rwlock for more information. On platforms where timeouts are not honored,
 /// passing 0 for timeout_ms executes a poll for the lock returning immediately, while any other
 /// value executes the equivalent of WriteLock().
 ///
-/// \param timeout_ms How long to wait to acquire the write lock, in milliseconds. Default is to
+/// @param timeout_ms How long to wait to acquire the write lock, in milliseconds. Default is to
 ///                   poll and return immediately.
-/// \return The result of etcpal_rwlock_timed_writelock() on the underlying read-write lock.
+/// @return The result of etcpal_rwlock_timed_writelock() on the underlying read-write lock.
 inline bool RwLock::TryWriteLock(int timeout_ms)
 {
   return etcpal_rwlock_timed_writelock(&rwlock_, timeout_ms);
 }
 
-/// \brief Release a write lock on the read-write lock.
+/// @brief Release a write lock on the read-write lock.
 ///
 /// See etcpal_rwlock_writeunlock().
 inline void RwLock::WriteUnlock()
@@ -446,17 +446,17 @@ inline void RwLock::WriteUnlock()
   etcpal_rwlock_writeunlock(&rwlock_);
 }
 
-/// \brief Get a reference to the underlying etcpal_rwlock_t type.
+/// @brief Get a reference to the underlying etcpal_rwlock_t type.
 inline etcpal_rwlock_t& RwLock::get()
 {
   return rwlock_;
 }
 
-/// \ingroup etcpal_cpp_lock
-/// \brief A wrapper class for the EtcPal counting semaphore type.
+/// @ingroup etcpal_cpp_lock
+/// @brief A wrapper class for the EtcPal counting semaphore type.
 ///
 /// Usage example:
-/// \code
+/// @code
 /// etcpal::Semaphore sem;
 ///
 /// void main()
@@ -480,14 +480,14 @@ inline etcpal_rwlock_t& RwLock::get()
 ///   // We've received an event. Notify the service thread that a new event has occurred.
 ///   sem.PostFromIsr();
 /// }
-/// \endcode
+/// @endcode
 ///
-/// See \ref etcpal_sem for more information.
+/// See @ref etcpal_sem for more information.
 class Semaphore
 {
 public:
   /// The default value used for the semaphore's max_count. This is not honored on all platforms -
-  /// see \ref etcpal_sem for more information.
+  /// see @ref etcpal_sem for more information.
   static constexpr unsigned int kDefaultMaxCount = 50;
 
   Semaphore(unsigned int initial_count = 0, unsigned int max_count = kDefaultMaxCount);
@@ -509,40 +509,40 @@ private:
   etcpal_sem_t sem_{};
 };
 
-/// \brief Create a new semaphore.
+/// @brief Create a new semaphore.
 inline Semaphore::Semaphore(unsigned int initial_count, unsigned int max_count)
 {
   (void)etcpal_sem_create(&sem_, initial_count, max_count);
 }
 
-/// \brief Destroy the semaphore.
+/// @brief Destroy the semaphore.
 inline Semaphore::~Semaphore()
 {
   etcpal_sem_destroy(&sem_);
 }
 
-/// \brief Wait for the semaphore.
-/// \return The result of etcpal_sem_wait() on the underlying semaphore.
+/// @brief Wait for the semaphore.
+/// @return The result of etcpal_sem_wait() on the underlying semaphore.
 inline bool Semaphore::Wait()
 {
   return etcpal_sem_wait(&sem_);
 }
 
-/// \brief Wait for the semaphore until either it is received or a timeout expires.
+/// @brief Wait for the semaphore until either it is received or a timeout expires.
 ///
 /// **NOTE**: Timeouts other than 0 or #ETCPAL_WAIT_FOREVER are typically only honored on real-time
-/// platforms. See the table in \ref etcpal_sem for more information. On platforms where
+/// platforms. See the table in @ref etcpal_sem for more information. On platforms where
 /// timeouts are not honored, passing 0 for timeout_ms returns immediately whether the semaphore
 /// was available and taken, while any other value executes the equivalent of Wait().
 ///
-/// \param timeout_ms How long to wait for the semaphore, in milliseconds.
-/// \return The result of etcpal_sem_timed_wait() on the underlying semaphore.
+/// @param timeout_ms How long to wait for the semaphore, in milliseconds.
+/// @return The result of etcpal_sem_timed_wait() on the underlying semaphore.
 inline bool Semaphore::TryWait(int timeout_ms)
 {
   return etcpal_sem_timed_wait(&sem_, timeout_ms);
 }
 
-/// \brief Post the semaphore.
+/// @brief Post the semaphore.
 ///
 /// See etcpal_sem_post().
 inline bool Semaphore::Post()
@@ -550,9 +550,9 @@ inline bool Semaphore::Post()
   return etcpal_sem_post(&sem_);
 }
 
-/// \brief Post the semaphore from an interrupt context.
+/// @brief Post the semaphore from an interrupt context.
 ///
-/// **NOTE**: Only meaningful on some platforms. See the table in \ref etcpal_sem and
+/// **NOTE**: Only meaningful on some platforms. See the table in @ref etcpal_sem and
 /// etcpal_sem_post_from_isr() for more information. On platforms on which it is not meaningful,
 /// executes the equivalent of Post().
 inline bool Semaphore::PostFromIsr()
@@ -560,23 +560,23 @@ inline bool Semaphore::PostFromIsr()
   return etcpal_sem_post_from_isr(&sem_);
 }
 
-/// \brief Get a reference to the underlying etcpal_sem_t type.
+/// @brief Get a reference to the underlying etcpal_sem_t type.
 inline etcpal_sem_t& Semaphore::get()
 {
   return sem_;
 }
 
-/// \name Lock guard classes
-/// RAII-style wrapper classes for \ref etcpal_mutex and \ref etcpal_rwlock.
+/// @name Lock guard classes
+/// RAII-style wrapper classes for @ref etcpal_mutex and @ref etcpal_rwlock.
 /// @{
 
-/// \ingroup etcpal_cpp_lock
-/// \brief Lock guard around a mutex.
+/// @ingroup etcpal_cpp_lock
+/// @brief Lock guard around a mutex.
 ///
 /// Lock is taken when this class is instantiated, and released when it goes out of scope.
 /// Example usage:
 ///
-/// \code
+/// @code
 /// void Class::CriticalFunction()
 /// {
 ///   etcpal::MutexGuard lock(mutex_);
@@ -584,7 +584,7 @@ inline etcpal_sem_t& Semaphore::get()
 ///
 ///   // Lock is released when it goes out of scope
 /// }
-/// \endcode
+/// @endcode
 class MutexGuard
 {
 public:
@@ -603,21 +603,21 @@ private:
   void GetLock();
 };
 
-/// \brief Lock an etcpal::Mutex.
-/// \throw std::runtime_error if locking the mutex failed.
+/// @brief Lock an etcpal::Mutex.
+/// @throw std::runtime_error if locking the mutex failed.
 inline MutexGuard::MutexGuard(Mutex& mutex) : mutex_(mutex.get())
 {
   GetLock();
 }
 
-/// \brief Lock an \ref etcpal_mutex_t.
-/// \throw std::runtime_error if locking the mutex failed.
+/// @brief Lock an @ref etcpal_mutex_t.
+/// @throw std::runtime_error if locking the mutex failed.
 inline MutexGuard::MutexGuard(etcpal_mutex_t& mutex) : mutex_(mutex)
 {
   GetLock();
 }
 
-/// \brief Release the lock upon going out-of-scope.
+/// @brief Release the lock upon going out-of-scope.
 inline MutexGuard::~MutexGuard()
 {
   etcpal_mutex_unlock(&mutex_);
@@ -629,13 +629,13 @@ inline void MutexGuard::GetLock()
     throw std::runtime_error("etcpal_mutex_lock failed.");
 }
 
-/// \ingroup etcpal_cpp_lock
-/// \brief Read lock guard around a read-write lock
+/// @ingroup etcpal_cpp_lock
+/// @brief Read lock guard around a read-write lock
 ///
 /// Read lock is taken when this class is instantiated, and released when it goes out of scope.
 /// Example usage:
 ///
-/// \code
+/// @code
 /// void Class::CriticalFunction()
 /// {
 ///   etcpal::ReadGuard read_lock(rwlock_);
@@ -643,7 +643,7 @@ inline void MutexGuard::GetLock()
 ///
 ///   // Lock is released when it goes out of scope
 /// }
-/// \endcode
+/// @endcode
 class ReadGuard
 {
 public:
@@ -662,21 +662,21 @@ private:
   void GetReadLock();
 };
 
-/// \brief Lock an etcpal::RwLock for reading.
-/// \throw std::runtime_error if getting a read lock failed.
+/// @brief Lock an etcpal::RwLock for reading.
+/// @throw std::runtime_error if getting a read lock failed.
 inline ReadGuard::ReadGuard(RwLock& rwlock) : rwlock_(rwlock.get())
 {
   GetReadLock();
 }
 
-/// \brief Lock an \ref etcpal_rwlock_t for reading.
-/// \throw std::runtime_error if getting a read lock failed.
+/// @brief Lock an @ref etcpal_rwlock_t for reading.
+/// @throw std::runtime_error if getting a read lock failed.
 inline ReadGuard::ReadGuard(etcpal_rwlock_t& rwlock) : rwlock_(rwlock)
 {
   GetReadLock();
 }
 
-/// \brief Release the read lock upon going out-of-scope.
+/// @brief Release the read lock upon going out-of-scope.
 inline ReadGuard::~ReadGuard()
 {
   etcpal_rwlock_readunlock(&rwlock_);
@@ -688,13 +688,13 @@ inline void ReadGuard::GetReadLock()
     throw std::runtime_error("etcpal_rwlock_readlock failed.");
 }
 
-/// \ingroup etcpal_cpp_lock
-/// \brief Write lock guard around a read-write lock.
+/// @ingroup etcpal_cpp_lock
+/// @brief Write lock guard around a read-write lock.
 ///
 /// Write lock is taken when this class is instantiated, and released when it goes out of scope.
 /// Example usage:
 ///
-/// \code
+/// @code
 /// void Class::CriticalFunction()
 /// {
 ///   etcpal::WriteGuard write_lock(rwlock_);
@@ -702,7 +702,7 @@ inline void ReadGuard::GetReadLock()
 ///
 ///   // Lock is released when it goes out of scope
 /// }
-/// \endcode
+/// @endcode
 class WriteGuard
 {
 public:
@@ -721,21 +721,21 @@ private:
   void GetWriteLock();
 };
 
-/// \brief Lock an etcpal::RwLock for writing.
-/// \throw std::runtime_error if getting a write lock failed.
+/// @brief Lock an etcpal::RwLock for writing.
+/// @throw std::runtime_error if getting a write lock failed.
 inline WriteGuard::WriteGuard(RwLock& rwlock) : rwlock_(rwlock.get())
 {
   GetWriteLock();
 }
 
-/// \brief Lock an \ref etcpal_rwlock_t for writing.
-/// \throw std::runtime_error if getting a write lock failed.
+/// @brief Lock an @ref etcpal_rwlock_t for writing.
+/// @throw std::runtime_error if getting a write lock failed.
 inline WriteGuard::WriteGuard(etcpal_rwlock_t& rwlock) : rwlock_(rwlock)
 {
   GetWriteLock();
 }
 
-/// \brief Release the write lock upon going out-of-scope.
+/// @brief Release the write lock upon going out-of-scope.
 inline WriteGuard::~WriteGuard()
 {
   etcpal_rwlock_writeunlock(&rwlock_);

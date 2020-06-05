@@ -21,10 +21,10 @@
 
 /*************************** Function definitions ****************************/
 
-/*!
- * \brief Start a timer.
- * \param timer Pointer to the EtcPalTimer to start.
- * \param interval Timer interval in milliseconds. An interval of 0 will result in a timer that is
+/**
+ * @brief Start a timer.
+ * @param timer Pointer to the EtcPalTimer to start.
+ * @param interval Timer interval in milliseconds. An interval of 0 will result in a timer that is
  *                 always expired.
  */
 void etcpal_timer_start(EtcPalTimer* timer, uint32_t interval)
@@ -36,9 +36,9 @@ void etcpal_timer_start(EtcPalTimer* timer, uint32_t interval)
   }
 }
 
-/*!
- * \brief Reset a timer while keeping the same interval.
- * \param timer Pointer to the EtcPalTimer to reset.
+/**
+ * @brief Reset a timer while keeping the same interval.
+ * @param timer Pointer to the EtcPalTimer to reset.
  */
 void etcpal_timer_reset(EtcPalTimer* timer)
 {
@@ -48,10 +48,10 @@ void etcpal_timer_reset(EtcPalTimer* timer)
   }
 }
 
-/*!
- * \brief Get the time since a timer was reset.
- * \param timer Pointer to the EtcPalTimer of which to get the elapsed time.
- * \return Number of milliseconds since the timer was reset.
+/**
+ * @brief Get the time since a timer was reset.
+ * @param timer Pointer to the EtcPalTimer of which to get the elapsed time.
+ * @return Number of milliseconds since the timer was reset.
  */
 uint32_t etcpal_timer_elapsed(const EtcPalTimer* timer)
 {
@@ -62,12 +62,12 @@ uint32_t etcpal_timer_elapsed(const EtcPalTimer* timer)
   return 0;
 }
 
-/*!
- * \brief Check to see if a timer is expired.
- * \param timer Pointer to the EtcPalTimer of which to check the expiration.
- * \return true: More than \link EtcPalTimer::interval interval \endlink milliseconds have passed
+/**
+ * @brief Check to see if a timer is expired.
+ * @param timer Pointer to the EtcPalTimer of which to check the expiration.
+ * @return true: More than @link EtcPalTimer::interval interval \endlink milliseconds have passed
  *         since the timer was started/reset.
- * \return false: Less than or equal to \link EtcPalTimer::interval interval \endlink milliseconds
+ * @return false: Less than or equal to @link EtcPalTimer::interval interval \endlink milliseconds
  *         have passed since the timer was started/reset)
  */
 bool etcpal_timer_is_expired(const EtcPalTimer* timer)
@@ -79,10 +79,10 @@ bool etcpal_timer_is_expired(const EtcPalTimer* timer)
   return true;
 }
 
-/*!
- * \brief Get the amount of time remaining in a timer.
- * \param timer Pointer to the EtcPalTimer of which to get the remaining time.
- * \return Remaining time in milliseconds or 0 (timer is expired).
+/**
+ * @brief Get the amount of time remaining in a timer.
+ * @param timer Pointer to the EtcPalTimer of which to get the remaining time.
+ * @return Remaining time in milliseconds or 0 (timer is expired).
  */
 uint32_t etcpal_timer_remaining(const EtcPalTimer* timer)
 {

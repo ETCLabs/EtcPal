@@ -17,9 +17,9 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/*!
- * \file etcpal/version.h
- * \brief Provides the current version of the EtcPal library.
+/**
+ * @file etcpal/version.h
+ * @brief Provides the current version of the EtcPal library.
  */
 
 #ifndef ETCPAL_VERSION_H_
@@ -27,27 +27,27 @@
 
 /* clang-format off */
 
-/*!
- * \name EtcPal version numbers
+/**
+ * @name EtcPal version numbers
  * @{
  */
 #define ETCPAL_VERSION_MAJOR 0
 #define ETCPAL_VERSION_MINOR 3
 #define ETCPAL_VERSION_PATCH 0
 #define ETCPAL_VERSION_BUILD 13
-/*!
+/**
  * @}
  */
 
-/*!
- * \name EtcPal version strings
+/**
+ * @name EtcPal version strings
  * @{
  */
 #define ETCPAL_VERSION_STRING "0.3.0.13"
 #define ETCPAL_VERSION_DATESTR "05.May.2020"
 #define ETCPAL_VERSION_COPYRIGHT "Copyright 2020 ETC Inc."
 #define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
-/*!
+/**
  * @}
  */
 

@@ -24,10 +24,10 @@
 #include "etcpal_config.h"
 #endif
 
-/*!
- * \defgroup etcpal_opts EtcPal config options
- * \ingroup etcpal
- * \brief Compile-time configuration options for EtcPal
+/**
+ * @defgroup etcpal_opts EtcPal config options
+ * @ingroup etcpal
+ * @brief Compile-time configuration options for EtcPal
  *
  * Options starting with "ETCPAL_EMBOS_" are ignored on Windows, macOS and Linux.
  *
@@ -42,8 +42,8 @@
  * @{
  */
 
-/*!
- * \brief Whether to build the etcpal/pack64.h functions.
+/**
+ * @brief Whether to build the etcpal/pack64.h functions.
  *
  * This can be defined to 0 if you are on a platform that does not provide a int64_t/uint64_t type.
  */
@@ -51,8 +51,8 @@
 #define ETCPAL_INCLUDE_PACK_64 1
 #endif
 
-/*!
- * \brief Whether a malloc() implementation is available.
+/**
+ * @brief Whether a malloc() implementation is available.
  *
  * Currently this only affects network interface enumeration using lwIP.
  */
@@ -60,8 +60,8 @@
 #define ETCPAL_EMBOS_USE_MALLOC 0
 #endif
 
-/*!
- * \brief The maximum number of network interfaces that can be tracked by the \ref etcpal_netint module.
+/**
+ * @brief The maximum number of network interfaces that can be tracked by the @ref etcpal_netint module.
  *
  * Currently this limit is not necessary and therefore ignored on all targets except lwIP.
  */
@@ -69,7 +69,7 @@
 #define ETCPAL_EMBOS_MAX_NETINTS 5
 #endif
 
-/*!
+/**
  * @}
  */
 

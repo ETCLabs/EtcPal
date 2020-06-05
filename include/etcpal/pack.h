@@ -24,10 +24,10 @@
 
 #include <stdint.h>
 
-/*!
- * \defgroup etcpal_pack pack (Buffer Packing and Unpacking)
- * \ingroup etcpal
- * \brief Platform- and endianness-independent buffer packing and unpacking.
+/**
+ * @defgroup etcpal_pack pack (Buffer Packing and Unpacking)
+ * @ingroup etcpal
+ * @brief Platform- and endianness-independent buffer packing and unpacking.
  *
  * For 16- and 32-bit integer packing and unpacking:
  * ```c
@@ -44,7 +44,7 @@
  *
  * For example:
  *
- * \code
+ * @code
  * uint8_t buf[4];
  * etcpal_pack_u32b(buf, 0x11223344); // Pack 32-bit value, big-endian
  *
@@ -54,7 +54,7 @@
  * etcpal_pack_u32l(&buf, val); // Pack 32-bit value, little-endian
  *
  * // buf now contains { 0x44, 0x33, 0x22, 0x11 }
- * \endcode
+ * @endcode
  *
  * @{
  */
@@ -87,7 +87,7 @@ void etcpal_pack_u32l(uint8_t* buf, uint32_t val);
 }
 #endif
 
-/*!
+/**
  * @}
  */
 

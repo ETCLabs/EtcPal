@@ -25,10 +25,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-/*!
- * \defgroup etcpal_timer timer (Timers)
- * \ingroup etcpal
- * \brief Platform-neutral system timers.
+/**
+ * @defgroup etcpal_timer timer (Timers)
+ * @ingroup etcpal
+ * @brief Platform-neutral system timers.
  *
  * ```c
  * #include "etcpal/timer.h"
@@ -36,17 +36,17 @@
  *
  * **WARNING:** This module must be explicitly initialized before use. Initialize the module by
  * calling etcpal_init() with the relevant feature mask:
- * \code
+ * @code
  * etcpal_init(ETCPAL_FEATURE_TIMERS);
- * \endcode
+ * @endcode
  *
  * Provides an implementation of a passive monotonic timer, as well as a way to get monotonic time
  * points. Time points and intervals are represented in milliseconds by a 32-bit unsigned int. To
  * get a time point, use etcpal_getms().
  *
- * \code
+ * @code
  * uint32_t time_point = etcpal_getms();
- * \endcode
+ * @endcode
  *
  * A time point represents the time elapsed in milliseconds since an arbitrary fixed point in the
  * past, independent of any changes in system "wall clock" time. Time points provided by this
@@ -63,13 +63,13 @@
  * Use the ETCPAL_TIME_ELAPSED_SINCE() macro to determine how much time has elapsed since a time
  * point.
  *
- * \code
+ * @code
  * uint32_t ms_elapsed = ETCPAL_TIME_ELAPSED_SINCE(time_point);
- * \endcode
+ * @endcode
  *
  * To time an interval, use an EtcPalTimer.
  *
- * \code
+ * @code
  * EtcPalTimer timer;
  * etcpal_timer_start(&timer, 100); // Start a 100-millisecond timer
  *
@@ -82,7 +82,7 @@
  * etcpal_timer_reset(&timer); // Reset the timer for another 100-millisecond interval
  * // Or
  * etcpal_timer_start(&timer, 1000); // Reuse the timer for a different interval, in this case 1 second.
- * \endcode
+ * @endcode
  *
  * @{
  */
@@ -91,31 +91,31 @@
 extern "C" {
 #endif
 
-/*!
- * \brief A millisecond-resolution timer.
+/**
+ * @brief A millisecond-resolution timer.
  *
  * The times are represented in milliseconds by a 32-bit unsigned integer. Since the timer is
  * monotonically-increasing, wraparound is handled by doing comparisons of the form
- * \code timeA - timeB > 0 \endcode rather than \code timeA > timeB \endcode.
+ * @code timeA - timeB > 0 @endcode rather than @code timeA > timeB @endcode.
  */
 typedef struct EtcPalTimer
 {
-  uint32_t reset_time; /*!< The time at which this timer was reset. */
-  uint32_t interval;   /*!< This timer's timeout interval. */
+  uint32_t reset_time; /**< The time at which this timer was reset. */
+  uint32_t interval;   /**< This timer's timeout interval. */
 } EtcPalTimer;
 
-/*!
- * \brief Get the amount of time elapsed since the given time point in milliseconds.
- * \param start_time (uint32_t) The start time to measure against.
- * \return The number of milliseconds elapsed since the start time.
+/**
+ * @brief Get the amount of time elapsed since the given time point in milliseconds.
+ * @param start_time (uint32_t) The start time to measure against.
+ * @return The number of milliseconds elapsed since the start time.
  */
 #define ETCPAL_TIME_ELAPSED_SINCE(start_time) (uint32_t)(etcpal_getms() - (uint32_t)start_time)
 
 /* Function with platform-specific definition */
 
-/*!
- * \brief Get a monotonically-increasing millisecond value
- * \return The current timestamp in milliseconds.
+/**
+ * @brief Get a monotonically-increasing millisecond value
+ * @return The current timestamp in milliseconds.
  */
 uint32_t etcpal_getms(void);
 
@@ -131,7 +131,7 @@ uint32_t etcpal_timer_remaining(const EtcPalTimer* timer);
 }
 #endif
 
-/*!
+/**
  * @}
  */
 

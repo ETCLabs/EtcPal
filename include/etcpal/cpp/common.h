@@ -17,14 +17,14 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/// \file etcpal/cpp/common.h
-/// \brief Common definitions used by EtcPal C++ wrappers.
+/// @file etcpal/cpp/common.h
+/// @brief Common definitions used by EtcPal C++ wrappers.
 
 #ifndef ETCPAL_CPP_COMMON_H_
 #define ETCPAL_CPP_COMMON_H_
 
-/// \defgroup etcpal_cpp etcpal/cpp (C++ Wrappers)
-/// \brief C++ Wrappers for EtcPal modules.
+/// @defgroup etcpal_cpp etcpal/cpp (C++ Wrappers)
+/// @brief C++ Wrappers for EtcPal modules.
 ///
 /// EtcPal is primarily a C-language library, but C++ language wrappers for certain modules are
 /// provided for convenience when writing C++ code that uses EtcPal. To include a C++ wrapper for a
@@ -40,10 +40,10 @@
 ///
 /// @{
 
-/// \def ETCPAL_CONSTEXPR_14
-/// \brief Stand-in for "constexpr" on entities that can only be defined "constexpr" in C++14 or later.
-/// \def ETCPAL_CONSTEXPR_14_OR_INLINE
-/// \brief Defined to "constexpr" in C++14 or later, "inline" earlier.
+/// @def ETCPAL_CONSTEXPR_14
+/// @brief Stand-in for "constexpr" on entities that can only be defined "constexpr" in C++14 or later.
+/// @def ETCPAL_CONSTEXPR_14_OR_INLINE
+/// @brief Defined to "constexpr" in C++14 or later, "inline" earlier.
 
 #if ((defined(_MSC_VER) && (_MSC_VER > 1900)) || (__cplusplus >= 201402L))
 #define ETCPAL_CONSTEXPR_14 constexpr
@@ -57,7 +57,7 @@
 
 namespace etcpal
 {
-/// \cond detail
+/// @cond detail
 
 namespace detail
 {
@@ -69,7 +69,7 @@ enum class enabler
 #define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
 }  // namespace detail
 
-/// \endcond
+/// @endcond
 }  // namespace etcpal
 
 #endif  // ETCPAL_CPP_COMMON_H_

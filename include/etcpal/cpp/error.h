@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/// \file etcpal/cpp/error.h
-/// \brief C++ wrapper and utilities for etcpal/error.h
+/// @file etcpal/cpp/error.h
+/// @brief C++ wrapper and utilities for etcpal/error.h
 
 #ifndef ETCPAL_CPP_ERROR_H_
 #define ETCPAL_CPP_ERROR_H_
@@ -31,9 +31,9 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_error error (Error Handling)
-/// \ingroup etcpal_cpp
-/// \brief C++ utilities for the \ref etcpal_error module.
+/// @defgroup etcpal_cpp_error error (Error Handling)
+/// @ingroup etcpal_cpp
+/// @brief C++ utilities for the @ref etcpal_error module.
 ///
 /// This module provides two main utilites: Error, which wraps an error code, and Expected, which
 /// represents either an error code or a value of configurable type. See the documentation for each
@@ -43,8 +43,8 @@ namespace etcpal
 // etcpal::Error
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// \ingroup etcpal_cpp_error
-/// \brief A wrapper class for the EtcPal error type.
+/// @ingroup etcpal_cpp_error
+/// @brief A wrapper class for the EtcPal error type.
 ///
 /// Provides C++ syntactic sugar on top of #etcpal_error_t codes. A Error can be created from an
 /// #etcpal_error_t, and contains the code and a string representation. If the Error contains
@@ -56,16 +56,16 @@ namespace etcpal
 /// code.
 ///
 /// Example with an "OK" error code:
-/// \code
+/// @code
 /// auto result = etcpal::Error(kEtcPalErrOk); // or etcpal::Error::Ok()
 /// if (result)
 /// {
 ///    // This block will be entered...
 /// }
-/// \endcode
+/// @endcode
 ///
 /// Example with a non-"OK" error code:
-/// \code
+/// @code
 /// auto result = etcpal::Error(kEtcPalErrNoMem);
 /// if (result)
 /// {
@@ -79,17 +79,17 @@ namespace etcpal
 ///   std::cout << "Error: '" << result.ToString() << "'\n";
 ///   // Prints "Error: 'Out of memory'"
 /// }
-/// \endcode
+/// @endcode
 ///
 /// Error is often used as the return type for functions; it has an implicit constructor from
 /// #etcpal_error_t to simplify return statements:
-/// \code
+/// @code
 /// etcpal::Error DoSomething()
 /// {
 ///   // ... After we did something successfully...
 ///   return kEtcPalErrOk;
 /// }
-/// \endcode
+/// @endcode
 class Error
 {
 public:
@@ -115,60 +115,60 @@ private:
   etcpal_error_t code_{kEtcPalErrOk};
 };
 
-/// \brief Construct a Error from an error code.
+/// @brief Construct a Error from an error code.
 constexpr Error::Error(etcpal_error_t code) noexcept : code_(code)
 {
 }
 
-/// \brief Assign an error code to this Error.
+/// @brief Assign an error code to this Error.
 inline Error& Error::operator=(etcpal_error_t code) noexcept
 {
   code_ = code;
   return *this;
 }
 
-/// \brief Whether this Error contains the code #kEtcPalErrOk.
-/// \details #kEtcPalErrOk is the only #etcpal_error_t code that does not indicate an error.
+/// @brief Whether this Error contains the code #kEtcPalErrOk.
+/// @details #kEtcPalErrOk is the only #etcpal_error_t code that does not indicate an error.
 constexpr bool Error::IsOk() const noexcept
 {
   return code_ == kEtcPalErrOk;
 }
 
-/// \brief Get the underlying code from a Error.
+/// @brief Get the underlying code from a Error.
 constexpr etcpal_error_t Error::code() const noexcept
 {
   return code_;
 }
 
-/// \brief Get a descriptive string for this Error as a std::string.
+/// @brief Get a descriptive string for this Error as a std::string.
 inline std::string Error::ToString() const
 {
   return etcpal_strerror(code_);
 }
 
-/// \brief Get a descriptive string for this Error as a C string.
+/// @brief Get a descriptive string for this Error as a C string.
 inline const char* Error::ToCString() const noexcept
 {
   return etcpal_strerror(code_);
 }
 
-/// \brief Evaluate the Error inline - evaluates true if the Error is #kEtcPalErrOk, false
+/// @brief Evaluate the Error inline - evaluates true if the Error is #kEtcPalErrOk, false
 ///        otherwise.
 constexpr Error::operator bool() const noexcept
 {
   return IsOk();
 }
 
-/// \brief Construct an Error containing #kEtcPalErrOk.
+/// @brief Construct an Error containing #kEtcPalErrOk.
 constexpr Error Error::Ok() noexcept
 {
   return Error(kEtcPalErrOk);
 }
 
-/// \addtogroup etcpal_cpp_error
+/// @addtogroup etcpal_cpp_error
 /// @{
 
-/// \name Error Relational Operators
+/// @name Error Relational Operators
 /// @{
 
 constexpr bool operator==(etcpal_error_t code, const Error& error)
@@ -208,9 +208,9 @@ constexpr bool operator!=(const Error& a, const Error& b)
 // etcpal::BadExpectedAccess
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// \brief Exception representing bad access to an Expected instance.
-/// \ingroup etcpal_cpp_error
-/// \details
+/// @brief Exception representing bad access to an Expected instance.
+/// @ingroup etcpal_cpp_error
+/// @details
 /// Thrown when attempting to access Expected<T>::value() when Expected<T>::has_value() is false.
 /// Holds an etcpal::Error; this allows nicer access to error information than just having the
 /// #etcpal_error_t code.
@@ -224,8 +224,8 @@ private:
   Error err_;
 };
 
-/// \brief Construct from a Error.
-/// \throw May throw std::bad_alloc.
+/// @brief Construct from a Error.
+/// @throw May throw std::bad_alloc.
 inline BadExpectedAccess::BadExpectedAccess(Error err)
     : std::logic_error("Bad access to etcpal::Expected::value(); the Expected instance contained error '" +
                        err.ToString() + "'.")
@@ -233,13 +233,13 @@ inline BadExpectedAccess::BadExpectedAccess(Error err)
 {
 }
 
-/// \brief Get the error code which was contained in the associated Expected when the exception occurred.
+/// @brief Get the error code which was contained in the associated Expected when the exception occurred.
 inline Error BadExpectedAccess::error() const noexcept
 {
   return err_;
 }
 
-/// \cond detail_expected
+/// @cond detail_expected
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // etcpal::Expected internals
@@ -379,14 +379,14 @@ public:
 };
 };  // namespace detail
 
-/// \endcond
+/// @endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // etcpal::Expected
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// \ingroup etcpal_cpp_error
-/// \brief A type representing either a value or an #etcpal_error_t code.
+/// @ingroup etcpal_cpp_error
+/// @brief A type representing either a value or an #etcpal_error_t code.
 ///
 /// This class is modeled after the [std::expected proposal](http://wg21.link/p0323). It is a
 /// useful companion to C++17's std::optional, when one desires a concise representation of either
@@ -403,12 +403,12 @@ public:
 /// Expected is almost always used as the return type of an API function. Consider a function that
 /// either creates a network socket or returns an error.
 ///
-/// \code
+/// @code
 /// etcpal::Expected<etcpal_socket_t> CreateSocket(int family, int type);
-/// \endcode
+/// @endcode
 ///
 /// When using this function, check whether the result contains an error:
-/// \code
+/// @code
 /// auto socket_res = CreateSocket(AF_INET, SOCK_STREAM);
 /// if (socket_res) // or socket_res.has_value()
 /// {
@@ -420,12 +420,12 @@ public:
 ///   printf("CreateSocket failed with result code %d, description '%s'\n", socket_res.error(),
 ///          socket_res.result().ToCString());
 /// }
-/// \endcode
+/// @endcode
 ///
 /// value() throws BadExpectedAccess if the instance does not have a valid value. So you can also
 /// use an exception-handling approach:
 ///
-/// \code
+/// @code
 /// try
 /// {
 ///   etcpal_socket_t socket = CreateSocket(AF_INET, SOCK_STREAM).value();
@@ -435,7 +435,7 @@ public:
 ///   printf("CreateSocket failed with result code %d, description '%s'\n", e.result().code(),
 ///          e.result().ToCString());
 /// }
-/// \endcode
+/// @endcode
 ///
 /// Note that this only works for the value() function, not any of the other accessors (they assert
 /// on the correct state instead).
@@ -443,7 +443,7 @@ public:
 /// Inside functions that return Expected, you can use implicit conversions from the value type or
 /// #etcpal_error_t to return success or failure:
 ///
-/// \code
+/// @code
 /// // Possible implementation of CreateSocket()...
 /// etcpal::Expected<etcpal_socket_t> CreateSocket(int family, int type)
 /// {
@@ -454,17 +454,17 @@ public:
 ///    else
 ///      return res; // Implicitly converted to Expected, has_value() is false
 /// }
-/// \endcode
+/// @endcode
 ///
 /// The value_or() function can be useful when you want to use a default value in case of an error
 /// condition:
 ///
-/// \code
+/// @code
 /// etcpal::Expected<std::string> ConvertIntToString(int val);
 /// // ...
 /// std::string conversion = ConvertIntToString(arg).value_or("0");
 /// // Conversion contains the successful conversion result, or "0" if the conversion failed.
-/// \endcode
+/// @endcode
 template <typename T>
 class Expected
 {
@@ -486,7 +486,7 @@ public:
 
   // clang-format off
 
-  /// \brief Default constructor - enabled if T is default-constructible.
+  /// @brief Default constructor - enabled if T is default-constructible.
   ///
   /// Default-constructs an instance of T. This Expected instance has a value after this
   /// constructor is called.
@@ -496,19 +496,19 @@ public:
     contained_.ConstructValue(ValueType());
   }
 
-  /// \brief Copy constructor - enabled if T is copy-constructible.
+  /// @brief Copy constructor - enabled if T is copy-constructible.
   ///
   /// If other has a value, copies its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
   ETCPAL_CONSTEXPR_14 Expected(const Expected& other) = default;
 
-  /// \brief Move constructor - enabled if T is move-constructible.
+  /// @brief Move constructor - enabled if T is move-constructible.
   ///
   /// If other has a value, moves its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
   ETCPAL_CONSTEXPR_14 Expected(Expected&& other) = default;
 
-  /// \brief Explicit conversion copy constructor - enabled for U that can be explicitly converted to T.
+  /// @brief Explicit conversion copy constructor - enabled for U that can be explicitly converted to T.
   ///
   /// If other has a value, copies its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
@@ -534,7 +534,7 @@ public:
       contained_.SetError(other.contained_.error());
   }
 
-  /// \brief Implicit conversion copy constructor - enabled for U that can be implicitly converted to T.
+  /// @brief Implicit conversion copy constructor - enabled for U that can be implicitly converted to T.
   ///
   /// If other has a value, copies its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
@@ -560,7 +560,7 @@ public:
       contained_.SetError(other.contained_.error());
   }
 
-  /// \brief Explicit conversion move constructor - enabled for U that can be explicitly converted to T.
+  /// @brief Explicit conversion move constructor - enabled for U that can be explicitly converted to T.
   ///
   /// If other has a value, moves its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
@@ -586,7 +586,7 @@ public:
       contained_.SetError(other.contained_.error());
   }
 
-  /// \brief Implicit conversion move constructor - enabled for U that can be implicitly converted to T.
+  /// @brief Implicit conversion move constructor - enabled for U that can be implicitly converted to T.
   ///
   /// If other has a value, moves its value into this Expected.
   /// If other does not have a value, copies its error code into this Expected.
@@ -612,13 +612,13 @@ public:
       contained_.SetError(other.contained_.error());
   }
 
-  /// \brief Construct from value, explicit.
+  /// @brief Construct from value, explicit.
   ///
   /// Constructs an Expected from some value U which is explicitly (but not implicitly) convertible
   /// to T. The constructor is made explicit as a result. This Expected instance has a value after
   /// this constructor is called.
   ///
-  /// \param value Value to construct from.
+  /// @param value Value to construct from.
   template <typename U = T>
   ETCPAL_CONSTEXPR_14 explicit Expected(U&& value,
                                         ETCPAL_ENABLE_IF_ARG( std::is_constructible<T, U&&>::value &&
@@ -629,13 +629,13 @@ public:
     contained_.ConstructValue(T{std::forward<U>(value)});
   }
 
-  /// \brief Construct from value, implicit.
+  /// @brief Construct from value, implicit.
   ///
   /// Constructs an Expected from some value U implicitly convertible to T. The constructor is not
   /// made explicit as a result. This Expected instance has a value after this constructor is
   /// called.
   ///
-  /// \param value Value to construct from.
+  /// @param value Value to construct from.
   template <typename U = T>
   ETCPAL_CONSTEXPR_14 Expected(U&& value, ETCPAL_ENABLE_IF_ARG(std::is_constructible<T, U&&>::value &&
                                                                std::is_convertible<U&&, T>::value
@@ -668,8 +668,8 @@ public:
 
   // clang-format off
 
-  /// \brief Get the value, or a default value if this Expected contains an error.
-  /// \param def_val The default value to return on error - must be convertible to T.
+  /// @brief Get the value, or a default value if this Expected contains an error.
+  /// @param def_val The default value to return on error - must be convertible to T.
   template <typename U,
             ETCPAL_ENABLE_IF_TEMPLATE(std::is_copy_constructible<T>::value && std::is_convertible<U&&, T>::value)>
   constexpr T value_or(U&& def_val) const&
@@ -677,8 +677,8 @@ public:
     return has_value() ? contained_.value() : static_cast<T>(std::forward<U>(def_val));
   }
 
-  /// \brief Get the value, or a default value if this Expected contains an error.
-  /// \param def_val The default value to return on error - must be convertible to T.
+  /// @brief Get the value, or a default value if this Expected contains an error.
+  /// @param def_val The default value to return on error - must be convertible to T.
   template <typename U,
             ETCPAL_ENABLE_IF_TEMPLATE(std::is_move_constructible<T>::value && std::is_convertible<U&&, T>::value)>
   T value_or(U&& def_val) &&
@@ -692,14 +692,14 @@ private:
   detail::ExpectedStorage<T, std::is_copy_constructible<T>::value, std::is_move_constructible<T>::value> contained_;
 };  // namespace etcpal
 
-/// \brief Construct an Expected instance containing an error code.
+/// @brief Construct an Expected instance containing an error code.
 template <typename T>
 ETCPAL_CONSTEXPR_14 Expected<T>::Expected(etcpal_error_t error) : contained_(false)
 {
   contained_.SetError(error);
 }
 
-/// \brief Calls the contained value's destructor if and only if has_value() is true.
+/// @brief Calls the contained value's destructor if and only if has_value() is true.
 template <typename T>
 Expected<T>::~Expected()
 {
@@ -707,7 +707,7 @@ Expected<T>::~Expected()
     contained_.DestructValue();
 }
 
-/// \brief Access members of a composite contained value.
+/// @brief Access members of a composite contained value.
 ///
 /// If has_value() is false, the behavior is undefined.
 template <typename T>
@@ -717,7 +717,7 @@ constexpr const T* Expected<T>::operator->() const
   return assert(has_value()), contained_.value_ptr();
 }
 
-/// \brief Access members of a composite contained value.
+/// @brief Access members of a composite contained value.
 ///
 /// If has_value() is false, the behavior is undefined.
 template <typename T>
@@ -727,7 +727,7 @@ T* Expected<T>::operator->()
   return assert(has_value()), contained_.value_ptr();
 }
 
-/// \brief Get the underlying value.
+/// @brief Get the underlying value.
 ///
 /// If has_value() is false, the behavior is undefined.
 template <typename T>
@@ -737,7 +737,7 @@ constexpr const T& Expected<T>::operator*() const&
   return assert(has_value()), contained_.value();
 }
 
-/// \brief Get the underlying value.
+/// @brief Get the underlying value.
 ///
 /// If has_value() is false, the behavior is undefined.
 template <typename T>
@@ -747,7 +747,7 @@ T& Expected<T>::operator*() &
   return assert(has_value()), contained_.value();
 }
 
-/// \brief Get the underlying value.
+/// @brief Get the underlying value.
 ///
 /// If has_value() is false, the behavior is undefined.
 template <typename T>
@@ -757,7 +757,7 @@ constexpr const T&& Expected<T>::operator*() const&&
   return assert(has_value()), std::move(contained_.value());
 }
 
-/// \brief Get the underlying value.
+/// @brief Get the underlying value.
 ///
 /// If has_value() is false, the behavior is undefined.
 template <typename T>
@@ -767,22 +767,22 @@ ETCPAL_CONSTEXPR_14 T&& Expected<T>::operator*() &&
   return assert(has_value()), std::move(contained_.value());
 }
 
-/// \brief Evaluate the Expected instance inline - evaluates to has_value().
+/// @brief Evaluate the Expected instance inline - evaluates to has_value().
 template <typename T>
 constexpr Expected<T>::operator bool() const noexcept
 {
   return has_value();
 }
 
-/// \brief Whether this Expected instance contains a valid value. If not, contains an error code.
+/// @brief Whether this Expected instance contains a valid value. If not, contains an error code.
 template <typename T>
 constexpr bool Expected<T>::has_value() const noexcept
 {
   return contained_.has_value();
 }
 
-/// \brief Get the underlying value.
-/// \throw BadExpectedAccess if has_value() is false.
+/// @brief Get the underlying value.
+/// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
 constexpr const T& Expected<T>::value() const&
 {
@@ -790,8 +790,8 @@ constexpr const T& Expected<T>::value() const&
   return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
 }
 
-/// \brief Get the underlying value.
-/// \throw BadExpectedAccess if has_value() is false.
+/// @brief Get the underlying value.
+/// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
 T& Expected<T>::value() &
 {
@@ -799,8 +799,8 @@ T& Expected<T>::value() &
   return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
 }
 
-/// \brief Get the underlying value.
-/// \throw BadExpectedAccess if has_value() is false.
+/// @brief Get the underlying value.
+/// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
 constexpr const T&& Expected<T>::value() const&&
 {
@@ -809,8 +809,8 @@ constexpr const T&& Expected<T>::value() const&&
                                : (throw BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
-/// \brief Get the underlying value.
-/// \throw BadExpectedAccess if has_value() is false.
+/// @brief Get the underlying value.
+/// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
 ETCPAL_CONSTEXPR_14 T&& Expected<T>::value() &&
 {
@@ -819,7 +819,7 @@ ETCPAL_CONSTEXPR_14 T&& Expected<T>::value() &&
                                : (throw BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
-/// \brief Get the error code.
+/// @brief Get the error code.
 ///
 /// If has_value() is true, the behavior is undefined.
 template <typename T>
@@ -829,7 +829,7 @@ constexpr etcpal_error_t Expected<T>::error_code() const noexcept
   return assert(!has_value()), contained_.error();
 }
 
-/// \brief Get the error code as a Error object.
+/// @brief Get the error code as a Error object.
 ///
 /// If has_value() is true, the behavior is undefined.
 template <typename T>
@@ -839,10 +839,10 @@ constexpr Error Expected<T>::error() const noexcept
   return assert(!has_value()), contained_.error();
 }
 
-/// \addtogroup etcpal_cpp_error
+/// @addtogroup etcpal_cpp_error
 /// @{
 
-/// \name Expected Relational Operators
+/// @name Expected Relational Operators
 /// @{
 
 template <typename T1, typename T2>

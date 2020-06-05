@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/// \file etcpal/cpp/thread.h
-/// \brief C++ wrapper and utilities for etcpal/thread.h
+/// @file etcpal/cpp/thread.h
+/// @brief C++ wrapper and utilities for etcpal/thread.h
 
 #ifndef ETCPAL_CPP_THREAD_H_
 #define ETCPAL_CPP_THREAD_H_
@@ -39,9 +39,9 @@
 
 namespace etcpal
 {
-/// \defgroup etcpal_cpp_thread thread (Threading)
-/// \ingroup etcpal_cpp
-/// \brief C++ utilities for the \ref etcpal_thread module.
+/// @defgroup etcpal_cpp_thread thread (Threading)
+/// @ingroup etcpal_cpp
+/// @brief C++ utilities for the @ref etcpal_thread module.
 ///
 /// Provides a thread class Thread which is similar to std::thread, with the key advantage that it
 /// will work on any threaded platform that EtcPal is ported for, including the embedded RTOS
@@ -50,7 +50,7 @@ namespace etcpal
 /// behavior of this class).
 ///
 /// To start the thread with default parameters, you can use the constructor:
-/// \code
+/// @code
 /// void MyThreadFunction()
 /// {
 ///   std::cout << "Hello from a thread!\n";
@@ -59,12 +59,12 @@ namespace etcpal
 /// etcpal::Thread thread(MyThreadFunction); // Thread is now running
 /// // Thread will be automatically joined when thread goes out of scope, or join it explicitly:
 /// thread.Join();
-/// \endcode
+/// @endcode
 ///
 /// The value constructor will throw an etcpal::Error object if the thread fails to start for any
 /// reason. To avoid an exception-handling approach, you can default-construct and use the Start()
 /// function:
-/// \code
+/// @code
 /// etcpal::Thread thread;
 /// etcpal::Error start_result = thread.Start(MyThreadFunction);
 /// if (start_result)
@@ -75,37 +75,37 @@ namespace etcpal
 /// {
 ///   std::cout << "Error starting thread: " << start_result.ToString() << '\n';
 /// }
-/// \endcode
+/// @endcode
 ///
 /// This approach also lets you set non-default thread parameters before starting; method-chaining
 /// syntax is available on these setters:
-/// \code
+/// @code
 /// etcpal::Thread thread;
 /// etcpal::Error start_result = thread.SetName("My Thread")
 ///                                     .SetPriority(4)
 ///                                     .SetStackSize(4000)
 ///                                     .Start(MyThreadFunction);
-/// \endcode
+/// @endcode
 ///
 /// Pass arguments to your thread function, which will be stored on the heap:
-/// \code
+/// @code
 /// void MyThreadFunction(int value)
 /// {
 ///   std::cout << "The value is " << value << ".\n";
 /// }
 ///
 /// etcpal::Thread thread(MyThreadFunction, 5); // Thread will print "The value is 5."
-/// \endcode
+/// @endcode
 ///
 /// You can even use lambdas for quick-and-dirty operations:
-/// \code
+/// @code
 /// int value = 42;
 /// etcpal::Thread thread([=]() { std::cout << "The value is " << value << '\n'; });
-/// \endcode
+/// @endcode
 ///
 /// The Thread class also provides static Sleep() functions, which can be used as a
 /// platform-neutral sleep.
-/// \code
+/// @code
 /// etcpal::Thread::Sleep(20); // Sleep for 20 milliseconds
 /// etcpal::Thread::Sleep(std::chrono::seconds(2)); // Sleep for 2 seconds
 ///
@@ -114,15 +114,15 @@ namespace etcpal
 /// using namespace std::chrono_literals;
 ///
 /// etcpal::Thread::Sleep(1min); // Sleep for 1 minute
-/// \endcode
+/// @endcode
 ///
 /// **IMPORTANT NOTE FOR RTOS USERS:** The EtcPal threading API does not initialize the scheduler
 /// on real-time systems (e.g. it does not call vTaskStartScheduler() on FreeRTOS or _mqx() on
 /// MQX). The application writer is responsible for managing the interaction between starting the
 /// scheduler and starting EtcPal threads, just like when starting native RTOS tasks.
 
-/// \ingroup etcpal_cpp_thread
-/// \brief A thread class, modeled after std::thread.
+/// @ingroup etcpal_cpp_thread
+/// @brief A thread class, modeled after std::thread.
 ///
 /// This class is similar to std::thread, with the key advantage that it will work on any threaded
 /// platform that EtcPal is ported for, including the embedded RTOS platforms. If your application
@@ -141,7 +141,7 @@ namespace etcpal
 class Thread
 {
 public:
-  /// \brief Create a new thread object which does not yet represent a thread.
+  /// @brief Create a new thread object which does not yet represent a thread.
   Thread() = default;
   template <class Function, class... Args>
   Thread(Function&& func, Args&&... args);
@@ -157,7 +157,7 @@ public:
 
   bool joinable() const noexcept;
 
-  /// \name Getters
+  /// @name Getters
   /// @{
   unsigned int priority() const noexcept;
   unsigned int stack_size() const noexcept;
@@ -166,7 +166,7 @@ public:
   const EtcPalThreadParams& params() const noexcept;
   /// @}
 
-  /// \name Setters
+  /// @name Setters
   /// @{
   Thread& SetPriority(unsigned int priority) noexcept;
   Thread& SetStackSize(unsigned int stack_size) noexcept;
@@ -183,16 +183,16 @@ public:
   template <typename Rep, typename Period>
   static void Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept;
 
-  /// \cond
+  /// @cond
   using FunctionType = std::function<void()>;
-  /// \endcond
+  /// @endcond
 
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
   EtcPalThreadParams params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
 };
 
-/// \cond Internal thread function
+/// @cond Internal thread function
 
 extern "C" inline void CppThreadFn(void* arg)
 {
@@ -201,16 +201,16 @@ extern "C" inline void CppThreadFn(void* arg)
   (*p_func)();
 }
 
-/// \endcond
+/// @endcond
 
-/// \brief Create a new thread object and associate it with a new thread of execution.
+/// @brief Create a new thread object and associate it with a new thread of execution.
 ///
 /// See the Start() function for more information.
 ///
-/// \param func Callable object to execute in the new thread.
-/// \param args Arguments to pass to func.
-/// \throw etcpal::Error if Start() returns an error code.
-/// \post `joinable() == true`
+/// @param func Callable object to execute in the new thread.
+/// @param args Arguments to pass to func.
+/// @throw etcpal::Error if Start() returns an error code.
+/// @post `joinable() == true`
 template <class Function, class... Args>
 inline Thread::Thread(Function&& func, Args&&... args)
 {
@@ -220,7 +220,7 @@ inline Thread::Thread(Function&& func, Args&&... args)
     throw result;
 }
 
-/// \brief Destroy the thread object.
+/// @brief Destroy the thread object.
 ///
 /// If *this has a valid associated thread (`joinable() == true`), the thread is joined before the
 /// destructor finishes.
@@ -230,7 +230,7 @@ inline Thread::~Thread()
     etcpal_thread_join(thread_.get());
 }
 
-/// \brief Move another thread into this thread.
+/// @brief Move another thread into this thread.
 ///
 /// If *this has a valid associated thread (`joinable() == true`), the behavior is undefined.
 /// After this call, *this has the parameters of other, and other is set to a default-constructed
@@ -240,7 +240,7 @@ inline Thread::Thread(Thread&& other) noexcept
   *this = std::move(other);
 }
 
-/// \brief Move another thread into this thread.
+/// @brief Move another thread into this thread.
 ///
 /// If *this has a valid associated thread (`joinable() == true`), the behavior is undefined.
 /// After this call, *this has the parameters of other, and other is set to a default-constructed
@@ -253,131 +253,131 @@ inline Thread& Thread::operator=(Thread&& other) noexcept
   return *this;
 }
 
-/// \brief Whether the thread object identifies an active thread of execution.
+/// @brief Whether the thread object identifies an active thread of execution.
 inline bool Thread::joinable() const noexcept
 {
   return (bool)thread_;
 }
 
-/// \brief Get the priority of this thread (not valid on all platforms).
+/// @brief Get the priority of this thread (not valid on all platforms).
 inline unsigned int Thread::priority() const noexcept
 {
   return params_.priority;
 }
 
-/// \brief Get the stack size of this thread (not valid on all platforms).
+/// @brief Get the stack size of this thread (not valid on all platforms).
 inline unsigned int Thread::stack_size() const noexcept
 {
   return params_.stack_size;
 }
 
-/// \brief Get the name of this thread.
+/// @brief Get the name of this thread.
 inline const char* Thread::name() const noexcept
 {
   return params_.thread_name;
 }
 
-/// \brief Get the platform-specific data of this thread.
+/// @brief Get the platform-specific data of this thread.
 inline void* Thread::platform_data() const noexcept
 {
   return params_.platform_data;
 }
 
-/// \brief Get a reference the parameters of this thread.
+/// @brief Get a reference the parameters of this thread.
 inline const EtcPalThreadParams& Thread::params() const noexcept
 {
   return params_;
 }
 
-/// \brief Set the priority of this thread.
+/// @brief Set the priority of this thread.
 ///
 /// Priority is not valid on all platforms. This function does not have any effect on the
 /// associated thread unless it is called on a default-constructed thread before Start() is called.
 ///
-/// \param priority Priority to set.
-/// \return A reference to this thread, for method chaining.
+/// @param priority Priority to set.
+/// @return A reference to this thread, for method chaining.
 inline Thread& Thread::SetPriority(unsigned int priority) noexcept
 {
   params_.priority = priority;
   return *this;
 }
 
-/// \brief Set the stack size of this thread.
+/// @brief Set the stack size of this thread.
 ///
 /// Stack size is not valid on all platforms. This function does not have any effect on the
 /// associated thread unless it is called on a default-constructed thread before Start() is called.
 ///
-/// \param stack_size Stack size to set.
-/// \return A reference to this thread, for method chaining.
+/// @param stack_size Stack size to set.
+/// @return A reference to this thread, for method chaining.
 inline Thread& Thread::SetStackSize(unsigned int stack_size) noexcept
 {
   params_.stack_size = stack_size;
   return *this;
 }
 
-/// \brief Set the name of this thread.
+/// @brief Set the name of this thread.
 ///
 /// This function does not have any effect on the associated thread unless it is called on a
 /// default-constructed thread before Start() is called. The pointer passed to this function must
 /// remain valid until after Start() is called.
 ///
-/// \param name Name to set.
-/// \return A reference to this thread, for method chaining.
+/// @param name Name to set.
+/// @return A reference to this thread, for method chaining.
 inline Thread& Thread::SetName(const char* name) noexcept
 {
   params_.thread_name = name;
   return *this;
 }
 
-/// \brief Set the name of this thread.
+/// @brief Set the name of this thread.
 ///
 /// This function does not have any effect on the associated thread unless it is called on a
 /// default-constructed thread before Start() is called. The string reference passed to this
 /// function must remain valid until after Start() is called.
 ///
-/// \param name Name to set.
-/// \return A reference to this thread, for method chaining.
+/// @param name Name to set.
+/// @return A reference to this thread, for method chaining.
 inline Thread& Thread::SetName(const std::string& name) noexcept
 {
   params_.thread_name = name.c_str();
   return *this;
 }
 
-/// \brief Set the platform-specific parameter data.
+/// @brief Set the platform-specific parameter data.
 ///
 /// This function does not have any effect on the associated thread unless it is called on a
 /// default-constructed thread before Start() is called. The pointer passed to this function must
 /// remain valid until after Start() is called.
 ///
-/// \param platform_data Pointer to platform-specific data structure.
-/// \return A reference to this thread, for method chaining.
+/// @param platform_data Pointer to platform-specific data structure.
+/// @return A reference to this thread, for method chaining.
 inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
 {
   params_.platform_data = platform_data;
   return *this;
 }
 
-/// \brief Associate this thread object with a new thread of execution.
+/// @brief Associate this thread object with a new thread of execution.
 ///
 /// The new thread of execution starts executing
-/// \code
+/// @code
 /// std::invoke(decay_copy(std::forward<Function>(f)),
 ///             decay_copy(std::forward<Args>(args))...);
-/// \endcode
+/// @endcode
 /// where decay_copy is defined as
-/// \code
+/// @code
 /// template <class T>
 /// std::decay<T>::type decay_copy(T&& v) { return std::forward<T>(v); }
-/// \endcode
+/// @endcode
 /// Except that the calls to decay_copy are evaluated in the context of the caller, so that any
 /// exceptions thrown during evaluation and copying/moving of the arguments are thrown in the
 /// current thread, without starting the new thread.
 ///
-/// \param func Callable object to execute in the new thread.
-/// \param args Arguments to pass to func.
-/// \return #kEtcPalErrOk: The thread started successfully, `joinable()` is now true.
-/// \return #kEtcPalErrInvalid: The thread was already running (`joinable() == true`).
-/// \return Other codes translated from system error codes are possible.
+/// @param func Callable object to execute in the new thread.
+/// @param args Arguments to pass to func.
+/// @return #kEtcPalErrOk: The thread started successfully, `joinable()` is now true.
+/// @return #kEtcPalErrInvalid: The thread was already running (`joinable() == true`).
+/// @return Other codes translated from system error codes are possible.
 template <class Function, class... Args>
 Error Thread::Start(Function&& func, Args&&... args)
 {
@@ -396,13 +396,13 @@ Error Thread::Start(Function&& func, Args&&... args)
   return create_res;
 }
 
-/// \brief Wait for the thread to finish execution.
+/// @brief Wait for the thread to finish execution.
 ///
 /// Blocks until the thread has exited.
 ///
-/// \return #kEtcPalErrOk: The thread was stopped; joinable() is now false.
-/// \return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
-/// \return Other codes translated from system error codes are possible.
+/// @return #kEtcPalErrOk: The thread was stopped; joinable() is now false.
+/// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
+/// @return Other codes translated from system error codes are possible.
 inline Error Thread::Join() noexcept
 {
   if (thread_)
@@ -418,13 +418,13 @@ inline Error Thread::Join() noexcept
   }
 }
 
-/// \brief Blocks the current thread for the specified number of milliseconds.
+/// @brief Blocks the current thread for the specified number of milliseconds.
 inline void Thread::Sleep(unsigned int ms) noexcept
 {
   etcpal_thread_sleep(ms);
 }
 
-/// \brief Blocks the current thread for the specified duration.
+/// @brief Blocks the current thread for the specified duration.
 ///
 /// Note: Duration will be clamped to [0, UINT_MAX] milliseconds.
 template <typename Rep, typename Period>

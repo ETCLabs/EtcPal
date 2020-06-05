@@ -2,10 +2,10 @@ Whoa, this isn't a real source file! What's going on here? Well, the headers for
 platform-specific, and some of them implement types and functions differently (i.e. functions as
 macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
 
-/*!
- * \defgroup etcpal_lock lock (Locks and Synchronization)
- * \ingroup etcpal
- * \brief Platform-neutral locks, mutexes and signals.
+/**
+ * @defgroup etcpal_lock lock (Locks and Synchronization)
+ * @ingroup etcpal
+ * @brief Platform-neutral locks, mutexes and signals.
  *
  * ```c
  * #include "etcpal/lock.h"
@@ -20,9 +20,9 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * @{
  */
 
-/*!
- * \defgroup etcpal_mutex Mutexes
- * \brief Mutual-exclusion (mutex) objects.
+/**
+ * @defgroup etcpal_mutex Mutexes
+ * @brief Mutual-exclusion (mutex) objects.
  *
  * Sometimes also referred to as a critical section. Only one thread can lock the mutex at a time
  * using etcpal_mutex_lock(). Where possible on real-time platforms, the mutex provides priority
@@ -30,7 +30,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *
  * Mutexes are used to synchronize access to data from different threads. For example:
  * 
- * \code
+ * @code
  * static int shared_counter;
  * etcpal_mutex_t mutex;
  *
@@ -69,7 +69,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *   etcpal_mutex_destroy(&mutex);
  *   return 0;
  * }
- * \endcode
+ * @endcode
  *
  * etcpal_mutex implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
@@ -85,95 +85,95 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * @{
  */
 
-/*!
- * \brief The mutex identifier.
+/**
+ * @brief The mutex identifier.
  *
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_mutex_t;
 
-/*!
- * \brief Whether etcpal_mutex_timed_lock() is meaningful on this platform.
+/**
+ * @brief Whether etcpal_mutex_timed_lock() is meaningful on this platform.
  * 
  * If defined to 0, etcpal_mutex_timed_lock() executes the equivalent of etcpal_mutex_try_lock() if
  * given a timeout of 0, or etcpal_mutex_lock() otherwise.
  */
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK /* platform-defined */
 
-/*!
- * \brief Create a new mutex.
- * \param[out] id Mutex identifier on which to create a mutex. If this function returns true, id
+/**
+ * @brief Create a new mutex.
+ * @param[out] id Mutex identifier on which to create a mutex. If this function returns true, id
  *                becomes valid for calls to other etcpal_mutex API functions.
- * \return true: The mutex was created.
- * \return false: The mutex was not created.
+ * @return true: The mutex was created.
+ * @return false: The mutex was not created.
  */
 bool etcpal_mutex_create(etcpal_mutex_t *id);
 
-/*!
- * \brief Lock a mutex.
+/**
+ * @brief Lock a mutex.
  * 
  * Blocks until the mutex is locked.
  *
- * \param[in] id Identifier for the mutex to lock.
- * \return true: The mutex is locked.
- * \return false: The mutex is invalid or an error occurred.
+ * @param[in] id Identifier for the mutex to lock.
+ * @return true: The mutex is locked.
+ * @return false: The mutex is invalid or an error occurred.
  */
 bool etcpal_mutex_lock(etcpal_mutex_t *id);
 
-/*!
- * \brief Try to lock a mutex.
+/**
+ * @brief Try to lock a mutex.
  *
  * Returns immediately either failure or success.
  *
- * \param[in] id Identifier for the mutex to try to lock.
- * \return true: The mutex is locked.
- * \return false: The mutex is locked by another thread, the mutex is invalid or an error occurred.
+ * @param[in] id Identifier for the mutex to try to lock.
+ * @return true: The mutex is locked.
+ * @return false: The mutex is locked by another thread, the mutex is invalid or an error occurred.
  */
 bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
 
-/*!
- * \brief Try to lock a mutex, giving up after a timeout.
+/**
+ * @brief Try to lock a mutex, giving up after a timeout.
  *
  * This function is not honored on all platforms. The value of #ETCPAL_MUTEX_HAS_TIMED_LOCK can be
  * used to determine whether this function is honored on the current platform. If it is defined to
  * 0, this function executes the equivalent of etcpal_mutex_try_lock() if timeout_ms is 0, or
  * etcpal_mutex_lock() otherwise.
  *
- * \param[in] id Identifier for the mutex to try to acquire.
- * \param[in] timeout_ms Maximum amount of time to wait for the mutex to become available, in
+ * @param[in] id Identifier for the mutex to try to acquire.
+ * @param[in] timeout_ms Maximum amount of time to wait for the mutex to become available, in
  *                       milliseconds. If #ETCPAL_WAIT_FOREVER is given, the result is the same as
  *                       if etcpal_mutex_lock() was called.
- * \return true: The mutex is locked.
- * \return false: The timeout expired while waiting to lock the mutex, the mutex is invalid or an
+ * @return true: The mutex is locked.
+ * @return false: The timeout expired while waiting to lock the mutex, the mutex is invalid or an
  *                error occurred.
  */
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
 
-/*!
- * \brief Unlock a mutex.
- * \param[in] id Identifier for the mutex to unlock.
+/**
+ * @brief Unlock a mutex.
+ * @param[in] id Identifier for the mutex to unlock.
  */
 void etcpal_mutex_unlock(etcpal_mutex_t *id);
 
-/*!
- * \brief Destroy a mutex object.
- * \param[in] id Identifier for the mutex to destroy.
+/**
+ * @brief Destroy a mutex object.
+ * @param[in] id Identifier for the mutex to destroy.
  */
 void etcpal_mutex_destroy(etcpal_mutex_t *id);
 
-/*!
+/**
  * @}
  */
 
-/*!
- * \defgroup etcpal_signal Signals
- * \brief Signal objects.
+/**
+ * @defgroup etcpal_signal Signals
+ * @brief Signal objects.
  *
  * Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
  * call to etcpal_signal_wait() blocks until etcpal_signal_post() is called.
  *
  * Mutexes are used to synchronize different threads around some event. For example:
- * \code
+ * @code
  * Event event_queue[EVENT_QUEUE_SIZE];
  * size_t event_queue_current_size;
  * etcpal_signal_t signal;
@@ -219,7 +219,7 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  *   event_queue[event_queue_current_size++] = new_event;
  *   etcpal_signal_post_from_isr(&signal);
  * }
- * \endcode
+ * @endcode
  *
  * etcpal_signal implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
@@ -235,127 +235,127 @@ void etcpal_mutex_destroy(etcpal_mutex_t *id);
  * @{
  */
 
-/*!
- * \brief The signal identifier.
+/**
+ * @brief The signal identifier.
  *
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_signal_t;
 
-/*!
- * \brief Whether etcpal_signal_timed_wait() is meaningful on this platform.
+/**
+ * @brief Whether etcpal_signal_timed_wait() is meaningful on this platform.
  * 
  * If defined to 0, etcpal_signal_timed_wait() executes the equivalent of etcpal_signal_try_wait()
  * if given a timeout of 0, or etcpal_signal_wait() otherwise.
  */
 #define ETCPAL_SIGNAL_HAS_TIMED_WAIT /* platform-defined */
 
-/*!
- * \brief Whether etcpal_signal_post_from_isr() is meaningful on this platform.
+/**
+ * @brief Whether etcpal_signal_post_from_isr() is meaningful on this platform.
  *
  * Some platforms have a different method for posting a signal from an interrupt context. If
  * defined to 0, etcpal_signal_post_from_isr() executes the equivalent of etcpal_signal_post().
  */
 #define ETCPAL_SIGNAL_HAS_POST_FROM_ISR /* platform-defined */
 
-/*!
- * \brief Create a new signal.
+/**
+ * @brief Create a new signal.
  *
  * Signals are created in the "unsignaled" state; that is, the first call to etcpal_signal_wait()
  * will block.
  *
- * \param[out] id Signal identifier on which to create a signal. If this function returns true,
+ * @param[out] id Signal identifier on which to create a signal. If this function returns true,
  *                id becomes valid for calls to other etcpal_signal API functions.
- * \return true: The signal was created.
- * \return false: The signal was not created.
+ * @return true: The signal was created.
+ * @return false: The signal was not created.
  */
 bool etcpal_signal_create(etcpal_signal_t* id);
 
-/*!
- * \brief Wait for a signal.
+/**
+ * @brief Wait for a signal.
  *
  * If the signal is in the signaled state (etcpal_signal_post() has previously been called), puts
  * the signal in the non-signaled state and returns true. Otherwise, blocks until a call to
  * etcpal_signal_post() is made on the signal object and returns true.
  *
- * \param[in] id Identifier for the signal for which to wait.
- * \return true: The signal was received.
- * \return false: The signal is invalid or an error occurred.
+ * @param[in] id Identifier for the signal for which to wait.
+ * @return true: The signal was received.
+ * @return false: The signal is invalid or an error occurred.
  */
 bool etcpal_signal_wait(etcpal_signal_t* id);
 
-/*!
- * \brief Try to wait for a signal.
+/**
+ * @brief Try to wait for a signal.
  *
  * If the signal is in the signaled state (etcpal_signal_post() has previously been called), puts
  * the signal in the non-signaled state and returns true. Otherwise, returns false.
  *
- * \param[in] id Identifier for the signal to poll.
- * \return true: The signal was received.
- * \return false: The signal is not in a signaled state (or the signal is invalid).
+ * @param[in] id Identifier for the signal to poll.
+ * @return true: The signal was received.
+ * @return false: The signal is not in a signaled state (or the signal is invalid).
  */
 bool etcpal_signal_try_wait(etcpal_signal_t* id);
 
-/*!
- * \brief Wait for a signal, giving up after a timeout.
+/**
+ * @brief Wait for a signal, giving up after a timeout.
  *
  * This function is not honored on all platforms. The value of #ETCPAL_SIGNAL_HAS_TIMED_WAIT can be
  * used to determine whether this function is honored on the current platform. If it is defined to
  * 0, this function executes the equivalent of etcpal_signal_try_wait() if timeout_ms is 0, or
  * etcpal_signal_wait() otherwise.
  *
- * \param[in] id Identifier for the signal for which to wait.
- * \param[in] timeout_ms Maximum amount of time to wait for the signal, in milliseconds. If
+ * @param[in] id Identifier for the signal for which to wait.
+ * @param[in] timeout_ms Maximum amount of time to wait for the signal, in milliseconds. If
  *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
  *                       etcpal_signal_wait() was called.
- * \return true: The signal was received.
- * \return false: The timeout expired, the signal was invalid or an error occurred.
+ * @return true: The signal was received.
+ * @return false: The timeout expired, the signal was invalid or an error occurred.
  */
 bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
 
-/*!
- * \brief Post a signal.
+/**
+ * @brief Post a signal.
  *
  * If no threads are waiting for the signal, puts the signal object in the "signaled" state (a
  * subsequent call to etcpal_signal_wait() will return immediately). Otherwise, wakes up the first
  * thread that waited for the signal.
  *
- * \param[in] id Identifier for the signal to post.
+ * @param[in] id Identifier for the signal to post.
  */
 void etcpal_signal_post(etcpal_signal_t* id);
 
-/*!
- * \brief Post a signal from an interrupt context.
+/**
+ * @brief Post a signal from an interrupt context.
  *
  * This function is only meaningful on some platforms; namely, those which have a different method
  * for posting a signal from an interrupt context. The value of #ETCPAL_SIGNAL_HAS_POST_FROM_ISR
  * can be used to determine whether this function is meaningful on the current platform. If it is
  * defined to 0, this function simply executes the equivalent of etcpal_signal_post().
  *
- * \param[in] id Identifier for the signal to post.
+ * @param[in] id Identifier for the signal to post.
  */
 void etcpal_signal_post_from_isr(etcpal_signal_t* id);
 
-/*!
- * \brief Destroy a signal object.
- * \param[in] id Identifier for the signal to destroy.
+/**
+ * @brief Destroy a signal object.
+ * @param[in] id Identifier for the signal to destroy.
  */
 void etcpal_signal_destroy(etcpal_signal_t* id);
 
-/*!
+/**
  * @}
  */
 
-/*!
- * \defgroup etcpal_rwlock Read-Write Locks
- * \brief Reader-writer lock objects.
+/**
+ * @defgroup etcpal_rwlock Read-Write Locks
+ * @brief Reader-writer lock objects.
  *
  * Sometimes also referred to as a shared-exclusive lock or multi-reader lock. When implemented to
  * protect a resource, allows multiple "readers" to access the resource at the same time for
  * read-only purposes.
  *
  * For example:
- * \code
+ * @code
  * // Must be initialized before use with etcpal_rwlock_create().
  * etcpal_rwlock_t lock;
  * char device_name[DEVICE_NAME_LENGTH];
@@ -390,7 +390,7 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
  *     return false;
  *   }
  * }
- * \endcode
+ * @endcode
  *
  * These are implemented as "write-preferring" reader-writer locks; this means that new readers are
  * blocked from acquiring a read lock if any context is currently waiting for a write lock.
@@ -409,15 +409,15 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
  * @{
  */
 
-/*!
- * \brief The read-write lock identifier.
+/**
+ * @brief The read-write lock identifier.
  *
  * This is highly likely to be a struct.
  */
 typedef PLATFORM_DEFINED etcpal_rwlock_t;
 
-/*!
- * \brief Whether etcpal_rwlock_timed_readlock() and etcpal_rwlock_timed_writelock() are meaningful
+/**
+ * @brief Whether etcpal_rwlock_timed_readlock() and etcpal_rwlock_timed_writelock() are meaningful
  *        on this platform.
  * 
  * If defined to 0, the etcpal_rwlock_timed_*lock() functions execute the equivalent of
@@ -425,44 +425,44 @@ typedef PLATFORM_DEFINED etcpal_rwlock_t;
  */
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK /* platform-defined */
 
-/*!
- * \brief Create a new read-write lock.
- * \param[out] id Read-write lock identifier on which to create a read-write lock. If this function
+/**
+ * @brief Create a new read-write lock.
+ * @param[out] id Read-write lock identifier on which to create a read-write lock. If this function
  *                returns true, id becomes valid for calls to other etcpal_rwlock API functions.
- * \return true: The read-write lock was created.
- * \return false: The read-write lock was not created.
+ * @return true: The read-write lock was created.
+ * @return false: The read-write lock was not created.
  */
 bool etcpal_rwlock_create(etcpal_rwlock_t* id);
 
-/*!
- * \brief Access a read-write lock for reading.
+/**
+ * @brief Access a read-write lock for reading.
  *
  * Blocks until any write lock has been released. Multiple contexts may have a read lock
  * simultaneously. In typical usage, the resource protected by this lock should only be read, not
  * modified, while inside a read lock.
  *
- * \param[in] id Identifier for the read-write lock on which to acquire a read lock.
- * \return true: The read lock was acquired.
- * \return false: The lock is invalid, or an error occurred.
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @return true: The read lock was acquired.
+ * @return false: The lock is invalid, or an error occurred.
  */
 bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
 
-/*!
- * \brief Try to access a read-write lock for reading.
+/**
+ * @brief Try to access a read-write lock for reading.
  *
  * Returns immediately either failure or success; does not block. Fails if a write lock is held
  * from another context. Multiple contexts may have a read lock simultaneously. In typical usage,
  * the resource protected by this lock should only be read, not modified, while inside a read lock.
  *
- * \param[in] id Identifier for the read-write lock on which to acquire a read lock.
- * \return true: The read lock was acquired.
- * \return false: The lock was held for writing from another thread, the lock is invalid, or an
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @return true: The read lock was acquired.
+ * @return false: The lock was held for writing from another thread, the lock is invalid, or an
  *                error occurred.
  */
 bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
 
-/*!
- * \brief Try to access a read-write lock for reading, giving up after a timeout.
+/**
+ * @brief Try to access a read-write lock for reading, giving up after a timeout.
  *
  * This function is not honored on all platforms. The value of #ETCPAL_RWLOCK_HAS_TIMED_LOCK can be
  * used to determine whether this function is honored on the current platform. If it is defined to
@@ -472,82 +472,82 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
  * In typical usage, the resource protected by this lock should only be read, not modified, while
  * inside a read lock.
  *
- * \param[in] id Identifier for the read-write lock on which to acquire a read lock.
- * \param[in] timeout_ms Maximum amount of time to wait to acquire a read lock, in milliseconds. If
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @param[in] timeout_ms Maximum amount of time to wait to acquire a read lock, in milliseconds. If
  *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
  *                       etcpal_rwlock_readlock() was called.
- * \return true: The read lock was acquired.
- * \return false: The timeout expired, the lock is invalid or an error occurred.
+ * @return true: The read lock was acquired.
+ * @return false: The timeout expired, the lock is invalid or an error occurred.
  */
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
 
-/*!
- * \brief Release a read lock on a read-write lock object.
- * \param[in] id Identifier for the read-write lock on which to release the read lock.
+/**
+ * @brief Release a read lock on a read-write lock object.
+ * @param[in] id Identifier for the read-write lock on which to release the read lock.
  */
 void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
 
-/*!
- * \brief Access a read-write lock for writing.
+/**
+ * @brief Access a read-write lock for writing.
  *
  * Blocks until all read and write locks have been released. No new read locks are allowed while
  * this function is being blocked on.
  *
- * \param[in] id Identifier for the read-write lock on which to acquire a write lock.
- * \return true: The write lock was acquired.
- * \return false: The lock is invalid, or an error occurred.
+ * @param[in] id Identifier for the read-write lock on which to acquire a write lock.
+ * @return true: The write lock was acquired.
+ * @return false: The lock is invalid, or an error occurred.
  */
 bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
 
-/*!
- * \brief Try to access a read-write lock for writing.
+/**
+ * @brief Try to access a read-write lock for writing.
  *
  * Returns immediately either failure or success; does not block. Fails if a read or write lock is
  * held from another context. 
  *
- * \param[in] id Identifier for the read-write lock on which to acquire a read lock.
- * \return true: The write lock was acquired.
- * \return false: The lock was held for reading or writing from another thread, the lock was
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @return true: The write lock was acquired.
+ * @return false: The lock was held for reading or writing from another thread, the lock was
  *         invalid, or an error occurred.
  */
 bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
 
-/*!
- * \brief Try to access a read-write lock for writing, giving up after a timeout.
+/**
+ * @brief Try to access a read-write lock for writing, giving up after a timeout.
  *
  * This function is not honored on all platforms. The value of #ETCPAL_RWLOCK_HAS_TIMED_LOCK can be
  * used to determine whether this function is honored on the current platform. If it is defined to
  * 0, this function executes the equivalent of etcpal_rwlock_try_writelock() if timeout_ms is 0, or
  * etcpal_rwlock_writelock() otherwise.
  *
- * \param[in] id Identifier for the read-write lock on which to acquire a write lock.
- * \param[in] timeout_ms Maximum amount of time to wait to acquire a write lock, in milliseconds.
+ * @param[in] id Identifier for the read-write lock on which to acquire a write lock.
+ * @param[in] timeout_ms Maximum amount of time to wait to acquire a write lock, in milliseconds.
  *                       If #ETCPAL_WAIT_FOREVER is given, the result is the same as if
  *                       etcpal_rwlock_writelock() was called.
- * \return true: The write lock was acquired.
- * \return false: The timeout expired, the lock is invalid or an error occurred.
+ * @return true: The write lock was acquired.
+ * @return false: The timeout expired, the lock is invalid or an error occurred.
  */
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
 
-/*!
- * \brief Release a write lock on a read-write lock object.
- * \param[in] id Identifier for the read-write lock on which to release the write lock.
+/**
+ * @brief Release a write lock on a read-write lock object.
+ * @param[in] id Identifier for the read-write lock on which to release the write lock.
  */
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
 
-/*!
- * \brief Destroy a read-write lock object.
- * \param[in] id Identifier for the read-write lock object to destroy.
+/**
+ * @brief Destroy a read-write lock object.
+ * @param[in] id Identifier for the read-write lock object to destroy.
  */
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
-/*!
+/**
  * @}
  */
 
-/*!
- * \defgroup etcpal_sem Counting Semaphores
- * \brief Counting semaphore objects.
+/**
+ * @defgroup etcpal_sem Counting Semaphores
+ * @brief Counting semaphore objects.
  *
  * A counting semaphore is a synchronization value which can never fall below zero. Each time the 
  * semaphore is _posted_, its count increases. Each time the semaphore is _taken_, its count
@@ -556,7 +556,7 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
  * being serviced or pools of resources. 
  *
  * Usage example:
- * \code
+ * @code
  * static etcpal_sem_t sem;
  * #define SEM_MAX_COUNT 20
  * 
@@ -586,7 +586,7 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
  *   // Notify the service thread that a new event has occurred.
  *   etcpal_sem_post_from_isr(&sem);
  * }
- * \endcode
+ * @endcode
  *
  * etcpal_sem implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
@@ -602,39 +602,39 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
  * @{
  */
 
-/*!
- * \brief The semaphore identifier.
+/**
+ * @brief The semaphore identifier.
  *
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_sem_t;
 
-/*!
- * \brief Whether etcpal_sem_timed_wait() is meaningful on this platform.
+/**
+ * @brief Whether etcpal_sem_timed_wait() is meaningful on this platform.
  * 
  * If defined to 0, etcpal_sem_timed_wait() executes the equivalent of etcpal_sem_try_wait() if
  * given a timeout of 0, or etcpal_sem_wait() otherwise.
  */
 #define ETCPAL_SEM_HAS_TIMED_WAIT /* platform-defined */
 
-/*!
- * \brief Whether etcpal_sem_post_from_isr() is meaningful on this platform.
+/**
+ * @brief Whether etcpal_sem_post_from_isr() is meaningful on this platform.
  *
  * Some platforms have a different method for posting a signal from an interrupt context. If
  * defined to 0, etcpal_sem_post_from_isr() executes the equivalent of etcpal_sem_post().
  */
 #define ETCPAL_SEM_HAS_POST_FROM_ISR /* platform-defined */
 
-/*!
- * \brief Whether counting semaphores have a maximum count on this platform.
+/**
+ * @brief Whether counting semaphores have a maximum count on this platform.
  *
  * Some platforms have a maximum count after which a counting semaphore can no longer be posted. If
  * defined to 0, the max_count argument to etcpal_sem_create() is ignored.
  */
 #define ETCPAL_SEM_HAS_MAX_COUNT /* platform-defined */
 
-/*!
- * \brief Whether the semaphore must have its initial count before being destroyed.
+/**
+ * @brief Whether the semaphore must have its initial count before being destroyed.
  *
  * Currently the only platform for which this is true is macOS. Calls to etcpal_sem_wait() and
  * friends must be balanced with calls to etcpal_sem_post() and friends. If the semaphore does not
@@ -642,49 +642,49 @@ typedef PLATFORM_DEFINED etcpal_sem_t;
  */
 #define ETCPAL_SEM_MUST_BE_BALANCED /* platform-defined */
 
-/*!
- * \brief Create a new counting semaphore.
+/**
+ * @brief Create a new counting semaphore.
  *
  * If initial_count is 0, calls to etcpal_sem_wait() will block until the first call is made to
  * etcpal_sem_post().
  *
- * \param[out] id Semaphore identifier on which to create a semaphore. If this function returns
+ * @param[out] id Semaphore identifier on which to create a semaphore. If this function returns
  *                true, *id becomes valid for calls to other etcpal_sem API functions.
- * \param[in] initial_count The count value assigned to the semaphore when it is created.
- * \param[in] max_count The maximum count that the semaphore can have. This is not meaningful on
+ * @param[in] initial_count The count value assigned to the semaphore when it is created.
+ * @param[in] max_count The maximum count that the semaphore can have. This is not meaningful on
  *                      all platforms - see #ETCPAL_SEM_HAS_MAX_COUNT. If it is meaningful, once
  *                      the count reaches this value, the semaphore can no longer be posted.
- * \return true: The semaphore was created.
- * \return false: The semaphore was not created.
+ * @return true: The semaphore was created.
+ * @return false: The semaphore was not created.
  */
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
 
-/*!
- * \brief Wait for a semaphore.
+/**
+ * @brief Wait for a semaphore.
  *
  * If the semaphore's count is nonzero, decrements the count and returns true. Otherwise, blocks
  * until a call to etcpal_sem_post() on the semaphore.
  *
- * \param[in] id Identifier for the semaphore for which to wait.
- * \return true: The semaphore's count was decremented.
- * \return false: The semaphore is invalid or an error occurred.
+ * @param[in] id Identifier for the semaphore for which to wait.
+ * @return true: The semaphore's count was decremented.
+ * @return false: The semaphore is invalid or an error occurred.
  */
 bool etcpal_sem_wait(etcpal_sem_t* id);
 
-/*!
- * \brief Try to wait for a semaphore.
+/**
+ * @brief Try to wait for a semaphore.
  *
  * If the semaphore's count is nonzero, decrements the count and returns true. Otherwise, returns
  * false immediately.
  *
- * \param[in] id Identifier for the semaphore for which to attempt to wait.
- * \return true: The semaphore's count was decremented.
- * \return false: The semaphore's count was zero, the semaphore is invalid or an error occurred.
+ * @param[in] id Identifier for the semaphore for which to attempt to wait.
+ * @return true: The semaphore's count was decremented.
+ * @return false: The semaphore's count was zero, the semaphore is invalid or an error occurred.
  */
 bool etcpal_sem_try_wait(etcpal_sem_t* id);
 
-/*!
- * \brief Wait for a semaphore, giving up after a timeout.
+/**
+ * @brief Wait for a semaphore, giving up after a timeout.
  *
  * If the semaphore's count is nonzero, decrements the count and returns true. Otherwise, waits up
  * to timeout_ms for the semaphore to be posted, returning false if this timeout expires.
@@ -694,18 +694,18 @@ bool etcpal_sem_try_wait(etcpal_sem_t* id);
  * 0, this function executes the equivalent of etcpal_sem_try_wait() if timeout_ms is 0, or
  * etcpal_sem_wait() otherwise.
  *
- * \param[in] id Identifier for the semaphore for which to wait.
- * \param[in] timeout_ms Maximum amount of time to wait for the semaphore, in milliseconds. If
+ * @param[in] id Identifier for the semaphore for which to wait.
+ * @param[in] timeout_ms Maximum amount of time to wait for the semaphore, in milliseconds. If
  *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
  *                       etcpal_sem_wait() was called.
- * \return true: The semaphore's count was decremented.
- * \return false: The timeout expired while the semaphore's count was zero, the semaphore was
+ * @return true: The semaphore's count was decremented.
+ * @return false: The timeout expired while the semaphore's count was zero, the semaphore was
  *                invalid or an error occurred.
  */
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
 
-/*!
- * \brief Post a semaphore.
+/**
+ * @brief Post a semaphore.
  *
  * If the count is zero and there is a thread waiting for the semaphore, wakes up the thread
  * without incrementing the count. Otherwise, increments the count, unless the count is equal to
@@ -713,42 +713,42 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
  * (note: the max_count behavior does not occur on all platforms. See the table in the module
  * overview for more information).
  *
- * \param[in] id Identifier for the semaphore to post.
- * \return true: The semaphore was posted.
- * \return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
+ * @param[in] id Identifier for the semaphore to post.
+ * @return true: The semaphore was posted.
+ * @return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
  *                occurred.
  */
 bool etcpal_sem_post(etcpal_sem_t* id);
 
-/*!
- * \brief Post a semaphore from an interrupt context.
+/**
+ * @brief Post a semaphore from an interrupt context.
  *
  * This function is only meaningful on some platforms; namely, those which have a different method
  * for posting a semaphore from an interrupt context. The value of #ETCPAL_SEM_HAS_POST_FROM_ISR
  * can be used to determine whether this function is meaningful on the current platform. If it is
  * defined to 0, this function simply executes the equivalent of etcpal_sem_post().
  *
- * \param[in] id Identifier for the semaphore to post.
- * \return true: The semaphore was posted.
- * \return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
+ * @param[in] id Identifier for the semaphore to post.
+ * @return true: The semaphore was posted.
+ * @return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
  *                occurred.
  */
 bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
 
-/*!
- * \brief Destroy a semaphore object.
+/**
+ * @brief Destroy a semaphore object.
  *
  * **NOTE:** if #ETCPAL_SEM_MUST_BE_BALANCED is defined to 1, the semaphore must have its initial
  * count before being destroyed.
  *
- * \param[in] id Identifier for the semaphore to destroy.
+ * @param[in] id Identifier for the semaphore to destroy.
  */
 void etcpal_sem_destroy(etcpal_sem_t* id);
 
-/*!
+/**
  * @}
  */
 
-/*!
+/**
  * @}
  */
