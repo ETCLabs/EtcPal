@@ -88,6 +88,7 @@ etcpal_error_t err_winsock_to_etcpal(int wsaerror)
     case WSASYSNOTREADY:
       return kEtcPalErrNotInit;
     case WSAEACCES:
+      return kEtcPalErrPerm;
     case WSA_OPERATION_ABORTED:
     case WSAEPROTOTYPE:
     case WSAEPROTONOSUPPORT:
