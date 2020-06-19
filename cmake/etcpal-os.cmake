@@ -22,12 +22,6 @@ set(ETCPAL_NET_TARGET "" CACHE STRING "Network stack provider for EtcPal. Often 
 
 if(NOT ETCPAL_OS_TARGET)
   message(STATUS "ETCPAL_OS_TARGET not supplied.")
-  
-  if(APPLE AND IOS)
-    message(STATUS "Assuming cross-compile for iOS and similar based on CMAKE_SYSTEM_NAME...")
-  else()
-    message(STATUS "Assuming native compile by default...")
-  endif()
 
   if(WIN32)
     set(ETCPAL_OS_TARGET windows)
@@ -43,6 +37,8 @@ if(NOT ETCPAL_OS_TARGET)
     # The error check below will catch this and print the fatal error.
     set(ETCPAL_OS_TARGET ${CMAKE_HOST_SYSTEM_NAME})
   endif()
+
+  message(STATUS "Assuming OS target '${ETCPAL_OS_TARGET}' based on current CMake configuration...")
 endif()
 
 if(NOT ETCPAL_NET_TARGET)
