@@ -678,7 +678,7 @@ inline void Logger::EmptyLogQueue()
 
   while (!to_log.empty())
   {
-    etcpal_log(&log_params_, to_log.front().pri, to_log.front().buf);
+    etcpal_log(&log_params_, to_log.front().pri, "%s", to_log.front().buf);
     to_log.pop();
   }
 }
