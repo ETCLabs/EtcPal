@@ -35,6 +35,12 @@
 #pragma warning(disable : 4996)
 #endif
 
+// Disable format security warnings in GCC/clang
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-security"
+#endif
+
 FAKE_VOID_FUNC(log_callback, void*, const EtcPalLogStrings*);
 FAKE_VOID_FUNC(time_callback, void*, EtcPalLogTimestamp*);
 
