@@ -882,9 +882,9 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
     else
       ai->ai_family = ETCPAL_AF_UNSPEC;
     if (os_ai->ai_socktype == SOCK_DGRAM)
-      ai->ai_socktype = ETCPAL_DGRAM;
+      ai->ai_socktype = ETCPAL_SOCK_DGRAM;
     else if (os_ai->ai_socktype == SOCK_STREAM)
-      ai->ai_socktype = ETCPAL_STREAM;
+      ai->ai_socktype = ETCPAL_SOCK_STREAM;
     else
       ai->ai_socktype = 0;
     if (os_ai->ai_protocol == IPPROTO_UDP)

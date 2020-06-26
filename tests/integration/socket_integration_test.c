@@ -239,13 +239,13 @@ void unicast_udp_test(etcpal_iptype_t ip_type)
 
 TEST(socket_integration_udp, unicast_udp_ipv4)
 {
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001u);
@@ -256,13 +256,13 @@ TEST(socket_integration_udp, unicast_udp_ipv4)
 #if ETCPAL_TEST_IPV6
 TEST(socket_integration_udp, unicast_udp_ipv6)
 {
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   uint8_t v6_loopback[ETCPAL_IPV6_BYTES];
@@ -329,10 +329,10 @@ TEST(socket_integration_udp, multicast_udp_ipv4)
 {
   EtcPalSockAddr bind_addr;
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], ETCPAL_SOCKET_INVALID);
 
   int intval = 1;
@@ -341,7 +341,7 @@ TEST(socket_integration_udp, multicast_udp_ipv4)
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], ETCPAL_SOL_SOCKET, ETCPAL_SO_REUSEADDR, &intval, sizeof(int)));
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
@@ -380,10 +380,10 @@ TEST(socket_integration_udp, multicast_udp_ipv6)
 {
   EtcPalSockAddr bind_addr;
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_DGRAM, &recv_socks[0]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &recv_socks[0]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[0], ETCPAL_SOCKET_INVALID);
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_DGRAM, &recv_socks[1]));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &recv_socks[1]));
   TEST_ASSERT_NOT_EQUAL(recv_socks[1], ETCPAL_SOCKET_INVALID);
 
   int intval = 1;
@@ -392,7 +392,7 @@ TEST(socket_integration_udp, multicast_udp_ipv6)
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], ETCPAL_SOL_SOCKET, ETCPAL_SO_REUSEADDR, &intval, sizeof(int)));
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   // TEST_ASSERT_EQUAL(kEtcPalErrOk,
@@ -441,7 +441,8 @@ TEST(socket_integration_udp, bulk_poll)
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
 
-    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &recv_socks[i]), error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &recv_socks[i]),
+                              error_msg);
     TEST_ASSERT_NOT_EQUAL_MESSAGE(recv_socks[i], ETCPAL_SOCKET_INVALID, error_msg);
 
     EtcPalSockAddr bind_addr;
@@ -455,7 +456,7 @@ TEST(socket_integration_udp, bulk_poll)
                               error_msg);
   }
 
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_DGRAM, &send_sock));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &send_sock));
 
   ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)

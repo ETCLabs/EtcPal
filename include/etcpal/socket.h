@@ -191,8 +191,8 @@ typedef struct EtcPalGroupReq
  * @name 'type' values for etcpal_socket() and etcpal_getsockopt()
  * @{
  */
-#define ETCPAL_STREAM 0u
-#define ETCPAL_DGRAM 1u
+#define ETCPAL_SOCK_STREAM 0u
+#define ETCPAL_SOCK_DGRAM 1u
 /**
  * @}
  */
@@ -295,7 +295,7 @@ typedef struct EtcPalAddrinfo
 {
   int            ai_flags;     /**< i.e. ETCPAL_AI_xxx */
   int            ai_family;    /**< i.e. ETCPAL_AF_xxx */
-  int            ai_socktype;  /**< i.e. ETCPAL_STREAM or ETCPAL_DGRAM */
+  int            ai_socktype;  /**< i.e. ETCPAL_SOCK_STREAM or ETCPAL_SOCK_DGRAM */
   int            ai_protocol;  /**< i.e. ETCPAL_IPPROTO_xxx */
   char*          ai_canonname; /**< Canonical name for host */
   EtcPalSockAddr ai_addr;      /**< Address of host */

@@ -56,8 +56,8 @@ endif()
 set(ETCPAL_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 option(ETCPAL_BUILD_MOCK_LIB "Build the EtcPalMock library" OFF)
-option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" ${OPTION_DEFAULTS})
-option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps" ${OPTION_DEFAULTS})
+option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" OFF)
+option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps" OFF)
 
 # Platform support
 include(${PROJECT_SOURCE_DIR}/cmake/etcpal-os.cmake)

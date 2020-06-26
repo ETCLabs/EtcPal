@@ -131,7 +131,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
  *
  * Refer to your favorite listen() man page for more information.
  *
- * @param[in] id ETCPAL_STREAM socket on which to listen.
+ * @param[in] id ETCPAL_SOCK_STREAM socket on which to listen.
  * @param[in] backlog Maximum length of pending connection queue.
  * @return #kEtcPalErrOk (success) or #etcpal_error_t code from system (error occurred).
  */
