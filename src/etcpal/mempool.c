@@ -28,6 +28,9 @@ static etcpal_mutex_t mempool_lock;
 
 etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
 {
+  if (!desc || desc->pool_size == 0)
+    return kEtcPalErrInvalid;
+
   etcpal_error_t res = kEtcPalErrSys;
 
   if (!mempool_lock_initted)
@@ -54,6 +57,9 @@ etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
 
 void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
 {
+  if (!desc)
+    return NULL;
+
   void* elem = NULL;
 
   if (etcpal_mutex_lock(&mempool_lock))
@@ -78,6 +84,9 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
 
 void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
 {
+  if (!desc || !elem)
+    return;
+
   char* c_pool = (char*)desc->pool;
 
   ptrdiff_t offset = (char*)elem - c_pool;
@@ -97,6 +106,9 @@ void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
 
 size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc)
 {
+  if (!desc)
+    return 0;
+
   size_t res = 0;
   if (etcpal_mutex_lock(&mempool_lock))
   {
