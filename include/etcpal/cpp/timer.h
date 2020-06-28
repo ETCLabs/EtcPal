@@ -236,7 +236,7 @@ constexpr const EtcPalTimer& Timer::get() const noexcept
 }
 
 /// @brief Get a mutable reference to the underlying C type.
-ETCPAL_CONSTEXPR_14 EtcPalTimer& Timer::get() noexcept
+ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalTimer& Timer::get() noexcept
 {
   return timer_;
 }
