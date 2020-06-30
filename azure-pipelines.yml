@@ -189,8 +189,6 @@ stages:
           # TODO change to ubuntu-latest when this issue is fixed:
           # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
           vmImage: "ubuntu-18.04"
-        variables:
-          - group: github-push-access
         steps:
           - script: sudo apt-get install doxygen
             displayName: "Install Doxygen"
@@ -206,7 +204,7 @@ stages:
             env:
               GH_REPO_NAME: EtcPal
               GH_REPO_REF: github.com/ETCLabs/EtcPal.git
-              GH_REPO_TOKEN: $(GH_ACCESS_TOKEN)
+              GH_REPO_TOKEN: svc-etclabs:$(svc_etclabs_password)
 
   - stage: deploy
     displayName: "Deploy Build Artifacts"
