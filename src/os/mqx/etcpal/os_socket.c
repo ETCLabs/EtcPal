@@ -478,7 +478,7 @@ int32_t join_leave_mcast_group_ipv4(etcpal_socket_t id, const struct EtcPalMreq*
                            sizeof os_mreq);
   if (res == RTCS_OK)
   {
-    /* Voodoo to allow locally-sent multicast traffic to be received by local sockets. We
+    /* Magic to allow locally-sent multicast traffic to be received by local sockets. We
      * don't check the result. */
     os_mreq.imr_interface.s_addr = 0x7f000001;
     setsockopt(id, SOL_IGMP, join ? RTCS_SO_IGMP_ADD_MEMBERSHIP : RTCS_SO_IGMP_DROP_MEMBERSHIP, &os_mreq,
