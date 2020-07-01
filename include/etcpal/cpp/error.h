@@ -786,10 +786,9 @@ constexpr bool Expected<T>::has_value() const noexcept
 template <typename T>
 ETCPAL_CONSTEXPR_14 const T& Expected<T>::value() const&
 {
-  if (has_value())
-    return contained_.value();
-  else
-    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return contained_.value();
 }
 
 /// @brief Get the underlying value.
@@ -797,10 +796,9 @@ ETCPAL_CONSTEXPR_14 const T& Expected<T>::value() const&
 template <typename T>
 T& Expected<T>::value() &
 {
-  if (has_value())
-    return contained_.value();
-  else
-    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return contained_.value();
 }
 
 /// @brief Get the underlying value.
@@ -808,10 +806,9 @@ T& Expected<T>::value() &
 template <typename T>
 ETCPAL_CONSTEXPR_14 const T&& Expected<T>::value() const&&
 {
-  if (has_value())
-    return std::move(contained_.value());
-  else
-    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return std::move(contained_.value());
 }
 
 /// @brief Get the underlying value.
@@ -819,10 +816,9 @@ ETCPAL_CONSTEXPR_14 const T&& Expected<T>::value() const&&
 template <typename T>
 ETCPAL_CONSTEXPR_14 T&& Expected<T>::value() &&
 {
-  if (has_value())
-    return std::move(contained_.value());
-  else
-    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return std::move(contained_.value());
 }
 
 /// @brief Get the error code.
