@@ -67,6 +67,14 @@ enum class enabler
 
 #define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
 #define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
+
+#if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) && !defined(ETCPAL_NO_EXCEPTIONS)
+#define ETCPAL_THROW(exception) throw exception
+#else
+#include <cstdlib>
+#define ETCPAL_THROW(exception) std::abort()
+#endif
+
 }  // namespace detail
 
 /// @endcond

@@ -24,6 +24,7 @@
 #define ETCPAL_CPP_LOCK_H_
 
 #include <stdexcept>
+#include "etcpal/cpp/common.h"
 #include "etcpal/lock.h"
 
 namespace etcpal
@@ -626,7 +627,7 @@ inline MutexGuard::~MutexGuard()
 inline void MutexGuard::GetLock()
 {
   if (!etcpal_mutex_lock(&mutex_))
-    throw std::runtime_error("etcpal_mutex_lock failed.");
+    ETCPAL_THROW(std::runtime_error("etcpal_mutex_lock failed."));
 }
 
 /// @ingroup etcpal_cpp_lock
@@ -685,7 +686,7 @@ inline ReadGuard::~ReadGuard()
 inline void ReadGuard::GetReadLock()
 {
   if (!etcpal_rwlock_readlock(&rwlock_))
-    throw std::runtime_error("etcpal_rwlock_readlock failed.");
+    ETCPAL_THROW(std::runtime_error("etcpal_rwlock_readlock failed."));
 }
 
 /// @ingroup etcpal_cpp_lock
@@ -744,7 +745,7 @@ inline WriteGuard::~WriteGuard()
 inline void WriteGuard::GetWriteLock()
 {
   if (!etcpal_rwlock_writelock(&rwlock_))
-    throw std::runtime_error("etcpal_rwlock_writelock failed.");
+    ETCPAL_THROW(std::runtime_error("etcpal_rwlock_writelock failed."));
 }
 
 /// @}

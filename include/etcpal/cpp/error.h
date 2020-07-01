@@ -784,10 +784,12 @@ constexpr bool Expected<T>::has_value() const noexcept
 /// @brief Get the underlying value.
 /// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
-constexpr const T& Expected<T>::value() const&
+ETCPAL_CONSTEXPR_14 const T& Expected<T>::value() const&
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
+  if (has_value())
+    return contained_.value();
+  else
+    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
 /// @brief Get the underlying value.
@@ -795,18 +797,21 @@ constexpr const T& Expected<T>::value() const&
 template <typename T>
 T& Expected<T>::value() &
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
+  if (has_value())
+    return contained_.value();
+  else
+    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
 /// @brief Get the underlying value.
 /// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
-constexpr const T&& Expected<T>::value() const&&
+ETCPAL_CONSTEXPR_14 const T&& Expected<T>::value() const&&
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return std::move(has_value() ? (contained_.value())
-                               : (throw BadExpectedAccess(contained_.error()), contained_.value()));
+  if (has_value())
+    return std::move(contained_.value());
+  else
+    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
 /// @brief Get the underlying value.
@@ -814,9 +819,10 @@ constexpr const T&& Expected<T>::value() const&&
 template <typename T>
 ETCPAL_CONSTEXPR_14 T&& Expected<T>::value() &&
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return std::move(has_value() ? (contained_.value())
-                               : (throw BadExpectedAccess(contained_.error()), contained_.value()));
+  if (has_value())
+    return std::move(contained_.value());
+  else
+    ETCPAL_THROW((BadExpectedAccess(contained_.error()), contained_.value()));
 }
 
 /// @brief Get the error code.
