@@ -217,7 +217,7 @@ inline Thread::Thread(Function&& func, Args&&... args)
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
   auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
-    throw result;
+    ETCPAL_THROW(result);
 }
 
 /// @brief Destroy the thread object.

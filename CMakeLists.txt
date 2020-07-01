@@ -59,6 +59,8 @@ option(ETCPAL_BUILD_MOCK_LIB "Build the EtcPalMock library" OFF)
 option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" OFF)
 option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps" OFF)
 
+option(ETCPAL_EXPLICITLY_DISABLE_EXCEPTIONS "Disable throwing of exceptions throughout the EtcPal C++ headers" OFF)
+
 # Platform support
 include(${PROJECT_SOURCE_DIR}/cmake/etcpal-os.cmake)
 

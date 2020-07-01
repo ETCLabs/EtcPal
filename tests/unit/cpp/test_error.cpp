@@ -215,24 +215,20 @@ TEST(etcpal_expected, default_constructor_default_init)
 
 TEST(etcpal_expected, default_constructor_is_called)
 {
-  class ConstructorThrows
+  static bool constructor_ran;
+
+  class ConstructorWithSideEffect
   {
   public:
-    ConstructorThrows() { throw std::runtime_error("Whoops!"); }
+    ConstructorWithSideEffect() { constructor_ran = true; }
 
   private:
     int i{42};
   };
 
-  try
-  {
-    etcpal::Expected<ConstructorThrows> v;
-    TEST_FAIL_MESSAGE("Constructor should have thrown runtime_error");
-  }
-  catch (const std::runtime_error&)
-  {
-    TEST_PASS();
-  }
+  constructor_ran = false;
+  etcpal::Expected<ConstructorWithSideEffect> v;
+  TEST_ASSERT_TRUE(constructor_ran);
 }
 
 TEST(etcpal_expected, copy_constructor_works)
@@ -343,6 +339,7 @@ TEST(etcpal_expected, error_is_correct)
   TEST_ASSERT_EQUAL(e.error().code(), kEtcPalErrNoMem);
 }
 
+#if ETCPAL_BUILDING_WITH_EXCEPTIONS
 TEST(etcpal_expected, value_throws_on_error)
 {
   try
@@ -356,6 +353,7 @@ TEST(etcpal_expected, value_throws_on_error)
     TEST_ASSERT_EQUAL_INT(e.error().code(), kEtcPalErrSys);
   }
 }
+#endif
 
 TEST(etcpal_expected, with_error_constructor_destructor_not_called)
 {
@@ -431,7 +429,9 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
   RUN_TEST_CASE(etcpal_expected, has_value_is_correct);
   RUN_TEST_CASE(etcpal_expected, observers_are_correct);
   RUN_TEST_CASE(etcpal_expected, error_is_correct);
+#if ETCPAL_BUILDING_WITH_EXCEPTIONS
   RUN_TEST_CASE(etcpal_expected, value_throws_on_error);
+#endif
   RUN_TEST_CASE(etcpal_expected, with_error_constructor_destructor_not_called);
   RUN_TEST_CASE(etcpal_expected, value_or_works);
   RUN_TEST_CASE(etcpal_expected, relational_operators_work)

@@ -656,12 +656,12 @@ public:
   constexpr const T&  operator*() const&;
   T&                  operator*() &;
   constexpr const T&& operator*() const&&;
-  ETCPAL_CONSTEXPR_14 T&& operator*() &&;
-  constexpr explicit      operator bool() const noexcept;
-  constexpr bool          has_value() const noexcept;
-  constexpr const T&      value() const&;
-  T&                      value() &;
-  constexpr const T&&     value() const&&;
+  ETCPAL_CONSTEXPR_14 T&&   operator*() &&;
+  constexpr explicit        operator bool() const noexcept;
+  constexpr bool            has_value() const noexcept;
+  ETCPAL_CONSTEXPR_14 const T& value() const&;
+  T&                           value() &;
+  ETCPAL_CONSTEXPR_14 const T&& value() const&&;
   ETCPAL_CONSTEXPR_14 T&&  value() &&;
   constexpr etcpal_error_t error_code() const noexcept;
   constexpr Error          error() const noexcept;
@@ -784,10 +784,11 @@ constexpr bool Expected<T>::has_value() const noexcept
 /// @brief Get the underlying value.
 /// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
-constexpr const T& Expected<T>::value() const&
+ETCPAL_CONSTEXPR_14 const T& Expected<T>::value() const&
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return contained_.value();
 }
 
 /// @brief Get the underlying value.
@@ -795,18 +796,19 @@ constexpr const T& Expected<T>::value() const&
 template <typename T>
 T& Expected<T>::value() &
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return has_value() ? (contained_.value()) : (throw BadExpectedAccess(contained_.error()), contained_.value());
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return contained_.value();
 }
 
 /// @brief Get the underlying value.
 /// @throw BadExpectedAccess if has_value() is false.
 template <typename T>
-constexpr const T&& Expected<T>::value() const&&
+ETCPAL_CONSTEXPR_14 const T&& Expected<T>::value() const&&
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return std::move(has_value() ? (contained_.value())
-                               : (throw BadExpectedAccess(contained_.error()), contained_.value()));
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return std::move(contained_.value());
 }
 
 /// @brief Get the underlying value.
@@ -814,9 +816,9 @@ constexpr const T&& Expected<T>::value() const&&
 template <typename T>
 ETCPAL_CONSTEXPR_14 T&& Expected<T>::value() &&
 {
-  // Comma syntax is to satisfy C++11 requirements for constexpr
-  return std::move(has_value() ? (contained_.value())
-                               : (throw BadExpectedAccess(contained_.error()), contained_.value()));
+  if (!has_value())
+    ETCPAL_THROW(BadExpectedAccess(contained_.error()));
+  return std::move(contained_.value());
 }
 
 /// @brief Get the error code.
