@@ -656,12 +656,12 @@ public:
   constexpr const T&  operator*() const&;
   T&                  operator*() &;
   constexpr const T&& operator*() const&&;
-  ETCPAL_CONSTEXPR_14 T&& operator*() &&;
-  constexpr explicit      operator bool() const noexcept;
-  constexpr bool          has_value() const noexcept;
-  constexpr const T&      value() const&;
-  T&                      value() &;
-  constexpr const T&&     value() const&&;
+  ETCPAL_CONSTEXPR_14 T&&   operator*() &&;
+  constexpr explicit        operator bool() const noexcept;
+  constexpr bool            has_value() const noexcept;
+  ETCPAL_CONSTEXPR_14 const T& value() const&;
+  T&                           value() &;
+  ETCPAL_CONSTEXPR_14 const T&& value() const&&;
   ETCPAL_CONSTEXPR_14 T&&  value() &&;
   constexpr etcpal_error_t error_code() const noexcept;
   constexpr Error          error() const noexcept;
