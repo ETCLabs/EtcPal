@@ -339,7 +339,7 @@ TEST(etcpal_expected, error_is_correct)
   TEST_ASSERT_EQUAL(e.error().code(), kEtcPalErrNoMem);
 }
 
-#if !ETCPAL_NO_EXCEPTIONS
+#if ETCPAL_BUILDING_WITH_EXCEPTIONS
 TEST(etcpal_expected, value_throws_on_error)
 {
   try
@@ -429,7 +429,7 @@ TEST_GROUP_RUNNER(etcpal_cpp_error)
   RUN_TEST_CASE(etcpal_expected, has_value_is_correct);
   RUN_TEST_CASE(etcpal_expected, observers_are_correct);
   RUN_TEST_CASE(etcpal_expected, error_is_correct);
-#if !ETCPAL_NO_EXCEPTIONS
+#if ETCPAL_BUILDING_WITH_EXCEPTIONS
   RUN_TEST_CASE(etcpal_expected, value_throws_on_error);
 #endif
   RUN_TEST_CASE(etcpal_expected, with_error_constructor_destructor_not_called);
