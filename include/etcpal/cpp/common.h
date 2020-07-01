@@ -59,6 +59,11 @@
 /// The EtcPal headers also attempt to organically detect whether exceptions are enabled using
 /// various standard defines. This definition is available to explicitly disable exceptions if
 /// that method does not work.
+#if DOXYGEN
+#define ETCPAL_NO_EXCEPTIONS
+#endif
+
+/// @cond Internal Exception Macros
 
 #if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) && !defined(ETCPAL_NO_EXCEPTIONS)
 #define ETCPAL_THROW(exception) throw exception
@@ -68,6 +73,8 @@
 #define ETCPAL_THROW(exception) std::abort()
 #define ETCPAL_BUILDING_WITH_EXCEPTIONS 0
 #endif
+
+/// @endcond
 
 /// @}
 
