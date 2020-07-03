@@ -18,6 +18,13 @@
       <anchor>ga598701b6928c77a8c086183a0a1cb9cc</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_NO_EXCEPTIONS</name>
+      <anchorfile>group__etcpal__cpp.html</anchorfile>
+      <anchor>gaaecae23a851a2e3b6d126547fbefbae3</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>error.h</name>
@@ -51,6 +58,7 @@
     <name>lock.h</name>
     <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2lock_8h</filename>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::Signal</class>
     <class kind="class">etcpal::RwLock</class>
@@ -1069,10 +1077,10 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>constexpr const T &amp;</type>
+      <type>ETCPAL_CONSTEXPR_14 const T &amp;</type>
       <name>value</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>aa3795c04ad2644e8294f7f028bde5393</anchor>
+      <anchor>a35aa923de0534bc610141949cd6fdf89</anchor>
       <arglist>() const &amp;</arglist>
     </member>
     <member kind="function">
@@ -1083,10 +1091,10 @@
       <arglist>() &amp;</arglist>
     </member>
     <member kind="function">
-      <type>constexpr const T &amp;&amp;</type>
+      <type>ETCPAL_CONSTEXPR_14 const T &amp;&amp;</type>
       <name>value</name>
       <anchorfile>classetcpal_1_1_expected.html</anchorfile>
-      <anchor>af0677a7aa98cba5e3a267da236f28175</anchor>
+      <anchor>ad75797dec2450b8f01fee82544b9526b</anchor>
       <arglist>() const &amp;&amp;</arglist>
     </member>
     <member kind="function">
@@ -2728,7 +2736,7 @@
       <type>ETCPAL_CONSTEXPR_14 EtcPalTimer &amp;</type>
       <name>get</name>
       <anchorfile>classetcpal_1_1_timer.html</anchorfile>
-      <anchor>aa2e64a6a8cf23cd9c7c7a6d7510bed8d</anchor>
+      <anchor>a66d897467a3ccc1cc83249c5111aeaf3</anchor>
       <arglist>() noexcept</arglist>
     </member>
     <member kind="function">
@@ -5628,6 +5636,13 @@
       <name>ETCPAL_CONSTEXPR_14_OR_INLINE</name>
       <anchorfile>group__etcpal__cpp.html</anchorfile>
       <anchor>ga598701b6928c77a8c086183a0a1cb9cc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_NO_EXCEPTIONS</name>
+      <anchorfile>group__etcpal__cpp.html</anchorfile>
+      <anchor>gaaecae23a851a2e3b6d126547fbefbae3</anchor>
       <arglist></arglist>
     </member>
   </compound>
