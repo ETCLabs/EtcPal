@@ -70,6 +70,11 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrInvalid;
 }
 
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout)
+{
+  return etcpal_thread_join(id);
+}
+
 void* thread_func_internal(void* arg)
 {
   etcpal_thread_t* thread_data = (etcpal_thread_t*)arg;

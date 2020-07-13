@@ -173,7 +173,7 @@ public:
   Thread& SetName(const char* name) noexcept;
   Thread& SetName(const std::string& name) noexcept;
   Thread& SetPlatformData(void* platform_data) noexcept;
-  Thread& SetShutdownTimeout(unsigned ms_timeout) noexcept;
+  Thread& SetShutdownTimeout(unsigned int ms_timeout) noexcept;
   /// @}
 
   template <class Function, class... Args>
@@ -191,8 +191,8 @@ public:
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
   EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
-  static const unsigned            MAX_SHUTDOWN_TIME =500; /* half a second */
-  unsigned                         max_shutdown_time_;
+  static constexpr unsigned            MAX_SHUTDOWN_TIME =500; /* half a second */
+  unsigned                         max_shutdown_time_{MAX_SHUTDOWN_TIME};
 };
 
 /// @cond Internal thread function
@@ -217,7 +217,6 @@ extern "C" inline void CppThreadFn(void* arg)
 template <class Function, class... Args>
 inline Thread::Thread(Function&& func, Args&&... args)
 {
-  max_shutdown_time_ = MAX_SHUTDOWN_TIME;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
   auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
@@ -231,11 +230,8 @@ inline Thread::Thread(Function&& func, Args&&... args)
 inline Thread::~Thread()
 {
   if (thread_)
-#if ETCPAL_THREAD_JOIN_CAN_TIMEOUT
     etcpal_thread_timed_join(thread_.get(), max_shutdown_time_);
-#else
-    etcpal_thread_join(thread_.get());
-#endif
+
 }
 
 /// @brief Move another thread into this thread.

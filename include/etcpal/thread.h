@@ -169,9 +169,7 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
 void etcpal_thread_sleep(unsigned int sleep_ms);
 #endif
 
-#if defined(ETCPAL_THREAD_JOIN_CAN_TIMEOUT) || DOXYGEN
 etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout);
-#endif
 
 /**
  * @}

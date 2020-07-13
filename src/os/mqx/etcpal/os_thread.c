@@ -82,4 +82,9 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrSys;
 }
 
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout)
+{
+  return etcpal_thread_join(id);
+}
+
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
