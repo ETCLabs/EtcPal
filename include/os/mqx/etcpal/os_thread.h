@@ -39,6 +39,7 @@ typedef struct EtcPalThreadParamsMqx
 #define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
 #define ETCPAL_THREAD_MQX_DEFAULT_ATTRIBUTES 0
 #define ETCPAL_THREAD_MQX_DEFAULT_TIME_SLICE 0
+#define ETCPAL_THREAD_JOIN_CAN_TIMEOUT 0 /* Timeout unavailable on mqx */
 
 typedef _task_id etcpal_thread_id_t;
 

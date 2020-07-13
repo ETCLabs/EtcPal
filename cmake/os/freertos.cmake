@@ -28,6 +28,7 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_thread.h
 
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_lock.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_queue.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_thread.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_uuid.c

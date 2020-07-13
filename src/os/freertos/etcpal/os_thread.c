@@ -74,4 +74,22 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrSys;
 }
 
-#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout)
+{
+  if (!id)
+    return kEtcPalErrInvalid;
+
+  if (pdTRUE == xSemaphoreTake(id->sig, pdMS_TO_TICKS(ms_timeout)))
+  {
+    vSemaphoreDelete(id->sig);
+    id->sig = NULL;
+    id->tid = NULL;
+    return kEtcPalErrOk;
+  }
+
+
+  // The semaphore was not taken within the timeout period
+  return kEtcPalErrTimedOut;
+}
+
+#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
