@@ -191,7 +191,7 @@ public:
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
   EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
-  static constexpr unsigned            MAX_SHUTDOWN_TIME =500; /* half a second */
+  static constexpr unsigned        MAX_SHUTDOWN_TIME = 500; /* half a second */
   unsigned                         max_shutdown_time_{MAX_SHUTDOWN_TIME};
 };
 
@@ -230,8 +230,13 @@ inline Thread::Thread(Function&& func, Args&&... args)
 inline Thread::~Thread()
 {
   if (thread_)
-    etcpal_thread_timed_join(thread_.get(), max_shutdown_time_);
-
+  {
+    if (etcpal_thread_timed_join(thread_.get(), max_shutdown_time_) == kEtcPalErrTimedOut)
+    {
+        // THREAD DID NOT SHUTDOWN GRACEFULLY - FORCE IT
+        etcpal_thread_terminate(thread.get());
+    }
+  }
 }
 
 /// @brief Move another thread into this thread.

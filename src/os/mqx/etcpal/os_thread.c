@@ -87,4 +87,15 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout
   return etcpal_thread_join(id);
 }
 
+etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
+{
+  if (!id)
+    return kEtcPalErrInvalid;
+
+  if (_task_abort(id->tid) != MQX_OK)
+    return kEtcPalErrSys;
+
+  return kEtcPalErrOk;
+}
+
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
