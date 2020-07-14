@@ -31,6 +31,7 @@ extern "C" {
 #define ETCPAL_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on macOS */
 #define ETCPAL_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
 #define ETCPAL_THREAD_DEFAULT_NAME NULL  /* Name ignored on macOS */
+#define ETCPAL_THREAD_JOIN_CAN_TIMEOUT 0 /* Timeout unavailable on macOS */
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 0
 

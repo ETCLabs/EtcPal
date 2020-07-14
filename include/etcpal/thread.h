@@ -169,6 +169,10 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
 void etcpal_thread_sleep(unsigned int sleep_ms);
 #endif
 
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout);
+
+etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id);
+
 /**
  * @}
  */

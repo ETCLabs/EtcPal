@@ -32,6 +32,7 @@ extern "C" {
 #define ETCPAL_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
 #define ETCPAL_THREAD_DEFAULT_STACK 500
 #define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
+#define ETCPAL_THREAD_JOIN_CAN_TIMEOUT 1
 
 typedef TaskHandle_t etcpal_thread_id_t;
 

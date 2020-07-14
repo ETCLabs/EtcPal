@@ -173,6 +173,7 @@ public:
   Thread& SetName(const char* name) noexcept;
   Thread& SetName(const std::string& name) noexcept;
   Thread& SetPlatformData(void* platform_data) noexcept;
+  Thread& SetShutdownTimeout(unsigned int ms_timeout) noexcept;
   /// @}
 
   template <class Function, class... Args>
@@ -190,6 +191,8 @@ public:
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
   EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
+  static constexpr unsigned        MAX_SHUTDOWN_TIME = 500; /* half a second */
+  unsigned                         max_shutdown_time_{MAX_SHUTDOWN_TIME};
 };
 
 /// @cond Internal thread function
@@ -227,7 +230,13 @@ inline Thread::Thread(Function&& func, Args&&... args)
 inline Thread::~Thread()
 {
   if (thread_)
-    etcpal_thread_join(thread_.get());
+  {
+    if (etcpal_thread_timed_join(thread_.get(), max_shutdown_time_) == kEtcPalErrTimedOut)
+    {
+        // THREAD DID NOT SHUTDOWN GRACEFULLY - FORCE IT
+        etcpal_thread_terminate(thread_.get());
+    }
+  }
 }
 
 /// @brief Move another thread into this thread.
@@ -357,6 +366,19 @@ inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
   return *this;
 }
 
+/// @brief Set the timeout for shutting down the thread
+///
+/// This function sets the timeout for destructing a thread. If the thread has not stopped within the timeout, it is
+/// forcefully quit.
+///
+/// @param ms_timeout Number of milliseconds to wait before forcefully killing the thread upon destruction
+/// @return A reference to this thread, for method chaining.
+inline Thread& Thread::SetShutdownTimeout(unsigned ms_timeout) noexcept
+{
+  max_shutdown_time_ = ms_timeout;
+  return *this;
+}
+
 /// @brief Associate this thread object with a new thread of execution.
 ///
 /// The new thread of execution starts executing
@@ -401,6 +423,7 @@ Error Thread::Start(Function&& func, Args&&... args)
 /// Blocks until the thread has exited.
 ///
 /// @return #kEtcPalErrOk: The thread was stopped; joinable() is now false.
+/// @return #kEtcPalErrTimeout: The thread did not join within the specified timeout.
 /// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
 /// @return Other codes translated from system error codes are possible.
 inline Error Thread::Join() noexcept
