@@ -2483,8 +2483,8 @@
       <type>Error</type>
       <name>Join</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
-      <anchor>a0fe525fdb9bcaccc319c79e1c74ee62e</anchor>
-      <arglist>() noexcept</arglist>
+      <anchor>aea418c2372922b6b295e06814c4fe988</anchor>
+      <arglist>(int timeout_ms=ETCPAL_WAIT_FOREVER) noexcept</arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
@@ -5404,6 +5404,13 @@
       <anchor>ga5a0a37d186ac57231b94c287a58b54a0</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_THREAD_HAS_TIMED_JOIN</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gaf382d29335eeeb4ed5c8d295bb8a380b</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>struct EtcPalThreadParams</type>
       <name>EtcPalThreadParams</name>
@@ -5430,6 +5437,20 @@
       <name>etcpal_thread_join</name>
       <anchorfile>group__etcpal__thread.html</anchorfile>
       <anchor>ga711be33696701513f19239cf22dc3792</anchor>
+      <arglist>(etcpal_thread_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_thread_timed_join</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga37eccd4b250f7b697bd366922d081f13</anchor>
+      <arglist>(etcpal_thread_t *id, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_error_t</type>
+      <name>etcpal_thread_terminate</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga9906049c7d559046052fa9509aedb705</anchor>
       <arglist>(etcpal_thread_t *id)</arglist>
     </member>
     <member kind="function">

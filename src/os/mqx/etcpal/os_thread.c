@@ -19,6 +19,8 @@
 
 #include "etcpal/thread.h"
 
+#include "etcpal/common.h"
+
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
 static void thread_func_internal(uint32_t initial_data)
@@ -82,8 +84,9 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrSys;
 }
 
-etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout)
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 {
+  ETCPAL_UNUSED_ARG(timeout_ms);
   return etcpal_thread_join(id);
 }
 

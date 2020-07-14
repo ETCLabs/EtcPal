@@ -74,12 +74,13 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrSys;
 }
 
-etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout)
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 {
   if (!id)
     return kEtcPalErrInvalid;
 
-  if (pdTRUE == xSemaphoreTake(id->sig, pdMS_TO_TICKS(ms_timeout)))
+  TickType_t ticks_to_wait = (ms_timeout < 0 ? portMAX_DELAY : pdMS_TO_TICKS(ms_timeout));
+  if (pdTRUE == xSemaphoreTake(id->sig, ticks_to_wait))
   {
     vSemaphoreDelete(id->sig);
     id->sig = NULL;
@@ -87,20 +88,19 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout
     return kEtcPalErrOk;
   }
 
-
   // The semaphore was not taken within the timeout period
   return kEtcPalErrTimedOut;
 }
 
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 {
-    if (!id)
-      return kEtcPalErrInvalid;
+  if (!id)
+    return kEtcPalErrInvalid;
 
-    vTaskDelete(id->tid);
-    id->tid = NULL;
+  vTaskDelete(id->tid);
+  id->tid = NULL;
 
-    return kEtcPalErrOk;
+  return kEtcPalErrOk;
 }
 
-#endif // !defined(ETCPAL_BUILDING_MOCK_LIB)
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

@@ -22,6 +22,7 @@
 #include <stdbool.h>
 
 #include "etcpal/common.h"
+#include "etcpal/timer.h"
 #include "unity_fixture.h"
 
 TEST_GROUP(etcpal_thread);
@@ -47,21 +48,39 @@ void wait_and_exit(void* param)
 // Basic test of the three thread functions.
 TEST(etcpal_thread, create_and_destroy_functions_work)
 {
-  EtcPalThreadParams params = {
-      ETCPAL_THREAD_DEFAULT_PRIORITY,  // priority
-      ETCPAL_THREAD_DEFAULT_STACK,     // stack_size
-      "cd_thread",                     // thread_name
-      NULL                             // platform_data
-  };
-  etcpal_thread_t wait_thread;
+  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  etcpal_thread_t    wait_thread;
 
   waitthread_run = true;
   TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL), kEtcPalErrOk);
 
-  // Stop should work if the thread has exited.
+  // Join should work if the thread has exited.
   waitthread_run = false;
   TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
 }
+
+#if ETCPAL_THREAD_HAS_TIMED_JOIN
+TEST(etcpal_thread, timed_join_works)
+{
+  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  etcpal_thread_t    wait_thread;
+
+  waitthread_run = true;
+  TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL), kEtcPalErrOk);
+
+  EtcPalTimer timer;
+  etcpal_timer_start(&timer, 100);
+  TEST_ASSERT_EQUAL(etcpal_thread_timed_join(&wait_thread, 10), kEtcPalErrTimedOut);
+
+  // An unfortunately necessary heuristic - we assert that at least half the specified time has
+  // gone by, to account for OS slop.
+  TEST_ASSERT_GREATER_THAN_UINT32(5, etcpal_timer_elapsed(&timer));
+
+  // Timed join should work if the thread has exited.
+  waitthread_run = false;
+  TEST_ASSERT_EQUAL(etcpal_thread_timed_join(&wait_thread, 100), kEtcPalErrOk);
+}
+#endif
 
 volatile bool spin_task_run;
 volatile bool spin_task_ran;
@@ -127,5 +146,8 @@ TEST(etcpal_thread, threads_are_time_sliced)
 TEST_GROUP_RUNNER(etcpal_thread)
 {
   RUN_TEST_CASE(etcpal_thread, create_and_destroy_functions_work);
+#if ETCPAL_THREAD_HAS_TIMED_JOIN
+  RUN_TEST_CASE(etcpal_thread, timed_join_works);
+#endif
   RUN_TEST_CASE(etcpal_thread, threads_are_time_sliced);
 }

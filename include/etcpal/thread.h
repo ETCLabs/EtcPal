@@ -58,6 +58,30 @@ extern "C" {
  * }
  * @endcode
  *
+ * On some platforms you can wait a finite time for a thread to exit:
+ *
+ * @code
+ * if (etcpal_thread_timed_join(&handle, 1000) == kEtcPalErrOk)
+ * {
+ *   // The thread is no longer running.
+ * }
+ * else
+ * {
+ *   // If etcpal_thread_timed_join() returns kEtcPalErrTimedOut, the thread failed to stop within
+ *   // the timeout given.
+ * }
+ * @endcode
+ *
+ * This behavior is platform-dependent:
+ *
+ * Platform | #ETCPAL_THREAD_HAS_TIMED_JOIN |
+ * ---------|-------------------------------|
+ * FreeRTOS | Yes                           |
+ * Linux    | No                            |
+ * macOS    | No                            |
+ * MQX      | No                            |
+ * Windows  | Yes                           |
+ *
  * Manipulate the EtcPalThreadParams structure to change parameters about the thread to be created:
  *
  * @code
@@ -164,14 +188,12 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
                                     void (*thread_fn)(void*),
                                     void* thread_arg);
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms);
+etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id);
 
 #if !defined(etcpal_thread_sleep) || DOXYGEN
 void etcpal_thread_sleep(unsigned int sleep_ms);
 #endif
-
-etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout);
-
-etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id);
 
 /**
  * @}
