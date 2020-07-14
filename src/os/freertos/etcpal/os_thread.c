@@ -79,7 +79,7 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
   if (!id)
     return kEtcPalErrInvalid;
 
-  TickType_t ticks_to_wait = (ms_timeout < 0 ? portMAX_DELAY : pdMS_TO_TICKS(ms_timeout));
+  TickType_t ticks_to_wait = (timeout_ms < 0 ? portMAX_DELAY : pdMS_TO_TICKS(timeout_ms));
   if (pdTRUE == xSemaphoreTake(id->sig, ticks_to_wait))
   {
     vSemaphoreDelete(id->sig);
