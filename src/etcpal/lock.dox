@@ -397,7 +397,7 @@ void etcpal_signal_destroy(etcpal_signal_t* id);
  *
  * EtcPal read-write locks are typically implemented using multiple OS synchronization constructs
  * under the hood.
-
+ *
  * | Platform | #ETCPAL_RWLOCK_HAS_TIMED_LOCK |
  * |----------|-------------------------------|
  * | FreeRTOS | Yes                           |

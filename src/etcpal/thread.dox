@@ -34,6 +34,14 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  */
 typedef PLATFORM_DEFINED etcpal_thread_t;
 
+/**
+ * @brief Whether etcpal_thread_timed_join() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_thread_timed_join() executes the equivalent of etcpal_thread_join(), and
+ * the timeout_ms argument is ignored.
+ */
+#define ETCPAL_THREAD_HAS_TIMED_JOIN /* platform-defined */
+
 /** 
  * @brief Create a new thread.
  *
@@ -51,7 +59,7 @@ typedef PLATFORM_DEFINED etcpal_thread_t;
  * @return #kEtcPalErrInvalid: Invalid argument.
  * @return Other codes translated from system error codes are possible.
  */
-etcpal_error_t etcpal_thread_create(etcpal_thread_t *id, const EtcPalThreadParams *params, void (*thread_fn)(void *), void *thread_arg);
+etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void *), void *thread_arg);
 
 /**
  * @brief Wait for a thread to finish execution.
@@ -63,7 +71,40 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t *id, const EtcPalThreadParam
  * @return #kEtcPalErrInvalid: id does not represent a joinable thread.
  * @return Other codes translated from system error codes are possible.
  */
-etcpal_error_t etcpal_thread_join(etcpal_thread_t *id);
+etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
+
+/**
+ * @brief Wait for a thread to finish execution, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. The value of #ETCPAL_THREAD_HAS_TIMED_JOIN can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_thread_join(), and the timeout_ms argument is
+ * ignored.
+ *
+ * @param[in] id Identifier for the thread to stop.
+ * @param[in] timeout_ms Maximum amount of time to wait for the thread, in milliseconds. If
+ *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_thread_join() was called.
+ * @return #kEtcPalErrOk: The thread was stopped.
+ * @return #kEtcPalErrInvalid: id does not represent a joinable thread.
+ * @return #kEtcPalErrTimedOut: Timed out waiting for the thread to stop.
+ * @return Other codes translated from system error codes are possible.
+ */
+ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms);
+
+/**
+ * @brief Forcefully kill a thread.
+ *
+ * **Be careful when using this function.** Depending on the state of a thread when it is
+ * terminated, shared resources or memory could not be freed, resulting in memory leaks or
+ * deadlocks.
+ *
+ * @param[in] id Identifier for the thread to terminate.
+ * @return #kEtcPalErrOk: The thread was terminated.
+ * @return #kEtcPalErrInvalid: id does not represent a joinable thread.
+ * @return Other codes translated from system error codes are possible.
+ */
+etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id);
 
 /**
  * @brief Provides a platform-neutral sleep.

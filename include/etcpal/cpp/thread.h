@@ -33,6 +33,7 @@
 #include <system_error>
 #include <type_traits>
 #include <utility>
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
 #include "etcpal/cpp/common.h"
 #include "etcpal/cpp/error.h"
@@ -173,12 +174,12 @@ public:
   Thread& SetName(const char* name) noexcept;
   Thread& SetName(const std::string& name) noexcept;
   Thread& SetPlatformData(void* platform_data) noexcept;
-  Thread& SetShutdownTimeout(unsigned int ms_timeout) noexcept;
   /// @}
 
   template <class Function, class... Args>
   Error Start(Function&& func, Args&&... args);
-  Error Join() noexcept;
+  Error Join(int timeout_ms = ETCPAL_WAIT_FOREVER) noexcept;
+  Error Terminate() noexcept;
 
   static void Sleep(unsigned int ms) noexcept;
   template <typename Rep, typename Period>
@@ -191,8 +192,6 @@ public:
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
   EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
-  static constexpr unsigned        MAX_SHUTDOWN_TIME = 500; /* half a second */
-  unsigned                         max_shutdown_time_{MAX_SHUTDOWN_TIME};
 };
 
 /// @cond Internal thread function
@@ -230,13 +229,7 @@ inline Thread::Thread(Function&& func, Args&&... args)
 inline Thread::~Thread()
 {
   if (thread_)
-  {
-    if (etcpal_thread_timed_join(thread_.get(), max_shutdown_time_) == kEtcPalErrTimedOut)
-    {
-        // THREAD DID NOT SHUTDOWN GRACEFULLY - FORCE IT
-        etcpal_thread_terminate(thread_.get());
-    }
-  }
+    etcpal_thread_join(thread_.get());
 }
 
 /// @brief Move another thread into this thread.
@@ -366,19 +359,6 @@ inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
   return *this;
 }
 
-/// @brief Set the timeout for shutting down the thread
-///
-/// This function sets the timeout for destructing a thread. If the thread has not stopped within the timeout, it is
-/// forcefully quit.
-///
-/// @param ms_timeout Number of milliseconds to wait before forcefully killing the thread upon destruction
-/// @return A reference to this thread, for method chaining.
-inline Thread& Thread::SetShutdownTimeout(unsigned ms_timeout) noexcept
-{
-  max_shutdown_time_ = ms_timeout;
-  return *this;
-}
-
 /// @brief Associate this thread object with a new thread of execution.
 ///
 /// The new thread of execution starts executing
@@ -420,20 +400,47 @@ Error Thread::Start(Function&& func, Args&&... args)
 
 /// @brief Wait for the thread to finish execution.
 ///
-/// Blocks until the thread has exited.
+/// If timeout_ms is not given, or if #ETCPAL_THREAD_HAS_TIMED_JOIN is false on this platform,
+/// blocks until the thread has exited. Otherwise, blocks up to timeout_ms waiting for the thread
+/// to exit.
 ///
+/// @param timeout_ms How long to wait for the thread to exit (default forever).
 /// @return #kEtcPalErrOk: The thread was stopped; joinable() is now false.
-/// @return #kEtcPalErrTimeout: The thread did not join within the specified timeout.
+/// @return #kEtcPalErrTimedOut: The thread did not join within the specified timeout.
 /// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
 /// @return Other codes translated from system error codes are possible.
-inline Error Thread::Join() noexcept
+inline Error Thread::Join(int timeout_ms) noexcept
 {
   if (thread_)
   {
-    Error join_res = etcpal_thread_join(thread_.get());
+    Error join_res = etcpal_thread_timed_join(thread_.get(), timeout_ms);
     if (join_res)
       thread_.reset();
     return join_res;
+  }
+  else
+  {
+    return kEtcPalErrInvalid;
+  }
+}
+
+/// @brief Forcefully kill the thread.
+///
+/// **Be careful when using this function.** Depending on the state of a thread when it is
+/// terminated, shared resources or memory could not be freed, resulting in memory leaks or
+/// deadlocks.
+///
+/// @return #kEtcPalErrOk: The thread was terminated; joinable() is now false.
+/// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
+/// @return Other codes translated from system error codes are possible.
+inline Error Thread::Terminate() noexcept
+{
+  if (thread_)
+  {
+    Error terminate_res = etcpal_thread_terminate(thread_.get());
+    if (terminate_res)
+      thread_.reset();
+    return terminate_res;
   }
   else
   {

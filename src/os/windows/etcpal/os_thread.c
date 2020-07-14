@@ -21,11 +21,13 @@
 
 #include <process.h>
 #include <string.h>
+#include "etcpal/common.h"
 #include "os_error.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
-/* THIS IS WINDOWS BLACK MAGIC, and copied from the sample code at Microsoft
+/*
+ * THIS IS WINDOWS BLACK MAGIC, and copied from the sample code at Microsoft
  * Lasciate ogne speranza, voi ch'intrate
  * Abandon all hope, ye who enter here.
  *
@@ -107,9 +109,19 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
   return kEtcPalErrInvalid;
 }
 
-etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, unsigned ms_timeout)
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 {
-  return etcpal_thread_join(id);
+  if (id)
+  {
+    DWORD wait_time = (timeout_ms < 0 ? INFINITE : timeout_ms);
+    if (WAIT_OBJECT_0 != WaitForSingleObject(id->tid, wait_time))
+    {
+      return kEtcPalErrTimedOut;
+    }
+    CloseHandle(id->tid);
+    return kEtcPalErrOk;
+  }
+  return kEtcPalErrInvalid;
 }
 
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
