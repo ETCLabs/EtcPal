@@ -101,6 +101,7 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
  *
  * @param[in] id Identifier for the thread to terminate.
  * @return #kEtcPalErrOk: The thread was terminated.
+ * @return #kEtcPalErrInvalid: id does not represent a joinable thread.
  * @return Other codes translated from system error codes are possible.
  */
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id);

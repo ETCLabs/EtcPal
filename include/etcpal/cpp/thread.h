@@ -179,6 +179,7 @@ public:
   template <class Function, class... Args>
   Error Start(Function&& func, Args&&... args);
   Error Join(int timeout_ms = ETCPAL_WAIT_FOREVER) noexcept;
+  Error Terminate() noexcept;
 
   static void Sleep(unsigned int ms) noexcept;
   template <typename Rep, typename Period>
@@ -416,6 +417,30 @@ inline Error Thread::Join(int timeout_ms) noexcept
     if (join_res)
       thread_.reset();
     return join_res;
+  }
+  else
+  {
+    return kEtcPalErrInvalid;
+  }
+}
+
+/// @brief Forcefully kill the thread.
+///
+/// **Be careful when using this function.** Depending on the state of a thread when it is
+/// terminated, shared resources or memory could not be freed, resulting in memory leaks or
+/// deadlocks.
+///
+/// @return #kEtcPalErrOk: The thread was terminated; joinable() is now false.
+/// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
+/// @return Other codes translated from system error codes are possible.
+inline Error Thread::Terminate() noexcept
+{
+  if (thread_)
+  {
+    Error terminate_res = etcpal_thread_terminate(thread_.get());
+    if (terminate_res)
+      thread_.reset();
+    return terminate_res;
   }
   else
   {

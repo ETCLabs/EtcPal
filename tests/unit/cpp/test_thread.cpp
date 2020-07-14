@@ -20,6 +20,7 @@
 #include "etcpal/cpp/thread.h"
 
 #include <vector>
+#include "etcpal/cpp/timer.h"
 #include "unity_fixture.h"
 
 extern "C" {
@@ -169,6 +170,27 @@ TEST(etcpal_cpp_thread, move_assignment_operator_works)
   TEST_ASSERT_TRUE(thread_ran);
 }
 
+#if ETCPAL_THREAD_HAS_TIMED_JOIN
+TEST(etcpal_cpp_thread, timed_join_works)
+{
+  bool           thread_run = true;
+  etcpal::Thread thrd([&]() {
+    while (thread_run)
+      etcpal::Thread::Sleep(5);
+  });
+
+  etcpal::Timer timer(100);
+  TEST_ASSERT_EQUAL(thrd.Join(10).code(), kEtcPalErrTimedOut);
+
+  // An unfortunately necessary heuristic - we assert that at least half the specified time has
+  // gone by, to account for OS slop.
+  TEST_ASSERT_GREATER_THAN_UINT32(5, timer.GetElapsed());
+
+  thread_run = false;
+  TEST_ASSERT_EQUAL(thrd.Join(100).code(), kEtcPalErrOk);
+}
+#endif
+
 TEST(etcpal_cpp_thread, param_setters_work)
 {
   bool           thread_ran = false;
@@ -211,6 +233,9 @@ TEST_GROUP_RUNNER(etcpal_cpp_thread)
   RUN_TEST_CASE(etcpal_cpp_thread, member_function);
   RUN_TEST_CASE(etcpal_cpp_thread, move_constructor_works);
   RUN_TEST_CASE(etcpal_cpp_thread, move_assignment_operator_works);
+#if ETCPAL_THREAD_HAS_TIMED_JOIN
+  RUN_TEST_CASE(etcpal_cpp_thread, timed_join_works);
+#endif
   RUN_TEST_CASE(etcpal_cpp_thread, param_setters_work);
   RUN_TEST_CASE(etcpal_cpp_thread, sleep_ms_works);
   RUN_TEST_CASE(etcpal_cpp_thread, sleep_chrono_works);
