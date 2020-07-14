@@ -234,7 +234,7 @@ inline Thread::~Thread()
     if (etcpal_thread_timed_join(thread_.get(), max_shutdown_time_) == kEtcPalErrTimedOut)
     {
         // THREAD DID NOT SHUTDOWN GRACEFULLY - FORCE IT
-        etcpal_thread_terminate(thread.get());
+        etcpal_thread_terminate(thread_.get());
     }
   }
 }
