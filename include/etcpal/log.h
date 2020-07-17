@@ -69,6 +69,10 @@
  * library available. When such libraries are present, they handle formatting and building the
  * header and thus this function should not be used.
  *
+ * The module also supports building a syslog format compliant with RFC 3164 (referred to here as
+ * "legacy syslog") for legacy product support. The RFC 3164 format is obsoleted by RFC 5424, and
+ * use of the legacy syslog format is not recommended in new code.
+ *
  * @code
  * EtcPalSyslogParams my_syslog_params;
  * my_syslog_params.facility = ETCPAL_LOG_LOCAL1;
@@ -244,7 +248,8 @@
 /** The maximum length of a syslog string that will be passed to an etcpal_log_callback function. */
 #define ETCPAL_SYSLOG_STR_MAX_LEN (ETCPAL_SYSLOG_HEADER_MAX_LEN + ETCPAL_RAW_LOG_MSG_MAX_LEN)
 
-/* Human-reaadable log string max length:
+/*
+ * Human-reaadable log string max length:
  * Timestamp:      [Referenced]
  * Space:                     1
  * Priority:                  6 ([CRIT])
