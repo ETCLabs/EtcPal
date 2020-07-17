@@ -463,10 +463,10 @@
     <name>EtcPalLogParams</name>
     <filename>struct_etc_pal_log_params.html</filename>
     <member kind="variable">
-      <type>etcpal_log_action_t</type>
+      <type>int</type>
       <name>action</name>
       <anchorfile>struct_etc_pal_log_params.html</anchorfile>
-      <anchor>a97b4c2de584d731ffb8d8ce759930691</anchor>
+      <anchor>a9ba0f2f280a2a2e49c17508af48aad91</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -513,6 +513,13 @@
       <name>syslog</name>
       <anchorfile>struct_etc_pal_log_strings.html</anchorfile>
       <anchor>a5911dbe6a47cb2b9cfbab87a8881b5b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>legacy_syslog</name>
+      <anchorfile>struct_etc_pal_log_strings.html</anchorfile>
+      <anchor>a7c969c4f61944571b31c58080a53f968</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -1470,10 +1477,10 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>etcpal_log_action_t</type>
+      <type>int</type>
       <name>log_action</name>
       <anchorfile>classetcpal_1_1_logger.html</anchorfile>
-      <anchor>a5ec18014ab4cbe6b2cf3ce90e8d6737c</anchor>
+      <anchor>a5763d3286470e0ddf797daac285d7e40</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -1529,8 +1536,8 @@
       <type>Logger &amp;</type>
       <name>SetLogAction</name>
       <anchorfile>classetcpal_1_1_logger.html</anchorfile>
-      <anchor>ad947c8fa600d19b89e362aab5405d07a</anchor>
-      <arglist>(etcpal_log_action_t log_action) noexcept</arglist>
+      <anchor>a4ef737dccf9de6bcbeaa668726a4f146</anchor>
+      <arglist>(int log_action) noexcept</arglist>
     </member>
     <member kind="function">
       <type>Logger &amp;</type>
@@ -1659,10 +1666,10 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
-      <type>etcpal_log_action_t</type>
+      <type>int</type>
       <name>log_action</name>
       <anchorfile>classetcpal_1_1_logger.html</anchorfile>
-      <anchor>a5ec18014ab4cbe6b2cf3ce90e8d6737c</anchor>
+      <anchor>a5763d3286470e0ddf797daac285d7e40</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -1718,8 +1725,8 @@
       <type>Logger &amp;</type>
       <name>SetLogAction</name>
       <anchorfile>classetcpal_1_1_logger.html</anchorfile>
-      <anchor>ad947c8fa600d19b89e362aab5405d07a</anchor>
-      <arglist>(etcpal_log_action_t log_action) noexcept</arglist>
+      <anchor>a4ef737dccf9de6bcbeaa668726a4f146</anchor>
+      <arglist>(int log_action) noexcept</arglist>
     </member>
     <member kind="function">
       <type>Logger &amp;</type>
@@ -2485,6 +2492,13 @@
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
       <anchor>aea418c2372922b6b295e06814c4fe988</anchor>
       <arglist>(int timeout_ms=ETCPAL_WAIT_FOREVER) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>Error</type>
+      <name>Terminate</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a07e5d2b8f7fce024200c4ec8a41c6570</anchor>
+      <arglist>() noexcept</arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
@@ -4073,6 +4087,41 @@
       <anchor>gaec05f1fdff3420181c0fe5ae92648e68</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_LOG_CREATE_HUMAN_READABLE</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga45d65c059c3b46a251f8ca4141ca1810</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_LOG_CREATE_SYSLOG</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaf080f0551c3c97b9297429f5d5cbfadc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_LOG_CREATE_LEGACY_SYSLOG</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga00ab18ae19f165c3d2b5c54b6c47f936</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SYSLOG_PARAMS_INIT</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>gaa0719223c22e26ee648c97be97ce2aad</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_LOG_PARAMS_INIT</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga24911b91f9e4d5043348096a3065cd41</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>struct EtcPalLogTimestamp</type>
       <name>EtcPalLogTimestamp</name>
@@ -4115,31 +4164,6 @@
       <anchor>gac6a69c52ee1d8dea2aa9d6a90d217050</anchor>
       <arglist></arglist>
     </member>
-    <member kind="enumeration">
-      <type></type>
-      <name>etcpal_log_action_t</name>
-      <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>ga10855f3c1f3816d0bd5e4687108ea1c5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>kEtcPalLogCreateSyslog</name>
-      <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5a1631725f7a5f65a9fb15767cecec5290</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>kEtcPalLogCreateHumanReadable</name>
-      <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5aa0ece7bdc03dd5b29a3be01c212f6b48</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>kEtcPalLogCreateBoth</name>
-      <anchorfile>group__etcpal__log.html</anchorfile>
-      <anchor>gga10855f3c1f3816d0bd5e4687108ea1c5a8d083dc7d2d4359fd9ce6330b9d4c2bb</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="function">
       <type>bool</type>
       <name>etcpal_create_log_str</name>
@@ -4166,6 +4190,20 @@
       <name>etcpal_vcreate_syslog_str</name>
       <anchorfile>group__etcpal__log.html</anchorfile>
       <anchor>ga943bb13f1d71efce45b30b466e757138</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format, va_list args)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_create_legacy_syslog_str</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga614043c892a15eb55d8695da85db36ca</anchor>
+      <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_vcreate_legacy_syslog_str</name>
+      <anchorfile>group__etcpal__log.html</anchorfile>
+      <anchor>ga412dd0f9c14ece292b9bfacdacf90e28</anchor>
       <arglist>(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format, va_list args)</arglist>
     </member>
     <member kind="function">

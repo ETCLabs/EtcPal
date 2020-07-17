@@ -47,6 +47,8 @@
 #define STRUCTURED_DATA_STR NILVALUE_STR
 /* LOG_LOCAL1 seems to be one that's lightly used */
 #define DEFAULT_FACILITY ETCPAL_LOG_LOCAL1
+/* 1-32 alphanumeric characters, terminated by ": " and a null */
+#define LEGACY_SYSLOG_TAG_MAX_LEN 35
 
 // clang-format off
 static const char* kLogSeverityStrings[] = {
@@ -58,6 +60,21 @@ static const char* kLogSeverityStrings[] = {
   "NOTI", // ETCPAL_LOG_NOTICE
   "INFO", // ETCPAL_LOG_INFO
   "DBUG"  // ETCPAL_LOG_DEBUG
+};
+
+static const char* kMonthNames[12] = {
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec"
 };
 // clang-format on
 
@@ -81,10 +98,19 @@ static char* create_syslog_str(char*                     buf,
                                int                       pri,
                                const char*               format,
                                va_list                   args);
+static char* create_legacy_syslog_str(char*                     buf,
+                                      size_t                    buflen,
+                                      const EtcPalLogTimestamp* timestamp,
+                                      const EtcPalSyslogParams* syslog_params,
+                                      int                       pri,
+                                      const char*               format,
+                                      va_list                   args);
 
 static void sanitize_str(char* str);
 
-static void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable);
+static void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable);
+static void make_legacy_syslog_timestamp(const EtcPalLogTimestamp* timestamp, char* buf);
+static void make_legacy_syslog_tag_str(const EtcPalSyslogParams* syslog_params, char* buf);
 static bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestamp);
 
 /*************************** Function definitions ****************************/
@@ -142,8 +168,7 @@ bool etcpal_create_log_str(char*                     buf,
 }
 
 /**
- * @brief Create a log a message with a human-readable prefix in the given buffer, with a list of
- *        format arguments already generated.
+ * @brief Create a log a message with a human-readable prefix in the given buffer.
  *
  * Buffer must be at least #ETCPAL_LOG_STR_MIN_LEN in length. This function is useful if you want
  * to create a wrapper function around etcpal_create_log_str() which also takes variable format
@@ -169,7 +194,7 @@ bool etcpal_vcreate_log_str(char*                     buf,
 }
 
 /**
- * @brief Create a log message with syslog header in the given buffer.
+ * @brief Create a log message with RFC 5424 syslog header in the given buffer.
  *
  * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length.
  *
@@ -199,8 +224,7 @@ bool etcpal_create_syslog_str(char*                     buf,
 }
 
 /**
- * @brief Create a log a message with syslog header in the given buffer, with a list of format
- *        arguments already generated.
+ * @brief Create a log a message with RFC 5424 syslog header in the given buffer.
  *
  * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length. This function is useful if you
  * want to create a wrapper function around etcpal_create_syslog_str() which also takes variable
@@ -225,6 +249,64 @@ bool etcpal_vcreate_syslog_str(char*                     buf,
                                va_list                   args)
 {
   return (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
+}
+
+/**
+ * @brief Create a log message with RFC 3164 syslog header in the given buffer.
+ *
+ * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length.
+ *
+ * @param[out] buf Buffer in which to build the syslog message.
+ * @param[in] buflen Length in bytes of buf.
+ * @param[in] timestamp A timestamp representing the current time. If NULL, no timestamp will be
+ *                      added to the log message.
+ * @param[in] syslog_params A set of parameters for the syslog header.
+ * @param[in] pri Priority of this log message.
+ * @param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
+ */
+bool etcpal_create_legacy_syslog_str(char*                     buf,
+                                     size_t                    buflen,
+                                     const EtcPalLogTimestamp* timestamp,
+                                     const EtcPalSyslogParams* syslog_params,
+                                     int                       pri,
+                                     const char*               format,
+                                     ...)
+{
+  va_list args;
+  bool    res;
+  va_start(args, format);
+  res = (create_legacy_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
+  va_end(args);
+  return res;
+}
+
+/**
+ * @brief Create a log a message with RFC 3164 syslog header in the given buffer.
+ *
+ * Buffer must be at least #ETCPAL_SYSLOG_STR_MIN_LEN in length. This function is useful if you
+ * want to create a wrapper function around etcpal_create_syslog_str() which also takes variable
+ * format arguments.
+ *
+ * @param[out] buf Buffer in which to build the syslog message.
+ * @param[in] buflen Length in bytes of buf.
+ * @param[in] timestamp A timestamp representing the current time. If NULL, no timestamp will be
+ *                      added to the log message.
+ * @param[in] syslog_params A set of parameters for the syslog header.
+ * @param[in] pri Priority of this log message.
+ * @param[in] format Log message with printf-style format specifiers. Provide additional arguments
+ *                   as appropriate for format specifiers.
+ * @param[in] args Argument list for the format specifiers in format.
+ */
+bool etcpal_vcreate_legacy_syslog_str(char*                     buf,
+                                      size_t                    buflen,
+                                      const EtcPalLogTimestamp* timestamp,
+                                      const EtcPalSyslogParams* syslog_params,
+                                      int                       pri,
+                                      const char*               format,
+                                      va_list                   args)
+{
+  return (create_legacy_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
 }
 
 /**
@@ -263,7 +345,7 @@ bool etcpal_validate_log_params(EtcPalLogParams* params)
     return false;
   }
 
-  if (params->action == kEtcPalLogCreateSyslog || params->action == kEtcPalLogCreateBoth)
+  if (params->action & (ETCPAL_LOG_CREATE_SYSLOG | ETCPAL_LOG_CREATE_LEGACY_SYSLOG))
   {
     etcpal_sanitize_syslog_params(&params->syslog_params);
   }
@@ -347,54 +429,71 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
 
   if (etcpal_mutex_lock(&buf_lock))
   {
-    static char      syslogmsg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
-    static char      humanlogmsg[ETCPAL_LOG_STR_MAX_LEN + 1];
-    EtcPalLogStrings strings = {NULL, NULL, NULL};
+    static char      syslog_msg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
+    static char      legacy_syslog_msg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
+    static char      human_log_msg[ETCPAL_LOG_STR_MAX_LEN + 1];
+    EtcPalLogStrings strings = {NULL, NULL, NULL, NULL, 0};
     strings.priority = pri;
 
-    if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateSyslog)
+    // In the below blocks, we check if the va_list will need to be reused further down - if so,
+    // the va_list must be copied. For more info on using a va_list multiple times, see:
+    // https://wiki.sei.cmu.edu/confluence/display/c/MSC39-C.+Do+not+call+va_arg%28%29+on+a+va_list+that+has+an+indeterminate+value
+    // https://stackoverflow.com/a/26919307
+    if (params->action & ETCPAL_LOG_CREATE_HUMAN_READABLE)
     {
-      // If we are calling both vcreate functions, we will need to copy the va_list.
-      // For more info on using a va_list multiple times, see:
-      // https://wiki.sei.cmu.edu/confluence/display/c/MSC39-C.+Do+not+call+va_arg%28%29+on+a+va_list+that+has+an+indeterminate+value
-      // https://stackoverflow.com/a/26919307
-      if (params->action == kEtcPalLogCreateBoth)
+      if (params->action & (ETCPAL_LOG_CREATE_SYSLOG | ETCPAL_LOG_CREATE_LEGACY_SYSLOG))
       {
         va_list args_copy;
         va_copy(args_copy, args);
-        strings.raw = create_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
+        strings.raw = create_log_str(human_log_msg, ETCPAL_LOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL, pri,
+                                     format, args_copy);
+        va_end(args_copy);
+      }
+      else
+      {
+        strings.raw =
+            create_log_str(human_log_msg, ETCPAL_LOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL, pri, format, args);
+      }
+      if (strings.raw)
+        strings.human_readable = human_log_msg;
+    }
+
+    if (params->action & ETCPAL_LOG_CREATE_SYSLOG)
+    {
+      if (params->action & ETCPAL_LOG_CREATE_LEGACY_SYSLOG)
+      {
+        va_list args_copy;
+        va_copy(args_copy, args);
+        strings.raw = create_syslog_str(syslog_msg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
                                         &params->syslog_params, pri, format, args_copy);
         va_end(args_copy);
       }
       else
       {
-        strings.raw = create_syslog_str(syslogmsg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
+        strings.raw = create_syslog_str(syslog_msg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
                                         &params->syslog_params, pri, format, args);
       }
       if (strings.raw)
-      {
-        strings.syslog = syslogmsg;
-      }
+        strings.syslog = syslog_msg;
     }
 
-    if (params->action == kEtcPalLogCreateBoth || params->action == kEtcPalLogCreateHumanReadable)
+    if (params->action & ETCPAL_LOG_CREATE_LEGACY_SYSLOG)
     {
-      strings.raw =
-          create_log_str(humanlogmsg, ETCPAL_LOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL, pri, format, args);
+      strings.raw = create_legacy_syslog_str(legacy_syslog_msg, ETCPAL_SYSLOG_STR_MAX_LEN + 1,
+                                             have_time ? &timestamp : NULL, &params->syslog_params, pri, format, args);
       if (strings.raw)
-      {
-        strings.human_readable = humanlogmsg;
-      }
+        strings.legacy_syslog = legacy_syslog_msg;
     }
 
     params->log_fn(params->context, &strings);
-
     etcpal_mutex_unlock(&buf_lock);
   }
 }
 
-/* Create a log message with a human-readable header given the appropriate va_list. Returns a
- * pointer to the original message within the log message, or NULL on failure. */
+/*
+ * Create a log message with a human-readable header given the appropriate va_list. Returns a
+ * pointer to the original message within the log message, or NULL on failure.
+ */
 char* create_log_str(char*                     buf,
                      size_t                    buflen,
                      const EtcPalLogTimestamp* timestamp,
@@ -406,7 +505,7 @@ char* create_log_str(char*                     buf,
     return NULL;
 
   char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
-  make_timestamp(timestamp, timestamp_str, true);
+  make_iso_timestamp(timestamp, timestamp_str, true);
 
   int header_size;
   if (timestamp_str[0] == '\0')
@@ -431,8 +530,10 @@ char* create_log_str(char*                     buf,
   }
 }
 
-/* Create a log message with syslog header given the appropriate va_list. Returns a pointer to the
- * original message within the syslog message, or NULL on failure. */
+/*
+ * Create a log message with the header specified by RFC 5424, given the appropriate va_list.
+ * Returns a pointer to the original message within the syslog message, or NULL on failure.
+ */
 char* create_syslog_str(char*                     buf,
                         size_t                    buflen,
                         const EtcPalLogTimestamp* timestamp,
@@ -445,7 +546,7 @@ char* create_syslog_str(char*                     buf,
     return NULL;
 
   char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
-  make_timestamp(timestamp, timestamp_str, false);
+  make_iso_timestamp(timestamp, timestamp_str, false);
 
   int prival = ETCPAL_LOG_PRI(pri) | syslog_params->facility;
   int syslog_header_size =
@@ -453,7 +554,58 @@ char* create_syslog_str(char*                     buf,
                timestamp_str, syslog_params->hostname[0] ? syslog_params->hostname : NILVALUE_STR,
                syslog_params->app_name[0] ? syslog_params->app_name : NILVALUE_STR,
                syslog_params->procid[0] ? syslog_params->procid : NILVALUE_STR, MSGID_STR, STRUCTURED_DATA_STR);
+  if (syslog_header_size >= 0)
+  {
+    // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
+    // This allows ETCPAL_LOG_MSG_MAX_LEN valid bytes to be written.
+    vsnprintf(&buf[syslog_header_size], buflen - (size_t)syslog_header_size, format, args);
+    return &buf[syslog_header_size];
+  }
+  else
+  {
+    return NULL;
+  }
+}
 
+/*
+ * Create a log message with the header specified by RFC 3164, given the appropriate va_list.
+ * Returns a pointer to the original message within the syslog message, or NULL on failure.
+ */
+char* create_legacy_syslog_str(char*                     buf,
+                               size_t                    buflen,
+                               const EtcPalLogTimestamp* timestamp,
+                               const EtcPalSyslogParams* syslog_params,
+                               int                       pri,
+                               const char*               format,
+                               va_list                   args)
+{
+  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+    return NULL;
+
+  char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
+  make_legacy_syslog_timestamp(timestamp, timestamp_str);
+  char tag_str[LEGACY_SYSLOG_TAG_MAX_LEN];
+  make_legacy_syslog_tag_str(syslog_params, tag_str);
+
+  // Resolve the hostname
+  const char* header_format = "<%d>%s%s %s";
+  const char* hostname_str;
+  if (timestamp_str[0] != '\0')
+  {
+    if (syslog_params->hostname[0] != '\0')
+      hostname_str = syslog_params->hostname;
+    else
+      hostname_str = NILVALUE_STR;
+  }
+  else  // Hostname cannot be included without timestamp
+  {
+    header_format = "<%d>%s%s%s";
+    hostname_str = "";
+  }
+
+  int prival = ETCPAL_LOG_PRI(pri) | syslog_params->facility;
+  int syslog_header_size =
+      snprintf(buf, ETCPAL_SYSLOG_HEADER_MAX_LEN, header_format, prival, timestamp_str, hostname_str, tag_str);
   if (syslog_header_size >= 0)
   {
     // Copy in the message. vsnprintf will write up to count - 1 bytes and always null-terminates.
@@ -483,7 +635,7 @@ void sanitize_str(char* str)
 }
 
 /* Build the current timestamp. Buffer must be of length ETCPAL_LOG_TIMESTAMP_LEN. */
-void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable)
+void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable)
 {
   bool timestamp_created = false;
 
@@ -509,7 +661,6 @@ void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_r
                  timestamp->utc_offset > 0 ? "+" : "-", abs(timestamp->utc_offset) / 60,
                  abs(timestamp->utc_offset) % 60);
       }
-
       timestamp_created = true;
     }
   }
@@ -520,6 +671,53 @@ void make_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_r
       strcpy(buf, NILVALUE_STR);
     else
       buf[0] = '\0';
+  }
+}
+
+void make_legacy_syslog_timestamp(const EtcPalLogTimestamp* timestamp, char* buf)
+{
+  bool timestamp_created = false;
+
+  if (etcpal_validate_log_timestamp(timestamp))
+  {
+    // Print the basic timestamp
+    int print_res = snprintf(buf, ETCPAL_LOG_TIMESTAMP_LEN, "%s %2d %02u:%02u:%02u ", kMonthNames[timestamp->month - 1],
+                             timestamp->day, timestamp->hour, timestamp->minute, timestamp->second);
+
+    if (print_res > 0 && print_res < ETCPAL_LOG_TIMESTAMP_LEN - 1)
+    {
+      timestamp_created = true;
+    }
+  }
+
+  if (!timestamp_created)
+    buf[0] = '\0';
+}
+
+void make_legacy_syslog_tag_str(const EtcPalSyslogParams* syslog_params, char* buf)
+{
+  int tag_str_len = 0;
+  if (syslog_params->app_name[0] != '\0' && syslog_params->procid[0] != '\0')
+  {
+    tag_str_len = snprintf(buf, LEGACY_SYSLOG_TAG_MAX_LEN, "%s[%s]: ", syslog_params->app_name, syslog_params->procid);
+  }
+  else if (syslog_params->app_name[0] != '\0')
+  {
+    tag_str_len = snprintf(buf, LEGACY_SYSLOG_TAG_MAX_LEN, "%s: ", syslog_params->app_name);
+  }
+  else if (syslog_params->procid[0] != '\0')
+  {
+    tag_str_len = snprintf(buf, LEGACY_SYSLOG_TAG_MAX_LEN, "%s: ", syslog_params->procid);
+  }
+  else
+    buf[0] = '\0';
+
+  // Intelligent truncation
+  if (tag_str_len > LEGACY_SYSLOG_TAG_MAX_LEN - 1)
+  {
+    buf[LEGACY_SYSLOG_TAG_MAX_LEN - 3] = ':';
+    buf[LEGACY_SYSLOG_TAG_MAX_LEN - 2] = ' ';
+    buf[LEGACY_SYSLOG_TAG_MAX_LEN - 1] = '\0';
   }
 }
 

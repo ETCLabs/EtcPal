@@ -259,7 +259,7 @@ public:
   /// @{
   LogDispatchPolicy      dispatch_policy() const noexcept;
   int                    log_mask() const noexcept;
-  etcpal_log_action_t    log_action() const noexcept;
+  int                    log_action() const noexcept;
   int                    syslog_facility() const noexcept;
   const char*            syslog_hostname() const noexcept;
   const char*            syslog_app_name() const noexcept;
@@ -271,7 +271,7 @@ public:
   /// @{
   Logger& SetDispatchPolicy(LogDispatchPolicy new_policy) noexcept;
   Logger& SetLogMask(int log_mask) noexcept;
-  Logger& SetLogAction(etcpal_log_action_t log_action) noexcept;
+  Logger& SetLogAction(int log_action) noexcept;
   Logger& SetSyslogFacility(int facility) noexcept;
   Logger& SetSyslogHostname(const char* hostname) noexcept;
   Logger& SetSyslogHostname(const std::string& hostname) noexcept;
@@ -329,7 +329,7 @@ extern "C" inline void LogTimestampFn(void* context, EtcPalLogTimestamp* timesta
 inline Logger::Logger()
 {
   // Default logging parameters
-  log_params_.action = kEtcPalLogCreateHumanReadable;
+  log_params_.action = ETCPAL_LOG_CREATE_HUMAN_READABLE;
   log_params_.log_fn = LogCallbackFn;
   log_params_.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
   log_params_.time_fn = LogTimestampFn;
@@ -505,7 +505,7 @@ inline int Logger::log_mask() const noexcept
 }
 
 /// @brief Get the current log action.
-inline etcpal_log_action_t Logger::log_action() const noexcept
+inline int Logger::log_action() const noexcept
 {
   return log_params_.action;
 }
@@ -569,7 +569,7 @@ inline Logger& Logger::SetLogMask(int log_mask) noexcept
 }
 
 /// @brief Set the types of log messages to create and dispatch to the LogMessageHandler.
-inline Logger& Logger::SetLogAction(etcpal_log_action_t log_action) noexcept
+inline Logger& Logger::SetLogAction(int log_action) noexcept
 {
   log_params_.action = log_action;
   return *this;
