@@ -379,6 +379,9 @@ EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_
  */
 bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2, const EtcPalIpAddr* netmask)
 {
+  if (!ip1 || !ip2 || !netmask)
+    return false;
+
   if (ETCPAL_IP_IS_V4(ip1) && ETCPAL_IP_IS_V4(ip2) && ETCPAL_IP_IS_V4(netmask))
   {
     return ((ETCPAL_IP_V4_ADDRESS(ip1) & ETCPAL_IP_V4_ADDRESS(netmask)) ==
@@ -386,12 +389,12 @@ bool etcpal_ip_network_portions_equal(const EtcPalIpAddr* ip1, const EtcPalIpAdd
   }
   else if (ETCPAL_IP_IS_V6(ip1) && ETCPAL_IP_IS_V6(ip2) && ETCPAL_IP_IS_V6(netmask))
   {
-    size_t          i;
-    const uint32_t* p1 = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(ip1);
-    const uint32_t* p2 = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(ip2);
-    const uint32_t* pm = (const uint32_t*)ETCPAL_IP_V6_ADDRESS(netmask);
+    size_t         i;
+    const uint8_t* p1 = ETCPAL_IP_V6_ADDRESS(ip1);
+    const uint8_t* p2 = ETCPAL_IP_V6_ADDRESS(ip2);
+    const uint8_t* pm = ETCPAL_IP_V6_ADDRESS(netmask);
 
-    for (i = 0; i < ETCPAL_IPV6_BYTES / 4; ++i, ++p1, ++p2, ++pm)
+    for (i = 0; i < ETCPAL_IPV6_BYTES; ++i, ++p1, ++p2, ++pm)
     {
       if ((*p1 & *pm) != (*p2 & *pm))
         return false;
