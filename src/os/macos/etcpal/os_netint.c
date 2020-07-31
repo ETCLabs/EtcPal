@@ -52,9 +52,11 @@
 #include <net/if.h>
 #include <net/if_dl.h>
 #include <net/route.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
+#include <unistd.h>
 
 #include "etcpal/common.h"
 #include "etcpal/private/netint.h"
@@ -287,7 +289,29 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
 
 bool os_netint_is_up(unsigned int index)
 {
-  return false;
+  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+  if (ioctl_sock == -1)
+    return false;
+
+  // Translate the index to a name
+  struct ifreq if_req;
+  if (!if_indextoname(index, if_req.ifr_name))
+  {
+    close(ioctl_sock);
+    return false;
+  }
+
+  // Get the flags for the interface with the given name
+  int ioctl_res = ioctl(ioctl_sock, SIOCGIFFLAGS, &if_req);
+  close(ioctl_sock);
+  if (ioctl_res == 0)
+  {
+    return (bool)(if_req.ifr_flags & IFF_UP);
+  }
+  else
+  {
+    return false;
+  }
 }
 
 /******************************************************************************

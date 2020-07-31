@@ -134,7 +134,7 @@ int main(void)
   {
     const EtcPalNetintInfo* addr_arr;
     size_t                  addr_arr_size;
-    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v6, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv6 interface: %s (%u)\n", addr_arr->friendly_name, default_v6);
     }
