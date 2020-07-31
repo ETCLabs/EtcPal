@@ -3,6 +3,7 @@
 # For now, we are mostly using the macOS sources. This may change in the future.
 
 set(ETCPAL_OS_ADDITIONAL_SOURCES
+  ${ETCPAL_ROOT}/include/os/macos/etcpal/os_event_group.h
   ${ETCPAL_ROOT}/include/os/macos/etcpal/os_mutex.h
   ${ETCPAL_ROOT}/include/os/macos/etcpal/os_recursive_mutex.h
   ${ETCPAL_ROOT}/include/os/macos/etcpal/os_rwlock.h
@@ -12,6 +13,7 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
 
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_error.h
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_error.c
+  ${ETCPAL_ROOT}/src/os/macos/etcpal/os_event_group.c
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_mutex.c
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_recursive_mutex.c
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_rwlock.c
