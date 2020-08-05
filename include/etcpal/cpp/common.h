@@ -53,6 +53,29 @@
 #define ETCPAL_CONSTEXPR_14_OR_INLINE inline
 #endif
 
+/// @def ETCPAL_NO_EXCEPTIONS
+/// @brief Explicitly removes all "throw" statements from EtcPal C++ headers.
+///
+/// The EtcPal headers also attempt to organically detect whether exceptions are enabled using
+/// various standard defines. This definition is available to explicitly disable exceptions if
+/// that method does not work.
+#if DOXYGEN
+#define ETCPAL_NO_EXCEPTIONS
+#endif
+
+/// @cond Internal Exception Macros
+
+#if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) && !defined(ETCPAL_NO_EXCEPTIONS)
+#define ETCPAL_THROW(exception) throw exception
+#define ETCPAL_BUILDING_WITH_EXCEPTIONS 1
+#else
+#include <cstdlib>
+#define ETCPAL_THROW(exception) std::abort()
+#define ETCPAL_BUILDING_WITH_EXCEPTIONS 0
+#endif
+
+/// @endcond
+
 /// @}
 
 namespace etcpal
@@ -67,6 +90,7 @@ enum class enabler
 
 #define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
 #define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::enabler>::type
+
 }  // namespace detail
 
 /// @endcond

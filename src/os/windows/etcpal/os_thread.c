@@ -21,6 +21,7 @@
 
 #include <process.h>
 #include <string.h>
+#include "etcpal/common.h"
 #include "os_error.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
@@ -105,6 +106,32 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
     return kEtcPalErrOk;
   }
   return kEtcPalErrInvalid;
+}
+
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
+{
+  if (id)
+  {
+    DWORD wait_time = (timeout_ms < 0 ? INFINITE : timeout_ms);
+    if (WAIT_OBJECT_0 != WaitForSingleObject(id->tid, wait_time))
+    {
+      return kEtcPalErrTimedOut;
+    }
+    CloseHandle(id->tid);
+    return kEtcPalErrOk;
+  }
+  return kEtcPalErrInvalid;
+}
+
+etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
+{
+  if (!id)
+    return kEtcPalErrInvalid;
+
+  if (TerminateThread(id->tid, 0) == 0)
+    return err_os_to_etcpal(GetLastError());
+
+  return kEtcPalErrOk;
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

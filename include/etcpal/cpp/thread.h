@@ -33,6 +33,7 @@
 #include <system_error>
 #include <type_traits>
 #include <utility>
+#include "etcpal/common.h"
 #include "etcpal/thread.h"
 #include "etcpal/cpp/common.h"
 #include "etcpal/cpp/error.h"
@@ -177,7 +178,8 @@ public:
 
   template <class Function, class... Args>
   Error Start(Function&& func, Args&&... args);
-  Error Join() noexcept;
+  Error Join(int timeout_ms = ETCPAL_WAIT_FOREVER) noexcept;
+  Error Terminate() noexcept;
 
   static void Sleep(unsigned int ms) noexcept;
   template <typename Rep, typename Period>
@@ -217,7 +219,7 @@ inline Thread::Thread(Function&& func, Args&&... args)
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
   auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
-    throw result;
+    ETCPAL_THROW(result);
 }
 
 /// @brief Destroy the thread object.
@@ -398,19 +400,47 @@ Error Thread::Start(Function&& func, Args&&... args)
 
 /// @brief Wait for the thread to finish execution.
 ///
-/// Blocks until the thread has exited.
+/// If timeout_ms is not given, or if #ETCPAL_THREAD_HAS_TIMED_JOIN is false on this platform,
+/// blocks until the thread has exited. Otherwise, blocks up to timeout_ms waiting for the thread
+/// to exit.
 ///
+/// @param timeout_ms How long to wait for the thread to exit (default forever).
 /// @return #kEtcPalErrOk: The thread was stopped; joinable() is now false.
+/// @return #kEtcPalErrTimedOut: The thread did not join within the specified timeout.
 /// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
 /// @return Other codes translated from system error codes are possible.
-inline Error Thread::Join() noexcept
+inline Error Thread::Join(int timeout_ms) noexcept
 {
   if (thread_)
   {
-    Error join_res = etcpal_thread_join(thread_.get());
+    Error join_res = etcpal_thread_timed_join(thread_.get(), timeout_ms);
     if (join_res)
       thread_.reset();
     return join_res;
+  }
+  else
+  {
+    return kEtcPalErrInvalid;
+  }
+}
+
+/// @brief Forcefully kill the thread.
+///
+/// **Be careful when using this function.** Depending on the state of a thread when it is
+/// terminated, shared resources or memory could not be freed, resulting in memory leaks or
+/// deadlocks.
+///
+/// @return #kEtcPalErrOk: The thread was terminated; joinable() is now false.
+/// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
+/// @return Other codes translated from system error codes are possible.
+inline Error Thread::Terminate() noexcept
+{
+  if (thread_)
+  {
+    Error terminate_res = etcpal_thread_terminate(thread_.get());
+    if (terminate_res)
+      thread_.reset();
+    return terminate_res;
   }
   else
   {

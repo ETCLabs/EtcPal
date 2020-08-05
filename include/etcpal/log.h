@@ -22,6 +22,7 @@
 #ifndef ETCPAL_LOG_H_
 #define ETCPAL_LOG_H_
 
+#include <limits.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -68,6 +69,10 @@
  * library available. When such libraries are present, they handle formatting and building the
  * header and thus this function should not be used.
  *
+ * The module also supports building a syslog format compliant with RFC 3164 (referred to here as
+ * "legacy syslog") for legacy product support. The RFC 3164 format is obsoleted by RFC 5424, and
+ * use of the legacy syslog format is not recommended in new code.
+ *
  * @code
  * EtcPalSyslogParams my_syslog_params;
  * my_syslog_params.facility = ETCPAL_LOG_LOCAL1;
@@ -102,14 +107,18 @@
  * }
  *
  * // In an init function of some kind...
- * EtcPalLogParams log_params;
- * log_params.action = kEtcPalLogCreateHumanReadable;
+ * EtcPalLogParams log_params = ETCPAL_LOG_PARAMS_INIT;
+ * log_params.action = ETCPAL_LOG_CREATE_HUMAN_READABLE;
  * log_params.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_INFO); // Log up to and including INFO, excluding DEBUG.
  * log_params.log_fn = my_log_callback;
  * log_params.time_fn = my_time_callback;
- * log_params.context = NULL;
- * // If we set action to kEtcPalLogCreateSyslog or kEtcPalLogCreateBoth, we would also initialize
- * // log_params.syslog_params here.
+ *
+ * // action is a bitmask representing the type of header(s) to create for each log message. For
+ * // example, to create both a human-readable and syslog header:
+ * log_params.action = ETCPAL_LOG_CREATE_HUMAN_READABLE | ETCPAL_LOG_CREATE_SYSLOG;
+ * log_params.syslog_params.facility = ETCPAL_LOG_USER;
+ * strcpy(log_params.syslog_params.hostname, my_ip_addr_string);
+ * strcpy(log_params.syslog_params.app_name, "My App");
  *
  * // Pass to some library, maybe...
  * somelib_init(&log_params);
@@ -193,7 +202,8 @@
 
 /* clang-format on */
 
-/* Timestamp length:
+/*
+ * Timestamp length:
  * Date:       10 (1970-01-01)
  * "T" or " ":  1
  * Time:       12 (00:00:00.001)
@@ -205,7 +215,8 @@
 /** The maximum length of the timestamp used in syslog and human-readable logging. */
 #define ETCPAL_LOG_TIMESTAMP_LEN 30u
 
-/* Syslog header length (from RFC 5424):
+/*
+ * Syslog header length (from RFC 5424):
  * PRIVAL:                     5
  * VERSION:                    3
  * SP:                         1
@@ -237,7 +248,8 @@
 /** The maximum length of a syslog string that will be passed to an etcpal_log_callback function. */
 #define ETCPAL_SYSLOG_STR_MAX_LEN (ETCPAL_SYSLOG_HEADER_MAX_LEN + ETCPAL_RAW_LOG_MSG_MAX_LEN)
 
-/* Human-reaadable log string max length:
+/*
+ * Human-reaadable log string max length:
  * Timestamp:      [Referenced]
  * Space:                     1
  * Priority:                  6 ([CRIT])
@@ -246,8 +258,10 @@
  * ----------------------------
  * Total non-referenced:      8
  */
-/** The maximum length of a string that will be passed via the human_readable member of an
- *  EtcPalLogStrings struct. */
+/**
+ * The maximum length of a string that will be passed via the human_readable member of an
+ * EtcPalLogStrings struct.
+ */
 #define ETCPAL_LOG_STR_MAX_LEN (8u + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) + ETCPAL_RAW_LOG_MSG_MAX_LEN)
 
 /**
@@ -266,19 +280,27 @@ typedef struct EtcPalLogTimestamp
   int          utc_offset; /**< The local offset from UTC in minutes. */
 } EtcPalLogTimestamp;
 
-/** The set of log strings passed with a call to an etcpal_log_callback function. Any members not
- *  requested in the corresponding EtcPalLogParams struct will be NULL. */
+/**
+ * @brief The set of log strings passed with a call to an etcpal_log_callback function.
+ * @details Any members not requested in the corresponding EtcPalLogParams struct will be NULL.
+ */
 typedef struct EtcPalLogStrings
 {
   /** Log string formatted compliant to RFC 5424. */
   const char* syslog;
+  /** Log string formatted compliant to RFC 3164. */
+  const char* legacy_syslog;
   /** Log string formatted for readability per ETC convention. */
   const char* human_readable;
-  /** The original log string that was passed to etcpal_log() or etcpal_vlog(). Will overlap with
-   *  one of syslog_str or human_str. */
+  /**
+   * The original log string that was passed to etcpal_log() or etcpal_vlog(). Will overlap with
+   * one of the strings above.
+   */
   const char* raw;
-  /** The original log priority that was passed to etcpal_log() or etcpal_vlog(). Useful if this
-   *  log message is being passed to a system syslog daemon. */
+  /**
+   * The original log priority that was passed to etcpal_log() or etcpal_vlog(). Useful if this log
+   * message is being passed to a system syslog daemon.
+   */
   int priority;
 } EtcPalLogStrings;
 
@@ -314,58 +336,78 @@ typedef void (*EtcPalLogCallback)(void* context, const EtcPalLogStrings* strings
  */
 typedef void (*EtcPalLogTimeFn)(void* context, EtcPalLogTimestamp* timestamp);
 
-/** Which types of log message(s) the etcpal_log() and etcpal_vlog() functions create. */
-typedef enum
-{
-  /** etcpal_log() and etcpal_vlog() create a syslog message and pass it back in the
-   *  strings->syslog parameter of the log callback. */
-  kEtcPalLogCreateSyslog,
-  /** etcpal_log() and etcpal_vlog() create a human-readable log message and pass it back in the
-   *  strings->human_readable parameter of the log callback. */
-  kEtcPalLogCreateHumanReadable,
-  /** etcpal_log() and etcpal_vlog() create both a syslog message and a human-readable log message
-   *  and pass them back in the strings->syslog and strings->human_readable parameters of the log
-   *  callback. */
-  kEtcPalLogCreateBoth
-} etcpal_log_action_t;
+/** Create a log string with a human-readable prefix including timestamp and severity. */
+#define ETCPAL_LOG_CREATE_HUMAN_READABLE 0x01
+/** Create a log string with a header that complies with RFC 5424. */
+#define ETCPAL_LOG_CREATE_SYSLOG 0x02
+/** Create a log string with a header that complies with RFC 3164. */
+#define ETCPAL_LOG_CREATE_LEGACY_SYSLOG 0x04
 
 /** A set of parameters for the syslog header. */
 typedef struct EtcPalSyslogParams
 {
-  /** Syslog Facility; see RFC 5424 &sect; 6.2.1. */
-  int facility;
-  /** Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4. */
-  char hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN];
-  /** Syslog APP-NAME; see RFC 5424 &sect; 6.2.5. */
-  char app_name[ETCPAL_LOG_APP_NAME_MAX_LEN];
-  /** Syslog PROCID; see RFC 5424 &sect; 6.2.6. */
-  char procid[ETCPAL_LOG_PROCID_MAX_LEN];
+  int  facility;                              /**< Syslog Facility; see RFC 5424 &sect; 6.2.1. */
+  char hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN]; /**< Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4. */
+  char app_name[ETCPAL_LOG_APP_NAME_MAX_LEN]; /**< Syslog APP-NAME; see RFC 5424 &sect; 6.2.5. */
+  char procid[ETCPAL_LOG_PROCID_MAX_LEN];     /**< Syslog PROCID; see RFC 5424 &sect; 6.2.6. */
 } EtcPalSyslogParams;
+
+/**
+ * @brief A default-value initializer for an EtcPalSyslogParams struct.
+ *
+ * Usage:
+ * @code
+ * EtcPalSyslogParams params = ETCPAL_SYSLOG_PARAMS_INIT;
+ * // Now fill in the relevant portions as necessary with your data...
+ * @endcode
+ */
+#define ETCPAL_SYSLOG_PARAMS_INIT \
+  {                               \
+    0, {'\0'}, {'\0'}, { '\0' }   \
+  }
 
 /** A set of parameters used for the etcpal_*log() functions. */
 typedef struct EtcPalLogParams
 {
   /** What should be done when etcpal_log() or etcpal_vlog() is called. */
-  etcpal_log_action_t action;
+  int action;
   /** A callback function for the finished log string(s). */
   EtcPalLogCallback log_fn;
   /** The syslog header parameters. */
   EtcPalSyslogParams syslog_params;
   /** A mask value that determines which priority messages can be logged. */
   int log_mask;
-  /** A callback function for the etcpal_log() and etcpal_vlog() functions to obtain the time from the
-   *  application. If NULL, no timestamp will be added to log messages. */
+  /**
+   * A callback function for the etcpal_log() and etcpal_vlog() functions to obtain the time from
+   * the application. If NULL, no timestamp will be added to log messages.
+   */
   EtcPalLogTimeFn time_fn;
   /** Application context that will be passed back with the log callback function. */
   void* context;
 } EtcPalLogParams;
 
+/**
+ * @brief A default-value initializer for an EtcPalLogParams struct.
+ *
+ * Usage:
+ * @code
+ * EtcPalLogParams params = ETCPAL_LOG_PARAMS_INIT;
+ * // Now fill in the relevant portions as necessary with your data...
+ * @endcode
+ */
+#define ETCPAL_LOG_PARAMS_INIT                        \
+  {                                                   \
+    0, NULL, ETCPAL_SYSLOG_PARAMS_INIT, 0, NULL, NULL \
+  }
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* The various compiler ifdefs are to use each compiler's method of checking printf-style
- * arguments. */
+/*
+ * The various compiler ifdefs are to use each compiler's method of checking printf-style
+ * arguments.
+ */
 
 #ifdef __ICCARM__
 #pragma __printf_args
@@ -410,6 +452,29 @@ bool etcpal_vcreate_syslog_str(char*                     buf,
                                int                       pri,
                                const char*               format,
                                va_list                   args);
+
+#ifdef __ICCARM__
+#pragma __printf_args
+#endif
+bool etcpal_create_legacy_syslog_str(char*                     buf,
+                                     size_t                    buflen,
+                                     const EtcPalLogTimestamp* timestamp,
+                                     const EtcPalSyslogParams* syslog_params,
+                                     int                       pri,
+                                     const char*               format,
+                                     ...)
+#ifdef __GNUC__
+    __attribute__((__format__(__printf__, 6, 7)))
+#endif
+    ;
+
+bool etcpal_vcreate_legacy_syslog_str(char*                     buf,
+                                      size_t                    buflen,
+                                      const EtcPalLogTimestamp* timestamp,
+                                      const EtcPalSyslogParams* syslog_params,
+                                      int                       pri,
+                                      const char*               format,
+                                      va_list                   args);
 
 void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params);
 bool etcpal_validate_log_params(EtcPalLogParams* params);

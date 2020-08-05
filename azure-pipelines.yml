@@ -139,6 +139,44 @@ stages:
               mergeTestResults: true
               testRunTitle: "Linux"
 
+      # Build and test EtcPal on Linux using CMake and gcc
+      - job: linux_build_no_exceptions
+        displayName: "Linux (Exceptions Disabled)"
+        pool:
+          # TODO change to ubuntu-latest when this issue is fixed:
+          # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
+          vmImage: "ubuntu-18.04"
+        variables:
+          cmake_definitions_linux: -DCMAKE_C_FLAGS="-fsanitize=address" -DCMAKE_CXX_FLAGS="-fno-exceptions -fsanitize=address" -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address"
+        steps:
+          - script: |
+              sudo apt-get update
+              sudo apt-get install uuid-dev
+              mkdir build
+              cd build
+              cmake --version
+              cmake -G "Unix Makefiles" $(cmake_definitions) $(cmake_definitions_linux) ..
+              cmake --build .
+            displayName: "Configure and Build Project"
+          - task: UsePythonVersion@0
+            displayName: "Select Python Version"
+            inputs:
+              versionSpec: "3.x"
+              addToPath: true
+          - script: |
+              python -m pip install unity-test-parser
+              python tools/ci/run_tests.py build
+            displayName: "Run Tests"
+          - task: PublishTestResults@2
+            displayName: "Publish Test Results"
+            condition: always()
+            inputs:
+              testResultsFormat: "JUnit"
+              testResultsFiles: "test_results_*.xml"
+              searchFolder: "$(Build.SourcesDirectory)/build"
+              mergeTestResults: true
+              testRunTitle: "Linux"
+
       # Build and test EtcPal against FreeRTOS, lwIP for ARM Cortex-M4 using arm-gcc
       - job: freertos_lwip_build
         displayName: "FreeRTOS/lwIP"
@@ -189,8 +227,6 @@ stages:
           # TODO change to ubuntu-latest when this issue is fixed:
           # https://github.com/microsoft/azure-pipelines-image-generation/issues/1379
           vmImage: "ubuntu-18.04"
-        variables:
-          - group: github-push-access
         steps:
           - script: sudo apt-get install doxygen
             displayName: "Install Doxygen"
@@ -206,7 +242,7 @@ stages:
             env:
               GH_REPO_NAME: EtcPal
               GH_REPO_REF: github.com/ETCLabs/EtcPal.git
-              GH_REPO_TOKEN: $(GH_ACCESS_TOKEN)
+              GH_REPO_TOKEN: svc-etclabs:$(svc_etclabs_password)
 
   - stage: deploy
     displayName: "Deploy Build Artifacts"

@@ -18,6 +18,8 @@
  ******************************************************************************/
 
 #include "etcpal/thread.h"
+
+#include "etcpal/common.h"
 #include "os_error.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
@@ -68,6 +70,23 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
       return errno_os_to_etcpal(errno);
   }
   return kEtcPalErrInvalid;
+}
+
+etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
+{
+  ETCPAL_UNUSED_ARG(timeout_ms);
+  return etcpal_thread_join(id);
+}
+
+etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
+{
+  if (!id)
+    return kEtcPalErrInvalid;
+
+  if (pthread_cancel(id->handle) != 0)
+    return kEtcPalErrSys;
+
+  return kEtcPalErrOk;
 }
 
 void* thread_func_internal(void* arg)

@@ -123,7 +123,7 @@ TEST(etcpal_cpp_log, startup_works)
 
   // Startup should work - after starting, logging should work
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
-                       .SetLogAction(kEtcPalLogCreateHumanReadable)
+                       .SetLogAction(ETCPAL_LOG_CREATE_HUMAN_READABLE)
                        .Startup(test_log_handler));
 
   logger.Debug("Test Message");
@@ -136,18 +136,18 @@ TEST(etcpal_cpp_log, startup_works)
 // Test the dispatch_policy, log_action and log_params setters/getters
 TEST(etcpal_cpp_log, basic_getters_work)
 {
-  logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct).SetLogAction(kEtcPalLogCreateSyslog);
+  logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct).SetLogAction(ETCPAL_LOG_CREATE_SYSLOG);
 
   TEST_ASSERT_EQUAL(logger.dispatch_policy(), etcpal::LogDispatchPolicy::Direct);
-  TEST_ASSERT_EQUAL(logger.log_action(), kEtcPalLogCreateSyslog);
-  TEST_ASSERT_EQUAL(logger.log_params().action, kEtcPalLogCreateSyslog);
+  TEST_ASSERT_EQUAL(logger.log_action(), ETCPAL_LOG_CREATE_SYSLOG);
+  TEST_ASSERT_EQUAL(logger.log_params().action, ETCPAL_LOG_CREATE_SYSLOG);
 }
 
 // Test the functionality of the log mask.
 TEST(etcpal_cpp_log, log_mask_works)
 {
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
-                       .SetLogAction(kEtcPalLogCreateHumanReadable)
+                       .SetLogAction(ETCPAL_LOG_CREATE_HUMAN_READABLE)
                        .Startup(test_log_handler));
 
   logger.SetLogMask(ETCPAL_LOG_UPTO(ETCPAL_LOG_WARNING));
@@ -192,7 +192,7 @@ TEST(etcpal_cpp_log, log_mask_works)
 TEST(etcpal_cpp_log, log_functions_work)
 {
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
-                       .SetLogAction(kEtcPalLogCreateHumanReadable)
+                       .SetLogAction(ETCPAL_LOG_CREATE_HUMAN_READABLE)
                        .Startup(test_log_handler));
 
   std::string human_str;
@@ -261,7 +261,7 @@ TEST(etcpal_cpp_log, log_functions_work)
 TEST(etcpal_cpp_log, timestamps_work)
 {
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
-                       .SetLogAction(kEtcPalLogCreateHumanReadable)
+                       .SetLogAction(ETCPAL_LOG_CREATE_HUMAN_READABLE)
                        .Startup(test_log_handler));
 
   // January 22, 2020 16:57:33.123 UTC-06:00
@@ -291,7 +291,7 @@ TEST(etcpal_cpp_log, syslog_params_work)
                        .SetSyslogAppName("TestApp")
                        .SetSyslogProcId(200)
                        .SetDispatchPolicy(etcpal::LogDispatchPolicy::Direct)
-                       .SetLogAction(kEtcPalLogCreateSyslog)
+                       .SetLogAction(ETCPAL_LOG_CREATE_SYSLOG | ETCPAL_LOG_CREATE_LEGACY_SYSLOG)
                        .Startup(test_log_handler));
 
   TEST_ASSERT_EQUAL_INT(logger.syslog_facility(), ETCPAL_LOG_LOCAL1);
@@ -300,9 +300,14 @@ TEST(etcpal_cpp_log, syslog_params_work)
   TEST_ASSERT_EQUAL_STRING(logger.syslog_procid(), "200");
 
   std::string syslog_str;
-  test_log_handler.OnLogEvent([&syslog_str](const EtcPalLogStrings& strings) { syslog_str = strings.syslog; });
+  std::string legacy_syslog_str;
+  test_log_handler.OnLogEvent([&](const EtcPalLogStrings& strings) {
+    syslog_str = strings.syslog;
+    legacy_syslog_str = strings.legacy_syslog;
+  });
   logger.Log(ETCPAL_LOG_INFO, "Test Message");
   TEST_ASSERT_EQUAL_STRING(syslog_str.c_str(), "<142>1 1970-01-01T00:00:00.000Z MyHost TestApp 200 - - Test Message");
+  TEST_ASSERT_EQUAL_STRING(legacy_syslog_str.c_str(), "<142>Jan  1 00:00:00 MyHost TestApp[200]: Test Message");
 }
 
 TEST(etcpal_cpp_log, queued_dispatch_works)
@@ -314,7 +319,7 @@ TEST(etcpal_cpp_log, queued_dispatch_works)
 
   // Startup should work - after starting, logging should work
   TEST_ASSERT_TRUE(logger.SetDispatchPolicy(etcpal::LogDispatchPolicy::Queued)
-                       .SetLogAction(kEtcPalLogCreateHumanReadable)
+                       .SetLogAction(ETCPAL_LOG_CREATE_HUMAN_READABLE)
                        .SetLogMask(ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG))
                        .Startup(test_log_handler));
 

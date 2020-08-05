@@ -64,6 +64,9 @@ target_include_directories(${ETCPAL_LIB_TARGET_NAME} PUBLIC
   ${ETCPAL_OS_INCLUDE_DIR}
   ${ETCPAL_NET_INCLUDE_DIR}
 )
+if(ETCPAL_EXPLICITLY_DISABLE_EXCEPTIONS)
+  target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PUBLIC ETCPAL_NO_EXCEPTIONS)
+endif()
 
 target_include_directories(${ETCPAL_LIB_TARGET_NAME} PRIVATE ${ETCPAL_ROOT}/src)
 target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE 

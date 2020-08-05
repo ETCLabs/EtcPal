@@ -349,6 +349,64 @@ TEST(etcpal_inet, ip_mask_from_length_works)
   TEST_ASSERT_EQUAL_UINT8_ARRAY(ETCPAL_IP_V6_ADDRESS(&mask_out), v6_compare_val, ETCPAL_IPV6_BYTES);
 }
 
+TEST(etcpal_inet, ip_network_portions_equal_invalid_calls_fail)
+{
+  // NULL parameters
+  TEST_ASSERT_FALSE(etcpal_ip_network_portions_equal(NULL, NULL, NULL));
+
+  // Contrasting IP types
+  EtcPalIpAddr addr1;
+  EtcPalIpAddr addr2;
+  ETCPAL_IP_SET_V4_ADDRESS(&addr1, 0xc0a80101);
+  ETCPAL_IP_SET_V4_ADDRESS(&addr2, 0xc0a80102);
+  EtcPalIpAddr mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 64);
+
+  TEST_ASSERT_FALSE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+}
+
+TEST(etcpal_inet, ip_network_portions_equal_works_ipv4)
+{
+  EtcPalIpAddr addr1;
+  EtcPalIpAddr addr2;
+  EtcPalIpAddr mask;
+
+  ETCPAL_IP_SET_V4_ADDRESS(&addr1, 0xa5a50011);
+  ETCPAL_IP_SET_V4_ADDRESS(&addr2, 0xa5a51100);
+  ETCPAL_IP_SET_V4_ADDRESS(&mask, 0xffff0000);
+
+  TEST_ASSERT_TRUE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+
+  ETCPAL_IP_SET_V4_ADDRESS(&mask, 0xffffff00);
+  TEST_ASSERT_FALSE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+
+  ETCPAL_IP_SET_V4_ADDRESS(&mask, 0);
+  TEST_ASSERT_TRUE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+
+  ETCPAL_IP_SET_V4_ADDRESS(&mask, 0xffffffff);
+  TEST_ASSERT_FALSE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+}
+
+TEST(etcpal_inet, ip_network_portions_equal_works_ipv6)
+{
+  EtcPalIpAddr addr1;
+  EtcPalIpAddr addr2;
+
+  etcpal_string_to_ip(kEtcPalIpTypeV6, "2001:db8::1234:5678", &addr1);
+  etcpal_string_to_ip(kEtcPalIpTypeV6, "2001:db8::8765:4321", &addr2);
+  EtcPalIpAddr mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 64);
+
+  TEST_ASSERT_TRUE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+
+  mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 112);
+  TEST_ASSERT_FALSE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+
+  mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 0);
+  TEST_ASSERT_TRUE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+
+  mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
+  TEST_ASSERT_FALSE(etcpal_ip_network_portions_equal(&addr1, &addr2, &mask));
+}
+
 // For ip/string functions
 char          str[ETCPAL_IP_STRING_BYTES];
 const char*   test_ip4_1 = "0.0.0.0";
@@ -477,6 +535,9 @@ TEST_GROUP_RUNNER(etcpal_inet)
   RUN_TEST_CASE(etcpal_inet, ip_compare_functions_work);
   RUN_TEST_CASE(etcpal_inet, ip_mask_length_works);
   RUN_TEST_CASE(etcpal_inet, ip_mask_from_length_works);
+  RUN_TEST_CASE(etcpal_inet, ip_network_portions_equal_invalid_calls_fail);
+  RUN_TEST_CASE(etcpal_inet, ip_network_portions_equal_works_ipv4);
+  RUN_TEST_CASE(etcpal_inet, ip_network_portions_equal_works_ipv6);
   RUN_TEST_CASE(etcpal_inet, ip_to_string_conversion_works);
   RUN_TEST_CASE(etcpal_inet, string_to_ip_conversion_works);
   RUN_TEST_CASE(etcpal_inet, mac_is_null_works);

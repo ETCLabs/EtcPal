@@ -23,6 +23,8 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 - etcpal/lock: Functions for posting signals and semaphores from an interrupt
   context.
 - etcpal/uuid: Functions to generate version 3 and version 5 UUIDs.
+- etcpal/log: Legacy syslog creation added. Interface changed slightly to
+  support this.
 
 ### Changed
 - Naming: Library name changed from lwpa to EtcPal. All API names updated
