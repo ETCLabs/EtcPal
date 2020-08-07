@@ -83,6 +83,6 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 ### Added
 - Initial library modules, tests and documentation.
 
-[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/master...develop
+[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/stable...develop
 [0.2.0]: https://github.com/ETCLabs/EtcPal/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ETCLabs/EtcPal/releases/tag/v0.1.0
