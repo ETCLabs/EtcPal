@@ -258,6 +258,8 @@ void*         etcpal_rbiter_first(EtcPalRbIter* self, EtcPalRbTree* tree);
 void*         etcpal_rbiter_last(EtcPalRbIter* self, EtcPalRbTree* tree);
 void*         etcpal_rbiter_next(EtcPalRbIter* self);
 void*         etcpal_rbiter_prev(EtcPalRbIter* self);
+void*         etcpal_rbiter_lower_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value);
+void*         etcpal_rbiter_upper_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value);
 
 #ifdef __cplusplus
 }

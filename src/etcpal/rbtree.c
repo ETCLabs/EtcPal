@@ -748,3 +748,31 @@ void* etcpal_rbiter_prev(EtcPalRbIter* self)
 {
   return rb_iter_move(self, 0);
 }
+
+/**
+ * @brief Point a red-black tree iterator to the lower-bound of a value.
+ *
+ * Gets the first value in the tree that is not considered to go before the given value.
+ *
+ * @param[in] self Iterator to modify.
+ * @param[in] tree Tree of which to get the lower bound.
+ * @return Pointer to the lower bound value, or NULL (the end of the tree has been reached).
+ */
+void* etcpal_rbiter_lower_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+{
+  return NULL;  // TODO: Implement this.
+}
+
+/**
+ * @brief Point a red-black tree iterator to the upper-bound of a value.
+ *
+ * Gets the first value in the tree that is considered to go after the given value.
+ *
+ * @param[in] self Iterator to modify.
+ * @param[in] tree Tree of which to get the upper bound.
+ * @return Pointer to the upper bound value, or NULL (the end of the tree has been reached).
+ */
+void* etcpal_rbiter_upper_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+{
+  return NULL;  // TODO: Implement this.
+}
