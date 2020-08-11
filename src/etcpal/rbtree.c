@@ -692,7 +692,7 @@ static void* rb_iter_move(EtcPalRbIter* self, int dir)
 }
 
 /* Iterate the tree in a binary search pattern as far as it can go. Returns the final comparison result. */
-static int rb_iter_binary_search(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+static int rb_iter_binary_search(EtcPalRbIter* self, const EtcPalRbTree* tree, const void* value)
 {
   int cmp = 0;
 
@@ -783,9 +783,10 @@ void* etcpal_rbiter_prev(EtcPalRbIter* self)
  *
  * @param[in] self Iterator to modify.
  * @param[in] tree Tree of which to get the lower bound.
+ * @param[in] value The value to compare against to determine the lower bound.
  * @return Pointer to the lower bound value, or NULL (the end of the tree has been reached).
  */
-void* etcpal_rbiter_lower_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+void* etcpal_rbiter_lower_bound(EtcPalRbIter* self, const EtcPalRbTree* tree, const void* value)
 {
   void* result = NULL;
 
@@ -819,9 +820,10 @@ void* etcpal_rbiter_lower_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const vo
  *
  * @param[in] self Iterator to modify.
  * @param[in] tree Tree of which to get the upper bound.
+ * @param[in] value The value to compare against to determine the upper bound.
  * @return Pointer to the upper bound value, or NULL (the end of the tree has been reached).
  */
-void* etcpal_rbiter_upper_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+void* etcpal_rbiter_upper_bound(EtcPalRbIter* self, const EtcPalRbTree* tree, const void* value)
 {
   void* result = NULL;
 
