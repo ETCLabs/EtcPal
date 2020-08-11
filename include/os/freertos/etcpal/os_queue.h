@@ -22,7 +22,7 @@
 
 #include <stdbool.h>
 #include <FreeRTOS.h>
-#include "pal_queue.h"
+#include "etcpal/common.h"
 #include "queue.h"
 
 #ifdef __cplusplus
