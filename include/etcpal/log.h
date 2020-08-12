@@ -30,7 +30,7 @@
 
 /**
  * @defgroup etcpal_log log (Logging)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief A platform-neutral module enabling applications and libraries to log messages in either
  *        or both of syslog-compliant and human-readable format.
  *

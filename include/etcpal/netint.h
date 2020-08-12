@@ -29,7 +29,7 @@
 
 /**
  * @defgroup etcpal_netint netint (Network Interfaces)
- * @ingroup etcpal
+ * @ingroup etcpal_net
  * @brief A platform-neutral method for enumerating network interfaces.
  *
  * ```c

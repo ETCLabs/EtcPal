@@ -4,7 +4,21 @@ EtcPal is often included as a dependency by ETC libraries which are portable to 
 In this case, there are a couple of options for integrating EtcPal (and its dependent libraries)
 into your project.
 
-## Cross-compile using CMake (recommended)
+## Note on Target Platforms
+
+EtcPal has the notion of an OS target, which is used by @ref etcpal_os, and a network target, which
+is used by @ref etcpal_net. Either of these can be disabled if your target does not have the
+applicable functionality. Bare-metal embedded apps can still take advantage of EtcPal's
+@ref etcpal_core "Core Modules" (and, if you want, their associated @ref etcpal_cpp "C++ Wrappers").
+
+To disable the OS or network modules, simply set the relevant CMake target variable to "none" or
+the empty string when configuring EtcPal using CMake (see below), or exclude the relevant source
+files from your build if including EtcPal manually. In the latter case, you must also define
+`ETCPAL_NO_OS_SUPPORT` and/or `ETCPAL_NO_NETWORKING_SUPPORT` in your compile options as applicable.
+
+## Methods for Including EtcPal in Your Project
+
+### Cross-compile using CMake (recommended)
 
 CMake can be configured to invoke your embedded cross-compilation toolchain directly to build
 EtcPal and other CMake libraries. This is done by providing a
@@ -27,7 +41,7 @@ are found on the pages below:
 The method for including EtcPal via CMake is different depending on if your project already uses
 CMake or not.
 
-### If your project is a CMake project
+#### If your project is a CMake project
 
 EtcPal can be added to the build using the `add_subdirectory()` command. Before adding EtcPal as a
 subdirectory, use the variables `ETCPAL_OS_TARGET` and `ETCPAL_NET_TARGET` to set the platforms
@@ -51,7 +65,7 @@ target_include_directories(lwIP PUBLIC [lwip/include/paths...])
 add_subdirectory([path/to/EtcPal/root] EtcPal)
 ```
 
-### If your project is not a CMake project
+#### If your project is not a CMake project
 
 If your project does not use CMake, you can still consume EtcPal and dependent libraries using
 CMake. Typically this is done by adding a root CMakeLists.txt one level up from the CMake libraries
@@ -174,7 +188,7 @@ The final step is just to add those paths to your project's include/library path
 With this configuration, each time you build your project, EtcPal and its dependent libraries will
 be built if out-of-date and installed to be linked by your project.
 
-## Include the sources in your project manually
+### Include the sources in your project manually
 
 It's recommended to use CMake to build EtcPal if possible. CMake is EtcPal's native build system;
 this means that if you consume EtcPal via CMake, and you update to a later version where the list

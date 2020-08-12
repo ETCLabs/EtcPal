@@ -23,7 +23,8 @@
 #ifndef ETCPAL_CPP_COMMON_H_
 #define ETCPAL_CPP_COMMON_H_
 
-/// @defgroup etcpal_cpp etcpal/cpp (C++ Wrappers)
+/// @defgroup etcpal_cpp C++ Wrappers
+/// @ingroup etcpal
 /// @brief C++ Wrappers for EtcPal modules.
 ///
 /// EtcPal is primarily a C-language library, but C++ language wrappers for certain modules are

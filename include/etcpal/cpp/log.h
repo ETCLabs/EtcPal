@@ -32,7 +32,6 @@
 #include "etcpal/common.h"
 #include "etcpal/log.h"
 #include "etcpal/cpp/common.h"
-#include "etcpal/cpp/inet.h"
 #include "etcpal/cpp/lock.h"
 #include "etcpal/cpp/thread.h"
 

@@ -32,7 +32,7 @@
 
 /**
  * @defgroup etcpal_acn_rlp acn_rlp (ACN Root Layer Protocol)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief Parse or pack an ACN Root Layer PDU block.
  *
  * ```c

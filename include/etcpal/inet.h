@@ -30,7 +30,7 @@
 
 /**
  * @defgroup etcpal_inet inet (Internet Addressing)
- * @ingroup etcpal
+ * @ingroup etcpal_net
  * @brief Identifiers for IP addresses and network interfaces.
  *
  * ```c

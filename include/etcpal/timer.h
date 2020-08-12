@@ -27,7 +27,7 @@
 
 /**
  * @defgroup etcpal_timer timer (Timers)
- * @ingroup etcpal
+ * @ingroup etcpal_os
  * @brief Platform-neutral system timers.
  *
  * ```c

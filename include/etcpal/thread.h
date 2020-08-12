@@ -29,7 +29,7 @@ extern "C" {
 
 /**
  * @defgroup etcpal_thread thread (Threading)
- * @ingroup etcpal
+ * @ingroup etcpal_os
  * @brief Platform-neutral threads.
  *
  * ```c

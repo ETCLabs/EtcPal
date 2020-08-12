@@ -25,7 +25,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if !ETCPAL_NO_OS_SUPPORT
 #include "etcpal/lock.h"
+#endif
 #include "etcpal/mempool.h"
 #include "etcpal/private/log.h"
 
@@ -80,8 +82,10 @@ static const char* kMonthNames[12] = {
 
 /**************************** Private variables ******************************/
 
-static unsigned int   init_count;
+static unsigned int init_count;
+#if !ETCPAL_NO_OS_SUPPORT
 static etcpal_mutex_t buf_lock;
+#endif
 
 /*********************** Private function prototypes *************************/
 
@@ -119,6 +123,7 @@ static bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestam
  * messages are written into. */
 etcpal_error_t etcpal_log_init(void)
 {
+#if !ETCPAL_NO_OS_SUPPORT
   if (init_count == 0)
   {
     if (!etcpal_mutex_create(&buf_lock))
@@ -126,6 +131,7 @@ etcpal_error_t etcpal_log_init(void)
       return kEtcPalErrSys;
     }
   }
+#endif
   ++init_count;
   return kEtcPalErrOk;
 }
@@ -133,10 +139,13 @@ etcpal_error_t etcpal_log_init(void)
 /* Deinitialize the etcpal_log module. */
 void etcpal_log_deinit(void)
 {
-  if (--init_count == 0)
+  --init_count;
+#if !ETCPAL_NO_OS_SUPPORT
+  if (init_count == 0)
   {
     etcpal_mutex_destroy(&buf_lock);
   }
+#endif
 }
 
 /**
@@ -427,8 +436,10 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
   EtcPalLogTimestamp timestamp;
   bool               have_time = get_time(params, &timestamp);
 
+#if !ETCPAL_NO_OS_SUPPORT
   if (etcpal_mutex_lock(&buf_lock))
   {
+#endif
     static char      syslog_msg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
     static char      legacy_syslog_msg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
     static char      human_log_msg[ETCPAL_LOG_STR_MAX_LEN + 1];
@@ -486,8 +497,10 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     }
 
     params->log_fn(params->context, &strings);
+#if !ETCPAL_NO_OS_SUPPORT
     etcpal_mutex_unlock(&buf_lock);
   }
+#endif
 }
 
 /*

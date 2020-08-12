@@ -20,6 +20,7 @@
 #include "etcpal/common.h"
 
 #include <stdbool.h>
+#include <string.h>
 #include "etcpal/private/log.h"
 #include "etcpal/private/timer.h"
 
@@ -30,34 +31,31 @@
 
 /****************************** Private types ********************************/
 
-typedef struct EtcPalModuleInit
+typedef struct EtcPalModule
 {
-  bool initted;
+  etcpal_features_t feature_mask;
   etcpal_error_t (*init_fn)();
   void (*deinit_fn)();
-} EtcPalModuleInit;
+} EtcPalModule;
+
+#define ETCPAL_MODULE(module_name, feature_mask)           \
+  {                                                        \
+    feature_mask, module_name##_init, module_name##_deinit \
+  }
 
 /* clang-format off */
 
-#define ETCPAL_MODULE_INIT(module_name) { false, module_name##_init, module_name##_deinit }
-
-#ifdef ETCPAL_NO_NETWORKING_SUPPORT
-#define ETCPAL_MODULE_INIT_ARRAY       \
-  {                                    \
-    ETCPAL_MODULE_INIT(etcpal_timer),  \
-    ETCPAL_MODULE_INIT(etcpal_log)     \
-  }
-#define MODULE_INIT_ARRAY_SIZE 2
-#else
-#define ETCPAL_MODULE_INIT_ARRAY       \
-  {                                    \
-    ETCPAL_MODULE_INIT(etcpal_socket), \
-    ETCPAL_MODULE_INIT(etcpal_netint), \
-    ETCPAL_MODULE_INIT(etcpal_timer),  \
-    ETCPAL_MODULE_INIT(etcpal_log)     \
-  }
-#define MODULE_INIT_ARRAY_SIZE 4
+static const EtcPalModule kEtcPalModules[] = {
+  ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),
+#if !ETCPAL_NO_OS_SUPPORT
+  ETCPAL_MODULE(etcpal_timer, ETCPAL_FEATURE_TIMERS),
 #endif
+#if !ETCPAL_NO_NETWORKING_SUPPORT
+  ETCPAL_MODULE(etcpal_socket, ETCPAL_FEATURE_SOCKETS),
+  ETCPAL_MODULE(etcpal_netint, ETCPAL_FEATURE_NETINTS),
+#endif
+};
+#define MODULE_ARRAY_SIZE (sizeof(kEtcPalModules) / sizeof(kEtcPalModules[0]))
 
 /* clang-format on */
 
@@ -96,32 +94,31 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   // If any init fails, each struct contains a flag indicating whether it has already been
   // initialized, so it can be cleaned up.
 
-  EtcPalModuleInit init_array[MODULE_INIT_ARRAY_SIZE] = ETCPAL_MODULE_INIT_ARRAY;
+  bool modules_initialized[MODULE_ARRAY_SIZE] = {false};
 
-  etcpal_error_t    init_res = kEtcPalErrOk;
-  etcpal_features_t feature_mask = 1u;
+  etcpal_error_t init_res = kEtcPalErrOk;
 
   // Initialize each module in turn.
-  for (EtcPalModuleInit* init_struct = init_array; init_struct < init_array + MODULE_INIT_ARRAY_SIZE; ++init_struct)
+  for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
   {
-    if (features & feature_mask)
+    const EtcPalModule* module = &kEtcPalModules[i];
+    if (features & module->feature_mask)
     {
-      init_res = init_struct->init_fn();
+      init_res = module->init_fn();
       if (init_res == kEtcPalErrOk)
-        init_struct->initted = true;
+        modules_initialized[i] = true;
       else
         break;
     }
-    feature_mask <<= 1;
   }
 
   if (init_res != kEtcPalErrOk)
   {
     // Clean up on failure.
-    for (EtcPalModuleInit* init_struct = init_array; init_struct < init_array + MODULE_INIT_ARRAY_SIZE; ++init_struct)
+    for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
     {
-      if (init_struct->initted)
-        init_struct->deinit_fn();
+      if (modules_initialized[i])
+        kEtcPalModules[i].deinit_fn();
     }
   }
 
@@ -138,17 +135,10 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
  */
 void etcpal_deinit(etcpal_features_t features)
 {
-  EtcPalModuleInit init_array[MODULE_INIT_ARRAY_SIZE] = ETCPAL_MODULE_INIT_ARRAY;
-
-  etcpal_features_t feature_mask = 1u;
-
   // Deinitialize each module in turn.
-  for (EtcPalModuleInit* init_struct = init_array; init_struct < init_array + MODULE_INIT_ARRAY_SIZE; ++init_struct)
+  for (const EtcPalModule* module = kEtcPalModules; module < kEtcPalModules + MODULE_ARRAY_SIZE; ++module)
   {
-    if (features & feature_mask)
-    {
-      init_struct->deinit_fn();
-    }
-    feature_mask <<= 1;
+    if (features & module->feature_mask)
+      module->deinit_fn();
   }
 }
