@@ -4,7 +4,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 
 /**
  * @defgroup etcpal_lock lock (Locks and Synchronization)
- * @ingroup etcpal
+ * @ingroup etcpal_os
  * @brief Platform-neutral locks, mutexes and signals.
  *
  * ```c

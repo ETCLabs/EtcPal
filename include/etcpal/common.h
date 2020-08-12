@@ -26,7 +26,7 @@
 #include "etcpal/error.h"
 
 /**
- * @defgroup etcpal etcpal (Core Modules)
+ * @defgroup etcpal EtcPal
  * @brief ETC Platform Abstraction Layer (EtcPal): A set of platform abstraction and utility
  *        modules used by ETC software libraries.
  *
@@ -57,6 +57,24 @@
  * @endcode
  *
  * @{
+ */
+
+/*!
+ * @defgroup etcpal_core Core Modules
+ * @ingroup etcpal
+ * @brief EtcPal modules that exist independently of OS or network targets.
+ */
+
+/*!
+ * @defgroup etcpal_os OS Abstraction Modules
+ * @ingroup etcpal
+ * @brief Modules that abstract OS functionality, excluding networking.
+ */
+
+/*!
+ * @defgroup etcpal_net Network Abstraction Modules
+ * @ingroup etcpal
+ * @brief Modules that abstract networking functionality.
  */
 
 #ifdef __cplusplus
@@ -95,16 +113,6 @@ extern "C" {
 /** A mask of desired EtcPal features. See "EtcPal feature masks". */
 typedef uint32_t etcpal_features_t;
 
-/** @cond feature_offset_values */
-
-#define ETCPAL_FEATURE_SOCKETS_OFFSET 0
-#define ETCPAL_FEATURE_NETINTS_OFFSET 1
-#define ETCPAL_FEATURE_TIMERS_OFFSET 2
-#define ETCPAL_FEATURE_LOGGING_OFFSET 3
-#define ETCPAL_NUM_FEATURES 4
-
-/** @endcond */
-
 /**
  * @name EtcPal feature masks
  *
@@ -116,15 +124,11 @@ typedef uint32_t etcpal_features_t;
  * @{
  */
 
-#define ETCPAL_FEATURE_SOCKETS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_SOCKETS_OFFSET)) /**< Use the etcpal/socket module. */
-#define ETCPAL_FEATURE_NETINTS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_NETINTS_OFFSET)) /**< Use the etcpal/netint module. */
-#define ETCPAL_FEATURE_TIMERS \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_TIMERS_OFFSET)) /**< Use the etcpal/timer module. */
-#define ETCPAL_FEATURE_LOGGING \
-  ((etcpal_features_t)(1u << ETCPAL_FEATURE_LOGGING_OFFSET)) /**< Use the etcpal/log module. */
-#define ETCPAL_FEATURES_ALL 0xffffffffu                      /**< Use every available module. */
+#define ETCPAL_FEATURE_SOCKETS ((etcpal_features_t)(1u << 0)) /**< Use the etcpal/socket module. */
+#define ETCPAL_FEATURE_NETINTS ((etcpal_features_t)(1u << 1)) /**< Use the etcpal/netint module. */
+#define ETCPAL_FEATURE_TIMERS ((etcpal_features_t)(1u << 2))  /**< Use the etcpal/timer module. */
+#define ETCPAL_FEATURE_LOGGING ((etcpal_features_t)(1u << 3)) /**< Use the etcpal/log module. */
+#define ETCPAL_FEATURES_ALL 0xffffffffu                       /**< Use every available module. */
 
 /**
  * @brief Use every available module except the ones passed in mask.

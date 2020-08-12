@@ -20,6 +20,7 @@
 #include "etcpal/uuid.h"
 
 #include <stddef.h>
+#include "etcpal/common.h"
 #include "etcpal/pack.h"
 #include "md5.h"
 #include "sha1.h"
@@ -127,9 +128,8 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
   return false;
 }
 
-/* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
+#if ETCPAL_NO_OS_SUPPORT || DOXYGEN
 /**
- * @fn etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid *uuid)
  * @brief Generate a Version 1 UUID.
  *
  * This function uses the underlying OS API to create a UUID that is based on a combination of a
@@ -149,6 +149,12 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
  * @return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
  * @return #kEtcPalErrSys: An internal library of system call error occurred.
  */
+etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
+{
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
+}
+#endif
 
 /**
  * @brief Generate a Version 3 UUID.
@@ -190,9 +196,8 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
   return kEtcPalErrOk;
 }
 
-/* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
+#if ETCPAL_NO_OS_SUPPORT || DOXYGEN
 /**
- * @fn etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid *uuid)
  * @brief Generate a Version 4 UUID.
  *
  * This function uses the underlying OS API to create a UUID that is based on random data. The
@@ -208,6 +213,12 @@ etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid* ns, const void* name, s
  * @return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
  * @return #kEtcPalErrSys: An internal library of system call error occurred.
  */
+etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
+{
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
+}
+#endif
 
 /**
  * @brief Generate a Version 5 UUID.
@@ -252,9 +263,8 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
   return kEtcPalErrOk;
 }
 
-/* This documentation appears here; the actual functions are in os/[os name]/etcpal/os_uuid.c */
+#if ETCPAL_NO_OS_SUPPORT || DOXYGEN
 /**
- * @fn etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid *uuid)
  * @brief Generate the preferred UUID version of the underlying OS.
  *
  * This function uses the underlying OS API to create a UUID of the recommended type per the
@@ -269,6 +279,12 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
  * @return #kEtcPalErrNotImpl: This UUID generation method is not available on this platform.
  * @return #kEtcPalErrSys: An internal library of system call error occurred.
  */
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
+{
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
+}
+#endif
 
 /**
  * @brief Generate a UUID from a combination of a custom string and MAC address.

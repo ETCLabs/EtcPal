@@ -29,7 +29,7 @@
 
 /**
  * @defgroup etcpal_uuid uuid (UUIDs)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief Type and helper functions for a Universally Unique Identifier (UUID).
  *
  * UUIDs (per RFC 4122) are used in several libraries supported by EtcPal. This module contains a
@@ -44,6 +44,9 @@
  * etcpal_generate_os_preferred_uuid() generates the UUID type preferred by the underlying OS, and
  * etcpal_generate_device_uuid() generates a special type of V5 UUID which can be used to identify
  * embedded devices.
+ *
+ * Generation of V1 and V4 UUIDs require EtcPal to be compiled with OS abstraction support (the
+ * default in most situations).
  *
  * The basic form of UUID generation is:
  * @code
