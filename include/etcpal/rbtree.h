@@ -43,7 +43,7 @@
 
 /**
  * @defgroup etcpal_rbtree rbtree (Red-Black Trees)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief A red-black tree implementation.
  *
  * ```c

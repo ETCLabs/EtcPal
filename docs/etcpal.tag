@@ -72,7 +72,6 @@
     <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
-    <includes id="cpp_2inet_8h" name="inet.h" local="yes" imported="no">etcpal/cpp/inet.h</includes>
     <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
     <includes id="cpp_2thread_8h" name="thread.h" local="yes" imported="no">etcpal/cpp/thread.h</includes>
     <class kind="class">etcpal::LogTimestamp</class>
@@ -3304,22 +3303,12 @@
   </compound>
   <compound kind="group">
     <name>etcpal</name>
-    <title>etcpal (Core Modules)</title>
+    <title>EtcPal</title>
     <filename>group__etcpal.html</filename>
-    <subgroup>etcpal_acn_pdu</subgroup>
-    <subgroup>etcpal_acn_rlp</subgroup>
-    <subgroup>etcpal_error</subgroup>
-    <subgroup>etcpal_inet</subgroup>
-    <subgroup>etcpal_log</subgroup>
-    <subgroup>etcpal_mempool</subgroup>
-    <subgroup>etcpal_netint</subgroup>
-    <subgroup>etcpal_pack</subgroup>
-    <subgroup>etcpal_rbtree</subgroup>
-    <subgroup>etcpal_socket</subgroup>
-    <subgroup>etcpal_thread</subgroup>
-    <subgroup>etcpal_timer</subgroup>
-    <subgroup>etcpal_uuid</subgroup>
-    <subgroup>etcpal_lock</subgroup>
+    <subgroup>etcpal_core</subgroup>
+    <subgroup>etcpal_os</subgroup>
+    <subgroup>etcpal_net</subgroup>
+    <subgroup>etcpal_cpp</subgroup>
     <subgroup>etcpal_opts</subgroup>
     <member kind="define">
       <type>#define</type>
@@ -3391,6 +3380,35 @@
       <anchor>ga15560671c4e732ed46dc03a0e522d160</anchor>
       <arglist>(mask)</arglist>
     </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_core</name>
+    <title>Core Modules</title>
+    <filename>group__etcpal__core.html</filename>
+    <subgroup>etcpal_acn_pdu</subgroup>
+    <subgroup>etcpal_acn_rlp</subgroup>
+    <subgroup>etcpal_error</subgroup>
+    <subgroup>etcpal_log</subgroup>
+    <subgroup>etcpal_mempool</subgroup>
+    <subgroup>etcpal_pack</subgroup>
+    <subgroup>etcpal_rbtree</subgroup>
+    <subgroup>etcpal_uuid</subgroup>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_os</name>
+    <title>OS Abstraction Modules</title>
+    <filename>group__etcpal__os.html</filename>
+    <subgroup>etcpal_thread</subgroup>
+    <subgroup>etcpal_timer</subgroup>
+    <subgroup>etcpal_lock</subgroup>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_net</name>
+    <title>Network Abstraction Modules</title>
+    <filename>group__etcpal__net.html</filename>
+    <subgroup>etcpal_inet</subgroup>
+    <subgroup>etcpal_netint</subgroup>
+    <subgroup>etcpal_socket</subgroup>
   </compound>
   <compound kind="group">
     <name>etcpal_error</name>
@@ -5674,7 +5692,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_cpp</name>
-    <title>etcpal/cpp (C++ Wrappers)</title>
+    <title>C++ Wrappers</title>
     <filename>group__etcpal__cpp.html</filename>
     <subgroup>etcpal_cpp_error</subgroup>
     <subgroup>etcpal_cpp_inet</subgroup>

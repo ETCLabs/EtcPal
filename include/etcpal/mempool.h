@@ -27,7 +27,7 @@
 
 /**
  * @defgroup etcpal_mempool mempool (Memory Pools)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief Memory pools with fixed-size elements.
  *
  * ```c
@@ -37,8 +37,10 @@
  * This module can be used to declare memory pools containing some number of elements of an
  * arbitrary type. Only elements of that type can be allocated from the pool or freed back into it.
  * A pool element can be a singular type (e.g. `MyStruct`) or a fixed-size array (e.g.
- * `uint8_t[100]`). Allocations and deallocations are ensured to be thread_safe by an
- * #etcpal_mutex_t internally.
+ * `uint8_t[100]`).
+ *
+ * If EtcPal is built with OS abstraction support (the default in most situations), allocations and
+ * deallocations are ensured to be thread-safe by an #etcpal_mutex_t internally.
  *
  * For example:
  * @code

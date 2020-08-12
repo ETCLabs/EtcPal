@@ -26,7 +26,7 @@
 
 /**
  * @defgroup etcpal_pack pack (Buffer Packing and Unpacking)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief Platform- and endianness-independent buffer packing and unpacking.
  *
  * For 16- and 32-bit integer packing and unpacking:

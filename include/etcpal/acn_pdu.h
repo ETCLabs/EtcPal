@@ -28,7 +28,7 @@
 
 /**
  * @defgroup etcpal_acn_pdu acn_pdu (ACN Protocol Family PDUs)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN).
  *
  * ```c

@@ -21,38 +21,47 @@
 
 #include <stdbool.h>
 #include "etcpal/common.h"
+#if !ETCPAL_NO_OS_SUPPORT
 #include "etcpal/lock.h"
+#endif
 
+#if !ETCPAL_NO_OS_SUPPORT
 static bool           mempool_lock_initted = false;
 static etcpal_mutex_t mempool_lock;
+#endif
 
 etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
 {
   if (!desc || desc->pool_size == 0)
     return kEtcPalErrInvalid;
 
-  etcpal_error_t res = kEtcPalErrSys;
-
+#if !ETCPAL_NO_OS_SUPPORT
   if (!mempool_lock_initted)
   {
     if (etcpal_mutex_create(&mempool_lock))
       mempool_lock_initted = true;
     else
-      return res;
+      return kEtcPalErrSys;
   }
 
+  etcpal_error_t res = kEtcPalErrSys;
   if (etcpal_mutex_lock(&mempool_lock))
   {
+#endif
     size_t i;
     for (i = 0; i < desc->pool_size - 1; ++i)
       desc->list[i].next = &desc->list[i + 1];
     desc->list[i].next = NULL;
     desc->freelist = desc->list;
     desc->current_used = 0;
+#if !ETCPAL_NO_OS_SUPPORT
     res = kEtcPalErrOk;
     etcpal_mutex_unlock(&mempool_lock);
   }
   return res;
+#else
+  return kEtcPalErrOk;
+#endif
 }
 
 void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
@@ -62,8 +71,10 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
 
   void* elem = NULL;
 
+#if !ETCPAL_NO_OS_SUPPORT
   if (etcpal_mutex_lock(&mempool_lock))
   {
+#endif
     char*          c_pool = (char*)desc->pool;
     EtcPalMempool* elem_desc = desc->freelist;
     if (elem_desc)
@@ -76,8 +87,10 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
         ++desc->current_used;
       }
     }
+#if !ETCPAL_NO_OS_SUPPORT
     etcpal_mutex_unlock(&mempool_lock);
   }
+#endif
 
   return elem;
 }
@@ -92,14 +105,21 @@ void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
   ptrdiff_t offset = (char*)elem - c_pool;
   if (offset >= 0)
   {
-    if (((size_t)offset % desc->elem_size == 0) && etcpal_mutex_lock(&mempool_lock))
+    if (((size_t)offset % desc->elem_size == 0))
     {
-      size_t         index = (size_t)offset / desc->elem_size;
-      EtcPalMempool* elem_desc = &desc->list[index];
-      elem_desc->next = desc->freelist;
-      desc->freelist = elem_desc;
-      --desc->current_used;
-      etcpal_mutex_unlock(&mempool_lock);
+#if !ETCPAL_NO_OS_SUPPORT
+      if (etcpal_mutex_lock(&mempool_lock))
+      {
+#endif
+        size_t         index = (size_t)offset / desc->elem_size;
+        EtcPalMempool* elem_desc = &desc->list[index];
+        elem_desc->next = desc->freelist;
+        desc->freelist = elem_desc;
+        --desc->current_used;
+#if !ETCPAL_NO_OS_SUPPORT
+        etcpal_mutex_unlock(&mempool_lock);
+      }
+#endif
     }
   }
 }
@@ -109,6 +129,9 @@ size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc)
   if (!desc)
     return 0;
 
+#if ETCPAL_NO_OS_SUPPORT
+  return desc->current_used;
+#else
   size_t res = 0;
   if (etcpal_mutex_lock(&mempool_lock))
   {
@@ -116,4 +139,5 @@ size_t etcpal_mempool_used_priv(EtcPalMempoolDesc* desc)
     etcpal_mutex_unlock(&mempool_lock);
   }
   return res;
+#endif
 }

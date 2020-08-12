@@ -30,7 +30,7 @@
 
 /**
  * @defgroup etcpal_socket socket (Network Socket Interface)
- * @ingroup etcpal
+ * @ingroup etcpal_net
  * @brief Platform-neutral BSD-modeled network socket implementation.
  *
  * ```c

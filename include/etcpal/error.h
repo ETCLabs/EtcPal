@@ -26,7 +26,7 @@
 
 /**
  * @defgroup etcpal_error error (Error Handling)
- * @ingroup etcpal
+ * @ingroup etcpal_core
  * @brief Platform-neutral error codes.
  *
  * ```c
