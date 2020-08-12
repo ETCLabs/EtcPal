@@ -181,27 +181,22 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree*           self,
  */
 void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value)
 {
-  void* result = NULL;
-  if (self)
-  {
-    EtcPalRbNode* it = self->root;
-    int           cmp = 0;
+  void*        result = NULL;
+  EtcPalRbIter tree_iter;
 
-    while (it)
-    {
-      if ((cmp = self->cmp(self, it->value, value)) != 0)
-      {
-        /* If the tree supports duplicates, they should be chained to the right subtree for this to
-         * work */
-        it = it->link[cmp < 0];
-      }
-      else
-      {
-        break;
-      }
-    }
-    result = it ? it->value : NULL;
+  etcpal_rbiter_init(&tree_iter);
+
+  int cmp = rb_iter_binary_search(&tree_iter, self, value);
+
+  if ((cmp == 0) && (tree_iter.node))
+  {
+    result = tree_iter.node->value;
   }
+  else
+  {
+    result = NULL;
+  }
+
   return result;
 }
 
