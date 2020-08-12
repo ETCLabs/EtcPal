@@ -169,6 +169,33 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree*           self,
   return self;
 }
 
+/* Iterate the tree in a binary search pattern as far as it can go. Returns the final comparison result. */
+static int rb_iter_binary_search(EtcPalRbIter* self, const EtcPalRbTree* tree, const void* value)
+{
+  int cmp = 0;
+
+  self->tree = tree;
+  self->node = tree->root;
+  self->top = 0;
+
+  if (self->node)
+  {
+    cmp = tree->cmp(tree, self->node->value, value);
+
+    while ((cmp != 0) && (self->node->link[cmp < 0] != NULL))
+    {
+      /* If the tree supports duplicates, they should be chained to the right subtree for this to
+       * work */
+      self->path[self->top++] = self->node;
+      self->node = self->node->link[cmp < 0];
+
+      cmp = tree->cmp(tree, self->node->value, value);
+    }
+  }
+
+  return cmp;
+}
+
 /**
  * @brief Find a value in a red-black tree.
  *
@@ -684,33 +711,6 @@ static void* rb_iter_move(EtcPalRbIter* self, int dir)
     } while (last == self->node->link[dir]);
   }
   return self->node == NULL ? NULL : self->node->value;
-}
-
-/* Iterate the tree in a binary search pattern as far as it can go. Returns the final comparison result. */
-static int rb_iter_binary_search(EtcPalRbIter* self, const EtcPalRbTree* tree, const void* value)
-{
-  int cmp = 0;
-
-  self->tree = tree;
-  self->node = tree->root;
-  self->top = 0;
-
-  if (self->node)
-  {
-    cmp = tree->cmp(tree, self->node->value, value);
-
-    while ((cmp != 0) && (self->node->link[cmp < 0] != NULL))
-    {
-      /* If the tree supports duplicates, they should be chained to the right subtree for this to
-       * work */
-      self->path[self->top++] = self->node;
-      self->node = self->node->link[cmp < 0];
-
-      cmp = tree->cmp(tree, self->node->value, value);
-    }
-  }
-
-  return cmp;
 }
 
 /**
