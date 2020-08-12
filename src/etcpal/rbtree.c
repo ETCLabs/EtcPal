@@ -836,7 +836,7 @@ void* etcpal_rbiter_upper_bound(EtcPalRbIter* self, const EtcPalRbTree* tree, co
       else
       {
         // If cmp == 0, then the current node is equal to the value, but not after. If cmp < 0, then the current node
-        // goes before the value. In either case, the next node goes after the value.
+        // goes before the value. In either case, the next node goes after the value (there are no duplicates).
         result = etcpal_rbiter_next(self);
       }
     }
