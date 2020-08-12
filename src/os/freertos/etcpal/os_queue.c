@@ -17,12 +17,11 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/rtos/pal_queue.h"
-#include "projdefs.h"
+#include "etcpal/queue.h"
 
 /*************************** Function definitions ****************************/
 
-bool etcpal_queue_create(etcpal_queue_t* id, unsigned size, unsigned item_size)
+bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {
   if (id)
   {
@@ -31,7 +30,7 @@ bool etcpal_queue_create(etcpal_queue_t* id, unsigned size, unsigned item_size)
   return false;
 }
 
-bool etcpal_queue_add_blocking(etcpal_queue_t* id, const void* data)
+bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 {
   if (id)
   {
@@ -41,7 +40,7 @@ bool etcpal_queue_add_blocking(etcpal_queue_t* id, const void* data)
   return false;
 }
 
-bool etcpal_queue_add(etcpal_queue_t* id, const void* data, unsigned timeout_ms)
+bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms)
 {
   if (id)
   {
@@ -52,7 +51,7 @@ bool etcpal_queue_add(etcpal_queue_t* id, const void* data, unsigned timeout_ms)
   return false;
 }
 
-bool etcpal_queue_add_from_isr(etcpal_queue_t* id, const void* data)
+bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data)
 {
   if (id)
   {
@@ -64,7 +63,7 @@ bool etcpal_queue_add_from_isr(etcpal_queue_t* id, const void* data)
   return false;
 }
 
-bool etcpal_queue_get_blocking(etcpal_queue_t* id, void* data)
+bool etcpal_queue_receive(etcpal_queue_t* id, void* data)
 {
   if (id)
   {
@@ -74,7 +73,7 @@ bool etcpal_queue_get_blocking(etcpal_queue_t* id, void* data)
   return false;
 }
 
-bool etcpal_queue_get(etcpal_queue_t* id, void* data, unsigned timeout_ms)
+bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 {
   if (id)
   {

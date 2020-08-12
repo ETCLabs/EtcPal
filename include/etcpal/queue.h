@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_RTOS_QUEUE_H_
-#define ETCPAL_RTOS_QUEUE_H_
+#ifndef ETCPAL_QUEUE_H_
+#define ETCPAL_QUEUE_H_
 
 #include "etcpal/os_queue.h"
 

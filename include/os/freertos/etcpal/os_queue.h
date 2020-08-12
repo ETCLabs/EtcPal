@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <FreeRTOS.h>
 #include "etcpal/common.h"
-#include "queue.h"
+#include <queue.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,14 +32,14 @@ extern "C" {
 typedef QueueHandle_t etcpal_queue_t;
 typedef TickType_t etcpal_ticks_t;
 
-bool etcpal_queue_create(etcpal_queue_t* id, unsigned size, unsigned item_size);
+bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
 
-bool etcpal_queue_add_blocking(etcpal_queue_t* id, const void* data);
-bool etcpal_queue_add(etcpal_queue_t* id, const void* data, unsigned timeout_ms);
-bool etcpal_queue_add_from_isr(etcpal_queue_t* id, const void* data);
+bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
+bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms);
+bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data);
 
-bool etcpal_queue_get_blocking(etcpal_queue_t* id, void* data);
-bool etcpal_queue_get(etcpal_queue_t* id, void* data, unsigned timeout_ms);
+bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
+bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id);
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
