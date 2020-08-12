@@ -19,6 +19,9 @@ if(ETCPAL_HAVE_OS_SUPPORT)
   # freertos is the only platform that supports queues right now
   if (ETCPAL_OS_TARGET STREQUAL "freertos")
     target_sources(etcpal_live_unit_tests PRIVATE test_queue.c)
+  else()
+    # we need a way to keep the queue tests from running in the code for non queue cabaple platforms
+    target_compile_definitions(etcpal_live_unit_tests PRIVATE DISABLE_QUEUE_TESTS)
   endif()
 endif()
 
