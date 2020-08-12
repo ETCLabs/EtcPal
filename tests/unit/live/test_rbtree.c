@@ -116,6 +116,9 @@ void test_bound(int is_lower_bound)
   // Test bound of ints from 0 to 99 inclusive.
   for (int i = 0; i < INT_ARRAY_SIZE; ++i)
   {
+    char test_error_msg[100];
+    sprintf(test_error_msg, "The %s function failed a test on iteration %d.", function_name_log_str, i);
+
     int expected_value = -1;
 
     if (is_lower_bound)
@@ -136,42 +139,21 @@ void test_bound(int is_lower_bound)
     // Check that this value can be found with etcpal_rbtree_find.
     if (bound)
     {
-      int* found = (int*)etcpal_rbtree_find(&tree, bound);
-
-      char test_null_error_msg[100];
-      sprintf(test_null_error_msg, "The %s function for %d returned %d, which isn't in the red-black tree.",
-              function_name_log_str, i, *bound);
-      TEST_ASSERT_NOT_NULL_MESSAGE(found, test_null_error_msg);
+      TEST_ASSERT_NOT_NULL_MESSAGE(etcpal_rbtree_find(&tree, bound), test_error_msg);
     }
 
     // Check the return value against the expected result.
     if (expected_value >= INT_ARRAY_SIZE)  // Expect NULL.
     {
-      int test_error_value = -1;
-      if (bound)
-      {
-        test_error_value = *bound;
-      }
-
-      char test_not_null_error_msg[100];
-      sprintf(test_not_null_error_msg, "The %s function for %d returned %d, when it should have returned NULL.",
-              function_name_log_str, i, test_error_value);
-
-      TEST_ASSERT_NULL_MESSAGE(bound, test_not_null_error_msg);
+      TEST_ASSERT_NULL_MESSAGE(bound, test_error_msg);
     }
     else  // Expect non-NULL.
     {
-      char test_null_error_msg[100];
-      sprintf(test_null_error_msg, "The %s function for %d returned NULL, when it should have returned %d.",
-              function_name_log_str, i, expected_value);
-      TEST_ASSERT_NOT_NULL_MESSAGE(bound, test_null_error_msg);
+      TEST_ASSERT_NOT_NULL_MESSAGE(bound, test_error_msg);
 
       if (bound)
       {
-        char test_not_equal_error_msg[100];
-        sprintf(test_not_equal_error_msg, "The %s function for %d returned %d, when it should have returned %d.",
-                function_name_log_str, i, *bound, expected_value);
-        TEST_ASSERT_EQUAL_MESSAGE(*bound, expected_value, test_not_equal_error_msg);
+        TEST_ASSERT_EQUAL_MESSAGE(*bound, expected_value, test_error_msg);
       }
     }
 
