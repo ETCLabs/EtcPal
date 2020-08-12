@@ -15,6 +15,7 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     test_lock.c
     test_thread.c
     test_timer.c
+    test_queue.c
   )
 endif()
 

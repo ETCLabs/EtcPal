@@ -33,6 +33,7 @@ void run_all_tests(void)
 #if !ETCPAL_NO_OS_SUPPORT
   RUN_TEST_GROUP(etcpal_lock);
   RUN_TEST_GROUP(etcpal_thread);
+  RUN_TEST_GROUP(etcpal_queue);
   RUN_TEST_GROUP(etcpal_timer);
 #endif
 #if !ETCPAL_NO_NETWORKING_SUPPORT
