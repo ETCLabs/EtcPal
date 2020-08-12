@@ -46,7 +46,7 @@ size_t       next_node_index;
 static EtcPalRbNode* get_node();
 static int           int_compare(const EtcPalRbTree* self, const void* value_a, const void* value_b);
 static void          populate_int_arrays();
-static void          initialize_tree_with_random_even_ints(const EtcPalRbTree* self);
+static void          initialize_tree_with_random_even_ints(EtcPalRbTree* self);
 static void          test_bound(int is_lower_bound);
 
 FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
@@ -88,7 +88,7 @@ void populate_int_arrays()
   }
 }
 
-void initialize_tree_with_random_even_ints(const EtcPalRbTree* self)
+void initialize_tree_with_random_even_ints(EtcPalRbTree* self)
 {
   TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(self, int_compare, node_alloc, node_dealloc));
 
@@ -144,6 +144,7 @@ void test_bound(int is_lower_bound)
       TEST_ASSERT_NOT_NULL_MESSAGE(found, test_null_error_msg);
     }
 
+    // Check the return value against the expected result.
     if (expected_value >= INT_ARRAY_SIZE)  // Expect NULL.
     {
       int test_error_value = -1;
@@ -172,6 +173,35 @@ void test_bound(int is_lower_bound)
                 function_name_log_str, i, *bound, expected_value);
         TEST_ASSERT_EQUAL_MESSAGE(*bound, expected_value, test_not_equal_error_msg);
       }
+    }
+
+    // Check the iterator.
+    int* last = NULL;
+    int* val = bound;
+    for (int j = 0; (j < 10) && (val != NULL); ++j, (val = (int*)etcpal_rbiter_prev(&iter)))
+    {
+      TEST_ASSERT_NOT_NULL(iter.tree);
+      TEST_ASSERT_NOT_NULL(iter.node);
+
+      if (val)
+      {
+        TEST_ASSERT_EQUAL(*val % 2, 0);
+
+        if (last)
+        {
+          TEST_ASSERT_EQUAL(*last - *val, 2);
+        }
+      }
+
+      last = val;
+    }
+
+    if (val == NULL)
+    {
+      // Should be the same as when calling rbiter_next at the end, or rbiter_prev at the beginning.
+      TEST_ASSERT_NOT_NULL(iter.tree);
+      TEST_ASSERT_NULL(iter.node);
+      TEST_ASSERT_EQUAL(iter.top, 0);
     }
   }
 
