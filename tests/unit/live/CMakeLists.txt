@@ -14,11 +14,11 @@ if(ETCPAL_HAVE_OS_SUPPORT)
   target_sources(etcpal_live_unit_tests PRIVATE
     test_lock.c
     test_timer.c
-    test_queue.c
+    test_thread.c
   )
   # freertos is the only platform that supports queues right now
   if (ETCPAL_OS_TARGET STREQUAL "freertos")
-    target_sources(etcpal_live_unit_tests PRIVATE test_thread.c)
+    target_sources(etcpal_live_unit_tests PRIVATE test_queue.c)
   endif()
 endif()
 
