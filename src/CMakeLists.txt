@@ -41,7 +41,7 @@ set(ETCPAL_CORE_SOURCES
   ${ETCPAL_ROOT}/src/etcpal/uuid.c
 )
 
-if(ETCPAL_NET_TARGET AND NOT ETCPAL_NET_TARGET STREQUAL "none")
+if(ETCPAL_HAVE_NETWORKING_SUPPORT)
   set(ETCPAL_CORE_SOURCES ${ETCPAL_CORE_SOURCES}
     ${ETCPAL_ROOT}/include/etcpal/inet.h
     ${ETCPAL_ROOT}/include/etcpal/netint.h
