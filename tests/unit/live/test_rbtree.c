@@ -133,6 +133,17 @@ void test_bound(int is_lower_bound)
     int* bound = (int*)(is_lower_bound ? etcpal_rbiter_lower_bound(&iter, &tree, &i)
                                        : etcpal_rbiter_upper_bound(&iter, &tree, &i));
 
+    // Check that this value can be found with etcpal_rbtree_find.
+    if (bound)
+    {
+      int* found = (int*)etcpal_rbtree_find(&tree, bound);
+
+      char test_null_error_msg[100];
+      sprintf(test_null_error_msg, "The %s function for %d returned %d, which isn't in the red-black tree.",
+              function_name_log_str, i, *bound);
+      TEST_ASSERT_NOT_NULL_MESSAGE(found, test_null_error_msg);
+    }
+
     if (expected_value >= INT_ARRAY_SIZE)  // Expect NULL.
     {
       int test_error_value = -1;
