@@ -11,7 +11,7 @@ etcpal_add_live_test(etcpal_live_unit_tests C
 )
 
 if(ETCPAL_HAVE_OS_SUPPORT)
-  target_sources(etcpal_cpp_unit_tests PRIVATE
+  target_sources(etcpal_live_unit_tests PRIVATE
     test_lock.c
     test_thread.c
     test_timer.c
