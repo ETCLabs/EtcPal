@@ -62,7 +62,7 @@ TEST(etcpal_cpp_queue, will_timeout_on_send)
 
   // This one should NOT work because we are over our size
   data = 0xEF;
-  TEST_ASSERT_FALSE(q.Send(data));
+  TEST_ASSERT_FALSE(q.Send(data, 10));
 }
 
 TEST(etcpal_cpp_queue, will_timeout_on_receive)
