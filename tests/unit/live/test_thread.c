@@ -105,7 +105,6 @@ void oneshot(void* param)
     oneshot_task_ran = true;
 }
 
-#ifdef configUSE_TIME_SLICING && configUSE_TIME_SLICING
 // Test time slicing. One thread spins constantly; if time slicing works, the second thread should
 // get a chance to set its flag. Failure mode could be the flag not being set or a full test timeout.
 TEST(etcpal_thread, threads_are_time_sliced)
@@ -116,7 +115,6 @@ TEST(etcpal_thread, threads_are_time_sliced)
       "ts_thread",                     // thread_name
       NULL                             // platform_data
   };
-#endif
 
   // MQX requires explicit setup to time-slice tasks
 #ifdef __MQX__
@@ -151,7 +149,5 @@ TEST_GROUP_RUNNER(etcpal_thread)
 #if ETCPAL_THREAD_HAS_TIMED_JOIN
   RUN_TEST_CASE(etcpal_thread, timed_join_works);
 #endif
-#if 0
   RUN_TEST_CASE(etcpal_thread, threads_are_time_sliced);
-#endif
 }
