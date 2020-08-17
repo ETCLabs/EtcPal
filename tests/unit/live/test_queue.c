@@ -42,6 +42,7 @@ TEST(etcpal_queue, can_send_and_receive)
   char receivedData;
   TEST_ASSERT_TRUE(etcpal_queue_receive(&queue, &receivedData));
   TEST_ASSERT_EQUAL(data, receivedData);
+  etcpal_queue_destroy(&queue);
 }
 
 TEST(etcpal_queue, will_timeout_on_send)
@@ -60,6 +61,8 @@ TEST(etcpal_queue, will_timeout_on_send)
   // This one should NOT work because we are over our size
   data = 0xEF;
   TEST_ASSERT_FALSE(etcpal_queue_timed_send(&queue, &data, 10));
+
+  etcpal_queue_destroy(&queue);
 }
 
 TEST(etcpal_queue, will_timeout_on_receive)
@@ -73,6 +76,8 @@ TEST(etcpal_queue, will_timeout_on_receive)
   char receivedData = 0x00;
   TEST_ASSERT_TRUE(etcpal_queue_timed_receive(&queue, &receivedData, 10));
   TEST_ASSERT_FALSE(etcpal_queue_timed_receive(&queue, &receivedData, 10));
+
+  etcpal_queue_destroy(&queue);
 }
 
 TEST(etcpal_queue, can_detect_empty)
@@ -93,6 +98,8 @@ TEST(etcpal_queue, can_detect_empty)
 
   TEST_ASSERT_TRUE(etcpal_queue_timed_send(&queue, &data, 0));
   TEST_ASSERT_FALSE(etcpal_queue_is_empty(&queue));
+
+  etcpal_queue_destroy(&queue);
 }
 
 TEST_GROUP_RUNNER(etcpal_queue)
