@@ -27,6 +27,7 @@
 #include <chrono>
 #include <cstddef>
 #include <limits>
+#include "etcpal/common.h"
 #include "etcpal/queue.h"
 #include "etcpal/cpp/common.h"
 
@@ -63,13 +64,13 @@ namespace etcpal
 /// EXPECT_EQ(received_foo.value, 42);
 /// @endcode
 ///
-/// By default, the Send() and Receive() functions will not block, and will return an error if the
-/// queue was full on attempted send or empty on attempted receive. You can also specify timeouts
-/// to these functions:
+/// By default, the Send() and Receive() functions will block indefinitely. You can also specify
+/// timeouts to these functions:
 ///
 /// @code
 /// Foo received_foo;
 /// queue.Receive(received_foo, 50); // Block up to 50 milliseconds waiting for a Foo
+/// queue.Receive(received_foo, 0); // Return immediately if a Foo is not available
 /// queue.Receive(received_foo, ETCPAL_WAIT_FOREVER); // Block indefinitely waiting for a Foo
 ///
 /// // In a C++14 or greater environment...
@@ -77,6 +78,9 @@ namespace etcpal
 ///
 /// queue.Receive(received_foo, 2s); // Block up to 2 seconds waiting for a Foo
 /// @endcode
+///
+/// In these cases, the Send() and Receive() functions will return false if the timeout was reached
+/// while waiting.
 ///
 /// OS queues are only available on RTOS platforms. See the @ref etcpal_queue module for details on
 /// what platforms this class is available on.
@@ -92,10 +96,10 @@ public:
   explicit Queue(size_t size);
   ~Queue();
 
-  bool Send(const T& data, int timeout_ms = 0);
+  bool Send(const T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
   bool SendFromIsr(const T& data);
 
-  bool Receive(T& data, int timeout_ms = 0);
+  bool Receive(T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
   template <class Rep, class Period>
   bool Receive(T& data, const std::chrono::duration<Rep, Period>& timeout = std::chrono::milliseconds(0));
   bool IsEmpty() const;
@@ -127,9 +131,7 @@ inline Queue<T>::~Queue()
 /// attempt to be made and the add to not work. Check the return value for confirmation.
 ///
 /// @param data A reference to the data.
-/// @param timeout_ms How long to wait to add to the queue. Use #ETCPAL_WAIT_FOREVER to block
-///                   indefinitely.
-///
+/// @param timeout_ms How long to wait to add to the queue.
 /// @return The result of the attempt to add to the queue.
 template <class T>
 inline bool Queue<T>::Send(const T& data, int timeout_ms)
@@ -147,11 +149,8 @@ inline bool Queue<T>::SendFromIsr(const T& data)
 }
 
 /// @brief Get an item from the queue.
-///
 /// @param data A reference to the data that will receive the item from the queue.
-/// @param timeout_ms Amount of time to wait for data. Use #ETCPAL_WAIT_FOREVER to block
-///                   indefinitely.
-///
+/// @param timeout_ms Amount of time to wait for data.
 /// @return The result of the attempt to get an item from the queue.
 template <class T>
 inline bool Queue<T>::Receive(T& data, int timeout_ms)
