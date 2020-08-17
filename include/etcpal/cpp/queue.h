@@ -101,7 +101,7 @@ public:
 
   bool Receive(T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
   template <class Rep, class Period>
-  bool Receive(T& data, const std::chrono::duration<Rep, Period>& timeout = std::chrono::milliseconds(0));
+  bool Receive(T& data, const std::chrono::duration<Rep, Period>& timeout);
   bool IsEmpty() const;
   bool IsEmptyFromIsr() const;
 
