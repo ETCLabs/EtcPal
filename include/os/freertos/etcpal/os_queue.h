@@ -21,6 +21,7 @@
 #define ETCPAL_OS_QUEUE_H_
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <FreeRTOS.h>
 #include "etcpal/common.h"
 #include <queue.h>
@@ -30,9 +31,9 @@ extern "C" {
 #endif
 
 typedef QueueHandle_t etcpal_queue_t;
-typedef TickType_t etcpal_ticks_t;
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
+void etcpal_queue_destroy(etcpal_queue_t* id);
 
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
 bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms);

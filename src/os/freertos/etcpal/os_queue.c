@@ -30,6 +30,14 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
   return false;
 }
 
+void etcpal_queue_destroy(etcpal_queue_t* id)
+{
+  if (id)
+  {
+    vQueueDelete(*id);
+  }
+}
+
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 {
   if (id)
@@ -85,7 +93,6 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
-
   UBaseType_t numMessages = uxQueueMessagesWaiting(*id);
 
   return (numMessages == 0);

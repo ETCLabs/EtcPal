@@ -1,0 +1,174 @@
+Whoa, this isn't a real source file! What's going on here? Well, the headers for this module are
+platform-specific, and some of them implement types and functions differently (i.e. functions as
+macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
+
+/**
+ * @defgroup etcpal_queue queue (RTOS queues)
+ * @ingroup etcpal_os
+ * @brief Platform-neutral blocking RTOS queues.
+ *
+ * ```c
+ * #include "etcpal/queue.h"
+ * ```
+ *
+ * Provides a platform-neutral API to RTOS queue functionality.
+ *
+ * @code
+ * #include "etcpal/queue.h"
+ *
+ * typedef struct Foo
+ * {
+ *   int value;
+ * } Foo;
+ * etcpal_queue_t queue;
+ *
+ * void main_task(void* arg)
+ * {
+ *   etcpal_error_t res = etcpal_queue_create(&queue, 10, sizeof(Foo));
+ *   if (res != kEtcPalErrOk)
+ *   {
+ *     printf("Queue creation failed: '%s'\n", etcpal_strerror(res));
+ *     return;
+ *   }
+ *
+ *   while (true)
+ *   {
+ *     Foo foo;
+ *     // Blocks until a new Foo is retrieved from the queue
+ *     if (etcpal_queue_receive(&queue, &foo))
+ *     {
+ *       printf("Got new Foo with value %d\n", foo.value);
+ *     }
+ *     else
+ *     {
+ *       printf("Error receiving from queue.\n");
+ *     }
+ *   }
+ *
+ *   etcpal_queue_destroy(&queue);
+ * }
+ *
+ * // Send a new Foo to the queue when an interrupt comes in.
+ * void interrupt_handler(void)
+ * {
+ *   Foo foo;
+ *   foo.value = REG_READ();
+ *   etcpal_queue_send_from_isr(&queue, &foo);
+ * }
+ * @endcode
+ *
+ * There are also functions for sending and receiving with a timeout, and for checking to see if
+ * the queue is empty.
+ *
+ * Queues are only available on RTOS platforms. The current availability is as follows:
+ *
+ * | Platform | Queue Functions Available |
+ * |----------|---------------------------|
+ * | FreeRTOS | Yes                       |
+ * | Linux    | No                        |
+ * | macOS    | No                        |
+ * | MQX      | No                        |
+ * | Windows  | No                        |
+ *
+ * @{
+ */
+
+/**
+ * @brief Create a new queue.
+ * @param[out] id Queue identifier on which to create a queue. If this function returns true, id
+                  becomes valid for calls to other etcpal_queue API functions.
+ * @param[in] size The maximum number of items that can be held in the queue.
+ * @param[in] item_size The size in bytes of the item type to be held in the queue.
+ * @return true: The queue was created.
+ * @return false: The queue was not created.
+ */
+bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
+
+/**
+ * @brief Destroy a queue.
+ * @details Frees the queue's resources back to the operating system.
+ * @param[in] id Identifier for the queue to destroy.
+ */
+void etcpal_queue_destroy(etcpal_queue_t* id);
+
+/**
+ * @brief Add an item to a queue.
+ * @details Blocks until there is room in the queue to add a new item.
+ * @param[in] id Identifier for the queue to which to add an item.
+ * @param[in] data Pointer to item to add to the queue.
+ * @return true: Item added successfully.
+ * @return false: An error occurred while trying to add an item to the queue.
+ */
+bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
+
+/**
+ * @brief Add an item to a queue, giving up after a timeout.
+ * @param[in] id Identifier for the queue to which to add an item.
+ * @param[in] data Pointer to item to add to the queue.
+ * @param[in] timeout_ms Maximum amount of time to wait for space to be available, in milliseconds.
+ *                       If #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_queue_send() was called.
+ * @return true: Item added successfully.
+ * @return false: Timeout or error occurred while trying to add an item to the queue.
+ */
+bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms);
+
+/**
+ * @brief Add an item to a queue from an interrupt context.
+ *
+ * This function is meaningful on platforms which have a different method for interacting with
+ * queues from an interrupt context. This function never blocks, i.e. the behavior is similar to
+ * calling etcpal_queue_timed_send() with a value of 0 for the timeout_ms parameter.
+ *
+ * @param[in] id Identifier for the queue to which to add an item.
+ * @param[in] data Pointer to item to add to the queue.
+ * @return true: Item added successfully.
+ * @return false: Timeout or error occurred while trying to add an item to the queue.
+ */
+bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data);
+
+/**
+ * @brief Retrieve the first item from a queue.
+ * @details Blocks until there is an item available to retrieve from the queue.
+ * @param[in] id Identifier for the queue from which to retrieve an item.
+ * @param[out] data Pointer to a location to write the object's data.
+ * @return true: Item retrieved successfully.
+ * @return false: Error occurred while trying to retrieve an item from the queue.
+ */
+bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
+
+/**
+ * @brief Retrieve the first item from a queue, giving up after a timeout.
+ * @param[in] id Identifier for the queue from which to retrieve an item.
+ * @param[out] data Pointer to a location to write the object's data.
+ * @param[in] timeout_ms Maximum amount of time to wait for an item to be available, in
+ *                       milliseconds. If #ETCPAL_WAIT_FOREVER is given, the result is the same as
+ *                       if etcpal_queue_receive() was called.
+ * @return true: Item retrieved successfully.
+ * @return false: Timeout or error occurred while trying to retrieve an item from the queue.
+ */
+bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
+
+/**
+ * @brief Determine whether a queue is currently empty.
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return true: The queue is empty.
+ * @return false: The queue is not empty.
+ */
+bool etcpal_queue_is_empty(const etcpal_queue_t* id);
+
+/**
+ * @brief Determine whether a queue is currently empty from an interrupt context.
+ *
+ * This function is meaningful on platforms which have a different method for interacting with
+ * queues from an interrupt context.
+ *
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return true: The queue is empty.
+ * @return false: The queue is not empty.
+ */
+bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
+
+/*!
+ * @}
+ */

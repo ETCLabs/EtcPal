@@ -23,125 +23,174 @@
 #ifndef ETCPAL_CPP_QUEUE_H
 #define ETCPAL_CPP_QUEUE_H
 
+#include <algorithm>
+#include <chrono>
+#include <cstddef>
+#include <limits>
 #include "etcpal/queue.h"
 #include "etcpal/cpp/common.h"
-#include <chrono>
 
 namespace etcpal
 {
+/// @defgroup etcpal_cpp_queue queue (RTOS queues)
+/// @ingroup etcpal_cpp
+/// @brief C++ utilities for the @ref etcpal_queue module.
+///
+/// Provides a template class Queue which can be used to create blocking OS queues of arbitrary
+/// objects.
+///
+/// @code
+/// #include "etcpal/cpp/queue.h"
+///
+/// struct Foo
+/// {
+///   Foo(int new_value) : value(new_value) {}
+///
+///   int value{0};
+/// };
+///
+/// // Create a queue big enough to hold 15 Foo instances.
+/// etcpal::Queue<Foo> queue(15);
+/// @endcode
+///
+/// Use the Send() and Receive() functions to add items to and remove items from the queue.
+///
+/// @code
+/// queue.Send(Foo(42));
+///
+/// Foo received_foo;
+/// queue.Receive(received_foo);
+/// EXPECT_EQ(received_foo.value, 42);
+/// @endcode
+///
+/// By default, the Send() and Receive() functions will not block, and will return an error if the
+/// queue was full on attempted send or empty on attempted receive. You can also specify timeouts
+/// to these functions:
+///
+/// @code
+/// Foo received_foo;
+/// queue.Receive(received_foo, 50); // Block up to 50 milliseconds waiting for a Foo
+/// queue.Receive(received_foo, ETCPAL_WAIT_FOREVER); // Block indefinitely waiting for a Foo
+///
+/// // In a C++14 or greater environment...
+/// using namespace std::chrono_literals;
+///
+/// queue.Receive(received_foo, 2s); // Block up to 2 seconds waiting for a Foo
+/// @endcode
+///
+/// OS queues are only available on RTOS platforms. See the @ref etcpal_queue module for details on
+/// what platforms this class is available on.
+
+/// @ingroup etcpal_cpp_queue
+/// @brief An RTOS queue class.
+///
+/// See the module description for @ref etcpal_cpp_queue for usage information.
 template <class T>
 class Queue
 {
-  etcpal_queue_t m_queueHandle;
-
 public:
-  explicit Queue(unsigned size);
+  explicit Queue(size_t size);
+  ~Queue();
 
-  bool SendToQueue(const T& data, bool block = false, unsigned timeout_ms = 0);
+  bool Send(const T& data, int timeout_ms = 0);
+  bool SendFromIsr(const T& data);
 
-  bool SendToQueueFromIsr(const T& data);
-
-  bool ReceiveFromQueue(T& data, unsigned timeout_ms = 0);
-  bool ReceiveFromQueue(T& data, std::chrono::milliseconds timeout_ms = std::chrono::milliseconds(0));
-  bool ReceiveFromQueueBlocking(T& data);
+  bool Receive(T& data, int timeout_ms = 0);
+  template <class Rep, class Period>
+  bool Receive(T& data, const std::chrono::duration<Rep, Period>& timeout = std::chrono::milliseconds(0));
   bool IsEmpty() const;
   bool IsEmptyFromIsr() const;
+
+private:
+  etcpal_queue_t queue_{};
 };
 
-/// @brief Create a new queue
+/// @brief Create a new queue.
 ///
-/// @param size The size of the queue
+/// @param size The size of the queue.
 template <class T>
-inline Queue<T>::Queue(unsigned size)
+inline Queue<T>::Queue(size_t size)
 {
-  etcpal_queue_create(&m_queueHandle, size, sizeof(T));
+  etcpal_queue_create(&queue_, size, sizeof(T));
 }
 
-/// @brief Add some data to the queue
-///
-/// Returns when either the timeout expires or the add was attempted. It is still possible for the attempt to be made
-/// and the add to not work. Check the return value for confirmation.
-///
-/// @param data A reference to the data
-/// @param block If this should cause the thread to block
-/// @param timeout_ms How long to wait to add to the queue
-///
-/// @return The result of the attempt to add to the queue
+/// @brief Destroy a queue.
 template <class T>
-inline bool Queue<T>::SendToQueue(const T& data, bool block, unsigned timeout_ms)
+inline Queue<T>::~Queue()
 {
-  if (block)
-  {
-    return etcpal_queue_send(&m_queueHandle, &data);
-  }
-  else
-  {
-    return etcpal_queue_timed_send(&m_queueHandle, &data, timeout_ms);
-  }
+  etcpal_queue_destroy(&queue_);
 }
 
-/// @brief Add to a queue from an interrupt service routine. 
+/// @brief Add some data to the queue.
 ///
-/// @param data A reference to the data to be added to the queue
+/// Returns when either the timeout expires or the add was attempted. It is still possible for the
+/// attempt to be made and the add to not work. Check the return value for confirmation.
 ///
-/// @return The result of the attempt to add to the queue
+/// @param data A reference to the data.
+/// @param timeout_ms How long to wait to add to the queue. Use #ETCPAL_WAIT_FOREVER to block
+///                   indefinitely.
+///
+/// @return The result of the attempt to add to the queue.
 template <class T>
-inline bool Queue<T>::SendToQueueFromIsr(const T& data)
+inline bool Queue<T>::Send(const T& data, int timeout_ms)
 {
-  return etcpal_queue_send_from_isr(&m_queueHandle, &data);
+  return etcpal_queue_timed_send(&queue_, &data, timeout_ms);
 }
 
-/// @brief Get an item from the queue
-///
-/// @param data A reference to the data that will receive the item from the queue
-/// @param timeout_ms Amount of time to wait for data
-///
-/// @return The result of the attempt to get an item from the queue
+/// @brief Add to a queue from an interrupt service routine.
+/// @param data A reference to the data to be added to the queue.
+/// @return The result of the attempt to add to the queue.
 template <class T>
-inline bool Queue<T>::ReceiveFromQueue(T& data, unsigned timeout_ms)
+inline bool Queue<T>::SendFromIsr(const T& data)
 {
-  return etcpal_queue_timed_receive(&m_queueHandle, &data, timeout_ms);
+  return etcpal_queue_send_from_isr(&queue_, &data);
 }
 
-/// @brief Get an item from the queue
+/// @brief Get an item from the queue.
 ///
-/// @param data A reference to the data that will receive the item from the queue
-/// @param timeout_ms Amount of time to wait for data
+/// @param data A reference to the data that will receive the item from the queue.
+/// @param timeout_ms Amount of time to wait for data. Use #ETCPAL_WAIT_FOREVER to block
+///                   indefinitely.
 ///
-/// @return The result of the attempt to get an item from the queue
+/// @return The result of the attempt to get an item from the queue.
 template <class T>
-inline bool Queue<T>::ReceiveFromQueue(T& data, std::chrono::milliseconds timeout_ms)
+inline bool Queue<T>::Receive(T& data, int timeout_ms)
 {
-  return etcpal_queue_timed_receive(&m_queueHandle, &data, timeout_ms.count());
+  return etcpal_queue_timed_receive(&queue_, &data, timeout_ms);
 }
 
-/// @brief Get an item from the queue - block until it works
+/// @brief Get an item from the queue.
 ///
-/// @param data A reference to the data that will receive the item from the queue
+/// @param data A reference to the data that will receive the item from the queue.
+/// @param timeout Amount of time to wait for data.
 ///
-/// @return The result of the attempt to get an item from the queue
+/// @return The result of the attempt to get an item from the queue.
 template <class T>
-inline bool Queue<T>::ReceiveFromQueueBlocking(T& data)
+template <class Rep, class Period>
+inline bool Queue<T>::Receive(T& data, const std::chrono::duration<Rep, Period>& timeout)
 {
-  return etcpal_queue_receive(&m_queueHandle, &data);
+  int timeout_ms_clamped =
+      static_cast<int>(std::min(std::chrono::milliseconds(timeout).count(),
+                                static_cast<std::chrono::milliseconds::rep>(std::numeric_limits<int>::max())));
+  return etcpal_queue_timed_receive(&queue_, &data, timeout_ms_clamped);
 }
 
-/// @brief Check if a queue is empty
+/// @brief Check if a queue is empty.
 ///
-/// @return True if queue is empty, False otherwise
+/// @return true if queue is empty, false otherwise.
 template <class T>
 inline bool Queue<T>::IsEmpty() const
 {
-  return etcpal_queue_is_empty(&m_queueHandle);
+  return etcpal_queue_is_empty(&queue_);
 };
 
-/// @brief Check if a queue is empty from an interrupt service routin
+/// @brief Check if a queue is empty from an interrupt service routine.
 ///
-/// @return True if queue is empty, False otherwise
+/// @return true if queue is empty, false otherwise.
 template <class T>
 inline bool Queue<T>::IsEmptyFromIsr() const
 {
-  return etcpal_queue_is_empty_from_isr(&m_queueHandle);
+  return etcpal_queue_is_empty_from_isr(&queue_);
 };
 
 };  // namespace etcpal

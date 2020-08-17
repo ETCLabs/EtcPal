@@ -19,6 +19,7 @@
 
 #include "etcpal/cpp/queue.h"
 
+#include <chrono>
 #include "unity_fixture.h"
 
 extern "C" {
@@ -35,17 +36,17 @@ TEST_TEAR_DOWN(etcpal_cpp_queue)
 
 TEST(etcpal_cpp_queue, check_empty)
 {
-    etcpal::Queue<char> q(5);
-    TEST_ASSERT_TRUE(q.IsEmpty());
+  etcpal::Queue<char> q(5);
+  TEST_ASSERT_TRUE(q.IsEmpty());
 }
 
 TEST(etcpal_cpp_queue, can_send_and_receive)
 {
   etcpal::Queue<char> q(3);
-  char data = 0xDE;
-  TEST_ASSERT_TRUE(q.SendToQueue(data));
-  char receivedData;
-  TEST_ASSERT_TRUE(q.ReceiveFromQueue(receivedData, 0));
+  char                data = 0xDE;
+  TEST_ASSERT_TRUE(q.Send(data));
+  char receivedData = 0;
+  TEST_ASSERT_TRUE(q.Receive(receivedData));
   TEST_ASSERT_EQUAL(data, receivedData);
 }
 
@@ -53,30 +54,28 @@ TEST(etcpal_cpp_queue, will_timeout_on_send)
 {
   // Create queue for 3 chars
   etcpal::Queue<char> q(3);
-  char data = 0xDE;
-  TEST_ASSERT_TRUE(q.SendToQueue(data, false, 0));
+  char                data = 0xDE;
+  TEST_ASSERT_TRUE(q.Send(data));
   data = 0xAD;
-  TEST_ASSERT_TRUE(q.SendToQueue(data, false, 0));
+  TEST_ASSERT_TRUE(q.Send(data));
   data = 0xBE;
-  TEST_ASSERT_TRUE(q.SendToQueue(data, false, 0));
+  TEST_ASSERT_TRUE(q.Send(data));
 
   // This one should NOT work because we are over our size
   data = 0xEF;
-  TEST_ASSERT_FALSE(q.SendToQueue(data, false, 0));
+  TEST_ASSERT_FALSE(q.Send(data));
 }
 
 TEST(etcpal_cpp_queue, will_timeout_on_receive)
 {
-  etcpal_queue_t queue;
-
   // Create queue for 3 chars
   etcpal::Queue<char> q(3);
-  char data = 0xDE;
-  TEST_ASSERT_TRUE(q.SendToQueue(data, false, 0));
+  char                data = 0xDE;
+  TEST_ASSERT_TRUE(q.Send(data));
   data = 0xAD;
   char receivedData = 0x00;
-  TEST_ASSERT_TRUE(q.ReceiveFromQueue(receivedData, 10));
-  TEST_ASSERT_FALSE(q.ReceiveFromQueue(receivedData, 10));
+  TEST_ASSERT_TRUE(q.Receive(receivedData, 10));
+  TEST_ASSERT_FALSE(q.Receive(receivedData, 10));
 }
 
 TEST(etcpal_cpp_queue, can_detect_empty)
@@ -86,14 +85,14 @@ TEST(etcpal_cpp_queue, can_detect_empty)
   TEST_ASSERT_TRUE(q.IsEmpty());
 
   char data = 0xDE;
-  TEST_ASSERT_TRUE(q.SendToQueue(data, false, 0));
+  TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_FALSE(q.IsEmpty());
 
   char receivedData = 0x00;
-  TEST_ASSERT_TRUE(q.ReceiveFromQueue(receivedData, 0));
+  TEST_ASSERT_TRUE(q.Receive(receivedData));
   TEST_ASSERT_TRUE(q.IsEmpty());
 
-  TEST_ASSERT_TRUE(q.SendToQueue(data, false, 0));
+  TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_FALSE(q.IsEmpty());
 }
 
