@@ -19,7 +19,6 @@
 
 #include "etcpal/cpp/queue.h"
 
-#include <chrono>
 #include "unity_fixture.h"
 
 extern "C" {
