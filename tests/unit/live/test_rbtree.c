@@ -46,6 +46,8 @@ size_t       next_node_index;
 static EtcPalRbNode* get_node();
 static int           int_compare(const EtcPalRbTree* self, const void* value_a, const void* value_b);
 static void          populate_int_arrays();
+static void          initialize_tree_with_random_even_ints(EtcPalRbTree* self);
+static void          test_bound(int is_lower_bound);
 
 FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
 FAKE_VOID_FUNC(node_dealloc, EtcPalRbNode*);
@@ -84,6 +86,109 @@ void populate_int_arrays()
     random_int_array[j] = random_int_array[i];
     random_int_array[i] = swap_val;
   }
+}
+
+void initialize_tree_with_random_even_ints(EtcPalRbTree* self)
+{
+  TEST_ASSERT_NOT_NULL(etcpal_rbtree_init(self, int_compare, node_alloc, node_dealloc));
+
+  // Insert even values between 0 and 98 (inclusive) into the tree at random.
+  for (int i = 0; i < INT_ARRAY_SIZE; ++i)
+  {
+    if ((random_int_array[i] % 2) == 0)
+    {
+      TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_insert(self, &random_int_array[i]));
+    }
+  }
+}
+
+/* Pass in 0 to test upper_bound, or 1 to test lower_bound. */
+void test_bound(int is_lower_bound)
+{
+  // Initialize the tree and iterator. Randomly initialize the tree with even numbers between 0 and 98 inclusive.
+  EtcPalRbTree tree;
+  EtcPalRbIter iter;
+  initialize_tree_with_random_even_ints(&tree);
+  etcpal_rbiter_init(&iter);
+
+  const char* function_name_log_str = (is_lower_bound ? "lower_bound" : "upper_bound");
+
+  // Test bound of ints from 0 to 99 inclusive.
+  for (int i = 0; i < INT_ARRAY_SIZE; ++i)
+  {
+    char test_error_msg[100];
+    sprintf(test_error_msg, "The %s function failed a test on iteration %d.", function_name_log_str, i);
+
+    int expected_value = -1;
+
+    if (is_lower_bound)
+    {
+      // Even numbers should have equivalent lower bounds.
+      // The lower bounds of the odd numbers should be the even number immediately after (if any).
+      expected_value = ((i % 2) == 0) ? (i) : (i + 1);
+    }
+    else
+    {
+      // The upper_bound should be the even number immediately after.
+      expected_value = ((i % 2) == 0) ? (i + 2) : (i + 1);
+    }
+
+    int* bound = (int*)(is_lower_bound ? etcpal_rbiter_lower_bound(&iter, &tree, &i)
+                                       : etcpal_rbiter_upper_bound(&iter, &tree, &i));
+
+    // Check that this value can be found with etcpal_rbtree_find.
+    if (bound)
+    {
+      TEST_ASSERT_NOT_NULL_MESSAGE(etcpal_rbtree_find(&tree, bound), test_error_msg);
+    }
+
+    // Check the return value against the expected result.
+    if (expected_value >= INT_ARRAY_SIZE)  // Expect NULL.
+    {
+      TEST_ASSERT_NULL_MESSAGE(bound, test_error_msg);
+    }
+    else  // Expect non-NULL.
+    {
+      TEST_ASSERT_NOT_NULL_MESSAGE(bound, test_error_msg);
+
+      if (bound)
+      {
+        TEST_ASSERT_EQUAL_MESSAGE(*bound, expected_value, test_error_msg);
+      }
+    }
+
+    // Check the iterator.
+    int* last = NULL;
+    int* val = bound;
+    for (int j = 0; (j < 10) && (val != NULL); ++j, (val = (int*)etcpal_rbiter_prev(&iter)))
+    {
+      TEST_ASSERT_NOT_NULL(iter.tree);
+      TEST_ASSERT_NOT_NULL(iter.node);
+
+      if (val)
+      {
+        TEST_ASSERT_EQUAL(*val % 2, 0);
+
+        if (last)
+        {
+          TEST_ASSERT_EQUAL(*last - *val, 2);
+        }
+      }
+
+      last = val;
+    }
+
+    if (val == NULL)
+    {
+      // Should be the same as when calling rbiter_next at the end, or rbiter_prev at the beginning.
+      TEST_ASSERT_NOT_NULL(iter.tree);
+      TEST_ASSERT_NULL(iter.node);
+      TEST_ASSERT_EQUAL(iter.top, 0);
+    }
+  }
+
+  // Clear the tree.
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_rbtree_clear(&tree));
 }
 
 // The tests themselves
@@ -295,6 +400,18 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
   TEST_ASSERT_LESS_OR_EQUAL_UINT(theoretical_max_height, max_height);
 }
 
+TEST(etcpal_rbtree, lower_bound_works)
+{
+  // Pass in 1 to test lower_bound.
+  test_bound(1);
+}
+
+TEST(etcpal_rbtree, upper_bound_works)
+{
+  // Pass in 0 to test upper_bound.
+  test_bound(0);
+}
+
 TEST_GROUP_RUNNER(etcpal_rbtree)
 {
   RUN_TEST_CASE(etcpal_rbtree, insert_node_functions_work);
@@ -303,4 +420,6 @@ TEST_GROUP_RUNNER(etcpal_rbtree)
   RUN_TEST_CASE(etcpal_rbtree, insert_failure_should_not_leak_memory);
   RUN_TEST_CASE(etcpal_rbtree, iterators_work_as_expected);
   RUN_TEST_CASE(etcpal_rbtree, max_height_is_within_bounds);
+  RUN_TEST_CASE(etcpal_rbtree, lower_bound_works);
+  RUN_TEST_CASE(etcpal_rbtree, upper_bound_works);
 }

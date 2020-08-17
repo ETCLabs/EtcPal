@@ -169,6 +169,33 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree*           self,
   return self;
 }
 
+/* Iterate the tree in a binary search pattern as far as it can go. Returns the final comparison result. */
+static int rb_iter_binary_search(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+{
+  int cmp = 0;
+
+  self->tree = tree;
+  self->node = tree->root;
+  self->top = 0;
+
+  if (self->node)
+  {
+    cmp = tree->cmp(tree, self->node->value, value);
+
+    while ((cmp != 0) && (self->node->link[cmp < 0] != NULL))
+    {
+      /* If the tree supports duplicates, they should be chained to the right subtree for this to
+       * work */
+      self->path[self->top++] = self->node;
+      self->node = self->node->link[cmp < 0];
+
+      cmp = tree->cmp(tree, self->node->value, value);
+    }
+  }
+
+  return cmp;
+}
+
 /**
  * @brief Find a value in a red-black tree.
  *
@@ -181,27 +208,22 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree*           self,
  */
 void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value)
 {
-  void* result = NULL;
-  if (self)
-  {
-    EtcPalRbNode* it = self->root;
-    int           cmp = 0;
+  void*        result = NULL;
+  EtcPalRbIter tree_iter;
 
-    while (it)
-    {
-      if ((cmp = self->cmp(self, it->value, value)) != 0)
-      {
-        /* If the tree supports duplicates, they should be chained to the right subtree for this to
-         * work */
-        it = it->link[cmp < 0];
-      }
-      else
-      {
-        break;
-      }
-    }
-    result = it ? it->value : NULL;
+  etcpal_rbiter_init(&tree_iter);
+
+  int cmp = rb_iter_binary_search(&tree_iter, self, value);
+
+  if ((cmp == 0) && (tree_iter.node))
+  {
+    result = tree_iter.node->value;
   }
+  else
+  {
+    result = NULL;
+  }
+
   return result;
 }
 
@@ -747,4 +769,78 @@ void* etcpal_rbiter_next(EtcPalRbIter* self)
 void* etcpal_rbiter_prev(EtcPalRbIter* self)
 {
   return rb_iter_move(self, 0);
+}
+
+/**
+ * @brief Point a red-black tree iterator to the lower-bound of a value.
+ *
+ * Gets the first value in the tree that is not considered to go before the given value.
+ *
+ * @param[in] self Iterator to modify.
+ * @param[in] tree Tree of which to get the lower bound.
+ * @param[in] value The value to compare against to determine the lower bound.
+ * @return Pointer to the lower bound value, or NULL (the end of the tree has been reached).
+ */
+void* etcpal_rbiter_lower_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+{
+  void* result = NULL;
+
+  if (tree && self)
+  {
+    int cmp = rb_iter_binary_search(self, tree, value);
+
+    if (self->node)
+    {
+      if (cmp < 0)
+      {
+        // The current node goes before the value. The next node (if any) goes after the value.
+        result = etcpal_rbiter_next(self);
+      }
+      else
+      {
+        // If cmp == 0, then the current node is equal to the value. If cmp > 0, then the current node goes after the
+        // value. In either case, the previous node (if any) goes before the value.
+        result = self->node->value;
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
+ * @brief Point a red-black tree iterator to the upper-bound of a value.
+ *
+ * Gets the first value in the tree that is considered to go after the given value.
+ *
+ * @param[in] self Iterator to modify.
+ * @param[in] tree Tree of which to get the upper bound.
+ * @param[in] value The value to compare against to determine the upper bound.
+ * @return Pointer to the upper bound value, or NULL (the end of the tree has been reached).
+ */
+void* etcpal_rbiter_upper_bound(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
+{
+  void* result = NULL;
+
+  if (tree && self)
+  {
+    int cmp = rb_iter_binary_search(self, tree, value);
+
+    if (self->node)
+    {
+      if (cmp > 0)
+      {
+        // The current node goes after the value. The previous node (if any) goes before the value.
+        result = self->node->value;
+      }
+      else
+      {
+        // If cmp == 0, then the current node is equal to the value, but not after. If cmp < 0, then the current node
+        // goes before the value. In either case, the next node goes after the value (there are no duplicates).
+        result = etcpal_rbiter_next(self);
+      }
+    }
+  }
+
+  return result;
 }
