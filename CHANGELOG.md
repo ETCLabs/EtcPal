@@ -4,7 +4,7 @@ All notable changes to the EtcPal library will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2020-08-18
 
 Note: This is a pre-release version. This version changelog is not exhaustive.
 
@@ -18,7 +18,8 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
   features defined by feature macros defined in etcpal/common.h.
 - Extra documentation page for network interface indexes.
 - Addition of a C++ wrapper layer over EtcPal. Added wrapper classes for error,
-  inet, lock, log, thread, timer and uuid.
+  inet, lock, log, queue, thread, timer and uuid.
+- New module etcpal/queue for RTOS queues. FreeRTOS only for now.
 - etcpal/lock: A counting semaphore API.
 - etcpal/lock: Functions for posting signals and semaphores from an interrupt
   context.
@@ -84,5 +85,6 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 - Initial library modules, tests and documentation.
 
 [Unreleased]: https://github.com/ETCLabs/EtcPal/compare/stable...develop
+[0.3.0]: https://github.com/ETCLabs/EtcPal/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ETCLabs/EtcPal/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ETCLabs/EtcPal/releases/tag/v0.1.0

@@ -41,6 +41,9 @@ And the following network targets:
 + lwIP
 + MQX (RTCS)
 
+EtcPal is also buildable in no-OS (bare-metal) environments, with its platform-neutral utility
+functionality still available.
+
 ### Building EtcPal for Your Platform
 
 See @ref building_etcpal for instructions on building EtcPal for your platform.
