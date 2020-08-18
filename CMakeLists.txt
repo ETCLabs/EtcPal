@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 
 ########################## Global Project Attributes ##########################
 
-project(EtcPal VERSION 0.3.0)
+project(EtcPal VERSION 0.4.0)
 
 # Sometimes the seems to be some weirdness with drive letter capitalization on Windows, so do a
 # case-insensitive comparision
