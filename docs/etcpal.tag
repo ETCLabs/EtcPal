@@ -2036,8 +2036,8 @@
       <type>bool</type>
       <name>Send</name>
       <anchorfile>classetcpal_1_1_queue.html</anchorfile>
-      <anchor>aa5e74f70881c76ee779a05d7c0a0283e</anchor>
-      <arglist>(const T &amp;data, int timeout_ms=0)</arglist>
+      <anchor>ad23735bc801c21635a277a31ac31b267</anchor>
+      <arglist>(const T &amp;data, int timeout_ms=ETCPAL_WAIT_FOREVER)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -2050,15 +2050,15 @@
       <type>bool</type>
       <name>Receive</name>
       <anchorfile>classetcpal_1_1_queue.html</anchorfile>
-      <anchor>a1e05b9a1beab8065c28062e2a91d4cf7</anchor>
-      <arglist>(T &amp;data, int timeout_ms=0)</arglist>
+      <anchor>ae2bd22bccd067e5b8558810eb878f7bf</anchor>
+      <arglist>(T &amp;data, int timeout_ms=ETCPAL_WAIT_FOREVER)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>Receive</name>
       <anchorfile>classetcpal_1_1_queue.html</anchorfile>
-      <anchor>ad9261100b606a1dc7f096a813987fcfd</anchor>
-      <arglist>(T &amp;data, const std::chrono::duration&lt; Rep, Period &gt; &amp;timeout=std::chrono::milliseconds(0))</arglist>
+      <anchor>a2e1a4a59421e30ad677c4aab766a6683</anchor>
+      <arglist>(T &amp;data, const std::chrono::duration&lt; Rep, Period &gt; &amp;timeout)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -4959,6 +4959,20 @@
       <anchorfile>group__etcpal__rbtree.html</anchorfile>
       <anchor>gad093318703094fd4bdb9ecb09443241d</anchor>
       <arglist>(EtcPalRbIter *self)</arglist>
+    </member>
+    <member kind="function">
+      <type>void *</type>
+      <name>etcpal_rbiter_lower_bound</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga44f891bf17cabdfba6bf7748c02fe52b</anchor>
+      <arglist>(EtcPalRbIter *self, EtcPalRbTree *tree, const void *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void *</type>
+      <name>etcpal_rbiter_upper_bound</name>
+      <anchorfile>group__etcpal__rbtree.html</anchorfile>
+      <anchor>ga260091c3e633a8b5e3db3625e615032d</anchor>
+      <arglist>(EtcPalRbIter *self, EtcPalRbTree *tree, const void *value)</arglist>
     </member>
     <member kind="typedef">
       <type>int(*</type>
