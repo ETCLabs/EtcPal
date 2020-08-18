@@ -1,10 +1,55 @@
 # Changelog
-All notable changes to the lwpa library will be documented in this file.
+All notable changes to the EtcPal library will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2020-08-18
+
+Note: This is a pre-release version. This version changelog is not exhaustive.
+
+### Added
+- New port: Linux
+- New port: macOS
+- New port: iOS
+- New port: FreeRTOS
+- New port: lwIP
+- etcpal_init() in etcpal/common.h. etcpal_init() must be called before using
+  features defined by feature macros defined in etcpal/common.h.
+- Extra documentation page for network interface indexes.
+- Addition of a C++ wrapper layer over EtcPal. Added wrapper classes for error,
+  inet, lock, log, queue, thread, timer and uuid.
+- New module etcpal/queue for RTOS queues. FreeRTOS only for now.
+- etcpal/lock: A counting semaphore API.
+- etcpal/lock: Functions for posting signals and semaphores from an interrupt
+  context.
+- etcpal/uuid: Functions to generate version 3 and version 5 UUIDs.
+- etcpal/log: Legacy syslog creation added. Interface changed slightly to
+  support this.
+
+### Changed
+- Naming: Library name changed from lwpa to EtcPal. All API names updated
+  accordingly.
+- Naming: Separated the platform-specific sources into 'os' and 'net' targets
+  to aid in targeting mix-and-match stack environments like FreeRTOS and lwIP.
+- Allow EtcPal to be built with no networking support.
+- Improvements in mnemonic consistency across the public APIs, including
+  addition of meaningful return information, better function naming, etc.
+- Modified etcpal_netint and etcpal_inet to make more meaningful use of network
+  interface indexes, for portability and compatibility with IPv6.
+- etcpal/pdu -> etcpal/acn_pdu, etcpal/root_layer_pdu -> etcpal/acn_rlp. API
+  constructs have prefixes changed from `etcpal_` to `acn_` for clarity.
+
+### Removed
+- etcpal/bool module. This module is not necessary given our target platform
+  and toolchain requirements.
+- etcpal/int module. This module is not necessary given our target platform and
+  toolchain requirements.
+
 ## [0.2.0] - 2019-05-29
+
+Note: This is a pre-release version. This version changelog is not exhaustive.
+
 ### Added
 - This CHANGELOG file.
 - lwpa_mempool: LWPA_MEMPOOL_DEFINE_ARRAY(), which allows a memory pool of
@@ -33,9 +78,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Visual Studio project files, as we now build with CMake.
 
 ## [0.1.0] - 2018-10-18
+
+Note: This is a pre-release version. This version changelog is not exhaustive.
+
 ### Added
 - Initial library modules, tests and documentation.
 
-[Unreleased]: https://github.com/ETCLabs/lwpa/compare/master...develop
-[0.2.0]: https://github.com/ETCLabs/lwpa/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/ETCLabs/lwpa/releases/tag/v0.1.0
+[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/stable...develop
+[0.3.0]: https://github.com/ETCLabs/EtcPal/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/ETCLabs/EtcPal/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/ETCLabs/EtcPal/releases/tag/v0.1.0

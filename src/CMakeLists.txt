@@ -1,182 +1,162 @@
-############################### Platform support ############################## 
 
-if(DEFINED LWPA_CONFIG)
-  get_filename_component(LWPA_CONFIG_LOC LWPA_CONFIG DIRECTORY)
-  set(${LWPA_HAVE_CONFIG_H} LWPA_HAVE_CONFIG_H)
+set(ETCPAL_CONFIG_FILE_DIR "" CACHE STRING "The directory path of the etcpal_config.h file, if provided")
+if(ETCPAL_CONFIG_FILE_DIR)
+  set(${ETCPAL_HAVE_CONFIG_H} ETCPAL_HAVE_CONFIG_H)
 endif()
 
-# The set of supported platforms
-set(VALID_LWPA_PLATFORMS
-  windows
-  linux
-  mqx
+###############################################################################
+# Core EtcPal library
+###############################################################################
+
+set(ETCPAL_LIB_TARGET_NAME EtcPal)
+
+set(ETCPAL_CORE_SOURCES
+  # EtcPal headers
+  ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
+  ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
+  ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
+  ${ETCPAL_ROOT}/include/etcpal/uuid.h
+  ${ETCPAL_ROOT}/include/etcpal/common.h
+  ${ETCPAL_ROOT}/include/etcpal/error.h
+  ${ETCPAL_ROOT}/include/etcpal/log.h
+  ${ETCPAL_ROOT}/include/etcpal/mempool.h
+  ${ETCPAL_ROOT}/include/etcpal/pack.h
+  ${ETCPAL_ROOT}/include/etcpal/rbtree.h
+  ${ETCPAL_ROOT}/include/etcpal/timer.h
+
+  # EtcPal sources
+  ${ETCPAL_ROOT}/src/etcpal/acn_pdu.c
+  ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
+  ${ETCPAL_ROOT}/src/etcpal/common.c
+  ${ETCPAL_ROOT}/src/etcpal/error.c
+  ${ETCPAL_ROOT}/src/etcpal/log.c
+  ${ETCPAL_ROOT}/src/etcpal/md5.h
+  ${ETCPAL_ROOT}/src/etcpal/md5.c
+  ${ETCPAL_ROOT}/src/etcpal/mempool.c
+  ${ETCPAL_ROOT}/src/etcpal/pack.c
+  ${ETCPAL_ROOT}/src/etcpal/rbtree.c
+  ${ETCPAL_ROOT}/src/etcpal/sha1.h
+  ${ETCPAL_ROOT}/src/etcpal/sha1.c
+  ${ETCPAL_ROOT}/src/etcpal/timer.c
+  ${ETCPAL_ROOT}/src/etcpal/uuid.c
 )
 
-if(NOT DEFINED LWPA_PLATFORM)
-  message(STATUS "LWPA_PLATFORM not supplied, assuming native compile by default...")
-  if(WIN32)
-    set(LWPA_PLATFORM windows)
-  elseif(UNIX AND NOT APPLE)
-    set(LWPA_PLATFORM linux)
-  else()
-    message(FATAL_ERROR "lwpa is not ported for this platform.")
-  endif()
+if(ETCPAL_HAVE_NETWORKING_SUPPORT)
+  set(ETCPAL_CORE_SOURCES ${ETCPAL_CORE_SOURCES}
+    ${ETCPAL_ROOT}/include/etcpal/inet.h
+    ${ETCPAL_ROOT}/include/etcpal/netint.h
+    ${ETCPAL_ROOT}/include/etcpal/socket.h
+    ${ETCPAL_ROOT}/src/etcpal/inet.c
+    ${ETCPAL_ROOT}/src/etcpal/netint.c
+  )
 endif()
 
-if(NOT ${LWPA_PLATFORM} IN_LIST VALID_LWPA_PLATFORMS)
-  message(FATAL_ERROR "${LWPA_PLATFORM} is not a valid platform.")
-endif()
-
-# MQX platform support
-if(LWPA_PLATFORM STREQUAL mqx)
-  if(NOT DEFINED MQX_BOARD_DIR)
-    message(FATAL_ERROR "You must provide a variable MQX_BOARD_DIR to indicate the location of your MQX libraries.")
-  endif()
-endif()
-
-set(LWPA_PLATFORM ${LWPA_PLATFORM} PARENT_SCOPE)
-
-###############################################################################
-# Core lwpa library
-###############################################################################
-
-set(LWPA_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
-
-add_library(lwpa
-  # lwpa headers
-  ${LWPA_ROOT}/include/lwpa/acn_prot.h
-  ${LWPA_ROOT}/include/lwpa/bool.h
-  ${LWPA_ROOT}/include/lwpa/uuid.h
-  ${LWPA_ROOT}/include/lwpa/common.h
-  ${LWPA_ROOT}/include/lwpa/error.h
-  ${LWPA_ROOT}/include/lwpa/inet.h
-  ${LWPA_ROOT}/include/lwpa/int.h
-  ${LWPA_ROOT}/include/lwpa/log.h
-  ${LWPA_ROOT}/include/lwpa/mempool.h
-  ${LWPA_ROOT}/include/lwpa/netint.h
-  ${LWPA_ROOT}/include/lwpa/opts.h
-  ${LWPA_ROOT}/include/lwpa/pack.h
-  ${LWPA_ROOT}/include/lwpa/pdu.h
-  ${LWPA_ROOT}/include/lwpa/rbtree.h
-  ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
-  ${LWPA_ROOT}/include/lwpa/socket.h
-  ${LWPA_ROOT}/include/lwpa/timer.h
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
-  # lwpa sources
-  ${LWPA_ROOT}/src/lwpa/uuid.c
-  ${LWPA_ROOT}/src/lwpa/error.c
-  ${LWPA_ROOT}/src/lwpa/log.c
-  ${LWPA_ROOT}/src/lwpa/mempool.c
-  ${LWPA_ROOT}/src/lwpa/pdu.c
-  ${LWPA_ROOT}/src/lwpa/rbtree.c
-  ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
-  ${LWPA_ROOT}/src/lwpa/md5.h
-  ${LWPA_ROOT}/src/lwpa/md5c.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/common.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
-  ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
+add_library(${ETCPAL_LIB_TARGET_NAME}
+  ${ETCPAL_CORE_SOURCES}
+  ${ETCPAL_OS_ADDITIONAL_SOURCES}
+  ${ETCPAL_NET_ADDITIONAL_SOURCES}
 )
 
-# lwpa public include directories and library dependencies
-target_include_directories(lwpa PUBLIC
-  ${LWPA_ROOT}/include
-  ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
-  ${LWPA_CONFIG_LOC}
+# EtcPal public include directories and library dependencies
+target_include_directories(${ETCPAL_LIB_TARGET_NAME} PUBLIC
+  ${ETCPAL_CONFIG_FILE_DIR}
+  ${ETCPAL_ROOT}/include
+  ${ETCPAL_OS_INCLUDE_DIR}
+  ${ETCPAL_NET_INCLUDE_DIR}
 )
-target_compile_definitions(lwpa PUBLIC ${LWPA_HAVE_CONFIG_H})
-
-# Add include paths and library dependencies based on platform for which we are being compiled
-if(LWPA_PLATFORM STREQUAL windows)
-  target_link_libraries(lwpa PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
-elseif(LWPA_PLATFORM STREQUAL linux)
-  target_link_libraries(lwpa PUBLIC uuid)
-elseif(LWPA_PLATFORM STREQUAL mqx)
-  # Include the debug versions of the MQX libs if a Debug configuration is specified.
-  # I think there's probably a better way of doing this and I'm missing something here.
-  if(CMAKE_BUILD_TYPE STREQUAL Debug)
-    set(MQX_BOARD_INT_DIR debug)
-  else()
-    set(MQX_BOARD_INT_DIR release)
-  endif()
-
-  # Depend on the MQX libs.
-  target_include_directories(lwpa PUBLIC ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}
-                                         ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp
-                                         ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Generated_Code
-                                         ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/Sources
-                                         ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/psp
-                                         ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/rtcs)
-  target_link_libraries(lwpa PUBLIC ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/bsp/bsp.a
-                                    ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/psp/psp.a
-                                    ${MQX_BOARD_DIR}/${MQX_BOARD_INT_DIR}/rtcs/rtcs.a)
+if(ETCPAL_EXPLICITLY_DISABLE_EXCEPTIONS)
+  target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PUBLIC ETCPAL_NO_EXCEPTIONS)
 endif()
 
-set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
+target_include_directories(${ETCPAL_LIB_TARGET_NAME} PRIVATE ${ETCPAL_ROOT}/src)
+target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE 
+  ${ETCPAL_HAVE_CONFIG_H}
+  ${ETCPAL_OS_ADDITIONAL_DEFINES}
+  ${ETCPAL_NET_ADDITIONAL_DEFINES}
+)
+if(ETCPAL_NETINT_DEBUG_OUTPUT)
+  target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
+endif()
+target_link_libraries(${ETCPAL_LIB_TARGET_NAME} PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
+
+if(NOT MSVC)
+  set_target_properties(${ETCPAL_LIB_TARGET_NAME} PROPERTIES C_STANDARD 99)
+endif()
+
+# Write a pkg-config file
+set(ETCPAL_PKGCONFIG_INTERMEDIATE_FILE ${CMAKE_BINARY_DIR}/${ETCPAL_LIB_TARGET_NAME}.pc)
+configure_file(${ETCPAL_ROOT}/cmake/EtcPal.pc.in ${ETCPAL_PKGCONFIG_INTERMEDIATE_FILE} @ONLY)
+
+# Installation
+install(TARGETS ${ETCPAL_LIB_TARGET_NAME} ARCHIVE DESTINATION lib)
+install(DIRECTORY ${ETCPAL_ROOT}/include/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY ${ETCPAL_OS_INCLUDE_DIR}/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
+if(ETCPAL_NET_INCLUDE_DIR)
+  install(DIRECTORY ${ETCPAL_NET_INCLUDE_DIR}/etcpal DESTINATION include FILES_MATCHING PATTERN "*.h")
+endif()
+install(DIRECTORY ${ETCPAL_ROOT}/include/etcpal/cpp DESTINATION include/etcpal FILES_MATCHING PATTERN "*.h")
+install(FILES ${ETCPAL_PKGCONFIG_INTERMEDIATE_FILE} DESTINATION lib/pkgconfig)
 
 ###############################################################################
-# Mock lwpa library
+# Mock EtcPal library
 ###############################################################################
 
-if(LWPA_BUILD_MOCK_LIB)
-  add_library(lwpa_mock
-    # lwpa headers
-    ${LWPA_ROOT}/include/lwpa/acn_prot.h
-    ${LWPA_ROOT}/include/lwpa/bool.h
-    ${LWPA_ROOT}/include/lwpa/uuid.h
-    ${LWPA_ROOT}/include/lwpa/common.h
-    ${LWPA_ROOT}/include/lwpa/error.h
-    ${LWPA_ROOT}/include/lwpa/inet.h
-    ${LWPA_ROOT}/include/lwpa/int.h
-    ${LWPA_ROOT}/include/lwpa/log.h
-    ${LWPA_ROOT}/include/lwpa/mempool.h
-    ${LWPA_ROOT}/include/lwpa/netint.h
-    ${LWPA_ROOT}/include/lwpa/opts.h
-    ${LWPA_ROOT}/include/lwpa/pack.h
-    ${LWPA_ROOT}/include/lwpa/pdu.h
-    ${LWPA_ROOT}/include/lwpa/rbtree.h
-    ${LWPA_ROOT}/include/lwpa/root_layer_pdu.h
-    ${LWPA_ROOT}/include/lwpa/socket.h
-    ${LWPA_ROOT}/include/lwpa/timer.h
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_lock.h
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_socket.h
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_thread.h
+if(ETCPAL_BUILD_MOCK_LIB)
+  add_library(EtcPalMock
+    # EtcPal headers
+    ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
+    ${ETCPAL_ROOT}/include/etcpal/acn_prot.h
+    ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
+    ${ETCPAL_ROOT}/include/etcpal/uuid.h
+    ${ETCPAL_ROOT}/include/etcpal/error.h
+    ${ETCPAL_ROOT}/include/etcpal/inet.h
+    ${ETCPAL_ROOT}/include/etcpal/log.h
+    ${ETCPAL_ROOT}/include/etcpal/mempool.h
+    ${ETCPAL_ROOT}/include/etcpal/pack.h
+    ${ETCPAL_ROOT}/include/etcpal/rbtree.h
 
-    ${LWPA_ROOT}/include/lwpa_mock/socket.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/common.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/netint.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/socket.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/timer.h
+    ${ETCPAL_ROOT}/include/etcpal_mock/thread.h
 
-    # lwpa sources
+    # EtcPal sources
     # We will gradually substitute these with mocks as needed
-    ${LWPA_ROOT}/src/lwpa/uuid.c
-    ${LWPA_ROOT}/src/lwpa/error.c
-    ${LWPA_ROOT}/src/lwpa/log.c
-    ${LWPA_ROOT}/src/lwpa/mempool.c
-    ${LWPA_ROOT}/src/lwpa/pdu.c
-    ${LWPA_ROOT}/src/lwpa/rbtree.c
-    ${LWPA_ROOT}/src/lwpa/root_layer_pdu.c
-    ${LWPA_ROOT}/src/lwpa/md5.h
-    ${LWPA_ROOT}/src/lwpa/md5c.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/lock.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/netint.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/plat_uuid.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/socket.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/thread.c
-    ${LWPA_ROOT}/src/lwpa_plat/${LWPA_PLATFORM}/lwpa/timer.c
+    ${ETCPAL_ROOT}/src/etcpal/acn_pdu.c
+    ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
+    ${ETCPAL_ROOT}/src/etcpal/error.c
+    ${ETCPAL_ROOT}/src/etcpal/inet.c
+    ${ETCPAL_ROOT}/src/etcpal/log.c
+    ${ETCPAL_ROOT}/src/etcpal/md5.h
+    ${ETCPAL_ROOT}/src/etcpal/md5.c
+    ${ETCPAL_ROOT}/src/etcpal/mempool.c
+    ${ETCPAL_ROOT}/src/etcpal/pack.c
+    ${ETCPAL_ROOT}/src/etcpal/rbtree.c
+    ${ETCPAL_ROOT}/src/etcpal/sha1.h
+    ${ETCPAL_ROOT}/src/etcpal/sha1.c
+    ${ETCPAL_ROOT}/src/etcpal/timer.c
+    ${ETCPAL_ROOT}/src/etcpal/uuid.c
 
-    ${LWPA_ROOT}/src/lwpa_mock/socket.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/common.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/netint.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/socket.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/timer.c
+    ${ETCPAL_ROOT}/src/etcpal_mock/thread.c
+
+    ${ETCPAL_OS_ADDITIONAL_SOURCES}
+    ${ETCPAL_NET_ADDITIONAL_SOURCES}
   )
-  target_include_directories(lwpa_mock PUBLIC
-    ${LWPA_ROOT}/include
-    ${LWPA_ROOT}/include/lwpa_plat/${LWPA_PLATFORM}
+  target_include_directories(EtcPalMock PUBLIC
+    ${ETCPAL_ROOT}/include
+    ${ETCPAL_OS_INCLUDE_DIR}
+    ${ETCPAL_NET_INCLUDE_DIR}
   )
-  target_compile_definitions(lwpa_mock PRIVATE LWPA_BUILDING_MOCK_LIB)
-  target_link_libraries(lwpa_mock PUBLIC meekrosoft::fff)
-  if(LWPA_PLATFORM STREQUAL windows)
-    target_link_libraries(lwpa_mock PUBLIC winmm ws2_32 Iphlpapi Rpcrt4)
+  target_include_directories(EtcPalMock PRIVATE ${ETCPAL_ROOT}/src)
+  target_compile_definitions(EtcPalMock PRIVATE ETCPAL_BUILDING_MOCK_LIB)
+  target_link_libraries(EtcPalMock PUBLIC meekrosoft::fff)
+  target_link_libraries(EtcPalMock PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
+  if(NOT MSVC)
+    set_target_properties(EtcPalMock PROPERTIES C_STANDARD 99)
   endif()
-  set_target_properties(lwpa PROPERTIES DEBUG_POSTFIX d)
 endif()

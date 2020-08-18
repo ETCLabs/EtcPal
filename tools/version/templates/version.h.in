@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2019 ETC Inc.
+ * Copyright 2020 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,35 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************
- * This file is a part of lwpa. For more information, go to:
- * https://github.com/ETCLabs/lwpa
+ * This file is a part of EtcPal. For more information, go to:
+ * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/*! \file lwpa/version.h
- *  \brief Provides the current version of the lwpa library.
- *  \author Sam Kearney
+/**
+ * @file etcpal/version.h
+ * @brief Provides the current version of the EtcPal library.
  */
-#ifndef _LWPA_VERSION_H_
-#define _LWPA_VERSION_H_
+
+#ifndef ETCPAL_VERSION_H_
+#define ETCPAL_VERSION_H_
 
 /* clang-format off */
 
-/*! \name lwpa version numbers
- *  @{
+/**
+ * @name EtcPal version numbers
+ * @{
  */
-#define LWPA_VERSION_MAJOR @LWPA_VERSION_MAJOR@
-#define LWPA_VERSION_MINOR @LWPA_VERSION_MINOR@
-#define LWPA_VERSION_PATCH @LWPA_VERSION_PATCH@
-#define LWPA_VERSION_BUILD @LWPA_VERSION_BUILD@
-/*! @} */
-
-/*! \name lwpa version strings
- *  @{
+#define ETCPAL_VERSION_MAJOR @ETCPAL_VERSION_MAJOR@
+#define ETCPAL_VERSION_MINOR @ETCPAL_VERSION_MINOR@
+#define ETCPAL_VERSION_PATCH @ETCPAL_VERSION_PATCH@
+#define ETCPAL_VERSION_BUILD @ETCPAL_VERSION_BUILD@
+/**
+ * @}
  */
-#define LWPA_VERSION_STRING "@LWPA_VERSION_STRING@"
-#define LWPA_VERSION_DATESTR "@LWPA_VERSION_DATESTR@"
-#define LWPA_VERSION_COPYRIGHT "@LWPA_VERSION_COPYRIGHT@"
-#define LWPA_VERSION_PRODUCTNAME "lwpa"
-/*! @} */
 
-#endif /* _LWPA_VERSION_H_ */
+/**
+ * @name EtcPal version strings
+ * @{
+ */
+#define ETCPAL_VERSION_STRING "@ETCPAL_VERSION_STRING@"
+#define ETCPAL_VERSION_DATESTR "@ETCPAL_VERSION_DATESTR@"
+#define ETCPAL_VERSION_COPYRIGHT "@ETCPAL_VERSION_COPYRIGHT@"
+#define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
+/**
+ * @}
+ */
+
+#endif /* ETCPAL_VERSION_H_ */

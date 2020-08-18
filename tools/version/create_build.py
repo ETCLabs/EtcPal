@@ -1,9 +1,9 @@
-"""Script to create a new versioned build of lwpa.
+"""Script to create a new versioned build of EtcPal.
 
-Updates the lwpa/version.h file
+Updates the etcpal/version.h file
 Prompts the user to review before committing and tagging
 
-This script is meant to be run by an lwpa developer on a development workstation. It assumes that
+This script is meant to be run by an EtcPal developer on a development workstation. It assumes that
 git is already configured globally and git commands can be run without further configuration.
 """
 import argparse
@@ -19,12 +19,20 @@ except ImportError as ie:
     sys.exit(1)
 
 
-VERSION_H_IN_FILE_REL_PATH = os.path.join('tools', 'version', 'templates', 'version.h.in')
-VERSION_H_OUT_FILE_REL_PATH = os.path.join('include', 'lwpa', 'version.h')
-CURRENT_VERSION_TXT_FILE_REL_PATH = os.path.join('tools', 'version', 'current_version.txt')
-COMMIT_MSG_TEMPLATE = 'Update version files for lwpa build {}'
-TAG_MSG_TEMPLATE = 'lwpa version {}'
-RELEASE_TAG_MSG_TEMPLATE = 'lwpa release version {}'
+FILE_TEMPLATE_DIR = os.path.join('tools', 'version', 'templates')
+FILE_IN_PATHS = [
+    os.path.join(FILE_TEMPLATE_DIR, 'version.h.in'),
+    os.path.join(FILE_TEMPLATE_DIR, 'current_version.txt.in'),
+    os.path.join(FILE_TEMPLATE_DIR, 'imports.txt.in')
+]
+FILE_OUT_PATHS = [
+    os.path.join('include', 'etcpal', 'version.h'),
+    os.path.join('tools', 'version', 'current_version.txt'),
+    os.path.join('tools', 'version', 'imports.txt')
+]
+COMMIT_MSG_TEMPLATE = 'Update version files for EtcPal build {}'
+TAG_MSG_TEMPLATE = 'EtcPal version {}'
+RELEASE_TAG_MSG_TEMPLATE = 'EtcPal release version {}'
 
 
 def parse_version(vers_string):
@@ -47,42 +55,39 @@ def parse_version(vers_string):
 
 
 def update_version_files(repo_root, version):
-    """Update the version header lwpa/version.h and the current_version.txt file with the new
+    """Update the version header etcpal/version.h and the current_version.txt file with .he new
     version information. Returns True on success, false otherwise."""
 
-    version_h_in_file_path = os.path.join(repo_root, VERSION_H_IN_FILE_REL_PATH)
-    version_h_out_file_path = os.path.join(repo_root, VERSION_H_OUT_FILE_REL_PATH)
-    current_version_txt_file_path = os.path.join(repo_root, CURRENT_VERSION_TXT_FILE_REL_PATH)
+    in_file_handles = []
+    out_file_handles = []
 
-    # Copy the template file to the output file, replacing the flagged values.
-    try:
-        version_h_in_file = open(version_h_in_file_path, mode='r', encoding='utf8')
-        version_h_out_file = open(version_h_out_file_path, mode='w', encoding='utf8')
-        current_version_txt_file = open(current_version_txt_file_path, mode='w', encoding='utf8')
-    except OSError:
-        print('Failed to open the version header.')
-        return False
+    # First make sure we can open each file for reading or writing as appropriate.
+    for in_file, out_file in zip(FILE_IN_PATHS, FILE_OUT_PATHS):
+        in_file_path = os.path.join(repo_root, in_file)
+        out_file_path = os.path.join(repo_root, out_file)
+        try:
+            in_file_handles.append(open(in_file_path, mode='r', encoding='utf8'))
+            out_file_handles.append(open(out_file_path, mode='w', encoding='utf8'))
+        except OSError as e:
+            print('Error while trying to open files {} and {}: {}'.format(in_file_path, out_file_path, e))
+            return False
 
     today = datetime.date.today()
-    version_str = '{}.{}.{}.{}'.format(
-        version[0], version[1], version[2], version[3])
+    version_str = '{}.{}.{}.{}'.format(version[0], version[1], version[2], version[3])
 
-    for line in version_h_in_file.readlines():
-        line = line.replace('@LWPA_VERSION_MAJOR@', str(version[0]))
-        line = line.replace('@LWPA_VERSION_MINOR@', str(version[1]))
-        line = line.replace('@LWPA_VERSION_PATCH@', str(version[2]))
-        line = line.replace('@LWPA_VERSION_BUILD@', str(version[3]))
-        line = line.replace('@LWPA_VERSION_STRING@', version_str)
-        line = line.replace('@LWPA_VERSION_DATESTR@', today.strftime('%d.%b.%Y'))
-        line = line.replace('@LWPA_VERSION_COPYRIGHT@', 'Copyright ' + str(today.year) + ' ETC Inc.')
+    for in_file, out_file in zip(in_file_handles, out_file_handles):
+        for line in in_file.readlines():
+            line = line.replace('@ETCPAL_VERSION_MAJOR@', str(version[0]))
+            line = line.replace('@ETCPAL_VERSION_MINOR@', str(version[1]))
+            line = line.replace('@ETCPAL_VERSION_PATCH@', str(version[2]))
+            line = line.replace('@ETCPAL_VERSION_BUILD@', str(version[3]))
+            line = line.replace('@ETCPAL_VERSION_STRING@', version_str)
+            line = line.replace('@ETCPAL_VERSION_DATESTR@', today.strftime('%d.%b.%Y'))
+            line = line.replace('@ETCPAL_VERSION_COPYRIGHT@', 'Copyright ' + str(today.year) + ' ETC Inc.')
+            out_file.write(line)
+        in_file.close()
+        out_file.close()
 
-        version_h_out_file.write(line)
-
-    current_version_txt_file.write(version_str + '\n')
-
-    version_h_in_file.close()
-    version_h_out_file.close()
-    current_version_txt_file.close()
     return True
 
 
@@ -97,16 +102,15 @@ def prompt_to_continue():
 def commit_and_tag(repo, new_version, release_build):
     """Commit the updated version files and tag the version."""
     index = repo.index
-    index.add([os.path.join(repo.working_tree_dir, VERSION_H_OUT_FILE_REL_PATH),
-               os.path.join(repo.working_tree_dir, CURRENT_VERSION_TXT_FILE_REL_PATH)])
+
+    # Add all of our version files
+    out_file_abs_paths = [os.path.join(repo.working_tree_dir, out_file) for out_file in FILE_OUT_PATHS]
+    index.add(out_file_abs_paths)
 
     vers_string_long = '{}.{}.{}.{}'.format(new_version[0], new_version[1], new_version[2], new_version[3])
     vers_string_short = '{}.{}.{}'.format(new_version[0], new_version[1], new_version[2])
-
     index.commit(COMMIT_MSG_TEMPLATE.format(vers_string_long))
-
     repo.create_tag('v' + vers_string_long, message=TAG_MSG_TEMPLATE.format(vers_string_long))
-
     if release_build:
         repo.create_tag('v' + vers_string_short, message=RELEASE_TAG_MSG_TEMPLATE.format(vers_string_short))
 
@@ -115,9 +119,9 @@ def main():
     """The script entry point."""
 
     # Parse the command-line arguments.
-    parser = argparse.ArgumentParser(description='Create a new versioned build of lwpa')
+    parser = argparse.ArgumentParser(description='Create a new versioned build of EtcPal')
     parser.add_argument('new_version', help='New version number (format M.m.p.b)')
-    parser.add_argument('-r', '--release', action='store_true', help='Tag a release build of lwpa.')
+    parser.add_argument('-r', '--release', action='store_true', help='Tag a release build of EtcPal.')
     args = parser.parse_args()
 
     new_version = parse_version(args.new_version)
@@ -127,7 +131,7 @@ def main():
         sys.exit(1)
 
     repo_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..')
-    lwpa_repo = git.Repo(repo_root)
+    etcpal_repo = git.Repo(repo_root)
 
     if not update_version_files(repo_root, new_version):
         sys.exit(1)
@@ -135,7 +139,7 @@ def main():
     if not prompt_to_continue():
         sys.exit(0)
 
-    commit_and_tag(lwpa_repo, new_version, args.release)
+    commit_and_tag(etcpal_repo, new_version, args.release)
 
     print("Done - now push using 'git push origin [branch] --tags'.")
 

@@ -1,6 +1,6 @@
 Third-Party Software
 
-lwpa incorporates components of the following third-party software, under the
+EtcPal incorporates components of the following third-party software, under the
 respective terms of the license of each third-party software component.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -11,8 +11,8 @@ Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All rights reserved.
 The following sources in this repository are derived from the RSA Data
 Security, Inc. MD5 Message-Digest algorithm:
 
-src/md5.h
-src/md5c.c
+src/etcpal/md5.h
+src/etcpal/md5.c
 
 See the license information at the top of those source files for more details.
 
@@ -24,7 +24,28 @@ Public domain, under the Unlicense (http://unlicense.org)
 The following sources in this repository are based on sources obtained from
 mirek/rb_tree:
 
-include/lwpa/rbtree.h
-src/lwpa_rbtree.c
+include/etcpal/rbtree.h
+src/etcpal/rbtree.c
 
 See the license information at the top of those source files for more details.
+
+NOTE: This software uses the Unlicense - the author is credited here as a
+courtesy, but software which includes EtcPal does not need to provide
+attribution for mirek/rb_tree if not desired. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+clibs/sha1 (https://github.com/clibs/sha1)
+By Steve Reid <steve@edmweb.com>, released to the public domain
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following sources in this repository are based on sources obtained from
+clibs/sha1:
+
+src/etcpal/sha1.h
+src/etcpal/sha1.c
+
+See the license information at the top of those source files for more details.
+
+NOTE: This software states that it is released to the public domain - the
+author is credited here as a courtesy, but software which includes EtcPal does
+not need to provide attribution for clibs/sha1 if not desired. 
