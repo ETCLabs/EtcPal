@@ -150,6 +150,20 @@ bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
 
 /**
+ * @brief Retrieve the first item from a queue from an interrupt context.
+ *
+ * This function is meaningful on platforms which have a different method for interacting with
+ * queues from an interrupt context. This function never blocks, i.e. the behavior is similar to
+ * calling etcpal_queue_timed_receive() with a value of 0 for the timeout_ms parameter.
+ *
+ * @param[in] id Identifier for the queue from which to retrieve an item.
+ * @param[out] data Pointer to a location to write the object's data.
+ * @return true: Item retrieved successfully.
+ * @return false: Error occurred while trying to retrieve an item from the queue.
+ */
+bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data);
+
+/**
  * @brief Determine whether a queue is currently empty.
  * @param[in] id Identifier for the queue to check the status of.
  * @return true: The queue is empty.

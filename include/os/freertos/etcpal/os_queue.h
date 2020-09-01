@@ -41,6 +41,7 @@ bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data);
 
 bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
+bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data);
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id);
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);

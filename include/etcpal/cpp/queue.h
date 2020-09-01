@@ -102,6 +102,7 @@ public:
   bool Receive(T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
   template <class Rep, class Period>
   bool Receive(T& data, const std::chrono::duration<Rep, Period>& timeout);
+  bool ReceiveFromIsr(T& data);
   bool IsEmpty() const;
   bool IsEmptyFromIsr() const;
 
@@ -172,6 +173,15 @@ inline bool Queue<T>::Receive(T& data, const std::chrono::duration<Rep, Period>&
       static_cast<int>(std::min(std::chrono::milliseconds(timeout).count(),
                                 static_cast<std::chrono::milliseconds::rep>(std::numeric_limits<int>::max())));
   return etcpal_queue_timed_receive(&queue_, &data, timeout_ms_clamped);
+}
+
+/// @brief Get an item from the queue from an interrupt context.
+/// @param data A reference to the data that will receive the item from the queue.
+/// @return The result of the attempt to get an item from the queue.
+template <class T>
+inline bool Queue<T>::ReceiveFromIsr(T& data)
+{
+  return etcpal_queue_receive_from_isr(&queue_, &data);
 }
 
 /// @brief Check if a queue is empty.
