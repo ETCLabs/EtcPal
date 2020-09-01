@@ -91,6 +91,21 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
   return false;
 }
 
+bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
+{
+  BaseType_t higherPrioTaskWoken = pdFALSE;
+  if (id)
+  {
+    BaseType_t status = xQueueReceiveFromISR(*id, data, &higherPrioTaskWoken);
+    // if 'higherPrioTaskWoken' is pdTRUE, it indicates to
+    // portYIELD_FROM_ISR() that the scheduler should run to allow
+    // the new thread to execute when the interrupt handler completes:
+    portYIELD_FROM_ISR(higherPrioTaskWoken);
+    return (status == pdPASS);
+  }
+  return false;
+}
+
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
   UBaseType_t numMessages = uxQueueMessagesWaiting(*id);
