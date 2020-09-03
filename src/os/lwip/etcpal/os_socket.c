@@ -23,6 +23,7 @@
 #include <lwip/sockets.h>
 #include <lwip/netdb.h>
 #include <lwip/netif.h>
+#include <lwip/tcpip.h>
 
 #include "etcpal/common.h"
 #include "os_error.h"
@@ -402,14 +403,17 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
 #if LWIP_IPV4
 static bool netif_index_to_ipv4_addr(unsigned int netif_index, struct in_addr* addr)
 {
+  bool result = false;
+  LOCK_TCPIP_CORE();
   struct netif* lwip_netif = netif_get_by_index((u8_t)netif_index);
   if (lwip_netif)
   {
     const ip4_addr_t* lwip_addr = netif_ip4_addr(lwip_netif);
     addr->s_addr = lwip_addr->addr;
-    return true;
+    result = true;
   }
-  return false;
+  UNLOCK_TCPIP_CORE();
+  return result;
 }
 
 int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
