@@ -20,6 +20,7 @@
 #include "etcpal/netint.h"
 #include <string.h>
 #include <lwip/netif.h>
+#include <lwip/tcpip.h>
 #include "etcpal/private/opts.h"
 #include "etcpal/private/netint.h"
 
@@ -32,6 +33,7 @@ static EtcPalNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS];
 size_t num_static_netints;
 size_t default_index;
 
+// Must be called with lwIP TCP/IP core locked
 static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
 {
   netint->index = netif_get_index(lwip_netif);
@@ -46,6 +48,7 @@ static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNet
   }
 }
 
+// Must be called with lwIP TCP/IP core locked
 static void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
 {
   copy_common_interface_info(lwip_netif, netint);
@@ -63,6 +66,7 @@ static void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintI
 }
 
 #if LWIP_IPV6
+// Must be called with lwIP TCP/IP core locked
 static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
 {
   copy_common_interface_info(lwip_netif, netint);
@@ -117,6 +121,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   num_static_netints = 0;
 
+  LOCK_TCPIP_CORE();
+
   // Make sure the default netint is included
 #if LWIP_IPV4
   if (netif_default)
@@ -168,6 +174,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     }
 #endif
   }
+
+  UNLOCK_TCPIP_CORE();
 
   cache->netints = static_netints;
   cache->num_netints = num_static_netints;
