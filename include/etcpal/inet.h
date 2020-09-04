@@ -381,6 +381,13 @@ typedef struct EtcPalNetintInfo
   bool is_default;
 } EtcPalNetintInfo;
 
+/** A set of identifying information for a network interface, for multicast purposes. */
+typedef struct EtcPalMcastNetintId
+{
+  etcpal_iptype_t ip_type; /*!< The IP protocol used on the network interface. */
+  unsigned int    index;   /*!< The OS index of the network interface. */
+} EtcPalMcastNetintId;
+
 /** Maximum length of the string representation of an IP address. */
 #define ETCPAL_IP_STRING_BYTES 46
 /** Maximum length of the string representation of a MAC address. */
