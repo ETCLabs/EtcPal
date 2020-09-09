@@ -381,7 +381,9 @@ typedef struct EtcPalNetintInfo
   bool is_default;
 } EtcPalNetintInfo;
 
-/** A set of identifying information for a network interface, for multicast purposes. */
+/** A set of identifying information for a network interface, for multicast purposes. The primary key for a network
+ *  interface is simply a combination of the interface index and the IP protocol used. The interface IP address is not
+ *  required for this. */
 typedef struct EtcPalMcastNetintId
 {
   etcpal_iptype_t ip_type; /*!< The IP protocol used on the network interface. */
