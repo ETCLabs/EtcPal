@@ -20,7 +20,7 @@
 #include "etcpal/sem.h"
 #include "etcpal_mqx_common.h"
 
-bool etcpal_sem_timed_wait(etcpal_mutex_t* id, int timeout_ms)
+bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
   return lwsem_timed_wait(id, timeout_ms);
 }
