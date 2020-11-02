@@ -1,0 +1,203 @@
+Whoa, this isn't a real source file! What's going on here? Well, the headers for this module are
+platform-specific, and some of them implement types and functions differently (i.e. functions as
+macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
+
+/**
+ * @defgroup etcpal_rwlock rwlock (Read-Write Locks)
+ * @ingroup etcpal_os
+ * @brief Reader-writer lock objects.
+ *
+ * Sometimes also referred to as a shared-exclusive lock or multi-reader lock. When implemented to
+ * protect a resource, allows multiple "readers" to access the resource at the same time for
+ * read-only purposes.
+ *
+ * For example:
+ * @code
+ * // Must be initialized before use with etcpal_rwlock_create().
+ * etcpal_rwlock_t lock;
+ * char device_name[DEVICE_NAME_LENGTH];
+ * 
+ * bool get_device_name(char* buffer)
+ * {
+ *   if (etcpal_rwlock_readlock(&lock))
+ *   {
+ *     // Multiple threads can be in this block simultaneously, which is fine.
+ *     strncpy(buffer, device_name, DEVICE_NAME_LENGTH);
+ *     etcpal_rwlock_readunlock(&lock);
+ *     return true;
+ *   }
+ *   else
+ *   {
+ *     return false;
+ *   }
+ * }
+ *
+ * bool set_device_name(const char* new_name)
+ * {
+ *   if (etcpal_rwlock_writelock(&lock))
+ *   {
+ *     // Only one thread can be in this block at a time. It also locks all threads out of the read
+ *     // lock block above.
+ *     strncpy(device_name, new_name, DEVICE_NAME_LENGTH);
+ *     etcpal_rwlock_writeunlock(&lock);
+ *     return true;
+ *   }
+ *   else
+ *   {
+ *     return false;
+ *   }
+ * }
+ * @endcode
+ *
+ * These are implemented as "write-preferring" reader-writer locks; this means that new readers are
+ * blocked from acquiring a read lock if any context is currently waiting for a write lock.
+ *
+ * EtcPal read-write locks are typically implemented using multiple OS synchronization constructs
+ * under the hood.
+ *
+ * | Platform | #ETCPAL_RWLOCK_HAS_TIMED_LOCK |
+ * |----------|-------------------------------|
+ * | FreeRTOS | Yes                           |
+ * | Linux    | No                            |
+ * | macOS    | No                            |
+ * | MQX      | Yes                           |
+ * | Windows  | No                            |
+ *
+ * @{
+ */
+
+/**
+ * @brief The read-write lock identifier.
+ *
+ * This is highly likely to be a struct.
+ */
+typedef PLATFORM_DEFINED etcpal_rwlock_t;
+
+/**
+ * @brief Whether etcpal_rwlock_timed_readlock() and etcpal_rwlock_timed_writelock() are meaningful
+ *        on this platform.
+ * 
+ * If defined to 0, the etcpal_rwlock_timed_*lock() functions execute the equivalent of
+ * etcpal_rwlock_try_*lock() if given a timeout of 0, or etcpal_rwlock_*lock() otherwise.
+ */
+#define ETCPAL_RWLOCK_HAS_TIMED_LOCK /* platform-defined */
+
+/**
+ * @brief Create a new read-write lock.
+ * @param[out] id Read-write lock identifier on which to create a read-write lock. If this function
+ *                returns true, id becomes valid for calls to other etcpal_rwlock API functions.
+ * @return true: The read-write lock was created.
+ * @return false: The read-write lock was not created.
+ */
+bool etcpal_rwlock_create(etcpal_rwlock_t* id);
+
+/**
+ * @brief Access a read-write lock for reading.
+ *
+ * Blocks until any write lock has been released. Multiple contexts may have a read lock
+ * simultaneously. In typical usage, the resource protected by this lock should only be read, not
+ * modified, while inside a read lock.
+ *
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @return true: The read lock was acquired.
+ * @return false: The lock is invalid, or an error occurred.
+ */
+bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
+
+/**
+ * @brief Try to access a read-write lock for reading.
+ *
+ * Returns immediately either failure or success; does not block. Fails if a write lock is held
+ * from another context. Multiple contexts may have a read lock simultaneously. In typical usage,
+ * the resource protected by this lock should only be read, not modified, while inside a read lock.
+ *
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @return true: The read lock was acquired.
+ * @return false: The lock was held for writing from another thread, the lock is invalid, or an
+ *                error occurred.
+ */
+bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
+
+/**
+ * @brief Try to access a read-write lock for reading, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. The value of #ETCPAL_RWLOCK_HAS_TIMED_LOCK can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_rwlock_try_readlock() if timeout_ms is 0, or
+ * etcpal_rwlock_readlock() otherwise.
+ *
+ * In typical usage, the resource protected by this lock should only be read, not modified, while
+ * inside a read lock.
+ *
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @param[in] timeout_ms Maximum amount of time to wait to acquire a read lock, in milliseconds. If
+ *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_rwlock_readlock() was called.
+ * @return true: The read lock was acquired.
+ * @return false: The timeout expired, the lock is invalid or an error occurred.
+ */
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
+
+/**
+ * @brief Release a read lock on a read-write lock object.
+ * @param[in] id Identifier for the read-write lock on which to release the read lock.
+ */
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
+
+/**
+ * @brief Access a read-write lock for writing.
+ *
+ * Blocks until all read and write locks have been released. No new read locks are allowed while
+ * this function is being blocked on.
+ *
+ * @param[in] id Identifier for the read-write lock on which to acquire a write lock.
+ * @return true: The write lock was acquired.
+ * @return false: The lock is invalid, or an error occurred.
+ */
+bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
+
+/**
+ * @brief Try to access a read-write lock for writing.
+ *
+ * Returns immediately either failure or success; does not block. Fails if a read or write lock is
+ * held from another context. 
+ *
+ * @param[in] id Identifier for the read-write lock on which to acquire a read lock.
+ * @return true: The write lock was acquired.
+ * @return false: The lock was held for reading or writing from another thread, the lock was
+ *         invalid, or an error occurred.
+ */
+bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
+
+/**
+ * @brief Try to access a read-write lock for writing, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. The value of #ETCPAL_RWLOCK_HAS_TIMED_LOCK can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_rwlock_try_writelock() if timeout_ms is 0, or
+ * etcpal_rwlock_writelock() otherwise.
+ *
+ * @param[in] id Identifier for the read-write lock on which to acquire a write lock.
+ * @param[in] timeout_ms Maximum amount of time to wait to acquire a write lock, in milliseconds.
+ *                       If #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_rwlock_writelock() was called.
+ * @return true: The write lock was acquired.
+ * @return false: The timeout expired, the lock is invalid or an error occurred.
+ */
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
+
+/**
+ * @brief Release a write lock on a read-write lock object.
+ * @param[in] id Identifier for the read-write lock on which to release the write lock.
+ */
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
+
+/**
+ * @brief Destroy a read-write lock object.
+ * @param[in] id Identifier for the read-write lock object to destroy.
+ */
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
+
+/**
+ * @}
+ */

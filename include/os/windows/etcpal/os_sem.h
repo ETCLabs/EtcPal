@@ -17,12 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_SOCKET_H_
-#define ETCPAL_OS_SOCKET_H_
+#ifndef ETCPAL_OS_SEM_H_
+#define ETCPAL_OS_SEM_H_
 
 #ifndef NOMINMAX
-#define NOMINMAX 1 /* Suppress some conflicting definitions in the Windows headers */
-#include <winsock2.h>
+#define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
+#include <winsock2.h> /* To fix winsock include order issues */
 #include <windows.h>
 #undef NOMINMAX
 #else
@@ -30,50 +30,30 @@
 #include <windows.h>
 #endif
 
-#include "etcpal/inet.h"
-#include "etcpal/mutex.h"
-#include "etcpal/rbtree.h"
+#include <stdbool.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Definitions for the EtcPal socket type */
+typedef HANDLE etcpal_sem_t;
 
-typedef SOCKET etcpal_socket_t;
+#define ETCPAL_SEM_HAS_TIMED_WAIT 1
+#define ETCPAL_SEM_HAS_POST_FROM_ISR 0
+#define ETCPAL_SEM_HAS_MAX_COUNT 1
+#define ETCPAL_SEM_MUST_BE_BALANCED 0
 
-#if defined(_WIN64)
-#define PRIepsock "I64u"
-#else
-#define PRIepsock "u"
-#endif
-
-#define ETCPAL_SOCKET_INVALID INVALID_SOCKET
-
-#define ETCPAL_SOCKET_MAX_POLL_SIZE FD_SETSIZE
-
-/* Definitions for the etcpal_poll API */
-
-typedef struct EtcPalPollFdSet
-{
-  fd_set set;
-  size_t count;
-} EtcPalPollFdSet;
-
-typedef struct EtcPalPollContext
-{
-  bool           valid;
-  etcpal_mutex_t lock;
-
-  EtcPalRbTree sockets;
-
-  EtcPalPollFdSet readfds;
-  EtcPalPollFdSet writefds;
-  EtcPalPollFdSet exceptfds;
-} EtcPalPollContext;
+bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
+bool etcpal_sem_wait(etcpal_sem_t* id);
+bool etcpal_sem_try_wait(etcpal_sem_t* id);
+bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
+bool etcpal_sem_post(etcpal_sem_t* id);
+#define etcpal_sem_post_from_isr etcpal_sem_post
+void etcpal_sem_destroy(etcpal_sem_t* id);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_SOCKET_H_ */
+#endif /* ETCPAL_OS_SEM_H_ */

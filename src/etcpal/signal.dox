@@ -1,0 +1,186 @@
+Whoa, this isn't a real source file! What's going on here? Well, the headers for this module are
+platform-specific, and some of them implement types and functions differently (i.e. functions as
+macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
+
+/**
+ * @defgroup etcpal_signal signal (Signals)
+ * @ingroup etcpal_os
+ * @brief Signal objects.
+ *
+ * Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
+ * call to etcpal_signal_wait() blocks until etcpal_signal_post() is called.
+ *
+ * Mutexes are used to synchronize different threads around some event. For example:
+ * @code
+ * Event event_queue[EVENT_QUEUE_SIZE];
+ * size_t event_queue_current_size;
+ * etcpal_signal_t signal;
+ *
+ * void event_thread(void* arg)
+ * {
+ *   while (keep_running)
+ *   {
+ *     // Wait until we have queue items to process
+ *     // Note this is a simplified example; in real code you would probably want a mutex or
+ *     // critical section here as well.
+ *     if (etcpal_signal_wait(&signal))
+ *     {
+ *       // Handle all events currently in the queue
+ *       for (size_t i = 0; i < event_queue_current_size; ++i)
+ *       {
+ *         Event* event = &event_queue[i];
+ *         // Handle event somehow
+ *       }
+ *       event_queue_current_size = 0;
+ *     }
+ *   }
+ * }
+ *
+ * int main(void)
+ * {
+ *   etcpal_signal_create(&signal);
+ *   
+ *   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
+ *   etcpal_thread_t event_thread_handle;
+ *   etcpal_thread_create(&event_thread_handle, &params, event_thread, NULL);
+ *
+ *   // At shutdown time...
+ *   keep_running = false;
+ *   etcpal_thread_join(&event_thread_handle);
+ *   etcpal_signal_destroy(&signal);
+ *   return 0;
+ * }
+ *
+ * void interrupt_handler(void)
+ * {
+ *   // Add some event to the queue
+ *   event_queue[event_queue_current_size++] = new_event;
+ *   etcpal_signal_post_from_isr(&signal);
+ * }
+ * @endcode
+ *
+ * etcpal_signal implementations use different constructs under the hood on various platforms. Also,
+ * different platforms affect the behavior of certain functions.
+ *
+ * | Platform | #ETCPAL_SIGNAL_HAS_TIMED_WAIT | #ETCPAL_SIGNAL_HAS_POST_FROM_ISR | Underlying Type    |
+ * |----------|-------------------------------|----------------------------------|--------------------|
+ * | FreeRTOS | Yes                           | Yes                              | [Binary Semaphores](https://www.freertos.org/Embedded-RTOS-Binary-Semaphores.html) |
+ * | Linux    | No                            | No                               | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
+ * | macOS    | No                            | No                               | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
+ * | MQX      | Yes                           | No                               | Lightweight Events |
+ * | Windows  | Yes                           | No                               | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
+ *
+ * @{
+ */
+
+/**
+ * @brief The signal identifier.
+ *
+ * Depending on the platform, this could be a scalar type or a struct.
+ */
+typedef PLATFORM_DEFINED etcpal_signal_t;
+
+/**
+ * @brief Whether etcpal_signal_timed_wait() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_signal_timed_wait() executes the equivalent of etcpal_signal_try_wait()
+ * if given a timeout of 0, or etcpal_signal_wait() otherwise.
+ */
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT /* platform-defined */
+
+/**
+ * @brief Whether etcpal_signal_post_from_isr() is meaningful on this platform.
+ *
+ * Some platforms have a different method for posting a signal from an interrupt context. If
+ * defined to 0, etcpal_signal_post_from_isr() executes the equivalent of etcpal_signal_post().
+ */
+#define ETCPAL_SIGNAL_HAS_POST_FROM_ISR /* platform-defined */
+
+/**
+ * @brief Create a new signal.
+ *
+ * Signals are created in the "unsignaled" state; that is, the first call to etcpal_signal_wait()
+ * will block.
+ *
+ * @param[out] id Signal identifier on which to create a signal. If this function returns true,
+ *                id becomes valid for calls to other etcpal_signal API functions.
+ * @return true: The signal was created.
+ * @return false: The signal was not created.
+ */
+bool etcpal_signal_create(etcpal_signal_t* id);
+
+/**
+ * @brief Wait for a signal.
+ *
+ * If the signal is in the signaled state (etcpal_signal_post() has previously been called), puts
+ * the signal in the non-signaled state and returns true. Otherwise, blocks until a call to
+ * etcpal_signal_post() is made on the signal object and returns true.
+ *
+ * @param[in] id Identifier for the signal for which to wait.
+ * @return true: The signal was received.
+ * @return false: The signal is invalid or an error occurred.
+ */
+bool etcpal_signal_wait(etcpal_signal_t* id);
+
+/**
+ * @brief Try to wait for a signal.
+ *
+ * If the signal is in the signaled state (etcpal_signal_post() has previously been called), puts
+ * the signal in the non-signaled state and returns true. Otherwise, returns false.
+ *
+ * @param[in] id Identifier for the signal to poll.
+ * @return true: The signal was received.
+ * @return false: The signal is not in a signaled state (or the signal is invalid).
+ */
+bool etcpal_signal_try_wait(etcpal_signal_t* id);
+
+/**
+ * @brief Wait for a signal, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. The value of #ETCPAL_SIGNAL_HAS_TIMED_WAIT can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_signal_try_wait() if timeout_ms is 0, or
+ * etcpal_signal_wait() otherwise.
+ *
+ * @param[in] id Identifier for the signal for which to wait.
+ * @param[in] timeout_ms Maximum amount of time to wait for the signal, in milliseconds. If
+ *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_signal_wait() was called.
+ * @return true: The signal was received.
+ * @return false: The timeout expired, the signal was invalid or an error occurred.
+ */
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
+
+/**
+ * @brief Post a signal.
+ *
+ * If no threads are waiting for the signal, puts the signal object in the "signaled" state (a
+ * subsequent call to etcpal_signal_wait() will return immediately). Otherwise, wakes up the first
+ * thread that waited for the signal.
+ *
+ * @param[in] id Identifier for the signal to post.
+ */
+void etcpal_signal_post(etcpal_signal_t* id);
+
+/**
+ * @brief Post a signal from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for posting a signal from an interrupt context. The value of #ETCPAL_SIGNAL_HAS_POST_FROM_ISR
+ * can be used to determine whether this function is meaningful on the current platform. If it is
+ * defined to 0, this function simply executes the equivalent of etcpal_signal_post().
+ *
+ * @param[in] id Identifier for the signal to post.
+ */
+void etcpal_signal_post_from_isr(etcpal_signal_t* id);
+
+/**
+ * @brief Destroy a signal object.
+ * @param[in] id Identifier for the signal to destroy.
+ */
+void etcpal_signal_destroy(etcpal_signal_t* id);
+
+/**
+ * @}
+ */
+

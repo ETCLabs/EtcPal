@@ -17,28 +17,33 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/cpp/signal.h"
 #include "unity_fixture.h"
 
-extern "C" void run_all_tests(void)
+extern "C" {
+TEST_GROUP(etcpal_cpp_signal);
+
+TEST_SETUP(etcpal_cpp_signal)
 {
-  RUN_TEST_GROUP(etcpal_cpp_error);
-  RUN_TEST_GROUP(etcpal_cpp_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
-  RUN_TEST_GROUP(etcpal_cpp_log);
-  RUN_TEST_GROUP(etcpal_cpp_mutex);
-  RUN_TEST_GROUP(etcpal_cpp_rwlock);
-  RUN_TEST_GROUP(etcpal_cpp_sem);
-  RUN_TEST_GROUP(etcpal_cpp_signal);
-  RUN_TEST_GROUP(etcpal_cpp_thread);
-  RUN_TEST_GROUP(etcpal_cpp_timer);
+}
 
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_queue);
-#endif
+TEST_TEAR_DOWN(etcpal_cpp_signal)
+{
+}
 
-#endif
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_inet);
-#endif
+TEST(etcpal_cpp_signal, create_and_destroy_works)
+{
+  etcpal::Signal sig;
+
+  // Signals shouldn't be created in the signaled state.
+  TEST_ASSERT_FALSE(sig.TryWait());
+
+  sig.Notify();
+  TEST_ASSERT_TRUE(sig.Wait());
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_signal)
+{
+  RUN_TEST_CASE(etcpal_cpp_signal, create_and_destroy_works);
+}
 }

@@ -1,0 +1,208 @@
+Whoa, this isn't a real source file! What's going on here? Well, the headers for this module are
+platform-specific, and some of them implement types and functions differently (i.e. functions as
+macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
+
+/**
+ * @defgroup etcpal_sem sem (Counting Semaphores)
+ * @ingroup etcpal_os
+ * @brief Counting semaphore objects.
+ *
+ * A counting semaphore is a synchronization value which can never fall below zero. Each time the 
+ * semaphore is _posted_, its count increases. Each time the semaphore is _taken_, its count
+ * decreases, unless the count is zero, in which case the task waiting for it is blocked until it
+ * is posted again. This is often used for tracking events that can occur multiple times before
+ * being serviced or pools of resources. 
+ *
+ * Usage example:
+ * @code
+ * static etcpal_sem_t sem;
+ * #define SEM_MAX_COUNT 20
+ * 
+ * void main(void)
+ * {
+ *   etcpal_sem_create(&sem, 0, SEM_MAX_COUNT);
+ *
+ *   // Enable interrupts
+ *
+ *   while (1)
+ *   {
+ *     if (etcpal_sem_wait(&sem))
+ *     {
+ *       // Service the interrupt.
+ *       // Because this is a counting semaphore, we will enter this block once for each time the
+ *       // interrupt is received.
+ *     }
+ *   }
+ *   
+ *   etcpal_sem_destroy(&sem);
+ *   return 0;
+ * }
+ *
+ * void interrupt_handler(void)
+ * {
+ *   // We've received some event via interrupt.
+ *   // Notify the service thread that a new event has occurred.
+ *   etcpal_sem_post_from_isr(&sem);
+ * }
+ * @endcode
+ *
+ * etcpal_sem implementations use different constructs under the hood on various platforms. Also,
+ * different platforms affect the behavior of certain functions.
+ *
+ * | Platform | #ETCPAL_SEM_HAS_TIMED_WAIT | #ETCPAL_SEM_HAS_POST_FROM_ISR | #ETCPAL_SEM_HAS_MAX_COUNT | #ETCPAL_SEM_MUST_BE_BALANCED | Underlying Type    |
+ * |----------|----------------------------|-------------------------------|---------------------------|------------------------------|--------------------|
+ * | FreeRTOS | Yes                        | Yes                           | Yes                       | No                           | [Counting Semaphores](https://www.freertos.org/Real-time-embedded-RTOS-Counting-Semaphores.html) |
+ * | Linux    | No                         | No                            | No                        | No                           | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
+ * | macOS    | No                         | No                            | No                        | Yes                          | [Dispatch Semaphores](https://developer.apple.com/documentation/dispatch/dispatch_semaphore?language=objc)
+ * | MQX      | Yes                        | No                            | No                        | No                           | Lightweight Semaphores |
+ * | Windows  | Yes                        | No                            | Yes                       | No                           | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
+ *
+ * @{
+ */
+
+/**
+ * @brief The semaphore identifier.
+ *
+ * Depending on the platform, this could be a scalar type or a struct.
+ */
+typedef PLATFORM_DEFINED etcpal_sem_t;
+
+/**
+ * @brief Whether etcpal_sem_timed_wait() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_sem_timed_wait() executes the equivalent of etcpal_sem_try_wait() if
+ * given a timeout of 0, or etcpal_sem_wait() otherwise.
+ */
+#define ETCPAL_SEM_HAS_TIMED_WAIT /* platform-defined */
+
+/**
+ * @brief Whether etcpal_sem_post_from_isr() is meaningful on this platform.
+ *
+ * Some platforms have a different method for posting a signal from an interrupt context. If
+ * defined to 0, etcpal_sem_post_from_isr() executes the equivalent of etcpal_sem_post().
+ */
+#define ETCPAL_SEM_HAS_POST_FROM_ISR /* platform-defined */
+
+/**
+ * @brief Whether counting semaphores have a maximum count on this platform.
+ *
+ * Some platforms have a maximum count after which a counting semaphore can no longer be posted. If
+ * defined to 0, the max_count argument to etcpal_sem_create() is ignored.
+ */
+#define ETCPAL_SEM_HAS_MAX_COUNT /* platform-defined */
+
+/**
+ * @brief Whether the semaphore must have its initial count before being destroyed.
+ *
+ * Currently the only platform for which this is true is macOS. Calls to etcpal_sem_wait() and
+ * friends must be balanced with calls to etcpal_sem_post() and friends. If the semaphore does not
+ * have its initial count when being destroyed, an EXC_BAD_INSTRUCTION exception is raised.
+ */
+#define ETCPAL_SEM_MUST_BE_BALANCED /* platform-defined */
+
+/**
+ * @brief Create a new counting semaphore.
+ *
+ * If initial_count is 0, calls to etcpal_sem_wait() will block until the first call is made to
+ * etcpal_sem_post().
+ *
+ * @param[out] id Semaphore identifier on which to create a semaphore. If this function returns
+ *                true, *id becomes valid for calls to other etcpal_sem API functions.
+ * @param[in] initial_count The count value assigned to the semaphore when it is created.
+ * @param[in] max_count The maximum count that the semaphore can have. This is not meaningful on
+ *                      all platforms - see #ETCPAL_SEM_HAS_MAX_COUNT. If it is meaningful, once
+ *                      the count reaches this value, the semaphore can no longer be posted.
+ * @return true: The semaphore was created.
+ * @return false: The semaphore was not created.
+ */
+bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
+
+/**
+ * @brief Wait for a semaphore.
+ *
+ * If the semaphore's count is nonzero, decrements the count and returns true. Otherwise, blocks
+ * until a call to etcpal_sem_post() on the semaphore.
+ *
+ * @param[in] id Identifier for the semaphore for which to wait.
+ * @return true: The semaphore's count was decremented.
+ * @return false: The semaphore is invalid or an error occurred.
+ */
+bool etcpal_sem_wait(etcpal_sem_t* id);
+
+/**
+ * @brief Try to wait for a semaphore.
+ *
+ * If the semaphore's count is nonzero, decrements the count and returns true. Otherwise, returns
+ * false immediately.
+ *
+ * @param[in] id Identifier for the semaphore for which to attempt to wait.
+ * @return true: The semaphore's count was decremented.
+ * @return false: The semaphore's count was zero, the semaphore is invalid or an error occurred.
+ */
+bool etcpal_sem_try_wait(etcpal_sem_t* id);
+
+/**
+ * @brief Wait for a semaphore, giving up after a timeout.
+ *
+ * If the semaphore's count is nonzero, decrements the count and returns true. Otherwise, waits up
+ * to timeout_ms for the semaphore to be posted, returning false if this timeout expires.
+ *
+ * This function is not honored on all platforms. The value of #ETCPAL_SEM_HAS_TIMED_WAIT can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_sem_try_wait() if timeout_ms is 0, or
+ * etcpal_sem_wait() otherwise.
+ *
+ * @param[in] id Identifier for the semaphore for which to wait.
+ * @param[in] timeout_ms Maximum amount of time to wait for the semaphore, in milliseconds. If
+ *                       #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                       etcpal_sem_wait() was called.
+ * @return true: The semaphore's count was decremented.
+ * @return false: The timeout expired while the semaphore's count was zero, the semaphore was
+ *                invalid or an error occurred.
+ */
+bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
+
+/**
+ * @brief Post a semaphore.
+ *
+ * If the count is zero and there is a thread waiting for the semaphore, wakes up the thread
+ * without incrementing the count. Otherwise, increments the count, unless the count is equal to
+ * the value provided for max_count when the semaphore was created, in which case it returns false.
+ * (note: the max_count behavior does not occur on all platforms. See the table in the module
+ * overview for more information).
+ *
+ * @param[in] id Identifier for the semaphore to post.
+ * @return true: The semaphore was posted.
+ * @return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
+ *                occurred.
+ */
+bool etcpal_sem_post(etcpal_sem_t* id);
+
+/**
+ * @brief Post a semaphore from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for posting a semaphore from an interrupt context. The value of #ETCPAL_SEM_HAS_POST_FROM_ISR
+ * can be used to determine whether this function is meaningful on the current platform. If it is
+ * defined to 0, this function simply executes the equivalent of etcpal_sem_post().
+ *
+ * @param[in] id Identifier for the semaphore to post.
+ * @return true: The semaphore was posted.
+ * @return false: The semaphore has hit its maximum count, the semaphore was invalid or an error
+ *                occurred.
+ */
+bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
+
+/**
+ * @brief Destroy a semaphore object.
+ *
+ * **NOTE:** if #ETCPAL_SEM_MUST_BE_BALANCED is defined to 1, the semaphore must have its initial
+ * count before being destroyed.
+ *
+ * @param[in] id Identifier for the semaphore to destroy.
+ */
+void etcpal_sem_destroy(etcpal_sem_t* id);
+
+/**
+ * @}
+ */

@@ -17,28 +17,9 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
+#ifndef ETCPAL_MUTEX_H_
+#define ETCPAL_MUTEX_H_
 
-extern "C" void run_all_tests(void)
-{
-  RUN_TEST_GROUP(etcpal_cpp_error);
-  RUN_TEST_GROUP(etcpal_cpp_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
-  RUN_TEST_GROUP(etcpal_cpp_log);
-  RUN_TEST_GROUP(etcpal_cpp_mutex);
-  RUN_TEST_GROUP(etcpal_cpp_rwlock);
-  RUN_TEST_GROUP(etcpal_cpp_sem);
-  RUN_TEST_GROUP(etcpal_cpp_signal);
-  RUN_TEST_GROUP(etcpal_cpp_thread);
-  RUN_TEST_GROUP(etcpal_cpp_timer);
+#include "etcpal/os_mutex.h"
 
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_queue);
-#endif
-
-#endif
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_inet);
-#endif
-}
+#endif /* ETCPAL_MUTEX_H_ */

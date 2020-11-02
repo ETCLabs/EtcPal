@@ -1,0 +1,149 @@
+Whoa, this isn't a real source file! What's going on here? Well, the headers for this module are
+platform-specific, and some of them implement types and functions differently (i.e. functions as
+macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
+
+/**
+ * @defgroup etcpal_mutex mutex (Mutexes)
+ * @ingroup etcpal_os
+ * @brief Mutual-exclusion (mutex) objects.
+ *
+ * Sometimes also referred to as a critical section. Only one thread can lock the mutex at a time
+ * using etcpal_mutex_lock(). Where possible on real-time platforms, the mutex provides priority
+ * inheritance.
+ *
+ * Mutexes are used to synchronize access to data from different threads. For example:
+ * 
+ * @code
+ * static int shared_counter;
+ * etcpal_mutex_t mutex;
+ *
+ * void counter_thread(void* arg)
+ * {
+ *   for (int i = 0; i < 10000; ++i)
+ *   {
+ *     // Ensure that we are the only context conducting read-modify-write operations on
+ *     // shared_counter. No other thread can be in this block of code at the same time.
+ *     etcpal_mutex_lock(&mutex);
+ *     ++shared_counter;
+ *     etcpal_mutex_unlock(&mutex);
+ *   }
+ * }
+ *
+ * int main(void)
+ * {
+ *   etcpal_mutex_create(&mutex);
+ *
+ *   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
+ *   etcpal_thread_t thread_handles[5];
+ *   for (int i = 0; i < 5; ++i)
+ *   {
+ *     etcpal_thread_create(&thread_handles[i], &params, counter_thread, NULL);
+ *   }
+ *  
+ *   // Wait for the threads to finish
+ *   etcpal_thread_sleep(1000);
+ *   for (int i = 0; i < 5; ++i)
+ *   {
+ *     etcpal_thread_join(&thread_handles[i]);
+ *   }
+ *
+ *   printf("The counter is: %d\n", shared_counter); // Prints "The counter is: 50000"
+ *
+ *   etcpal_mutex_destroy(&mutex);
+ *   return 0;
+ * }
+ * @endcode
+ *
+ * etcpal_mutex implementations use different constructs under the hood on various platforms. Also,
+ * different platforms affect the behavior of certain functions.
+ *
+ * | Platform | #ETCPAL_MUTEX_HAS_TIMED_LOCK | Underlying Type    |
+ * |----------|------------------------------|--------------------|
+ * | FreeRTOS | Yes                          | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
+ * | Linux    | No                           | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
+ * | macOS    | No                           | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
+ * | MQX      | Yes                          | Lightweight Semaphores |
+ * | Windows  | No                           | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ *
+ * @{
+ */
+
+/**
+ * @brief The mutex identifier.
+ *
+ * Depending on the platform, this could be a scalar type or a struct.
+ */
+typedef PLATFORM_DEFINED etcpal_mutex_t;
+
+/**
+ * @brief Whether etcpal_mutex_timed_lock() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_mutex_timed_lock() executes the equivalent of etcpal_mutex_try_lock() if
+ * given a timeout of 0, or etcpal_mutex_lock() otherwise.
+ */
+#define ETCPAL_MUTEX_HAS_TIMED_LOCK /* platform-defined */
+
+/**
+ * @brief Create a new mutex.
+ * @param[out] id Mutex identifier on which to create a mutex. If this function returns true, id
+ *                becomes valid for calls to other etcpal_mutex API functions.
+ * @return true: The mutex was created.
+ * @return false: The mutex was not created.
+ */
+bool etcpal_mutex_create(etcpal_mutex_t *id);
+
+/**
+ * @brief Lock a mutex.
+ * 
+ * Blocks until the mutex is locked.
+ *
+ * @param[in] id Identifier for the mutex to lock.
+ * @return true: The mutex is locked.
+ * @return false: The mutex is invalid or an error occurred.
+ */
+bool etcpal_mutex_lock(etcpal_mutex_t *id);
+
+/**
+ * @brief Try to lock a mutex.
+ *
+ * Returns immediately either failure or success.
+ *
+ * @param[in] id Identifier for the mutex to try to lock.
+ * @return true: The mutex is locked.
+ * @return false: The mutex is locked by another thread, the mutex is invalid or an error occurred.
+ */
+bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
+
+/**
+ * @brief Try to lock a mutex, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. The value of #ETCPAL_MUTEX_HAS_TIMED_LOCK can be
+ * used to determine whether this function is honored on the current platform. If it is defined to
+ * 0, this function executes the equivalent of etcpal_mutex_try_lock() if timeout_ms is 0, or
+ * etcpal_mutex_lock() otherwise.
+ *
+ * @param[in] id Identifier for the mutex to try to acquire.
+ * @param[in] timeout_ms Maximum amount of time to wait for the mutex to become available, in
+ *                       milliseconds. If #ETCPAL_WAIT_FOREVER is given, the result is the same as
+ *                       if etcpal_mutex_lock() was called.
+ * @return true: The mutex is locked.
+ * @return false: The timeout expired while waiting to lock the mutex, the mutex is invalid or an
+ *                error occurred.
+ */
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
+
+/**
+ * @brief Unlock a mutex.
+ * @param[in] id Identifier for the mutex to unlock.
+ */
+void etcpal_mutex_unlock(etcpal_mutex_t *id);
+
+/**
+ * @brief Destroy a mutex object.
+ * @param[in] id Identifier for the mutex to destroy.
+ */
+void etcpal_mutex_destroy(etcpal_mutex_t *id);
+
+/**
+ * @}
+ */

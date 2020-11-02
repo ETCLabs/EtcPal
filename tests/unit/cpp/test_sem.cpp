@@ -17,28 +17,39 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/cpp/sem.h"
 #include "unity_fixture.h"
 
-extern "C" void run_all_tests(void)
+extern "C" {
+TEST_GROUP(etcpal_cpp_sem);
+
+TEST_SETUP(etcpal_cpp_sem)
 {
-  RUN_TEST_GROUP(etcpal_cpp_error);
-  RUN_TEST_GROUP(etcpal_cpp_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
-  RUN_TEST_GROUP(etcpal_cpp_log);
-  RUN_TEST_GROUP(etcpal_cpp_mutex);
-  RUN_TEST_GROUP(etcpal_cpp_rwlock);
-  RUN_TEST_GROUP(etcpal_cpp_sem);
-  RUN_TEST_GROUP(etcpal_cpp_signal);
-  RUN_TEST_GROUP(etcpal_cpp_thread);
-  RUN_TEST_GROUP(etcpal_cpp_timer);
+}
 
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_queue);
-#endif
+TEST_TEAR_DOWN(etcpal_cpp_sem)
+{
+}
 
-#endif
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_inet);
-#endif
+TEST(etcpal_cpp_sem, create_and_destroy_works)
+{
+  // The semaphore has an initial count of 1
+  etcpal::Semaphore sem(1);
+
+  TEST_ASSERT_TRUE(sem.Wait());
+
+  // The count should now be zero - wait should fail
+  TEST_ASSERT_FALSE(sem.TryWait());
+
+  TEST_ASSERT_TRUE(sem.Post());
+  // The count should be 1 again. Wait should succeed.
+  TEST_ASSERT_TRUE(sem.TryWait());
+
+  TEST_ASSERT_TRUE(sem.Post());
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_sem)
+{
+  RUN_TEST_CASE(etcpal_cpp_sem, create_and_destroy_works);
+}
 }

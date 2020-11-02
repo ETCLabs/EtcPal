@@ -17,60 +17,21 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/lock.h"
+#include "etcpal/cpp/rwlock.h"
 #include "unity_fixture.h"
 
 extern "C" {
-TEST_GROUP(etcpal_cpp_lock);
+TEST_GROUP(etcpal_cpp_rwlock);
 
-TEST_SETUP(etcpal_cpp_lock)
+TEST_SETUP(etcpal_cpp_rwlock)
 {
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_lock)
+TEST_TEAR_DOWN(etcpal_cpp_rwlock)
 {
 }
 
-TEST(etcpal_cpp_lock, mutex_create_and_destroy_works)
-{
-  etcpal::Mutex mutex;
-
-  // Take ownership
-  TEST_ASSERT_TRUE(mutex.Lock());
-
-  TEST_ASSERT_FALSE(mutex.TryLock());
-
-  mutex.Unlock();
-}
-
-TEST(etcpal_cpp_lock, mutex_guard_works)
-{
-  etcpal::Mutex mutex;
-
-  {
-    // Take ownership via a mutex guard
-    etcpal::MutexGuard guard(mutex);
-
-    TEST_ASSERT_FALSE(mutex.TryLock());
-  }
-
-  // Lock should now be unlocked
-  TEST_ASSERT_TRUE(mutex.TryLock());
-  mutex.Unlock();
-}
-
-TEST(etcpal_cpp_lock, signal_create_and_destroy_works)
-{
-  etcpal::Signal sig;
-
-  // Signals shouldn't be created in the signaled state.
-  TEST_ASSERT_FALSE(sig.TryWait());
-
-  sig.Notify();
-  TEST_ASSERT_TRUE(sig.Wait());
-}
-
-TEST(etcpal_cpp_lock, rwlock_create_and_destroy_works)
+TEST(etcpal_cpp_rwlock, create_and_destroy_works)
 {
   etcpal::RwLock rwlock;
 
@@ -92,7 +53,7 @@ TEST(etcpal_cpp_lock, rwlock_create_and_destroy_works)
   rwlock.WriteUnlock();
 }
 
-TEST(etcpal_cpp_lock, read_guard_works)
+TEST(etcpal_cpp_rwlock, read_guard_works)
 {
   etcpal::RwLock rwlock;
 
@@ -113,7 +74,7 @@ TEST(etcpal_cpp_lock, read_guard_works)
   rwlock.WriteUnlock();
 }
 
-TEST(etcpal_cpp_lock, write_guard_works)
+TEST(etcpal_cpp_rwlock, write_guard_works)
 {
   etcpal::RwLock rwlock;
 
@@ -130,31 +91,10 @@ TEST(etcpal_cpp_lock, write_guard_works)
   rwlock.WriteUnlock();
 }
 
-TEST(etcpal_cpp_lock, sem_create_and_destroy_works)
+TEST_GROUP_RUNNER(etcpal_cpp_rwlock)
 {
-  // The semaphore has an initial count of 1
-  etcpal::Semaphore sem(1);
-
-  TEST_ASSERT_TRUE(sem.Wait());
-
-  // The count should now be zero - wait should fail
-  TEST_ASSERT_FALSE(sem.TryWait());
-
-  TEST_ASSERT_TRUE(sem.Post());
-  // The count should be 1 again. Wait should succeed.
-  TEST_ASSERT_TRUE(sem.TryWait());
-
-  TEST_ASSERT_TRUE(sem.Post());
-}
-
-TEST_GROUP_RUNNER(etcpal_cpp_lock)
-{
-  RUN_TEST_CASE(etcpal_cpp_lock, mutex_create_and_destroy_works);
-  RUN_TEST_CASE(etcpal_cpp_lock, mutex_guard_works);
-  RUN_TEST_CASE(etcpal_cpp_lock, signal_create_and_destroy_works);
-  RUN_TEST_CASE(etcpal_cpp_lock, rwlock_create_and_destroy_works);
-  RUN_TEST_CASE(etcpal_cpp_lock, read_guard_works);
-  RUN_TEST_CASE(etcpal_cpp_lock, write_guard_works);
-  RUN_TEST_CASE(etcpal_cpp_lock, sem_create_and_destroy_works);
+  RUN_TEST_CASE(etcpal_cpp_rwlock, create_and_destroy_works);
+  RUN_TEST_CASE(etcpal_cpp_rwlock, read_guard_works);
+  RUN_TEST_CASE(etcpal_cpp_rwlock, write_guard_works);
 }
 }

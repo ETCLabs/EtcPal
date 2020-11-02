@@ -17,28 +17,51 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
+#include "etcpal/signal.h"
 
-extern "C" void run_all_tests(void)
+bool etcpal_signal_create(etcpal_signal_t* id)
 {
-  RUN_TEST_GROUP(etcpal_cpp_error);
-  RUN_TEST_GROUP(etcpal_cpp_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
-  RUN_TEST_GROUP(etcpal_cpp_log);
-  RUN_TEST_GROUP(etcpal_cpp_mutex);
-  RUN_TEST_GROUP(etcpal_cpp_rwlock);
-  RUN_TEST_GROUP(etcpal_cpp_sem);
-  RUN_TEST_GROUP(etcpal_cpp_signal);
-  RUN_TEST_GROUP(etcpal_cpp_thread);
-  RUN_TEST_GROUP(etcpal_cpp_timer);
+  if (id)
+  {
+    *id = CreateEvent(NULL, FALSE, FALSE, NULL);
+    if (*id)
+      return true;
+  }
+  return false;
+}
 
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_queue);
-#endif
+bool etcpal_signal_wait(etcpal_signal_t* id)
+{
+  if (id)
+    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, INFINITE));
+  return false;
+}
 
-#endif
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_inet);
-#endif
+bool etcpal_signal_try_wait(etcpal_signal_t* id)
+{
+  if (id)
+    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, 0));
+  return false;
+}
+
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
+{
+  if (id)
+  {
+    DWORD wait_time = (timeout_ms < 0 ? INFINITE : timeout_ms);
+    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, wait_time));
+  }
+  return false;
+}
+
+void etcpal_signal_post(etcpal_signal_t* id)
+{
+  if (id)
+    SetEvent(*id);
+}
+
+void etcpal_signal_destroy(etcpal_signal_t* id)
+{
+  if (id)
+    CloseHandle(*id);
 }

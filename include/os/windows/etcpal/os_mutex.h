@@ -17,12 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_SOCKET_H_
-#define ETCPAL_OS_SOCKET_H_
+#ifndef ETCPAL_OS_MUTEX_H_
+#define ETCPAL_OS_MUTEX_H_
 
 #ifndef NOMINMAX
-#define NOMINMAX 1 /* Suppress some conflicting definitions in the Windows headers */
-#include <winsock2.h>
+#define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
+#include <winsock2.h> /* To fix winsock include order issues */
 #include <windows.h>
 #undef NOMINMAX
 #else
@@ -30,50 +30,34 @@
 #include <windows.h>
 #endif
 
-#include "etcpal/inet.h"
-#include "etcpal/mutex.h"
-#include "etcpal/rbtree.h"
+#include <stdbool.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Definitions for the EtcPal socket type */
-
-typedef SOCKET etcpal_socket_t;
-
-#if defined(_WIN64)
-#define PRIepsock "I64u"
-#else
-#define PRIepsock "u"
-#endif
-
-#define ETCPAL_SOCKET_INVALID INVALID_SOCKET
-
-#define ETCPAL_SOCKET_MAX_POLL_SIZE FD_SETSIZE
-
-/* Definitions for the etcpal_poll API */
-
-typedef struct EtcPalPollFdSet
+/*
+ * SRWLocks have been shown by empirical testing to provide a large efficiency boost over Windows
+ * mutexes and critical sections.
+ */
+typedef struct
 {
-  fd_set set;
-  size_t count;
-} EtcPalPollFdSet;
+  bool    valid;
+  SRWLOCK lock;
+} etcpal_mutex_t;
 
-typedef struct EtcPalPollContext
-{
-  bool           valid;
-  etcpal_mutex_t lock;
+#define ETCPAL_MUTEX_HAS_TIMED_LOCK 0
 
-  EtcPalRbTree sockets;
-
-  EtcPalPollFdSet readfds;
-  EtcPalPollFdSet writefds;
-  EtcPalPollFdSet exceptfds;
-} EtcPalPollContext;
+bool etcpal_mutex_create(etcpal_mutex_t* id);
+bool etcpal_mutex_lock(etcpal_mutex_t* id);
+bool etcpal_mutex_try_lock(etcpal_mutex_t* id);
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
+void etcpal_mutex_unlock(etcpal_mutex_t* id);
+void etcpal_mutex_destroy(etcpal_mutex_t* id);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_SOCKET_H_ */
+#endif /* ETCPAL_OS_MUTEX_H_ */

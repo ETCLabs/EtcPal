@@ -17,28 +17,41 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
+#ifndef ETCPAL_OS_SIGNAL_H_
+#define ETCPAL_OS_SIGNAL_H_
 
-extern "C" void run_all_tests(void)
-{
-  RUN_TEST_GROUP(etcpal_cpp_error);
-  RUN_TEST_GROUP(etcpal_cpp_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
-  RUN_TEST_GROUP(etcpal_cpp_log);
-  RUN_TEST_GROUP(etcpal_cpp_mutex);
-  RUN_TEST_GROUP(etcpal_cpp_rwlock);
-  RUN_TEST_GROUP(etcpal_cpp_sem);
-  RUN_TEST_GROUP(etcpal_cpp_signal);
-  RUN_TEST_GROUP(etcpal_cpp_thread);
-  RUN_TEST_GROUP(etcpal_cpp_timer);
-
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_queue);
+#ifndef NOMINMAX
+#define NOMINMAX 1    /* Suppress some conflicting definitions in the Windows headers */
+#include <winsock2.h> /* To fix winsock include order issues */
+#include <windows.h>
+#undef NOMINMAX
+#else
+#include <winsock2.h>
+#include <windows.h>
 #endif
 
+#include <stdbool.h>
+#include "etcpal/common.h"
+
+#ifdef __cplusplus
+extern "C" {
 #endif
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_inet);
-#endif
+
+typedef HANDLE etcpal_signal_t;
+
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT 1
+#define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 0
+
+bool etcpal_signal_create(etcpal_signal_t* id);
+bool etcpal_signal_wait(etcpal_signal_t* id);
+bool etcpal_signal_try_wait(etcpal_signal_t* id);
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
+void etcpal_signal_post(etcpal_signal_t* id);
+#define etcpal_signal_post_from_isr etcpal_signal_post
+void etcpal_signal_destroy(etcpal_signal_t* id);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* ETCPAL_OS_SIGNAL_H_ */

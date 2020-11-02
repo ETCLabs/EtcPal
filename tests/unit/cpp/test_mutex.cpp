@@ -17,9 +17,51 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_LOCK_H_
-#define ETCPAL_LOCK_H_
+#include "etcpal/cpp/mutex.h"
+#include "unity_fixture.h"
 
-#include "etcpal/os_lock.h"
+extern "C" {
+TEST_GROUP(etcpal_cpp_mutex);
 
-#endif /* ETCPAL_LOCK_H_ */
+TEST_SETUP(etcpal_cpp_mutex)
+{
+}
+
+TEST_TEAR_DOWN(etcpal_cpp_mutex)
+{
+}
+
+TEST(etcpal_cpp_mutex, create_and_destroy_works)
+{
+  etcpal::Mutex mutex;
+
+  // Take ownership
+  TEST_ASSERT_TRUE(mutex.Lock());
+
+  TEST_ASSERT_FALSE(mutex.TryLock());
+
+  mutex.Unlock();
+}
+
+TEST(etcpal_cpp_mutex, guard_works)
+{
+  etcpal::Mutex mutex;
+
+  {
+    // Take ownership via a mutex guard
+    etcpal::MutexGuard guard(mutex);
+
+    TEST_ASSERT_FALSE(mutex.TryLock());
+  }
+
+  // Lock should now be unmutexed
+  TEST_ASSERT_TRUE(mutex.TryLock());
+  mutex.Unlock();
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_mutex)
+{
+  RUN_TEST_CASE(etcpal_cpp_mutex, create_and_destroy_works);
+  RUN_TEST_CASE(etcpal_cpp_mutex, guard_works);
+}
+}
