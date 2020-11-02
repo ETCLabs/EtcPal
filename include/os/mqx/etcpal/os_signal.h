@@ -17,34 +17,32 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_SEM_H_
-#define ETCPAL_OS_SEM_H_
+#ifndef ETCPAL_OS_SIGNAL_H_
+#define ETCPAL_OS_SIGNAL_H_
 
 #include <stdbool.h>
-#include <FreeRTOS.h>
-#include <semphr.h>
+#include <mqx.h>
+#include <lwevent.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef SemaphoreHandle_t etcpal_sem_t;
+typedef LWEVENT_STRUCT etcpal_signal_t;
 
-#define ETCPAL_SEM_HAS_TIMED_WAIT 1
-#define ETCPAL_SEM_HAS_POST_FROM_ISR 1
-#define ETCPAL_SEM_HAS_MAX_COUNT 1
-#define ETCPAL_SEM_MUST_BE_BALANCED 0
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT 1
+#define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 0
 
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
-bool etcpal_sem_wait(etcpal_sem_t* id);
-bool etcpal_sem_try_wait(etcpal_sem_t* id);
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
-bool etcpal_sem_post(etcpal_sem_t* id);
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
-void etcpal_sem_destroy(etcpal_sem_t* id);
+#define etcpal_signal_create(idptr) (MQX_OK == _lwevent_create((idptr), LWEVENT_AUTO_CLEAR))
+#define etcpal_signal_wait(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 0u))
+#define etcpal_signal_try_wait(idptr) (MQX_OK == _lwevent_wait_ticks((idptr), 1u, true, 1u))
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
+#define etcpal_signal_post(idptr) ((void)_lwevent_set((idptr), 1u))
+#define etcpal_signal_post_from_isr etcpal_signal_post
+#define etcpal_signal_destroy(idptr) ((void)_lwevent_destroy(idptr))
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_SEM_H_ */
+#endif /* ETCPAL_OS_SIGNAL_H_ */

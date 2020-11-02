@@ -7,6 +7,10 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * @ingroup etcpal_os
  * @brief Reader-writer lock objects.
  *
+ * ```c
+ * #include "etcpal/rwlock.h"
+ * ```
+ *
  * Sometimes also referred to as a shared-exclusive lock or multi-reader lock. When implemented to
  * protect a resource, allows multiple "readers" to access the resource at the same time for
  * read-only purposes.

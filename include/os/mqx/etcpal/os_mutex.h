@@ -17,34 +17,29 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_SEM_H_
-#define ETCPAL_OS_SEM_H_
+#ifndef ETCPAL_OS_MUTEX_H_
+#define ETCPAL_OS_MUTEX_H_
 
 #include <stdbool.h>
-#include <FreeRTOS.h>
-#include <semphr.h>
+#include <mqx.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef SemaphoreHandle_t etcpal_sem_t;
+typedef LWSEM_STRUCT etcpal_mutex_t;
 
-#define ETCPAL_SEM_HAS_TIMED_WAIT 1
-#define ETCPAL_SEM_HAS_POST_FROM_ISR 1
-#define ETCPAL_SEM_HAS_MAX_COUNT 1
-#define ETCPAL_SEM_MUST_BE_BALANCED 0
+#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
-bool etcpal_sem_wait(etcpal_sem_t* id);
-bool etcpal_sem_try_wait(etcpal_sem_t* id);
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
-bool etcpal_sem_post(etcpal_sem_t* id);
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
-void etcpal_sem_destroy(etcpal_sem_t* id);
+#define etcpal_mutex_create(idptr) (MQX_OK == _lwsem_create((idptr), 1))
+#define etcpal_mutex_lock(idptr) (MQX_OK == _lwsem_wait(idptr))
+#define etcpal_mutex_try_lock(idptr) (MQX_OK == _lwsem_wait_ticks((idptr), 1u))
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
+#define etcpal_mutex_unlock(idptr) ((void)_lwsem_post(idptr))
+#define etcpal_mutex_destroy(idptr) ((void)_lwsem_destroy(idptr))
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_SEM_H_ */
+#endif /* ETCPAL_OS_MUTEX_H_ */

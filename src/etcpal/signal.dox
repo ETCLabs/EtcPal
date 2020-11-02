@@ -7,6 +7,10 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * @ingroup etcpal_os
  * @brief Signal objects.
  *
+ * ```c
+ * #include "etcpal/signal.h"
+ * ```
+ *
  * Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
  * call to etcpal_signal_wait() blocks until etcpal_signal_post() is called.
  *

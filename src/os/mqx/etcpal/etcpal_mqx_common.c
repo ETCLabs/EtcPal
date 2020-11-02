@@ -17,34 +17,27 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_SEM_H_
-#define ETCPAL_OS_SEM_H_
+#include "etcpal_mqx_common.h"
 
-#include <stdbool.h>
-#include <FreeRTOS.h>
-#include <semphr.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef SemaphoreHandle_t etcpal_sem_t;
-
-#define ETCPAL_SEM_HAS_TIMED_WAIT 1
-#define ETCPAL_SEM_HAS_POST_FROM_ISR 1
-#define ETCPAL_SEM_HAS_MAX_COUNT 1
-#define ETCPAL_SEM_MUST_BE_BALANCED 0
-
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
-bool etcpal_sem_wait(etcpal_sem_t* id);
-bool etcpal_sem_try_wait(etcpal_sem_t* id);
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
-bool etcpal_sem_post(etcpal_sem_t* id);
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
-void etcpal_sem_destroy(etcpal_sem_t* id);
-
-#ifdef __cplusplus
+bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct)
+{
+  TIME_STRUCT ts;
+  ts.SECONDS = (ms < 0 ? 0 : (ms / 1000));
+  ts.MILLISECONDS = (ms <= 0 ? 1 : (ms % 1000));
+  return _time_to_ticks(&ts, tick_struct);
 }
-#endif
 
-#endif /* ETCPAL_OS_SEM_H_ */
+bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms)
+{
+  if (timeout_ms < 0)
+  {
+    return (MQX_OK == _lwsem_wait(sem));
+  }
+  else
+  {
+    MQX_TICK_STRUCT ticks_to_wait;
+    if (milliseconds_to_ticks(timeout_ms, &ticks_to_wait))
+      return (MQX_OK == _lwsem_wait_for(sem, &ticks_to_wait));
+    return false;
+  }
+}

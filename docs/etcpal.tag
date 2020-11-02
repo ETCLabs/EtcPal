@@ -59,6 +59,8 @@
     <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
+    <includes id="cpp_2mutex_8h" name="mutex.h" local="yes" imported="no">etcpal/cpp/mutex.h</includes>
+    <includes id="cpp_2signal_8h" name="signal.h" local="yes" imported="no">etcpal/cpp/signal.h</includes>
     <includes id="cpp_2thread_8h" name="thread.h" local="yes" imported="no">etcpal/cpp/thread.h</includes>
     <class kind="class">etcpal::LogTimestamp</class>
     <class kind="class">etcpal::LogMessageHandler</class>

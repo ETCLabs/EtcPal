@@ -22,13 +22,22 @@ if(NOT TARGET MQX)
 endif()
 
 set(ETCPAL_OS_ADDITIONAL_SOURCES
-  ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_lock.h
+  ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_mutex.h
+  ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_rwlock.h
+  ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_sem.h
+  ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_signal.h
   ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_thread.h
 
-  ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_lock.c
+  ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_mutex.c
+  ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_rwlock.c
+  ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_sem.c
+  ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_signal.c
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_thread.c
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_uuid.c
+
+  ${ETCPAL_ROOT}/src/os/mqx/etcpal/etcpal_mqx_common.h
+  ${ETCPAL_ROOT}/src/os/mqx/etcpal/etcpal_mqx_common.c
 )
 set(ETCPAL_OS_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/mqx)
 set(ETCPAL_OS_ADDITIONAL_LIBS MQX)

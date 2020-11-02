@@ -17,34 +17,38 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_SEM_H_
-#define ETCPAL_OS_SEM_H_
+#ifndef ETCPAL_OS_RWLOCK_H_
+#define ETCPAL_OS_RWLOCK_H_
 
 #include <stdbool.h>
-#include <FreeRTOS.h>
-#include <semphr.h>
+#include <mqx.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef SemaphoreHandle_t etcpal_sem_t;
+#define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 
-#define ETCPAL_SEM_HAS_TIMED_WAIT 1
-#define ETCPAL_SEM_HAS_POST_FROM_ISR 1
-#define ETCPAL_SEM_HAS_MAX_COUNT 1
-#define ETCPAL_SEM_MUST_BE_BALANCED 0
+typedef struct
+{
+  bool         valid;
+  LWSEM_STRUCT sem;
+  unsigned int reader_count;
+} etcpal_rwlock_t;
 
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
-bool etcpal_sem_wait(etcpal_sem_t* id);
-bool etcpal_sem_try_wait(etcpal_sem_t* id);
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
-bool etcpal_sem_post(etcpal_sem_t* id);
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
-void etcpal_sem_destroy(etcpal_sem_t* id);
+bool etcpal_rwlock_create(etcpal_rwlock_t* id);
+bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_SEM_H_ */
+#endif /* ETCPAL_OS_RWLOCK_H_ */

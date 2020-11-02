@@ -7,6 +7,10 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * @ingroup etcpal_os
  * @brief Counting semaphore objects.
  *
+ * ```c
+ * #include "etcpal/sem.h"
+ * ```
+ *
  * A counting semaphore is a synchronization value which can never fall below zero. Each time the 
  * semaphore is _posted_, its count increases. Each time the semaphore is _taken_, its count
  * decreases, unless the count is zero, in which case the task waiting for it is blocked until it

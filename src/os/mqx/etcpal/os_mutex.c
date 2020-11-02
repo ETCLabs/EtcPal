@@ -17,34 +17,10 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_SEM_H_
-#define ETCPAL_OS_SEM_H_
+#include "etcpal/mutex.h"
+#include "etcpal_mqx_common.h"
 
-#include <stdbool.h>
-#include <FreeRTOS.h>
-#include <semphr.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef SemaphoreHandle_t etcpal_sem_t;
-
-#define ETCPAL_SEM_HAS_TIMED_WAIT 1
-#define ETCPAL_SEM_HAS_POST_FROM_ISR 1
-#define ETCPAL_SEM_HAS_MAX_COUNT 1
-#define ETCPAL_SEM_MUST_BE_BALANCED 0
-
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
-bool etcpal_sem_wait(etcpal_sem_t* id);
-bool etcpal_sem_try_wait(etcpal_sem_t* id);
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
-bool etcpal_sem_post(etcpal_sem_t* id);
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
-void etcpal_sem_destroy(etcpal_sem_t* id);
-
-#ifdef __cplusplus
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
+{
+  return lwsem_timed_wait(id, timeout_ms);
 }
-#endif
-
-#endif /* ETCPAL_OS_SEM_H_ */

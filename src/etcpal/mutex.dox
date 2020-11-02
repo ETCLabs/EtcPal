@@ -7,6 +7,10 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * @ingroup etcpal_os
  * @brief Mutual-exclusion (mutex) objects.
  *
+ * ```c
+ * #include "etcpal/mutex.h"
+ * ```
+ *
  * Sometimes also referred to as a critical section. Only one thread can lock the mutex at a time
  * using etcpal_mutex_lock(). Where possible on real-time platforms, the mutex provides priority
  * inheritance.
