@@ -81,6 +81,6 @@ void etcpal_sem_destroy(etcpal_sem_t* id)
   if (id && *id)
   {
     vSemaphoreDelete((SemaphoreHandle_t)*id);
-    *id = (etcpal_signal_t)NULL;
+    *id = (etcpal_sem_t)NULL;
   }
 }

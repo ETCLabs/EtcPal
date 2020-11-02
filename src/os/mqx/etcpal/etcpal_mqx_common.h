@@ -27,8 +27,8 @@
 extern "C" {
 #endif
 
-static bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct);
-static bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms);
+bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct);
+bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms);
 
 #ifdef __cplusplus
 }
