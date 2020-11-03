@@ -10,6 +10,7 @@ if(ETCPAL_HAVE_OS_SUPPORT)
   target_sources(etcpal_cpp_unit_tests PRIVATE
     test_log.cpp
     test_mutex.cpp
+    test_recursive_mutex.cpp
     test_rwlock.cpp
     test_sem.cpp
     test_signal.cpp

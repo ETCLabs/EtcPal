@@ -58,6 +58,9 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * }
  * @endcode
  *
+ * Mutexes are not recursive; if the same mutex object is locked twice from the same thread before
+ * being unlocked, a deadlock will result.
+ *
  * etcpal_mutex implementations use different constructs under the hood on various platforms. Also,
  * different platforms affect the behavior of certain functions.
  *
@@ -65,9 +68,9 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * |----------|------------------------------|--------------------|
  * | FreeRTOS | Yes                          | [Mutexes](https://www.freertos.org/Real-time-embedded-RTOS-mutexes.html) |
  * | Linux    | No                           | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
- * | macOS    | No                           | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html)
+ * | macOS    | No                           | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html) |
  * | MQX      | Yes                          | Lightweight Semaphores |
- * | Windows  | No                           | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ * | Windows  | No                           | [SRWLocks](https://docs.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks) |
  *
  * @{
  */

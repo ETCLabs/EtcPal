@@ -22,6 +22,7 @@
 void run_all_tests(void)
 {
   RUN_TEST_GROUP(mutex_integration);
+  RUN_TEST_GROUP(recursive_mutex_integration);
   RUN_TEST_GROUP(rwlock_integration);
   RUN_TEST_GROUP(sem_integration);
   RUN_TEST_GROUP(signal_integration);

@@ -17,41 +17,43 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/mutex.h"
+#include "etcpal/cpp/recursive_mutex.h"
 #include "unity_fixture.h"
 
 extern "C" {
-TEST_GROUP(etcpal_cpp_mutex);
+TEST_GROUP(etcpal_cpp_recursive_mutex);
 
-TEST_SETUP(etcpal_cpp_mutex)
+TEST_SETUP(etcpal_cpp_recursive_mutex)
 {
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_mutex)
+TEST_TEAR_DOWN(etcpal_cpp_recursive_mutex)
 {
 }
 
-TEST(etcpal_cpp_mutex, create_and_destroy_works)
+TEST(etcpal_cpp_recursive_mutex, create_and_destroy_works)
 {
-  etcpal::Mutex mutex;
+  etcpal::RecursiveMutex mutex;
 
-  // Take ownership
+  // Take ownership multiple times
   TEST_ASSERT_TRUE(mutex.Lock());
-
-  TEST_ASSERT_FALSE(mutex.TryLock());
-
+  TEST_ASSERT_TRUE(mutex.Lock());
+  mutex.Unlock();
   mutex.Unlock();
 }
 
-TEST(etcpal_cpp_mutex, guard_works)
+TEST(etcpal_cpp_recursive_mutex, guard_works)
 {
-  etcpal::Mutex mutex;
+  etcpal::RecursiveMutex mutex;
 
   {
     // Take ownership via a mutex guard
-    etcpal::MutexGuard guard(mutex);
+    etcpal::RecursiveMutexGuard guard(mutex);
 
-    TEST_ASSERT_FALSE(mutex.TryLock());
+    {
+      // Take ownership again
+      etcpal::RecursiveMutexGuard guard_2(mutex);
+    }
   }
 
   // Lock should now be unlocked
@@ -59,9 +61,9 @@ TEST(etcpal_cpp_mutex, guard_works)
   mutex.Unlock();
 }
 
-TEST_GROUP_RUNNER(etcpal_cpp_mutex)
+TEST_GROUP_RUNNER(etcpal_cpp_recursive_mutex)
 {
-  RUN_TEST_CASE(etcpal_cpp_mutex, create_and_destroy_works);
-  RUN_TEST_CASE(etcpal_cpp_mutex, guard_works);
+  RUN_TEST_CASE(etcpal_cpp_recursive_mutex, create_and_destroy_works);
+  RUN_TEST_CASE(etcpal_cpp_recursive_mutex, guard_works);
 }
 }

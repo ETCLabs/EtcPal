@@ -1,0 +1,123 @@
+Whoa, this isn't a real source file! What's going on here? Well, the headers for this module are
+platform-specific, and some of them implement types and functions differently (i.e. functions as
+macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
+
+/**
+ * @defgroup etcpal_recursive_mutex recursive_mutex (Recursive Mutexes)
+ * @ingroup etcpal_os
+ * @brief Mutual-exclusion (mutex) objects with recursion support.
+ *
+ * ```c
+ * #include "etcpal/recursive_mutex.h"
+ * ```
+
+ * **WARNING:** Recursive mutexes are rarely necessary for new code. They are often used to
+ * retrofit thread-safety into existing code. They can hide nasty bugs. Use regular
+ * @ref etcpal_mutex whenever possible. 
+ *
+ * For further reference:
+ * * [One](http://www.fieryrobot.com/blog/2008/10/14/recursive-locks-will-kill-you/)
+ * * [Two](https://groups.google.com/g/comp.programming.threads/c/tcrTKnfP8HI/m/me2K7_byNdgJ)
+ * * [Three](https://blog.stephencleary.com/2013/04/recursive-re-entrant-locks.html)
+ *
+ * Recursive mutexes behave like mutexes, but they can be locked multiple times from the same
+ * thread before being unlocked. A recursive mutex must be unlocked an equal number of times as it
+ * was locked before it is considered to be available again. Where possible on real-time platforms,
+ * the mutex provides priority inheritance. 
+ *
+ * See the @ref etcpal_mutex documentation for more information on basic mutex behavior.
+ *
+ * etcpal_recursive_mutex implementations use different constructs under the hood on various
+ * platforms. Also, different platforms affect the behavior of certain functions.
+ *
+ * | Platform | #ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK | Underlying Type    |
+ * |----------|----------------------------------------|--------------------|
+ * | FreeRTOS | Yes                                    | [Recursive Mutexes](https://www.freertos.org/RTOS-Recursive-Mutexes.html) |
+ * | Linux    | No                                     | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
+ * | macOS    | No                                     | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html) |
+ * | MQX      | Yes                                    | Lightweight Semaphores |
+ * | Windows  | No                                     | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ *
+ * @{
+ */
+
+/**
+ * @brief The mutex identifier.
+ *
+ * Depending on the platform, this could be a scalar type or a struct.
+ */
+typedef PLATFORM_DEFINED etcpal_recursive_mutex_t;
+
+/**
+ * @brief Whether etcpal_recursive_mutex_timed_lock() is meaningful on this platform.
+ * 
+ * If defined to 0, etcpal_recursive_mutex_timed_lock() executes the equivalent of
+ * etcpal_recursive_mutex_try_lock() if given a timeout of 0, or etcpal_recursive_mutex_lock()
+ * otherwise.
+ */
+#define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK /* platform-defined */
+
+/**
+ * @brief Create a new mutex.
+ * @param[out] id Mutex identifier on which to create a mutex. If this function returns true, id
+ *                becomes valid for calls to other etcpal_recursive_mutex API functions.
+ * @return true: The mutex was created.
+ * @return false: The mutex was not created.
+ */
+bool etcpal_recursive_mutex_create(etcpal_recursive_mutex_t *id);
+
+/**
+ * @brief Lock a mutex.
+ * 
+ * Blocks until the mutex is locked.
+ *
+ * @param[in] id Identifier for the mutex to lock.
+ * @return true: The mutex is locked.
+ * @return false: The mutex is invalid or an error occurred.
+ */
+bool etcpal_recursive_mutex_lock(etcpal_recursive_mutex_t *id);
+
+/**
+ * @brief Try to lock a mutex.
+ *
+ * Returns immediately either failure or success.
+ *
+ * @param[in] id Identifier for the mutex to try to lock.
+ * @return true: The mutex is locked.
+ * @return false: The mutex is locked by another thread, the mutex is invalid or an error occurred.
+ */
+bool etcpal_recursive_mutex_try_lock(etcpal_recursive_mutex_t *id);
+
+/**
+ * @brief Try to lock a mutex, giving up after a timeout.
+ *
+ * This function is not honored on all platforms. The value of
+ * #ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK can be used to determine whether this function is honored
+ * on the current platform. If it is defined to 0, this function executes the equivalent of
+ * etcpal_recursive_mutex_try_lock() if timeout_ms is 0, or etcpal_recursive_mutex_lock() otherwise.
+ *
+ * @param[in] id Identifier for the mutex to try to acquire.
+ * @param[in] timeout_ms Maximum amount of time to wait for the mutex to become available, in
+ *                       milliseconds. If #ETCPAL_WAIT_FOREVER is given, the result is the same as
+ *                       if etcpal_recursive_mutex_lock() was called.
+ * @return true: The mutex is locked.
+ * @return false: The timeout expired while waiting to lock the mutex, the mutex is invalid or an
+ *                error occurred.
+ */
+bool etcpal_recursive_mutex_timed_lock(etcpal_recursive_mutex_t* id, int timeout_ms);
+
+/**
+ * @brief Unlock a mutex.
+ * @param[in] id Identifier for the mutex to unlock.
+ */
+void etcpal_recursive_mutex_unlock(etcpal_recursive_mutex_t *id);
+
+/**
+ * @brief Destroy a mutex object.
+ * @param[in] id Identifier for the mutex to destroy.
+ */
+void etcpal_recursive_mutex_destroy(etcpal_recursive_mutex_t *id);
+
+/**
+ * @}
+ */
