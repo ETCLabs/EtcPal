@@ -17,9 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/lock.h"
+#include "etcpal/rwlock.h"
 #include <unistd.h>
-#include <semaphore.h>
 
 /**************************** Private constants ******************************/
 
@@ -31,99 +30,6 @@ static void reader_atomic_increment(etcpal_rwlock_t* id);
 static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
-
-bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
-{
-  return (timeout_ms == 0 ? etcpal_mutex_try_lock(id) : etcpal_mutex_lock(id));
-}
-
-bool etcpal_signal_create(etcpal_signal_t* id)
-{
-  if (id)
-  {
-    if (0 == pthread_mutex_init(&id->mutex, NULL))
-    {
-      if (0 == pthread_cond_init(&id->cond, NULL))
-      {
-        id->valid = true;
-        id->signaled = false;
-        return true;
-      }
-      else
-      {
-        pthread_mutex_destroy(&id->mutex);
-      }
-    }
-  }
-  return false;
-}
-
-bool etcpal_signal_wait(etcpal_signal_t* id)
-{
-  if (id && id->valid)
-  {
-    if (0 == pthread_mutex_lock(&id->mutex))
-    {
-      while (!id->signaled)
-      {
-        if (0 != pthread_cond_wait(&id->cond, &id->mutex))
-        {
-          // On error, the mutex is not locked
-        }
-      }
-      id->signaled = false;
-      pthread_mutex_unlock(&id->mutex);
-      return true;
-    }
-  }
-  return false;
-}
-
-bool etcpal_signal_try_wait(etcpal_signal_t* id)
-{
-  bool res = false;
-  if (id && id->valid)
-  {
-    if (0 == pthread_mutex_lock(&id->mutex))
-    {
-      if (id->signaled)
-      {
-        res = true;
-        id->signaled = false;
-      }
-      pthread_mutex_unlock(&id->mutex);
-    }
-  }
-  return res;
-}
-
-bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
-{
-  return (timeout_ms == 0 ? etcpal_signal_try_wait(id) : etcpal_signal_wait(id));
-}
-
-void etcpal_signal_post(etcpal_signal_t* id)
-{
-  if (id && id->valid)
-  {
-    if (0 == pthread_mutex_lock(&id->mutex))
-    {
-      id->signaled = true;
-      pthread_cond_signal(&id->cond);
-      pthread_mutex_unlock(&id->mutex);
-    }
-  }
-}
-
-void etcpal_signal_destroy(etcpal_signal_t* id)
-{
-  if (id && id->valid)
-  {
-    pthread_cond_destroy(&id->cond);
-    pthread_mutex_destroy(&id->mutex);
-    id->valid = false;
-  }
-}
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
@@ -252,11 +158,6 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
     pthread_mutex_destroy(&id->readcount_mutex);
     id->valid = false;
   }
-}
-
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
-{
-  return (timeout_ms == 0 ? etcpal_sem_try_wait(id) : etcpal_sem_wait(id));
 }
 
 // TODO investigate C11 atomics for this

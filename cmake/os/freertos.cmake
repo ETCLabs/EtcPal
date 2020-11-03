@@ -24,11 +24,18 @@ if(NOT TARGET FreeRTOS)
 endif()
 
 set(ETCPAL_OS_ADDITIONAL_SOURCES
-  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_lock.h
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_mutex.h
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_queue.h
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_rwlock.h
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_sem.h
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_signal.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_thread.h
 
-  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_lock.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_mutex.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_queue.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_rwlock.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_sem.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_signal.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_thread.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_uuid.c

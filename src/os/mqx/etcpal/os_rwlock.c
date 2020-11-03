@@ -17,7 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/lock.h"
+#include "etcpal/rwlock.h"
+#include "etcpal_mqx_common.h"
 
 /**************************** Private constants ******************************/
 
@@ -31,30 +32,8 @@
 
 static void reader_atomic_increment(etcpal_rwlock_t* id);
 static void reader_atomic_decrement(etcpal_rwlock_t* id);
-static bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct);
-static bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms);
 
 /*************************** Function definitions ****************************/
-
-bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
-{
-  return lwsem_timed_wait(id, timeout_ms);
-}
-
-bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
-{
-  if (timeout_ms < 0)
-  {
-    return (MQX_OK == _lwevent_wait_ticks(id, 1u, true, 0u));
-  }
-  else
-  {
-    MQX_TICK_STRUCT ticks_to_wait;
-    if (milliseconds_to_ticks(timeout_ms, &ticks_to_wait))
-      return (MQX_OK == _lwevent_wait_for(id, 1u, true, &ticks_to_wait));
-    return false;
-  }
-}
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
@@ -223,11 +202,6 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
   }
 }
 
-bool etcpal_sem_timed_wait(etcpal_mutex_t* id, int timeout_ms)
-{
-  return lwsem_timed_wait(id, timeout_ms);
-}
-
 void reader_atomic_increment(etcpal_rwlock_t* id)
 {
   _int_disable();
@@ -240,27 +214,4 @@ void reader_atomic_decrement(etcpal_rwlock_t* id)
   _int_disable();
   --id->reader_count;
   _int_enable();
-}
-
-bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct)
-{
-  TIME_STRUCT ts;
-  ts.SECONDS = (ms < 0 ? 0 : (ms / 1000));
-  ts.MILLISECONDS = (ms <= 0 ? 1 : (ms % 1000));
-  return _time_to_ticks(&ts, tick_struct);
-}
-
-bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms)
-{
-  if (timeout_ms < 0)
-  {
-    return (MQX_OK == _lwsem_wait(sem));
-  }
-  else
-  {
-    MQX_TICK_STRUCT ticks_to_wait;
-    if (milliseconds_to_ticks(timeout_ms, &ticks_to_wait))
-      return (MQX_OK == _lwsem_wait_for(sem, &ticks_to_wait));
-    return false;
-  }
 }

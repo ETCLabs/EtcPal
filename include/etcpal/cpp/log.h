@@ -32,7 +32,8 @@
 #include "etcpal/common.h"
 #include "etcpal/log.h"
 #include "etcpal/cpp/common.h"
-#include "etcpal/cpp/lock.h"
+#include "etcpal/cpp/mutex.h"
+#include "etcpal/cpp/signal.h"
 #include "etcpal/cpp/thread.h"
 
 namespace etcpal

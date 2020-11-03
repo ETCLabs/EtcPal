@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
@@ -28,7 +28,7 @@
   </compound>
   <compound kind="file">
     <name>error.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Error</class>
@@ -37,7 +37,7 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
@@ -55,24 +55,12 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>lock.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
-    <filename>cpp_2lock_8h</filename>
-    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
-    <class kind="class">etcpal::Mutex</class>
-    <class kind="class">etcpal::Signal</class>
-    <class kind="class">etcpal::RwLock</class>
-    <class kind="class">etcpal::Semaphore</class>
-    <class kind="class">etcpal::MutexGuard</class>
-    <class kind="class">etcpal::ReadGuard</class>
-    <class kind="class">etcpal::WriteGuard</class>
-  </compound>
-  <compound kind="file">
     <name>log.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
-    <includes id="cpp_2lock_8h" name="lock.h" local="yes" imported="no">etcpal/cpp/lock.h</includes>
+    <includes id="cpp_2mutex_8h" name="mutex.h" local="yes" imported="no">etcpal/cpp/mutex.h</includes>
+    <includes id="cpp_2signal_8h" name="signal.h" local="yes" imported="no">etcpal/cpp/signal.h</includes>
     <includes id="cpp_2thread_8h" name="thread.h" local="yes" imported="no">etcpal/cpp/thread.h</includes>
     <class kind="class">etcpal::LogTimestamp</class>
     <class kind="class">etcpal::LogMessageHandler</class>
@@ -88,15 +76,46 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>mutex.h</name>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2mutex_8h</filename>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
+    <class kind="class">etcpal::Mutex</class>
+    <class kind="class">etcpal::MutexGuard</class>
+  </compound>
+  <compound kind="file">
     <name>queue.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2queue_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Queue</class>
   </compound>
   <compound kind="file">
+    <name>rwlock.h</name>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2rwlock_8h</filename>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
+    <class kind="class">etcpal::RwLock</class>
+    <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::WriteGuard</class>
+  </compound>
+  <compound kind="file">
+    <name>sem.h</name>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2sem_8h</filename>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
+    <class kind="class">etcpal::Semaphore</class>
+  </compound>
+  <compound kind="file">
+    <name>signal.h</name>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2signal_8h</filename>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
+    <class kind="class">etcpal::Signal</class>
+  </compound>
+  <compound kind="file">
     <name>thread.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
@@ -104,7 +123,7 @@
   </compound>
   <compound kind="file">
     <name>timer.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2timer_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::TimePoint</class>
@@ -112,7 +131,7 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <class kind="class">etcpal::Uuid</class>
     <member kind="enumeration">
@@ -131,7 +150,7 @@
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>E:/git/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="struct">
@@ -619,6 +638,24 @@
       <anchorfile>struct_etc_pal_mac_addr.html</anchorfile>
       <anchor>a251236fb1e367947c8f6f5498a86896b</anchor>
       <arglist>[ETCPAL_MAC_BYTES]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>EtcPalMcastNetintId</name>
+    <filename>struct_etc_pal_mcast_netint_id.html</filename>
+    <member kind="variable">
+      <type>etcpal_iptype_t</type>
+      <name>ip_type</name>
+      <anchorfile>struct_etc_pal_mcast_netint_id.html</anchorfile>
+      <anchor>a69e98f42b011c7c001d2857cb68bb304</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>unsigned int</type>
+      <name>index</name>
+      <anchorfile>struct_etc_pal_mcast_netint_id.html</anchorfile>
+      <anchor>a589d64202487f78e3cc30dd2e04c5201</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -2062,6 +2099,13 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>ReceiveFromIsr</name>
+      <anchorfile>classetcpal_1_1_queue.html</anchorfile>
+      <anchor>a6d23c1b53807ebce980dce934789a4e4</anchor>
+      <arglist>(T &amp;data)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>IsEmpty</name>
       <anchorfile>classetcpal_1_1_queue.html</anchorfile>
       <anchor>a8e12342fc420701fbffd97025421575a</anchor>
@@ -3468,8 +3512,11 @@
     <filename>group__etcpal__os.html</filename>
     <subgroup>etcpal_thread</subgroup>
     <subgroup>etcpal_timer</subgroup>
-    <subgroup>etcpal_lock</subgroup>
+    <subgroup>etcpal_mutex</subgroup>
     <subgroup>etcpal_queue</subgroup>
+    <subgroup>etcpal_rwlock</subgroup>
+    <subgroup>etcpal_sem</subgroup>
+    <subgroup>etcpal_signal</subgroup>
   </compound>
   <compound kind="group">
     <name>etcpal_net</name>
@@ -3699,6 +3746,7 @@
     <class kind="struct">EtcPalSockAddr</class>
     <class kind="struct">EtcPalMacAddr</class>
     <class kind="struct">EtcPalNetintInfo</class>
+    <class kind="struct">EtcPalMcastNetintId</class>
     <member kind="define">
       <type>#define</type>
       <name>ETCPAL_IPV6_BYTES</name>
@@ -3781,6 +3829,13 @@
       <name>EtcPalNetintInfo</name>
       <anchorfile>group__etcpal__inet.html</anchorfile>
       <anchor>gaed988a9502c1d15538ef945b3b5b234b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct EtcPalMcastNetintId</type>
+      <name>EtcPalMcastNetintId</name>
+      <anchorfile>group__etcpal__inet.html</anchorfile>
+      <anchor>ga0e06e2959af0b9a03a0845683017a144</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -5779,9 +5834,12 @@
     <filename>group__etcpal__cpp.html</filename>
     <subgroup>etcpal_cpp_error</subgroup>
     <subgroup>etcpal_cpp_inet</subgroup>
-    <subgroup>etcpal_cpp_lock</subgroup>
     <subgroup>etcpal_cpp_log</subgroup>
+    <subgroup>etcpal_cpp_mutex</subgroup>
     <subgroup>etcpal_cpp_queue</subgroup>
+    <subgroup>etcpal_cpp_rwlock</subgroup>
+    <subgroup>etcpal_cpp_sem</subgroup>
+    <subgroup>etcpal_cpp_signal</subgroup>
     <subgroup>etcpal_cpp_thread</subgroup>
     <subgroup>etcpal_cpp_timer</subgroup>
     <subgroup>etcpal_cpp_uuid</subgroup>
@@ -5834,18 +5892,6 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_cpp_lock</name>
-    <title>lock (Locks and Synchronization)</title>
-    <filename>group__etcpal__cpp__lock.html</filename>
-    <class kind="class">etcpal::Mutex</class>
-    <class kind="class">etcpal::Signal</class>
-    <class kind="class">etcpal::RwLock</class>
-    <class kind="class">etcpal::Semaphore</class>
-    <class kind="class">etcpal::MutexGuard</class>
-    <class kind="class">etcpal::ReadGuard</class>
-    <class kind="class">etcpal::WriteGuard</class>
-  </compound>
-  <compound kind="group">
     <name>etcpal_cpp_log</name>
     <title>log (Logging)</title>
     <filename>group__etcpal__cpp__log.html</filename>
@@ -5863,10 +5909,37 @@
     </member>
   </compound>
   <compound kind="group">
+    <name>etcpal_cpp_mutex</name>
+    <title>mutex (Mutexes)</title>
+    <filename>group__etcpal__cpp__mutex.html</filename>
+    <class kind="class">etcpal::Mutex</class>
+    <class kind="class">etcpal::MutexGuard</class>
+  </compound>
+  <compound kind="group">
     <name>etcpal_cpp_queue</name>
     <title>queue (RTOS queues)</title>
     <filename>group__etcpal__cpp__queue.html</filename>
     <class kind="class">etcpal::Queue</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_rwlock</name>
+    <title>rwlock (Read-Write Locks)</title>
+    <filename>group__etcpal__cpp__rwlock.html</filename>
+    <class kind="class">etcpal::RwLock</class>
+    <class kind="class">etcpal::ReadGuard</class>
+    <class kind="class">etcpal::WriteGuard</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_sem</name>
+    <title>sem (Counting Semaphores)</title>
+    <filename>group__etcpal__cpp__sem.html</filename>
+    <class kind="class">etcpal::Semaphore</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_signal</name>
+    <title>signal (Signal Objects)</title>
+    <filename>group__etcpal__cpp__signal.html</filename>
+    <class kind="class">etcpal::Signal</class>
   </compound>
   <compound kind="group">
     <name>etcpal_cpp_thread</name>
@@ -5888,17 +5961,8 @@
     <class kind="class">etcpal::Uuid</class>
   </compound>
   <compound kind="group">
-    <name>etcpal_lock</name>
-    <title>lock (Locks and Synchronization)</title>
-    <filename>group__etcpal__lock.html</filename>
-    <subgroup>etcpal_mutex</subgroup>
-    <subgroup>etcpal_signal</subgroup>
-    <subgroup>etcpal_rwlock</subgroup>
-    <subgroup>etcpal_sem</subgroup>
-  </compound>
-  <compound kind="group">
     <name>etcpal_mutex</name>
-    <title>Mutexes</title>
+    <title>mutex (Mutexes)</title>
     <filename>group__etcpal__mutex.html</filename>
     <member kind="define">
       <type>#define</type>
@@ -5958,83 +6022,83 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_signal</name>
-    <title>Signals</title>
-    <filename>group__etcpal__signal.html</filename>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_SIGNAL_HAS_TIMED_WAIT</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gae27ec551b3bcdeb4c72e6ecea9ba3ca8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ETCPAL_SIGNAL_HAS_POST_FROM_ISR</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga29bf79c6470cde2c5bdc45ab90f4d826</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>PLATFORM_DEFINED</type>
-      <name>etcpal_signal_t</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gab450fff060bfcede49357b2e00357669</anchor>
-      <arglist></arglist>
-    </member>
+    <name>etcpal_queue</name>
+    <title>queue (RTOS queues)</title>
+    <filename>group__etcpal__queue.html</filename>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_signal_create</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga4082ebadfba33b125930d5c5067139f0</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_signal_wait</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga10e2d2cc15e6a30f38ba65f02c0905d7</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_signal_try_wait</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gaae6c46b47ab125aeac18bf0a27bc6f9d</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_signal_timed_wait</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga770f7b128af027172c866a765f50f4fb</anchor>
-      <arglist>(etcpal_signal_t *id, int timeout_ms)</arglist>
+      <name>etcpal_queue_create</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>gaefbd1625abdb0e502024b9c9749c2b17</anchor>
+      <arglist>(etcpal_queue_t *id, size_t size, size_t item_size)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_signal_post</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gafa2af190375bdb673563e2a029f0a89b</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
+      <name>etcpal_queue_destroy</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>ga89749b4899a165bb461570e8a91d470c</anchor>
+      <arglist>(etcpal_queue_t *id)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>etcpal_signal_post_from_isr</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>gad88439176943dd91e5a98f0f508c55a1</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
+      <type>bool</type>
+      <name>etcpal_queue_send</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>gad11692ddc849a8c049c1f15da818957d</anchor>
+      <arglist>(etcpal_queue_t *id, const void *data)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>etcpal_signal_destroy</name>
-      <anchorfile>group__etcpal__signal.html</anchorfile>
-      <anchor>ga4ecc28a0f67939859d91c8e9e75701e4</anchor>
-      <arglist>(etcpal_signal_t *id)</arglist>
+      <type>bool</type>
+      <name>etcpal_queue_timed_send</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>gae0c1e587408884bfdf7e9502cac7ffa7</anchor>
+      <arglist>(etcpal_queue_t *id, const void *data, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_queue_send_from_isr</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>ga19c542b25dd6f5884c4d69ec8c891bb2</anchor>
+      <arglist>(etcpal_queue_t *id, const void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_queue_receive</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>ga6606a64800aeb535bc2fea3317e6fd44</anchor>
+      <arglist>(etcpal_queue_t *id, void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_queue_timed_receive</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>ga13c3c4ca6b7b2ace00da407f52bba261</anchor>
+      <arglist>(etcpal_queue_t *id, void *data, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_queue_receive_from_isr</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>ga7e17d87946f3241b16c03d86a0b426c3</anchor>
+      <arglist>(etcpal_queue_t *id, void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_queue_is_empty</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>ga3c0f4a48f832d88fead582a330255aec</anchor>
+      <arglist>(const etcpal_queue_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_queue_is_empty_from_isr</name>
+      <anchorfile>group__etcpal__queue.html</anchorfile>
+      <anchor>ga0a72aed21853d03ac10a09bafd148d0d</anchor>
+      <arglist>(const etcpal_queue_t *id)</arglist>
     </member>
   </compound>
   <compound kind="group">
     <name>etcpal_rwlock</name>
-    <title>Read-Write Locks</title>
+    <title>rwlock (Read-Write Locks)</title>
     <filename>group__etcpal__rwlock.html</filename>
     <member kind="define">
       <type>#define</type>
@@ -6123,7 +6187,7 @@
   </compound>
   <compound kind="group">
     <name>etcpal_sem</name>
-    <title>Counting Semaphores</title>
+    <title>sem (Counting Semaphores)</title>
     <filename>group__etcpal__sem.html</filename>
     <member kind="define">
       <type>#define</type>
@@ -6211,71 +6275,78 @@
     </member>
   </compound>
   <compound kind="group">
-    <name>etcpal_queue</name>
-    <title>queue (RTOS queues)</title>
-    <filename>group__etcpal__queue.html</filename>
+    <name>etcpal_signal</name>
+    <title>signal (Signals)</title>
+    <filename>group__etcpal__signal.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SIGNAL_HAS_TIMED_WAIT</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gae27ec551b3bcdeb4c72e6ecea9ba3ca8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_SIGNAL_HAS_POST_FROM_ISR</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga29bf79c6470cde2c5bdc45ab90f4d826</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_signal_t</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gab450fff060bfcede49357b2e00357669</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function">
       <type>bool</type>
-      <name>etcpal_queue_create</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>gaefbd1625abdb0e502024b9c9749c2b17</anchor>
-      <arglist>(etcpal_queue_t *id, size_t size, size_t item_size)</arglist>
+      <name>etcpal_signal_create</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga4082ebadfba33b125930d5c5067139f0</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_signal_wait</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga10e2d2cc15e6a30f38ba65f02c0905d7</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_signal_try_wait</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gaae6c46b47ab125aeac18bf0a27bc6f9d</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_signal_timed_wait</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga770f7b128af027172c866a765f50f4fb</anchor>
+      <arglist>(etcpal_signal_t *id, int timeout_ms)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>etcpal_queue_destroy</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>ga89749b4899a165bb461570e8a91d470c</anchor>
-      <arglist>(etcpal_queue_t *id)</arglist>
+      <name>etcpal_signal_post</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gafa2af190375bdb673563e2a029f0a89b</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
-      <name>etcpal_queue_send</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>gad11692ddc849a8c049c1f15da818957d</anchor>
-      <arglist>(etcpal_queue_t *id, const void *data)</arglist>
+      <type>void</type>
+      <name>etcpal_signal_post_from_isr</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>gad88439176943dd91e5a98f0f508c55a1</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
-      <name>etcpal_queue_timed_send</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>gae0c1e587408884bfdf7e9502cac7ffa7</anchor>
-      <arglist>(etcpal_queue_t *id, const void *data, int timeout_ms)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_queue_send_from_isr</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>ga19c542b25dd6f5884c4d69ec8c891bb2</anchor>
-      <arglist>(etcpal_queue_t *id, const void *data)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_queue_receive</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>ga6606a64800aeb535bc2fea3317e6fd44</anchor>
-      <arglist>(etcpal_queue_t *id, void *data)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_queue_timed_receive</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>ga13c3c4ca6b7b2ace00da407f52bba261</anchor>
-      <arglist>(etcpal_queue_t *id, void *data, int timeout_ms)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_queue_is_empty</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>ga3c0f4a48f832d88fead582a330255aec</anchor>
-      <arglist>(const etcpal_queue_t *id)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>etcpal_queue_is_empty_from_isr</name>
-      <anchorfile>group__etcpal__queue.html</anchorfile>
-      <anchor>ga0a72aed21853d03ac10a09bafd148d0d</anchor>
-      <arglist>(const etcpal_queue_t *id)</arglist>
+      <type>void</type>
+      <name>etcpal_signal_destroy</name>
+      <anchorfile>group__etcpal__signal.html</anchorfile>
+      <anchor>ga4ecc28a0f67939859d91c8e9e75701e4</anchor>
+      <arglist>(etcpal_signal_t *id)</arglist>
     </member>
   </compound>
   <compound kind="group">

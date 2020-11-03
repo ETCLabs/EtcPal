@@ -17,112 +17,13 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/lock.h"
+#include "etcpal/rwlock.h"
 
 /**************************** Private constants ******************************/
 
 #define MAX_READERS 20000
 
 /*************************** Function definitions ****************************/
-
-bool etcpal_mutex_create(etcpal_mutex_t* id)
-{
-  if (id)
-  {
-    InitializeSRWLock(&id->lock);
-    id->valid = true;
-    return true;
-  }
-  return false;
-}
-
-bool etcpal_mutex_lock(etcpal_mutex_t* id)
-{
-  if (id && id->valid)
-  {
-    AcquireSRWLockExclusive(&id->lock);
-    return true;
-  }
-  return false;
-}
-
-bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
-{
-  if (id && id->valid)
-  {
-    return TryAcquireSRWLockExclusive(&id->lock);
-  }
-  return false;
-}
-
-bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
-{
-  return (timeout_ms == 0) ? etcpal_mutex_try_lock(id) : etcpal_mutex_lock(id);
-}
-
-void etcpal_mutex_unlock(etcpal_mutex_t* id)
-{
-  if (id && id->valid)
-  {
-    ReleaseSRWLockExclusive(&id->lock);
-  }
-}
-
-void etcpal_mutex_destroy(etcpal_mutex_t* id)
-{
-  if (id && id->valid)
-  {
-    // SRWLocks do not need to be destroyed.
-    id->valid = false;
-  }
-}
-
-bool etcpal_signal_create(etcpal_signal_t* id)
-{
-  if (id)
-  {
-    *id = CreateEvent(NULL, FALSE, FALSE, NULL);
-    if (*id)
-      return true;
-  }
-  return false;
-}
-
-bool etcpal_signal_wait(etcpal_signal_t* id)
-{
-  if (id)
-    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, INFINITE));
-  return false;
-}
-
-bool etcpal_signal_try_wait(etcpal_signal_t* id)
-{
-  if (id)
-    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, 0));
-  return false;
-}
-
-bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
-{
-  if (id)
-  {
-    DWORD wait_time = (timeout_ms < 0 ? INFINITE : timeout_ms);
-    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, wait_time));
-  }
-  return false;
-}
-
-void etcpal_signal_post(etcpal_signal_t* id)
-{
-  if (id)
-    SetEvent(*id);
-}
-
-void etcpal_signal_destroy(etcpal_signal_t* id)
-{
-  if (id)
-    CloseHandle(*id);
-}
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
@@ -237,54 +138,4 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
     // SRWLocks do not need to be destroyed.
     id->valid = false;
   }
-}
-
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
-{
-  if (id)
-  {
-    *id = CreateSemaphore(NULL, initial_count, max_count, NULL);
-    if (*id)
-      return true;
-  }
-  return false;
-}
-
-bool etcpal_sem_wait(etcpal_sem_t* id)
-{
-  if (id)
-    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, INFINITE));
-  return false;
-}
-
-bool etcpal_sem_try_wait(etcpal_sem_t* id)
-{
-  if (id)
-    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, 0));
-  return false;
-}
-
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
-{
-  if (id)
-  {
-    DWORD wait_time = (timeout_ms < 0 ? INFINITE : timeout_ms);
-    return (WAIT_OBJECT_0 == WaitForSingleObject(*id, wait_time));
-  }
-  return false;
-}
-
-bool etcpal_sem_post(etcpal_sem_t* id)
-{
-  if (id)
-  {
-    return ReleaseSemaphore(*id, 1, NULL);
-  }
-  return false;
-}
-
-void etcpal_sem_destroy(etcpal_sem_t* id)
-{
-  if (id)
-    CloseHandle(*id);
 }

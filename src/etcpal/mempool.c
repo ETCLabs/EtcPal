@@ -22,7 +22,7 @@
 #include <stdbool.h>
 #include "etcpal/common.h"
 #if !ETCPAL_NO_OS_SUPPORT
-#include "etcpal/lock.h"
+#include "etcpal/mutex.h"
 #endif
 
 #if !ETCPAL_NO_OS_SUPPORT

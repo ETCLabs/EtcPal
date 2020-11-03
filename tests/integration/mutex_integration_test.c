@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/lock.h"
+#include "etcpal/mutex.h"
 #include "unity_fixture.h"
 
 #include <stdio.h>

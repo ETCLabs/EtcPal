@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #if !ETCPAL_NO_OS_SUPPORT
-#include "etcpal/lock.h"
+#include "etcpal/mutex.h"
 #endif
 #include "etcpal/mempool.h"
 #include "etcpal/private/log.h"

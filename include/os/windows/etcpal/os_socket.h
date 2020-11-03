@@ -31,7 +31,7 @@
 #endif
 
 #include "etcpal/inet.h"
-#include "etcpal/lock.h"
+#include "etcpal/mutex.h"
 #include "etcpal/rbtree.h"
 
 #ifdef __cplusplus

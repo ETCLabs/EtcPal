@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/lock.h"
+#include "etcpal/rwlock.h"
 #include <task.h>
 
 /*********************** Private function prototypes *************************/
@@ -26,118 +26,6 @@ static void reader_atomic_increment(etcpal_rwlock_t* id);
 static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
-
-bool etcpal_mutex_create(etcpal_mutex_t* id)
-{
-  if (id)
-  {
-    return ((*id = (etcpal_mutex_t)xSemaphoreCreateMutex()) != NULL);
-  }
-  return false;
-}
-
-bool etcpal_mutex_lock(etcpal_mutex_t* id)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY));
-  }
-  return false;
-}
-
-bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0));
-  }
-  return false;
-}
-
-bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
-  }
-  return false;
-}
-
-void etcpal_mutex_unlock(etcpal_mutex_t* id)
-{
-  if (id && *id)
-    xSemaphoreGive((SemaphoreHandle_t)*id);
-}
-
-void etcpal_mutex_destroy(etcpal_mutex_t* id)
-{
-  if (id && *id)
-  {
-    vSemaphoreDelete((SemaphoreHandle_t)*id);
-    *id = (etcpal_mutex_t)NULL;
-  }
-}
-
-bool etcpal_signal_create(etcpal_signal_t* id)
-{
-  if (id)
-  {
-    return ((*id = (etcpal_signal_t)xSemaphoreCreateBinary()) != NULL);
-  }
-  return false;
-}
-
-bool etcpal_signal_wait(etcpal_signal_t* id)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY));
-  }
-  return false;
-}
-
-bool etcpal_signal_try_wait(etcpal_signal_t* id)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0));
-  }
-  return false;
-}
-
-bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
-  }
-  return false;
-}
-
-void etcpal_signal_post(etcpal_signal_t* id)
-{
-  if (id && *id)
-    xSemaphoreGive((SemaphoreHandle_t)*id);
-}
-
-void etcpal_signal_post_from_isr(etcpal_signal_t* id)
-{
-  if (id && *id)
-  {
-    BaseType_t higherPriorityTaskWoken;
-    xSemaphoreGiveFromISR((SemaphoreHandle_t)*id, &higherPriorityTaskWoken);
-    portYIELD_FROM_ISR(higherPriorityTaskWoken);
-  }
-}
-
-void etcpal_signal_destroy(etcpal_signal_t* id)
-{
-  if (id && *id)
-  {
-    vSemaphoreDelete((SemaphoreHandle_t)*id);
-    *id = (etcpal_signal_t)NULL;
-  }
-}
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
@@ -289,72 +177,6 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
     vSemaphoreDelete(id->sem);
     id->sem = NULL;
     id->valid = false;
-  }
-}
-
-bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
-{
-  if (id)
-  {
-    return ((*id = (etcpal_sem_t)xSemaphoreCreateCounting(max_count, initial_count)) != NULL);
-  }
-  return false;
-}
-
-bool etcpal_sem_wait(etcpal_sem_t* id)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, portMAX_DELAY));
-  }
-  return false;
-}
-
-bool etcpal_sem_try_wait(etcpal_sem_t* id)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, 0));
-  }
-  return false;
-}
-
-bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
-  }
-  return false;
-}
-
-bool etcpal_sem_post(etcpal_sem_t* id)
-{
-  if (id && *id)
-  {
-    return (pdTRUE == xSemaphoreGive((SemaphoreHandle_t)*id));
-  }
-  return false;
-}
-
-bool etcpal_sem_post_from_isr(etcpal_sem_t* id)
-{
-  bool result = false;
-  if (id && *id)
-  {
-    BaseType_t higherPriorityTaskWoken;
-    result = (pdTRUE == xSemaphoreGiveFromISR((SemaphoreHandle_t)*id, &higherPriorityTaskWoken));
-    portYIELD_FROM_ISR(higherPriorityTaskWoken);
-  }
-  return result;
-}
-
-void etcpal_sem_destroy(etcpal_sem_t* id)
-{
-  if (id && *id)
-  {
-    vSemaphoreDelete((SemaphoreHandle_t)*id);
-    *id = (etcpal_signal_t)NULL;
   }
 }
 

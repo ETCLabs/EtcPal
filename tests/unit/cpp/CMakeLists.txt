@@ -8,8 +8,11 @@ etcpal_add_live_test(etcpal_cpp_unit_tests CXX
 
 if(ETCPAL_HAVE_OS_SUPPORT)
   target_sources(etcpal_cpp_unit_tests PRIVATE
-    test_lock.cpp
     test_log.cpp
+    test_mutex.cpp
+    test_rwlock.cpp
+    test_sem.cpp
+    test_signal.cpp
     test_thread.cpp
     test_timer.cpp
   )

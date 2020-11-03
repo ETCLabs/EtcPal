@@ -31,7 +31,10 @@ void run_all_tests(void)
   RUN_TEST_GROUP(etcpal_rbtree);
   RUN_TEST_GROUP(etcpal_uuid);
 #if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_lock);
+  RUN_TEST_GROUP(etcpal_mutex);
+  RUN_TEST_GROUP(etcpal_rwlock);
+  RUN_TEST_GROUP(etcpal_sem);
+  RUN_TEST_GROUP(etcpal_signal);
   RUN_TEST_GROUP(etcpal_thread);
   RUN_TEST_GROUP(etcpal_timer);
 #if !DISABLE_QUEUE_TESTS
