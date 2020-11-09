@@ -203,6 +203,27 @@ extern "C" inline void CppThreadFn(void* arg)
   (*p_func)();
 }
 
+namespace detail
+{
+// Translate the possible EtcPal error codes that can be returned from starting a thread, into
+// std::error_codes to throw std::system_error
+inline std::error_code TranslateEtcPalErr(etcpal_error_t etcpal_err)
+{
+  switch (etcpal_err)
+  {
+    case kEtcPalErrInvalid:
+      return std::make_error_code(std::errc::invalid_argument);
+    case kEtcPalErrPerm:
+      return std::make_error_code(std::errc::operation_not_permitted);
+    case kEtcPalErrNoMem:
+      return std::make_error_code(std::errc::not_enough_memory);
+    case kEtcPalErrSys:
+    default:
+      return std::make_error_code(std::errc::resource_unavailable_try_again);
+  }
+}
+};  // namespace detail
+
 /// @endcond
 
 /// @brief Create a new thread object and associate it with a new thread of execution.
@@ -211,7 +232,7 @@ extern "C" inline void CppThreadFn(void* arg)
 ///
 /// @param func Callable object to execute in the new thread.
 /// @param args Arguments to pass to func.
-/// @throw etcpal::Error if Start() returns an error code.
+/// @throw std::system_error if Start() returns an error code.
 /// @post `joinable() == true`
 template <class Function, class... Args>
 inline Thread::Thread(Function&& func, Args&&... args)
@@ -219,7 +240,7 @@ inline Thread::Thread(Function&& func, Args&&... args)
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
   auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
-    ETCPAL_THROW(result);
+    ETCPAL_THROW((std::system_error(detail::TranslateEtcPalErr(result.code()), "Error while starting EtcPal thread")));
 }
 
 /// @brief Destroy the thread object.
@@ -378,6 +399,7 @@ inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
 /// @param func Callable object to execute in the new thread.
 /// @param args Arguments to pass to func.
 /// @return #kEtcPalErrOk: The thread started successfully, `joinable()` is now true.
+/// @return #kEtcPalErrNoMem: Allocation failed while starting thread.
 /// @return #kEtcPalErrInvalid: The thread was already running (`joinable() == true`).
 /// @return Other codes translated from system error codes are possible.
 template <class Function, class... Args>
@@ -387,9 +409,14 @@ Error Thread::Start(Function&& func, Args&&... args)
     return kEtcPalErrInvalid;
 
   thread_.reset(new etcpal_thread_t);
+  if (!thread_)
+    return kEtcPalErrNoMem;
 
   auto new_f = std::unique_ptr<FunctionType>(
       new FunctionType(std::bind(std::forward<Function>(func), std::forward<Args>(args)...)));
+  if (!new_f)
+    return kEtcPalErrNoMem;
+
   Error create_res = etcpal_thread_create(thread_.get(), &params_, CppThreadFn, new_f.get());
   if (create_res)
     new_f.release();
