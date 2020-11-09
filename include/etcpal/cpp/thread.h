@@ -29,8 +29,8 @@
 #include <functional>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <string>
-#include <system_error>
 #include <type_traits>
 #include <utility>
 #include "etcpal/common.h"
@@ -203,27 +203,6 @@ extern "C" inline void CppThreadFn(void* arg)
   (*p_func)();
 }
 
-namespace detail
-{
-// Translate the possible EtcPal error codes that can be returned from starting a thread, into
-// std::error_codes to throw std::system_error
-inline std::error_code TranslateEtcPalErr(etcpal_error_t etcpal_err)
-{
-  switch (etcpal_err)
-  {
-    case kEtcPalErrInvalid:
-      return std::make_error_code(std::errc::invalid_argument);
-    case kEtcPalErrPerm:
-      return std::make_error_code(std::errc::operation_not_permitted);
-    case kEtcPalErrNoMem:
-      return std::make_error_code(std::errc::not_enough_memory);
-    case kEtcPalErrSys:
-    default:
-      return std::make_error_code(std::errc::resource_unavailable_try_again);
-  }
-}
-};  // namespace detail
-
 /// @endcond
 
 /// @brief Create a new thread object and associate it with a new thread of execution.
@@ -232,7 +211,7 @@ inline std::error_code TranslateEtcPalErr(etcpal_error_t etcpal_err)
 ///
 /// @param func Callable object to execute in the new thread.
 /// @param args Arguments to pass to func.
-/// @throw std::system_error if Start() returns an error code.
+/// @throw std::runtime_error if Start() returns an error code.
 /// @post `joinable() == true`
 template <class Function, class... Args>
 inline Thread::Thread(Function&& func, Args&&... args)
@@ -240,7 +219,7 @@ inline Thread::Thread(Function&& func, Args&&... args)
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
   auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
-    ETCPAL_THROW((std::system_error(detail::TranslateEtcPalErr(result.code()), "Error while starting EtcPal thread")));
+    ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
 }
 
 /// @brief Destroy the thread object.
