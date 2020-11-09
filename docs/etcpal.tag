@@ -91,6 +91,14 @@
     <class kind="class">etcpal::Queue</class>
   </compound>
   <compound kind="file">
+    <name>recursive_mutex.h</name>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2recursive__mutex_8h</filename>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
+    <class kind="class">etcpal::RecursiveMutex</class>
+    <class kind="class">etcpal::RecursiveMutexGuard</class>
+  </compound>
+  <compound kind="file">
     <name>rwlock.h</name>
     <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2rwlock_8h</filename>
@@ -2145,6 +2153,77 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>etcpal::RecursiveMutex</name>
+    <filename>classetcpal_1_1_recursive_mutex.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>RecursiveMutex</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex.html</anchorfile>
+      <anchor>a8629c480ab7a14342fd8428e12758ab8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~RecursiveMutex</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex.html</anchorfile>
+      <anchor>ae6174c936b2476911d57c33a194c1b29</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>Lock</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex.html</anchorfile>
+      <anchor>a747fd95916e116a6ed37cc641e394c69</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>TryLock</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex.html</anchorfile>
+      <anchor>a8ad93c25cdc665654314bba0797d37ef</anchor>
+      <arglist>(int timeout_ms=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>Unlock</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex.html</anchorfile>
+      <anchor>a91b88a5d5517cb042431c4ea24d8ecb7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_recursive_mutex_t &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex.html</anchorfile>
+      <anchor>abcaf9c69e4582c82b7adfe1548f71a7c</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::RecursiveMutexGuard</name>
+    <filename>classetcpal_1_1_recursive_mutex_guard.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>RecursiveMutexGuard</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex_guard.html</anchorfile>
+      <anchor>a75626f673c69debf3f5926caf1458841</anchor>
+      <arglist>(RecursiveMutex &amp;mutex)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>RecursiveMutexGuard</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex_guard.html</anchorfile>
+      <anchor>a5eef5a4428ec8e93b1b066d440117742</anchor>
+      <arglist>(etcpal_recursive_mutex_t &amp;mutex)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~RecursiveMutexGuard</name>
+      <anchorfile>classetcpal_1_1_recursive_mutex_guard.html</anchorfile>
+      <anchor>a67de9be30a261b55b01363094e9dda08</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>etcpal::RwLock</name>
     <filename>classetcpal_1_1_rw_lock.html</filename>
     <member kind="function">
@@ -3514,6 +3593,7 @@
     <subgroup>etcpal_timer</subgroup>
     <subgroup>etcpal_mutex</subgroup>
     <subgroup>etcpal_queue</subgroup>
+    <subgroup>etcpal_recursive_mutex</subgroup>
     <subgroup>etcpal_rwlock</subgroup>
     <subgroup>etcpal_sem</subgroup>
     <subgroup>etcpal_signal</subgroup>
@@ -5837,6 +5917,7 @@
     <subgroup>etcpal_cpp_log</subgroup>
     <subgroup>etcpal_cpp_mutex</subgroup>
     <subgroup>etcpal_cpp_queue</subgroup>
+    <subgroup>etcpal_cpp_recursive_mutex</subgroup>
     <subgroup>etcpal_cpp_rwlock</subgroup>
     <subgroup>etcpal_cpp_sem</subgroup>
     <subgroup>etcpal_cpp_signal</subgroup>
@@ -5920,6 +6001,13 @@
     <title>queue (RTOS queues)</title>
     <filename>group__etcpal__cpp__queue.html</filename>
     <class kind="class">etcpal::Queue</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_recursive_mutex</name>
+    <title>recursive_mutex (Recursive Mutexes)</title>
+    <filename>group__etcpal__cpp__recursive__mutex.html</filename>
+    <class kind="class">etcpal::RecursiveMutex</class>
+    <class kind="class">etcpal::RecursiveMutexGuard</class>
   </compound>
   <compound kind="group">
     <name>etcpal_cpp_rwlock</name>
@@ -6094,6 +6182,67 @@
       <anchorfile>group__etcpal__queue.html</anchorfile>
       <anchor>ga0a72aed21853d03ac10a09bafd148d0d</anchor>
       <arglist>(const etcpal_queue_t *id)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_recursive_mutex</name>
+    <title>recursive_mutex (Recursive Mutexes)</title>
+    <filename>group__etcpal__recursive__mutex.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>ga752b7f9693eb78835fccb80beac59eb2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_recursive_mutex_t</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>gab023065e9028d318e1c559e6c7493e6b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_recursive_mutex_create</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>ga694158054907acac552eccb8e88d020a</anchor>
+      <arglist>(etcpal_recursive_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_recursive_mutex_lock</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>ga3b0a40808f7c27f4a5f90754ef9fcf53</anchor>
+      <arglist>(etcpal_recursive_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_recursive_mutex_try_lock</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>ga616eae5bd1a7f76b82be8c01c64e39ad</anchor>
+      <arglist>(etcpal_recursive_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_recursive_mutex_timed_lock</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>gafb88fc7f6b18d47218220198d588f322</anchor>
+      <arglist>(etcpal_recursive_mutex_t *id, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_recursive_mutex_unlock</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>ga6adbf97bdbbd324ee5d2cba2f1d07a2d</anchor>
+      <arglist>(etcpal_recursive_mutex_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_recursive_mutex_destroy</name>
+      <anchorfile>group__etcpal__recursive__mutex.html</anchorfile>
+      <anchor>ga1a42ba95ca28f89502795b71f59cb060</anchor>
+      <arglist>(etcpal_recursive_mutex_t *id)</arglist>
     </member>
   </compound>
   <compound kind="group">

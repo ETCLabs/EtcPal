@@ -17,37 +17,21 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
-#include "fff.h"
+#include "etcpal/recursive_mutex.h"
 
-DEFINE_FFF_GLOBALS;
-
-void run_all_tests(void)
+bool etcpal_recursive_mutex_create(etcpal_recursive_mutex_t* id)
 {
-  RUN_TEST_GROUP(etcpal_common);
-  RUN_TEST_GROUP(etcpal_log);
-  RUN_TEST_GROUP(etcpal_mempool);
-  RUN_TEST_GROUP(etcpal_pack);
-  RUN_TEST_GROUP(etcpal_rbtree);
-  RUN_TEST_GROUP(etcpal_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_mutex);
-#if !DISABLE_RECURSIVE_MUTEX_TESTS
-  RUN_TEST_GROUP(etcpal_recursive_mutex);
-#endif
-  RUN_TEST_GROUP(etcpal_rwlock);
-  RUN_TEST_GROUP(etcpal_sem);
-  RUN_TEST_GROUP(etcpal_signal);
-  RUN_TEST_GROUP(etcpal_thread);
-  RUN_TEST_GROUP(etcpal_timer);
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_queue);
-#endif  // DISABLE_QUEUE_TESTS
-#endif  // ETCPAL_NO_OS_SUPPORT
+  if (id)
+  {
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+    return (bool)(!pthread_mutex_init(id, &attr));
+  }
+  return false;
+}
 
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_netint);
-  RUN_TEST_GROUP(etcpal_inet);
-  RUN_TEST_GROUP(etcpal_socket);
-#endif
+bool etcpal_recursive_mutex_timed_lock(etcpal_recursive_mutex_t* id, int timeout_ms)
+{
+  return (timeout_ms == 0 ? etcpal_recursive_mutex_try_lock(id) : etcpal_recursive_mutex_lock(id));
 }

@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/mutex.h"
+#include "etcpal/recursive_mutex.h"
 #include "unity_fixture.h"
 
 #include <stdio.h>
@@ -33,8 +33,8 @@
 #define NUM_THREADS 10
 #define NUM_ITERATIONS 10000
 
-static int            shared_var;
-static etcpal_mutex_t mutex;
+static int                      shared_var;
+static etcpal_recursive_mutex_t mutex;
 
 static void mutex_test_thread(void* arg)
 {
@@ -42,9 +42,11 @@ static void mutex_test_thread(void* arg)
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    (void)etcpal_mutex_lock(&mutex);
+    (void)etcpal_recursive_mutex_lock(&mutex);
+    (void)etcpal_recursive_mutex_lock(&mutex);
     ++shared_var;
-    etcpal_mutex_unlock(&mutex);
+    etcpal_recursive_mutex_unlock(&mutex);
+    etcpal_recursive_mutex_unlock(&mutex);
     // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
     // This ensures that each thread runs for long enough to get time-sliced multiple times.
     for (volatile size_t j = 0; j < 100; ++j)
@@ -52,17 +54,17 @@ static void mutex_test_thread(void* arg)
   }
 }
 
-TEST_GROUP(mutex_integration);
+TEST_GROUP(recursive_mutex_integration);
 
-TEST_SETUP(mutex_integration)
+TEST_SETUP(recursive_mutex_integration)
 {
   shared_var = 0;
-  TEST_ASSERT(etcpal_mutex_create(&mutex));
+  TEST_ASSERT(etcpal_recursive_mutex_create(&mutex));
 }
 
-TEST_TEAR_DOWN(mutex_integration)
+TEST_TEAR_DOWN(recursive_mutex_integration)
 {
-  etcpal_mutex_destroy(&mutex);
+  etcpal_recursive_mutex_destroy(&mutex);
   // Allow some time for threads to be cleaned up on RTOS platforms
   etcpal_thread_sleep(200);
 }
@@ -73,7 +75,7 @@ TEST_TEAR_DOWN(mutex_integration)
 
 // Yes, this test isn't guaranteed to fail if the mutexes don't work. But it's still a good test to
 // run. Tests on several platforms where the mutex lines were commented showed failure very reliably.
-TEST(mutex_integration, mutex_thread_test)
+TEST(recursive_mutex_integration, mutex_thread_test)
 {
   etcpal_thread_t threads[NUM_THREADS];
 
@@ -90,9 +92,10 @@ TEST(mutex_integration, mutex_thread_test)
     TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
 
   TEST_ASSERT_EQUAL(shared_var, (NUM_THREADS * NUM_ITERATIONS));
+  etcpal_thread_sleep(200);
 }
 
-TEST_GROUP_RUNNER(mutex_integration)
+TEST_GROUP_RUNNER(recursive_mutex_integration)
 {
-  RUN_TEST_CASE(mutex_integration, mutex_thread_test);
+  RUN_TEST_CASE(recursive_mutex_integration, mutex_thread_test);
 }

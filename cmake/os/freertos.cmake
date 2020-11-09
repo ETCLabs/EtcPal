@@ -25,6 +25,7 @@ endif()
 
 set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_mutex.h
+  ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_recursive_mutex.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_queue.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_rwlock.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_sem.h
@@ -32,6 +33,7 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_thread.h
 
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_mutex.c
+  ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_recursive_mutex.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_queue.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_rwlock.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_sem.c
