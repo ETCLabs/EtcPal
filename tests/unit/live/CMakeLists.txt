@@ -13,7 +13,6 @@ etcpal_add_live_test(etcpal_live_unit_tests C
 if(ETCPAL_HAVE_OS_SUPPORT)
   target_sources(etcpal_live_unit_tests PRIVATE
     test_mutex.c
-    test_recursive_mutex.c
     test_rwlock.c
     test_sem.c
     test_signal.c
