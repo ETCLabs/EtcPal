@@ -127,7 +127,14 @@ typedef struct EtcPalThreadParams
 {
   /** The priority of the thread. Note that thread priority is not valid on all platforms. */
   unsigned int priority;
-  /** The stack size of the thread. Note that thread stack size is not valid on all platforms. */
+  /**
+   * @brief The stack size of the thread in bytes.
+   *
+   * This value is always in bytes and will be translated as appropriate for the underlying
+   * platform (e.g. converted to words for FreeRTOS).
+   *
+   * Note that thread stack size is not valid on all platforms.
+   */
   unsigned int stack_size;
   /** A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH. */
   const char* thread_name;

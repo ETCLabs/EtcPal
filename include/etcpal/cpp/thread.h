@@ -288,7 +288,7 @@ inline unsigned int Thread::priority() const noexcept
   return params_.priority;
 }
 
-/// @brief Get the stack size of this thread (not valid on all platforms).
+/// @brief Get the stack size of this thread in bytes (not valid on all platforms).
 inline unsigned int Thread::stack_size() const noexcept
 {
   return params_.stack_size;
@@ -325,7 +325,7 @@ inline Thread& Thread::SetPriority(unsigned int priority) noexcept
   return *this;
 }
 
-/// @brief Set the stack size of this thread.
+/// @brief Set the stack size of this thread in bytes.
 ///
 /// Stack size is not valid on all platforms. This function does not have any effect on the
 /// associated thread unless it is called on a default-constructed thread before Start() is called.
