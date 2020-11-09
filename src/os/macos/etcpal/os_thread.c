@@ -19,6 +19,7 @@
 
 #include "etcpal/thread.h"
 
+#include <string.h>
 #include "etcpal/common.h"
 #include "os_error.h"
 
@@ -46,6 +47,16 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     pthread_attr_init(&thread_attr);
     pthread_attr_setstacksize(&thread_attr, params->stack_size);
     p_thread_attr = &thread_attr;
+  }
+
+  if (params->thread_name)
+  {
+    strncpy(id->name, params->thread_name, ETCPAL_THREAD_NAME_MAX_LENGTH);
+    id->name[ETCPAL_THREAD_NAME_MAX_LENGTH - 1] = '\0';
+  }
+  else
+  {
+    id->name[0] = '\0';
   }
 
   id->fn = thread_fn;
@@ -94,6 +105,9 @@ void* thread_func_internal(void* arg)
   etcpal_thread_t* thread_data = (etcpal_thread_t*)arg;
   if (thread_data && thread_data->fn)
   {
+    if (thread_data->name[0] != '\0')
+      pthread_setname_np(thread_data->name);
+
     thread_data->fn(thread_data->arg);
   }
   return NULL;

@@ -118,8 +118,8 @@ extern "C" {
  * Platform | Priority Honored | Stack Size Honored | Thread Name Honored | Platform Data Available    |
  * ---------|------------------|--------------------|---------------------|----------------------------|
  * FreeRTOS | Yes              | Yes                | Yes                 | No                         |
- * Linux    | No               | Yes                | No                  | No                         |
- * macOS    | No               | Yes                | No                  | No                         |
+ * Linux    | No               | Yes                | Yes                 | No                         |
+ * macOS    | No               | Yes                | Yes                 | No                         |
  * MQX      | Yes              | Yes                | Yes                 | Yes, EtcPalThreadParamsMqx |
  * Windows  | Yes              | Yes                | Yes                 | No                         |
  */
