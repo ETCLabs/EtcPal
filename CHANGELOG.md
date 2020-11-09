@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - etcpal_queue_receive_from_isr() and etcpal::Queue::ReceiveFromIsr()
+- New platform abstraction feature: recursive mutexes (`etcpal/recursive_mutex.h`)
 
 ### Changed
 - Separated etcpal/lock.h into more specific headers: etcpal/mutex.h, etcpal/signal.h, etcpal/sem.h

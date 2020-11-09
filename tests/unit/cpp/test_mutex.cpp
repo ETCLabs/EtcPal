@@ -54,7 +54,7 @@ TEST(etcpal_cpp_mutex, guard_works)
     TEST_ASSERT_FALSE(mutex.TryLock());
   }
 
-  // Lock should now be unmutexed
+  // Lock should now be unlocked
   TEST_ASSERT_TRUE(mutex.TryLock());
   mutex.Unlock();
 }

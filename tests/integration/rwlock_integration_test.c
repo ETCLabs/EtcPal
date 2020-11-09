@@ -86,6 +86,8 @@ TEST_SETUP(rwlock_integration)
 TEST_TEAR_DOWN(rwlock_integration)
 {
   etcpal_rwlock_destroy(&rwlock);
+  // Allow some time for threads to be cleaned up on RTOS platforms
+  etcpal_thread_sleep(200);
 }
 
 // Test the actual read-write lock functionality. Start a number of threads and have them all

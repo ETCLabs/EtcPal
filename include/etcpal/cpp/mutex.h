@@ -142,7 +142,7 @@ inline bool Mutex::TryLock(int timeout_ms)
 
 /// @brief Unlock the mutex.
 ///
-/// See etcpal_mutex_give().
+/// See etcpal_mutex_unlock().
 inline void Mutex::Unlock()
 {
   etcpal_mutex_unlock(&mutex_);

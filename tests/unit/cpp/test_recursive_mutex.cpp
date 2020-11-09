@@ -17,37 +17,53 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/cpp/recursive_mutex.h"
 #include "unity_fixture.h"
-#include "fff.h"
 
-DEFINE_FFF_GLOBALS;
+extern "C" {
+TEST_GROUP(etcpal_cpp_recursive_mutex);
 
-void run_all_tests(void)
+TEST_SETUP(etcpal_cpp_recursive_mutex)
 {
-  RUN_TEST_GROUP(etcpal_common);
-  RUN_TEST_GROUP(etcpal_log);
-  RUN_TEST_GROUP(etcpal_mempool);
-  RUN_TEST_GROUP(etcpal_pack);
-  RUN_TEST_GROUP(etcpal_rbtree);
-  RUN_TEST_GROUP(etcpal_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_mutex);
-#if !DISABLE_RECURSIVE_MUTEX_TESTS
-  RUN_TEST_GROUP(etcpal_recursive_mutex);
-#endif
-  RUN_TEST_GROUP(etcpal_rwlock);
-  RUN_TEST_GROUP(etcpal_sem);
-  RUN_TEST_GROUP(etcpal_signal);
-  RUN_TEST_GROUP(etcpal_thread);
-  RUN_TEST_GROUP(etcpal_timer);
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_queue);
-#endif  // DISABLE_QUEUE_TESTS
-#endif  // ETCPAL_NO_OS_SUPPORT
+}
 
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_netint);
-  RUN_TEST_GROUP(etcpal_inet);
-  RUN_TEST_GROUP(etcpal_socket);
-#endif
+TEST_TEAR_DOWN(etcpal_cpp_recursive_mutex)
+{
+}
+
+TEST(etcpal_cpp_recursive_mutex, create_and_destroy_works)
+{
+  etcpal::RecursiveMutex mutex;
+
+  // Take ownership multiple times
+  TEST_ASSERT_TRUE(mutex.Lock());
+  TEST_ASSERT_TRUE(mutex.Lock());
+  mutex.Unlock();
+  mutex.Unlock();
+}
+
+TEST(etcpal_cpp_recursive_mutex, guard_works)
+{
+  etcpal::RecursiveMutex mutex;
+
+  {
+    // Take ownership via a mutex guard
+    etcpal::RecursiveMutexGuard guard(mutex);
+
+    {
+      // Take ownership again
+      etcpal::RecursiveMutexGuard guard_2(mutex);
+    }
+  }
+
+  // Lock should now be unlocked
+  TEST_ASSERT_TRUE(mutex.TryLock());
+  mutex.Unlock();
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_recursive_mutex)
+{
+  RUN_TEST_CASE(etcpal_cpp_recursive_mutex, create_and_destroy_works);
+  RUN_TEST_CASE(etcpal_cpp_recursive_mutex, guard_works);
+}
 }
