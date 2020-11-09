@@ -33,13 +33,14 @@ extern "C" {
 #define ETCPAL_THREAD_DEFAULT_NAME NULL  /* Name ignored on Linux */
 #define ETCPAL_THREAD_HAS_TIMED_JOIN 0   /* Timeout unavailable on linux */
 
-#define ETCPAL_THREAD_NAME_MAX_LENGTH 0
+#define ETCPAL_THREAD_NAME_MAX_LENGTH 16
 
 typedef struct
 {
   void (*fn)(void*);
   void*     arg;
   pthread_t handle;
+  char      name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
