@@ -27,16 +27,17 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *
  * See the @ref etcpal_mutex documentation for more information on basic mutex behavior.
  *
- * etcpal_recursive_mutex implementations use different constructs under the hood on various
- * platforms. Also, different platforms affect the behavior of certain functions.
+ * etcpal_recursive_mutex are not available on all platforms, and their implementations use
+ * different constructs under the hood on various platforms. Also, different platforms affect the
+ * behavior of certain functions.
  *
- * | Platform | #ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK | Underlying Type    |
- * |----------|----------------------------------------|--------------------|
- * | FreeRTOS | Yes                                    | [Recursive Mutexes](https://www.freertos.org/RTOS-Recursive-Mutexes.html) |
- * | Linux    | No                                     | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
- * | macOS    | No                                     | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html) |
- * | MQX      | Yes                                    | Lightweight Semaphores |
- * | Windows  | No                                     | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ * | Platform | Recursive Mutexes available | #ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK | Underlying Type    |
+ * |----------|-----------------------------|----------------------------------------|--------------------|
+ * | FreeRTOS | Yes                         | Yes                                    | [Recursive Mutexes](https://www.freertos.org/RTOS-Recursive-Mutexes.html) |
+ * | Linux    | Yes                         | No                                     | [pthread_mutex](https://linux.die.net/man/3/pthread_mutex_init) |
+ * | macOS    | Yes                         | No                                     | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html) |
+ * | MQX      | No                          | N/A                                    | N/A                |
+ * | Windows  | Yes                         | No                                     | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
  *
  * @{
  */

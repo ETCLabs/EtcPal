@@ -10,7 +10,6 @@ if(ETCPAL_HAVE_OS_SUPPORT)
   target_sources(etcpal_cpp_unit_tests PRIVATE
     test_log.cpp
     test_mutex.cpp
-    test_recursive_mutex.cpp
     test_rwlock.cpp
     test_sem.cpp
     test_signal.cpp
@@ -23,6 +22,13 @@ if(ETCPAL_HAVE_OS_SUPPORT)
   else()
     # we need a way to keep the queue tests from running in the code for non queue cabaple platforms
     target_compile_definitions(etcpal_cpp_unit_tests PRIVATE DISABLE_QUEUE_TESTS)
+  endif()
+
+  # Recursive mutexes not supported on MQX
+  if (ETCPAL_OS_TARGET STREQUAL "mqx")
+    target_compile_definitions(etcpal_cpp_unit_tests PRIVATE DISABLE_RECURSIVE_MUTEX_TESTS)
+  else()
+    target_sources(etcpal_cpp_unit_tests PRIVATE test_recursive_mutex.cpp)
   endif()
 endif()
 

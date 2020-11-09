@@ -27,7 +27,9 @@ extern "C" void run_all_tests(void)
   RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
   RUN_TEST_GROUP(etcpal_cpp_log);
   RUN_TEST_GROUP(etcpal_cpp_mutex);
+#if !DISABLE_RECURSIVE_MUTEX_TESTS
   RUN_TEST_GROUP(etcpal_cpp_recursive_mutex);
+#endif
   RUN_TEST_GROUP(etcpal_cpp_rwlock);
   RUN_TEST_GROUP(etcpal_cpp_sem);
   RUN_TEST_GROUP(etcpal_cpp_signal);

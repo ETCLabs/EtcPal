@@ -17,37 +17,30 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
-#include "fff.h"
+#ifndef ETCPAL_OS_RECURSIVE_MUTEX_H_
+#define ETCPAL_OS_RECURSIVE_MUTEX_H_
 
-DEFINE_FFF_GLOBALS;
+#include <stdbool.h>
+#include <FreeRTOS.h>
+#include <semphr.h>
 
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(etcpal_common);
-  RUN_TEST_GROUP(etcpal_log);
-  RUN_TEST_GROUP(etcpal_mempool);
-  RUN_TEST_GROUP(etcpal_pack);
-  RUN_TEST_GROUP(etcpal_rbtree);
-  RUN_TEST_GROUP(etcpal_uuid);
-#if !ETCPAL_NO_OS_SUPPORT
-  RUN_TEST_GROUP(etcpal_mutex);
-#if !DISABLE_RECURSIVE_MUTEX_TESTS
-  RUN_TEST_GROUP(etcpal_recursive_mutex);
+#ifdef __cplusplus
+extern "C" {
 #endif
-  RUN_TEST_GROUP(etcpal_rwlock);
-  RUN_TEST_GROUP(etcpal_sem);
-  RUN_TEST_GROUP(etcpal_signal);
-  RUN_TEST_GROUP(etcpal_thread);
-  RUN_TEST_GROUP(etcpal_timer);
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_queue);
-#endif  // DISABLE_QUEUE_TESTS
-#endif  // ETCPAL_NO_OS_SUPPORT
 
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_netint);
-  RUN_TEST_GROUP(etcpal_inet);
-  RUN_TEST_GROUP(etcpal_socket);
-#endif
+typedef SemaphoreHandle_t etcpal_recursive_mutex_t;
+
+#define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK 1
+
+bool etcpal_recursive_mutex_create(etcpal_recursive_mutex_t* id);
+bool etcpal_recursive_mutex_lock(etcpal_recursive_mutex_t* id);
+bool etcpal_recursive_mutex_try_lock(etcpal_recursive_mutex_t* id);
+bool etcpal_recursive_mutex_timed_lock(etcpal_recursive_mutex_t* id, int timeout_ms);
+void etcpal_recursive_mutex_unlock(etcpal_recursive_mutex_t* id);
+void etcpal_recursive_mutex_destroy(etcpal_recursive_mutex_t* id);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* ETCPAL_OS_RECURSIVE_MUTEX_H_ */

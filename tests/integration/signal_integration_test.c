@@ -50,6 +50,8 @@ TEST_SETUP(signal_integration)
 TEST_TEAR_DOWN(signal_integration)
 {
   etcpal_signal_destroy(&sig);
+  // Allow some time for threads to be cleaned up on RTOS platforms
+  etcpal_thread_sleep(200);
 }
 
 // Two threads are created. They wait on the same signal 3 times. Each post of the signal should

@@ -63,6 +63,8 @@ TEST_SETUP(mutex_integration)
 TEST_TEAR_DOWN(mutex_integration)
 {
   etcpal_mutex_destroy(&mutex);
+  // Allow some time for threads to be cleaned up on RTOS platforms
+  etcpal_thread_sleep(200);
 }
 
 // Test the actual mutex functionality. Start a number of threads and have them all increment the

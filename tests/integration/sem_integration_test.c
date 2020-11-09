@@ -53,6 +53,8 @@ TEST_SETUP(sem_integration)
 
 TEST_TEAR_DOWN(sem_integration)
 {
+  // Allow some time for threads to be cleaned up on RTOS platforms
+  etcpal_thread_sleep(200);
 }
 
 // Initialize the semaphore with a count of 0. Each thread just tries to take the semaphore NUM_ITERATIONS times. Post

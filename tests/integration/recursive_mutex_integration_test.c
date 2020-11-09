@@ -65,6 +65,8 @@ TEST_SETUP(recursive_mutex_integration)
 TEST_TEAR_DOWN(recursive_mutex_integration)
 {
   etcpal_recursive_mutex_destroy(&mutex);
+  // Allow some time for threads to be cleaned up on RTOS platforms
+  etcpal_thread_sleep(200);
 }
 
 // Test the actual mutex functionality. Start a number of threads and have them all increment the
@@ -90,6 +92,7 @@ TEST(recursive_mutex_integration, mutex_thread_test)
     TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
 
   TEST_ASSERT_EQUAL(shared_var, (NUM_THREADS * NUM_ITERATIONS));
+  etcpal_thread_sleep(200);
 }
 
 TEST_GROUP_RUNNER(recursive_mutex_integration)
