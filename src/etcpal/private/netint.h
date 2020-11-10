@@ -42,8 +42,10 @@ typedef struct CachedNetintInfo
 etcpal_error_t etcpal_netint_init(void);
 void           etcpal_netint_deinit(void);
 
+// These functions are defined in the os_netint.c files for each platform.
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
 void           os_free_interfaces(CachedNetintInfo* cache);
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index);
+bool           os_netint_is_up(unsigned int index);
 
 #endif /* ETCPAL_PRIVATE_NETINT_H_ */

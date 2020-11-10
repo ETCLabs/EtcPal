@@ -95,6 +95,8 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, un
 
 etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed);
 
+bool etcpal_netint_is_up(unsigned int netint_index);
+
 #ifdef __cplusplus
 }
 #endif

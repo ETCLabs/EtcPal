@@ -242,3 +242,18 @@ etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)
   ETCPAL_UNUSED_ARG(list_changed);
   return kEtcPalErrNotImpl;
 }
+
+/**
+ * @brief Determine whether a network interface is currently up and running.
+ *
+ * @param netint_index Index of the interface to check.
+ * @return true: The interface indicated by netint_index is up.
+ * @return false: The interface indicated by netint_index is down, or netint_index is invalid.
+ */
+bool etcpal_netint_is_up(unsigned int netint_index)
+{
+  if (netint_index == 0)
+    return false;
+
+  return os_netint_is_up(netint_index);
+}

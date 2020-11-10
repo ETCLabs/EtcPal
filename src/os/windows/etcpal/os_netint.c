@@ -41,35 +41,6 @@ static void                  copy_all_netint_info(const IP_ADAPTER_ADDRESSES* ad
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
-{
-  ETCPAL_UNUSED_ARG(cache);  // unused
-
-  struct sockaddr_storage os_addr;
-  if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
-  {
-    DWORD resolved_index;
-    DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
-    if (res == NO_ERROR)
-    {
-      *index = resolved_index;
-      return kEtcPalErrOk;
-    }
-    else if (res == ERROR_INVALID_PARAMETER)
-    {
-      return kEtcPalErrInvalid;
-    }
-    else
-    {
-      return kEtcPalErrNotFound;
-    }
-  }
-  else
-  {
-    return kEtcPalErrInvalid;
-  }
-}
-
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   IP_ADAPTER_ADDRESSES *padapters, *pcur;
@@ -125,6 +96,40 @@ void os_free_interfaces(CachedNetintInfo* cache)
     free(cache->netints);
     cache->netints = NULL;
   }
+}
+
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+{
+  ETCPAL_UNUSED_ARG(cache);  // unused
+
+  struct sockaddr_storage os_addr;
+  if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
+  {
+    DWORD resolved_index;
+    DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
+    if (res == NO_ERROR)
+    {
+      *index = resolved_index;
+      return kEtcPalErrOk;
+    }
+    else if (res == ERROR_INVALID_PARAMETER)
+    {
+      return kEtcPalErrInvalid;
+    }
+    else
+    {
+      return kEtcPalErrNotFound;
+    }
+  }
+  else
+  {
+    return kEtcPalErrInvalid;
+  }
+}
+
+bool os_netint_is_up(unsigned int index)
+{
+  return false;
 }
 
 IP_ADAPTER_ADDRESSES* get_windows_adapters()

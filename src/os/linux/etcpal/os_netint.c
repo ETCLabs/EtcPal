@@ -281,6 +281,11 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   }
 }
 
+bool os_netint_is_up(unsigned int index)
+{
+  return false;
+}
+
 etcpal_error_t build_routing_tables(void)
 {
   etcpal_error_t res = build_routing_table(AF_INET, &routing_table_v4);

@@ -285,6 +285,11 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   }
 }
 
+bool os_netint_is_up(unsigned int index)
+{
+  return false;
+}
+
 /******************************************************************************
  * Internal Functions
  *****************************************************************************/
