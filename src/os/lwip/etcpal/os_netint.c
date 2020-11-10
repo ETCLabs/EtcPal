@@ -49,6 +49,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   struct netif* lwip_netif;
 
+  LOCK_TCPIP_CORE();
+
 #if ETCPAL_EMBOS_USE_MALLOC
   size_t num_lwip_netints = 0;
   NETIF_FOREACH(lwip_netif)
@@ -66,12 +68,13 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
   cache->netints = (EtcPalNetintInfo*)calloc(sizeof(EtcPalNetintInfo), num_lwip_netints);
   if (!cache->netints)
+  {
+    UNLOCK_TCPIP_CORE();
     return kEtcPalErrNoMem;
+  }
 #endif
 
   num_static_netints = 0;
-
-  LOCK_TCPIP_CORE();
 
   // Make sure the default netint is included
 #if LWIP_IPV4
@@ -175,9 +178,17 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   }
 }
 
-bool os_netint_is_up(unsigned int index)
+bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 {
-  return false;
+  ETCPAL_UNUSED_ARG(cache);
+
+  bool res = false;
+  LOCK_TCPIP_CORE();
+  struct netif* netif = netif_get_by_index(index);
+  if (netif)
+    res = netif_is_up(netif);
+  UNLOCK_TCPIP_CORE();
+  return res;
 }
 
 // Must be called with lwIP TCP/IP core locked

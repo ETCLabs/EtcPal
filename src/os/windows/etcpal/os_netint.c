@@ -127,8 +127,19 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   }
 }
 
-bool os_netint_is_up(unsigned int index)
+bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 {
+  // Note: I have not found a way to dynamically get whether an adapter is enabled based on its
+  // index. Trial and error shows a lot of false positives, like NT is reserving indexes and giving
+  // them names even though they do not correspond to adapters on the system. For this reason, the
+  // Windows implementation uses the cached netint list and interprets an index being present as
+  // that interface being up.
+
+  for (const EtcPalNetintInfo* netint = cache->netints; netint < cache->num_netints; ++netint)
+  {
+    if (netint->index == index)
+      return true;
+  }
   return false;
 }
 

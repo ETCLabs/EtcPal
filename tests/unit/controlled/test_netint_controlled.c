@@ -25,12 +25,14 @@
 FAKE_VALUE_FUNC(etcpal_error_t, os_enumerate_interfaces, CachedNetintInfo*);
 FAKE_VOID_FUNC(os_free_interfaces, CachedNetintInfo*);
 FAKE_VALUE_FUNC(etcpal_error_t, os_resolve_route, const EtcPalIpAddr*, const CachedNetintInfo*, unsigned int*);
-FAKE_VALUE_FUNC(bool, os_netint_is_up, unsigned int);
+FAKE_VALUE_FUNC(bool, os_netint_is_up, unsigned int, const CachedNetintInfo*);
 
 TEST_GROUP(netint_controlled);
 
 TEST_SETUP(netint_controlled)
 {
+  TEST_ASSERT_EQUAL(etcpal_netint_init(), kEtcPalErrOk);
+
   RESET_FAKE(os_enumerate_interfaces);
   RESET_FAKE(os_free_interfaces);
   RESET_FAKE(os_resolve_route);
@@ -39,6 +41,7 @@ TEST_SETUP(netint_controlled)
 
 TEST_TEAR_DOWN(netint_controlled)
 {
+  etcpal_netint_deinit();
 }
 
 TEST(netint_controlled, netint_is_up_works)

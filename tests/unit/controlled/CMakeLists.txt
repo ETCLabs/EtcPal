@@ -13,4 +13,9 @@ target_include_directories(etcpal_controlled_unit_tests PRIVATE
   ${ETCPAL_INCLUDE}
   ${ETCPAL_SRC}
   ${ETCPAL_OS_INCLUDE_DIR}
+  ${ETCPAL_NET_INCLUDE_DIR}
+)
+target_link_libraries(etcpal_controlled_unit_tests PRIVATE
+  ${ETCPAL_OS_ADDITIONAL_LIBS}
+  ${ETCPAL_NET_ADDITIONAL_LIBS}
 )

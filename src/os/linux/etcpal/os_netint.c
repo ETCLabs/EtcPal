@@ -281,8 +281,10 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   }
 }
 
-bool os_netint_is_up(unsigned int index)
+bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 {
+  ETCPAL_UNUSED_ARG(cache);
+
   int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (ioctl_sock == -1)
     return false;
