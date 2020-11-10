@@ -22,8 +22,6 @@
 #include "unity_fixture.h"
 #include "fff.h"
 
-DEFINE_FFF_GLOBALS;
-
 extern "C" {
 
 FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
@@ -101,10 +99,5 @@ TEST_GROUP_RUNNER(timer_controlled)
   RUN_TEST_CASE(timer_controlled, elapsed_since_wraparound_works_as_expected);
   RUN_TEST_CASE(timer_controlled, remaining_works_as_expected);
   RUN_TEST_CASE(timer_controlled, time_point_now_works);
-}
-
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(timer_controlled);
 }
 }

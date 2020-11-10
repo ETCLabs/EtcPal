@@ -283,7 +283,31 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
 
 bool os_netint_is_up(unsigned int index)
 {
-  return false;
+  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+  if (ioctl_sock == -1)
+    return false;
+
+  // Translate the index to a name
+  struct ifreq if_req;
+  if_req.ifr_ifindex = index;
+  int ioctl_res = ioctl(ioctl_sock, SIOCGIFNAME, &if_req);
+  if (ioctl_res != 0)
+  {
+    close(ioctl_sock);
+    return false;
+  }
+
+  // Get the flags for the interface with the given name
+  ioctl_res = ioctl(ioctl_sock, SIOCGIFFLAGS, &if_req);
+  close(ioctl_sock);
+  if (ioctl_res == 0)
+  {
+    return (bool)(if_req.ifr_flags & IFF_UP);
+  }
+  else
+  {
+    return false;
+  }
 }
 
 etcpal_error_t build_routing_tables(void)
