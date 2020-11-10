@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Separated etcpal/lock.h into more specific headers: etcpal/mutex.h, etcpal/signal.h, etcpal/sem.h
   and etcpal/rwlock.h
+- Stack size parameters for EtcPal threads are always in bytes, and are translated for the
+  underlying thread API if necessary.
+- etcpal::Thread value constructor now throws std::system_error on failure instead of etcpal::Error
+- EtcPal thread names are now honored on macOS and Linux
 
 ## [0.3.0] - 2020-08-18
 

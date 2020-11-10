@@ -29,8 +29,8 @@
 #include <functional>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <string>
-#include <system_error>
 #include <type_traits>
 #include <utility>
 #include "etcpal/common.h"
@@ -211,7 +211,7 @@ extern "C" inline void CppThreadFn(void* arg)
 ///
 /// @param func Callable object to execute in the new thread.
 /// @param args Arguments to pass to func.
-/// @throw etcpal::Error if Start() returns an error code.
+/// @throw std::runtime_error if Start() returns an error code.
 /// @post `joinable() == true`
 template <class Function, class... Args>
 inline Thread::Thread(Function&& func, Args&&... args)
@@ -219,7 +219,7 @@ inline Thread::Thread(Function&& func, Args&&... args)
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
   auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
-    ETCPAL_THROW(result);
+    ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
 }
 
 /// @brief Destroy the thread object.
@@ -267,7 +267,7 @@ inline unsigned int Thread::priority() const noexcept
   return params_.priority;
 }
 
-/// @brief Get the stack size of this thread (not valid on all platforms).
+/// @brief Get the stack size of this thread in bytes (not valid on all platforms).
 inline unsigned int Thread::stack_size() const noexcept
 {
   return params_.stack_size;
@@ -304,7 +304,7 @@ inline Thread& Thread::SetPriority(unsigned int priority) noexcept
   return *this;
 }
 
-/// @brief Set the stack size of this thread.
+/// @brief Set the stack size of this thread in bytes.
 ///
 /// Stack size is not valid on all platforms. This function does not have any effect on the
 /// associated thread unless it is called on a default-constructed thread before Start() is called.
@@ -378,6 +378,7 @@ inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
 /// @param func Callable object to execute in the new thread.
 /// @param args Arguments to pass to func.
 /// @return #kEtcPalErrOk: The thread started successfully, `joinable()` is now true.
+/// @return #kEtcPalErrNoMem: Allocation failed while starting thread.
 /// @return #kEtcPalErrInvalid: The thread was already running (`joinable() == true`).
 /// @return Other codes translated from system error codes are possible.
 template <class Function, class... Args>
@@ -387,9 +388,14 @@ Error Thread::Start(Function&& func, Args&&... args)
     return kEtcPalErrInvalid;
 
   thread_.reset(new etcpal_thread_t);
+  if (!thread_)
+    return kEtcPalErrNoMem;
 
   auto new_f = std::unique_ptr<FunctionType>(
       new FunctionType(std::bind(std::forward<Function>(func), std::forward<Args>(args)...)));
+  if (!new_f)
+    return kEtcPalErrNoMem;
+
   Error create_res = etcpal_thread_create(thread_.get(), &params_, CppThreadFn, new_f.get());
   if (create_res)
     new_f.release();

@@ -26,12 +26,10 @@
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
-/* THIS IS WINDOWS MAGIC, and copied from the sample code at Microsoft
- * Lasciate ogne speranza, voi ch'intrate
- * Abandon all hope, ye who enter here.
- *
- * Usage: SetThreadName ((DWORD)-1, "MainThread");
- */
+// THIS IS WINDOWS MAGIC to set the thread name on versions older than Win10 1607. It is copied
+// directly from the sample code at Microsoft.
+// Lasciate ogne speranza, voi ch'intrate
+// Abandon all hope, ye who enter here.
 const DWORD MS_VC_EXCEPTION = 0x406D1388;
 #pragma pack(push, 8)
 typedef struct tagTHREADNAME_INFO
@@ -42,8 +40,36 @@ typedef struct tagTHREADNAME_INFO
   DWORD  dwFlags;    /* Reserved for future use, must be zero. */
 } THREADNAME_INFO;
 #pragma pack(pop)
+
+#ifdef UNICODE
+#define KERNEL32_DLL_NAME L"Kernel32.dll"
+#else
+#define KERNEL32_DLL_NAME "Kernel32.dll"
+#endif
+
+// Usage: SetThreadName ((DWORD)-1, "MainThread");
+//
+// Windows 10 version 1607 and Windows Server 2016 add an explicit thread name using the
+// SetThreadDescription function. This API works even if no debugger is attached. This is used if
+// available (the version of Windows is new enough); otherwise, we fall back to the old method that
+// only works in debuggers.
 void SetThreadName(DWORD dwThreadID, const char* threadName)
 {
+  // Find function pointer for Win10 1607 version
+  // Kernel32 will definitely be loaded so directly ask for the handle
+  typedef HRESULT(WINAPI * SetThreadDescriptionFunc)(HANDLE hThread, PCWSTR lpThreadDescription);
+  SetThreadDescriptionFunc set_thread_description_func =
+      (SetThreadDescriptionFunc)GetProcAddress(GetModuleHandle(KERNEL32_DLL_NAME), "SetThreadDescription");
+  if (set_thread_description_func)
+  {
+    // Convert to WCHAR
+    wchar_t wszDest[100] = {0};
+    MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, threadName, -1, wszDest, 100);
+    set_thread_description_func(GetCurrentThread(), wszDest);
+    return;
+  }
+
+  // Older versions of Windows
   THREADNAME_INFO info;
   info.dwType = 0x1000;
   info.szName = threadName;
