@@ -25,5 +25,7 @@ DEFINE_FFF_GLOBALS;
 void run_all_tests(void)
 {
   RUN_TEST_GROUP(timer_controlled);
+#if !ETCPAL_NO_NETWORKING_SUPPORT
   RUN_TEST_GROUP(netint_controlled);
+#endif
 }

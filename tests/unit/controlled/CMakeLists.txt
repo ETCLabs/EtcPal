@@ -3,7 +3,6 @@
 
 etcpal_add_custom_test(etcpal_controlled_unit_tests CXX
   test_timer_controlled.cpp
-  test_netint_controlled.c
   test_main.c
 
   ${ETCPAL_SRC}/etcpal/timer.c
@@ -19,3 +18,7 @@ target_link_libraries(etcpal_controlled_unit_tests PRIVATE
   ${ETCPAL_OS_ADDITIONAL_LIBS}
   ${ETCPAL_NET_ADDITIONAL_LIBS}
 )
+
+if(ETCPAL_HAVE_NETWORKING_SUPPORT)
+  target_sources(etcpal_controlled_unit_tests PRIVATE test_netint_controlled.c)
+endif()
