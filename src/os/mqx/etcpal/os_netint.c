@@ -95,3 +95,13 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   *index = index_found;
   return kEtcPalErrOk;
 }
+
+bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
+{
+  ETCPAL_UNUSED_ARG(cache);
+
+  if (index == 0)
+    return false;
+
+  return (ipcfg_get_state(index - 1) != IPCFG_STATE_INIT);
+}

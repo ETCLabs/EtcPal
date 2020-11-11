@@ -4774,6 +4774,13 @@
       <anchor>ga4708e2c4209e3a74e6c22d2c02c52f62</anchor>
       <arglist>(bool *list_changed)</arglist>
     </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_netint_is_up</name>
+      <anchorfile>group__etcpal__netint.html</anchorfile>
+      <anchor>ga1a58dc251d9f952f0927719bae19cd07</anchor>
+      <arglist>(unsigned int netint_index)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>etcpal_pack</name>

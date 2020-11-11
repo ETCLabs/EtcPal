@@ -38,6 +38,7 @@ static char line_format[FORMAT_BUF_SIZE];
 #define NETMASK_COL_HEADER "Netmask"
 #define MAC_COL_HEADER "MAC"
 #define INDEX_COL_HEADER "OS Index"
+#define STATE_COL_HEADER "State"
 
 // Create a format string for printf based on the column width of the longest entry in each column
 void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interfaces)
@@ -73,9 +74,9 @@ void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interf
   if (longest_netmask < sizeof(NETMASK_COL_HEADER))
     longest_netmask = sizeof(NETMASK_COL_HEADER);
 
-  snprintf(header_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%s\n", longest_id, longest_addr,
+  snprintf(header_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%s %%s\n", longest_id, longest_addr,
            longest_netmask);
-  snprintf(line_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%8u\n", longest_id, longest_addr,
+  snprintf(line_format, FORMAT_BUF_SIZE, "%%-%zus %%-%zus %%-%zus %%-17s %%8u %%s\n", longest_id, longest_addr,
            longest_netmask);
 }
 
@@ -102,7 +103,8 @@ int main(void)
   create_format_strings(netint_arr, num_interfaces);
 
   printf("Network interfaces found:\n");
-  printf(header_format, ID_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER);
+  printf(header_format, ID_COL_HEADER, ADDR_COL_HEADER, NETMASK_COL_HEADER, MAC_COL_HEADER, INDEX_COL_HEADER,
+         STATE_COL_HEADER);
 
   for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
@@ -112,7 +114,8 @@ int main(void)
     etcpal_ip_to_string(&netint->addr, addr_str);
     etcpal_ip_to_string(&netint->mask, netmask_str);
     etcpal_mac_to_string(&netint->mac, mac_str);
-    printf(line_format, netint->id, addr_str, netmask_str, mac_str, netint->index);
+    printf(line_format, netint->id, addr_str, netmask_str, mac_str, netint->index,
+           etcpal_netint_is_up(netint->index) ? "Up" : "Down");
   }
 
   unsigned int default_v4;
@@ -131,7 +134,7 @@ int main(void)
   {
     const EtcPalNetintInfo* addr_arr;
     size_t                  addr_arr_size;
-    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v6, &addr_arr, &addr_arr_size))
     {
       printf("Default IPv6 interface: %s (%u)\n", addr_arr->friendly_name, default_v6);
     }

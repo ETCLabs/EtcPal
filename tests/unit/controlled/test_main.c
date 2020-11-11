@@ -17,35 +17,15 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_PRIVATE_NETINT_H_
-#define ETCPAL_PRIVATE_NETINT_H_
+#include "unity_fixture.h"
+#include "fff.h"
 
-#include "etcpal/netint.h"
-#include "etcpal/error.h"
+DEFINE_FFF_GLOBALS;
 
-typedef struct DefaultNetint
+void run_all_tests(void)
 {
-  bool         v4_valid;
-  unsigned int v4_index;
-
-  bool         v6_valid;
-  unsigned int v6_index;
-} DefaultNetint;
-
-typedef struct CachedNetintInfo
-{
-  size_t            num_netints;
-  EtcPalNetintInfo* netints;
-  DefaultNetint     def;
-} CachedNetintInfo;
-
-etcpal_error_t etcpal_netint_init(void);
-void           etcpal_netint_deinit(void);
-
-// These functions are defined in the os_netint.c files for each platform.
-etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
-void           os_free_interfaces(CachedNetintInfo* cache);
-etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index);
-bool           os_netint_is_up(unsigned int index, const CachedNetintInfo* cache);
-
-#endif /* ETCPAL_PRIVATE_NETINT_H_ */
+  RUN_TEST_GROUP(timer_controlled);
+#if !ETCPAL_NO_NETWORKING_SUPPORT
+  RUN_TEST_GROUP(netint_controlled);
+#endif
+}

@@ -24,6 +24,8 @@
 #include "etcpal/private/opts.h"
 #include "etcpal/private/netint.h"
 
+/**************************** Private variables ******************************/
+
 #if ETCPAL_EMBOS_USE_MALLOC
 #include <stdlib.h>
 static EtcPalNetintInfo* static_netints;
@@ -33,71 +35,21 @@ static EtcPalNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS];
 size_t num_static_netints;
 size_t default_index;
 
-// Must be called with lwIP TCP/IP core locked
-static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
-{
-  netint->index = netif_get_index(lwip_netif);
-  memset(netint->mac.data, 0, ETCPAL_MAC_BYTES);
-  memcpy(netint->mac.data, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
+/*********************** Private function prototypes *************************/
 
-  char lwip_name[NETIF_NAMESIZE];
-  if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
-  {
-    strncpy(netint->id, lwip_name, ETCPAL_NETINTINFO_ID_LEN);
-    strncpy(netint->friendly_name, lwip_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
-  }
-}
-
-// Must be called with lwIP TCP/IP core locked
-static void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
-{
-  copy_common_interface_info(lwip_netif, netint);
-
-  if (!ip_addr_isany(netif_ip_addr4(lwip_netif)))
-  {
-    ETCPAL_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netif)->addr));
-    ETCPAL_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netif)->addr));
-  }
-
-  if (lwip_netif == netif_default)
-    netint->is_default = true;
-  else
-    netint->is_default = false;
-}
-
+static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint);
+static void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* netint);
 #if LWIP_IPV6
-// Must be called with lwIP TCP/IP core locked
-static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
-{
-  copy_common_interface_info(lwip_netif, netint);
-
-  /* Finish filling in a netintinfo for a single IPv6 address. */
-
-  if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[v6_addr_index]))
-  {
-#if LWIP_IPV6_SCOPES
-    ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
-                                           ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
-#else
-    ETCPAL_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
-    // TODO revisit
-    netint->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
+static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint);
 #endif
 
-    if (lwip_netif == netif_default)
-      netint->is_default = true;
-    else
-      netint->is_default = false;
-
-    return true;
-  }
-  return false;
-}
-#endif
+/*************************** Function definitions ****************************/
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   struct netif* lwip_netif;
+
+  LOCK_TCPIP_CORE();
 
 #if ETCPAL_EMBOS_USE_MALLOC
   size_t num_lwip_netints = 0;
@@ -116,12 +68,13 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
   cache->netints = (EtcPalNetintInfo*)calloc(sizeof(EtcPalNetintInfo), num_lwip_netints);
   if (!cache->netints)
+  {
+    UNLOCK_TCPIP_CORE();
     return kEtcPalErrNoMem;
+  }
 #endif
 
   num_static_netints = 0;
-
-  LOCK_TCPIP_CORE();
 
   // Make sure the default netint is included
 #if LWIP_IPV4
@@ -224,3 +177,78 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
     return kEtcPalErrOk;
   }
 }
+
+bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
+{
+  ETCPAL_UNUSED_ARG(cache);
+
+  bool res = false;
+  LOCK_TCPIP_CORE();
+  struct netif* netif = netif_get_by_index(index);
+  if (netif)
+    res = netif_is_up(netif);
+  UNLOCK_TCPIP_CORE();
+  return res;
+}
+
+// Must be called with lwIP TCP/IP core locked
+void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
+{
+  netint->index = netif_get_index(lwip_netif);
+  memset(netint->mac.data, 0, ETCPAL_MAC_BYTES);
+  memcpy(netint->mac.data, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
+
+  char lwip_name[NETIF_NAMESIZE];
+  if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
+  {
+    strncpy(netint->id, lwip_name, ETCPAL_NETINTINFO_ID_LEN);
+    strncpy(netint->friendly_name, lwip_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
+  }
+}
+
+// Must be called with lwIP TCP/IP core locked
+void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
+{
+  copy_common_interface_info(lwip_netif, netint);
+
+  if (!ip_addr_isany(netif_ip_addr4(lwip_netif)))
+  {
+    ETCPAL_IP_SET_V4_ADDRESS(&netint->addr, ntohl(netif_ip4_addr(lwip_netif)->addr));
+    ETCPAL_IP_SET_V4_ADDRESS(&netint->mask, ntohl(netif_ip4_netmask(lwip_netif)->addr));
+  }
+
+  if (lwip_netif == netif_default)
+    netint->is_default = true;
+  else
+    netint->is_default = false;
+}
+
+#if LWIP_IPV6
+// Must be called with lwIP TCP/IP core locked
+bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
+{
+  copy_common_interface_info(lwip_netif, netint);
+
+  /* Finish filling in a netintinfo for a single IPv6 address. */
+
+  if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[v6_addr_index]))
+  {
+#if LWIP_IPV6_SCOPES
+    ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
+                                           ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
+#else
+    ETCPAL_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
+    // TODO revisit
+    netint->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
+#endif
+
+    if (lwip_netif == netif_default)
+      netint->is_default = true;
+    else
+      netint->is_default = false;
+
+    return true;
+  }
+  return false;
+}
+#endif

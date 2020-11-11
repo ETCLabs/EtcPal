@@ -41,35 +41,6 @@ static void                  copy_all_netint_info(const IP_ADAPTER_ADDRESSES* ad
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
-{
-  ETCPAL_UNUSED_ARG(cache);  // unused
-
-  struct sockaddr_storage os_addr;
-  if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
-  {
-    DWORD resolved_index;
-    DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
-    if (res == NO_ERROR)
-    {
-      *index = resolved_index;
-      return kEtcPalErrOk;
-    }
-    else if (res == ERROR_INVALID_PARAMETER)
-    {
-      return kEtcPalErrInvalid;
-    }
-    else
-    {
-      return kEtcPalErrNotFound;
-    }
-  }
-  else
-  {
-    return kEtcPalErrInvalid;
-  }
-}
-
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
   IP_ADAPTER_ADDRESSES *padapters, *pcur;
@@ -125,6 +96,51 @@ void os_free_interfaces(CachedNetintInfo* cache)
     free(cache->netints);
     cache->netints = NULL;
   }
+}
+
+etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+{
+  ETCPAL_UNUSED_ARG(cache);  // unused
+
+  struct sockaddr_storage os_addr;
+  if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
+  {
+    DWORD resolved_index;
+    DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
+    if (res == NO_ERROR)
+    {
+      *index = resolved_index;
+      return kEtcPalErrOk;
+    }
+    else if (res == ERROR_INVALID_PARAMETER)
+    {
+      return kEtcPalErrInvalid;
+    }
+    else
+    {
+      return kEtcPalErrNotFound;
+    }
+  }
+  else
+  {
+    return kEtcPalErrInvalid;
+  }
+}
+
+bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
+{
+  // Note: I have not found a way to dynamically get whether an adapter is enabled based on its
+  // index. Trial and error shows a lot of false positives, like NT is reserving indexes and giving
+  // them names even though they do not correspond to adapters on the system. For this reason, the
+  // Windows implementation uses the cached netint list and interprets an index being present as
+  // that interface being up.
+
+  for (const EtcPalNetintInfo* netint = cache->netints; netint < cache->num_netints; ++netint)
+  {
+    if (netint->index == index)
+      return true;
+  }
+  return false;
 }
 
 IP_ADAPTER_ADDRESSES* get_windows_adapters()

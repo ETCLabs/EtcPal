@@ -23,6 +23,7 @@
  * enumeration yet.
  */
 
+#include "etcpal/common.h"
 #include "etcpal/private/netint.h"
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
@@ -42,4 +43,11 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   ETCPAL_UNUSED_ARG(cache);
   ETCPAL_UNUSED_ARG(index);
   return kEtcPalErrNotImpl;
+}
+
+bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
+{
+  ETCPAL_UNUSED_ARG(index);
+  ETCPAL_UNUSED_ARG(cache);
+  return false;
 }
