@@ -4,6 +4,7 @@
 
 if(ETCPAL_HAVE_OS_SUPPORT)
   etcpal_add_live_test(etcpal_integration_tests C
+    event_integration_test.c
     mutex_integration_test.c
     rwlock_integration_test.c
     sem_integration_test.c

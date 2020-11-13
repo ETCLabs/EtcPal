@@ -135,7 +135,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   // Windows implementation uses the cached netint list and interprets an index being present as
   // that interface being up.
 
-  for (const EtcPalNetintInfo* netint = cache->netints; netint < cache->num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = cache->netints; netint < cache->netints + cache->num_netints; ++netint)
   {
     if (netint->index == index)
       return true;

@@ -21,6 +21,7 @@
 
 void run_all_tests(void)
 {
+  RUN_TEST_GROUP(event_integration);
   RUN_TEST_GROUP(mutex_integration);
 #if !DISABLE_RECURSIVE_MUTEX_TESTS
   RUN_TEST_GROUP(recursive_mutex_integration);
