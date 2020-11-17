@@ -1,0 +1,287 @@
+Whoa, this isn't a real source file! What's going on here? Well, the headers for this module are
+platform-specific, and some of them implement types and functions differently (i.e. functions as
+macros, etc.), so the documentation needs somewhere to pull a standard interface from. Voila!
+
+/**
+ * @defgroup etcpal_event_group event_group (Event Groups)
+ * @ingroup etcpal_os
+ * @brief Event group objects.
+ *
+ * ```c
+ * #include "etcpal/event_group.h"
+ * ```
+ *
+ * An event group can be used to signal between different contexts that one or more events have
+ * occurred. Events in an event group are represented by bits in a bitfield, with the bitfield
+ * being of type etcpal_event_bits_t (which may be different sizes on different platforms but will
+ * always be at least the size of an int).
+ *
+ * @code
+ * etcpal_event_group_t event_group;
+ * #define EVENT_MESSAGE_RECEIVED (1 << 0)
+ * #define EVENT_MESSAGE_ERROR (2 << 0)
+ *
+ * bool keep_running;
+ *
+ * void event_handler_thread(void* arg)
+ * {
+ *   while (keep_running)
+ *   {
+ *     etcpal_event_bits_t event = etcpal_event_group_wait(&event_group, EVENT_MESSAGE_RECEIVED | EVENT_MESSAGE_ERROR, 0);
+ *     if (event & EVENT_MESSAGE_RECEIVED)
+ *     {
+ *       // Handle message received...
+ *     }
+ *     // Note: Depending on the user implementation, EVENT_MESSAGE_RECEIVED and EVENT_MESSAGE_ERROR
+ *     // could be set at the same time.
+ *     if (event & EVENT_MESSAGE_ERROR)
+ *     {
+ *       // Handle message error...
+ *     }
+ *
+ *     // Since we passed ETCPAL_EVENT_GROUP_AUTO_CLEAR at creation, the event bits do not need to
+ *     // be cleared before the next iteration.
+ *   }
+ * }
+ *
+ * void message_received_interrupt(void)
+ * {
+ *   // Handle/copy the message somehow...
+ *   etcpal_event_group_set_bits_from_isr(&event_group, EVENT_MESSAGE_RECEIVED);
+ * }
+ *
+ * void message_error_interrupt(void)
+ * {
+ *   etcpal_event_group_set_bits_from_isr(&event_group, EVENT_MESSAGE_ERROR);
+ * }
+ *
+ * int main(void)
+ * {
+ *   etcpal_event_group_create(&event_group, ETCPAL_EVENT_GROUP_AUTO_CLEAR);
+ *
+ *   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
+ *   etcpal_thread_t handler_thread;
+ *   keep_running = true;
+ *   etcpal_thread_create(&handler_thread, &thread_params, event_handler_thread, NULL);
+ *
+ *   // ...
+ * }
+ * @endcode
+ *
+ * **NOTE:** Due to platform differences, it's not recommended to have multiple threads that wait
+ * on the same event group. The behavior will not be predictable across platforms. See
+ * #ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS for more information.
+ *
+ * etcpal_event_group implementations use different constructs under the hood on various platforms.
+ * Also, different platforms affect the behavior of certain functions.
+ *
+ * | Platform | #ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT | #ETCPAL_EVENT_GROUP_HAS_GET_BITS | #ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS | #ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS | Underlying Type |
+ * |----------|------------------------------------|----------------------------------|---------------------------------------|--------------------------------------------|-----------------|
+ * | FreeRTOS | Yes                                | Yes                              | Yes                                   | Yes                                        | [Event Groups](https://www.freertos.org/FreeRTOS-Event-Groups.html) |
+ * | Linux    | No                                 | Yes                              | No                                    | No                                         | [pthread_cond](https://linux.die.net/man/3/pthread_cond_init) |
+ * | macOS    | No                                 | Yes                              | No                                    | No                                         | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html) |
+ * | MQX      | Yes                                | No                               | No                                    | Yes                                        | Lightweight Events |
+ * | Windows  | No                                 | Yes                              | No                                    | No                                         | [Condition Variables](https://docs.microsoft.com/en-us/windows/win32/sync/condition-variables) |
+ *
+ * @{
+ */
+
+/**
+ * @brief The event identifier.
+ *
+ * Depending on the platform, this could be a scalar type or a struct.
+ */
+typedef PLATFORM_DEFINED etcpal_event_group_t;
+
+/**
+ * @brief The type that holds the event bitfield.
+ *
+ * This is always an integer type of some kind. Depending on the platform, the number of usable
+ * bits in this type may be restricted. Use #ETCPAL_EVENT_GROUP_NUM_USABLE_BITS to determine how
+ * many bits are usable.
+ */
+typedef PLATFORM_DEFINED etcpal_event_bits_t;
+
+/**
+ * @brief Whether etcpal_event_group_timed_wait() is meaningful on this platform.
+ *
+ * If defined to 0, etcpal_event_group_timed_wait() executes the equivalent of
+ * etcpal_event_group_wait() if given a nonzero timeout, or returns immediately with the status of
+ * the event group if given a timeout of 0.
+ */
+#define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT /* platform-defined */
+
+/**
+ * @brief Whether etcpal_event_group_get_bits() works on this platform.
+ *
+ * If defined to 0, the underlying platform does not provide a way to immediately get the status of
+ * the event. etcpal_event_group_get_bits() will always return 0.
+ */
+#define ETCPAL_EVENT_GROUP_HAS_GET_BITS /* platform-defined */
+
+/**
+ * @brief Whether the etcpal_event_group_*_from_isr() functions are meaningful on this platform.
+ *
+ * Some platforms have a different method for interacting with events from an interrupt context. If
+ * defined to 0, the etcpal_event_group_*_from_isr() functions execute the equivalent of
+ * etcpal_event_group_*().
+ */
+#define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS /* platform-defined */
+
+/**
+ * @brief Whether etcpal_event_group_set_bits() wakes multiple threads waiting on the same event.
+ *
+ * Due to platform restrictions, there is currently no way to ensure predictable behavior across
+ * platforms when multiple threads wait on the same event. On RTOS platforms, generally, when an
+ * event bit that is being waited on by multiple threads is set, all threads are woken and the
+ * event state is delivered atomically to all of them. This behavior is difficult to replicate on
+ * desktop platforms, so they are typically implemented as waking only the first waiting thread.
+ */
+#define ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS /* platform-defined */
+
+/**
+ * @brief How many bits in the etcpal_event_bits_t type are usable, starting from the LSB.
+ *
+ * Some platforms reserve event bits for internal implementation resources. At time of writing,
+ * FreeRTOS is the only platform that does this. On other platforms, this value will be defined to
+ * sizeof(etcpal_event_bits_t) * 8.
+ */
+ #define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS /* platform-defined */
+
+/**
+ * @brief Create a new event group.
+ *
+ * At creation, none of the bits in the event group bitfield are set.
+ *
+ * @param[out] id Event identifier on which to create an event group. If this function returns true,
+ *                id becomes valid for calls to other etcpal_event_group API functions.
+ * @param[in] flags Flags that define attributes of this event group. #ETCPAL_EVENT_GROUP_AUTO_CLEAR
+ *                  is currently the only valid flag.
+ * @return true: The event group was created.
+ * @return false: The event group was not created.
+ */
+bool etcpal_event_group_create(etcpal_event_group_t* id, int flags);
+
+/**
+ * @brief Wait for one or more bits in an event group.
+ *
+ * Pass a mask of bits to wait for. If #ETCPAL_EVENT_GROUP_WAIT_FOR_ALL is given as a flag, blocks
+ * until all bits are set. Otherwise, blocks until any of the bits are set. If
+ * #ETCPAL_EVENT_GROUP_AUTO_CLEAR was given when the event group was created, any bits returned
+ * will be cleared automatically from the event's state before the function returns. Otherwise,
+ * etcpal_event_group_clear_bits() must be used to clear bits.
+ *
+ * @param id Identifier for the event group for which to wait.
+ * @param bits Mask of bits in the event group to wait for.
+ * @param flags Flags that define waiting options.
+ * @return Bitmask representing the bits that were set at the time the requested condition was
+ *         fulfilled (note that this could include other bits that were not requested).
+ */
+etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags);
+
+/**
+ * @brief Wait for one or more bits in an event group, giving up after a timeout.
+ *
+ * Pass a mask of bits to wait for. If #ETCPAL_EVENT_GROUP_WAIT_FOR_ALL is given as a flag, blocks
+ * until either all bits are set or the timeout passes. Otherwise, blocks until any of the bits are
+ * set or the timeout passes. If #ETCPAL_EVENT_GROUP_AUTO_CLEAR was given when the event group was
+ * created, any bits returned will be cleared automatically from the event's state before the
+ * function returns. Otherwise, etcpal_event_group_clear_bits() must be used to clear bits.
+ *
+ * @param id Identifier for the event group for which to wait.
+ * @param bits Mask of bits in the event group to wait for.
+ * @param flags Flags that define waiting options.
+ * @param timeout_ms Maximum amount of time to wait for the event bits, in milliseconds. If
+ *                   #ETCPAL_WAIT_FOREVER is given, the result is the same as if
+ *                   etcpal_event_group_wait() was called.
+ * @return Bitmask representing the bits that were set at the time that either the requested
+ *         condition was fulfilled or a timeout occurred (note that this could include other bits
+ *         that were not requested).
+ */
+etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags, int timeout_ms);
+
+/**
+ * @brief Set one or more bits in an event group.
+ *
+ * If one or more threads are waiting for the bits that were set, at least one of those threads
+ * will be woken up (whether it is one or all depends on #ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS).
+ * The bits will remain set until cleared, either through one of the etcpal_event_group_wait()
+ * functions on an event group that was created with the #ETCPAL_EVENT_GROUP_AUTO_CLEAR flag, or
+ * explicitly using etcpal_event_group_clear_bits().
+ *
+ * @param id Identifier for the event group in which to set bits.
+ * @param bits_to_set Mask of bits in the event group to set.
+ */
+void etcpal_event_group_set_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_set);
+
+/**
+ * @brief Get the current bitfield from an event group.
+ * @param id Identifier for the event group from which to get the bits.
+ * @return The bitfield (or 0 if an invalid argument was given).
+ */
+etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id);
+
+/**
+ * @brief Clear one or more bits in an event group.
+ * @param id Identifier for the event group in which to clear bits.
+ * @param bits_to_clear Mask of bits to clear.
+ */
+void etcpal_event_group_clear_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_clear);
+
+/**
+ * @brief Destroy an event group.
+ * @param id Identifier for the event group to destroy.
+ */
+void etcpal_event_group_destroy(etcpal_event_group_t* id);
+
+/**
+ * @brief Set one or more bits in an event group from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for interacting with event groups from an interrupt context. The value of
+ * #ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS can be used to determine whether this function is
+ * meaningful on the current platform. If it is defined to 0, this function simply executes the
+ * equivalent of etcpal_event_group_set_bits().
+ *
+ * If one or more threads are waiting for the bits that were set, at least one of those threads
+ * will be woken up (whether it is one or all depends on #ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS).
+ * The bits will remain set until cleared, either through one of the etcpal_event_group_wait()
+ * functions on an event group that was created with the #ETCPAL_EVENT_GROUP_AUTO_CLEAR flag, or
+ * explicitly using etcpal_event_group_clear_bits().
+ *
+ * @param id Identifier for the event group in which to set bits.
+ * @param bits_to_set Mask of bits in the event group to set.
+ */
+void etcpal_event_group_set_bits_from_isr(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_set);
+
+/**
+ * @brief Get the current bitfield from an event group from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for interacting with event groups from an interrupt context. The value of
+ * #ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS can be used to determine whether this function is
+ * meaningful on the current platform. If it is defined to 0, this function simply executes the
+ * equivalent of etcpal_event_group_get_bits().
+ *
+ * @param id Identifier for the event group from which to get the bits.
+ * @return The bitfield (or 0 if an invalid argument was given).
+ */
+etcpal_event_bits_t etcpal_event_group_get_bits_from_isr(etcpal_event_group_t* id);
+
+/**
+ * @brief Clear one or more bits in an event group from an interrupt context.
+ *
+ * This function is only meaningful on some platforms; namely, those which have a different method
+ * for interacting with event groups from an interrupt context. The value of
+ * #ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS can be used to determine whether this function is
+ * meaningful on the current platform. If it is defined to 0, this function simply executes the
+ * equivalent of etcpal_event_group_get_bits().
+ *
+ * @param id Identifier for the event group in which to clear bits.
+ * @param bits_to_clear Mask of bits to clear.
+ */
+void etcpal_event_group_clear_bits_from_isr(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_clear);
+
+/**
+ * @}
+ */

@@ -14,7 +14,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * Sometimes also referred to as a binary semaphore or event. Used for thread synchronization; a
  * call to etcpal_signal_wait() blocks until etcpal_signal_post() is called.
  *
- * Mutexes are used to synchronize different threads around some event. For example:
+ * Signals are used to synchronize different threads around some event. For example:
  * @code
  * Event event_queue[EVENT_QUEUE_SIZE];
  * size_t event_queue_current_size;
@@ -46,7 +46,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *   
  *   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
  *   etcpal_thread_t event_thread_handle;
- *   etcpal_thread_create(&event_thread_handle, &params, event_thread, NULL);
+ *   etcpal_thread_create(&event_thread_handle, &thread_params, event_thread, NULL);
  *
  *   // At shutdown time...
  *   keep_running = false;

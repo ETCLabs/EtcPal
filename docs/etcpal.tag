@@ -36,6 +36,20 @@
     <class kind="class">etcpal::Expected</class>
   </compound>
   <compound kind="file">
+    <name>event_group.h</name>
+    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>cpp_2event__group_8h</filename>
+    <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
+    <class kind="class">etcpal::EventGroup</class>
+    <member kind="typedef">
+      <type>etcpal_event_bits_t</type>
+      <name>EventBits</name>
+      <anchorfile>cpp_2event__group_8h.html</anchorfile>
+      <anchor>adf88a2feae4a7de0c6d7416d08a89698</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>inet.h</name>
     <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
@@ -988,6 +1002,80 @@
       <anchorfile>struct_etc_pal_uuid.html</anchorfile>
       <anchor>a814a9e92ac05977a8fce43ba49425d14</anchor>
       <arglist>[ETCPAL_UUID_BYTES]</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>etcpal::EventGroup</name>
+    <filename>classetcpal_1_1_event_group.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>EventGroup</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a9e62d34910bfcfc7336019f722f8f496</anchor>
+      <arglist>(int flags=0)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~EventGroup</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a94820ca5e1b2c2cbbd563f7ed300f66e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>EventBits</type>
+      <name>Wait</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a0485e3165b2d4927e65b6ad0d8e63b74</anchor>
+      <arglist>(EventBits bits, int flags=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>EventBits</type>
+      <name>TryWait</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>accaf0585b4ff7ed5c4f662d632b73cc8</anchor>
+      <arglist>(EventBits bits, int flags=0, int timeout_ms=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetBits</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a8941ac4db3dc5dbf13842a68e2474b77</anchor>
+      <arglist>(EventBits bits_to_set)</arglist>
+    </member>
+    <member kind="function">
+      <type>EventBits</type>
+      <name>GetBits</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a91b2d653df2c04cea00337695fed03d1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ClearBits</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a00b51ef9ad31be233f2005ed798f8b6c</anchor>
+      <arglist>(EventBits bits_to_clear)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetBitsFromIsr</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a2163854253b96737e4af5123d636af6a</anchor>
+      <arglist>(EventBits bits_to_set)</arglist>
+    </member>
+    <member kind="function">
+      <type>EventBits</type>
+      <name>GetBitsFromIsr</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a1176e819049613d157ea7d0e42fa3312</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>ClearBitsFromIsr</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a41ba5cddf117130676e4a27cb3ebcdd5</anchor>
+      <arglist>(EventBits bits_to_clear)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -3591,6 +3679,7 @@
     <filename>group__etcpal__os.html</filename>
     <subgroup>etcpal_thread</subgroup>
     <subgroup>etcpal_timer</subgroup>
+    <subgroup>etcpal_event_group</subgroup>
     <subgroup>etcpal_mutex</subgroup>
     <subgroup>etcpal_queue</subgroup>
     <subgroup>etcpal_recursive_mutex</subgroup>
@@ -5920,6 +6009,7 @@
     <title>C++ Wrappers</title>
     <filename>group__etcpal__cpp.html</filename>
     <subgroup>etcpal_cpp_error</subgroup>
+    <subgroup>etcpal_cpp_event_group</subgroup>
     <subgroup>etcpal_cpp_inet</subgroup>
     <subgroup>etcpal_cpp_log</subgroup>
     <subgroup>etcpal_cpp_mutex</subgroup>
@@ -5960,6 +6050,12 @@
     <class kind="class">etcpal::Error</class>
     <class kind="class">etcpal::BadExpectedAccess</class>
     <class kind="class">etcpal::Expected</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_event_group</name>
+    <title>event_group (Event Groups)</title>
+    <filename>group__etcpal__cpp__event__group.html</filename>
+    <class kind="class">etcpal::EventGroup</class>
   </compound>
   <compound kind="group">
     <name>etcpal_cpp_inet</name>
@@ -6054,6 +6150,144 @@
     <title>uuid (UUIDs)</title>
     <filename>group__etcpal__cpp__uuid.html</filename>
     <class kind="class">etcpal::Uuid</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_event_group</name>
+    <title>event_group (Event Groups)</title>
+    <filename>group__etcpal__event__group.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga4227d5a45f092ff04e17cd6809eadd19</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EVENT_GROUP_HAS_GET_BITS</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>gaf62ed085f6b489ed4ad3d42616d9ca77</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga5fdd69b602a2b614d80575067d135459</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga299add3138230c9999f63d38dc7964b0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EVENT_GROUP_NUM_USABLE_BITS</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga13812920e0d661b38e9aeb6020eac678</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_event_group_t</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>gad366db88a3a26f1ff9451f8ed3333c4e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_event_bits_t</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga70de7127d1f9721ed1b012b5aebd1f98</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>etcpal_event_group_create</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga32b6a1c36ca46943d9250679a238f672</anchor>
+      <arglist>(etcpal_event_group_t *id, int flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_event_bits_t</type>
+      <name>etcpal_event_group_wait</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga2ce63fdddde875fda44575076de44925</anchor>
+      <arglist>(etcpal_event_group_t *id, etcpal_event_bits_t bits, int flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_event_bits_t</type>
+      <name>etcpal_event_group_timed_wait</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>gafca908241967793b21bb2e259ea51824</anchor>
+      <arglist>(etcpal_event_group_t *id, etcpal_event_bits_t bits, int flags, int timeout_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_event_group_set_bits</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>gaa7e0ecaa3b305362c79edc1926bee120</anchor>
+      <arglist>(etcpal_event_group_t *id, etcpal_event_bits_t bits_to_set)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_event_bits_t</type>
+      <name>etcpal_event_group_get_bits</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga6b0cc124b3996a1a6fbb6c9cff665613</anchor>
+      <arglist>(etcpal_event_group_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_event_group_clear_bits</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga7f2b89aa448aeebd1cb92f06f11370c1</anchor>
+      <arglist>(etcpal_event_group_t *id, etcpal_event_bits_t bits_to_clear)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_event_group_destroy</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga5670b49ec1200c9a6fa5c7c54ceeb85b</anchor>
+      <arglist>(etcpal_event_group_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_event_group_set_bits_from_isr</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga39ba56549fc91c52ee5719fdc95853bd</anchor>
+      <arglist>(etcpal_event_group_t *id, etcpal_event_bits_t bits_to_set)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_event_bits_t</type>
+      <name>etcpal_event_group_get_bits_from_isr</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>gae34841ea23ebe95855dbd022c1207af1</anchor>
+      <arglist>(etcpal_event_group_t *id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>etcpal_event_group_clear_bits_from_isr</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga1054ca42842a22492e6304de4241facb</anchor>
+      <arglist>(etcpal_event_group_t *id, etcpal_event_bits_t bits_to_clear)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EVENT_GROUP_AUTO_CLEAR</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>gae7f8a36d6d226e95f2c7d4fa9474e1e1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_EVENT_GROUP_WAIT_FOR_ALL</name>
+      <anchorfile>group__etcpal__event__group.html</anchorfile>
+      <anchor>ga9a2eea55a13fd20a3b3a8e15efef1016</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>etcpal_mutex</name>
