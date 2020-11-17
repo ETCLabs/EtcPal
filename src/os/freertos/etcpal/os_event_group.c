@@ -19,23 +19,21 @@
 
 #include "etcpal/event_group.h"
 
-bool etcpal_event_group_create(etcpal_event_group_t* id, int flags)
+bool etcpal_event_group_create(etcpal_event_group_t* id)
 {
   if (id)
   {
-    id->flags = flags;
-    id->handle = xEventGroupCreate();
-    return (id->handle != NULL);
+    return ((*id = xEventGroupCreate()) != NULL);
   }
   return false;
 }
 
 etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags)
 {
-  if (id && id->handle)
+  if (id && *id)
   {
-    return xEventGroupWaitBits(id->handle, bits, (id->flags & ETCPAL_EVENT_AUTO_CLEAR) ? pdTRUE : pdFALSE,
-                               (flags & ETCPAL_EVENT_WAIT_FOR_ALL) ? pdTRUE : pdFALSE, portMAX_DELAY);
+    return xEventGroupWaitBits(*id, bits, (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR) ? pdTRUE : pdFALSE,
+                               (flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL) ? pdTRUE : pdFALSE, portMAX_DELAY);
   }
   return 0;
 }
@@ -45,58 +43,61 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
                                                   int                   flags,
                                                   int                   timeout_ms)
 {
-  if (id && id->handle)
+  if (id && *id)
   {
-    return xEventGroupWaitBits(id->handle, bits, (id->flags & ETCPAL_EVENT_AUTO_CLEAR) ? pdTRUE : pdFALSE,
-                               (flags & ETCPAL_EVENT_WAIT_FOR_ALL) ? pdTRUE : pdFALSE, pdMS_TO_TICKS(timeout_ms));
+    return xEventGroupWaitBits(*id, bits, (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR) ? pdTRUE : pdFALSE,
+                               (flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL) ? pdTRUE : pdFALSE, pdMS_TO_TICKS(timeout_ms));
   }
   return 0;
 }
 
 void etcpal_event_group_set_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_set)
 {
-  if (id && id->handle)
-    xEventGroupSetBits(id->handle, bits_to_set);
+  if (id && *id)
+    xEventGroupSetBits(*id, bits_to_set);
 }
 
 etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id)
 {
-  if (id && id->handle)
-    return xEventGroupGetBits(id->handle);
+  if (id && *id)
+    return xEventGroupGetBits(*id);
   return 0;
 }
 
 void etcpal_event_group_clear_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_clear)
 {
-  if (id && id->handle)
-    xEventGroupClearBits(id->handle, bits_to_clear);
+  if (id && *id)
+    xEventGroupClearBits(*id, bits_to_clear);
 }
 
 void etcpal_event_group_destroy(etcpal_event_group_t* id)
 {
-  if (id && id->handle)
-    vEventGroupDelete(id->handle);
+  if (id && *id)
+  {
+    vEventGroupDelete(*id);
+    *id = NULL;
+  }
 }
 
 void etcpal_event_group_set_bits_from_isr(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_set)
 {
-  if (id && id->handle)
+  if (id && *id)
   {
     BaseType_t higherPriorityTaskWoken;
-    if (xEventGroupSetBitsFromISR(id->handle, bits_to_set, &higherPriorityTaskWoken) == pdPASS)
+    if (xEventGroupSetBitsFromISR(*id, bits_to_set, &higherPriorityTaskWoken) == pdPASS)
       portYIELD_FROM_ISR(higherPriorityTaskWoken);
   }
 }
 
 etcpal_event_bits_t etcpal_event_group_get_bits_from_isr(etcpal_event_group_t* id)
 {
-  if (id && id->handle)
-    return xEventGroupGetBitsFromISR(id->handle);
+  if (id && *id)
+    return xEventGroupGetBitsFromISR(*id);
   return 0;
 }
 
 void etcpal_event_group_clear_bits_from_isr(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_clear)
 {
-  if (id && id->handle)
-    xEventGroupClearBitsFromISR(id->handle, bits_to_clear);
+  if (id && *id)
+    xEventGroupClearBitsFromISR(*id, bits_to_clear);
 }

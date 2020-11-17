@@ -21,7 +21,9 @@
 
 void run_all_tests(void)
 {
+#if !DISABLE_EVENT_GROUP_TESTS
   RUN_TEST_GROUP(event_group_integration);
+#endif
   RUN_TEST_GROUP(mutex_integration);
 #if !DISABLE_RECURSIVE_MUTEX_TESTS
   RUN_TEST_GROUP(recursive_mutex_integration);

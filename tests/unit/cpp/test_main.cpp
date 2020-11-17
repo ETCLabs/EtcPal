@@ -24,7 +24,9 @@ extern "C" void run_all_tests(void)
   RUN_TEST_GROUP(etcpal_cpp_error);
   RUN_TEST_GROUP(etcpal_cpp_uuid);
 #if !ETCPAL_NO_OS_SUPPORT
+#if !DISABLE_EVENT_GROUP_TESTS
   RUN_TEST_GROUP(etcpal_cpp_event_group);
+#endif
   RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
   RUN_TEST_GROUP(etcpal_cpp_log);
   RUN_TEST_GROUP(etcpal_cpp_mutex);

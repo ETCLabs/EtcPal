@@ -30,23 +30,18 @@ extern "C" {
 
 typedef EventBits_t etcpal_event_bits_t;
 
-typedef struct
-{
-  EventGroupHandle_t handle;
-  int                flags;
-} etcpal_event_group_t;
+typedef EventGroupHandle_t etcpal_event_group_t;
 
 #define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT 1
 #define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS 1
 #define ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS 1
-#define ETCPAL_EVENT_GROUP_HAS_GET_BITS 1
 #if configUSE_16_BIT_TICKS == 1
 #define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS 8
 #else
 #define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS 24
 #endif
 
-bool                etcpal_event_group_create(etcpal_event_group_t* id, int flags);
+bool                etcpal_event_group_create(etcpal_event_group_t* id);
 etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags);
 etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
                                                   etcpal_event_bits_t   bits,

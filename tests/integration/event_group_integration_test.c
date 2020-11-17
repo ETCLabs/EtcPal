@@ -31,7 +31,7 @@ TEST_GROUP(event_group_integration);
 
 TEST_SETUP(event_group_integration)
 {
-  TEST_ASSERT_TRUE(etcpal_event_group_create(&event, ETCPAL_EVENT_GROUP_AUTO_CLEAR));
+  TEST_ASSERT_TRUE(etcpal_event_group_create(&event));
 }
 
 TEST_TEAR_DOWN(event_group_integration)
@@ -49,7 +49,7 @@ static void single_event_wait_thread(void* arg)
 
   for (int i = 0; i < NUM_ITERATIONS; ++i)
   {
-    if (etcpal_event_group_wait(&event, 0x80, 0) == 0x80)
+    if (etcpal_event_group_wait(&event, 0x80, ETCPAL_EVENT_GROUP_AUTO_CLEAR) == 0x80)
       ++num_events_received;
   }
 }
@@ -85,7 +85,8 @@ static void multiple_event_wait_thread(void* arg)
 
   do
   {
-    etcpal_event_bits_t result = etcpal_event_group_timed_wait(&event, EVENT_1 | EVENT_2, 0, 0);
+    etcpal_event_bits_t result =
+        etcpal_event_group_timed_wait(&event, EVENT_1 | EVENT_2, ETCPAL_EVENT_GROUP_AUTO_CLEAR, 0);
     if (result & EVENT_1)
       ++event_1_num_received;
     if (result & EVENT_2)
@@ -129,7 +130,8 @@ static void unrequested_bits_test_thread(void* arg)
 
   for (int i = 0; i < 2; ++i)
   {
-    etcpal_event_bits_t result = etcpal_event_group_wait(&event, 0x88, ETCPAL_EVENT_GROUP_WAIT_FOR_ALL);
+    etcpal_event_bits_t result =
+        etcpal_event_group_wait(&event, 0x88, ETCPAL_EVENT_GROUP_WAIT_FOR_ALL | ETCPAL_EVENT_GROUP_AUTO_CLEAR);
     if (result != 0)
       ++num_events_received;
   }

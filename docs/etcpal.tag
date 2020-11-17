@@ -1011,8 +1011,8 @@
       <type></type>
       <name>EventGroup</name>
       <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
-      <anchor>a9e62d34910bfcfc7336019f722f8f496</anchor>
-      <arglist>(int flags=0)</arglist>
+      <anchor>a1124b535c20e8d1cf40b6bf0285712f0</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -1076,6 +1076,13 @@
       <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
       <anchor>a41ba5cddf117130676e4a27cb3ebcdd5</anchor>
       <arglist>(EventBits bits_to_clear)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_event_group_t &amp;</type>
+      <name>get</name>
+      <anchorfile>classetcpal_1_1_event_group.html</anchorfile>
+      <anchor>a6aa96e85b1f0f64527c0befa610e2df0</anchor>
+      <arglist>()</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -6164,13 +6171,6 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>ETCPAL_EVENT_GROUP_HAS_GET_BITS</name>
-      <anchorfile>group__etcpal__event__group.html</anchorfile>
-      <anchor>gaf62ed085f6b489ed4ad3d42616d9ca77</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
       <name>ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS</name>
       <anchorfile>group__etcpal__event__group.html</anchorfile>
       <anchor>ga5fdd69b602a2b614d80575067d135459</anchor>
@@ -6208,8 +6208,8 @@
       <type>bool</type>
       <name>etcpal_event_group_create</name>
       <anchorfile>group__etcpal__event__group.html</anchorfile>
-      <anchor>ga32b6a1c36ca46943d9250679a238f672</anchor>
-      <arglist>(etcpal_event_group_t *id, int flags)</arglist>
+      <anchor>ga73ba468847773eeef9f820727f9c4a66</anchor>
+      <arglist>(etcpal_event_group_t *id)</arglist>
     </member>
     <member kind="function">
       <type>etcpal_event_bits_t</type>

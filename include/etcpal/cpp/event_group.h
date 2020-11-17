@@ -42,7 +42,7 @@ using EventBits = etcpal_event_bits_t;
 ///
 /// Example usage:
 /// @code
-/// etcpal::EventGroup event_group(ETCPAL_EVENT_GROUP_AUTO_CLEAR);
+/// etcpal::EventGroup event_group;
 /// constexpr etcpal::EventBits kEventMessageReceived = 0x1;
 /// constexpr etcpal::EventBits kEventMessageError = 0x2;
 ///
@@ -50,20 +50,21 @@ using EventBits = etcpal_event_bits_t;
 /// {
 ///   while (keep_running)
 ///   {
-///     etcpal::EventBits event = event_group.Wait(kEventMessageReceived | kEventMessageError);
+///     etcpal::EventBits event = event_group.Wait(kEventMessageReceived | kEventMessageError,
+///                                                ETCPAL_EVENT_GROUP_AUTO_CLEAR);
 ///     if (event & kEventMessageReceived)
 ///     {
 ///       // Handle message received...
 ///     }
-///     // Note: Depending on the user implementation, EVENT_MESSAGE_RECEIVED and EVENT_MESSAGE_ERROR
+///     // Note: Depending on the user implementation, kEventMessageReceived and kEventMessageError
 ///     // could be set at the same time.
 ///     if (event & kEventMessageError)
 ///     {
 ///       // Handle message error...
 ///     }
 ///
-///     // Since we passed ETCPAL_EVENT_GROUP_AUTO_CLEAR to the EventGroup's constructor, the event
-///     // bits do not need to be cleared before the next iteration.
+///     // Since we passed ETCPAL_EVENT_GROUP_AUTO_CLEAR to Wait(), the event bits do not need to
+///     // be explicitly cleared before the next iteration.
 ///   }
 /// }
 ///
@@ -86,7 +87,7 @@ using EventBits = etcpal_event_bits_t;
 class EventGroup
 {
 public:
-  EventGroup(int flags = 0);
+  EventGroup();
   ~EventGroup();
 
   EventGroup(const EventGroup& other) = delete;
@@ -103,16 +104,16 @@ public:
   EventBits GetBitsFromIsr();
   void      ClearBitsFromIsr(EventBits bits_to_clear);
 
+  etcpal_event_group_t& get();
+
 private:
   etcpal_event_group_t event_group_{};
 };
 
 /// @brief Create a new event group.
-/// @param flags Flags that define attributes of this event group. #ETCPAL_EVENT_GROUP_AUTO_CLEAR
-///              is currently the only valid flag.
-inline EventGroup::EventGroup(int flags)
+inline EventGroup::EventGroup()
 {
-  (void)etcpal_event_group_create(&event_group_, flags);
+  (void)etcpal_event_group_create(&event_group_);
 }
 
 /// @brief Destroy the event group.
@@ -201,6 +202,12 @@ inline EventBits EventGroup::GetBitsFromIsr()
 inline void EventGroup::ClearBitsFromIsr(EventBits bits_to_clear)
 {
   etcpal_event_group_clear_bits_from_isr(&event_group_, bits_to_clear);
+}
+
+/// @brief Get a reference to the underlying etcpal_event_group_t type.
+inline etcpal_event_group_t& EventGroup::get()
+{
+  return event_group_;
 }
 
 };  // namespace etcpal

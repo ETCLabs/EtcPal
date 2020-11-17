@@ -29,7 +29,7 @@ TEST_GROUP(etcpal_event_group);
 
 TEST_SETUP(etcpal_event_group)
 {
-  TEST_ASSERT_TRUE(etcpal_event_group_create(&event, 0));
+  TEST_ASSERT_TRUE(etcpal_event_group_create(&event));
 }
 
 TEST_TEAR_DOWN(etcpal_event_group)
@@ -89,23 +89,14 @@ TEST(etcpal_event_group, timed_wait_works)
 
 TEST(etcpal_event_group, auto_clear_works)
 {
-  // Create another event group with the AUTO_CLEAR bit set
-  etcpal_event_group_t auto_clear_event;
-  TEST_ASSERT_TRUE(etcpal_event_group_create(&auto_clear_event, ETCPAL_EVENT_GROUP_AUTO_CLEAR));
-
-  // Test with the non-auto-clear event group
   etcpal_event_group_set_bits(&event, 0x3);
   TEST_ASSERT_EQUAL(etcpal_event_group_wait(&event, 0x3, 0), 0x3);
   // The bits should not have auto-cleared without passing the flag
   TEST_ASSERT_EQUAL(etcpal_event_group_get_bits(&event), 0x3);
 
-  // Test with the auto-clear event group
-  etcpal_event_group_set_bits(&auto_clear_event, 0x3);
-  TEST_ASSERT_EQUAL(etcpal_event_group_wait(&auto_clear_event, 0x3, 0), 0x3);
+  TEST_ASSERT_EQUAL(etcpal_event_group_wait(&event, 0x3, ETCPAL_EVENT_GROUP_AUTO_CLEAR), 0x3);
   // Now they should be cleared
-  TEST_ASSERT_EQUAL(etcpal_event_group_get_bits(&auto_clear_event), 0x0);
-
-  etcpal_event_group_destroy(&auto_clear_event);
+  TEST_ASSERT_EQUAL(etcpal_event_group_get_bits(&event), 0x0);
 }
 
 TEST(etcpal_event_group, get_bits_works)

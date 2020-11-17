@@ -21,21 +21,17 @@
 
 /*********************** Private function prototypes *************************/
 
-static bool check_and_clear_bits(etcpal_event_bits_t* bits,
-                                 etcpal_event_bits_t  bits_requested,
-                                 int                  event_flags,
-                                 int                  call_flags);
+static bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags);
 
 /*************************** Function definitions ****************************/
 
-bool etcpal_event_group_create(etcpal_event_group_t* id, int flags)
+bool etcpal_event_group_create(etcpal_event_group_t* id)
 {
   if (id)
   {
     InitializeSRWLock(&id->lock);
     InitializeConditionVariable(&id->cond);
     id->bits = 0;
-    id->flags = flags;
     id->valid = true;
     return true;
   }
@@ -49,7 +45,7 @@ etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_eve
 
   AcquireSRWLockExclusive(&id->lock);
   etcpal_event_bits_t result = id->bits;
-  while (!check_and_clear_bits(&id->bits, bits, id->flags, flags))
+  while (!check_and_clear_bits(&id->bits, bits, flags))
   {
     SleepConditionVariableSRW(&id->cond, &id->lock, INFINITE, 0);
     result = id->bits;
@@ -71,7 +67,7 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
   // Just check once and return the state of the bits
   AcquireSRWLockExclusive(&id->lock);
   etcpal_event_bits_t result = id->bits;
-  check_and_clear_bits(&id->bits, bits, id->flags, flags);
+  check_and_clear_bits(&id->bits, bits, flags);
   ReleaseSRWLockExclusive(&id->lock);
   return result;
 }
@@ -117,14 +113,11 @@ void etcpal_event_group_destroy(etcpal_event_group_t* id)
   }
 }
 
-bool check_and_clear_bits(etcpal_event_bits_t* bits,
-                          etcpal_event_bits_t  bits_requested,
-                          int                  event_flags,
-                          int                  call_flags)
+bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags)
 {
   bool result = false;
 
-  if (call_flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL)
+  if (flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL)
   {
     if ((*bits & bits_requested) == bits_requested)
       result = true;
@@ -135,7 +128,7 @@ bool check_and_clear_bits(etcpal_event_bits_t* bits,
       result = true;
   }
 
-  if (result && (event_flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR))
+  if (result && (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR))
   {
     *bits &= (~(*bits & bits_requested));
   }

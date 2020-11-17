@@ -48,9 +48,9 @@ TEST(etcpal_cpp_event_group, wait_and_set_works)
 
 TEST(etcpal_cpp_event_group, auto_clear_works)
 {
-  etcpal::EventGroup eg(ETCPAL_EVENT_GROUP_AUTO_CLEAR);
+  etcpal::EventGroup eg;
   eg.SetBits(0x2);
-  TEST_ASSERT_EQUAL(eg.Wait(0x2), 0x2);
+  TEST_ASSERT_EQUAL(eg.Wait(0x2, ETCPAL_EVENT_GROUP_AUTO_CLEAR), 0x2);
   TEST_ASSERT_EQUAL(eg.TryWait(0x2), 0);
 }
 

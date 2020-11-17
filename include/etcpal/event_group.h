@@ -26,26 +26,18 @@
  */
 
 /**
- * @name Flags for etcpal_event_group_create()
+ * @name Flags for etcpal_event_group_wait() and etcpal_event_group_timed_wait().
  * @{
  */
 
 /**
  * @brief Clear bits automatically when they are returned from a wait function.
  *
- * If this flag is not specified, bits will remain set on an event until they are explicitly
- * cleared with etcpal_event_group_clear_bits().
+ * If this flag is not specified, bits will remain set in an event group after the wait function
+ * returns. They can be cleared by waiting again with this flag specified, or explicitly cleared
+ * with etcpal_event_group_clear_bits().
  */
 #define ETCPAL_EVENT_GROUP_AUTO_CLEAR 0x1
-
-/**
- * @}
- */
-
-/**
- * @name Flags for etcpal_event_group_wait() and etcpal_event_group_timed_wait().
- * @{
- */
 
 /**
  * @brief Wait for all specified bits.
@@ -57,7 +49,7 @@
  * If this flag was not specified for an event group, etcpal_event_group_wait() and
  * etcpal_event_group_timed_wait() will return when at least one bit in the bit mask is matched.
  */
-#define ETCPAL_EVENT_GROUP_WAIT_FOR_ALL 0x1
+#define ETCPAL_EVENT_GROUP_WAIT_FOR_ALL 0x2
 
 /**
  * @}

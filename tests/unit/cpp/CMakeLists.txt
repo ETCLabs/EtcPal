@@ -8,7 +8,6 @@ etcpal_add_live_test(etcpal_cpp_unit_tests CXX
 
 if(ETCPAL_HAVE_OS_SUPPORT)
   target_sources(etcpal_cpp_unit_tests PRIVATE
-    test_event_group.cpp
     test_log.cpp
     test_mutex.cpp
     test_rwlock.cpp
@@ -25,11 +24,17 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     target_compile_definitions(etcpal_cpp_unit_tests PRIVATE DISABLE_QUEUE_TESTS)
   endif()
 
-  # Recursive mutexes not supported on MQX
+  # Recursive mutexes and event groups not supported on MQX
   if (ETCPAL_OS_TARGET STREQUAL "mqx")
-    target_compile_definitions(etcpal_cpp_unit_tests PRIVATE DISABLE_RECURSIVE_MUTEX_TESTS)
+    target_compile_definitions(etcpal_cpp_unit_tests PRIVATE
+      DISABLE_EVENT_GROUP_TESTS
+      DISABLE_RECURSIVE_MUTEX_TESTS
+    )
   else()
-    target_sources(etcpal_cpp_unit_tests PRIVATE test_recursive_mutex.cpp)
+    target_sources(etcpal_cpp_unit_tests PRIVATE
+      test_event_group.cpp
+      test_recursive_mutex.cpp
+    )
   endif()
 endif()
 
