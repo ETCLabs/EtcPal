@@ -51,6 +51,7 @@ bool etcpal_signal_wait(etcpal_signal_t* id)
         if (0 != pthread_cond_wait(&id->cond, &id->mutex))
         {
           // On error, the mutex is not locked
+          return false;
         }
       }
       id->signaled = false;
