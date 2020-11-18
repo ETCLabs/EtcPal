@@ -1,5 +1,7 @@
 name: Notify PR about Staging Docs
-on: pull_request
+on:
+  pull_request:
+    types: [opened]
 jobs:
   comment:
     name: Comment on PR about Staging Docs
