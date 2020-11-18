@@ -31,6 +31,9 @@ void run_all_tests(void)
   RUN_TEST_GROUP(etcpal_rbtree);
   RUN_TEST_GROUP(etcpal_uuid);
 #if !ETCPAL_NO_OS_SUPPORT
+#if !DISABLE_EVENT_GROUP_TESTS
+  RUN_TEST_GROUP(etcpal_event_group);
+#endif
   RUN_TEST_GROUP(etcpal_mutex);
 #if !DISABLE_RECURSIVE_MUTEX_TESTS
   RUN_TEST_GROUP(etcpal_recursive_mutex);

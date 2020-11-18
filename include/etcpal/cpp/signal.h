@@ -32,7 +32,7 @@ namespace etcpal
 /// @ingroup etcpal_cpp
 /// @brief C++ utilities for the @ref etcpal_signal module.
 ///
-/// Provides a C++ wrapper for the EtcPal signal type. This class is similar to
+/// Provides a C++ wrapper for the EtcPal signal type. This class is similar to some uses of
 /// std::condition_variable, with the key advantage that it will work on any threaded platform that
 /// EtcPal is ported for, including the embedded RTOS platforms. If your application or library
 /// does not need to run on these platforms, consider using std::condition_variable instead.

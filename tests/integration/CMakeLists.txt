@@ -26,10 +26,16 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     target_compile_definitions(etcpal_integration_tests PRIVATE ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS)
   endif()
 
-  # Recursive mutexes not supported on MQX
+  # Recursive mutexes and event groups not supported on MQX
   if (ETCPAL_OS_TARGET STREQUAL "mqx")
-    target_compile_definitions(etcpal_integration_tests PRIVATE DISABLE_RECURSIVE_MUTEX_TESTS)
+    target_compile_definitions(etcpal_integration_tests PRIVATE
+      DISABLE_EVENT_GROUP_TESTS
+      DISABLE_RECURSIVE_MUTEX_TESTS
+    )
   else()
-    target_sources(etcpal_integration_tests PRIVATE recursive_mutex_integration_test.c)
+    target_sources(etcpal_integration_tests PRIVATE
+      event_group_integration_test.c
+      recursive_mutex_integration_test.c
+    )
   endif()
 endif()
