@@ -27,14 +27,15 @@ extern "C" {
 #include <pthread.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "etcpal/common.h"
 
 typedef uint32_t etcpal_event_bits_t;
 
 typedef struct
 {
-  bool valid;
-  pthread_cond_t cond;
-  pthread_mutex_t mutex;
+  bool                valid;
+  pthread_cond_t      cond;
+  pthread_mutex_t     mutex;
   etcpal_event_bits_t bits;
 } etcpal_event_group_t;
 
@@ -57,7 +58,6 @@ void                etcpal_event_group_destroy(etcpal_event_group_t* id);
 #define etcpal_event_group_set_bits_from_isr etcpal_event_group_set_bits
 #define etcpal_event_group_get_bits_from_isr etcpal_event_group_get_bits
 #define etcpal_event_group_clear_bits_from_isr etcpal_event_group_clear_bits
-
 
 #ifdef __cplusplus
 }

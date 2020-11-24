@@ -22,6 +22,7 @@
 
 #include <stdbool.h>
 #include <pthread.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {

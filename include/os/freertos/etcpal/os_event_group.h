@@ -23,6 +23,7 @@
 #include <stdbool.h>
 #include <FreeRTOS.h>
 #include <event_groups.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {

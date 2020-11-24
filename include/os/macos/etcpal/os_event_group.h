@@ -27,6 +27,7 @@ extern "C" {
 #include <pthread.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "etcpal/common.h"
 
 typedef uint32_t etcpal_event_bits_t;
 
