@@ -22,6 +22,7 @@
 
 #include <stdbool.h>
 #include <semaphore.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {

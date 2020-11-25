@@ -32,6 +32,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {

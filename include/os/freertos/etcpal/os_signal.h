@@ -23,6 +23,7 @@
 #include <stdbool.h>
 #include <FreeRTOS.h>
 #include <semphr.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {

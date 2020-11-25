@@ -23,6 +23,7 @@
 #include <stdbool.h>
 #include <mqx.h>
 #include <lwevent.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {
