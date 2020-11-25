@@ -47,6 +47,9 @@ extern "C" {
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 32
 
+typedef DWORD etcpal_thread_os_handle_t;
+#define ETCPAL_THREAD_OS_HANDLE_INVALID 0
+
 typedef struct
 {
   void (*fn)(void*);
@@ -57,8 +60,10 @@ typedef struct
 
 #ifdef __cplusplus
 #define etcpal_thread_sleep(sleep_ms) ::Sleep(static_cast<DWORD>(sleep_ms))
+#define etcpal_thread_get_current_os_handle() ::GetCurrentThreadId()
 #else
 #define etcpal_thread_sleep(sleep_ms) Sleep((DWORD)sleep_ms)
+#define etcpal_thread_get_current_os_handle() GetCurrentThreadId()
 #endif
 
 #ifdef __cplusplus

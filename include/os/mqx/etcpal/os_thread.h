@@ -41,7 +41,8 @@ typedef struct EtcPalThreadParamsMqx
 #define ETCPAL_THREAD_MQX_DEFAULT_TIME_SLICE 0
 #define ETCPAL_THREAD_HAS_TIMED_JOIN 0 /* Timeout unavailable on mqx */
 
-typedef _task_id etcpal_thread_id_t;
+typedef _task_id etcpal_thread_os_handle_t;
+#define ETCPAL_THREAD_OS_HANDLE_INVALID MQX_NULL_TASK_ID
 
 typedef struct
 {
@@ -52,6 +53,7 @@ typedef struct
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms) _time_delay((uint32_t)sleep_ms)
+#define etcpal_thread_get_current_os_handle _task_get_id
 
 #ifdef __cplusplus
 }

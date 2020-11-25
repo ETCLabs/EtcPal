@@ -160,4 +160,9 @@ etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
   return kEtcPalErrOk;
 }
 
+etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id)
+{
+  return (id ? GetThreadId(id->tid) : ETCPAL_THREAD_OS_HANDLE_INVALID);
+}
+
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
