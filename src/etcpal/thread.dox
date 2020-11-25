@@ -43,6 +43,8 @@ typedef PLATFORM_DEFINED etcpal_thread_os_handle_t;
 
 /**
  * @brief An invalid value for the native OS thread handle type.
+ * @warning On POSIX platforms (currently Linux and macOS), there is no defined value for an
+ *          invalid pthread_t. This is defined to `(pthread_t)-1` as a heuristic.
  */
 #define ETCPAL_THREAD_OS_HANDLE_INVALID /* platform-defined */
 

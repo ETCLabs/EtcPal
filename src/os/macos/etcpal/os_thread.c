@@ -113,4 +113,9 @@ void* thread_func_internal(void* arg)
   return NULL;
 }
 
+etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id)
+{
+  return (id ? id->handle : ETCPAL_THREAD_OS_HANDLE_INVALID);
+}
+
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
