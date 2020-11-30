@@ -143,6 +143,28 @@ TEST(etcpal_thread, threads_are_time_sliced)
   TEST_ASSERT_TRUE(oneshot_task_ran);
 }
 
+etcpal_thread_os_handle_t thread_handle;
+
+void save_thread_handle(void* param)
+{
+  ETCPAL_UNUSED_ARG(param);
+  thread_handle = etcpal_thread_get_current_os_handle();
+}
+
+TEST(etcpal_thread, get_os_handle_works)
+{
+  thread_handle = ETCPAL_THREAD_OS_HANDLE_INVALID;
+  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+
+  etcpal_thread_t save_handle_thread;
+  TEST_ASSERT_EQUAL(etcpal_thread_create(&save_handle_thread, &params, save_thread_handle, NULL), kEtcPalErrOk);
+  etcpal_thread_os_handle_t reported_handle = etcpal_thread_get_os_handle(&save_handle_thread);
+  etcpal_thread_join(&save_handle_thread);
+
+  // Using == comparison here instead of TEST_ASSERT_EQUAL because of platform-defined type
+  TEST_ASSERT_TRUE(thread_handle == reported_handle);
+}
+
 TEST_GROUP_RUNNER(etcpal_thread)
 {
   RUN_TEST_CASE(etcpal_thread, create_and_destroy_functions_work);
@@ -150,4 +172,5 @@ TEST_GROUP_RUNNER(etcpal_thread)
   RUN_TEST_CASE(etcpal_thread, timed_join_works);
 #endif
   RUN_TEST_CASE(etcpal_thread, threads_are_time_sliced);
+  RUN_TEST_CASE(etcpal_thread, get_os_handle_works);
 }

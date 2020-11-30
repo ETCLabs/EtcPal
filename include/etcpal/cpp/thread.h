@@ -165,6 +165,7 @@ public:
   const char*               name() const noexcept;
   void*                     platform_data() const noexcept;
   const EtcPalThreadParams& params() const noexcept;
+  etcpal_thread_os_handle_t os_handle() const noexcept;
   /// @}
 
   /// @name Setters
@@ -289,6 +290,14 @@ inline void* Thread::platform_data() const noexcept
 inline const EtcPalThreadParams& Thread::params() const noexcept
 {
   return params_;
+}
+
+/// @brief Get the native OS handle of this thread.
+/// @return The thread's OS handle, or ETCPAL_THREAD_OS_HANDLE_INVALID if the thread is not running
+///         (`joinable() == false`).
+inline etcpal_thread_os_handle_t Thread::os_handle() const noexcept
+{
+  return thread_ ? etcpal_thread_get_os_handle(thread_.get()) : ETCPAL_THREAD_OS_HANDLE_INVALID;
 }
 
 /// @brief Set the priority of this thread.

@@ -34,7 +34,8 @@ extern "C" {
 #define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
 #define ETCPAL_THREAD_HAS_TIMED_JOIN 1
 
-typedef TaskHandle_t etcpal_thread_id_t;
+typedef TaskHandle_t etcpal_thread_os_handle_t;
+#define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
 
 typedef struct
 {
@@ -45,6 +46,7 @@ typedef struct
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms) vTaskDelay(pdMS_TO_TICKS(sleep_ms))
+#define etcpal_thread_get_current_os_handle xTaskGetCurrentTaskHandle
 
 #ifdef __cplusplus
 }

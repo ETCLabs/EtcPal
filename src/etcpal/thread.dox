@@ -35,6 +35,20 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_thread_t;
 
 /**
+ * @brief The native OS handle type for threads on this platform.
+ *
+ * This is a scalar type on all platforms for which EtcPal is ported.
+ */
+typedef PLATFORM_DEFINED etcpal_thread_os_handle_t;
+
+/**
+ * @brief An invalid value for the native OS thread handle type.
+ * @warning On POSIX platforms (currently Linux and macOS), there is no defined value for an
+ *          invalid pthread_t. This is defined to `(pthread_t)-1` as a heuristic.
+ */
+#define ETCPAL_THREAD_OS_HANDLE_INVALID /* platform-defined */
+
+/**
  * @brief Whether etcpal_thread_timed_join() is meaningful on this platform.
  * 
  * If defined to 0, etcpal_thread_timed_join() executes the equivalent of etcpal_thread_join(), and
@@ -111,6 +125,21 @@ etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id);
  * @param[in] sleep_ms How long to sleep, in milliseconds.
  */
 void etcpal_thread_sleep(unsigned int sleep_ms);
+
+/**
+ * @brief Get the native OS handle of an EtcPal thread.
+ * @param[in] id Identifier for the thread for which to get the OS handle.
+ * @return The OS handle, or ETCPAL_THREAD_OS_HANDLE_INVALID if an invalid argument was given.
+ */
+etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id);
+
+/**
+ * @brief Get the native OS handle of the currently executing thread.
+ * 
+ * This cannot be converted back to an etcpal_thread_t, but it can be used as a thread identifier
+ * for non-EtcPal purposes.
+ */
+etcpal_thread_os_handle_t etcpal_thread_get_current_os_handle(void);
 
 /**
  * @}

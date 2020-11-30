@@ -223,6 +223,16 @@ TEST(etcpal_cpp_thread, sleep_chrono_works)
   etcpal::Thread::Sleep(std::chrono::milliseconds(1));
 }
 
+TEST(etcpal_cpp_thread, get_os_handle_works)
+{
+  etcpal_thread_os_handle_t os_handle = ETCPAL_THREAD_OS_HANDLE_INVALID;
+  etcpal::Thread            thrd([&]() { os_handle = etcpal_thread_get_current_os_handle(); });
+  TEST_ASSERT_TRUE(thrd.joinable());
+  etcpal_thread_os_handle_t reported_handle = thrd.os_handle();
+  thrd.Join();
+  TEST_ASSERT_EQUAL(os_handle, reported_handle);
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_thread)
 {
   RUN_TEST_CASE(etcpal_cpp_thread, default_constructor_works);
@@ -239,6 +249,7 @@ TEST_GROUP_RUNNER(etcpal_cpp_thread)
   RUN_TEST_CASE(etcpal_cpp_thread, param_setters_work);
   RUN_TEST_CASE(etcpal_cpp_thread, sleep_ms_works);
   RUN_TEST_CASE(etcpal_cpp_thread, sleep_chrono_works);
+  RUN_TEST_CASE(etcpal_cpp_thread, get_os_handle_works);
 }
 
 }  // extern "C"

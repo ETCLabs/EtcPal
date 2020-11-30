@@ -35,6 +35,9 @@ extern "C" {
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 16
 
+typedef pthread_t etcpal_thread_os_handle_t;
+#define ETCPAL_THREAD_OS_HANDLE_INVALID ((pthread_t)-1)
+
 typedef struct
 {
   void (*fn)(void*);
@@ -44,6 +47,7 @@ typedef struct
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
+#define etcpal_thread_get_current_os_handle pthread_self
 
 #ifdef __cplusplus
 }
