@@ -204,7 +204,7 @@ void etcpal_thread_sleep(unsigned int sleep_ms);
 #endif
 
 #if !defined(etcpal_thread_get_current_os_handle) || DOXYGEN
-etcpal_thread_os_handle_t etcpal_thread_get_os_handle(void);
+etcpal_thread_os_handle_t etcpal_thread_get_current_os_handle(void);
 #endif
 
 /**

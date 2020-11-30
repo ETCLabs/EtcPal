@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New platform abstraction feature: recursive mutexes (`etcpal/recursive_mutex.h`)
 - New platform abstraction feature: event groups (`etcpal/event_group.h`)
 - etcpal_netint_is_up()
+- Native thread handle functionality:
+  * `etcpal_thread_os_handle_t`
+  * etcpal_thread_get_os_handle()
+  * etcpal_thread_get_current_os_handle()
 
 ### Changed
 - Separated etcpal/lock.h into more specific headers: etcpal/mutex.h, etcpal/signal.h, etcpal/sem.h
