@@ -234,6 +234,9 @@ void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value)
  * #EtcPalRbNodeAllocFunc provided in etcpal_rbtree_init(). Uses the #EtcPalRbTreeNodeCmpFunc
  * provided in etcpal_rbtree_init() to compare values. Insertion guaranteed in log(n) time.
  *
+ * If this function returns #kEtcPalErrOk, all iterators created using the etcpal_rbiter_*()
+ * functions are invalidated.
+ *
  * @param[in] self Tree in which to insert the value.
  * @param[in] value Value to insert.
  * @return #kEtcPalErrOk: the value was inserted.
@@ -273,6 +276,9 @@ etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
  * The node is supplied by the caller and its memory must remain valid as long as it remains in the
  * tree. Uses the #EtcPalRbTreeNodeCmpFunc provided in etcpal_rbtree_init() to compare values.
  * Insertion guaranteed in log(n) time.
+ *
+ * If this function returns #kEtcPalErrOk, all iterators created using the etcpal_rbiter_*()
+ * functions are invalidated.
  *
  * @param[in] self Tree in which to insert the value.
  * @param[in] node Node containing value to insert. Must have been previously initialized using
@@ -370,6 +376,9 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
  * #EtcPalRbTreeNodeCmpFunc provided in etcpal_rbtree_init() to compare values. Removal guaranteed
  * in log(n) time.
  *
+ * If this function returns #kEtcPalErrOk, all iterators created using the etcpal_rbiter_*()
+ * functions are invalidated.
+ *
  * @param[in] self Tree from which to remove the value.
  * @param[in] value Value to remove.
  * @return #kEtcPalErrOk: The value was removed.
@@ -391,6 +400,9 @@ etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree* self, const void* value)
  * The user provides a #EtcPalRbTreeNodeFunc callback function and is responsible for deallocating
  * both the node and value memory. Uses the #EtcPalRbTreeNodeCmpFunc provided in
  * etcpal_rbtree_init() to compare values. Removal guaranteed in log(n) time.
+ *
+ * If this function returns #kEtcPalErrOk, all iterators created using the etcpal_rbiter_*()
+ * functions are invalidated.
  *
  * @param[in] self Tree from which to remove the value.
  * @param[in] value Value to remove.
@@ -503,6 +515,9 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* valu
  * The node memory is deallocated using the #EtcPalRbNodeDeallocFunc provided in
  * etcpal_rbtree_init(); the user is responsible for deallocating the value memory.
  *
+ * If this function returns #kEtcPalErrOk, all iterators created using the etcpal_rbiter_*()
+ * functions are invalidated.
+ *
  * @param[in] self Tree to clear.
  * @return #kEtcPalErrOk: The tree was cleared.
  * @return #kEtcPalErrInvalid: Invalid argument provided.
@@ -521,6 +536,9 @@ etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree* self)
  *
  * The user provides a #EtcPalRbTreeNodeFunc callback function which is called for each node in the
  * tree. The user is responsible for deallocating both the node and value memory.
+ *
+ * If this function returns #kEtcPalErrOk, all iterators created using the etcpal_rbiter_*()
+ * functions are invalidated.
  *
  * @param[in] self Tree to clear.
  * @param[in] node_cb Callback function to call with each node and value being removed.
