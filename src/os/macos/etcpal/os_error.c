@@ -1,6 +1,4 @@
-/****
-    :  //
- github.com/ETCLabs/EtcPaletcpal_kEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalkEtcPalto_etcpal
+/******************************************************************************
  * Copyright 2021 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
