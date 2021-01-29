@@ -38,7 +38,7 @@ void etcpal_timer_deinit(void)
 
 uint32_t etcpal_getms(void)
 {
-  return (uint32_t)(xTaskGetTickCount() * 1000 / configTICK_RATE_HZ);
+  return (uint32_t)(((uint64_t)xTaskGetTickCount()) * 1000 / configTICK_RATE_HZ);
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
