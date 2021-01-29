@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2020 ETC Inc.
+ * Copyright 2021 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -887,7 +887,7 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
       res = -1;
   }
   return (res == 0 ? kEtcPalErrOk : err_gai_to_etcpal(res));
-#else   // LWIP_DNS
+#else  // LWIP_DNS
   return kEtcPalErrNotImpl;
 #endif  // LWIP_DNS
 }

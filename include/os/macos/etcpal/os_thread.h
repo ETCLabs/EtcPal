@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2020 ETC Inc.
+ * Copyright 2021 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ extern "C" {
 #endif
 
 #define ETCPAL_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on macOS */
-#define ETCPAL_THREAD_DEFAULT_STACK 0    /* 0 means keep default */
-#define ETCPAL_THREAD_DEFAULT_NAME NULL  /* Name ignored on macOS */
-#define ETCPAL_THREAD_HAS_TIMED_JOIN 0   /* Timeout unavailable on macOS */
+#define ETCPAL_THREAD_DEFAULT_STACK 0 /* 0 means keep default */
+#define ETCPAL_THREAD_DEFAULT_NAME NULL /* Name ignored on macOS */
+#define ETCPAL_THREAD_HAS_TIMED_JOIN 0 /* Timeout unavailable on macOS */
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 16
 

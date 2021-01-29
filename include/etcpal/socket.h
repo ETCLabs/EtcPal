@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2020 ETC Inc.
+ * Copyright 2021 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -241,11 +241,11 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
  * @name Flag values to use with etcpal_poll_events_t.
  * @{
  */
-#define ETCPAL_POLL_IN 0x1u      /**< Notify when data is available for reading on the socket. */
-#define ETCPAL_POLL_OUT 0x2u     /**< Notify when the socket has space available to write data. */
+#define ETCPAL_POLL_IN 0x1u /**< Notify when data is available for reading on the socket. */
+#define ETCPAL_POLL_OUT 0x2u /**< Notify when the socket has space available to write data. */
 #define ETCPAL_POLL_CONNECT 0x4u /**< Notify when a non-blocking connect operation has completed. */
-#define ETCPAL_POLL_OOB 0x8u     /**< Notify when there is out-of-band data on a TCP socket. */
-#define ETCPAL_POLL_ERR 0x10u    /**< An error has occurred on the socket (output only). */
+#define ETCPAL_POLL_OOB 0x8u /**< Notify when there is out-of-band data on a TCP socket. */
+#define ETCPAL_POLL_ERR 0x10u /**< An error has occurred on the socket (output only). */
 /**
  * @}
  */
