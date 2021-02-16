@@ -3,6 +3,7 @@
 etcpal_add_live_test(etcpal_cpp_unit_tests CXX
   test_error.cpp
   test_main.cpp
+  test_opaque_id.cpp
   test_uuid.cpp
 )
 

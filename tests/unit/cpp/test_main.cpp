@@ -23,6 +23,7 @@ extern "C" void run_all_tests(void)
 {
   RUN_TEST_GROUP(etcpal_cpp_error);
   RUN_TEST_GROUP(etcpal_cpp_uuid);
+  RUN_TEST_GROUP(etcpal_cpp_opaque_id);
 #if !ETCPAL_NO_OS_SUPPORT
 #if !DISABLE_EVENT_GROUP_TESTS
   RUN_TEST_GROUP(etcpal_cpp_event_group);
