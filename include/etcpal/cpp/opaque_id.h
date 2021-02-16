@@ -24,6 +24,7 @@
 #define ETCPAL_CPP_OPAQUE_ID_H_
 
 #include <functional>
+#include "etcpal/cpp/common.h"
 
 namespace etcpal
 {
@@ -126,8 +127,8 @@ public:
   constexpr explicit  operator bool() const;
   constexpr bool      operator!() const;
 
-  constexpr void SetValue(const ValueType& newValue);
-  constexpr void Clear();
+  ETCPAL_CONSTEXPR_14 void SetValue(const ValueType& newValue);
+  ETCPAL_CONSTEXPR_14 void Clear();
 
 private:
   ValueType value_{InvalidValue};
@@ -196,7 +197,7 @@ constexpr bool OpaqueId<IdType, ValueType, InvalidValue>::operator!() const
 /// @brief Set a new underlying value for an ID.
 /// @param new_value The new value to set.
 template <class IdType, class ValueType, ValueType InvalidValue>
-constexpr void OpaqueId<IdType, ValueType, InvalidValue>::SetValue(const ValueType& new_value)
+ETCPAL_CONSTEXPR_14_OR_INLINE void OpaqueId<IdType, ValueType, InvalidValue>::SetValue(const ValueType& new_value)
 {
   value_ = new_value;
 }
@@ -204,7 +205,7 @@ constexpr void OpaqueId<IdType, ValueType, InvalidValue>::SetValue(const ValueTy
 /// @brief Clear any valid value from an ID and set it back to the invalid value.
 /// @post value.IsValid() will return false.
 template <class IdType, class ValueType, ValueType InvalidValue>
-constexpr void OpaqueId<IdType, ValueType, InvalidValue>::Clear()
+ETCPAL_CONSTEXPR_14_OR_INLINE void OpaqueId<IdType, ValueType, InvalidValue>::Clear()
 {
   value_ = InvalidValue;
 }
