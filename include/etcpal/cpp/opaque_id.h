@@ -230,40 +230,28 @@ constexpr bool operator!=(const OpaqueId<IdType, ValueType, InvalidValue>& a,
   return !(a == b);
 }
 
-template <class IdType, class ValueType, ValueType InvalidValue>
-constexpr bool operator<(const OpaqueId<IdType, ValueType, InvalidValue>& a,
-                         const OpaqueId<IdType, ValueType, InvalidValue>& b)
-{
-  return a.value() < b.value();
-}
-
-template <class IdType, class ValueType, ValueType InvalidValue>
-constexpr bool operator>(const OpaqueId<IdType, ValueType, InvalidValue>& a,
-                         const OpaqueId<IdType, ValueType, InvalidValue>& b)
-{
-  return b < a;
-}
-
-template <class IdType, class ValueType, ValueType InvalidValue>
-constexpr bool operator<=(const OpaqueId<IdType, ValueType, InvalidValue>& a,
-                          const OpaqueId<IdType, ValueType, InvalidValue>& b)
-{
-  return !(b < a);
-}
-
-template <class IdType, class ValueType, ValueType InvalidValue>
-constexpr bool operator>=(const OpaqueId<IdType, ValueType, InvalidValue>& a,
-                          const OpaqueId<IdType, ValueType, InvalidValue>& b)
-{
-  return !(a < b);
-}
-
 /// @}
 /// @}
 
 };  // namespace etcpal
 
-/// @cond std::hash specialization
+/// @cond std namespace specializations
+
+namespace std
+{
+// Inject a std::less specialization for any template specialization for OpaqueId. This takes the
+// place of operator< for the purposes of OpaqueId usage in ordered containers. We don't provide
+// relational operators other than == and != to avoid the temptation to treat OpaqueIds like
+// numbers.
+template <class IdType, class ValueType, ValueType InvalidValue>
+struct less<etcpal::OpaqueId<IdType, ValueType, InvalidValue>>
+{
+  ETCPAL_CONSTEXPR_14 bool operator()(const etcpal::OpaqueId<IdType, ValueType, InvalidValue>& a,
+                                      const etcpal::OpaqueId<IdType, ValueType, InvalidValue>& b) const
+  {
+    return a.value() < b.value();
+  }
+};
 
 // Inject a new std::hash specialization for any template specialization of OpaqueId, so that
 // OpaqueIds can be used in hash-based containers (e.g. unordered_map and unordered_set) without
@@ -272,8 +260,6 @@ constexpr bool operator>=(const OpaqueId<IdType, ValueType, InvalidValue>& a,
 // The std::hash specialization simply passes through to a hash of the underlying value. If the
 // underlying value is not hashable, this specialization should simply be eliminated without a
 // compile error through SFINAE.
-namespace std
-{
 template <class IdType, class ValueType, ValueType InvalidValue>
 struct hash<etcpal::OpaqueId<IdType, ValueType, InvalidValue>>
 {
