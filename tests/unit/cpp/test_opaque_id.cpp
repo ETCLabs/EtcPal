@@ -54,6 +54,7 @@ TEST(etcpal_cpp_opaque_id, default_constructor_works)
   TEST_ASSERT_FALSE(id);
   TEST_ASSERT_FALSE(id.IsValid());
   TEST_ASSERT_TRUE(!id);
+  TEST_ASSERT_EQUAL(id.value(), -1);
 }
 
 TEST(etcpal_cpp_opaque_id, validators_work)
@@ -62,6 +63,7 @@ TEST(etcpal_cpp_opaque_id, validators_work)
   TEST_ASSERT_TRUE(id);
   TEST_ASSERT_TRUE(id.IsValid());
   TEST_ASSERT_FALSE(!id);
+  TEST_ASSERT_EQUAL(id.value(), 5);
 }
 
 TEST(etcpal_cpp_opaque_id, copy_constructor_works)
