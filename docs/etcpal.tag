@@ -2,7 +2,7 @@
 <tagfile>
   <compound kind="file">
     <name>common.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2common_8h</filename>
     <member kind="define">
       <type>#define</type>
@@ -27,8 +27,14 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>opaque_id.h</name>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <filename>opaque__id_8h</filename>
+    <class kind="class">etcpal::OpaqueId</class>
+  </compound>
+  <compound kind="file">
     <name>error.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2error_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Error</class>
@@ -37,7 +43,7 @@
   </compound>
   <compound kind="file">
     <name>event_group.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2event__group_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::EventGroup</class>
@@ -51,7 +57,7 @@
   </compound>
   <compound kind="file">
     <name>inet.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2inet_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::IpAddr</class>
@@ -70,7 +76,7 @@
   </compound>
   <compound kind="file">
     <name>log.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2log_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2mutex_8h" name="mutex.h" local="yes" imported="no">etcpal/cpp/mutex.h</includes>
@@ -91,7 +97,7 @@
   </compound>
   <compound kind="file">
     <name>mutex.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2mutex_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Mutex</class>
@@ -99,14 +105,14 @@
   </compound>
   <compound kind="file">
     <name>queue.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2queue_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Queue</class>
   </compound>
   <compound kind="file">
     <name>recursive_mutex.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2recursive__mutex_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::RecursiveMutex</class>
@@ -114,7 +120,7 @@
   </compound>
   <compound kind="file">
     <name>rwlock.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2rwlock_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::RwLock</class>
@@ -123,21 +129,21 @@
   </compound>
   <compound kind="file">
     <name>sem.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2sem_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Semaphore</class>
   </compound>
   <compound kind="file">
     <name>signal.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2signal_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::Signal</class>
   </compound>
   <compound kind="file">
     <name>thread.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2thread_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <includes id="cpp_2error_8h" name="error.h" local="yes" imported="no">etcpal/cpp/error.h</includes>
@@ -145,7 +151,7 @@
   </compound>
   <compound kind="file">
     <name>timer.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2timer_8h</filename>
     <includes id="cpp_2common_8h" name="common.h" local="yes" imported="no">etcpal/cpp/common.h</includes>
     <class kind="class">etcpal::TimePoint</class>
@@ -153,7 +159,7 @@
   </compound>
   <compound kind="file">
     <name>uuid.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/cpp/</path>
     <filename>cpp_2uuid_8h</filename>
     <class kind="class">etcpal::Uuid</class>
     <member kind="enumeration">
@@ -172,7 +178,7 @@
   </compound>
   <compound kind="file">
     <name>version.h</name>
-    <path>E:/github/ETCLabs/EtcPal/include/etcpal/</path>
+    <path>D:/github/ETCLabs/EtcPal/include/etcpal/</path>
     <filename>version_8h</filename>
   </compound>
   <compound kind="struct">
@@ -2155,6 +2161,69 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>etcpal::OpaqueId</name>
+    <filename>classetcpal_1_1_opaque_id.html</filename>
+    <templarg>IdType</templarg>
+    <templarg>ValueType</templarg>
+    <templarg>InvalidValue</templarg>
+    <member kind="function">
+      <type>constexpr</type>
+      <name>OpaqueId</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>a5e3f60e8b9cdbd532ae091c2a603ac3b</anchor>
+      <arglist>(ValueType value)</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr ValueType</type>
+      <name>value</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>afbeb3ea2eee6f9695aa8328ce7d9bac4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr bool</type>
+      <name>IsValid</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>ab0b02c2ae96656027facd95c8015b7db</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr</type>
+      <name>operator bool</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>ad0ed9dded3dc4405713f0b9270930a92</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr bool</type>
+      <name>operator!</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>ac252a44c73ef696bf047b7b7b0ea13bc</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr void</type>
+      <name>SetValue</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>ab4b7ca5d45556532c8f244a779504a8b</anchor>
+      <arglist>(const ValueType &amp;newValue)</arglist>
+    </member>
+    <member kind="function">
+      <type>constexpr void</type>
+      <name>Clear</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>adc79a2829b7e197f61e821a2b0942b81</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static constexpr OpaqueId</type>
+      <name>Invalid</name>
+      <anchorfile>classetcpal_1_1_opaque_id.html</anchorfile>
+      <anchor>a67fba554b339bd96ec627d8ddebb2794</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>etcpal::Queue</name>
     <filename>classetcpal_1_1_queue.html</filename>
     <templarg>T</templarg>
@@ -2821,6 +2890,13 @@
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
+      <type>etcpal_thread_os_handle_t</type>
+      <name>os_handle</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a1f9139cb02adad1237dcc17c5cbb7fec</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
       <type>Thread &amp;</type>
       <name>SetPriority</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
@@ -2902,6 +2978,13 @@
       <name>params</name>
       <anchorfile>classetcpal_1_1_thread.html</anchorfile>
       <anchor>aa66aa5c50746cd41312f22bebbf0d4e0</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_thread_os_handle_t</type>
+      <name>os_handle</name>
+      <anchorfile>classetcpal_1_1_thread.html</anchorfile>
+      <anchor>a1f9139cb02adad1237dcc17c5cbb7fec</anchor>
       <arglist>() const noexcept</arglist>
     </member>
     <member kind="function">
@@ -5783,6 +5866,13 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>ETCPAL_THREAD_OS_HANDLE_INVALID</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>ga72620094cf45f5335fc4f9c338b17207</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>ETCPAL_THREAD_HAS_TIMED_JOIN</name>
       <anchorfile>group__etcpal__thread.html</anchorfile>
       <anchor>gaf382d29335eeeb4ed5c8d295bb8a380b</anchor>
@@ -5800,6 +5890,13 @@
       <name>etcpal_thread_t</name>
       <anchorfile>group__etcpal__thread.html</anchorfile>
       <anchor>ga6ea2bb55f405380e3ea296e3b6164ae8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>PLATFORM_DEFINED</type>
+      <name>etcpal_thread_os_handle_t</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gad25eb672dee4e360d79cf5988d0b6071</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -5831,11 +5928,25 @@
       <arglist>(etcpal_thread_t *id)</arglist>
     </member>
     <member kind="function">
+      <type>etcpal_thread_os_handle_t</type>
+      <name>etcpal_thread_get_os_handle</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gaf6711b2ff2eee44104ec5f472b2701b1</anchor>
+      <arglist>(etcpal_thread_t *id)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>etcpal_thread_sleep</name>
       <anchorfile>group__etcpal__thread.html</anchorfile>
       <anchor>gaf5d7c5aec312d172e617fd653ade3b08</anchor>
       <arglist>(unsigned int sleep_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>etcpal_thread_os_handle_t</type>
+      <name>etcpal_thread_get_current_os_handle</name>
+      <anchorfile>group__etcpal__thread.html</anchorfile>
+      <anchor>gae66dc24d979de981d2e2a0475d320be2</anchor>
+      <arglist>(void)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -6020,6 +6131,7 @@
     <subgroup>etcpal_cpp_inet</subgroup>
     <subgroup>etcpal_cpp_log</subgroup>
     <subgroup>etcpal_cpp_mutex</subgroup>
+    <subgroup>etcpal_cpp_opaque_id</subgroup>
     <subgroup>etcpal_cpp_queue</subgroup>
     <subgroup>etcpal_cpp_recursive_mutex</subgroup>
     <subgroup>etcpal_cpp_rwlock</subgroup>
@@ -6105,6 +6217,12 @@
     <filename>group__etcpal__cpp__mutex.html</filename>
     <class kind="class">etcpal::Mutex</class>
     <class kind="class">etcpal::MutexGuard</class>
+  </compound>
+  <compound kind="group">
+    <name>etcpal_cpp_opaque_id</name>
+    <title>opaque_id (Strongly typed handles)</title>
+    <filename>group__etcpal__cpp__opaque__id.html</filename>
+    <class kind="class">etcpal::OpaqueId</class>
   </compound>
   <compound kind="group">
     <name>etcpal_cpp_queue</name>
