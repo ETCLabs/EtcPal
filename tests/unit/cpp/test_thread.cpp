@@ -42,7 +42,28 @@ TEST(etcpal_cpp_thread, default_constructor_works)
   TEST_ASSERT_FALSE(thrd.Join().IsOk());
 }
 
-TEST(etcpal_cpp_thread, constructor_works_no_args)
+TEST(etcpal_cpp_thread, params_constructor_works)
+{
+  etcpal::Thread thrd(42u, 1234u, "test_thread", nullptr);
+  TEST_ASSERT_EQUAL_UINT(thrd.priority(), 42u);
+  TEST_ASSERT_EQUAL_UINT(thrd.stack_size(), 1234u);
+  TEST_ASSERT_EQUAL_STRING(thrd.name(), "test_thread");
+  TEST_ASSERT_EQUAL_PTR(thrd.platform_data(), nullptr);
+
+  // Now test a thread that actually runs
+  etcpal::Thread thrd2(ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test_thread");
+  bool           thread_ran = false;
+  thrd2.Start([&]() {
+    etcpal::Thread::Sleep(1);
+    thread_ran = true;
+  });
+  TEST_ASSERT_TRUE(thrd2.joinable());
+  TEST_ASSERT_TRUE(thrd2.Join().IsOk());
+  TEST_ASSERT_FALSE(thrd2.joinable());
+  TEST_ASSERT_TRUE(thread_ran);
+}
+
+TEST(etcpal_cpp_thread, thread_constructor_works_no_args)
 {
   bool           thread_ran = false;
   etcpal::Thread thrd([&]() {
@@ -55,7 +76,7 @@ TEST(etcpal_cpp_thread, constructor_works_no_args)
   TEST_ASSERT_TRUE(thread_ran);
 }
 
-TEST(etcpal_cpp_thread, constructor_works_with_args)
+TEST(etcpal_cpp_thread, thread_constructor_works_with_args)
 {
   bool           thread_ran = false;
   etcpal::Thread thrd(
@@ -236,8 +257,9 @@ TEST(etcpal_cpp_thread, get_os_handle_works)
 TEST_GROUP_RUNNER(etcpal_cpp_thread)
 {
   RUN_TEST_CASE(etcpal_cpp_thread, default_constructor_works);
-  RUN_TEST_CASE(etcpal_cpp_thread, constructor_works_no_args);
-  RUN_TEST_CASE(etcpal_cpp_thread, constructor_works_with_args);
+  RUN_TEST_CASE(etcpal_cpp_thread, params_constructor_works);
+  RUN_TEST_CASE(etcpal_cpp_thread, thread_constructor_works_no_args);
+  RUN_TEST_CASE(etcpal_cpp_thread, thread_constructor_works_with_args);
   RUN_TEST_CASE(etcpal_cpp_thread, start_works_no_args);
   RUN_TEST_CASE(etcpal_cpp_thread, start_works_with_args);
   RUN_TEST_CASE(etcpal_cpp_thread, member_function);
