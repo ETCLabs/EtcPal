@@ -670,7 +670,7 @@ Logger& Logger::SetThreadName(const std::string& name) noexcept
 }
 
 /// @brief Set the platform-specific parameter data of the log dispatch thread.
-/// @see etcpal::Thread::SetName()
+/// @see etcpal::Thread::SetPlatformData()
 /// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
 Logger& Logger::SetThreadPlatformData(void* platform_data) noexcept
 {
