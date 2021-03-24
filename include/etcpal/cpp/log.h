@@ -280,6 +280,12 @@ public:
   Logger& SetSyslogProcId(const char* proc_id) noexcept;
   Logger& SetSyslogProcId(const std::string& proc_id) noexcept;
   Logger& SetSyslogProcId(int proc_id) noexcept;
+
+  Logger& SetThreadPriority(unsigned int priority) noexcept;
+  Logger& SetThreadStackSize(unsigned int stack_size) noexcept;
+  Logger& SetThreadName(const char* name) noexcept;
+  Logger& SetThreadName(const std::string& name) noexcept;
+  Logger& SetThreadPlatformData(void* platform_data) noexcept;
   /// @}
 
 private:
@@ -624,6 +630,51 @@ inline Logger& Logger::SetSyslogProcId(const char* proc_id) noexcept
 inline Logger& Logger::SetSyslogProcId(const std::string& proc_id) noexcept
 {
   SetSyslogProcId(proc_id.c_str());
+  return *this;
+}
+
+/// @brief Set the priority of the log dispatch thread.
+/// @see etcpal::Thread::SetPriority()
+/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+Logger& Logger::SetThreadPriority(unsigned int priority) noexcept
+{
+  thread_.SetPriority(priority);
+  return *this;
+}
+
+/// @brief Set the stack size of the log dispatch thread.
+/// @see etcpal::Thread::SetStackSize()
+/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+Logger& Logger::SetThreadStackSize(unsigned int stack_size) noexcept
+{
+  thread_.SetStackSize(stack_size);
+  return *this;
+}
+
+/// @brief Set the name of the log dispatch thread.
+/// @see etcpal::Thread::SetName()
+/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+Logger& Logger::SetThreadName(const char* name) noexcept
+{
+  thread_.SetName(name);
+  return *this;
+}
+
+/// @brief Set the name of the log dispatch thread.
+/// @see etcpal::Thread::SetName()
+/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+Logger& Logger::SetThreadName(const std::string& name) noexcept
+{
+  thread_.SetName(name);
+  return *this;
+}
+
+/// @brief Set the platform-specific parameter data of the log dispatch thread.
+/// @see etcpal::Thread::SetPlatformData()
+/// @note If the dispatch policy is LogDispatchPolicy::Direct, this has no effect.
+Logger& Logger::SetThreadPlatformData(void* platform_data) noexcept
+{
+  thread_.SetPlatformData(platform_data);
   return *this;
 }
 

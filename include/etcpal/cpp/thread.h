@@ -144,8 +144,11 @@ class Thread
 public:
   /// @brief Create a new thread object which does not yet represent a thread.
   Thread() = default;
-  template <class Function, class... Args>
+  template <class Function,
+            class... Args,
+            typename std::enable_if<!std::is_arithmetic<Function>::value, bool>::type = true>
   Thread(Function&& func, Args&&... args);
+  Thread(unsigned int priority, unsigned int stack_size, const char* name, void* platform_data = nullptr);
   virtual ~Thread();
 
   Thread(Thread&& other) noexcept;
@@ -175,6 +178,7 @@ public:
   Thread& SetName(const char* name) noexcept;
   Thread& SetName(const std::string& name) noexcept;
   Thread& SetPlatformData(void* platform_data) noexcept;
+  Thread& SetParams(const EtcPalThreadParams& params) noexcept;
   /// @}
 
   template <class Function, class... Args>
@@ -208,19 +212,33 @@ extern "C" inline void CppThreadFn(void* arg)
 
 /// @brief Create a new thread object and associate it with a new thread of execution.
 ///
-/// See the Start() function for more information.
+/// Default thread parameters will be used. See the Start() function for more information.
 ///
 /// @param func Callable object to execute in the new thread.
 /// @param args Arguments to pass to func.
 /// @throw std::runtime_error if Start() returns an error code.
 /// @post `joinable() == true`
-template <class Function, class... Args>
-inline Thread::Thread(Function&& func, Args&&... args)
+template <class Function, class... Args, typename std::enable_if<!std::is_arithmetic<Function>::value, bool>::type>
+Thread::Thread(Function&& func, Args&&... args)
 {
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
   auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
     ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
+}
+
+/// @brief Create a new thread object which does not yet represent a thread, passing explicit parameters.
+///
+/// The thread is not running until Start() is called.
+///
+/// @param priority Priority of the thread.
+/// @param stack_size Stack size of the thread in bytes.
+/// @param name A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH.
+/// @param platform_data Pointer to a platform-specific parameter structure. See
+///                      #EtcPalThreadParams for more information.
+inline Thread::Thread(unsigned int priority, unsigned int stack_size, const char* name, void* platform_data)
+    : params_{priority, stack_size, name, platform_data}
+{
 }
 
 /// @brief Destroy the thread object.
@@ -365,6 +383,19 @@ inline Thread& Thread::SetName(const std::string& name) noexcept
 inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
 {
   params_.platform_data = platform_data;
+  return *this;
+}
+
+/// @brief Set this thread's parameters from an existing EtcPalThreadParams struct.
+///
+/// This function does not have any effect on the associated thread unless it is called on a
+/// default-constructed thread before Start() is called.
+///
+/// @param params EtcPalThreadParams to use when starting the thread.
+/// @return A reference to this thread, for method chaining.
+inline Thread& Thread::SetParams(const EtcPalThreadParams& params) noexcept
+{
+  params_ = params;
   return *this;
 }
 
