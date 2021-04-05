@@ -23,6 +23,7 @@
 
 #include "etcpal/common.h"
 #include "etcpal/queue.h"
+#include "etcpal/sem.h"
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -31,17 +32,23 @@
 extern "C" {
 #endif
 
-typedef struct
+typedef struct _queue_node
 {
-  _queue_node_t* ahead;
-  _queue_node_t* behind;
   void*          data;
 } _queue_node_t;
 
 typedef struct
 {
-  _queue_node_t* first;
+  unsigned       head;
+  unsigned       tail;
+  _queue_node_t* node_list;
+  size_t         max_queue_size;
   size_t         queue_size;
+
+  etcpal_sem_t lock;
+  etcpal_sem_t spots_available;
+  etcpal_sem_t spots_filled;
+  size_t       element_size;
 }etcpal_queue_t;
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
@@ -49,25 +56,13 @@ void etcpal_queue_destroy(etcpal_queue_t* id);
 
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
 bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms);
-
-/**
- * Shouldn't link. Not appliccable in windows.
- */
 bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data);
 
 bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
-
-/**
- * Shouldn't link. Not appliccable in windows.
- */
 bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data);
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id);
-
-/**
- * Shouldn't link. Not appliccable in windows.
- */
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
 #ifdef __cplusplus
 }
