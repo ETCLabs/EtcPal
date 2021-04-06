@@ -8,6 +8,8 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     rwlock_integration_test.c
     sem_integration_test.c
     signal_integration_test.c
+    queue_integration_test.cpp
+    queue_tests/queue_simple_concurrency_test.cpp
     test_main.c
   )
 

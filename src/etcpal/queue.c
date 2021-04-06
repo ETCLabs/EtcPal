@@ -1,52 +1,52 @@
-#include "..\..\..\..\include\os\windows\etcpal\os_queue.h"
+#include "etcpal\os_queue.h"
 #include <cassert>
 
-static inline bool wait_for_space_timed(etcpal_queue_t* queue, int timeout_ms)
+static inline bool wait_for_space_timed(const etcpal_queue_t* queue, int timeout_ms)
 {
-  return etcpal_sem_timed_wait(&queue->spots_available, timeout_ms);
+  return etcpal_sem_timed_wait((etcpal_sem_t*)&queue->spots_available, timeout_ms);
 }
 
-static inline bool notify_space_available(etcpal_queue_t* queue)
+static inline bool notify_space_available(const etcpal_queue_t* queue)
 {
-  return etcpal_sem_post(&queue->spots_available);
+  return etcpal_sem_post((etcpal_sem_t*)&queue->spots_available);
 }
 
-static inline bool notify_space_available_from_isr(etcpal_queue_t* queue)
+static inline bool notify_space_available_from_isr(const etcpal_queue_t* queue)
 {
-  return etcpal_sem_post_from_isr(&queue->spots_available);
+  return etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->spots_available);
 }
 
-static inline bool wait_for_data_timed(etcpal_queue_t* queue, int timeout_ms)
+static inline bool wait_for_data_timed(const etcpal_queue_t* queue, int timeout_ms)
 {
-  return etcpal_sem_timed_wait(&queue->spots_filled, timeout_ms);
+  return etcpal_sem_timed_wait((etcpal_sem_t*)&queue->spots_filled, timeout_ms);
 }
 
-static inline bool notify_data_available(etcpal_queue_t* queue)
+static inline bool notify_data_available(const etcpal_queue_t* queue)
 {
-  return etcpal_sem_post(&queue->spots_filled);
+  return etcpal_sem_post((etcpal_sem_t*)&queue->spots_filled);
 }
 
-static inline bool notify_data_available_from_isr(etcpal_queue_t* queue)
+static inline bool notify_data_available_from_isr(const etcpal_queue_t* queue)
 {
-  return etcpal_sem_post_from_isr(&queue->spots_filled);
+  return etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->spots_filled);
 }
 
-static inline bool lock(etcpal_queue_t* queue)
+static inline bool lock(const etcpal_queue_t* queue)
 {
-  bool success = etcpal_sem_wait(&queue->lock);
+  bool success = etcpal_sem_wait((etcpal_sem_t*)&queue->lock);
   assert(success);
   return success;
 }
 
-static inline void unlock(etcpal_queue_t* queue)
+static inline void unlock(const etcpal_queue_t* queue)
 {
-  bool success = etcpal_sem_post(&queue->lock);
+  bool success = etcpal_sem_post((etcpal_sem_t*)&queue->lock);
   assert(success);
 }
 
-static inline void unlock_from_isr(etcpal_queue_t* queue)
+static inline void unlock_from_isr(const etcpal_queue_t* queue)
 {
-  bool success = etcpal_sem_post_from_isr(&queue->lock);
+  bool success = etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->lock);
   assert(success);
 }
 
@@ -58,8 +58,6 @@ static inline bool push_data_timed(etcpal_queue_t* queue, const void* data, int 
   {
     lock(queue);
     
-    int initial_queue_size = queue->queue_size;
-
     memcpy(queue->node_list[queue->head].data, data, queue->element_size);
 
     queue->head++;
@@ -82,8 +80,6 @@ static inline bool push_data_from_isr(etcpal_queue_t* queue, const void* data)
   if (wait_for_space_timed(queue, 0))
   {
     lock(queue);
-
-    int initial_queue_size = queue->queue_size;
 
     memcpy(queue->node_list[queue->head].data, data, queue->element_size);
 
@@ -162,15 +158,21 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 
   // Initialize locks
   etcpal_sem_create(&id->lock, 1, 1);
-  etcpal_sem_create(&id->spots_available, size, size);
-  etcpal_sem_create(&id->spots_filled, 0, size);
+  etcpal_sem_create(&id->spots_available, (unsigned)size, (unsigned)size);
+  etcpal_sem_create(&id->spots_filled, 0, (unsigned)size);
 
   // Circular buffers need space for an extra item
   id->node_list = calloc(sizeof(_queue_node_t), size + 1);
-
-  for (unsigned item_index = 0; item_index < size + 1; item_index++)
+  if (id->node_list)
   {
-    id->node_list[item_index].data = calloc(item_size, 1);
+    for (unsigned item_index = 0; item_index < size + 1; item_index++)
+    {
+      id->node_list[item_index].data = calloc(item_size, 1);
+    }
+  }
+  else
+  {
+    return false;
   }
 
   id->max_queue_size = size;
@@ -184,10 +186,12 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 void etcpal_queue_destroy(etcpal_queue_t* id)
 {
   lock(id);
-
-  for (unsigned item_index = 0; item_index < id->max_queue_size + 1; item_index++)
+  if (id->node_list)
   {
-    free(id->node_list[item_index].data);
+    for (unsigned item_index = 0; item_index < id->max_queue_size + 1; item_index++)
+    {
+      free(id->node_list[item_index].data);
+    }
   }
 
   free(id->node_list);

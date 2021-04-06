@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "queue_tests.h"
 
 bool send_to_empty_from_isr()
 {

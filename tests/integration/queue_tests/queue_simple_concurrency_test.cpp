@@ -1,7 +1,6 @@
-#include "tests.h"
+#include "queue_tests.h"
 #include "etcpal/thread.h"
 #include <unordered_map>
-#include "simple_concurrency_test.h"
 
 static const unsigned large_prime = 115249;
 
@@ -32,7 +31,7 @@ static void register_value_received(long long int val)
   etcpal_sem_post(&occ_map_lock);
 }
 
-static bool check_occurrences(int num_expected_occurrences)
+static bool check_occurrences(unsigned num_expected_occurrences)
 {
   bool true_if_success = true;
   etcpal_sem_wait(&occ_map_lock);
@@ -123,16 +122,19 @@ static void create_writer_test(etcpal::Queue<long long int>* q, int num_writers)
 {
   char fmt[] = "Writer %d";
   list_of_writers = (thread_t*)calloc(sizeof(thread_t), num_writers);
-  for (int i = 0; i < num_writers; i++)
+  if (list_of_writers)
   {
-    thread_t* thread = &list_of_writers[i];
+    for (int i = 0; i < num_writers; i++)
+    {
+      thread_t* thread = &list_of_writers[i];
     
-    thread->params.priority = 1;
-    thread->params.stack_size = 0x5000;
-    snprintf(thread->thread_name, ETCPAL_THREAD_NAME_MAX_LENGTH, fmt, i);
-    thread->params.thread_name = thread->thread_name;
+      thread->params.priority = 1;
+      thread->params.stack_size = 0x5000;
+      snprintf(thread->thread_name, ETCPAL_THREAD_NAME_MAX_LENGTH, fmt, i);
+      thread->params.thread_name = thread->thread_name;
 
-    etcpal_thread_create(&thread->thread, &thread->params, writer_func, q);
+      etcpal_thread_create(&thread->thread, &thread->params, writer_func, q);
+    }
   }
 }
 
@@ -140,19 +142,21 @@ static void create_reader_test(etcpal::Queue<long long int>* q, int num_readers)
 {
   char fmt[] = "Reader %d";
   list_of_readers = (thread_t*)calloc(sizeof(thread_t), num_readers);
-  for (int i = 0; i < num_readers; i++)
+  if (list_of_readers)
   {
-    thread_t* thread = &list_of_readers[i];
+    for (int i = 0; i < num_readers; i++)
+    {
+      thread_t* thread = &list_of_readers[i];
 
-    thread->params.priority = 1;
-    thread->params.stack_size = 0x5000;
-    snprintf(thread->thread_name, ETCPAL_THREAD_NAME_MAX_LENGTH, fmt, i);
-    thread->params.thread_name = thread->thread_name;
+      thread->params.priority = 1;
+      thread->params.stack_size = 0x5000;
+      snprintf(thread->thread_name, ETCPAL_THREAD_NAME_MAX_LENGTH, fmt, i);
+      thread->params.thread_name = thread->thread_name;
 
-    etcpal_thread_create(&thread->thread, &thread->params, reader_func, q);
+      etcpal_thread_create(&thread->thread, &thread->params, reader_func, q);
+    }
   }
 }
-
 
 static void wait_for_writer_complete(int num_threads)
 {

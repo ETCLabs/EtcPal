@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "queue_tests.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -49,11 +49,10 @@ bool leak_check_send_receive()
 bool leak_check_create_destroy()
 {
   bool                          true_if_leak;
-  long long int                 val;
 
   START_LEAK_SNAPSHOT
   etcpal::Queue<long long int>* q = new etcpal::Queue<long long int>(10);
-  //q->Send(10);
+  q->Send(10);
   delete q;
   END_LEAK_SNAPSHOT(true_if_leak)
   return !true_if_leak;

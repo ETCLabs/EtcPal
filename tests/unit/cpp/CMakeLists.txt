@@ -17,8 +17,8 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     test_thread.cpp
     test_timer.cpp
   )
-    # freertos is the only platform that supports queues right now
-  if (ETCPAL_OS_TARGET STREQUAL "freertos")
+  # Queues are supported on every platform except MQX
+  if (NOT ETCPAL_OS_TARGET STREQUAL "mqx")
     target_sources(etcpal_cpp_unit_tests PRIVATE test_queue.cpp)
   else()
     # we need a way to keep the queue tests from running in the code for non queue cabaple platforms

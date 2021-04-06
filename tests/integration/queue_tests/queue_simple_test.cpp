@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "queue_tests.h"
 
 bool create_queue()
 {
