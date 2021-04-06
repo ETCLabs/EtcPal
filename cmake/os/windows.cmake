@@ -20,6 +20,8 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/windows/etcpal/os_thread.c
   ${ETCPAL_ROOT}/src/os/windows/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/windows/etcpal/os_uuid.c
+
+  ${ETCPAL_ROOT}/src/etcpal/queue.c
 )
 set(ETCPAL_OS_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/windows)
 set(ETCPAL_OS_ADDITIONAL_LIBS winmm Rpcrt4)
