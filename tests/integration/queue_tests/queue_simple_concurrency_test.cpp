@@ -47,8 +47,6 @@ static bool check_occurrences(unsigned num_expected_occurrences)
   if (!true_if_success)
   {
     printf("\r\n");
-    Sleep(10);
-
   }
   etcpal_sem_post(&occ_map_lock);
   return true_if_success;
