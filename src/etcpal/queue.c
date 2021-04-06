@@ -1,5 +1,6 @@
+// Author: Noah Meltzer
+
 #include "etcpal/queue.h"
-#include <cassert>
 
 static inline bool wait_for_space_timed(const etcpal_queue_t* queue, int timeout_ms)
 {
@@ -34,20 +35,17 @@ static inline bool notify_data_available_from_isr(const etcpal_queue_t* queue)
 static inline bool lock(const etcpal_queue_t* queue)
 {
   bool success = etcpal_sem_wait((etcpal_sem_t*)&queue->lock);
-  assert(success);
   return success;
 }
 
 static inline void unlock(const etcpal_queue_t* queue)
 {
-  bool success = etcpal_sem_post((etcpal_sem_t*)&queue->lock);
-  assert(success);
+  etcpal_sem_post((etcpal_sem_t*)&queue->lock);
 }
 
 static inline void unlock_from_isr(const etcpal_queue_t* queue)
 {
-  bool success = etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->lock);
-  assert(success);
+  etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->lock);
 }
 
 static inline bool push_data_timed(etcpal_queue_t* queue, const void* data, int timeout_ms)
@@ -101,8 +99,6 @@ static inline bool pop_data_timed(etcpal_queue_t* queue, void* data, int timeout
   bool true_if_success = false;
   if (wait_for_data_timed(queue, timeout_ms))
   {
-    assert(queue->queue_size > 0);
-
     lock(queue);
     memcpy(data, queue->node_list[queue->tail].data, queue->element_size);
 
@@ -125,8 +121,6 @@ static inline bool pop_data_from_isr(etcpal_queue_t* queue, void* data)
   bool true_if_success = false;
   if (wait_for_data_timed(queue, 0))
   {
-    assert(queue->queue_size > 0);
-
     lock(queue);
     memcpy(data, queue->node_list[queue->tail].data, queue->element_size);
 
