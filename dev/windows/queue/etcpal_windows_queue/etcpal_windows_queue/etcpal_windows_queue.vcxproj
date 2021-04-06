@@ -72,11 +72,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\..\..\..\include;$(ProjectDir)..\..\..\..\..\include\os\windows;$(ProjectDir)..\..\..\..\..\dev\windows\queue\tests;$(ProjectDir)..\..\..\..\..\include\etcpal;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\..\..\..\include;$(ProjectDir)..\..\..\..\..\include\os\windows;$(ProjectDir)..\..\..\..\..\dev\windows\queue\tests;$(ProjectDir)..\..\..\..\..\include\etcpal;$(ProjectDir)..\..\..\..\..\tests\unit\cpp\queue_tests;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)..\..\..\..\..\include;$(ProjectDir)..\..\..\..\..\include\os\windows;$(ProjectDir)..\..\..\..\..\dev\windows\queue\tests;$(ProjectDir)..\..\..\..\..\include\etcpal;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\..\..\..\include;$(ProjectDir)..\..\..\..\..\include\os\windows;$(ProjectDir)..\..\..\..\..\dev\windows\queue\tests;$(ProjectDir)..\..\..\..\..\include\etcpal;$(ProjectDir)..\..\..\..\..\tests\unit\cpp\queue_tests;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -143,21 +143,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\src\etcpal\queue.c" />
     <ClCompile Include="..\..\..\..\..\src\os\windows\etcpal\os_error.c" />
-    <ClCompile Include="..\..\..\..\..\src\os\windows\etcpal\os_queue.c" />
     <ClCompile Include="..\..\..\..\..\src\os\windows\etcpal\os_sem.c" />
     <ClCompile Include="..\..\..\..\..\src\os\windows\etcpal\os_thread.c" />
-    <ClCompile Include="..\..\tests\from_ISR_api_test.cpp" />
-    <ClCompile Include="..\..\tests\leak_check_test.cpp" />
-    <ClCompile Include="..\..\tests\simple_concurrency_test.cpp" />
-    <ClCompile Include="..\..\tests\simple_test.cpp" />
+    <ClCompile Include="..\..\..\..\..\tests\unit\cpp\queue_tests\queue_from_ISR_api_test.cpp" />
+    <ClCompile Include="..\..\..\..\..\tests\unit\cpp\queue_tests\queue_leak_check_test.cpp" />
+    <ClCompile Include="..\..\..\..\..\tests\unit\cpp\queue_tests\queue_simple_concurrency_test.cpp" />
+    <ClCompile Include="..\..\..\..\..\tests\unit\cpp\queue_tests\queue_simple_test.cpp" />
     <ClCompile Include="etcpal_windows_queue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\include\etcpal\cpp\queue.h" />
     <ClInclude Include="..\..\..\..\..\include\os\windows\etcpal\os_queue.h" />
-    <ClInclude Include="..\..\tests\simple_concurrency_test.h" />
-    <ClInclude Include="..\..\tests\tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
