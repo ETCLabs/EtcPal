@@ -1,4 +1,4 @@
-#include "etcpal\os_queue.h"
+#include "etcpal\queue.h"
 #include <cassert>
 
 static inline bool wait_for_space_timed(const etcpal_queue_t* queue, int timeout_ms)
