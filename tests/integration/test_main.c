@@ -25,6 +25,7 @@ void run_all_tests(void)
   RUN_TEST_GROUP(event_group_integration);
 #endif
   RUN_TEST_GROUP(mutex_integration);
+  RUN_TEST_GROUP(etcpal_queue_integration);
 #if !DISABLE_RECURSIVE_MUTEX_TESTS
   RUN_TEST_GROUP(recursive_mutex_integration);
 #endif
