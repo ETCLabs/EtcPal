@@ -1,5 +1,6 @@
 #include "queue_tests.h"
 #include "etcpal/thread.h"
+#include "etcpal/sem.h"
 #include <unordered_map>
 
 static const unsigned large_prime = 115249;
