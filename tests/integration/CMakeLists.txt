@@ -39,7 +39,7 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     target_sources(etcpal_integration_tests PRIVATE
       event_group_integration_test.c
       recursive_mutex_integration_test.c
-      queue_integration_tests.cpp
+      queue_integration_test.cpp
       queue_tests/queue_simple_concurrency_test.cpp
     )
   endif()
