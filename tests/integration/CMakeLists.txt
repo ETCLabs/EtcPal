@@ -39,8 +39,14 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     )
   endif()
 
-  # Queues not supported on MQX or Apple platforms
-  if(ETCPAL_OS_TARGET STREQUAL "mqx" OR ETCPAL_OS_TARGET STREQUAL "ios" OR ETCPAL_OS_TARGET STREQUAL "macos")
+  # Queues not supported on MQX or Apple platforms.
+  # TODO On our FreeRTOS test bed we currently don't have enough memory available to run the
+  # integration tests, so those are also disabled for now. ETCPAL-91
+  if(ETCPAL_OS_TARGET STREQUAL "mqx" OR
+     ETCPAL_OS_TARGET STREQUAL "ios" OR
+     ETCPAL_OS_TARGET STREQUAL "macos" OR
+     ETCPAL_OS_TARGET STREQUAL "freertos"
+  )
     target_compile_definitions(etcpal_integration_tests PRIVATE DISABLE_QUEUE_TESTS)
   else()
     target_sources(etcpal_integration_tests PRIVATE
