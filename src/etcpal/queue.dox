@@ -60,18 +60,47 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * There are also functions for sending and receiving with a timeout, and for checking to see if
  * the queue is empty.
  *
- * Queues are only available on RTOS platforms. The current availability is as follows:
+ * Queues are implemented using native constructs on RTOS platforms, and using other EtcPal
+ * constructs such as semaphores on full OS platforms. The current availability is as follows:
  *
- * | Platform | Queue Functions Available |
- * |----------|---------------------------|
- * | FreeRTOS | Yes                       |
- * | Linux    | No                        |
- * | macOS    | No                        |
- * | MQX      | No                        |
- * | Windows  | No                        |
+ * | Platform | Queues Available | #ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS | #ETCPAL_QUEUE_HAS_ISR_FUNCTIONS |
+ * |----------|------------------|-----------------------------------|---------------------------------|
+ * | FreeRTOS | Yes              | Yes                               | Yes                             |
+ * | Linux    | Yes              | No                                | No                              |
+ * | macOS    | No               | N/A                               | N/A                             |
+ * | MQX      | No               | N/A                               | N/A                             |
+ * | Windows  | Yes              | Yes                               | No                              |
  *
  * @{
  */
+
+/**
+ * @brief The queue identifier.
+ *
+ * Depending on the platform, this could be a scalar type or a struct.
+ */
+typedef PLATFORM_DEFINED etcpal_queue_t;
+
+/**
+ * @brief Whether etcpal_queue_timed_send() and etcpal_queue_timed_receive() are meaningful on this
+ *        platform.
+ *
+ * If defined to 0, etcpal_queue_timed_send() and etcpal_queue_timed_receive() execute the
+ * equivalent of etcpal_queue_send() and etcpal_queue_receive(), respectively, if given nonzero
+ * timeouts. With a timeout of 0, they check the queue's availability to send or receive an item
+ * and return success or failure immediately.
+ */
+#define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS /* platform-defined */
+
+/**
+ * @brief Whether etcpal_queue_send_from_isr() and etcpal_queue_receive_from_isr() are meaningful
+ *        on this platform.
+ *
+ * Some platforms have a different method for interacting with a queue from an interrupt context.
+ * If defined to 0, etcpal_queue_send_from_isr() and etcpal_queue_receive_from_isr() execute the
+ * equivalent of etcpal_queue_send() and etcpal_queue_receive(), respectively.
+ */
+ #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS /* platform-defined */
 
 /**
  * @brief Create a new queue.
