@@ -17,15 +17,8 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     test_thread.cpp
     test_timer.cpp
   )
-    # freertos is the only platform that supports queues right now
-  if (ETCPAL_OS_TARGET STREQUAL "freertos")
-    target_sources(etcpal_cpp_unit_tests PRIVATE test_queue.cpp)
-  else()
-    # we need a way to keep the queue tests from running in the code for non queue cabaple platforms
-    target_compile_definitions(etcpal_cpp_unit_tests PRIVATE DISABLE_QUEUE_TESTS)
-  endif()
 
-  # Recursive mutexes and event groups not supported on MQX
+  # Recursive mutexes, queues and event groups not supported on MQX
   if (ETCPAL_OS_TARGET STREQUAL "mqx")
     target_compile_definitions(etcpal_cpp_unit_tests PRIVATE
       DISABLE_EVENT_GROUP_TESTS
@@ -36,6 +29,13 @@ if(ETCPAL_HAVE_OS_SUPPORT)
       test_event_group.cpp
       test_recursive_mutex.cpp
     )
+  endif()
+
+  # Queues not supported on MQX or Apple platforms
+  if(ETCPAL_OS_TARGET STREQUAL "mqx" OR ETCPAL_OS_TARGET STREQUAL "ios" OR ETCPAL_OS_TARGET STREQUAL "macos")
+    target_compile_definitions(etcpal_cpp_unit_tests PRIVATE DISABLE_QUEUE_TESTS)
+  else()
+    target_sources(etcpal_cpp_unit_tests PRIVATE test_queue.cpp)
   endif()
 endif()
 

@@ -35,16 +35,16 @@ TEST_TEAR_DOWN(etcpal_cpp_queue)
 
 TEST(etcpal_cpp_queue, check_empty)
 {
-  etcpal::Queue<char> q(5);
+  etcpal::Queue<unsigned char> q(5);
   TEST_ASSERT_TRUE(q.IsEmpty());
 }
 
 TEST(etcpal_cpp_queue, can_send_and_receive)
 {
-  etcpal::Queue<char> q(3);
-  char                data = 0xDE;
+  etcpal::Queue<unsigned char> q(3);
+  unsigned char                 data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
-  char receivedData = 0;
+  unsigned char receivedData = 0;
   TEST_ASSERT_TRUE(q.Receive(receivedData));
   TEST_ASSERT_EQUAL(data, receivedData);
 }
@@ -52,8 +52,8 @@ TEST(etcpal_cpp_queue, can_send_and_receive)
 TEST(etcpal_cpp_queue, will_timeout_on_send)
 {
   // Create queue for 3 chars
-  etcpal::Queue<char> q(3);
-  char                data = 0xDE;
+  etcpal::Queue<unsigned char> q(3);
+  unsigned char                 data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
   data = 0xAD;
   TEST_ASSERT_TRUE(q.Send(data));
@@ -62,32 +62,40 @@ TEST(etcpal_cpp_queue, will_timeout_on_send)
 
   // This one should NOT work because we are over our size
   data = 0xEF;
+#if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
   TEST_ASSERT_FALSE(q.Send(data, 10));
+#else
+  TEST_ASSERT_FALSE(q.Send(data, 0));
+#endif
 }
 
 TEST(etcpal_cpp_queue, will_timeout_on_receive)
 {
   // Create queue for 3 chars
-  etcpal::Queue<char> q(3);
-  char                data = 0xDE;
+  etcpal::Queue<unsigned char> q(3);
+  unsigned char       data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
   data = 0xAD;
-  char receivedData = 0x00;
+  unsigned char receivedData = 0x00;
   TEST_ASSERT_TRUE(q.Receive(receivedData, 10));
+#if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
   TEST_ASSERT_FALSE(q.Receive(receivedData, 10));
+#else
+  TEST_ASSERT_FALSE(q.Receive(receivedData, 0));
+#endif
 }
 
 TEST(etcpal_cpp_queue, can_detect_empty)
 {
   // Create queue for 3 chars
-  etcpal::Queue<char> q(3);
+  etcpal::Queue<unsigned char> q(3);
   TEST_ASSERT_TRUE(q.IsEmpty());
 
-  char data = 0xDE;
+  unsigned char data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_FALSE(q.IsEmpty());
 
-  char receivedData = 0x00;
+  unsigned char receivedData = 0x00;
   TEST_ASSERT_TRUE(q.Receive(receivedData));
   TEST_ASSERT_TRUE(q.IsEmpty());
 

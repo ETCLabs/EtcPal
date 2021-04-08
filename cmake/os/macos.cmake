@@ -20,5 +20,8 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_thread.c
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_timer.c
   ${ETCPAL_ROOT}/src/os/macos/etcpal/os_uuid.c
+
+  # TODO Queues not currently supported on macOS, ETCPAL-90
+  # ${ETCPAL_ROOT}/src/etcpal/queue.c
 )
 set(ETCPAL_OS_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/macos)
