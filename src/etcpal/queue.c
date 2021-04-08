@@ -1,6 +1,7 @@
 // Author: Noah Meltzer
 
 #include "etcpal/queue.h"
+#include <string.h>
 
 static inline bool wait_for_space_timed(const etcpal_queue_t* queue, int timeout_ms)
 {
@@ -52,10 +53,10 @@ static inline bool push_data_timed(etcpal_queue_t* queue, const void* data, int 
 {
   bool true_if_success = false;
 
-  if(wait_for_space_timed(queue, timeout_ms))
+  if (wait_for_space_timed(queue, timeout_ms))
   {
     lock(queue);
-    
+
     memcpy(queue->node_list[queue->head].data, data, queue->element_size);
 
     queue->head++;
@@ -109,7 +110,7 @@ static inline bool pop_data_timed(etcpal_queue_t* queue, void* data, int timeout
 
     true_if_success = true;
 
-    unlock(queue);   
+    unlock(queue);
     notify_space_available(queue);
   }
 
@@ -190,6 +191,15 @@ void etcpal_queue_destroy(etcpal_queue_t* id)
 
   free(id->node_list);
 
+#if ETCPAL_SEM_MUST_BE_BALANCED
+  // Reset the semaphores to their initial counts before destroying
+  for (size_t i = 0; i < id->queue_size; ++i)
+  {
+    etcpal_sem_wait(&id->spots_filled);
+    etcpal_sem_post(&id->spots_available);
+  }
+#endif
+
   unlock(id);
 
   etcpal_sem_destroy(&id->lock);
@@ -208,7 +218,7 @@ bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 
 bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms)
 {
-  bool            true_if_success = false;
+  bool true_if_success = false;
 
   true_if_success = push_data_timed(id, data, timeout_ms);
 
@@ -263,7 +273,7 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 {
   bool true_if_empty = true;
-  if(lock(id))
+  if (lock(id))
   {
     true_if_empty = (id->queue_size == 0);
     unlock_from_isr(id);
