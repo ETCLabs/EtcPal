@@ -62,7 +62,11 @@ TEST(etcpal_cpp_queue, will_timeout_on_send)
 
   // This one should NOT work because we are over our size
   data = 0xEF;
+#if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
   TEST_ASSERT_FALSE(q.Send(data, 10));
+#else
+  TEST_ASSERT_FALSE(q.Send(data, 0));
+#endif
 }
 
 TEST(etcpal_cpp_queue, will_timeout_on_receive)
@@ -74,7 +78,11 @@ TEST(etcpal_cpp_queue, will_timeout_on_receive)
   data = 0xAD;
   unsigned char receivedData = 0x00;
   TEST_ASSERT_TRUE(q.Receive(receivedData, 10));
+#if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
   TEST_ASSERT_FALSE(q.Receive(receivedData, 10));
+#else
+  TEST_ASSERT_FALSE(q.Receive(receivedData, 0));
+#endif
 }
 
 TEST(etcpal_cpp_queue, can_detect_empty)

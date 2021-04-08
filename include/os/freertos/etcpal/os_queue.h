@@ -32,6 +32,9 @@ extern "C" {
 
 typedef QueueHandle_t etcpal_queue_t;
 
+#define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS 1
+#define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS 1
+
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
 void etcpal_queue_destroy(etcpal_queue_t* id);
 

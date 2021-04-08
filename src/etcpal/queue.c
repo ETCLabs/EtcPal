@@ -41,12 +41,12 @@ static inline bool lock(const etcpal_queue_t* queue)
 
 static inline void unlock(const etcpal_queue_t* queue)
 {
-  etcpal_sem_post((etcpal_sem_t*)&queue->lock);
+  (void)etcpal_sem_post((etcpal_sem_t*)&queue->lock);
 }
 
 static inline void unlock_from_isr(const etcpal_queue_t* queue)
 {
-  etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->lock);
+  (void)etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->lock);
 }
 
 static inline bool push_data_timed(etcpal_queue_t* queue, const void* data, int timeout_ms)
@@ -152,9 +152,19 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
   id->element_size = item_size;
 
   // Initialize locks
-  etcpal_sem_create(&id->lock, 1, 1);
-  etcpal_sem_create(&id->spots_available, (unsigned)size, (unsigned)size);
-  etcpal_sem_create(&id->spots_filled, 0, (unsigned)size);
+  if (!etcpal_sem_create(&id->lock, 1, 1))
+    return false;
+  if (!etcpal_sem_create(&id->spots_available, (unsigned)size, (unsigned)size))
+  {
+    etcpal_sem_destroy(&id->lock);
+    return false;
+  }
+  if (!etcpal_sem_create(&id->spots_filled, 0, (unsigned)size))
+  {
+    etcpal_sem_destroy(&id->spots_available);
+    etcpal_sem_destroy(&id->spots_filled);
+    return false;
+  }
 
   // Circular buffers need space for an extra item
   id->node_list = calloc(sizeof(_queue_node_t), size + 1);

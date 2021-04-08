@@ -1,21 +1,6 @@
 #pragma once
 #include "etcpal/cpp/queue.h"
 
-#define TEST(FUNC, NAME)                                              \
-{                                                                     \
-  printf("\x1b[39m ");                                                 \
-  printf("%s: ... ", NAME);                                          \
-  printf("\r \x1b[60C");                                              \
-  if (FUNC())                                                         \
-  {                                                                   \
-    printf("\x1b[92m");                                               \
-    printf("SUCCESS\r\n");                                            \
-  }else{                                                              \
-    printf("\x1b[91m");                                               \
-    printf("FAIL\r\n");                                               \
-  }                                                                   \
-}
-
 void init_concurrency_test();
 bool create_queue();
 bool simple_send_receive();

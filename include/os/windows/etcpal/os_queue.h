@@ -34,7 +34,7 @@ extern "C" {
 
 typedef struct _queue_node
 {
-  void*          data;
+  void* data;
 } _queue_node_t;
 
 typedef struct
@@ -49,7 +49,10 @@ typedef struct
   etcpal_sem_t spots_available;
   etcpal_sem_t spots_filled;
   size_t       element_size;
-}etcpal_queue_t;
+} etcpal_queue_t;
+
+#define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS ETCPAL_SEM_HAS_TIMED_WAIT
+#define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS ETCPAL_SEM_HAS_POST_FROM_ISR
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
 void etcpal_queue_destroy(etcpal_queue_t* id);
@@ -64,7 +67,9 @@ bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data);
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id);
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
+
 #ifdef __cplusplus
 }
 #endif
-#endif
+
+#endif // ETCPAL_OS_QUEUE_H_

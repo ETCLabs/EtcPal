@@ -19,6 +19,7 @@
 
 #include "etcpal/queue.h"
 
+#include "etcpal/timer.h"
 #include "unity_fixture.h"
 
 TEST_GROUP(etcpal_queue);
@@ -58,9 +59,22 @@ TEST(etcpal_queue, will_timeout_on_send)
   data = 0xBE;
   TEST_ASSERT_TRUE(etcpal_queue_timed_send(&queue, &data, 0));
 
+#if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
+  EtcPalTimer timer;
+  etcpal_timer_start(&timer, 100);
+
   // This one should NOT work because we are over our size
   data = 0xEF;
   TEST_ASSERT_FALSE(etcpal_queue_timed_send(&queue, &data, 10));
+
+  // An unfortunately necessary heuristic - we assert that at least half the specified time has
+  // gone by, to account for OS slop.
+  TEST_ASSERT_GREATER_THAN_UINT32(5, etcpal_timer_elapsed(&timer));
+#else
+  // This one should NOT work because we are over our size
+  data = 0xEF;
+  TEST_ASSERT_FALSE(etcpal_queue_timed_send(&queue, &data, 0));
+#endif
 
   etcpal_queue_destroy(&queue);
 }
@@ -75,7 +89,19 @@ TEST(etcpal_queue, will_timeout_on_receive)
   TEST_ASSERT_TRUE(etcpal_queue_timed_send(&queue, &data, 0));
   char receivedData = 0x00;
   TEST_ASSERT_TRUE(etcpal_queue_timed_receive(&queue, &receivedData, 10));
+
+#if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
+  EtcPalTimer timer;
+  etcpal_timer_start(&timer, 100);
+
   TEST_ASSERT_FALSE(etcpal_queue_timed_receive(&queue, &receivedData, 10));
+
+  // An unfortunately necessary heuristic - we assert that at least half the specified time has
+  // gone by, to account for OS slop.
+  TEST_ASSERT_GREATER_THAN_UINT32(5, etcpal_timer_elapsed(&timer));
+#else
+  TEST_ASSERT_FALSE(etcpal_queue_timed_receive(&queue, &receivedData, 0));
+#endif
 
   etcpal_queue_destroy(&queue);
 }
