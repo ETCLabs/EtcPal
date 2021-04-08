@@ -3,6 +3,7 @@
 set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/include/os/windows/etcpal/os_event_group.h
   ${ETCPAL_ROOT}/include/os/windows/etcpal/os_mutex.h
+  ${ETCPAL_ROOT}/include/os/windows/etcpal/os_queue.h
   ${ETCPAL_ROOT}/include/os/windows/etcpal/os_recursive_mutex.h
   ${ETCPAL_ROOT}/include/os/windows/etcpal/os_rwlock.h
   ${ETCPAL_ROOT}/include/os/windows/etcpal/os_sem.h
