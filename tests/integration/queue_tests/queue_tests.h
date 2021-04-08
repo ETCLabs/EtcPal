@@ -1,4 +1,6 @@
-#pragma once
+#ifndef QUEUE_TESTS_H_
+#define QUEUE_TESTS_H_
+
 #include "etcpal/cpp/queue.h"
 
 void init_concurrency_test();
@@ -22,3 +24,5 @@ bool receive_from_full_from_isr();
 
 bool leak_check_send_receive();
 bool leak_check_create_destroy();
+
+#endif  // QUEUE_TESTS_H_

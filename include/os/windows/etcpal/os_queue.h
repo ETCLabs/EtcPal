@@ -1,4 +1,3 @@
-#pragma once
 /******************************************************************************
  * Copyright 2021 ETC Inc.
  *
@@ -72,4 +71,4 @@ bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
 }
 #endif
 
-#endif // ETCPAL_OS_QUEUE_H_
+#endif  // ETCPAL_OS_QUEUE_H_
