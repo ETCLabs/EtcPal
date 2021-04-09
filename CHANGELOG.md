@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * etcpal_thread_get_os_handle()
   * etcpal_thread_get_current_os_handle()
 - New C++ feature: Strongly typed opaque IDs (`etcpal/cpp/opaque_id.h`)
+- etcpal/queue implementation expanded to work on Windows and Linux as well as FreeRTOS.
 
 ### Changed
 - Separated etcpal/lock.h into more specific headers: etcpal/mutex.h, etcpal/signal.h, etcpal/sem.h
