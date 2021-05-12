@@ -119,13 +119,17 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
   if(id)
   {
-    return (uxQueueMessagesWaiting(*id) == 0);
+    UBaseType_t numMessages = uxQueueMessagesWaiting(*id);
+    return (numMessages == 0);
   }
   return false
 }
 
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 {
+  // UBaseType_t numMessages = uxQueueMessagesWaitingFromISR(*id);
+
+  // return (numMessages == 0);
   if(id)
   {
     return xQueueIsQueueEmptyFromISR(*id);
@@ -137,7 +141,8 @@ bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
   if(id)
   {
-    return (uxQueueSpacesAvailable(*id) == 0);
+    UBaseType_t numMessages = uxQueueSpacesAvailable(*id);
+    return (numMessages == 0);
   }
   return false;
 }
