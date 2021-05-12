@@ -106,16 +106,74 @@ bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
   return false;
 }
 
+bool etcpal_queue_reset(etcpal_queue_t* id)
+{
+  if (id)
+  {
+    return xQueueReset(*id);
+  }
+  return false;
+}
+
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
-  UBaseType_t numMessages = uxQueueMessagesWaiting(*id);
-
-  return (numMessages == 0);
+  if(id)
+  {
+    return (uxQueueMessagesWaiting(*id) == 0);
+  }
+  return false;
 }
 
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 {
-  UBaseType_t numMessages = uxQueueMessagesWaitingFromISR(*id);
+  if(id)
+  {
+    return xQueueIsQueueEmptyFromISR(*id);
+  }
+  return false;
+}
 
-  return (numMessages == 0);
+bool etcpal_queue_is_full(const etcpal_queue_t* id)
+{
+  if(id)
+  {
+    return (uxQueueSpacesAvailable(*id) == 0);
+  }
+  return false;
+}
+
+bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
+{
+  if(id)
+  {
+    return xQueueIsQueueFullFromISR(*id);
+  }
+  return false;
+}
+
+size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
+{
+  if(id)
+  {
+    return uxQueueMessagesWaiting(*id);
+  }
+  return 0;
+}
+
+size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
+{
+  if(id)
+  {
+    return uxQueueMessagesWaitingFromISR(*id);
+  }
+  return 0;
+}
+
+size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
+{
+  if(id)
+  {
+    return uxQueueSpacesAvailable(*id);
+  }
+  return 0;
 }

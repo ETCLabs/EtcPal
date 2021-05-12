@@ -271,6 +271,21 @@ bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
   return true_if_success;
 }
 
+bool etcpal_queue_reset(etcpal_queue_t* id)
+{
+  bool true_if_success = true;
+
+  lock(id);
+
+  id->queue_size = 0;
+
+  id->tail = 0;
+  id->head = 0;
+
+  unlock(id);
+  return true_if_success;
+}
+
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
   bool true_if_empty = false;
@@ -289,4 +304,55 @@ bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
     unlock_from_isr(id);
   }
   return true_if_empty;
+}
+
+bool etcpal_queue_is_full(const etcpal_queue_t* id)
+{
+  bool true_if_full = false;
+  lock(id);
+  true_if_full = (id->queue_size == id->max_queue_size);
+  unlock(id);
+  return true_if_full;
+}
+
+bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
+{
+  bool true_if_full = true;
+  if (lock(id))
+  {
+    true_if_full = (id->queue_size == id->max_queue_size);
+    unlock_from_isr(id);
+  }
+  return true_if_full;
+}
+
+size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
+{
+  size_t size = 0;
+  lock(id);
+  size =  id->queue_size;
+  unlock(id);
+
+  return size;
+}
+
+size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
+{
+  size_t size = 0;
+  if (lock(id))
+  {
+    unlock_from_isr(id);
+  }
+  return size;
+}
+
+size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
+{
+  size_t elements;
+
+  lock(id);
+  elements = id->max_queue_size - id->queue_size;
+  unlock(id);
+
+  return elements;
 }
