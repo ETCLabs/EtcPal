@@ -72,10 +72,10 @@ bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
 bool etcpal_queue_is_full(const etcpal_queue_t* id);
 bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id);
 
-unsigned int etcpal_queue_size(const etcpal_queue_t* id);
-unsigned int etcpal_queue_size_from_isr(const etcpal_queue_t* id);
+size_t etcpal_queue_slots_used(const etcpal_queue_t* id);
+size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id);
 
-unsigned int etcpal_queue_available(const etcpal_queue_t* id);
+size_t etcpal_queue_slots_available(const etcpal_queue_t* id);
 
 #ifdef __cplusplus
 }

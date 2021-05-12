@@ -108,9 +108,9 @@ public:
   bool IsEmptyFromIsr() const;
   bool IsFull() const;
   bool IsFullFromIsr() const;
-  unsigned int Size() const;
-  unsigned int SizeFromIsr() const;
-  unsigned int Available() const;
+  size_t SlotsUsed() const;
+  size_t SlotsUsedFromIsr() const;
+  size_t SlotsAvailable() const;
 
 private:
   etcpal_queue_t queue_{};
@@ -235,31 +235,31 @@ inline bool Queue<T>::IsFullFromIsr() const
   return etcpal_queue_is_full_from_isr(&queue_);
 };
 
-/// @brief Get number of elements stored in queue.
+/// @brief Get number of slots being stored in the queue.
 ///
-/// @return number of elements in queue.
+/// @return number of slots in queue.
 template <class T>
-inline unsigned int Queue<T>::Size() const
+inline size_t Queue<T>::SlotsUsed() const
 {
-  return etcpal_queue_size(&queue_);
+  return etcpal_queue_slots_used(&queue_);
 };
 
-/// @brief Get number of elements stored in queue from an interrupt service routine.
+/// @brief Get number of slots being stored in the queue from an interrupt service routine.
 ///
-/// @return number of elements in queue.
+/// @return number of slots in queue.
 template <class T>
-inline unsigned int Queue<T>::SizeFromIsr() const
+inline size_t Queue<T>::SlotsUsedFromIsr() const
 {
-  return etcpal_queue_size_from_isr(&queue_);
+  return etcpal_queue_slots_used_from_isr(&queue_);
 };
 
-/// @brief Get number of free elements in queue.
+/// @brief Get number of remaining slots in the queue.
 ///
-/// @return number of free elements in queue.
+/// @return number of remaining slots in queue.
 template <class T>
-inline unsigned int Queue<T>::Available() const
+inline size_t Queue<T>::SlotsAvailable() const
 {
-  return etcpal_queue_available(&queue_);
+  return etcpal_queue_slots_available(&queue_);
 };
 
 };  // namespace etcpal

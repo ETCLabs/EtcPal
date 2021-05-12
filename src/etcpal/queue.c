@@ -326,9 +326,9 @@ bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
   return true_if_full;
 }
 
-unsigned int etcpal_queue_size(const etcpal_queue_t* id)
+size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
-  unsigned int size = 0;
+  size_t size = 0;
   lock(id);
   size =  id->queue_size;
   unlock(id);
@@ -336,9 +336,9 @@ unsigned int etcpal_queue_size(const etcpal_queue_t* id)
   return size;
 }
 
-unsigned int etcpal_queue_size_from_isr(const etcpal_queue_t* id)
+size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 {
-  unsigned int size = 0;
+  size_t size = 0;
   if (lock(id))
   {
     unlock_from_isr(id);
@@ -346,9 +346,9 @@ unsigned int etcpal_queue_size_from_isr(const etcpal_queue_t* id)
   return size;
 }
 
-unsigned int etcpal_queue_available(const etcpal_queue_t* id)
+size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
-  unsigned int elements;
+  size_t elements;
 
   lock(id);
   elements = id->max_queue_size - id->queue_size;

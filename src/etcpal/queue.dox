@@ -193,6 +193,14 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
 bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data);
 
 /**
+ * @brief Resets queue to empty state.
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return true: On reset success.
+ * @return false: On reset failure.
+ */
+bool etcpal_queue_reset(const etcpal_queue_t* id);
+
+/**
  * @brief Determine whether a queue is currently empty.
  * @param[in] id Identifier for the queue to check the status of.
  * @return true: The queue is empty.
@@ -211,6 +219,51 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id);
  * @return false: The queue is not empty.
  */
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
+
+/**
+ * @brief Determine whether a queue is currently full.
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return true: The queue is full.
+ * @return false: The queue is not full.
+ */
+bool etcpal_queue_is_full(const etcpal_queue_t* id);
+
+/**
+ * @brief Determine whether a queue is currently full from an interrupt context.
+ *
+ * This function is meaningful on platforms which have a different method for interacting with
+ * queues from an interrupt context.
+ *
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return true: The queue is full.
+ * @return false: The queue is not full.
+ */
+bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id);
+
+/**
+ * @brief Get number of slots being stored in the queue.
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return Number of slots in queue.
+ */
+size_t etcpal_queue_slots_used(const etcpal_queue_t* id);
+
+/**
+ * @brief Get number of slots being stored in the queue from an interrupt context.
+ *
+ * This function is meaningful on platforms which have a different method for interacting with
+ * queues from an interrupt context.
+ *
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return Number of slots in queue.
+ */
+size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id);
+
+/**
+ * @brief Get number of remaining slots in the queue.
+ * @param[in] id Identifier for the queue to check the status of.
+ * @return Number of remaining slots in queue.
+ */
+size_t etcpal_queue_slots_available(const etcpal_queue_t* id);
 
 /*!
  * @}

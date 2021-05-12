@@ -21,7 +21,7 @@
 
 /*************************** Function definitions ****************************/
 
-bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
+bool etcpal_queue_create(etcpal_queue_t* id, size_t max_size, size_t item_size)
 {
   if (id)
   {
@@ -108,50 +108,72 @@ bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
 
 bool etcpal_queue_reset(etcpal_queue_t* id)
 {
-  return xQueueReset(*id);
+  if (id)
+  {
+    return xQueueReset(*id);
+  }
+  return false;
 }
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
-  UBaseType_t numMessages = uxQueueMessagesWaiting(*id);
-
-  return (numMessages == 0);
+  if(id)
+  {
+    return (uxQueueMessagesWaiting(*id) == 0);
+  }
+  return false
 }
 
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 {
-  // UBaseType_t numMessages = uxQueueMessagesWaitingFromISR(*id);
-
-  // return (numMessages == 0);
-  return xQueueIsQueueEmptyFromISR(*id);
+  if(id)
+  {
+    return xQueueIsQueueEmptyFromISR(*id);
+  }
+  return false;
 }
 
 bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
-  UBaseType_t numMessages = uxQueueSpacesAvailable(*id);
-
-  return (numMessages == 0);
+  if(id)
+  {
+    return (uxQueueSpacesAvailable(*id) == 0);
+  }
+  return false;
 }
 
 bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
 {
-  return xQueueIsQueueFullFromISR(*id);
+  if(id)
+  {
+    return xQueueIsQueueFullFromISR(*id);
+  }
+  return false;
 }
 
-unsigned int etcpal_queue_size(const etcpal_queue_t* id)
+size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
-  UBaseType_t numMessages = uxQueueMessagesWaiting(*id);
-  return numMessages;
+  if(id)
+  {
+    return uxQueueMessagesWaiting(*id);
+  }
+  return 0;
 }
 
-unsigned int etcpal_queue_size_from_isr(const etcpal_queue_t* id)
+size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 {
-  UBaseType_t numMessages = uxQueueMessagesWaitingFromISR(*id);
-  return numMessages;
+  if(id)
+  {
+    return uxQueueMessagesWaitingFromISR(*id);
+  }
+  return 0;
 }
 
-unsigned int etcpal_queue_available(const etcpal_queue_t* id)
+size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
-  UBaseType_t numMessages = uxQueueSpacesAvailable(*id);
-  return numMessages;
+  if(id)
+  {
+    return uxQueueSpacesAvailable(*id);
+  }
+  return 0;
 }

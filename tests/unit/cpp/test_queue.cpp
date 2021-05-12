@@ -137,43 +137,43 @@ TEST(etcpal_cpp_queue, can_detect_full)
   TEST_ASSERT_TRUE(q.IsFull());
 }
 
-TEST(etcpal_cpp_queue, can_detect_size)
+TEST(etcpal_cpp_queue, can_detect_slots_used)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char> q(3);
-  TEST_ASSERT_TRUE(q.Size() == 0);
+  TEST_ASSERT_TRUE(q.SlotsUsed() == 0);
 
   unsigned char data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
-  TEST_ASSERT_TRUE(q.Size() == 1);
+  TEST_ASSERT_TRUE(q.SlotsUsed() == 1);
 
   unsigned char receivedData = 0x00;
   TEST_ASSERT_TRUE(q.Receive(receivedData));
-  TEST_ASSERT_TRUE(q.Size() == 0);
+  TEST_ASSERT_TRUE(q.SlotsUsed() == 0);
 
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_TRUE(q.Send(data));
-  TEST_ASSERT_TRUE(q.Size() == 3);
+  TEST_ASSERT_TRUE(q.SlotsUsed() == 3);
 }
 
-TEST(etcpal_cpp_queue, can_detect_available)
+TEST(etcpal_cpp_queue, can_detect_slots_available)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char> q(3);
-  TEST_ASSERT_TRUE(q.Available() == 3);
+  TEST_ASSERT_TRUE(q.SlotsAvailable() == 3);
 
   unsigned char data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
-  TEST_ASSERT_TRUE(q.Available() == 2);
+  TEST_ASSERT_TRUE(q.SlotsAvailable() == 2);
   TEST_ASSERT_TRUE(q.Send(data));
-  TEST_ASSERT_TRUE(q.Available() == 1);
+  TEST_ASSERT_TRUE(q.SlotsAvailable() == 1);
   TEST_ASSERT_TRUE(q.Send(data));
-  TEST_ASSERT_TRUE(q.Available() == 0);
+  TEST_ASSERT_TRUE(q.SlotsAvailable() == 0);
 
   unsigned char receivedData = 0x00;
   TEST_ASSERT_TRUE(q.Receive(receivedData));
-  TEST_ASSERT_TRUE(q.Available() == 1);
+  TEST_ASSERT_TRUE(q.SlotsAvailable() == 1);
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_queue)
@@ -184,8 +184,8 @@ TEST_GROUP_RUNNER(etcpal_cpp_queue)
   RUN_TEST_CASE(etcpal_cpp_queue, can_detect_empty);
   RUN_TEST_CASE(etcpal_cpp_queue, can_detect_reset);
   RUN_TEST_CASE(etcpal_cpp_queue, can_detect_full);
-  RUN_TEST_CASE(etcpal_cpp_queue, can_detect_size);
-  RUN_TEST_CASE(etcpal_cpp_queue, can_detect_available);
+  RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_used);
+  RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_available);
 }
 
 }  // extern "C"
