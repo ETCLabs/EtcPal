@@ -21,7 +21,7 @@
 
 /*************************** Function definitions ****************************/
 
-bool etcpal_queue_create(etcpal_queue_t* id, size_t max_size, size_t item_size)
+bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {
   if (id)
   {
@@ -119,17 +119,13 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
   if(id)
   {
-    UBaseType_t numMessages = uxQueueMessagesWaiting(*id);
-    return (numMessages == 0);
+    return (uxQueueMessagesWaiting(*id) == 0);
   }
-  return false
+  return false;
 }
 
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 {
-  // UBaseType_t numMessages = uxQueueMessagesWaitingFromISR(*id);
-
-  // return (numMessages == 0);
   if(id)
   {
     return xQueueIsQueueEmptyFromISR(*id);
@@ -141,8 +137,7 @@ bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
   if(id)
   {
-    UBaseType_t numMessages = uxQueueSpacesAvailable(*id);
-    return (numMessages == 0);
+    return (uxQueueSpacesAvailable(*id) == 0);
   }
   return false;
 }
