@@ -103,8 +103,14 @@ public:
   template <class Rep, class Period>
   bool Receive(T& data, const std::chrono::duration<Rep, Period>& timeout);
   bool ReceiveFromIsr(T& data);
+  bool Reset();
   bool IsEmpty() const;
   bool IsEmptyFromIsr() const;
+  bool IsFull() const;
+  bool IsFullFromIsr() const;
+  unsigned int Size() const;
+  unsigned int SizeFromIsr() const;
+  unsigned int Available() const;
 
 private:
   etcpal_queue_t queue_{};
@@ -184,6 +190,15 @@ inline bool Queue<T>::ReceiveFromIsr(T& data)
   return etcpal_queue_receive_from_isr(&queue_, &data);
 }
 
+/// @brief Resets queue to empty state.
+///
+/// @return true on success, false otherwise.
+template <class T>
+inline bool Queue<T>::Reset()
+{
+  return etcpal_queue_reset(&queue_);
+}
+
 /// @brief Check if a queue is empty.
 ///
 /// @return true if queue is empty, false otherwise.
@@ -200,6 +215,51 @@ template <class T>
 inline bool Queue<T>::IsEmptyFromIsr() const
 {
   return etcpal_queue_is_empty_from_isr(&queue_);
+};
+
+/// @brief Check if a queue is full.
+///
+/// @return true if queue is full, false otherwise.
+template <class T>
+inline bool Queue<T>::IsFull() const
+{
+  return etcpal_queue_is_full(&queue_);
+};
+
+/// @brief Check if a queue is full from an interrupt service routine.
+///
+/// @return true if queue is full, false otherwise.
+template <class T>
+inline bool Queue<T>::IsFullFromIsr() const
+{
+  return etcpal_queue_is_full_from_isr(&queue_);
+};
+
+/// @brief Get number of elements stored in queue.
+///
+/// @return number of elements in queue.
+template <class T>
+inline unsigned int Queue<T>::Size() const
+{
+  return etcpal_queue_size(&queue_);
+};
+
+/// @brief Get number of elements stored in queue from an interrupt service routine.
+///
+/// @return number of elements in queue.
+template <class T>
+inline unsigned int Queue<T>::SizeFromIsr() const
+{
+  return etcpal_queue_size_from_isr(&queue_);
+};
+
+/// @brief Get number of free elements in queue.
+///
+/// @return number of free elements in queue.
+template <class T>
+inline unsigned int Queue<T>::Available() const
+{
+  return etcpal_queue_available(&queue_);
 };
 
 };  // namespace etcpal

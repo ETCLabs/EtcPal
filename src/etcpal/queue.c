@@ -271,6 +271,21 @@ bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
   return true_if_success;
 }
 
+bool etcpal_queue_reset(etcpal_queue_t* id)
+{
+  bool true_if_success = true;
+
+  lock(id);
+
+  id->queue_size = 0;
+
+  id->tail = 0;
+  id->head = 0;
+
+  unlock(id);
+  return true_if_success;
+}
+
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
   bool true_if_empty = false;
@@ -289,4 +304,57 @@ bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
     unlock_from_isr(id);
   }
   return true_if_empty;
+}
+
+bool etcpal_queue_is_full(const etcpal_queue_t* id)
+{
+  bool true_if_full = false;
+  lock(id);
+  true_if_full = (id->queue_size == id->max_queue_size);
+  unlock(id);
+  return true_if_full;
+}
+
+bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
+{
+  bool true_if_full = true;
+  if (lock(id))
+  {
+    true_if_full = (id->queue_size == id->max_queue_size);
+    unlock_from_isr(id);
+  }
+  return true_if_full;
+}
+
+unsigned int etcpal_queue_size(const etcpal_queue_t* id)
+{
+  unsigned int elements;
+  if(id->tail > id->head)
+  {
+    elements = id->max_queue_size - id->tail + id->head;
+  }
+  else{
+    elements = id->head - id->tail;
+  }
+  return elements;
+}
+
+unsigned int etcpal_queue_size_from_isr(const etcpal_queue_t* id)
+{
+  unsigned int elements;
+  if(id->tail > id->head)
+  {
+    elements = id->max_queue_size - id->tail + id->head;
+  }
+  else{
+    elements = id->head - id->tail;
+  }
+  return elements;
+}
+
+unsigned int etcpal_queue_available(const etcpal_queue_t* id)
+{
+  unsigned int elements;
+  elements = id->max_queue_size - etcpal_queue_size(id);
+  return elements;
 }

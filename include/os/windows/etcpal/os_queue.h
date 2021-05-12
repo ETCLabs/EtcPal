@@ -64,8 +64,19 @@ bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
 bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data);
 
+bool etcpal_queue_reset(etcpal_queue_t* id);
+
 bool etcpal_queue_is_empty(const etcpal_queue_t* id);
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
+
+bool etcpal_queue_is_full(const etcpal_queue_t* id);
+bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id);
+
+unsigned int etcpal_queue_size(const etcpal_queue_t* id);
+unsigned int etcpal_queue_size_from_isr(const etcpal_queue_t* id);
+
+unsigned int etcpal_queue_available(const etcpal_queue_t* id);
+
 
 #ifdef __cplusplus
 }
