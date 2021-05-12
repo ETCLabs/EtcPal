@@ -328,33 +328,31 @@ bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
 
 unsigned int etcpal_queue_size(const etcpal_queue_t* id)
 {
-  unsigned int elements;
-  if(id->tail > id->head)
-  {
-    elements = id->max_queue_size - id->tail + id->head;
-  }
-  else{
-    elements = id->head - id->tail;
-  }
-  return elements;
+  unsigned int size = 0;
+  lock(id);
+  size =  id->queue_size;
+  unlock(id);
+
+  return size;
 }
 
 unsigned int etcpal_queue_size_from_isr(const etcpal_queue_t* id)
 {
-  unsigned int elements;
-  if(id->tail > id->head)
+  unsigned int size = 0;
+  if (lock(id))
   {
-    elements = id->max_queue_size - id->tail + id->head;
+    unlock_from_isr(id);
   }
-  else{
-    elements = id->head - id->tail;
-  }
-  return elements;
+  return size;
 }
 
 unsigned int etcpal_queue_available(const etcpal_queue_t* id)
 {
   unsigned int elements;
-  elements = id->max_queue_size - etcpal_queue_size(id);
+
+  lock(id);
+  elements = id->max_queue_size - id->queue_size;
+  unlock(id);
+
   return elements;
 }
