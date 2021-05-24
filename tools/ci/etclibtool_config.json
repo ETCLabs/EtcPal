@@ -1,0 +1,10 @@
+{
+  "version": {
+    "fileTemplates": {
+      "tools/ci/templates/version.h.in": "include/etcpal/version.h"
+    },
+    "jira": {
+      "project": "ETCPAL"
+    }
+  }
+}

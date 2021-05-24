@@ -2,6 +2,7 @@
 #include "etcpal/thread.h"
 #include "etcpal/sem.h"
 #include <unordered_map>
+#include <cstdio>
 
 static const unsigned large_prime = 115249;
 

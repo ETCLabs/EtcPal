@@ -17,12 +17,12 @@ echo 'Publishing documentation...'
 set -e
 
 # Create a clean working directory for this script.
-cd ${BUILD_SOURCESDIRECTORY}/docs
+cd ${CI_PROJECT_DIR}/docs
 mkdir build
 cd build
 
 # Get the current gh-pages branch
-git clone -b gh-pages https://git@${GH_REPO_REF}
+git clone https://git@${GH_REPO_REF}
 cd ${GH_REPO_NAME}
 
 ##### Configure git.
@@ -35,7 +35,7 @@ git config user.email "noreply.etclabs@etcconnect.com"
 ################################################################################
 ##### Generate the Doxygen code documentation and log the output.          #####
 cd ../..
-python generate_doxygen.py
+python3 generate_doxygen.py
 cd build/${GH_REPO_NAME}
 
 ################################################################################
@@ -52,12 +52,10 @@ if ! git diff-index --quiet HEAD; then
   echo 'Uploading documentation to the gh-pages branch...'
   # Commit the added files with a title and description containing the Azure Pipelines
   # build number and the GitHub commit reference that issued this build.
-  git commit -m "Deploy code docs to GitHub Pages" -m "Azure build: ${BUILD_BUILDNUMBER}" -m "Commit: ${BUILD_SOURCEVERSION}"
+  git commit -m "Deploy code docs to GitHub Pages" -m "Pipeline: ${CI_PIPELINE_ID}" -m "Commit: ${CI_COMMIT_SHA}"
 
   # Force push to the remote gh-pages branch.
-  # The ouput is redirected to /dev/null to hide any sensitive credential data
-  # that might otherwise be exposed.
-  git push --force "https://${GH_REPO_TOKEN}@${GH_REPO_REF}" > /dev/null 2>&1
+  git push --force "https://${GH_REPO_TOKEN}@${GH_REPO_REF}"
 else
   echo 'No documentation changes. Doing nothing.'
 fi

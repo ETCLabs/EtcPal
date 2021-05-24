@@ -1,23 +1,5 @@
 # EtcPal: ETC Platform Abstraction Layer
 
-| Test Platform | Build & Test Status |
-|---------------|:-------------------:|
-| FreeRTOS+lwIP | [![Build & Test Status][freertos-lwip-build-badge]][azure-devops-link] |
-| iOS           | [![Build Status][ios-build-badge]][azure-devops-link] |
-| Linux         | [![Build & Test Status][linux-build-badge]][azure-devops-link] |
-| macOS         | [![Build & Test Status][macos-build-badge]][azure-devops-link] |
-| MQX           | [![Build & Test Status][mqx-build-badge]][azure-devops-link] |
-| Windows       | [![Build & Test Status][win-build-badge]][azure-devops-link] |
-
-[freertos-lwip-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=FreeRTOS%2FlwIP
-[ios-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=iOS
-[linux-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=Linux
-[macos-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=macOS
-[mqx-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=MQX
-[win-build-badge]: https://dev.azure.com/ETCLabs/EtcPal/_apis/build/status/ETCLabs.EtcPal?branchName=develop&stageName=Build%20and%20Test%20EtcPal&jobName=Windows
-[azure-devops-link]: https://dev.azure.com/ETCLabs/EtcPal/_build/latest?definitionId=4&branchName=develop 
-
-
 This repository contains ETC's Platform Abstraction Layer (PAL), which supports other open-source
 libraries by [ETC](http://www.etcconnect.com).
 
@@ -31,7 +13,7 @@ portable. The EtcPal library serves this purpose in two main ways:
 
 ## Docs
 
-EtcPal's API documentation is located [here](https://etclabs.github.io/EtcPal/docs/head). The
+EtcPal's API documentation is located [here](https://etclabs.github.io/EtcPalDocs). The
 "modules" entry on the sidebar provides module-by-module documentation.
 
 ## Platform Ports
@@ -51,7 +33,7 @@ functionality still available.
 
 EtcPal is typically included as a dependency by other software libraries. However, if you would
 like to build EtcPal on its own, there are instructions in the
-[documentation](https://etclabs.github.io/EtcPal).
+[documentation](https://etclabs.github.io/EtcPalDocs).
 
 ## License
 

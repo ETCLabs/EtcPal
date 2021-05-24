@@ -51,6 +51,7 @@
 
 #define NUM_TEST_PACKETS 1000
 
+etcpal_error_t      etcpal_init_result;
 static unsigned int v4_netint;
 bool                run_ipv4_mcast_test;
 #if ETCPAL_TEST_IPV6
@@ -150,6 +151,13 @@ TEST_GROUP(socket_integration_udp);
 
 TEST_SETUP(socket_integration_udp)
 {
+  if (etcpal_init_result != kEtcPalErrOk)
+  {
+    char buf[100];
+    sprintf(buf, "This test could not be run because etcpal_init() failed with error '%s'", etcpal_strerror(etcpal_init_result));
+    TEST_FAIL_MESSAGE(buf);
+  }
+
   send_sock = ETCPAL_SOCKET_INVALID;
   for (size_t i = 0; i < ETCPAL_BULK_POLL_TEST_NUM_SOCKETS; ++i)
     recv_socks[i] = ETCPAL_SOCKET_INVALID;
@@ -483,14 +491,17 @@ TEST(socket_integration_udp, bulk_poll)
 
 TEST_GROUP_RUNNER(socket_integration_udp)
 {
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS));
+  etcpal_init_result = etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS);
 
+  if (etcpal_init_result == kEtcPalErrOk)
+  {
 #if !ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS
-  select_network_interface_v4();
+    select_network_interface_v4();
 #if ETCPAL_TEST_IPV6
-  select_network_interface_v6();
+    select_network_interface_v6();
 #endif
 #endif
+  }
 
   RUN_TEST_CASE(socket_integration_udp, unicast_udp_ipv4);
   if (run_ipv4_mcast_test)
@@ -503,5 +514,6 @@ TEST_GROUP_RUNNER(socket_integration_udp)
 
   RUN_TEST_CASE(socket_integration_udp, bulk_poll);
 
-  etcpal_deinit(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS);
+  if (etcpal_init_result == kEtcPalErrOk)
+    etcpal_deinit(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS);
 }

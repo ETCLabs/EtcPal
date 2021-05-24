@@ -541,12 +541,9 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
         break;
       }
     }
-    return kEtcPalErrOk;
   }
-  else
-  {
-    return kEtcPalErrSys;
-  }
+
+  return kEtcPalErrOk;
 }
 
 void init_routing_table_entry(RoutingTableEntry* entry)

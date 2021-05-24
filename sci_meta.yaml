@@ -1,4 +1,4 @@
-title: GITHUB_EtcPal
+title: EtcPal
 summary: ETC's Platform Abstraction Layer (PAL)
 tags: [lib, github, open source, embedded]
 exclude_from_index: false
@@ -6,5 +6,5 @@ docs:
   title: EtcPal
   helix_path:
   target_group: libraries
-  external_url: https://etclabs.github.io/EtcPal/
+  external_url: https://etclabs.github.io/EtcPalDocs/
   tags: [lib, github, open source, embedded]

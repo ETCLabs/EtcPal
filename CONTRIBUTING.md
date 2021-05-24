@@ -8,7 +8,7 @@ Thanks for your interest in contributing code to the EtcPal library!
 
 ### Building and Debugging the Library
 
-Check out the relevant [docs page](https://etclabs.github.io/EtcPal/docs/head/building_etcpal.html)
+Check out the relevant [docs page](https://etclabs.github.io/EtcPalDocs/docs/head/building_etcpal.html)
 for how to build EtcPal.
 
 When configuring with CMake, you will want to define `ETCPAL_BUILD_TESTS=ON` so that you can check
