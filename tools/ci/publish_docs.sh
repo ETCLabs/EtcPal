@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Adapted from the EXTREMELY helpful example script by Jeroen de Bruijn,
 # available here: https://gist.github.com/vidavidorra/548ffbcdae99d752da02
@@ -32,11 +32,16 @@ git config --global push.default simple
 git config user.name "ETCLabs CI"
 git config user.email "noreply.etclabs@etcconnect.com"
 
+### Remove all existing files (except the .git directory).
+git rm -rf .
+git clean -fxd
+git reset
+
 ################################################################################
 ##### Generate the Doxygen code documentation and log the output.          #####
-cd ../..
-python3 generate_doxygen.py
-cd build/${GH_REPO_NAME}
+cd ../../..
+etclibtool docs -c tools/ci/etclibtool_config.json -o docs/build/EtcPalDocs . 1.9.1
+cd docs/build/${GH_REPO_NAME}
 
 ################################################################################
 ##### Upload the documentation to the gh-pages branch of the repository.   #####
