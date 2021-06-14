@@ -37,11 +37,11 @@ TEST(etcpal_cpp_uuid, default_constructor_works)
   TEST_ASSERT_TRUE(uuid.IsNull());
 }
 
-TEST(etcpal_cpp_uuid, field_constructor_works)
+TEST(etcpal_cpp_uuid, data_constructor_works)
 {
-  const etcpal::Uuid            uuid(0x00001111, 0x2222, 0x3333, {0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb});
   const std::array<uint8_t, 16> uuid_data{0x00, 0x00, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33,
                                           0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb};
+  const etcpal::Uuid            uuid(uuid_data.data());
 
   TEST_ASSERT_EQUAL_UINT8_ARRAY(uuid.data(), uuid_data.data(), 16);
   TEST_ASSERT_EQUAL_UINT32(uuid.time_low(), 0x00001111);
@@ -147,7 +147,7 @@ TEST(etcpal_cpp_uuid, generates_v1_correctly)
   // 1.
   TEST_ASSERT_EQUAL_UINT8((v1.get().data[6] & 0xf0u), 0x10u);
   TEST_ASSERT_EQUAL_UINT8((v1.get().data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL(v1.version(), etcpal::UuidVersion::V1);
+  TEST_ASSERT_EQUAL(v1.version(), etcpal::UuidVersion::kV1);
 }
 
 TEST(etcpal_cpp_uuid, generates_v3_correctly)
@@ -169,11 +169,11 @@ TEST(etcpal_cpp_uuid, generates_v3_correctly)
   TEST_ASSERT_TRUE(ns1_name1 == ns1_name1_dup);
 
   // Make sure the version is correct
-  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::V3);
-  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::V3);
+  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::kV3);
+  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::kV3);
 
   // Make sure the Variant Version bits are correct.
   // We should always have Variant 1, Version 3.
@@ -203,7 +203,7 @@ TEST(etcpal_cpp_uuid, generates_v4_correctly)
   // 4.
   TEST_ASSERT_EQUAL_UINT8((v4.get().data[6] & 0xf0u), 0x40u);
   TEST_ASSERT_EQUAL_UINT8((v4.get().data[8] & 0xc0u), 0x80u);
-  TEST_ASSERT_EQUAL(v4.version(), etcpal::UuidVersion::V4);
+  TEST_ASSERT_EQUAL(v4.version(), etcpal::UuidVersion::kV4);
 }
 
 TEST(etcpal_cpp_uuid, generates_v5_correctly)
@@ -225,11 +225,11 @@ TEST(etcpal_cpp_uuid, generates_v5_correctly)
   TEST_ASSERT_TRUE(ns1_name1 == ns1_name1_dup);
 
   // Make sure the version is correct
-  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::V5);
-  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::V5);
+  TEST_ASSERT_EQUAL(ns1_name1.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns1_name1_dup.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns1_name2.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns2_name1.version(), etcpal::UuidVersion::kV5);
+  TEST_ASSERT_EQUAL(ns2_name2.version(), etcpal::UuidVersion::kV5);
 
   // Make sure the Variant Version bits are correct.
   // We should always have Variant 1, Version 5.
@@ -348,7 +348,7 @@ TEST(etcpal_cpp_uuid, accessors_work)
 TEST_GROUP_RUNNER(etcpal_cpp_uuid)
 {
   RUN_TEST_CASE(etcpal_cpp_uuid, default_constructor_works);
-  RUN_TEST_CASE(etcpal_cpp_uuid, field_constructor_works);
+  RUN_TEST_CASE(etcpal_cpp_uuid, data_constructor_works);
   RUN_TEST_CASE(etcpal_cpp_uuid, copy_constructors_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, assignment_operators_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, to_string_works);

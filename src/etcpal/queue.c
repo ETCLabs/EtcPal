@@ -167,7 +167,7 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
   }
 
   // Circular buffers need space for an extra item
-  id->node_list = calloc(sizeof(_queue_node_t), size + 1);
+  id->node_list = calloc(sizeof(EtcPalQueueNode), size + 1);
   if (id->node_list)
   {
     for (unsigned item_index = 0; item_index < size + 1; item_index++)
@@ -330,7 +330,7 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
   size_t size = 0;
   lock(id);
-  size =  id->queue_size;
+  size = id->queue_size;
   unlock(id);
 
   return size;
@@ -348,10 +348,8 @@ size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
-  size_t elements;
-
   lock(id);
-  elements = id->max_queue_size - id->queue_size;
+  size_t elements = id->max_queue_size - id->queue_size;
   unlock(id);
 
   return elements;

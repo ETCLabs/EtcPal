@@ -162,7 +162,7 @@ constexpr Error::operator bool() const noexcept
 /// @brief Construct an Error containing #kEtcPalErrOk.
 constexpr Error Error::Ok() noexcept
 {
-  return Error(kEtcPalErrOk);
+  return {kEtcPalErrOk};
 }
 
 /// @addtogroup etcpal_cpp_error
@@ -217,7 +217,7 @@ constexpr bool operator!=(const Error& a, const Error& b)
 class BadExpectedAccess : public std::logic_error
 {
 public:
-  explicit BadExpectedAccess(Error res);
+  explicit BadExpectedAccess(Error err);
   Error error() const noexcept;
 
 private:
@@ -253,16 +253,19 @@ namespace detail
 // This method of implementing Expected's storage, with copy and move functionality, was borrowed
 // with love from a generic header-only expected implementation by martinmoene:
 // https://github.com/martinmoene/expected-lite
+// There are some NOLINT directives since this class does some tricky unexpected C++ stuff.
 
 template <typename T>
-class ExpectedStorageImpl
+class ExpectedStorageImpl  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
   using ValueType = T;
 
   // Do not construct or destruct members on construction or destruction
-  ExpectedStorageImpl() {}
-  ~ExpectedStorageImpl() {}
+  ExpectedStorageImpl() {}   // NOLINT(cppcoreguidelines-pro-type-member-init,modernize-use-equals-default)
+  ~ExpectedStorageImpl() {}  // NOLINT(modernize-use-equals-default)
+
+  // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
   explicit ExpectedStorageImpl(bool has_value) : has_value_(has_value) {}
 
   void ConstructValue(const ValueType& v) { new (&value_) ValueType(v); }
@@ -287,8 +290,8 @@ private:
   bool has_value_{false};
   union
   {
-    ValueType      value_;
-    etcpal_error_t error_;
+    ValueType      value_;  // NOLINT(readability-identifier-naming)
+    etcpal_error_t error_;  // NOLINT(readability-identifier-naming)
   };
 };
 
@@ -300,6 +303,7 @@ private:
 // specializations, for (copyable and movable), (copyable and not moveable), and (moveable and not
 // copyable) respectively.
 template <typename T, bool IsCopyConstructible, bool IsMoveConstructible>
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ExpectedStorage : public ExpectedStorageImpl<T>
 {
 public:
@@ -313,6 +317,7 @@ public:
 };
 
 template <typename T>
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ExpectedStorage<T, true, true> : public ExpectedStorageImpl<T>
 {
 public:
@@ -339,6 +344,7 @@ public:
 };
 
 template <typename T>
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ExpectedStorage<T, true, false> : public ExpectedStorageImpl<T>
 {
 public:
@@ -359,6 +365,7 @@ public:
 };
 
 template <typename T>
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class ExpectedStorage<T, false, true> : public ExpectedStorageImpl<T>
 {
 public:
@@ -466,7 +473,7 @@ public:
 /// // Conversion contains the successful conversion result, or "0" if the conversion failed.
 /// @endcode
 template <typename T>
-class Expected
+class Expected  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 private:
   template <typename>
@@ -850,7 +857,7 @@ constexpr Error Expected<T>::error() const noexcept
 template <typename T1, typename T2>
 constexpr bool operator==(const Expected<T1>& x, const Expected<T2>& y)
 {
-  return bool(x) != bool(y) ? false : bool(x) == false ? x.error_code() == y.error_code() : *x == *y;
+  return bool(x) != bool(y) ? false : !bool(x) ? x.error_code() == y.error_code() : *x == *y;
 }
 
 template <typename T1, typename T2>

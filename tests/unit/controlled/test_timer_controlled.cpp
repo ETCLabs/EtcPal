@@ -20,11 +20,11 @@
 #include "etcpal/timer.h"
 #include "etcpal/cpp/timer.h"
 #include "unity_fixture.h"
-#include "fff.h"
+#include "etc_fff_wrapper.h"
 
 extern "C" {
 
-FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
+ETC_FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
 
 TEST_GROUP(timer_controlled);
 

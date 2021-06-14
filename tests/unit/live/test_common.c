@@ -19,7 +19,7 @@
 
 #include "etcpal/common.h"
 #include "unity_fixture.h"
-#include "fff.h"
+#include "etc_fff_wrapper.h"
 
 #if !ETCPAL_NO_NETWORKING_SUPPORT
 #include "etcpal/netint.h"
@@ -62,7 +62,7 @@ TEST(etcpal_common, netint_double_init_works)
   etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 
   // After 2 inits and one deinit, we should still be able to make valid calls to the module.
-  unsigned int def_netint;
+  unsigned int def_netint = 0;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_netint));
 
   etcpal_deinit(ETCPAL_FEATURE_NETINTS);
@@ -70,7 +70,7 @@ TEST(etcpal_common, netint_double_init_works)
 #endif
 
 // A shim from the etcpal_log module to fff.
-FAKE_VOID_FUNC(common_test_log_callback, void*, const EtcPalLogStrings*);
+ETC_FAKE_VOID_FUNC(common_test_log_callback, void*, const EtcPalLogStrings*);
 
 // Test multiple calls of etcpal_init() for the log module.
 TEST(etcpal_common, log_double_init_works)

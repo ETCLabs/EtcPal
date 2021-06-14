@@ -44,9 +44,9 @@ namespace etcpal
 /// @brief Indicates an IP address family, or an invalid IP address.
 enum class IpAddrType
 {
-  Invalid = kEtcPalIpTypeInvalid,
-  V4 = kEtcPalIpTypeV4,
-  V6 = kEtcPalIpTypeV6
+  kInvalid = kEtcPalIpTypeInvalid,
+  kV4 = kEtcPalIpTypeV4,
+  kV6 = kEtcPalIpTypeV6
 };
 
 /// @ingroup etcpal_cpp_inet
@@ -161,12 +161,12 @@ ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalIpAddr& IpAddr::get() noexcept
 /// See etcpal_ip_to_string() for more information.
 inline std::string IpAddr::ToString() const
 {
-  char str_buf[ETCPAL_IP_STRING_BYTES];
-  auto result = etcpal_ip_to_string(&addr_, str_buf);
+  std::array<char, ETCPAL_IP_STRING_BYTES> str_buf;  // NOLINT(cppcoreguidelines-pro-type-member-init)
+
+  auto result = etcpal_ip_to_string(&addr_, str_buf.data());
   if (result == kEtcPalErrOk)
-    return str_buf;
-  else
-    return std::string();
+    return {str_buf.data()};
+  return {};
 }
 
 /// @brief Get the raw 32-bit representation of an IPv4 address.
@@ -195,7 +195,7 @@ constexpr const uint8_t* IpAddr::v6_data() const noexcept
 inline std::array<uint8_t, ETCPAL_IPV6_BYTES> IpAddr::ToV6Array() const
 {
   // RVO should hopefully make this only a single copy
-  std::array<uint8_t, ETCPAL_IPV6_BYTES> arr;
+  std::array<uint8_t, ETCPAL_IPV6_BYTES> arr;  // NOLINT(cppcoreguidelines-pro-type-member-init)
   std::memcpy(arr.data(), ETCPAL_IP_V6_ADDRESS(&addr_), ETCPAL_IPV6_BYTES);
   return arr;
 }
@@ -329,7 +329,7 @@ inline IpAddr IpAddr::FromString(const std::string& ip_str) noexcept
 /// See etcpal_ip_set_wildcard() for more information.
 inline IpAddr IpAddr::WildcardV4() noexcept
 {
-  return Wildcard(IpAddrType::V4);
+  return Wildcard(IpAddrType::kV4);
 }
 
 /// @brief Construct a wildcard IPv6 address.
@@ -337,7 +337,7 @@ inline IpAddr IpAddr::WildcardV4() noexcept
 /// See etcpal_ip_set_wildcard() for more information.
 inline IpAddr IpAddr::WildcardV6() noexcept
 {
-  return Wildcard(IpAddrType::V6);
+  return Wildcard(IpAddrType::kV6);
 }
 
 /// @brief Construct a wildcard address of the type specified.
@@ -355,7 +355,7 @@ inline IpAddr IpAddr::Wildcard(IpAddrType type) noexcept
 /// See etcpal_ip_mask_from_length() for more information.
 inline IpAddr IpAddr::NetmaskV4(unsigned int mask_length) noexcept
 {
-  return Netmask(IpAddrType::V4, mask_length);
+  return Netmask(IpAddrType::kV4, mask_length);
 }
 
 /// @brief Construct an IPv6 netmask given a length in bits.
@@ -363,7 +363,7 @@ inline IpAddr IpAddr::NetmaskV4(unsigned int mask_length) noexcept
 /// See etcpal_ip_mask_from_length() for more information.
 inline IpAddr IpAddr::NetmaskV6(unsigned int mask_length) noexcept
 {
-  return Netmask(IpAddrType::V6, mask_length);
+  return Netmask(IpAddrType::kV6, mask_length);
 }
 
 /// @brief Construct a netmask of the type specifed given a length in bits.
@@ -502,10 +502,9 @@ inline std::string SockAddr::ToString() const
 {
   if (ETCPAL_IP_IS_V4(&addr_.ip))
     return ip().ToString() + ':' + std::to_string(addr_.port);
-  else if (ETCPAL_IP_IS_V6(&addr_.ip))
+  if (ETCPAL_IP_IS_V6(&addr_.ip))
     return '[' + ip().ToString() + "]:" + std::to_string(addr_.port);
-  else
-    return std::string();
+  return {};
 }
 
 /// @brief Get the IP address from the SockAddr.
@@ -546,7 +545,7 @@ constexpr const uint8_t* SockAddr::v6_data() const noexcept
 inline std::array<uint8_t, ETCPAL_IPV6_BYTES> SockAddr::ToV6Array() const
 {
   // RVO should hopefully make this only a single copy
-  std::array<uint8_t, ETCPAL_IPV6_BYTES> arr;
+  std::array<uint8_t, ETCPAL_IPV6_BYTES> arr;  // NOLINT(cppcoreguidelines-pro-type-member-init)
   std::memcpy(arr.data(), ETCPAL_IP_V6_ADDRESS(&addr_.ip), ETCPAL_IPV6_BYTES);
   return arr;
 }
@@ -726,9 +725,9 @@ ETCPAL_CONSTEXPR_14_OR_INLINE EtcPalMacAddr& MacAddr::get() noexcept
 /// See etcpal_mac_to_string() for more information.
 inline std::string MacAddr::ToString() const
 {
-  char str_buf[ETCPAL_MAC_STRING_BYTES];
-  etcpal_mac_to_string(&addr_, str_buf);
-  return str_buf;
+  std::array<char, ETCPAL_MAC_STRING_BYTES> str_buf;  // NOLINT(cppcoreguidelines-pro-type-member-init)
+  etcpal_mac_to_string(&addr_, str_buf.data());
+  return {str_buf.data()};
 }
 
 /// @brief Get the raw 6-byte array representation of a MAC address.
@@ -744,7 +743,7 @@ constexpr const uint8_t* MacAddr::data() const noexcept
 inline std::array<uint8_t, ETCPAL_MAC_BYTES> MacAddr::ToArray() const noexcept
 {
   // RVO should hopefully make this only a single copy
-  std::array<uint8_t, ETCPAL_MAC_BYTES> arr;
+  std::array<uint8_t, ETCPAL_MAC_BYTES> arr;  // NOLINT(cppcoreguidelines-pro-type-member-init)
   std::memcpy(arr.data(), addr_.data, ETCPAL_MAC_BYTES);
   return arr;
 }

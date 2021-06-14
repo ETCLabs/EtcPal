@@ -19,6 +19,7 @@
 
 #include "etcpal/queue.h"
 
+#include <stdint.h>
 #include "etcpal/timer.h"
 #include "unity_fixture.h"
 
@@ -37,12 +38,12 @@ TEST(etcpal_queue, can_send_and_receive)
   etcpal_queue_t queue;
 
   // Create queue for 10 chars
-  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 10, sizeof(char)));
-  char data = 0xDE;
+  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 10, sizeof(uint8_t)));
+  uint8_t data = 0xDE;
   TEST_ASSERT_TRUE(etcpal_queue_send(&queue, &data));
-  char receivedData;
-  TEST_ASSERT_TRUE(etcpal_queue_receive(&queue, &receivedData));
-  TEST_ASSERT_EQUAL(data, receivedData);
+  uint8_t received_data = 0;
+  TEST_ASSERT_TRUE(etcpal_queue_receive(&queue, &received_data));
+  TEST_ASSERT_EQUAL(data, received_data);
   etcpal_queue_destroy(&queue);
 }
 
@@ -51,8 +52,8 @@ TEST(etcpal_queue, will_timeout_on_send)
   etcpal_queue_t queue;
 
   // Create queue for 3 chars
-  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 3, sizeof(char)));
-  char data = 0xDE;
+  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 3, sizeof(uint8_t)));
+  uint8_t data = 0xDE;
   TEST_ASSERT_TRUE(etcpal_queue_timed_send(&queue, &data, 0));
   data = 0xAD;
   TEST_ASSERT_TRUE(etcpal_queue_timed_send(&queue, &data, 0));
@@ -84,23 +85,23 @@ TEST(etcpal_queue, will_timeout_on_receive)
   etcpal_queue_t queue;
 
   // Create queue for 3 chars
-  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 3, sizeof(char)));
-  char data = 0xDE;
+  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 3, sizeof(uint8_t)));
+  uint8_t data = 0xDE;
   TEST_ASSERT_TRUE(etcpal_queue_timed_send(&queue, &data, 0));
-  char receivedData = 0x00;
-  TEST_ASSERT_TRUE(etcpal_queue_timed_receive(&queue, &receivedData, 10));
+  uint8_t received_data = 0x00;
+  TEST_ASSERT_TRUE(etcpal_queue_timed_receive(&queue, &received_data, 10));
 
 #if ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS
   EtcPalTimer timer;
   etcpal_timer_start(&timer, 100);
 
-  TEST_ASSERT_FALSE(etcpal_queue_timed_receive(&queue, &receivedData, 10));
+  TEST_ASSERT_FALSE(etcpal_queue_timed_receive(&queue, &received_data, 10));
 
   // An unfortunately necessary heuristic - we assert that at least half the specified time has
   // gone by, to account for OS slop.
   TEST_ASSERT_GREATER_THAN_UINT32(5, etcpal_timer_elapsed(&timer));
 #else
-  TEST_ASSERT_FALSE(etcpal_queue_timed_receive(&queue, &receivedData, 0));
+  TEST_ASSERT_FALSE(etcpal_queue_timed_receive(&queue, &received_data, 0));
 #endif
 
   etcpal_queue_destroy(&queue);
@@ -111,10 +112,10 @@ TEST(etcpal_queue, can_detect_empty)
   etcpal_queue_t queue;
 
   // Create queue for 3 chars
-  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 4, sizeof(char)));
+  TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 4, sizeof(uint8_t)));
   TEST_ASSERT_TRUE(etcpal_queue_is_empty(&queue));
 
-  char data = 0xDE;
+  uint8_t data = 0xDE;
   TEST_ASSERT_TRUE(etcpal_queue_timed_send(&queue, &data, 0));
   TEST_ASSERT_FALSE(etcpal_queue_is_empty(&queue));
 

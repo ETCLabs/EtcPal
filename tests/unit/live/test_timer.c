@@ -38,10 +38,9 @@ TEST_TEAR_DOWN(etcpal_timer)
 
 TEST(etcpal_timer, getms_gets_increasing_values)
 {
-  uint32_t t1, t2;
-  t1 = etcpal_getms();
+  uint32_t t1 = etcpal_getms();
   etcpal_thread_sleep(10);
-  t2 = etcpal_getms();
+  uint32_t t2 = etcpal_getms();
 
   TEST_ASSERT_NOT_EQUAL(t1, 0u);
   TEST_ASSERT_NOT_EQUAL(t2, 0u);
@@ -57,9 +56,9 @@ TEST(etcpal_timer, elapsed_since_works)
 
 TEST(etcpal_timer, timers_report_expired_properly)
 {
-  EtcPalTimer t1, t2;
-
+  EtcPalTimer t1;
   etcpal_timer_start(&t1, 0);
+  EtcPalTimer t2;
   etcpal_timer_start(&t2, 100);
 
   // A timer with a timeout of 0 should start expired.

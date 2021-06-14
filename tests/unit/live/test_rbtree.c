@@ -25,7 +25,7 @@
 
 #include "etcpal/common.h"
 #include "unity_fixture.h"
-#include "fff.h"
+#include "etc_fff_wrapper.h"
 
 // Disable sprintf() warning on Windows/MSVC
 #ifdef _MSC_VER
@@ -49,9 +49,9 @@ static void          populate_int_arrays();
 static void          initialize_tree_with_random_even_ints(EtcPalRbTree* self);
 static void          test_bound(int is_lower_bound);
 
-FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
-FAKE_VOID_FUNC(node_dealloc, EtcPalRbNode*);
-FAKE_VOID_FUNC(clear_func, const EtcPalRbTree*, EtcPalRbNode*);
+ETC_FAKE_VALUE_FUNC(EtcPalRbNode*, node_alloc);
+ETC_FAKE_VOID_FUNC(node_dealloc, EtcPalRbNode*);
+ETC_FAKE_VOID_FUNC(clear_func, const EtcPalRbTree*, EtcPalRbNode*);
 
 // Very very dumb "allocation" of nodes but all we need for these tests - each call returns the
 // next one from the array, freeing does nothing.
@@ -103,7 +103,7 @@ void initialize_tree_with_random_even_ints(EtcPalRbTree* self)
 }
 
 /* Pass in 0 to test upper_bound, or 1 to test lower_bound. */
-void test_bound(int is_lower_bound)
+void test_bound(int is_lower_bound)  // NOLINT(readability-function-cognitive-complexity)
 {
   // Initialize the tree and iterator. Randomly initialize the tree with even numbers between 0 and 98 inclusive.
   EtcPalRbTree tree;
@@ -386,7 +386,6 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
   // Get the height of the tree and compare it against the theoretical maximum.
   EtcPalRbIter iter;
   size_t       max_height = 0;
-  size_t       theoretical_max_height;
   TEST_ASSERT_NOT_NULL(etcpal_rbiter_init(&iter));
   TEST_ASSERT_NOT_NULL(etcpal_rbiter_first(&iter, &tree));
   do
@@ -395,8 +394,10 @@ TEST(etcpal_rbtree, max_height_is_within_bounds)
       max_height = iter.top;
   } while (NULL != etcpal_rbiter_next(&iter));
   max_height += 1;
+
   // http://www.doctrina.org/maximum-height-of-red-black-tree.html
-  theoretical_max_height = 2 * (size_t)(log(INT_ARRAY_SIZE + 1) / log(2));
+  size_t theoretical_max_height = 2 * (size_t)(log(INT_ARRAY_SIZE + 1) / log(2));
+
   TEST_ASSERT_LESS_OR_EQUAL_UINT(theoretical_max_height, max_height);
 }
 
