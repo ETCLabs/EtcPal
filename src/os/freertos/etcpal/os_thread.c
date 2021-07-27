@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/thread.h"
+#include "freertos_timed_wait.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
@@ -79,8 +80,7 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
   if (!id)
     return kEtcPalErrInvalid;
 
-  TickType_t ticks_to_wait = (timeout_ms < 0 ? portMAX_DELAY : pdMS_TO_TICKS(timeout_ms));
-  if (pdTRUE == xSemaphoreTake(id->sig, ticks_to_wait))
+  if (pdTRUE == xSemaphoreTake(id->sig, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms)))
   {
     vSemaphoreDelete(id->sig);
     id->sig = NULL;

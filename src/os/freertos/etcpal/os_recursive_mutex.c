@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/recursive_mutex.h"
+#include "freertos_timed_wait.h"
 
 bool etcpal_recursive_mutex_create(etcpal_recursive_mutex_t* id)
 {
@@ -50,7 +51,7 @@ bool etcpal_recursive_mutex_timed_lock(etcpal_recursive_mutex_t* id, int timeout
 {
   if (id && *id)
   {
-    return (pdTRUE == xSemaphoreTakeRecursive((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
+    return (pdTRUE == xSemaphoreTakeRecursive((SemaphoreHandle_t)*id, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms)));
   }
   return false;
 }

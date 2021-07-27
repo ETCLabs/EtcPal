@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/sem.h"
+#include "freertos_timed_wait.h"
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
@@ -50,7 +51,7 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
   if (id && *id)
   {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms)));
   }
   return false;
 }

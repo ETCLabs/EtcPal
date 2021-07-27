@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/queue.h"
+#include "freertos_timed_wait.h"
 
 /*************************** Function definitions ****************************/
 
@@ -52,8 +53,7 @@ bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_m
 {
   if (id)
   {
-    TickType_t ticks_to_wait = pdMS_TO_TICKS(timeout_ms);
-    BaseType_t status = xQueueSendToBack(*id, data, ticks_to_wait);
+    BaseType_t status = xQueueSendToBack(*id, data, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms));
     return (status == pdPASS);
   }
   return false;
@@ -85,7 +85,7 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 {
   if (id)
   {
-    BaseType_t status = xQueueReceive(*id, data, pdMS_TO_TICKS(timeout_ms));
+    BaseType_t status = xQueueReceive(*id, data, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms));
     return (status == pdPASS);
   }
   return false;
@@ -117,7 +117,7 @@ bool etcpal_queue_reset(etcpal_queue_t* id)
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
-  if(id)
+  if (id)
   {
     return (uxQueueMessagesWaiting(*id) == 0);
   }
@@ -126,7 +126,7 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 {
-  if(id)
+  if (id)
   {
     return xQueueIsQueueEmptyFromISR(*id);
   }
@@ -135,7 +135,7 @@ bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
-  if(id)
+  if (id)
   {
     return (uxQueueSpacesAvailable(*id) == 0);
   }
@@ -144,7 +144,7 @@ bool etcpal_queue_is_full(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
 {
-  if(id)
+  if (id)
   {
     return xQueueIsQueueFullFromISR(*id);
   }
@@ -153,7 +153,7 @@ bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
-  if(id)
+  if (id)
   {
     return uxQueueMessagesWaiting(*id);
   }
@@ -162,7 +162,7 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 {
-  if(id)
+  if (id)
   {
     return uxQueueMessagesWaitingFromISR(*id);
   }
@@ -171,7 +171,7 @@ size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
-  if(id)
+  if (id)
   {
     return uxQueueSpacesAvailable(*id);
   }

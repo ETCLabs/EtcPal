@@ -19,6 +19,7 @@
 
 #include "etcpal/rwlock.h"
 #include <task.h>
+#include "freertos_timed_wait.h"
 
 /*********************** Private function prototypes *************************/
 
@@ -76,7 +77,7 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
   if (!id || !id->valid)
     return false;
 
-  if (pdTRUE == xSemaphoreTake(id->sem, pdMS_TO_TICKS(timeout_ms)))
+  if (pdTRUE == xSemaphoreTake(id->sem, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms)))
   {
     // Add one to the reader count
     reader_atomic_increment(id);

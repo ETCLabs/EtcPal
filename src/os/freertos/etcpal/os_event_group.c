@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/event_group.h"
+#include "freertos_timed_wait.h"
 
 bool etcpal_event_group_create(etcpal_event_group_t* id)
 {
@@ -46,7 +47,8 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
   if (id && *id)
   {
     return xEventGroupWaitBits(*id, bits, (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR) ? pdTRUE : pdFALSE,
-                               (flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL) ? pdTRUE : pdFALSE, pdMS_TO_TICKS(timeout_ms));
+                               (flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL) ? pdTRUE : pdFALSE,
+                               ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms));
   }
   return 0;
 }

@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/signal.h"
+#include "freertos_timed_wait.h"
 
 bool etcpal_signal_create(etcpal_signal_t* id)
 {
@@ -50,7 +51,7 @@ bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
 {
   if (id && *id)
   {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms)));
   }
   return false;
 }

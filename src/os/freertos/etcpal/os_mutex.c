@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/mutex.h"
+#include "freertos_timed_wait.h"
 
 bool etcpal_mutex_create(etcpal_mutex_t* id)
 {
@@ -50,7 +51,7 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {
   if (id && *id)
   {
-    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, pdMS_TO_TICKS(timeout_ms)));
+    return (pdTRUE == xSemaphoreTake((SemaphoreHandle_t)*id, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms)));
   }
   return false;
 }
