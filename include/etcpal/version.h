@@ -34,7 +34,7 @@
 #define ETCPAL_VERSION_MAJOR 0
 #define ETCPAL_VERSION_MINOR 4
 #define ETCPAL_VERSION_PATCH 0
-#define ETCPAL_VERSION_BUILD 7
+#define ETCPAL_VERSION_BUILD 8
 /**
  * @}
  */
@@ -43,8 +43,8 @@
  * @name EtcPal version strings
  * @{
  */
-#define ETCPAL_VERSION_STRING "0.4.0.7"
-#define ETCPAL_VERSION_DATESTR "24.May.2021"
+#define ETCPAL_VERSION_STRING "0.4.0.8"
+#define ETCPAL_VERSION_DATESTR "27.Jul.2021"
 #define ETCPAL_VERSION_COPYRIGHT "Copyright 2021 ETC Inc."
 #define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
 /**
