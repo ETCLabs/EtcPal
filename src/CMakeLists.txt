@@ -27,6 +27,7 @@ set(ETCPAL_CORE_SOURCES
   ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
   ${ETCPAL_ROOT}/include/etcpal/common.h
   ${ETCPAL_ROOT}/include/etcpal/error.h
+  ${ETCPAL_ROOT}/include/etcpal/handle_manager.h
   ${ETCPAL_ROOT}/include/etcpal/log.h
   ${ETCPAL_ROOT}/include/etcpal/mempool.h
   ${ETCPAL_ROOT}/include/etcpal/pack.h
@@ -41,6 +42,7 @@ set(ETCPAL_CORE_SOURCES
   ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
   ${ETCPAL_ROOT}/src/etcpal/common.c
   ${ETCPAL_ROOT}/src/etcpal/error.c
+  ${ETCPAL_ROOT}/src/etcpal/handle_manager.c
   ${ETCPAL_ROOT}/src/etcpal/log.c
   ${ETCPAL_ROOT}/src/etcpal/mempool.c
   ${ETCPAL_ROOT}/src/etcpal/pack.c
@@ -131,6 +133,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/etcpal/acn_rlp.h
     ${ETCPAL_ROOT}/include/etcpal/uuid.h
     ${ETCPAL_ROOT}/include/etcpal/error.h
+    ${ETCPAL_ROOT}/include/etcpal/handle_manager.h
     ${ETCPAL_ROOT}/include/etcpal/inet.h
     ${ETCPAL_ROOT}/include/etcpal/log.h
     ${ETCPAL_ROOT}/include/etcpal/mempool.h
@@ -148,6 +151,7 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/src/etcpal/acn_pdu.c
     ${ETCPAL_ROOT}/src/etcpal/acn_rlp.c
     ${ETCPAL_ROOT}/src/etcpal/error.c
+    ${ETCPAL_ROOT}/src/etcpal/handle_manager.c
     ${ETCPAL_ROOT}/src/etcpal/inet.c
     ${ETCPAL_ROOT}/src/etcpal/log.c
     ${ETCPAL_ROOT}/src/etcpal/mempool.c

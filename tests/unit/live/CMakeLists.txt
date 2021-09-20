@@ -2,6 +2,7 @@
 
 etcpal_add_live_test(etcpal_live_unit_tests C
   test_common.c
+  test_handle_manager.c
   test_log.c
   test_main.c
   test_mempool.c

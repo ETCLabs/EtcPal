@@ -25,6 +25,7 @@ DEFINE_FFF_GLOBALS;
 void run_all_tests(void)
 {
   RUN_TEST_GROUP(etcpal_common);
+  RUN_TEST_GROUP(etcpal_handle_manager);
   RUN_TEST_GROUP(etcpal_log);
   RUN_TEST_GROUP(etcpal_mempool);
   RUN_TEST_GROUP(etcpal_pack);
