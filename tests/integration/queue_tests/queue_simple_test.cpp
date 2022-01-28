@@ -23,13 +23,13 @@ bool simple_send_receive()
 
 bool simple_fill_and_empty()
 {
-  static const unsigned queue_size = 128;
-  static const unsigned large_prime = 115249;
+  static const unsigned        queue_size  = 128;
+  static const unsigned        large_prime = 115249;
   etcpal::Queue<long long int> q(queue_size);
 
   for (int i = 0; i < queue_size; i++)
   {
-    if(!q.Send(115249 * i))
+    if (!q.Send(115249 * i))
     {
       return false;
     }
@@ -40,7 +40,7 @@ bool simple_fill_and_empty()
     long long int val;
     if (!q.Receive(val))
     {
-      if(val / large_prime != i)
+      if (val / large_prime != i)
       {
         return false;
       }

@@ -30,7 +30,7 @@
 #endif
 
 // Constants
-#define NUM_THREADS 10
+#define NUM_THREADS    10
 #define NUM_ITERATIONS 10000
 
 static int            shared_var;

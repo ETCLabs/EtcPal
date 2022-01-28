@@ -157,11 +157,11 @@ TEST(etcpal_cpp_uuid, generates_v3_correctly)
   etcpal::Uuid namespace2(
       {0xa9, 0x30, 0x54, 0x86, 0xd7, 0xe8, 0x4c, 0x31, 0xbe, 0xc3, 0x44, 0x20, 0x57, 0xad, 0x3d, 0x17});
 
-  const auto ns1_name1 = etcpal::Uuid::V3(namespace1, "name1");
+  const auto ns1_name1     = etcpal::Uuid::V3(namespace1, "name1");
   const auto ns1_name1_dup = etcpal::Uuid::V3(namespace1, "name1");
-  const auto ns1_name2 = etcpal::Uuid::V3(namespace1, "name2");
-  const auto ns2_name1 = etcpal::Uuid::V3(namespace2, "name1");
-  const auto ns2_name2 = etcpal::Uuid::V3(namespace2, "name2");
+  const auto ns1_name2     = etcpal::Uuid::V3(namespace1, "name2");
+  const auto ns2_name1     = etcpal::Uuid::V3(namespace2, "name1");
+  const auto ns2_name2     = etcpal::Uuid::V3(namespace2, "name2");
 
   TEST_ASSERT_FALSE(ns1_name1 == ns2_name1);
   TEST_ASSERT_FALSE(ns1_name1 == ns1_name2);
@@ -213,11 +213,11 @@ TEST(etcpal_cpp_uuid, generates_v5_correctly)
   etcpal::Uuid namespace2(
       {0xa6, 0xfe, 0x6a, 0xb6, 0xf4, 0xc3, 0x40, 0x9b, 0xb1, 0x0d, 0xa6, 0x4d, 0x3e, 0x62, 0xa9, 0xcc});
 
-  const auto ns1_name1 = etcpal::Uuid::V5(namespace1, "name1");
+  const auto ns1_name1     = etcpal::Uuid::V5(namespace1, "name1");
   const auto ns1_name1_dup = etcpal::Uuid::V5(namespace1, "name1");
-  const auto ns1_name2 = etcpal::Uuid::V5(namespace1, "name2");
-  const auto ns2_name1 = etcpal::Uuid::V5(namespace2, "name1");
-  const auto ns2_name2 = etcpal::Uuid::V5(namespace2, "name2");
+  const auto ns1_name2     = etcpal::Uuid::V5(namespace1, "name2");
+  const auto ns2_name1     = etcpal::Uuid::V5(namespace2, "name1");
+  const auto ns2_name2     = etcpal::Uuid::V5(namespace2, "name2");
 
   TEST_ASSERT_FALSE(ns1_name1 == ns2_name1);
   TEST_ASSERT_FALSE(ns1_name1 == ns1_name2);
@@ -262,9 +262,9 @@ TEST(etcpal_cpp_uuid, generates_device_correctly)
   const uint8_t                mac[6]{0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
   const std::array<uint8_t, 6> mac_array{0x00, 0xc0, 0x16, 0x01, 0x02, 0x03};
 
-  const etcpal::Uuid dev_1 = etcpal::Uuid::Device("Test Device", mac, 20);
+  const etcpal::Uuid dev_1     = etcpal::Uuid::Device("Test Device", mac, 20);
   const etcpal::Uuid dev_1_dup = etcpal::Uuid::Device("Test Device", mac_array, 20);
-  const etcpal::Uuid dev_2 = etcpal::Uuid::Device("Test Device", mac, 21);
+  const etcpal::Uuid dev_2     = etcpal::Uuid::Device("Test Device", mac, 21);
 
   TEST_ASSERT_FALSE(dev_1.IsNull());
   TEST_ASSERT_FALSE(dev_1_dup.IsNull());
@@ -319,7 +319,7 @@ TEST(etcpal_cpp_uuid, special_equality_operators_work)
 {
   const etcpal::Uuid uuid_1({20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35});
   const EtcPalUuid   c_uuid_1_dup = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
-  const EtcPalUuid   c_uuid_2 = {0, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
+  const EtcPalUuid   c_uuid_2     = {0, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35};
 
   TEST_ASSERT_TRUE(uuid_1 == c_uuid_1_dup);
   TEST_ASSERT_TRUE(c_uuid_1_dup == uuid_1);

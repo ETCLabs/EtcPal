@@ -159,7 +159,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
 
   struct sockaddr_storage ss;
   socklen_t               sa_size = sizeof ss;
-  int                     res = lwip_accept(id, (struct sockaddr*)&ss, &sa_size);
+  int                     res     = lwip_accept(id, (struct sockaddr*)&ss, &sa_size);
 
   if (res != -1)
   {
@@ -223,7 +223,7 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 
   struct sockaddr_storage ss;
   socklen_t               size = (socklen_t)sizeof ss;
-  int                     res = lwip_getsockname(id, (struct sockaddr*)&ss, &size);
+  int                     res  = lwip_getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
@@ -256,7 +256,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
     return (int)kEtcPalErrInvalid;
 
   int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
-  int res = (int)lwip_recv(id, buffer, length, impl_flags);
+  int res        = (int)lwip_recv(id, buffer, length, impl_flags);
   return (res >= 0 ? res : (int)errno_lwip_to_etcpal(errno));
 }
 
@@ -266,7 +266,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
     return (int)kEtcPalErrInvalid;
 
   struct sockaddr_storage fromaddr;
-  socklen_t               fromlen = (socklen_t)sizeof fromaddr;
+  socklen_t               fromlen    = (socklen_t)sizeof fromaddr;
   int                     impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
   int res = (int)lwip_recvfrom(id, buffer, length, impl_flags, (struct sockaddr*)&fromaddr, &fromlen);
 
@@ -385,7 +385,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
       {
         EtcPalLinger* ll = (EtcPalLinger*)option_value;
         struct linger val;
-        val.l_onoff = ll->onoff;
+        val.l_onoff  = ll->onoff;
         val.l_linger = ll->linger;
         return lwip_setsockopt(id, SOL_SOCKET, SO_LINGER, &val, sizeof val);
       }
@@ -409,8 +409,8 @@ static bool netif_index_to_ipv4_addr(unsigned int netif_index, struct in_addr* a
   if (lwip_netif)
   {
     const ip4_addr_t* lwip_addr = netif_ip4_addr(lwip_netif);
-    addr->s_addr = lwip_addr->addr;
-    result = true;
+    addr->s_addr                = lwip_addr->addr;
+    result                      = true;
   }
   UNLOCK_TCPIP_CORE();
   return result;
@@ -545,7 +545,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
 void ms_to_timeval(int ms, struct timeval* tv)
 {
-  tv->tv_sec = ms / 1000;
+  tv->tv_sec  = ms / 1000;
   tv->tv_usec = (ms % 1000) * 1000;
 }
 
@@ -648,8 +648,8 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
     EtcPalPollSocket* new_sock = find_hole(context);
     if (new_sock)
     {
-      new_sock->sock = socket;
-      new_sock->events = events;
+      new_sock->sock      = socket;
+      new_sock->events    = events;
       new_sock->user_data = user_data;
       set_in_fd_sets(context, new_sock);
       context->num_valid_sockets++;
@@ -675,7 +675,7 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
   if (sock_desc)
   {
     clear_in_fd_sets(context, sock_desc);
-    sock_desc->events = new_events;
+    sock_desc->events    = new_events;
     sock_desc->user_data = new_user_data;
     set_in_fd_sets(context, sock_desc);
     return kEtcPalErrOk;
@@ -720,8 +720,8 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
     return kEtcPalErrNoSockets;
   }
 
-  fd_set readfds = context->readfds.set;
-  fd_set writefds = context->writefds.set;
+  fd_set readfds   = context->readfds.set;
+  fd_set writefds  = context->writefds.set;
   fd_set exceptfds = context->exceptfds.set;
 
   struct timeval os_timeout;
@@ -755,7 +755,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context,
   // Init the event data.
   event->socket = ETCPAL_SOCKET_INVALID;
   event->events = 0;
-  event->err = kEtcPalErrOk;
+  event->err    = kEtcPalErrOk;
 
   // The default return; if we don't find any sockets set that we passed to select(), something has
   // gone wrong.
@@ -770,8 +770,8 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context,
     if (FD_ISSET(sock_desc->sock, readfds) || FD_ISSET(sock_desc->sock, writefds) ||
         FD_ISSET(sock_desc->sock, exceptfds))
     {
-      res = kEtcPalErrOk;
-      event->socket = sock_desc->sock;
+      res              = kEtcPalErrOk;
+      event->socket    = sock_desc->sock;
       event->user_data = sock_desc->user_data;
 
       if (FD_ISSET(sock_desc->sock, readfds))
@@ -872,8 +872,8 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
-    pf_hints.ai_flags = (hints->ai_flags < ETCPAL_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0;
-    pf_hints.ai_family = (hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
+    pf_hints.ai_flags    = (hints->ai_flags < ETCPAL_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0;
+    pf_hints.ai_family   = (hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
     pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
     pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
   }
@@ -887,7 +887,7 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
       res = -1;
   }
   return (res == 0 ? kEtcPalErrOk : err_gai_to_etcpal(res));
-#else  // LWIP_DNS
+#else   // LWIP_DNS
   return kEtcPalErrNotImpl;
 #endif  // LWIP_DNS
 }
@@ -898,7 +898,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
   if (ai && ai->pd[1])
   {
     struct addrinfo* pf_ai = (struct addrinfo*)ai->pd[1];
-    ai->ai_flags = 0;
+    ai->ai_flags           = 0;
     if (!sockaddr_os_to_etcpal(pf_ai->ai_addr, &ai->ai_addr))
       return false;
     /* Can't use reverse maps, because we have no guarantee of the numeric
@@ -922,7 +922,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
     else
       ai->ai_protocol = 0;
     ai->ai_canonname = pf_ai->ai_canonname;
-    ai->pd[1] = pf_ai->ai_next;
+    ai->pd[1]        = pf_ai->ai_next;
 
     return true;
   }

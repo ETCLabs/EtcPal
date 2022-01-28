@@ -102,7 +102,7 @@ TEST(event_group_integration, one_wait_one_signal_multiple_events)
 
   event_1_num_received = 0;
   event_2_num_received = 0;
-  keep_running = true;
+  keep_running         = true;
 
   TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, multiple_event_wait_thread, NULL), kEtcPalErrOk);
 

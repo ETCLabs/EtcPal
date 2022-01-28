@@ -548,7 +548,7 @@ TEST(etcpal_cpp_inet, sockaddr_to_ip_works)
   constexpr uint32_t kIpv4AddrVal = 0x0a0b0c0d;
 
   const auto sockaddr = etcpal::SockAddr(kIpv4AddrVal, 8888);
-  const auto ip = sockaddr.ip();
+  const auto ip       = sockaddr.ip();
   TEST_ASSERT_TRUE(ip.IsV4());
   TEST_ASSERT_EQUAL_UINT32(ip.v4_data(), kIpv4AddrVal);
 }

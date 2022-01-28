@@ -55,7 +55,7 @@ TEST(etcpal_netint_no_init, api_does_not_work_before_initialization)
   TEST_ASSERT_EQUAL(etcpal_netint_get_num_interfaces(), 0u);
   TEST_ASSERT_EQUAL_PTR(etcpal_netint_get_interfaces(), NULL);
 
-  const EtcPalNetintInfo* netint_arr = NULL;
+  const EtcPalNetintInfo* netint_arr      = NULL;
   size_t                  netint_arr_size = 0;
   TEST_ASSERT_EQUAL(etcpal_netint_get_interfaces_by_index(1, &netint_arr, &netint_arr_size), kEtcPalErrNotInit);
 
@@ -103,7 +103,7 @@ TEST(etcpal_netint, netints_are_in_index_order)
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
   const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
-  unsigned int            last_index = netint_list->index;
+  unsigned int            last_index  = netint_list->index;
   for (const EtcPalNetintInfo* netint = netint_list + 1; netint < netint_list + num_netints; ++netint)
   {
     TEST_ASSERT_GREATER_OR_EQUAL(last_index, netint->index);
@@ -128,11 +128,11 @@ TEST(etcpal_netint, get_netints_by_index_works)
 {
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
 
-  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
+  const EtcPalNetintInfo* netint_list   = etcpal_netint_get_interfaces();
   unsigned int            current_index = 0;
   // There are other tests covering that the netint list should be in order by index and that the
   // indexes must all be greater than 0, which simplifies this code.
-  const EtcPalNetintInfo* current_arr_by_index = NULL;
+  const EtcPalNetintInfo* current_arr_by_index   = NULL;
   size_t                  current_index_arr_size = 0;
   for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
   {
@@ -210,7 +210,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
         etcpal_ip_is_link_local(&netint->addr))
       continue;
 
-    EtcPalIpAddr test_addr = netint->addr;
+    EtcPalIpAddr test_addr        = netint->addr;
     unsigned int netint_index_res = 0;
     TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
 
@@ -226,7 +226,7 @@ TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
 
   EtcPalIpAddr ext_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
-  unsigned int netint_index_res = 0;
+  unsigned int netint_index_res     = 0;
   unsigned int netint_index_default = 0;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &netint_index_default));
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&ext_addr, &netint_index_res));

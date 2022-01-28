@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enum constant names changed in etcpal::LogDispatchPolicy, IpAddrType, UuidVersion due to linting
   rules.
 
+### Fixed
+- Fixed a potential memory leak when enumerating network interfaces on Windows.
+
 ## [0.3.0] - 2020-08-18
 
 Note: This is a pre-release version. This version changelog is not exhaustive.
@@ -108,7 +111,7 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 ### Added
 - Initial library modules, tests and documentation.
 
-[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/stable...develop
+[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/v0.3.0...main
 [0.3.0]: https://github.com/ETCLabs/EtcPal/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ETCLabs/EtcPal/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ETCLabs/EtcPal/releases/tag/v0.1.0

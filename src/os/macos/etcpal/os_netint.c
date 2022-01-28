@@ -169,8 +169,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   // Pass 2: Fill in all the info about each address
   size_t              current_etcpal_index = 0;
-  char*               link_name = NULL;
-  struct sockaddr_dl* link_addr = NULL;
+  char*               link_name            = NULL;
+  struct sockaddr_dl* link_addr            = NULL;
 
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
@@ -341,7 +341,7 @@ etcpal_error_t build_routing_tables()
 
 etcpal_error_t build_routing_table(int family, RoutingTable* table)
 {
-  uint8_t* buf = NULL;
+  uint8_t* buf     = NULL;
   size_t   buf_len = 0;
 
   etcpal_error_t res = get_routing_table_dump(family, &buf, &buf_len);
@@ -395,7 +395,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
  * (sizeof(unsigned long) is 8 on 64-bit platforms)
  */
 #define SOCKADDR_ALIGN 4  // not sizeof(unsigned long)
-#define SA_SIZE(sa) ((!(sa) || (sa)->sa_len == 0) ? SOCKADDR_ALIGN : (1 + (((sa)->sa_len - 1) | (SOCKADDR_ALIGN - 1))))
+#define SA_SIZE(sa)    ((!(sa) || (sa)->sa_len == 0) ? SOCKADDR_ALIGN : (1 + (((sa)->sa_len - 1) | (SOCKADDR_ALIGN - 1))))
 
 static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
 {
@@ -404,7 +404,7 @@ static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct so
     if (addrs & (1 << i))
     {
       rti_info[i] = sa;
-      sa = (struct sockaddr*)((char*)sa + SA_SIZE(sa));
+      sa          = (struct sockaddr*)((char*)sa + SA_SIZE(sa));
     }
     else
     {
@@ -484,7 +484,7 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
   if (family == AF_INET)
   {
     size_t      mask_offset = offsetof(struct sockaddr_in, sin_addr);
-    const char* mask_ptr = &((char*)os_netmask)[mask_offset];
+    const char* mask_ptr    = &((char*)os_netmask)[mask_offset];
 
     if (os_netmask->sa_len > mask_offset)
     {
@@ -502,7 +502,7 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
   else if (family == AF_INET6)
   {
     size_t      mask_offset = offsetof(struct sockaddr_in6, sin6_addr);
-    const char* mask_ptr = &((char*)os_netmask)[mask_offset];
+    const char* mask_ptr    = &((char*)os_netmask)[mask_offset];
 
     if (os_netmask->sa_len > mask_offset)
     {
@@ -572,8 +572,8 @@ static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr*
  */
 etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, RoutingTable* table)
 {
-  table->size = 0;
-  table->entries = NULL;
+  table->size          = 0;
+  table->entries       = NULL;
   table->default_route = NULL;
 
   size_t buf_pos = 0;

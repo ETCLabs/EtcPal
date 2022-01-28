@@ -274,9 +274,9 @@ public:
 
   void DestructValue() { value_.~ValueType(); }
 
-  constexpr const ValueType&  value() const& { return value_; }
-  ValueType&                  value() & { return value_; }
-  constexpr const ValueType&& value() const&& { return std::move(value_); }
+  constexpr const ValueType&      value() const& { return value_; }
+  ValueType&                      value() & { return value_; }
+  constexpr const ValueType&&     value() const&& { return std::move(value_); }
   ETCPAL_CONSTEXPR_14 ValueType&& value() && { return std::move(value_); }
   const ValueType*                value_ptr() const { return &value_; }
   ValueType*                      value_ptr() { return &value_; }
@@ -307,13 +307,13 @@ template <typename T, bool IsCopyConstructible, bool IsMoveConstructible>
 class ExpectedStorage : public ExpectedStorageImpl<T>
 {
 public:
-  ExpectedStorage() = default;
+  ExpectedStorage()  = default;
   ~ExpectedStorage() = default;
 
   explicit ExpectedStorage(bool has_value) : ExpectedStorageImpl<T>(has_value) {}
 
   ExpectedStorage(const ExpectedStorage& other) = delete;
-  ExpectedStorage(ExpectedStorage&& other) = delete;
+  ExpectedStorage(ExpectedStorage&& other)      = delete;
 };
 
 template <typename T>
@@ -321,7 +321,7 @@ template <typename T>
 class ExpectedStorage<T, true, true> : public ExpectedStorageImpl<T>
 {
 public:
-  ExpectedStorage() = default;
+  ExpectedStorage()  = default;
   ~ExpectedStorage() = default;
 
   explicit ExpectedStorage(bool has_value) : ExpectedStorageImpl<T>(has_value) {}
@@ -348,7 +348,7 @@ template <typename T>
 class ExpectedStorage<T, true, false> : public ExpectedStorageImpl<T>
 {
 public:
-  ExpectedStorage() = default;
+  ExpectedStorage()  = default;
   ~ExpectedStorage() = default;
 
   explicit ExpectedStorage(bool has_value) : ExpectedStorageImpl<T>(has_value) {}
@@ -369,7 +369,7 @@ template <typename T>
 class ExpectedStorage<T, false, true> : public ExpectedStorageImpl<T>
 {
 public:
-  ExpectedStorage() = default;
+  ExpectedStorage()  = default;
   ~ExpectedStorage() = default;
 
   explicit ExpectedStorage(bool has_value) : ExpectedStorageImpl<T>(has_value) {}
@@ -658,20 +658,20 @@ public:
   ETCPAL_CONSTEXPR_14 Expected(etcpal_error_t error);
   ~Expected();
 
-  constexpr const T*  operator->() const;
-  T*                  operator->();
-  constexpr const T&  operator*() const&;
-  T&                  operator*() &;
-  constexpr const T&& operator*() const&&;
-  ETCPAL_CONSTEXPR_14 T&&   operator*() &&;
-  constexpr explicit        operator bool() const noexcept;
-  constexpr bool            has_value() const noexcept;
-  ETCPAL_CONSTEXPR_14 const T& value() const&;
-  T&                           value() &;
+  constexpr const T*            operator->() const;
+  T*                            operator->();
+  constexpr const T&            operator*() const&;
+  T&                            operator*() &;
+  constexpr const T&&           operator*() const&&;
+  ETCPAL_CONSTEXPR_14 T&&       operator*() &&;
+  constexpr explicit            operator bool() const noexcept;
+  constexpr bool                has_value() const noexcept;
+  ETCPAL_CONSTEXPR_14 const T&  value() const&;
+  T&                            value() &;
   ETCPAL_CONSTEXPR_14 const T&& value() const&&;
-  ETCPAL_CONSTEXPR_14 T&&  value() &&;
-  constexpr etcpal_error_t error_code() const noexcept;
-  constexpr Error          error() const noexcept;
+  ETCPAL_CONSTEXPR_14 T&&       value() &&;
+  constexpr etcpal_error_t      error_code() const noexcept;
+  constexpr Error               error() const noexcept;
 
   // clang-format off
 

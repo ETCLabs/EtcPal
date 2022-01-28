@@ -35,11 +35,11 @@ void init_int_handle_manager(IntHandleManager*        manager,
                              HandleValueInUseFunction value_in_use_func,
                              void*                    context)
 {
-  manager->last_handle = -1;
-  manager->max_value = max_value;
+  manager->last_handle        = -1;
+  manager->max_value          = max_value;
   manager->check_value_in_use = false;
-  manager->value_in_use = value_in_use_func;
-  manager->context = context;
+  manager->value_in_use       = value_in_use_func;
+  manager->context            = context;
 }
 
 /**
@@ -52,15 +52,15 @@ void init_int_handle_manager(IntHandleManager*        manager,
  */
 int get_next_int_handle(IntHandleManager* manager)
 {
-  int new_handle = manager->last_handle;
-  bool is_used = false;
+  int  new_handle = manager->last_handle;
+  bool is_used    = false;
   do
   {
     ++new_handle;
 
     if ((new_handle < 0) || ((manager->max_value >= 0) && (new_handle > manager->max_value)))
     {
-      new_handle = 0;
+      new_handle                  = 0;
       manager->check_value_in_use = true;
     }
 

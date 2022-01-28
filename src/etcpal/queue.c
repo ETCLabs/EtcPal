@@ -181,7 +181,7 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
   }
 
   id->max_queue_size = size;
-  id->queue_size = 0;
+  id->queue_size     = 0;
 
   id->tail = 0;
   id->head = 0;

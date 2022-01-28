@@ -30,7 +30,7 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
   if (id)
   {
     InitializeSRWLock(&id->lock);
-    id->valid = true;
+    id->valid        = true;
     id->reader_count = 0;
     return true;
   }

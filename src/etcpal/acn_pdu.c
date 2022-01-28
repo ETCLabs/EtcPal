@@ -39,7 +39,7 @@ bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* c
 
   const uint8_t* buf_end = buf + buflen;
 
-  const uint8_t* this_pdu = buf;
+  const uint8_t* this_pdu  = buf;
   const uint8_t* prev_vect = NULL;
   const uint8_t* prev_head = NULL;
   const uint8_t* prev_data = NULL;
@@ -49,7 +49,7 @@ bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* c
     if (pdu->pnextpdu < buf || pdu->pnextpdu >= buf_end)
       return false;
 
-    this_pdu = pdu->pnextpdu;
+    this_pdu  = pdu->pnextpdu;
     prev_vect = pdu->pvector;
     prev_head = pdu->pheader;
     prev_data = pdu->pdata;
@@ -57,8 +57,8 @@ bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* c
   // Else this is the first PDU in the block - leave pointers at their default values
 
   // Check the inheritance and the size of the length field
-  uint8_t flags_byte = *this_pdu;
-  bool    extlength = ACN_PDU_L_FLAG_SET(flags_byte);
+  uint8_t flags_byte  = *this_pdu;
+  bool    extlength   = ACN_PDU_L_FLAG_SET(flags_byte);
   bool    inheritvect = !ACN_PDU_V_FLAG_SET(flags_byte);
   bool    inherithead = !ACN_PDU_H_FLAG_SET(flags_byte);
   bool    inheritdata = !ACN_PDU_D_FLAG_SET(flags_byte);
@@ -70,7 +70,7 @@ bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* c
     return false;
   }
 
-  uint32_t pdu_len = ACN_PDU_LENGTH(this_pdu);
+  uint32_t pdu_len     = ACN_PDU_LENGTH(this_pdu);
   uint32_t min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritvect ? 0 : constraints->vector_size) +
                                     (inherithead ? 0 : constraints->header_size));
 
@@ -97,7 +97,7 @@ bool acn_parse_pdu(const uint8_t* buf, size_t buflen, const AcnPduConstraints* c
 
   if (!inheritdata)
   {
-    pdu->pdata = cur_ptr;
+    pdu->pdata    = cur_ptr;
     pdu->data_len = pdu_len - (uint32_t)(cur_ptr - this_pdu);
     cur_ptr += pdu->data_len;
   }

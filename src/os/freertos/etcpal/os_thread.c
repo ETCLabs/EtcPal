@@ -48,7 +48,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     return kEtcPalErrNoMem;
   }
 
-  id->fn = thread_fn;
+  id->fn  = thread_fn;
   id->arg = thread_arg;
   if (pdPASS == xTaskCreate(thread_func_internal, params->thread_name ? params->thread_name : "etcpal_thread",
                             (uint16_t)(params->stack_size / sizeof(StackType_t)), id, params->priority, &id->tid))

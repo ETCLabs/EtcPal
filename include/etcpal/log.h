@@ -349,11 +349,11 @@ typedef struct EtcPalSyslogParams
   /** Syslog Facility; see RFC 5424 &sect; 6.2.1. */
   int facility;
   /** Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4. */
-  char hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+  char hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN];  // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
   /** Syslog APP-NAME; see RFC 5424 &sect; 6.2.5. */
-  char app_name[ETCPAL_LOG_APP_NAME_MAX_LEN]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+  char app_name[ETCPAL_LOG_APP_NAME_MAX_LEN];  // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
   /** Syslog PROCID; see RFC 5424 &sect; 6.2.6. */
-  char procid[ETCPAL_LOG_PROCID_MAX_LEN]; // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+  char procid[ETCPAL_LOG_PROCID_MAX_LEN];  // NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
 } EtcPalSyslogParams;
 
 /**

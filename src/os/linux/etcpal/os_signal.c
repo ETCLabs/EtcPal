@@ -27,7 +27,7 @@ bool etcpal_signal_create(etcpal_signal_t* id)
     {
       if (0 == pthread_cond_init(&id->cond, NULL))
       {
-        id->valid = true;
+        id->valid    = true;
         id->signaled = false;
         return true;
       }
@@ -68,7 +68,7 @@ bool etcpal_signal_try_wait(etcpal_signal_t* id)
     {
       if (id->signaled)
       {
-        res = true;
+        res          = true;
         id->signaled = false;
       }
       pthread_mutex_unlock(&id->mutex);

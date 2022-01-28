@@ -51,7 +51,7 @@ typedef struct
 } etcpal_queue_t;
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS ETCPAL_SEM_HAS_TIMED_WAIT
-#define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS ETCPAL_SEM_HAS_POST_FROM_ISR
+#define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   ETCPAL_SEM_HAS_POST_FROM_ISR
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
 void etcpal_queue_destroy(etcpal_queue_t* id);

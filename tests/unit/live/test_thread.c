@@ -120,8 +120,8 @@ TEST(etcpal_thread, threads_are_time_sliced)
 #ifdef __MQX__
   EtcPalThreadParamsMqx mqx_params;
   mqx_params.task_attributes = MQX_TIME_SLICE_TASK;
-  mqx_params.time_slice = 0;
-  params.platform_data = &mqx_params;
+  mqx_params.time_slice      = 0;
+  params.platform_data       = &mqx_params;
 #endif
 
   etcpal_thread_t spin_task;
@@ -154,7 +154,7 @@ void save_thread_handle(void* param)
 
 TEST(etcpal_thread, get_os_handle_works)
 {
-  thread_handle = ETCPAL_THREAD_OS_HANDLE_INVALID;
+  thread_handle             = ETCPAL_THREAD_OS_HANDLE_INVALID;
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
 
   etcpal_thread_t save_handle_thread;

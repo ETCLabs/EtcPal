@@ -41,9 +41,9 @@ extern "C" {
  * is ignored. */
 
 #define ETCPAL_THREAD_DEFAULT_PRIORITY THREAD_PRIORITY_NORMAL
-#define ETCPAL_THREAD_DEFAULT_STACK 0
-#define ETCPAL_THREAD_DEFAULT_NAME "etcpal_thread"
-#define ETCPAL_THREAD_HAS_TIMED_JOIN 1
+#define ETCPAL_THREAD_DEFAULT_STACK    0
+#define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
+#define ETCPAL_THREAD_HAS_TIMED_JOIN   1
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 32
 
@@ -59,10 +59,10 @@ typedef struct
 } etcpal_thread_t;
 
 #ifdef __cplusplus
-#define etcpal_thread_sleep(sleep_ms) ::Sleep(static_cast<DWORD>(sleep_ms))
+#define etcpal_thread_sleep(sleep_ms)         ::Sleep(static_cast<DWORD>(sleep_ms))
 #define etcpal_thread_get_current_os_handle() ::GetCurrentThreadId()
 #else
-#define etcpal_thread_sleep(sleep_ms) Sleep((DWORD)sleep_ms)
+#define etcpal_thread_sleep(sleep_ms)         Sleep((DWORD)sleep_ms)
 #define etcpal_thread_get_current_os_handle() GetCurrentThreadId()
 #endif
 

@@ -85,9 +85,9 @@ unsigned long test_mutex(DWORD core_count)
 {
   printf("Starting Mutex test for %d cores...\n", core_count);
 
-  mutex = CreateMutex(NULL, FALSE, NULL);
+  mutex          = CreateMutex(NULL, FALSE, NULL);
   shared_counter = 0;
-  keep_running = true;
+  keep_running   = true;
 
   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
 
@@ -133,7 +133,7 @@ unsigned long test_critical_section(DWORD core_count)
 
   InitializeCriticalSection(&cs);
   shared_counter = 0;
-  keep_running = true;
+  keep_running   = true;
 
   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
 
@@ -179,7 +179,7 @@ unsigned long test_srw_lock(DWORD core_count)
 
   InitializeSRWLock(&srw_lock);
   shared_counter = 0;
-  keep_running = true;
+  keep_running   = true;
 
   EtcPalThreadParams thread_params = ETCPAL_THREAD_PARAMS_INIT;
 
@@ -213,8 +213,8 @@ int main(void)
   DWORD core_count = system_info.dwNumberOfProcessors;
 
   uintmax_t mutex_average = 0;
-  uintmax_t cs_average = 0;
-  uintmax_t srw_average = 0;
+  uintmax_t cs_average    = 0;
+  uintmax_t srw_average   = 0;
 
   for (int i = 0; i < NUM_TEST_ITERATIONS; ++i)
   {

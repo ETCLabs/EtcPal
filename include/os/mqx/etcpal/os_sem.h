@@ -30,17 +30,17 @@ extern "C" {
 
 typedef LWSEM_STRUCT etcpal_sem_t;
 
-#define ETCPAL_SEM_HAS_TIMED_WAIT 1
+#define ETCPAL_SEM_HAS_TIMED_WAIT    1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 0
-#define ETCPAL_SEM_HAS_MAX_COUNT 0
-#define ETCPAL_SEM_MUST_BE_BALANCED 0
+#define ETCPAL_SEM_HAS_MAX_COUNT     0
+#define ETCPAL_SEM_MUST_BE_BALANCED  0
 
 #define etcpal_sem_create(idptr, initial_count, max_count) (MQX_OK == _lwsem_create((idptr), (_mqx_int)(initial_count)))
-#define etcpal_sem_wait(idptr) (MQX_OK == _lwsem_wait(idptr))
-#define etcpal_sem_try_wait(idptr) (MQX_OK == _lwsem_wait_ticks((idptr), 1u))
+#define etcpal_sem_wait(idptr)                             (MQX_OK == _lwsem_wait(idptr))
+#define etcpal_sem_try_wait(idptr)                         (MQX_OK == _lwsem_wait_ticks((idptr), 1u))
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
-#define etcpal_sem_post(idptr) (MQX_OK == _lwsem_post(idptr))
-#define etcpal_sem_post_from_isr etcpal_sem_post
+#define etcpal_sem_post(idptr)    (MQX_OK == _lwsem_post(idptr))
+#define etcpal_sem_post_from_isr  etcpal_sem_post
 #define etcpal_sem_destroy(idptr) ((void)_lwsem_destroy(idptr))
 
 #ifdef __cplusplus

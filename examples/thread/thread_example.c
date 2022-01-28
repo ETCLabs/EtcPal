@@ -70,7 +70,7 @@ int main(void)
   // Start thread 1
   etcpal_thread_t thread_1_handle;
   thread_params.thread_name = "Thread 1";
-  etcpal_error_t res = etcpal_thread_create(&thread_1_handle, &thread_params, thread_1_func, &thread_1_count);
+  etcpal_error_t res        = etcpal_thread_create(&thread_1_handle, &thread_params, thread_1_func, &thread_1_count);
   if (res != kEtcPalErrOk)
   {
     printf("Error starting thread 1: '%s'\n", etcpal_strerror(res));
@@ -80,7 +80,7 @@ int main(void)
   // Start thread 2
   etcpal_thread_t thread_2_handle;
   thread_params.thread_name = "Thread 2";
-  res = etcpal_thread_create(&thread_2_handle, &thread_params, thread_2_func, &thread_2_count);
+  res                       = etcpal_thread_create(&thread_2_handle, &thread_params, thread_2_func, &thread_2_count);
   if (res != kEtcPalErrOk)
   {
     printf("Error starting thread 2: '%s'\n", etcpal_strerror(res));
@@ -90,7 +90,7 @@ int main(void)
   // Start thread 3
   etcpal_thread_t thread_3_handle;
   thread_params.thread_name = "Thread 3";
-  res = etcpal_thread_create(&thread_3_handle, &thread_params, thread_3_func, &thread_3_count);
+  res                       = etcpal_thread_create(&thread_3_handle, &thread_params, thread_3_func, &thread_3_count);
   if (res != kEtcPalErrOk)
   {
     printf("Error starting thread 3: '%s'\n", etcpal_strerror(res));

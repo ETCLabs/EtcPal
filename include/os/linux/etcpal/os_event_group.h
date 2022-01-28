@@ -39,10 +39,10 @@ typedef struct
   etcpal_event_bits_t bits;
 } etcpal_event_group_t;
 
-#define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT 0
-#define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS 0
+#define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         0
+#define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS      0
 #define ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS 0
-#define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS 32
+#define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS        32
 
 bool                etcpal_event_group_create(etcpal_event_group_t* id);
 etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags);
@@ -55,8 +55,8 @@ etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id);
 void                etcpal_event_group_clear_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_clear);
 void                etcpal_event_group_destroy(etcpal_event_group_t* id);
 
-#define etcpal_event_group_set_bits_from_isr etcpal_event_group_set_bits
-#define etcpal_event_group_get_bits_from_isr etcpal_event_group_get_bits
+#define etcpal_event_group_set_bits_from_isr   etcpal_event_group_set_bits
+#define etcpal_event_group_get_bits_from_isr   etcpal_event_group_get_bits
 #define etcpal_event_group_clear_bits_from_isr etcpal_event_group_clear_bits
 
 #ifdef __cplusplus

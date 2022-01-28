@@ -23,7 +23,7 @@
 #include "etcpal/pack.h"
 
 #define ACN_RLP_HEADER_SIZE 16u
-#define RLP_VECTOR_SIZE 4u
+#define RLP_VECTOR_SIZE     4u
 
 #define RLP_EXTENDED_LENGTH(vector, header, data_len) \
   ((data_len + (vector ? 0 : RLP_VECTOR_SIZE) + (header ? 0 : ACN_RLP_HEADER_SIZE)) > 4095)
@@ -33,7 +33,7 @@
    (vector == ACN_VECTOR_ROOT_EPT))
 
 // Make sure to use memcmp, not strcmp, because of the extra nulls
-#define ACN_PACKET_IDENT "ASC-E1.17\0\0\0"
+#define ACN_PACKET_IDENT      "ASC-E1.17\0\0\0"
 #define ACN_PACKET_IDENT_SIZE 12
 
 typedef struct PduInheritance
@@ -69,7 +69,7 @@ bool acn_parse_tcp_preamble(const uint8_t* buf, size_t buflen, AcnTcpPreamble* p
 
   if (memcmp(buf, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE) == 0)
   {
-    preamble->rlp_block = buf + ACN_TCP_PREAMBLE_SIZE;
+    preamble->rlp_block     = buf + ACN_TCP_PREAMBLE_SIZE;
     preamble->rlp_block_len = etcpal_unpack_u32b(buf + ACN_PACKET_IDENT_SIZE);
     return true;
   }
@@ -93,7 +93,7 @@ bool acn_parse_udp_preamble(const uint8_t* buf, size_t buflen, AcnUdpPreamble* p
   if (!preamble || !buf || (buflen < ACN_UDP_PREAMBLE_SIZE))
     return false;
 
-  const uint8_t* pcur = buf;
+  const uint8_t* pcur         = buf;
   uint16_t       preamble_len = etcpal_unpack_u16b(pcur);
   pcur += 2;
   uint16_t postamble_len = etcpal_unpack_u16b(pcur);
@@ -101,7 +101,7 @@ bool acn_parse_udp_preamble(const uint8_t* buf, size_t buflen, AcnUdpPreamble* p
   if ((preamble_len == ACN_UDP_PREAMBLE_SIZE) && (memcmp(pcur, ACN_PACKET_IDENT, ACN_PACKET_IDENT_SIZE) == 0) &&
       (buflen > (unsigned)(preamble_len + postamble_len)))
   {
-    preamble->rlp_block = buf + ACN_UDP_PREAMBLE_SIZE;
+    preamble->rlp_block     = buf + ACN_UDP_PREAMBLE_SIZE;
     preamble->rlp_block_len = buflen - preamble_len - postamble_len;
     return true;
   }
@@ -126,11 +126,11 @@ bool acn_parse_root_layer_header(const uint8_t* buf, size_t buflen, AcnRootLayer
     return false;
 
   uint8_t        flags_byte = *buf;
-  bool           extlength = ACN_PDU_L_FLAG_SET(flags_byte);
+  bool           extlength  = ACN_PDU_L_FLAG_SET(flags_byte);
   PduInheritance inheritance;
   inheritance.vector = !ACN_PDU_V_FLAG_SET(flags_byte);
   inheritance.header = !ACN_PDU_H_FLAG_SET(flags_byte);
-  inheritance.data = !ACN_PDU_D_FLAG_SET(flags_byte);
+  inheritance.data   = !ACN_PDU_D_FLAG_SET(flags_byte);
 
   const uint8_t* cur_ptr = buf;
   const uint8_t* buf_end = buf + buflen;
@@ -140,7 +140,7 @@ bool acn_parse_root_layer_header(const uint8_t* buf, size_t buflen, AcnRootLayer
     return false;
   }
 
-  uint32_t pdu_len = ACN_PDU_LENGTH(buf);
+  uint32_t pdu_len     = ACN_PDU_LENGTH(buf);
   uint32_t min_pdu_len = (uint32_t)((extlength ? 3 : 2) + (inheritance.vector ? 0 : 4) + (inheritance.header ? 0 : 16));
   if (((inheritance.vector || inheritance.header || inheritance.data) && !last_pdu) || (pdu_len < min_pdu_len))
   {
@@ -172,12 +172,12 @@ bool acn_parse_root_layer_header(const uint8_t* buf, size_t buflen, AcnRootLayer
 
   if (inheritance.data)
   {
-    pdu->pdata = last_pdu->pdata;
+    pdu->pdata    = last_pdu->pdata;
     pdu->data_len = last_pdu->data_len;
   }
   else
   {
-    pdu->pdata = cur_ptr;
+    pdu->pdata    = cur_ptr;
     pdu->data_len = (size_t)(pdu_len - (size_t)(cur_ptr - buf));
   }
 
@@ -233,7 +233,7 @@ bool acn_parse_root_layer_pdu(const uint8_t* buf, size_t buflen, AcnRootLayerPdu
   {
     pdu->vector = etcpal_unpack_u32b(last_pdu->pvector);
     memcpy(pdu->sender_cid.data, last_pdu->pheader, ETCPAL_UUID_BYTES);
-    pdu->pdata = last_pdu->pdata;
+    pdu->pdata    = last_pdu->pdata;
     pdu->data_len = last_pdu->data_len;
     return true;
   }
@@ -332,7 +332,7 @@ size_t acn_pack_root_layer_header(uint8_t* buf, size_t buflen, const AcnRootLaye
     return 0;
 
   uint8_t* cur_ptr = buf;
-  *cur_ptr = 0x70;
+  *cur_ptr         = 0x70;
 
   if (PROT_MANDATES_L_FLAG(pdu->vector) || RLP_EXTENDED_LENGTH(false, false, pdu->data_len))
   {
@@ -371,7 +371,7 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
   if (!buf || !pdu_block || (acn_root_layer_buf_size(pdu_block, num_pdus)) > buflen)
     return 0;
 
-  uint8_t*        cur_ptr = buf;
+  uint8_t*        cur_ptr  = buf;
   AcnRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
   for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
@@ -426,7 +426,7 @@ void evaluate_pdu_inheritance(const AcnRootLayerPdu* pdu_block,
 {
   inheritance->vector = true;
   inheritance->header = true;
-  inheritance->data = true;
+  inheritance->data   = true;
 
   // Start with no flags set
   *cur_ptr = 0;
@@ -435,15 +435,15 @@ void evaluate_pdu_inheritance(const AcnRootLayerPdu* pdu_block,
     // First PDU in the block - no inheritance
     ACN_PDU_SET_V_FLAG(*cur_ptr);
     inheritance->vector = false;
-    last_pdu->vector = current_pdu->vector;
+    last_pdu->vector    = current_pdu->vector;
 
     ACN_PDU_SET_H_FLAG(*cur_ptr);
-    inheritance->header = false;
+    inheritance->header  = false;
     last_pdu->sender_cid = current_pdu->sender_cid;
 
     ACN_PDU_SET_D_FLAG(*cur_ptr);
-    inheritance->data = false;
-    last_pdu->pdata = current_pdu->pdata;
+    inheritance->data  = false;
+    last_pdu->pdata    = current_pdu->pdata;
     last_pdu->data_len = current_pdu->data_len;
   }
   else
@@ -453,13 +453,13 @@ void evaluate_pdu_inheritance(const AcnRootLayerPdu* pdu_block,
     {
       ACN_PDU_SET_V_FLAG(*cur_ptr);
       inheritance->vector = false;
-      last_pdu->vector = current_pdu->vector;
+      last_pdu->vector    = current_pdu->vector;
     }
 
     if (0 != ETCPAL_UUID_CMP(&current_pdu->sender_cid, &last_pdu->sender_cid))
     {
       ACN_PDU_SET_H_FLAG(*cur_ptr);
-      inheritance->header = false;
+      inheritance->header  = false;
       last_pdu->sender_cid = current_pdu->sender_cid;
     }
 
@@ -467,8 +467,8 @@ void evaluate_pdu_inheritance(const AcnRootLayerPdu* pdu_block,
         (0 != memcmp(current_pdu->pdata, last_pdu->pdata, last_pdu->data_len)))
     {
       ACN_PDU_SET_D_FLAG(*cur_ptr);
-      inheritance->data = false;
-      last_pdu->pdata = current_pdu->pdata;
+      inheritance->data  = false;
+      last_pdu->pdata    = current_pdu->pdata;
       last_pdu->data_len = current_pdu->data_len;
     }
   }

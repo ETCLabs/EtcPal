@@ -1,0 +1,94 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 15,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-ninja-msvc",
+      "hidden": true,
+      "generator": "Ninja",
+      "cacheVariables": {
+        "ETCPAL_BUILD_TESTS": true,
+        "ETCPAL_BUILD_EXAMPLES": true,
+        "ETCPAL_BUILD_MOCK_LIB": true,
+        "ETCPAL_ENABLE_CLANG_TIDY": true,
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe",
+        "CMAKE_INSTALL_PREFIX": "${binaryDir}/install"
+      },
+      "binaryDir": "${sourceDir}/build",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "toolset": {
+        "value": "host=x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "windows-ninja-msvc-stub-debug",
+      "displayName": "Windows Native Debug x64 with Ninja, MSVC, Clang-Tidy",
+      "inherits": "windows-ninja-msvc",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "binaryDir": "${sourceDir}/build/debug"
+    },
+    {
+      "name": "windows-ninja-msvc-release",
+      "displayName": "Windows Native Release x64 with Ninja, MSVC, Clang-Tidy",
+      "inherits": "windows-ninja-msvc",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "binaryDir": "${sourceDir}/build/release"
+    },
+    {
+      "name": "windows-msvc",
+      "displayName": "Windows Visual Studio 2019 Native x64",
+      "generator": "Visual Studio 16 2019",
+      "cacheVariables": {
+        "ETCPAL_BUILD_TESTS": true,
+        "ETCPAL_BUILD_EXAMPLES": true,
+        "ETCPAL_BUILD_MOCK_LIB": true,
+        "CMAKE_INSTALL_PREFIX": "${binaryDir}/install"
+      },
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "unix-makefiles",
+      "hidden": true,
+      "generator": "Unix Makefiles",
+      "cacheVariables": {
+        "ETCPAL_BUILD_TESTS": true,
+        "ETCPAL_BUILD_EXAMPLES": true,
+        "ETCPAL_BUILD_MOCK_LIB": true,
+        "ETCPAL_ENABLE_CLANG_TIDY": true,
+        "CMAKE_INSTALL_PREFIX": "${binaryDir}/install"
+      },
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "unix-makefiles-debug",
+      "displayName": "Unix Makefiles Debug with Clang-Tidy",
+      "inherits": "unix-makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "binaryDir": "${sourceDir}/build/debug"
+    },
+    {
+      "name": "unix-makefiles-release",
+      "displayName": "Unix Makefiles Release with Clang-Tidy",
+      "inherits": "unix-makefiles",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "binaryDir": "${sourceDir}/build/release"
+    }
+  ]
+}

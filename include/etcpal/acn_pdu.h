@@ -183,9 +183,9 @@ typedef struct AcnPdu
 #define ACN_INIT_PDU(pduptr)   \
   do                           \
   {                            \
-    (pduptr)->pvector = NULL;  \
-    (pduptr)->pheader = NULL;  \
-    (pduptr)->pdata = NULL;    \
+    (pduptr)->pvector  = NULL; \
+    (pduptr)->pheader  = NULL; \
+    (pduptr)->pdata    = NULL; \
     (pduptr)->data_len = 0;    \
     (pduptr)->pnextpdu = NULL; \
   } while (0)

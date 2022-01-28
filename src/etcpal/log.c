@@ -44,8 +44,8 @@
 /*************************** Private constants *******************************/
 
 #define SYSLOG_PROT_VERSION 1 /*RFC 5424, sec. 6.2.2 */
-#define NILVALUE_STR "-"
-#define MSGID_STR NILVALUE_STR
+#define NILVALUE_STR        "-"
+#define MSGID_STR           NILVALUE_STR
 #define STRUCTURED_DATA_STR NILVALUE_STR
 /* LOG_LOCAL1 seems to be one that's lightly used */
 #define DEFAULT_FACILITY ETCPAL_LOG_LOCAL1
@@ -168,7 +168,7 @@ bool etcpal_create_log_str(char*                     buf,
                            const char*               format,
                            ...)
 {
-  va_list args;
+  va_list args;  // NOLINT
   va_start(args, format);
   bool res = (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
   va_end(args);
@@ -223,7 +223,7 @@ bool etcpal_create_syslog_str(char*                     buf,
                               const char*               format,
                               ...)
 {
-  va_list args;
+  va_list args;  // NOLINT
   va_start(args, format);
   bool res = (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
   va_end(args);
@@ -280,7 +280,7 @@ bool etcpal_create_legacy_syslog_str(char*                     buf,
                                      const char*               format,
                                      ...)
 {
-  va_list args;
+  va_list args;  // NOLINT
   va_start(args, format);
   bool res = (create_legacy_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
   va_end(args);
@@ -404,7 +404,7 @@ bool etcpal_can_log(const EtcPalLogParams* params, int pri)
  */
 void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
 {
-  va_list args;
+  va_list args;  // NOLINT
   va_start(args, format);
   etcpal_vlog(params, pri, format, args);
   va_end(args);
@@ -437,7 +437,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     static char      legacy_syslog_msg[ETCPAL_SYSLOG_STR_MAX_LEN + 1];
     static char      human_log_msg[ETCPAL_LOG_STR_MAX_LEN + 1];
     EtcPalLogStrings strings = {NULL, NULL, NULL, NULL, 0};
-    strings.priority = pri;
+    strings.priority         = pri;
 
     // In the below blocks, we check if the va_list will need to be reused further down - if so,
     // the va_list must be copied. For more info on using a va_list multiple times, see:
@@ -447,7 +447,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     {
       if (params->action & (ETCPAL_LOG_CREATE_SYSLOG | ETCPAL_LOG_CREATE_LEGACY_SYSLOG))
       {
-        va_list args_copy;
+        va_list args_copy;  // NOLINT
         va_copy(args_copy, args);
         strings.raw = create_log_str(human_log_msg, ETCPAL_LOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL, pri,
                                      format, args_copy);
@@ -466,7 +466,7 @@ void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_
     {
       if (params->action & ETCPAL_LOG_CREATE_LEGACY_SYSLOG)
       {
-        va_list args_copy;
+        va_list args_copy;  // NOLINT
         va_copy(args_copy, args);
         strings.raw = create_syslog_str(syslog_msg, ETCPAL_SYSLOG_STR_MAX_LEN + 1, have_time ? &timestamp : NULL,
                                         &params->syslog_params, pri, format, args_copy);
@@ -591,7 +591,7 @@ char* create_legacy_syslog_str(char*                     buf,
 
   // Resolve the hostname
   const char* header_format = "<%d>%s%s %s";
-  const char* hostname_str = "";
+  const char* hostname_str  = "";
   if (timestamp_str[0] != '\0')
   {
     if (syslog_params->hostname[0] != '\0')
@@ -650,7 +650,7 @@ void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool hum
       // Add the UTC offset
       if (timestamp->utc_offset == 0)
       {
-        buf[print_res] = 'Z';
+        buf[print_res]     = 'Z';
         buf[print_res + 1] = '\0';
       }
       else
@@ -666,7 +666,7 @@ void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool hum
   if (!timestamp_created)
   {
     if (!human_readable)
-      strcpy(buf, NILVALUE_STR);
+      strcpy(buf, NILVALUE_STR);  // NOLINT
     else
       buf[0] = '\0';
   }

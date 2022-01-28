@@ -39,7 +39,7 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
     {
       if (0 == pthread_mutex_init(&id->readcount_mutex, NULL))
       {
-        id->valid = true;
+        id->valid        = true;
         id->reader_count = 0;
         return true;
       }

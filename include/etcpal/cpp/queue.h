@@ -98,7 +98,7 @@ public:
 
   Queue(const Queue& other) = delete;
   Queue& operator=(const Queue& other) = delete;
-  Queue(Queue&& other) = delete;
+  Queue(Queue&& other)                 = delete;
   Queue& operator=(Queue&& other) = delete;
 
   bool Send(const T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
@@ -106,13 +106,13 @@ public:
 
   bool Receive(T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
   template <class Rep, class Period>
-  bool Receive(T& data, const std::chrono::duration<Rep, Period>& timeout);
-  bool ReceiveFromIsr(T& data);
-  bool Reset();
-  bool IsEmpty() const;
-  bool IsEmptyFromIsr() const;
-  bool IsFull() const;
-  bool IsFullFromIsr() const;
+  bool   Receive(T& data, const std::chrono::duration<Rep, Period>& timeout);
+  bool   ReceiveFromIsr(T& data);
+  bool   Reset();
+  bool   IsEmpty() const;
+  bool   IsEmptyFromIsr() const;
+  bool   IsFull() const;
+  bool   IsFullFromIsr() const;
   size_t SlotsUsed() const;
   size_t SlotsUsedFromIsr() const;
   size_t SlotsAvailable() const;

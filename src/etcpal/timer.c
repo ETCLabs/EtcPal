@@ -32,7 +32,7 @@ void etcpal_timer_start(EtcPalTimer* timer, uint32_t interval)
   if (timer)
   {
     timer->reset_time = etcpal_getms();
-    timer->interval = interval;
+    timer->interval   = interval;
   }
 }
 

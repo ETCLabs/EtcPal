@@ -61,4 +61,4 @@ TEST_GROUP_RUNNER(etcpal_queue_integration)
   RUN_TEST_CASE(etcpal_queue_integration, concurrent_small_queue_few_readers_few_writers_few_items);
   RUN_TEST_CASE(etcpal_queue_integration, concurrent_small_queue_few_readers_many_writers_many_items);
 }
-}// extern "C"
+}  // extern "C"

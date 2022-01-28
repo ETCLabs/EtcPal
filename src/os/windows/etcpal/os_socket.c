@@ -68,7 +68,7 @@ typedef struct EtcPalPollSocket
 /* clang-format off */
 
 #define ETCPAL_NUM_SHUT 3
-static const int shutmap[ETCPAL_NUM_SHUT] =
+static const int kShutMap[ETCPAL_NUM_SHUT] =
 {
   SD_RECEIVE,
   SD_SEND,
@@ -76,7 +76,7 @@ static const int shutmap[ETCPAL_NUM_SHUT] =
 };
 
 #define ETCPAL_NUM_AF 3
-static const int sfmap[ETCPAL_NUM_AF] =
+static const int kSfMap[ETCPAL_NUM_AF] =
 {
   AF_UNSPEC,
   AF_INET,
@@ -84,14 +84,14 @@ static const int sfmap[ETCPAL_NUM_AF] =
 };
 
 #define ETCPAL_NUM_TYPE 2
-static const int stmap[ETCPAL_NUM_TYPE] =
+static const int kStMap[ETCPAL_NUM_TYPE] =
 {
   SOCK_STREAM,
   SOCK_DGRAM
 };
 
 #define ETCPAL_NUM_AIF 8
-static const int aiflagmap[ETCPAL_NUM_AIF] =
+static const int kAiFlagMap[ETCPAL_NUM_AIF] =
 {
   0,
   AI_PASSIVE,
@@ -103,7 +103,7 @@ static const int aiflagmap[ETCPAL_NUM_AIF] =
   AI_PASSIVE | AI_CANONNAME | AI_NUMERICHOST
 };
 
-static const int aifammap[ETCPAL_NUM_AF] =
+static const int kAiFamMap[ETCPAL_NUM_AF] =
 {
   AF_UNSPEC,
   AF_INET,
@@ -111,7 +111,7 @@ static const int aifammap[ETCPAL_NUM_AF] =
 };
 
 #define ETCPAL_NUM_IPPROTO 6
-static const int aiprotmap[ETCPAL_NUM_IPPROTO] =
+static const int kAiProtMap[ETCPAL_NUM_IPPROTO] =
 {
   0,
   IPPROTO_IP,
@@ -147,7 +147,7 @@ static void          poll_socket_free(EtcPalRbNode* node);
 etcpal_error_t etcpal_socket_init(void)
 {
   WSADATA wsdata;
-  WORD    wsver = MAKEWORD(2, 2);
+  WORD    wsver       = MAKEWORD(2, 2);
   int     startup_res = WSAStartup(wsver, &wsdata);
   if (startup_res != 0)
   {
@@ -163,14 +163,13 @@ void etcpal_socket_deinit(void)
 
 etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal_socket_t* conn_sock)
 {
-  struct sockaddr_storage ss;
-  int                     sa_size = sizeof ss;
-  SOCKET                  res;
-
   if (!conn_sock)
     return kEtcPalErrInvalid;
 
-  res = accept(id, (struct sockaddr*)&ss, &sa_size);
+  struct sockaddr_storage ss;
+  int                     sa_size = sizeof ss;
+
+  SOCKET res = accept(id, (struct sockaddr*)&ss, &sa_size);
 
   if (res != INVALID_SOCKET)
   {
@@ -187,18 +186,17 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
 
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
-  struct sockaddr_storage ss;
-  size_t                  sa_size;
-  int                     res;
-
   if (!address)
     return kEtcPalErrInvalid;
+
+  struct sockaddr_storage ss;
+  size_t                  sa_size = 0;
 
   sa_size = sockaddr_etcpal_to_os(address, (etcpal_os_sockaddr_t*)&ss);
   if (sa_size == 0)
     return kEtcPalErrInvalid;
 
-  res = bind(id, (struct sockaddr*)&ss, (int)sa_size);
+  int res = bind(id, (struct sockaddr*)&ss, (int)sa_size);
   return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
@@ -210,18 +208,16 @@ etcpal_error_t etcpal_close(etcpal_socket_t id)
 
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
-  struct sockaddr_storage ss;
-  size_t                  sa_size;
-  int                     res;
-
   if (!address)
     return kEtcPalErrInvalid;
 
-  sa_size = sockaddr_etcpal_to_os(address, (etcpal_os_sockaddr_t*)&ss);
+  struct sockaddr_storage ss;
+
+  size_t sa_size = sockaddr_etcpal_to_os(address, (etcpal_os_sockaddr_t*)&ss);
   if (sa_size == 0)
     return kEtcPalErrInvalid;
 
-  res = connect(id, (struct sockaddr*)&ss, (int)sa_size);
+  int res = connect(id, (struct sockaddr*)&ss, (int)sa_size);
   return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
@@ -235,14 +231,13 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 
 etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 {
-  int                     res;
-  struct sockaddr_storage ss;
-  socklen_t               size = sizeof ss;
-
   if (!address)
     return kEtcPalErrInvalid;
 
-  res = getsockname(id, (struct sockaddr*)&ss, &size);
+  struct sockaddr_storage ss;
+  socklen_t               size = sizeof ss;
+
+  int res = getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
@@ -252,6 +247,7 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
   return err_winsock_to_etcpal(WSAGetLastError());
 }
 
+// NOLINTNEXTLINE(readability-non-const-parameter)
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
   /* TODO */
@@ -271,27 +267,25 @@ etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
 
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
 {
-  int res;
-  int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
-
   if (!buffer)
     return kEtcPalErrInvalid;
 
-  res = recv(id, buffer, (int)length, impl_flags);
+  int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
+
+  int res = recv(id, buffer, (int)length, impl_flags);
   return (res >= 0 ? res : (int)err_winsock_to_etcpal(WSAGetLastError()));
 }
 
 int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockAddr* address)
 {
-  int                     res;
+  if (!buffer)
+    return (int)kEtcPalErrInvalid;
+
   int                     impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
   struct sockaddr_storage fromaddr;
   socklen_t               fromlen = sizeof fromaddr;
 
-  if (!buffer)
-    return (int)kEtcPalErrInvalid;
-
-  res = recvfrom(id, buffer, (int)length, impl_flags, (struct sockaddr*)&fromaddr, &fromlen);
+  int res = recvfrom(id, buffer, (int)length, impl_flags, (struct sockaddr*)&fromaddr, &fromlen);
 
   if (res >= 0)
   {
@@ -409,7 +403,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
       {
         EtcPalLinger* ll = (EtcPalLinger*)option_value;
         struct linger val;
-        val.l_onoff = (u_short)ll->onoff;
+        val.l_onoff  = (u_short)ll->onoff;
         val.l_linger = (u_short)ll->linger;
         return setsockopt(id, SOL_SOCKET, SO_LINGER, (char*)&val, sizeof val);
       }
@@ -473,8 +467,8 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
-          sin->sin_family = AF_INET;
-          sin->sin_addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
+          sin->sin_family         = AF_INET;
+          sin->sin_addr.s_addr    = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
           return setsockopt(id, IPPROTO_IP, MCAST_JOIN_GROUP, (char*)&val, sizeof val);
         }
       }
@@ -490,8 +484,8 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
-          sin->sin_family = AF_INET;
-          sin->sin_addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
+          sin->sin_family         = AF_INET;
+          sin->sin_addr.s_addr    = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
           return setsockopt(id, IPPROTO_IP, MCAST_LEAVE_GROUP, (char*)&val, sizeof val);
         }
       }
@@ -543,7 +537,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;
-          sin6->sin6_family = AF_INET6;
+          sin6->sin6_family         = AF_INET6;
           memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, (char*)&val, sizeof val);
         }
@@ -560,7 +554,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;
-          sin6->sin6_family = AF_INET6;
+          sin6->sin6_family         = AF_INET6;
           memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, MCAST_LEAVE_GROUP, (char*)&val, sizeof val);
         }
@@ -606,7 +600,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
 {
   if (how >= 0 && how < ETCPAL_NUM_SHUT)
   {
-    int res = shutdown(id, shutmap[how]);
+    int res = shutdown(id, kShutMap[how]);
     return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
   }
   return kEtcPalErrInvalid;
@@ -618,22 +612,16 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
   {
     if (family < ETCPAL_NUM_AF && type < ETCPAL_NUM_TYPE)
     {
-      SOCKET sock = socket(sfmap[family], stmap[type], 0);
+      SOCKET sock = socket(kSfMap[family], kStMap[type], 0);
       if (sock != INVALID_SOCKET)
       {
         *id = sock;
         return kEtcPalErrOk;
       }
-      else
-      {
-        *id = ETCPAL_SOCKET_INVALID;
-        return err_winsock_to_etcpal(WSAGetLastError());
-      }
-    }
-    else
-    {
       *id = ETCPAL_SOCKET_INVALID;
+      return err_winsock_to_etcpal(WSAGetLastError());
     }
+    *id = ETCPAL_SOCKET_INVALID;
   }
   return kEtcPalErrInvalid;
 }
@@ -645,6 +633,7 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
   return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
+// NOLINTNEXTLINE(readability-non-const-parameter)
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
 {
   ETCPAL_UNUSED_ARG(id);
@@ -678,6 +667,7 @@ void etcpal_poll_context_deinit(EtcPalPollContext* context)
   context->valid = false;
 }
 
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock_desc)
 {
   if (sock_desc->events & ETCPAL_POLL_IN)
@@ -730,10 +720,10 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
       EtcPalPollSocket* new_sock = (EtcPalPollSocket*)malloc(sizeof(EtcPalPollSocket));
       if (new_sock)
       {
-        new_sock->sock = socket;
-        new_sock->events = events;
+        new_sock->sock      = socket;
+        new_sock->events    = events;
         new_sock->user_data = user_data;
-        res = etcpal_rbtree_insert(&context->sockets, new_sock);
+        res                 = etcpal_rbtree_insert(&context->sockets, new_sock);
         if (res == kEtcPalErrOk)
         {
           set_in_fd_sets(context, new_sock);
@@ -769,7 +759,7 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
     if (sock_desc)
     {
       clear_in_fd_sets(context, sock_desc);
-      sock_desc->events = new_events;
+      sock_desc->events    = new_events;
       sock_desc->user_data = new_user_data;
       set_in_fd_sets(context, sock_desc);
       res = kEtcPalErrOk;
@@ -806,16 +796,18 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
     return kEtcPalErrInvalid;
 
   // Get the sets of sockets that we will select on.
-  EtcPalPollFdSet readfds, writefds, exceptfds;
+  EtcPalPollFdSet readfds;
   ETCPAL_FD_ZERO(&readfds);
+  EtcPalPollFdSet writefds;
   ETCPAL_FD_ZERO(&writefds);
+  EtcPalPollFdSet exceptfds;
   ETCPAL_FD_ZERO(&exceptfds);
   if (etcpal_mutex_lock(&context->lock))
   {
     if (etcpal_rbtree_size(&context->sockets) > 0)
     {
-      readfds = context->readfds;
-      writefds = context->writefds;
+      readfds   = context->readfds;
+      writefds  = context->writefds;
       exceptfds = context->exceptfds;
     }
     etcpal_mutex_unlock(&context->lock);
@@ -828,12 +820,12 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
   struct timeval os_timeout;
   if (timeout_ms == 0)
   {
-    os_timeout.tv_sec = 0;
+    os_timeout.tv_sec  = 0;
     os_timeout.tv_usec = 0;
   }
   else if (timeout_ms != ETCPAL_WAIT_FOREVER)
   {
-    os_timeout.tv_sec = timeout_ms / 1000;
+    os_timeout.tv_sec  = timeout_ms / 1000;
     os_timeout.tv_usec = (timeout_ms % 1000) * 1000;
   }
 
@@ -841,23 +833,17 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
                        exceptfds.count ? &exceptfds.set : NULL, timeout_ms == ETCPAL_WAIT_FOREVER ? NULL : &os_timeout);
 
   if (sel_res < 0)
-  {
     return err_winsock_to_etcpal(WSAGetLastError());
-  }
-  else if (sel_res == 0)
-  {
+  if (sel_res == 0)
     return kEtcPalErrTimedOut;
-  }
-  else
+
+  etcpal_error_t res = kEtcPalErrSys;
+  if (context->valid && etcpal_mutex_lock(&context->lock))
   {
-    etcpal_error_t res = kEtcPalErrSys;
-    if (context->valid && etcpal_mutex_lock(&context->lock))
-    {
-      res = handle_select_result(context, event, &readfds, &writefds, &exceptfds);
-      etcpal_mutex_unlock(&context->lock);
-    }
-    return res;
+    res = handle_select_result(context, event, &readfds, &writefds, &exceptfds);
+    etcpal_mutex_unlock(&context->lock);
   }
+  return res;
 }
 
 etcpal_error_t handle_select_result(EtcPalPollContext*     context,
@@ -869,7 +855,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext*     context,
   // Init the event data.
   event->socket = ETCPAL_SOCKET_INVALID;
   event->events = 0;
-  event->err = kEtcPalErrOk;
+  event->err    = kEtcPalErrOk;
 
   // The default return; if we don't find any sockets set that we passed to select(), something has
   // gone wrong.
@@ -878,7 +864,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext*     context,
   EtcPalRbIter iter;
   etcpal_rbiter_init(&iter);
   for (EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbiter_first(&iter, &context->sockets); sock_desc;
-       sock_desc = (EtcPalPollSocket*)etcpal_rbiter_next(&iter))
+       sock_desc                   = (EtcPalPollSocket*)etcpal_rbiter_next(&iter))
   {
     if (sock_desc->sock == ETCPAL_SOCKET_INVALID)
       continue;
@@ -886,12 +872,12 @@ etcpal_error_t handle_select_result(EtcPalPollContext*     context,
     if (ETCPAL_FD_ISSET(sock_desc->sock, readfds) || ETCPAL_FD_ISSET(sock_desc->sock, writefds) ||
         ETCPAL_FD_ISSET(sock_desc->sock, exceptfds))
     {
-      res = kEtcPalErrOk;
-      event->socket = sock_desc->sock;
+      res              = kEtcPalErrOk;
+      event->socket    = sock_desc->sock;
       event->user_data = sock_desc->user_data;
 
       /* Check for errors */
-      int error;
+      int error      = 0;
       int error_size = sizeof(error);
       if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, (char*)&error, &error_size) == 0)
       {
@@ -960,23 +946,22 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
                                   const EtcPalAddrinfo* hints,
                                   EtcPalAddrinfo*       result)
 {
-  int              res;
-  struct addrinfo* pf_res;
-  struct addrinfo  pf_hints;
-
   if ((!hostname && !service) || !result)
     return kEtcPalErrInvalid;
 
+  struct addrinfo pf_hints;
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
-    pf_hints.ai_flags = (hints->ai_flags < ETCPAL_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0;
-    pf_hints.ai_family = (hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
-    pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
-    pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
+    pf_hints.ai_flags    = (hints->ai_flags < ETCPAL_NUM_AIF) ? kAiFlagMap[hints->ai_flags] : 0;
+    pf_hints.ai_family   = (hints->ai_family < ETCPAL_NUM_AF) ? kAiFamMap[hints->ai_family] : AF_UNSPEC;
+    pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? kStMap[hints->ai_socktype] : 0;
+    pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? kAiProtMap[hints->ai_protocol] : 0;
   }
 
-  res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
+  struct addrinfo* pf_res = NULL;
+
+  int res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
   if (res == 0)
   {
     result->pd[0] = pf_res;
@@ -992,7 +977,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
   if (ai && ai->pd[1])
   {
     struct addrinfo* pf_ai = (struct addrinfo*)ai->pd[1];
-    ai->ai_flags = 0;
+    ai->ai_flags           = 0;
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)pf_ai->ai_addr, &ai->ai_addr))
       return false;
 
@@ -1020,7 +1005,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
       ai->ai_protocol = 0;
 
     ai->ai_canonname = pf_ai->ai_canonname;
-    ai->pd[1] = pf_ai->ai_next;
+    ai->pd[1]        = pf_ai->ai_next;
 
     return true;
   }

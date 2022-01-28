@@ -68,7 +68,7 @@ public:
 
   RecursiveMutex(const RecursiveMutex& other) = delete;
   RecursiveMutex& operator=(const RecursiveMutex& other) = delete;
-  RecursiveMutex(RecursiveMutex&& other) = delete;
+  RecursiveMutex(RecursiveMutex&& other)                 = delete;
   RecursiveMutex& operator=(RecursiveMutex&& other) = delete;
 
   bool Lock();
@@ -154,7 +154,7 @@ public:
 
   RecursiveMutexGuard(const RecursiveMutexGuard& other) = delete;
   RecursiveMutexGuard& operator=(const RecursiveMutexGuard& other) = delete;
-  RecursiveMutexGuard(RecursiveMutexGuard&& other) = delete;
+  RecursiveMutexGuard(RecursiveMutexGuard&& other)                 = delete;
   RecursiveMutexGuard& operator=(RecursiveMutexGuard&& other) = delete;
 
 private:

@@ -39,7 +39,7 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
   if (id && (MQX_OK == _lwsem_create(&id->sem, 1)))
   {
-    id->valid = true;
+    id->valid        = true;
     id->reader_count = 0;
     return true;
   }

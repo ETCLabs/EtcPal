@@ -33,30 +33,30 @@
 static char header_format[FORMAT_BUF_SIZE];
 static char line_format[FORMAT_BUF_SIZE];
 
-#define ID_COL_HEADER "ID"
-#define ADDR_COL_HEADER "Address"
+#define ID_COL_HEADER      "ID"
+#define ADDR_COL_HEADER    "Address"
 #define NETMASK_COL_HEADER "Netmask"
-#define MAC_COL_HEADER "MAC"
-#define INDEX_COL_HEADER "OS Index"
-#define STATE_COL_HEADER "State"
+#define MAC_COL_HEADER     "MAC"
+#define INDEX_COL_HEADER   "OS Index"
+#define STATE_COL_HEADER   "State"
 
 // Create a format string for printf based on the column width of the longest entry in each column
 void create_format_strings(const EtcPalNetintInfo* netint_arr, size_t num_interfaces)
 {
-  size_t longest_id = 0;
-  size_t longest_addr = 0;
+  size_t longest_id      = 0;
+  size_t longest_addr    = 0;
   size_t longest_netmask = 0;
 
   for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
+    char addr_str[ETCPAL_IP_STRING_BYTES]    = {'\0'};
     char netmask_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
 
     etcpal_ip_to_string(&netint->addr, addr_str);
     etcpal_ip_to_string(&netint->mask, netmask_str);
 
-    size_t id_len = strlen(netint->id);
-    size_t addr_len = strlen(addr_str);
+    size_t id_len      = strlen(netint->id);
+    size_t addr_len    = strlen(addr_str);
     size_t netmask_len = strlen(netmask_str);
 
     if (id_len > longest_id)
@@ -108,7 +108,7 @@ int main(void)
 
   for (const EtcPalNetintInfo* netint = netint_arr; netint < netint_arr + num_interfaces; ++netint)
   {
-    char addr_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
+    char addr_str[ETCPAL_IP_STRING_BYTES]    = {'\0'};
     char netmask_str[ETCPAL_IP_STRING_BYTES] = {'\0'};
     char mac_str[ETCPAL_MAC_STRING_BYTES];
     etcpal_ip_to_string(&netint->addr, addr_str);
@@ -121,7 +121,7 @@ int main(void)
   unsigned int default_v4 = 0;
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &default_v4))
   {
-    const EtcPalNetintInfo* addr_arr = NULL;
+    const EtcPalNetintInfo* addr_arr      = NULL;
     size_t                  addr_arr_size = 0;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
     {
@@ -132,7 +132,7 @@ int main(void)
   unsigned int default_v6 = 0;
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &default_v6))
   {
-    const EtcPalNetintInfo* addr_arr = NULL;
+    const EtcPalNetintInfo* addr_arr      = NULL;
     size_t                  addr_arr_size = 0;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v6, &addr_arr, &addr_arr_size))
     {

@@ -22,7 +22,7 @@
 bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct)
 {
   TIME_STRUCT ts;
-  ts.SECONDS = (ms < 0 ? 0 : (ms / 1000));
+  ts.SECONDS      = (ms < 0 ? 0 : (ms / 1000));
   ts.MILLISECONDS = (ms <= 0 ? 1 : (ms % 1000));
   return _time_to_ticks(&ts, tick_struct);
 }

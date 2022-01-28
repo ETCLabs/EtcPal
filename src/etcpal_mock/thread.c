@@ -33,5 +33,5 @@ void etcpal_thread_reset_all_fakes(void)
   RESET_FAKE(etcpal_thread_join);
 
   etcpal_thread_create_fake.return_val = kEtcPalErrOk;
-  etcpal_thread_join_fake.return_val = kEtcPalErrOk;
+  etcpal_thread_join_fake.return_val   = kEtcPalErrOk;
 }

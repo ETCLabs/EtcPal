@@ -33,8 +33,8 @@ typedef EventBits_t etcpal_event_bits_t;
 
 typedef EventGroupHandle_t etcpal_event_group_t;
 
-#define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT 1
-#define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS 1
+#define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         1
+#define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS      1
 #define ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS 1
 #if configUSE_16_BIT_TICKS == 1
 #define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS 8

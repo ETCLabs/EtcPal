@@ -336,28 +336,28 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
       if (level == ETCPAL_SOL_SOCKET && option_len >= sizeof(uint32_t))
       {
         uint32_t val = (uint32_t)(*(int*)option_value);
-        res = setsockopt(id, SOL_TCP, OPT_TBSIZE, &val, sizeof val);
+        res          = setsockopt(id, SOL_TCP, OPT_TBSIZE, &val, sizeof val);
       }
       break;
     case ETCPAL_SO_RCVTIMEO:
       if (level == ETCPAL_SOL_SOCKET && option_len >= sizeof(uint32_t))
       {
         uint32_t val = (uint32_t)(*(int*)option_value);
-        res = setsockopt(id, SOL_SOCKET, SO_RCVTIMEO, &val, sizeof val);
+        res          = setsockopt(id, SOL_SOCKET, SO_RCVTIMEO, &val, sizeof val);
       }
       break;
     case ETCPAL_SO_SNDTIMEO:
       if (level == ETCPAL_SOL_SOCKET && option_len >= sizeof(uint32_t))
       {
         uint32_t val = (uint32_t)(*(int*)option_value);
-        res = setsockopt(id, SOL_SOCKET, SO_SNDTIMEO, &val, sizeof val);
+        res          = setsockopt(id, SOL_SOCKET, SO_SNDTIMEO, &val, sizeof val);
       }
       break;
     case ETCPAL_IP_TTL:
       if (level == ETCPAL_IPPROTO_IP && option_len >= sizeof(unsigned char))
       {
         unsigned char val = (unsigned char)(*(int*)option_value);
-        res = setsockopt(id, SOL_IP, RTCS_SO_IP_TX_TTL, &val, sizeof val);
+        res               = setsockopt(id, SOL_IP, RTCS_SO_IP_TX_TTL, &val, sizeof val);
       }
       break;
     case ETCPAL_MCAST_JOIN_GROUP:
@@ -386,7 +386,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
           if (keep_going)
           {
             mreq.group = greq->group;
-            res = join_leave_mcast_group_ipv4(id, &mreq, option_name == ETCPAL_MCAST_JOIN_GROUP ? true : false);
+            res        = join_leave_mcast_group_ipv4(id, &mreq, option_name == ETCPAL_MCAST_JOIN_GROUP ? true : false);
           }
         }
         else if (ETCPAL_IP_IS_V6(&greq->group) && level == ETCPAL_IPPROTO_IPV6)
@@ -633,8 +633,8 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
     EtcPalPollCtxSocket* new_sock = find_hole(context);
     if (new_sock)
     {
-      new_sock->socket = socket;
-      new_sock->events = events;
+      new_sock->socket    = socket;
+      new_sock->events    = events;
       new_sock->user_data = user_data;
       set_in_fd_sets(context, new_sock);
       context->num_valid_sockets++;
@@ -657,7 +657,7 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
   if (sock_desc)
   {
     clear_in_fd_sets(context, sock_desc);
-    sock_desc->events = new_events;
+    sock_desc->events    = new_events;
     sock_desc->user_data = new_user_data;
     set_in_fd_sets(context, sock_desc);
     return kEtcPalErrOk;
@@ -693,7 +693,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
     return kEtcPalErrNoSockets;
   }
 
-  rtcs_fd_set readfds = context->readfds.set;
+  rtcs_fd_set readfds  = context->readfds.set;
   rtcs_fd_set writefds = context->writefds.set;
 
   uint32_t os_timeout;
@@ -739,7 +739,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context,
   // Init the event data.
   event->socket = ETCPAL_SOCKET_INVALID;
   event->events = 0;
-  event->err = kEtcPalErrOk;
+  event->err    = kEtcPalErrOk;
 
   // The default return; if we don't find any sockets set that we passed to select(), something has
   // gone wrong.
@@ -753,8 +753,8 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context,
 
     if (RTCS_FD_ISSET(sock_desc->socket, readfds) || RTCS_FD_ISSET(sock_desc->socket, writefds))
     {
-      res = kEtcPalErrOk;
-      event->socket = sock_desc->socket;
+      res              = kEtcPalErrOk;
+      event->socket    = sock_desc->socket;
       event->user_data = sock_desc->user_data;
 
       /* Check for errors */
@@ -848,8 +848,8 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
-    pf_hints.ai_flags = (uint16_t)((hints->ai_flags < ETCPAL_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0);
-    pf_hints.ai_family = (uint16_t)((hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC);
+    pf_hints.ai_flags    = (uint16_t)((hints->ai_flags < ETCPAL_NUM_AIF) ? aiflagmap[hints->ai_flags] : 0);
+    pf_hints.ai_family   = (uint16_t)((hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC);
     pf_hints.ai_socktype = (uint32_t)((hints->ai_socktype < ETCPAL_NUM_TYPE) ? stmap[hints->ai_socktype] : 0);
     pf_hints.ai_protocol = (uint16_t)((hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0);
   }
@@ -870,7 +870,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
   if (ai && ai->pd[1])
   {
     struct addrinfo* os_ai = (struct addrinfo*)ai->pd[1];
-    ai->ai_flags = 0;
+    ai->ai_flags           = 0;
     if (!sockaddr_os_to_etcpal(os_ai->ai_addr, &ai->ai_addr))
       return false;
     /* Can't use reverse maps, because we have no guarantee of the numeric values of the OS
@@ -894,7 +894,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
     else
       ai->ai_protocol = 0;
     ai->ai_canonname = os_ai->ai_canonname;
-    ai->pd[1] = os_ai->ai_next;
+    ai->pd[1]        = os_ai->ai_next;
 
     return true;
   }

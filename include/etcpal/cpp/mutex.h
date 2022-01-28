@@ -92,7 +92,7 @@ public:
 
   Mutex(const Mutex& other) = delete;
   Mutex& operator=(const Mutex& other) = delete;
-  Mutex(Mutex&& other) = delete;
+  Mutex(Mutex&& other)                 = delete;
   Mutex& operator=(Mutex&& other) = delete;
 
   bool Lock();
@@ -178,7 +178,7 @@ public:
 
   MutexGuard(const MutexGuard& other) = delete;
   MutexGuard& operator=(const MutexGuard& other) = delete;
-  MutexGuard(MutexGuard&& other) = delete;
+  MutexGuard(MutexGuard&& other)                 = delete;
   MutexGuard& operator=(MutexGuard&& other) = delete;
 
 private:

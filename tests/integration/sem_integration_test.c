@@ -30,7 +30,7 @@
 #endif
 
 // Constants
-#define NUM_THREADS 5
+#define NUM_THREADS    5
 #define NUM_ITERATIONS 3
 
 static etcpal_sem_t sem;

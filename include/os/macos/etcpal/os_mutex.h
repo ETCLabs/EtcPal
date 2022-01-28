@@ -32,11 +32,11 @@ typedef pthread_mutex_t etcpal_mutex_t;
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 0
 
-#define etcpal_mutex_create(idptr) ((bool)(!pthread_mutex_init((idptr), NULL)))
-#define etcpal_mutex_lock(idptr) ((bool)(!pthread_mutex_lock(idptr)))
+#define etcpal_mutex_create(idptr)   ((bool)(!pthread_mutex_init((idptr), NULL)))
+#define etcpal_mutex_lock(idptr)     ((bool)(!pthread_mutex_lock(idptr)))
 #define etcpal_mutex_try_lock(idptr) ((bool)(!pthread_mutex_trylock(idptr)))
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
-#define etcpal_mutex_unlock(idptr) ((void)pthread_mutex_unlock(idptr))
+#define etcpal_mutex_unlock(idptr)  ((void)pthread_mutex_unlock(idptr))
 #define etcpal_mutex_destroy(idptr) ((void)pthread_mutex_destroy(idptr))
 
 #ifdef __cplusplus

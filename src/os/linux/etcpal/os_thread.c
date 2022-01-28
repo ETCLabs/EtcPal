@@ -61,8 +61,8 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     id->name[0] = '\0';
   }
 
-  id->fn = thread_fn;
-  id->arg = thread_arg;
+  id->fn             = thread_fn;
+  id->arg            = thread_arg;
   etcpal_error_t res = kEtcPalErrOk;
   if (0 != pthread_create(&id->handle, p_thread_attr, thread_func_internal, id))
     res = errno_os_to_etcpal(errno);

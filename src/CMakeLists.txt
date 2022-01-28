@@ -16,7 +16,6 @@ add_library(EtcPalThirdParty OBJECT
   ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.h
   ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.c
 )
-set_target_properties(EtcPalThirdParty PROPERTIES C_CLANG_TIDY "")
 
 set(ETCPAL_LIB_TARGET_NAME EtcPal)
 
@@ -100,6 +99,7 @@ if(ETCPAL_NETINT_DEBUG_OUTPUT)
   target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
 endif()
 target_link_libraries(${ETCPAL_LIB_TARGET_NAME} PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
+target_clang_tidy(${ETCPAL_LIB_TARGET_NAME})
 
 if(NOT MSVC)
   set_target_properties(${ETCPAL_LIB_TARGET_NAME} PROPERTIES C_STANDARD 99)
@@ -181,5 +181,4 @@ if(ETCPAL_BUILD_MOCK_LIB)
   if(NOT MSVC)
     set_target_properties(EtcPalMock PROPERTIES C_STANDARD 99)
   endif()
-  set_target_properties(EtcPalMock PROPERTIES C_CLANG_TIDY "")
 endif()

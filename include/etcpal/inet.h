@@ -262,7 +262,7 @@ typedef struct EtcPalIpAddr
 #define ETCPAL_IP_SET_V4_ADDRESS(etcpal_ip_ptr, val) \
   do                                                 \
   {                                                  \
-    (etcpal_ip_ptr)->type = kEtcPalIpTypeV4;         \
+    (etcpal_ip_ptr)->type    = kEtcPalIpTypeV4;      \
     (etcpal_ip_ptr)->addr.v4 = val;                  \
   } while (0)
 

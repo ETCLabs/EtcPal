@@ -169,8 +169,8 @@ typedef struct EtcPalGroupReq
  * @name 'how' values for etcpal_shutdown()
  * @{
  */
-#define ETCPAL_SHUT_RD 0
-#define ETCPAL_SHUT_WR 1
+#define ETCPAL_SHUT_RD   0
+#define ETCPAL_SHUT_WR   1
 #define ETCPAL_SHUT_RDWR 2
 /**
  * @}
@@ -181,8 +181,8 @@ typedef struct EtcPalGroupReq
  * @{
  */
 #define ETCPAL_AF_UNSPEC 0u
-#define ETCPAL_AF_INET 1u
-#define ETCPAL_AF_INET6 2u
+#define ETCPAL_AF_INET   1u
+#define ETCPAL_AF_INET6  2u
 /**
  * @}
  */
@@ -192,7 +192,7 @@ typedef struct EtcPalGroupReq
  * @{
  */
 #define ETCPAL_SOCK_STREAM 0u
-#define ETCPAL_SOCK_DGRAM 1u
+#define ETCPAL_SOCK_DGRAM  1u
 /**
  * @}
  */
@@ -241,11 +241,11 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
  * @name Flag values to use with etcpal_poll_events_t.
  * @{
  */
-#define ETCPAL_POLL_IN 0x1u /**< Notify when data is available for reading on the socket. */
-#define ETCPAL_POLL_OUT 0x2u /**< Notify when the socket has space available to write data. */
-#define ETCPAL_POLL_CONNECT 0x4u /**< Notify when a non-blocking connect operation has completed. */
-#define ETCPAL_POLL_OOB 0x8u /**< Notify when there is out-of-band data on a TCP socket. */
-#define ETCPAL_POLL_ERR 0x10u /**< An error has occurred on the socket (output only). */
+#define ETCPAL_POLL_IN      0x1u  /**< Notify when data is available for reading on the socket. */
+#define ETCPAL_POLL_OUT     0x2u  /**< Notify when the socket has space available to write data. */
+#define ETCPAL_POLL_CONNECT 0x4u  /**< Notify when a non-blocking connect operation has completed. */
+#define ETCPAL_POLL_OOB     0x8u  /**< Notify when there is out-of-band data on a TCP socket. */
+#define ETCPAL_POLL_ERR     0x10u /**< An error has occurred on the socket (output only). */
 /**
  * @}
  */
@@ -282,8 +282,8 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
  * Refer to the similarly-named flags in your favorite getaddrinfo() man page for more details.
  * @{
  */
-#define ETCPAL_AI_PASSIVE 0x01
-#define ETCPAL_AI_CANONNAME 0x02
+#define ETCPAL_AI_PASSIVE     0x01
+#define ETCPAL_AI_CANONNAME   0x02
 #define ETCPAL_AI_NUMERICHOST 0x04
 /**
  * @}

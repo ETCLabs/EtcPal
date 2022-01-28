@@ -33,10 +33,10 @@ typedef pthread_mutex_t etcpal_recursive_mutex_t;
 #define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK 0
 
 bool etcpal_recursive_mutex_create(etcpal_recursive_mutex_t* id);
-#define etcpal_recursive_mutex_lock(idptr) ((bool)(!pthread_mutex_lock(idptr)))
+#define etcpal_recursive_mutex_lock(idptr)     ((bool)(!pthread_mutex_lock(idptr)))
 #define etcpal_recursive_mutex_try_lock(idptr) ((bool)(!pthread_mutex_trylock(idptr)))
 bool etcpal_recursive_mutex_timed_lock(etcpal_recursive_mutex_t* id, int timeout_ms);
-#define etcpal_recursive_mutex_unlock(idptr) ((void)pthread_mutex_unlock(idptr))
+#define etcpal_recursive_mutex_unlock(idptr)  ((void)pthread_mutex_unlock(idptr))
 #define etcpal_recursive_mutex_destroy(idptr) ((void)pthread_mutex_destroy(idptr))
 
 #ifdef __cplusplus

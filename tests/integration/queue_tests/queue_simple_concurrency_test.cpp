@@ -24,8 +24,14 @@
 #include <functional>
 #include <unordered_map>
 #include <vector>
+#include "etcpal/common.h"
 #include "etcpal/cpp/thread.h"
 #include "etcpal/sem.h"
+
+// Disable sprintf() warning on Windows/MSVC
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#endif
 
 static const unsigned kLargePrime = 115249;
 
@@ -33,7 +39,7 @@ static bool writer_failure = false;
 static bool reader_failure = false;
 
 static unsigned num_writes = 0;
-static unsigned num_reads = 0;
+static unsigned num_reads  = 0;
 
 std::unordered_map<long long int, unsigned> val_occurrences_map;
 
@@ -148,12 +154,14 @@ static void create_reader_test(etcpal::Queue<long long int>& q, int num_readers)
 
 static void wait_for_writer_complete(int num_threads)
 {
+  ETCPAL_UNUSED_ARG(num_threads);
   for (auto& thread : writer_threads)
     thread.Join();
 }
 
 static void wait_for_reader_complete(int num_threads)
 {
+  ETCPAL_UNUSED_ARG(num_threads);
   for (auto& thread : reader_threads)
     thread.Join();
 }
@@ -188,7 +196,7 @@ bool concurrent_large_queue_few_writers_many_items()
   writer_failure = false;
 
   // Each of 8 threads writes 10000 elements, to fill a queue with 80000 elements
-  num_writes = 10000;
+  num_writes                               = 10000;
   int                          num_threads = 8;
   etcpal::Queue<long long int> q(80000);
 
@@ -203,7 +211,7 @@ bool concurrent_large_queue_many_writers_few_items()
   writer_failure = false;
 
   // Each of 100 threads writes 800 elements, to fill a queue with 80000 elements
-  num_writes = 800;
+  num_writes                               = 800;
   int                          num_threads = 100;
   etcpal::Queue<long long int> q(80000);
 
@@ -224,8 +232,8 @@ bool concurrent_small_queue_one_reader_few_writers_few_items()
   // Meanwhile, Each of 1 readers reads 64 elements
   // Queue only has 8 elements
 
-  num_writes = 8;
-  num_reads = 64;
+  num_writes                               = 8;
+  num_reads                                = 64;
   int                          num_writers = 8;
   int                          num_readers = 1;
   etcpal::Queue<long long int> q(8);
@@ -256,8 +264,8 @@ bool concurrent_small_queue_few_readers_few_writers_few_items()
   // Meanwhile, Each of 8 readers reads 8 elements
   // Queue only has 8 elements
 
-  num_writes = 8;
-  num_reads = 8;
+  num_writes                               = 8;
+  num_reads                                = 8;
   int                          num_writers = 8;
   int                          num_readers = 8;
   etcpal::Queue<long long int> q(8);
@@ -288,8 +296,8 @@ bool concurrent_small_queue_few_readers_many_writers_many_items()
   // Meanwhile, Each of 8 readers reads 10000 elements
   // Queue only has 8 elements
 
-  num_writes = 800;
-  num_reads = 10000;
+  num_writes                               = 800;
+  num_reads                                = 10000;
   int                          num_writers = 100;
   int                          num_readers = 8;
   etcpal::Queue<long long int> q(8);
@@ -320,8 +328,8 @@ bool concurrent_small_queue_many_readers_few_writers_many_items()
   // Meanwhile, Each of 100 readers reads 800 elements
   // Queue only has 8 elements
 
-  num_writes = 10000;
-  num_reads = 800;
+  num_writes                               = 10000;
+  num_reads                                = 800;
   int                          num_writers = 8;
   int                          num_readers = 100;
   etcpal::Queue<long long int> q(8);

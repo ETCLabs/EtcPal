@@ -30,7 +30,7 @@
 #endif
 
 #define NUM_WRITE_THREADS 10
-#define NUM_ITERATIONS 10000
+#define NUM_ITERATIONS    10000
 
 static etcpal_rwlock_t rwlock;
 static int             shared_var;

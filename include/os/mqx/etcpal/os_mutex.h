@@ -32,11 +32,11 @@ typedef LWSEM_STRUCT etcpal_mutex_t;
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 
-#define etcpal_mutex_create(idptr) (MQX_OK == _lwsem_create((idptr), 1))
-#define etcpal_mutex_lock(idptr) (MQX_OK == _lwsem_wait(idptr))
+#define etcpal_mutex_create(idptr)   (MQX_OK == _lwsem_create((idptr), 1))
+#define etcpal_mutex_lock(idptr)     (MQX_OK == _lwsem_wait(idptr))
 #define etcpal_mutex_try_lock(idptr) (MQX_OK == _lwsem_wait_ticks((idptr), 1u))
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
-#define etcpal_mutex_unlock(idptr) ((void)_lwsem_post(idptr))
+#define etcpal_mutex_unlock(idptr)  ((void)_lwsem_post(idptr))
 #define etcpal_mutex_destroy(idptr) ((void)_lwsem_destroy(idptr))
 
 #ifdef __cplusplus

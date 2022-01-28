@@ -72,7 +72,7 @@ void init_int_handle_manager(IntHandleManager*        manager,
                              int                      max_value,
                              HandleValueInUseFunction value_in_use_func,
                              void*                    context);
-int get_next_int_handle(IntHandleManager* manager);
+int  get_next_int_handle(IntHandleManager* manager);
 
 #ifdef __cplusplus
 }

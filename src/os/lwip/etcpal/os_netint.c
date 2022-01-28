@@ -130,7 +130,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   UNLOCK_TCPIP_CORE();
 
-  cache->netints = static_netints;
+  cache->netints     = static_netints;
   cache->num_netints = num_static_netints;
   return kEtcPalErrOk;
 }

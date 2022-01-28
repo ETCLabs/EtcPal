@@ -92,7 +92,7 @@ public:
 
   EventGroup(const EventGroup& other) = delete;
   EventGroup& operator=(const EventGroup& other) = delete;
-  EventGroup(EventGroup&& other) = delete;
+  EventGroup(EventGroup&& other)                 = delete;
   EventGroup& operator=(EventGroup&& other) = delete;
 
   EventBits Wait(EventBits bits, int flags = 0);

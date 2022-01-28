@@ -31,7 +31,7 @@ bool etcpal_event_group_create(etcpal_event_group_t* id)
   {
     InitializeSRWLock(&id->lock);
     InitializeConditionVariable(&id->cond);
-    id->bits = 0;
+    id->bits  = 0;
     id->valid = true;
     return true;
   }

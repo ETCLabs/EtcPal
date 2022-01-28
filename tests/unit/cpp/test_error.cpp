@@ -171,7 +171,7 @@ class NoCopyConstructor  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
   NoCopyConstructor(const NoCopyConstructor& other) = delete;
-  NoCopyConstructor(NoCopyConstructor&& other) = default;
+  NoCopyConstructor(NoCopyConstructor&& other)      = default;
 
 private:
   int val_;
@@ -185,9 +185,9 @@ static_assert(std::is_move_constructible<etcpal::Expected<NoCopyConstructor>>::v
 class NoMoveConstructor  // NOLINT(cppcoreguidelines-special-member-functions)
 {
 public:
-  NoMoveConstructor() = default;
+  NoMoveConstructor()                               = default;
   NoMoveConstructor(const NoMoveConstructor& other) = default;
-  NoMoveConstructor(NoMoveConstructor&& other) = delete;
+  NoMoveConstructor(NoMoveConstructor&& other)      = delete;
 
 private:
   int val_;

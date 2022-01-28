@@ -30,17 +30,17 @@ extern "C" {
 
 typedef sem_t etcpal_sem_t;
 
-#define ETCPAL_SEM_HAS_TIMED_WAIT 0
+#define ETCPAL_SEM_HAS_TIMED_WAIT    0
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 0
-#define ETCPAL_SEM_HAS_MAX_COUNT 0
-#define ETCPAL_SEM_MUST_BE_BALANCED 0
+#define ETCPAL_SEM_HAS_MAX_COUNT     0
+#define ETCPAL_SEM_MUST_BE_BALANCED  0
 
 #define etcpal_sem_create(idptr, initial_count, max_count) ((bool)(!sem_init(idptr, 0, initial_count)))
-#define etcpal_sem_wait(idptr) ((bool)(!sem_wait(idptr)))
-#define etcpal_sem_try_wait(idptr) ((bool)(!sem_trywait(idptr)))
+#define etcpal_sem_wait(idptr)                             ((bool)(!sem_wait(idptr)))
+#define etcpal_sem_try_wait(idptr)                         ((bool)(!sem_trywait(idptr)))
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
-#define etcpal_sem_post(idptr) ((bool)(!sem_post(idptr)))
-#define etcpal_sem_post_from_isr etcpal_sem_post
+#define etcpal_sem_post(idptr)    ((bool)(!sem_post(idptr)))
+#define etcpal_sem_post_from_isr  etcpal_sem_post
 #define etcpal_sem_destroy(idptr) ((void)sem_destroy(idptr))
 
 #ifdef __cplusplus

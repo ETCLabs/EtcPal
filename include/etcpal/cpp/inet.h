@@ -45,8 +45,8 @@ namespace etcpal
 enum class IpAddrType
 {
   kInvalid = kEtcPalIpTypeInvalid,
-  kV4 = kEtcPalIpTypeV4,
-  kV6 = kEtcPalIpTypeV6
+  kV4      = kEtcPalIpTypeV4,
+  kV6      = kEtcPalIpTypeV6
 };
 
 /// @ingroup etcpal_cpp_inet
@@ -66,7 +66,7 @@ public:
   explicit IpAddr(const uint8_t* v6_data) noexcept;
   IpAddr(const uint8_t* v6_data, unsigned long scope_id) noexcept;
 
-  constexpr const EtcPalIpAddr& get() const noexcept;
+  constexpr const EtcPalIpAddr&          get() const noexcept;
   ETCPAL_CONSTEXPR_14 EtcPalIpAddr&      get() noexcept;
   std::string                            ToString() const;
   constexpr uint32_t                     v4_data() const noexcept;
@@ -393,7 +393,7 @@ public:
   SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16_t port) noexcept;
   ETCPAL_CONSTEXPR_14 SockAddr(IpAddr ip, uint16_t port) noexcept;
 
-  constexpr const EtcPalSockAddr& get() const noexcept;
+  constexpr const EtcPalSockAddr&     get() const noexcept;
   ETCPAL_CONSTEXPR_14 EtcPalSockAddr& get() noexcept;
   std::string                         ToString() const;
   constexpr IpAddr                    ip() const noexcept;
@@ -477,7 +477,7 @@ inline SockAddr::SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16
 /// @param[in] port The port number in host byte order.
 ETCPAL_CONSTEXPR_14_OR_INLINE SockAddr::SockAddr(IpAddr ip, uint16_t port) noexcept
 {
-  addr_.ip = ip.get();
+  addr_.ip   = ip.get();
   addr_.port = port;
 }
 
@@ -674,7 +674,7 @@ public:
   MacAddr& operator=(const EtcPalMacAddr& c_mac) noexcept;
   explicit MacAddr(const uint8_t* mac_data) noexcept;
 
-  constexpr const EtcPalMacAddr& get() const noexcept;
+  constexpr const EtcPalMacAddr&        get() const noexcept;
   ETCPAL_CONSTEXPR_14 EtcPalMacAddr&    get() noexcept;
   std::string                           ToString() const;
   constexpr const uint8_t*              data() const noexcept;

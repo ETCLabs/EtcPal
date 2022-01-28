@@ -52,7 +52,7 @@ etcpal_error_t etcpal_mempool_init_priv(EtcPalMempoolDesc* desc)
     for (; i < desc->pool_size - 1; ++i)
       desc->list[i].next = &desc->list[i + 1];
     desc->list[i].next = NULL;
-    desc->freelist = desc->list;
+    desc->freelist     = desc->list;
     desc->current_used = 0;
 #if !ETCPAL_NO_OS_SUPPORT
     res = kEtcPalErrOk;
@@ -75,7 +75,7 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
   if (etcpal_mutex_lock(&mempool_lock))
   {
 #endif
-    char*          c_pool = (char*)desc->pool;
+    char*          c_pool    = (char*)desc->pool;
     EtcPalMempool* elem_desc = desc->freelist;
     if (elem_desc)
     {
@@ -83,7 +83,7 @@ void* etcpal_mempool_alloc_priv(EtcPalMempoolDesc* desc)
       if (index >= 0)
       {
         desc->freelist = elem_desc->next;
-        elem = (void*)(c_pool + ((size_t)index * desc->elem_size));
+        elem           = (void*)(c_pool + ((size_t)index * desc->elem_size));
         ++desc->current_used;
       }
     }
@@ -111,10 +111,10 @@ void etcpal_mempool_free_priv(EtcPalMempoolDesc* desc, void* elem)
       if (etcpal_mutex_lock(&mempool_lock))
       {
 #endif
-        size_t         index = (size_t)offset / desc->elem_size;
+        size_t         index     = (size_t)offset / desc->elem_size;
         EtcPalMempool* elem_desc = &desc->list[index];
-        elem_desc->next = desc->freelist;
-        desc->freelist = elem_desc;
+        elem_desc->next          = desc->freelist;
+        desc->freelist           = elem_desc;
         --desc->current_used;
 #if !ETCPAL_NO_OS_SUPPORT
         etcpal_mutex_unlock(&mempool_lock);

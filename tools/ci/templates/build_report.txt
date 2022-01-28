@@ -1,0 +1,3 @@
+View the [documentation for EtcPal|https://etclabs.github.io/EtcPalDocs/head/].
+
+${project_dependencies}

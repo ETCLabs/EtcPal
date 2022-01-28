@@ -68,14 +68,14 @@ static void save_log_strings(void* context, const EtcPalLogStrings* strings)
 
 static void fill_default_time(EtcPalLogTimestamp* timestamp)
 {
-  timestamp->year = 1970;     // absolute year
-  timestamp->month = 1;       // month of the year - [1, 12]
-  timestamp->day = 1;         // day of the month - [1, 31]
-  timestamp->hour = 0;        // hours since midnight - [0, 23]
-  timestamp->minute = 0;      // minutes after the hour - [0, 59]
-  timestamp->second = 0;      // seconds after the minute - [0, 60] including leap second
-  timestamp->msec = 0;        // milliseconds after the second - [0, 999]
-  timestamp->utc_offset = 0;  // Local offset from UTC in minutes
+  timestamp->year       = 1970;  // absolute year
+  timestamp->month      = 1;     // month of the year - [1, 12]
+  timestamp->day        = 1;     // day of the month - [1, 31]
+  timestamp->hour       = 0;     // hours since midnight - [0, 23]
+  timestamp->minute     = 0;     // minutes after the hour - [0, 59]
+  timestamp->second     = 0;     // seconds after the minute - [0, 60] including leap second
+  timestamp->msec       = 0;     // milliseconds after the second - [0, 999]
+  timestamp->utc_offset = 0;     // Local offset from UTC in minutes
 }
 
 TEST_GROUP(etcpal_log);
@@ -88,7 +88,7 @@ TEST_SETUP(etcpal_log)
 
   RESET_FAKE(log_callback);
   RESET_FAKE(time_callback);
-  log_callback_fake.custom_fake = save_log_strings;
+  log_callback_fake.custom_fake  = save_log_strings;
   time_callback_fake.custom_fake = fill_timestamp;
 }
 
@@ -100,7 +100,7 @@ TEST_TEAR_DOWN(etcpal_log)
 // Test the etcpal_sanitize_syslog_params() function.
 TEST(etcpal_log, sanitize_syslog_params_works)
 {
-  EtcPalSyslogParams  syslog_params = ETCPAL_SYSLOG_PARAMS_INIT;
+  EtcPalSyslogParams  syslog_params        = ETCPAL_SYSLOG_PARAMS_INIT;
   const unsigned char special_char_array[] = {
       0x01, 0x10, 0x7f,  // Some non-printing chars
       0x41, 0x42, 0x43,  // "ABC"
@@ -122,7 +122,7 @@ TEST(etcpal_log, sanitize_syslog_params_works)
 // Test the etcpal_validate_log_params() function.
 TEST(etcpal_log, validate_log_params_works)
 {
-  EtcPalLogParams     lparams = ETCPAL_LOG_PARAMS_INIT;
+  EtcPalLogParams     lparams              = ETCPAL_LOG_PARAMS_INIT;
   const unsigned char special_char_array[] = {
       0x01, 0x10, 0x7f,  // Some non-printing chars
       0x41, 0x42, 0x43,  // "ABC"
@@ -136,8 +136,8 @@ TEST(etcpal_log, validate_log_params_works)
   memset(&lparams.syslog_params, 0, sizeof(EtcPalSyslogParams));
   memcpy(lparams.syslog_params.app_name, special_char_array, sizeof special_char_array);
   lparams.log_mask = 0;
-  lparams.time_fn = time_callback;
-  lparams.context = NULL;
+  lparams.time_fn  = time_callback;
+  lparams.context  = NULL;
 
   // Make sure the validation returned true and the syslog field got sanitized
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
@@ -148,7 +148,7 @@ TEST(etcpal_log, validate_log_params_works)
   TEST_ASSERT_FALSE(etcpal_validate_log_params(&lparams));
 
   // It's valid for time_fn to be NULL
-  lparams.log_fn = log_callback;
+  lparams.log_fn  = log_callback;
   lparams.time_fn = NULL;
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
 }
@@ -218,11 +218,11 @@ EtcPalLogParams log_action_test_params = {
 };
 // clang-format on
 
-#define LOG_ACTION_TEST_MESSAGE "Test Message"
-#define LOG_ACTION_TEST_HUMAN_STR "1970-01-01 00:00:00.000Z [EMRG] " LOG_ACTION_TEST_MESSAGE
-#define LOG_ACTION_TEST_SYSLOG_STR "<0>1 1970-01-01T00:00:00.000Z 10.101.17.38 My_App - - - " LOG_ACTION_TEST_MESSAGE
+#define LOG_ACTION_TEST_MESSAGE           "Test Message"
+#define LOG_ACTION_TEST_HUMAN_STR         "1970-01-01 00:00:00.000Z [EMRG] " LOG_ACTION_TEST_MESSAGE
+#define LOG_ACTION_TEST_SYSLOG_STR        "<0>1 1970-01-01T00:00:00.000Z 10.101.17.38 My_App - - - " LOG_ACTION_TEST_MESSAGE
 #define LOG_ACTION_TEST_LEGACY_SYSLOG_STR "<0>Jan  1 00:00:00 10.101.17.38 My_App: " LOG_ACTION_TEST_MESSAGE
-#define LOG_ACTION_TEST_RAW_STR LOG_ACTION_TEST_MESSAGE
+#define LOG_ACTION_TEST_RAW_STR           LOG_ACTION_TEST_MESSAGE
 
 // Make sure the "action" member in the EtcPalLogParams struct works as expected.
 TEST(etcpal_log, action_human_only_is_honored)
@@ -292,9 +292,9 @@ TEST(etcpal_log, action_all_is_honored)
 TEST(etcpal_log, context_pointer_is_passed_unmodified)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_HUMAN_READABLE;
-  lparams.log_fn = log_callback;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.action          = ETCPAL_LOG_CREATE_HUMAN_READABLE;
+  lparams.log_fn          = log_callback;
+  lparams.log_mask        = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
 
   // Test a null pointer
   lparams.context = NULL;
@@ -312,9 +312,9 @@ TEST(etcpal_log, context_pointer_is_passed_unmodified)
 TEST(etcpal_log, priority_is_passed_unmodified)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_HUMAN_READABLE;
-  lparams.log_fn = log_callback;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.action          = ETCPAL_LOG_CREATE_HUMAN_READABLE;
+  lparams.log_fn          = log_callback;
+  lparams.log_mask        = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
 
   // Test each priority value
   for (int pri = 0; pri < ETCPAL_LOG_DEBUG + 1; ++pri)
@@ -354,14 +354,14 @@ void test_syslog_header(const EtcPalLogParams*    lparams,
 TEST(etcpal_log, syslog_header_with_all_parts)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   // Validate (and also sanitize) the log params
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
@@ -372,13 +372,13 @@ TEST(etcpal_log, syslog_header_with_all_parts)
 TEST(etcpal_log, syslog_header_minus_time)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
 
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
   test_syslog_header(&lparams, NULL, "<0>1 - host?name My_App _2_4? - - " SYSLOG_HEADER_TEST_MESSAGE);
@@ -387,13 +387,13 @@ TEST(etcpal_log, syslog_header_minus_time)
 TEST(etcpal_log, syslog_header_minus_hostname)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
   test_syslog_header(&lparams, &cur_time,
@@ -403,13 +403,13 @@ TEST(etcpal_log, syslog_header_minus_hostname)
 TEST(etcpal_log, syslog_header_minus_app_name)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
   test_syslog_header(&lparams, &cur_time,
@@ -419,13 +419,13 @@ TEST(etcpal_log, syslog_header_minus_app_name)
 TEST(etcpal_log, syslog_header_minus_procid)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
   test_syslog_header(&lparams, &cur_time,
@@ -434,11 +434,11 @@ TEST(etcpal_log, syslog_header_minus_procid)
 
 TEST(etcpal_log, syslog_header_with_no_values)
 {
-  EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
+  EtcPalLogParams lparams        = ETCPAL_LOG_PARAMS_INIT;
+  lparams.action                 = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn                 = log_callback;
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
 
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
   test_syslog_header(&lparams, NULL, "<0>1 - - - - - - " SYSLOG_HEADER_TEST_MESSAGE);
@@ -462,14 +462,14 @@ void test_legacy_syslog_header(const EtcPalLogParams*    lparams,
 TEST(etcpal_log, legacy_syslog_header_with_all_parts)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   // Validate (and also sanitize) the log params
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
@@ -481,13 +481,13 @@ TEST(etcpal_log, legacy_syslog_header_with_all_parts)
 TEST(etcpal_log, legacy_syslog_header_minus_timestamp)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
 
   // Validate (and also sanitize) the log params
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
@@ -497,13 +497,13 @@ TEST(etcpal_log, legacy_syslog_header_minus_timestamp)
 TEST(etcpal_log, legacy_syslog_header_minus_hostname)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   // Validate (and also sanitize) the log params
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
@@ -513,13 +513,13 @@ TEST(etcpal_log, legacy_syslog_header_minus_hostname)
 TEST(etcpal_log, legacy_syslog_header_minus_app_name)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.procid, kWeirdProcId, sizeof kWeirdProcId);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   // Validate (and also sanitize) the log params
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
@@ -529,13 +529,13 @@ TEST(etcpal_log, legacy_syslog_header_minus_app_name)
 TEST(etcpal_log, legacy_syslog_header_minus_procid)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
-  lparams.log_fn = log_callback;
+  lparams.action          = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
+  lparams.log_fn          = log_callback;
   memcpy(lparams.syslog_params.hostname, kWeirdHostname, sizeof kWeirdHostname);
   memcpy(lparams.syslog_params.app_name, kWeirdAppName, sizeof kWeirdAppName);
   lparams.syslog_params.facility = ETCPAL_LOG_KERN;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   // Validate (and also sanitize) the log params
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
@@ -574,9 +574,9 @@ TEST(etcpal_log, syslog_prival_is_correct)
 TEST(etcpal_log, log_mask_is_honored)
 {
   EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
-  lparams.log_mask = 0;
+  lparams.action          = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn          = log_callback;
+  lparams.log_mask        = 0;
 
 #define LOG_MASK_TEST_MESSAGE "Test Message"
 
@@ -678,8 +678,8 @@ TEST(etcpal_log, legacy_syslog_time_header_is_well_formed)
 
   // Make sure two digits are handled correctly
   cur_time.month = 8;
-  cur_time.day = 15;
-  cur_time.hour = 8;
+  cur_time.day   = 15;
+  cur_time.hour  = 8;
   TEST_ASSERT_TRUE(etcpal_create_legacy_syslog_str(syslog_buf, ETCPAL_SYSLOG_STR_MAX_LEN, &cur_time, &syslog_params,
                                                    ETCPAL_LOG_EMERG, "Test Message"));
   TEST_ASSERT_TRUE(strstr(syslog_buf, "Aug 15 08:00:00"));
@@ -748,12 +748,12 @@ static char get_sanitized_char(size_t i)
 // Test logging a maximum length string.
 TEST(etcpal_log, maximum_length_human_string_works)
 {
-  EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_HUMAN_READABLE;
-  lparams.log_fn = log_callback;
+  EtcPalLogParams lparams        = ETCPAL_LOG_PARAMS_INIT;
+  lparams.action                 = ETCPAL_LOG_CREATE_HUMAN_READABLE;
+  lparams.log_fn                 = log_callback;
   lparams.syslog_params.facility = ETCPAL_LOG_LOCAL7;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   TEST_ASSERT_TRUE(etcpal_validate_log_params(&lparams));
 
@@ -767,14 +767,14 @@ TEST(etcpal_log, maximum_length_human_string_works)
   size_t      i = 0;
   for (; i < ETCPAL_RAW_LOG_MSG_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                 = get_sanitized_char(i);
     expect_human_str[str_pos++] = to_add;
-    expect_raw_str[i] = to_add;
-    to_log_str[i] = to_add;
+    expect_raw_str[i]           = to_add;
+    to_log_str[i]               = to_add;
   }
   expect_human_str[str_pos++] = '\0';
-  expect_raw_str[i] = '\0';
-  to_log_str[i] = '\0';
+  expect_raw_str[i]           = '\0';
+  to_log_str[i]               = '\0';
 
   TEST_ASSERT_LESS_OR_EQUAL(ETCPAL_LOG_STR_MAX_LEN, str_pos);
 
@@ -796,12 +796,12 @@ TEST(etcpal_log, maximum_length_human_string_works)
 
 TEST(etcpal_log, maximum_length_syslog_string_works)
 {
-  EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_SYSLOG;
-  lparams.log_fn = log_callback;
+  EtcPalLogParams lparams        = ETCPAL_LOG_PARAMS_INIT;
+  lparams.action                 = ETCPAL_LOG_CREATE_SYSLOG;
+  lparams.log_fn                 = log_callback;
   lparams.syslog_params.facility = ETCPAL_LOG_LOCAL7;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   static char expect_syslog_str[ETCPAL_SYSLOG_STR_MAX_LEN];
   static char expect_raw_str[ETCPAL_LOG_STR_MAX_LEN];
@@ -813,31 +813,31 @@ TEST(etcpal_log, maximum_length_syslog_string_works)
   size_t i = 0;
   for (; i < ETCPAL_LOG_HOSTNAME_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                       = get_sanitized_char(i);
     lparams.syslog_params.hostname[i] = to_add;
-    expect_syslog_str[str_pos++] = to_add;
+    expect_syslog_str[str_pos++]      = to_add;
   }
   lparams.syslog_params.hostname[i] = '\0';
-  expect_syslog_str[str_pos++] = ' ';
+  expect_syslog_str[str_pos++]      = ' ';
 
   TEST_ASSERT_LESS_THAN(ETCPAL_SYSLOG_STR_MAX_LEN, str_pos);
 
   for (i = 0; i < ETCPAL_LOG_APP_NAME_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                       = get_sanitized_char(i);
     lparams.syslog_params.app_name[i] = to_add;
-    expect_syslog_str[str_pos++] = to_add;
+    expect_syslog_str[str_pos++]      = to_add;
   }
   lparams.syslog_params.app_name[i] = '\0';
-  expect_syslog_str[str_pos++] = ' ';
+  expect_syslog_str[str_pos++]      = ' ';
 
   TEST_ASSERT_LESS_THAN(ETCPAL_SYSLOG_STR_MAX_LEN, str_pos);
 
   for (i = 0; i < ETCPAL_LOG_PROCID_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                     = get_sanitized_char(i);
     lparams.syslog_params.procid[i] = to_add;
-    expect_syslog_str[str_pos++] = to_add;
+    expect_syslog_str[str_pos++]    = to_add;
   }
   lparams.syslog_params.procid[i] = '\0';
   strcat(expect_syslog_str, " - - ");
@@ -849,14 +849,14 @@ TEST(etcpal_log, maximum_length_syslog_string_works)
   char to_log_str[ETCPAL_RAW_LOG_MSG_MAX_LEN];
   for (i = 0; i < ETCPAL_RAW_LOG_MSG_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                  = get_sanitized_char(i);
     expect_syslog_str[str_pos++] = to_add;
-    expect_raw_str[i] = to_add;
-    to_log_str[i] = to_add;
+    expect_raw_str[i]            = to_add;
+    to_log_str[i]                = to_add;
   }
   expect_syslog_str[str_pos++] = '\0';
-  expect_raw_str[i] = '\0';
-  to_log_str[i] = '\0';
+  expect_raw_str[i]            = '\0';
+  to_log_str[i]                = '\0';
 
   TEST_ASSERT_LESS_OR_EQUAL(ETCPAL_SYSLOG_STR_MAX_LEN, str_pos);
 
@@ -880,12 +880,12 @@ TEST(etcpal_log, maximum_length_syslog_string_works)
 
 TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
 {
-  EtcPalLogParams lparams = ETCPAL_LOG_PARAMS_INIT;
-  lparams.action = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
-  lparams.log_fn = log_callback;
+  EtcPalLogParams lparams        = ETCPAL_LOG_PARAMS_INIT;
+  lparams.action                 = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
+  lparams.log_fn                 = log_callback;
   lparams.syslog_params.facility = ETCPAL_LOG_LOCAL7;
-  lparams.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  lparams.time_fn = time_callback;
+  lparams.log_mask               = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
+  lparams.time_fn                = time_callback;
 
   static char expect_syslog_str[ETCPAL_SYSLOG_STR_MAX_LEN];
   static char expect_raw_str[ETCPAL_LOG_STR_MAX_LEN];
@@ -896,18 +896,18 @@ TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
   size_t i = 0;
   for (; i < ETCPAL_LOG_HOSTNAME_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                       = get_sanitized_char(i);
     lparams.syslog_params.hostname[i] = to_add;
-    expect_syslog_str[str_pos++] = to_add;
+    expect_syslog_str[str_pos++]      = to_add;
   }
   lparams.syslog_params.hostname[i] = '\0';
-  expect_syslog_str[str_pos++] = ' ';
+  expect_syslog_str[str_pos++]      = ' ';
 
   TEST_ASSERT_LESS_THAN(ETCPAL_SYSLOG_STR_MAX_LEN, str_pos);
 
   for (i = 0; i < ETCPAL_LOG_APP_NAME_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                       = get_sanitized_char(i);
     lparams.syslog_params.app_name[i] = to_add;
     if (i < 32)
       expect_syslog_str[str_pos++] = to_add;
@@ -918,7 +918,7 @@ TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
 
   for (i = 0; i < ETCPAL_LOG_PROCID_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                     = get_sanitized_char(i);
     lparams.syslog_params.procid[i] = to_add;
     // APP_NAME/PROCID pair will be truncated to 32 characters
     // expect_syslog_str[str_pos++] = to_add;
@@ -933,14 +933,14 @@ TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
   char to_log_str[ETCPAL_RAW_LOG_MSG_MAX_LEN];
   for (i = 0; i < ETCPAL_RAW_LOG_MSG_MAX_LEN - 1; ++i)
   {
-    char to_add = get_sanitized_char(i);
+    char to_add                  = get_sanitized_char(i);
     expect_syslog_str[str_pos++] = to_add;
-    expect_raw_str[i] = to_add;
-    to_log_str[i] = to_add;
+    expect_raw_str[i]            = to_add;
+    to_log_str[i]                = to_add;
   }
   expect_syslog_str[str_pos++] = '\0';
-  expect_raw_str[i] = '\0';
-  to_log_str[i] = '\0';
+  expect_raw_str[i]            = '\0';
+  to_log_str[i]                = '\0';
 
   TEST_ASSERT_LESS_OR_EQUAL(ETCPAL_SYSLOG_STR_MAX_LEN, str_pos);
 
@@ -962,9 +962,9 @@ TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
   TEST_ASSERT_EQUAL_STRING(last_log_strings_received.raw, expect_raw_str);
 }
 
-#define VCREATE_TEST_PRI ETCPAL_LOG_WARNING
+#define VCREATE_TEST_PRI                 ETCPAL_LOG_WARNING
 #define VCREATE_TEST_FORMAT_STR_AND_ARGS "Here are some random values: %s %d %x", "hey", 25, 0x3d5
-#define VCREATE_TEST_EXPECTED_RESULT "1970-01-01 00:00:00.000Z [WARN] Here are some random values: hey 25 3d5"
+#define VCREATE_TEST_EXPECTED_RESULT     "1970-01-01 00:00:00.000Z [WARN] Here are some random values: hey 25 3d5"
 
 static bool vcreate_test_helper(const char* format, ...)
 {
@@ -981,7 +981,7 @@ TEST(etcpal_log, vcreate_log_str_works)
   TEST_ASSERT_EQUAL_STRING(human_buf, VCREATE_TEST_EXPECTED_RESULT);
 }
 
-#define VCREATE_SYSLOG_TEST_PRI ETCPAL_LOG_EMERG
+#define VCREATE_SYSLOG_TEST_PRI                 ETCPAL_LOG_EMERG
 #define VCREATE_SYSLOG_TEST_FORMAT_STR_AND_ARGS "Here are some random values: %s %d %x", "hey", 25, 0x3d5
 
 static const EtcPalSyslogParams kVcreateTestSyslogParams = {ETCPAL_LOG_DAEMON, "test_host", "test_app", "test_proc"};

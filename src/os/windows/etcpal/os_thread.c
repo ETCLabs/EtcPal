@@ -30,15 +30,15 @@
 // directly from the sample code at Microsoft.
 // Lasciate ogne speranza, voi ch'intrate
 // Abandon all hope, ye who enter here.
-const DWORD MS_VC_EXCEPTION = 0x406D1388;
+const DWORD kMsVcException = 0x406D1388;
 #pragma pack(push, 8)
-typedef struct tagTHREADNAME_INFO
+typedef struct
 {
-  DWORD  dwType;     /* Must be 0x1000. */
-  LPCSTR szName;     /* Pointer to name (in user addr space). */
-  DWORD  dwThreadID; /* Thread ID (-1=caller thread). */
-  DWORD  dwFlags;    /* Reserved for future use, must be zero. */
-} THREADNAME_INFO;
+  DWORD  dwType; /* Must be 0x1000. */                          // NOLINT
+  LPCSTR szName; /* Pointer to name (in user addr space). */    // NOLINT
+  DWORD  dwThreadID; /* Thread ID (-1=caller thread). */        // NOLINT
+  DWORD  dwFlags; /* Reserved for future use, must be zero. */  // NOLINT
+} ThreadNameInfo;
 #pragma pack(pop)
 
 #ifdef UNICODE
@@ -53,33 +53,33 @@ typedef struct tagTHREADNAME_INFO
 // SetThreadDescription function. This API works even if no debugger is attached. This is used if
 // available (the version of Windows is new enough); otherwise, we fall back to the old method that
 // only works in debuggers.
-void SetThreadName(DWORD dwThreadID, const char* threadName)
+void set_thread_name(DWORD thread_id, const char* thread_name)
 {
   // Find function pointer for Win10 1607 version
   // Kernel32 will definitely be loaded so directly ask for the handle
-  typedef HRESULT(WINAPI * SetThreadDescriptionFunc)(HANDLE hThread, PCWSTR lpThreadDescription);
+  typedef HRESULT(WINAPI * SetThreadDescriptionFunc)(HANDLE thread, PCWSTR thread_description);
   SetThreadDescriptionFunc set_thread_description_func =
       (SetThreadDescriptionFunc)GetProcAddress(GetModuleHandle(KERNEL32_DLL_NAME), "SetThreadDescription");
   if (set_thread_description_func)
   {
     // Convert to WCHAR
-    wchar_t wszDest[100] = {0};
-    MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, threadName, -1, wszDest, 100);
-    set_thread_description_func(GetCurrentThread(), wszDest);
+    wchar_t dest[100] = {0};
+    MultiByteToWideChar(CP_UTF8, MB_PRECOMPOSED, thread_name, -1, dest, 100);
+    set_thread_description_func(GetCurrentThread(), dest);
     return;
   }
 
   // Older versions of Windows
-  THREADNAME_INFO info;
-  info.dwType = 0x1000;
-  info.szName = threadName;
-  info.dwThreadID = dwThreadID;
-  info.dwFlags = 0;
+  ThreadNameInfo info;
+  info.dwType     = 0x1000;
+  info.szName     = thread_name;
+  info.dwThreadID = thread_id;
+  info.dwFlags    = 0;
 #pragma warning(push)
 #pragma warning(disable : 6320 6322)
   __try
   {
-    RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+    RaiseException(kMsVcException, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
   }
   __except (EXCEPTION_EXECUTE_HANDLER)
   {
@@ -92,7 +92,7 @@ unsigned __stdcall thread_func_internal(void* pthread)
   etcpal_thread_t* thread_data = (etcpal_thread_t*)pthread;
   if (thread_data)
   {
-    SetThreadName((DWORD)-1, thread_data->name);
+    set_thread_name((DWORD)-1, thread_data->name);
     if (thread_data->fn)
       thread_data->fn(thread_data->arg);
     return 0;
@@ -110,12 +110,12 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
 
   strncpy_s(id->name, ETCPAL_THREAD_NAME_MAX_LENGTH, params->thread_name, _TRUNCATE);
   id->arg = thread_arg;
-  id->fn = thread_fn;
+  id->fn  = thread_fn;
   id->tid = (HANDLE)_beginthreadex(NULL, params->stack_size, thread_func_internal, id, CREATE_SUSPENDED, NULL);
   if (id->tid == 0)
     return err_os_to_etcpal(errno);
 
-  SetThreadPriority(id->tid, params->priority);
+  SetThreadPriority(id->tid, (int)params->priority);
   ResumeThread(id->tid);
   return kEtcPalErrOk;
 }

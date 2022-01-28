@@ -40,10 +40,7 @@ etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
     memcpy(&uuid->data[8], os_uuid.Data4, 8);
     return kEtcPalErrOk;
   }
-  else
-  {
-    return kEtcPalErrSys;
-  }
+  return kEtcPalErrSys;
 }
 
 etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
@@ -60,10 +57,7 @@ etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
     memcpy(&uuid->data[8], os_uuid.Data4, 8);
     return kEtcPalErrOk;
   }
-  else
-  {
-    return kEtcPalErrSys;
-  }
+  return kEtcPalErrSys;
 }
 
 etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)

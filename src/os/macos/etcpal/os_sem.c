@@ -23,7 +23,7 @@ bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned in
 {
   if (id)
   {
-    id->sem = dispatch_semaphore_create(initial_count);
+    id->sem   = dispatch_semaphore_create(initial_count);
     id->valid = true;
     return true;
   }

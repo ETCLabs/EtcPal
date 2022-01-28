@@ -154,7 +154,7 @@ void MD5Final(uint8_t digest[16], MD5_CTX* context)
   Encode(bits, context->count, 8);
 
   /* Pad out to 56 mod 64.*/
-  index = (unsigned int)((context->count[0] >> 3) & 0x3f);
+  index  = (unsigned int)((context->count[0] >> 3) & 0x3f);
   padLen = (index < 56) ? (56 - index) : (120 - index);
   MD5Update(context, PADDING, padLen);
 
@@ -266,7 +266,7 @@ static void Encode(uint8_t* output, uint32_t* input, unsigned int len)
 
   for (i = 0, j = 0; j < len; i++, j += 4)
   {
-    output[j] = (uint8_t)(input[i] & 0xff);
+    output[j]     = (uint8_t)(input[i] & 0xff);
     output[j + 1] = (uint8_t)((input[i] >> 8) & 0xff);
     output[j + 2] = (uint8_t)((input[i] >> 16) & 0xff);
     output[j + 3] = (uint8_t)((input[i] >> 24) & 0xff);

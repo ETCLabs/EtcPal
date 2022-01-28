@@ -43,12 +43,10 @@ static void                  copy_all_netint_info(const IP_ADAPTER_ADDRESSES* ad
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
-  IP_ADAPTER_ADDRESSES *padapters, *pcur;
-
-  padapters = get_windows_adapters();
+  IP_ADAPTER_ADDRESSES* padapters = get_windows_adapters();
   if (!padapters)
     return kEtcPalErrSys;
-  pcur = padapters;
+  IP_ADAPTER_ADDRESSES* pcur = padapters;
 
   cache->num_netints = 0;
   while (pcur)
@@ -105,26 +103,20 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   struct sockaddr_storage os_addr;
   if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
   {
-    DWORD resolved_index;
-    DWORD res = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
+    DWORD resolved_index = 0;
+    DWORD res            = GetBestInterfaceEx((struct sockaddr*)&os_addr, &resolved_index);
     if (res == NO_ERROR)
     {
       *index = resolved_index;
       return kEtcPalErrOk;
     }
-    else if (res == ERROR_INVALID_PARAMETER)
+    if (res == ERROR_INVALID_PARAMETER)
     {
       return kEtcPalErrInvalid;
     }
-    else
-    {
-      return kEtcPalErrNotFound;
-    }
+    return kEtcPalErrNotFound;
   }
-  else
-  {
-    return kEtcPalErrInvalid;
-  }
+  return kEtcPalErrInvalid;
 }
 
 bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
@@ -146,7 +138,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 IP_ADAPTER_ADDRESSES* get_windows_adapters()
 {
   ULONG buflen = 0;
-  ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+  ULONG flags  = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
 
   // Preallocating a buffer specifically this size is expressly recommended by the Microsoft usage
   // page.
@@ -154,16 +146,21 @@ IP_ADAPTER_ADDRESSES* get_windows_adapters()
   if (!buffer)
     return NULL;
 
-  if (ERROR_BUFFER_OVERFLOW == GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen))
+  DWORD result = GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen);
+  if (result == ERROR_BUFFER_OVERFLOW)
   {
     free(buffer);
     buffer = malloc(buflen);
-    if (buffer &&
-        (ERROR_SUCCESS == GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen)))
-    {
-      return (IP_ADAPTER_ADDRESSES*)buffer;
-    }
+    if (!buffer)
+      return NULL;
+    result = GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen);
   }
+
+  if (result == NO_ERROR)
+  {
+    return (IP_ADAPTER_ADDRESSES*)buffer;
+  }
+  free(buffer);
   return NULL;
 }
 
@@ -188,7 +185,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
   const IP_ADAPTER_ADDRESSES* pcur = adapters;
 
   // Get the index of the default interface for IPv4
-  DWORD              def_ifindex_v4;
+  DWORD              def_ifindex_v4 = 0;
   struct sockaddr_in v4_dest;
   memset(&v4_dest, 0, sizeof v4_dest);
   v4_dest.sin_family = AF_INET;
@@ -199,7 +196,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
   }
 
   // And the same for IPv6
-  DWORD               def_ifindex_v6;
+  DWORD               def_ifindex_v6 = 0;
   struct sockaddr_in6 v6_dest;
   memset(&v6_dest, 0, sizeof v6_dest);
   v6_dest.sin6_family = AF_INET6;

@@ -34,10 +34,10 @@ typedef struct
   dispatch_semaphore_t sem;
 } etcpal_sem_t;
 
-#define ETCPAL_SEM_HAS_TIMED_WAIT 1
+#define ETCPAL_SEM_HAS_TIMED_WAIT    1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 0
-#define ETCPAL_SEM_HAS_MAX_COUNT 0
-#define ETCPAL_SEM_MUST_BE_BALANCED 1
+#define ETCPAL_SEM_HAS_MAX_COUNT     0
+#define ETCPAL_SEM_MUST_BE_BALANCED  1
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
 bool etcpal_sem_wait(etcpal_sem_t* id);

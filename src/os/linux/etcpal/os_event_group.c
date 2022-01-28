@@ -34,7 +34,7 @@ bool etcpal_event_group_create(etcpal_event_group_t* id)
       if (0 == pthread_cond_init(&id->cond, NULL))
       {
         id->valid = true;
-        id->bits = 0;
+        id->bits  = 0;
         return true;
       }
 

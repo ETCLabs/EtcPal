@@ -184,7 +184,7 @@ public:
   template <typename Rep, typename Period>
   explicit Timer(const std::chrono::duration<Rep, Period>& interval) noexcept;
 
-  constexpr const EtcPalTimer& get() const noexcept;
+  constexpr const EtcPalTimer&     get() const noexcept;
   ETCPAL_CONSTEXPR_14 EtcPalTimer& get() noexcept;
 
   TimePoint GetStartTime() const noexcept;

@@ -77,7 +77,7 @@ public:
 
   Semaphore(const Semaphore& other) = delete;
   Semaphore& operator=(const Semaphore& other) = delete;
-  Semaphore(Semaphore&& other) = delete;
+  Semaphore(Semaphore&& other)                 = delete;
   Semaphore& operator=(Semaphore&& other) = delete;
 
   bool Wait();

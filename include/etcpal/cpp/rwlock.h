@@ -116,7 +116,7 @@ public:
 
   RwLock(const RwLock& other) = delete;
   RwLock& operator=(const RwLock& other) = delete;
-  RwLock(RwLock&& other) = delete;
+  RwLock(RwLock&& other)                 = delete;
   RwLock& operator=(RwLock&& other) = delete;
 
   bool ReadLock();
@@ -237,7 +237,7 @@ public:
 
   ReadGuard(const ReadGuard& other) = delete;
   ReadGuard& operator=(const ReadGuard& other) = delete;
-  ReadGuard(ReadGuard&& other) = delete;
+  ReadGuard(ReadGuard&& other)                 = delete;
   ReadGuard& operator=(ReadGuard&& other) = delete;
 
 private:
@@ -296,7 +296,7 @@ public:
 
   WriteGuard(const WriteGuard& other) = delete;
   WriteGuard& operator=(const WriteGuard& other) = delete;
-  WriteGuard(WriteGuard&& other) = delete;
+  WriteGuard(WriteGuard&& other)                 = delete;
   WriteGuard& operator=(WriteGuard&& other) = delete;
 
 private:

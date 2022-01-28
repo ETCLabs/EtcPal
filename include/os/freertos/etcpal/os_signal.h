@@ -31,7 +31,7 @@ extern "C" {
 
 typedef SemaphoreHandle_t etcpal_signal_t;
 
-#define ETCPAL_SIGNAL_HAS_TIMED_WAIT 1
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT    1
 #define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 1
 
 bool etcpal_signal_create(etcpal_signal_t* id);

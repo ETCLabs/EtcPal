@@ -61,7 +61,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     copy_interface_info(i, &netints[i]);
   }
 
-  cache->netints = netints;
+  cache->netints     = netints;
   cache->num_netints = BSP_ENET_DEVICE_COUNT;
 
   cache->def.v4_valid = true;

@@ -69,7 +69,7 @@ TEST(etcpal_inet, ipaddr_init_macros_work)
 #define V6_INITIALIZER 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 
   const uint8_t      v6_val[] = {V6_INITIALIZER};
-  const EtcPalIpAddr v6 = ETCPAL_IPV6_INIT(V6_INITIALIZER);
+  const EtcPalIpAddr v6       = ETCPAL_IPV6_INIT(V6_INITIALIZER);
 
   TEST_ASSERT_TRUE(ETCPAL_IP_IS_V6(&v6));
   TEST_ASSERT_EQUAL_UINT8_ARRAY(ETCPAL_IP_V6_ADDRESS(&v6), v6_val, 16);
@@ -316,7 +316,7 @@ TEST(etcpal_inet, ip_mask_from_length_works)
 
   // Test mask: /0, V6
   uint8_t v6_compare_val[ETCPAL_IPV6_BYTES] = {0};
-  mask_out = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 0);
+  mask_out                                  = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 0);
   TEST_ASSERT(ETCPAL_IP_IS_V6(&mask_out));
   TEST_ASSERT_EQUAL_UINT8_ARRAY(ETCPAL_IP_V6_ADDRESS(&mask_out), v6_compare_val, ETCPAL_IPV6_BYTES);
 
@@ -409,17 +409,17 @@ TEST(etcpal_inet, ip_network_portions_equal_works_ipv6)
 
 // For ip/string functions
 static char              str[ETCPAL_IP_STRING_BYTES];
-static const char* const kTestIp41 = "0.0.0.0";
-static const char* const kTestIp42 = "255.255.255.255";
-static const char* const kTestIp4Fail = "256.256.256.256";
-static const char* const kTestIp61 = "::";
+static const char* const kTestIp41                       = "0.0.0.0";
+static const char* const kTestIp42                       = "255.255.255.255";
+static const char* const kTestIp4Fail                    = "256.256.256.256";
+static const char* const kTestIp61                       = "::";
 static const uint8_t     kTestIp61Bin[ETCPAL_IPV6_BYTES] = {0};
-static const char* const kTestIp62 = "::1";
+static const char* const kTestIp62                       = "::1";
 static const uint8_t     kTestIp62Bin[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-static const char* const kTestIp63 = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
+static const char* const kTestIp63                       = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
 static const uint8_t     kTestIp63Bin[ETCPAL_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
                                                         0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-static const char* const kTestIp6Fail = "abcd::ef01::2345";
+static const char* const kTestIp6Fail                    = "abcd::ef01::2345";
 
 TEST(etcpal_inet, ip_to_string_conversion_works)
 {
@@ -497,7 +497,7 @@ TEST(etcpal_inet, string_to_mac_conversion_works)
 {
   EtcPalMacAddr       mac;
   const char*         good_strings[] = {"0a:0b:cd:01:02:34", "0a0bcd010234"};
-  const EtcPalMacAddr good_str_mac = {{0x0a, 0x0b, 0xcd, 0x01, 0x02, 0x34}};
+  const EtcPalMacAddr good_str_mac   = {{0x0a, 0x0b, 0xcd, 0x01, 0x02, 0x34}};
   // clang-format off
   const char* bad_strings[] = {
     "0a:0b:cd:01:02:0", // short by one character

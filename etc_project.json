@@ -1,0 +1,35 @@
+{
+  "devToolConfig": {
+    "version": {
+      "fileTemplates": {
+        "tools/ci/templates/version.h.in": "include/etcpal/version.h"
+      },
+      "jira": {
+        "project": "ETCPAL",
+        "buildReportTemplate": "tools/ci/templates/build_report.txt"
+      }
+    },
+    "docs": {
+      "extraStylesheets": ["docs/etcpal_dox_styles.css"],
+      "multiVersion": {
+        "enabled": true,
+        "htmlRoot": "/EtcPalDocs",
+        "versions": [
+          {
+            "name": "0.1.0",
+            "ref": "v0.1.0",
+            "doxyfileDir": "doc"
+          },
+          {
+            "name": "0.2.0",
+            "ref": "v0.2.0"
+          },
+          {
+            "name": "0.3.0",
+            "ref": "v0.3.0"
+          }
+        ]
+      }
+    }
+  }
+}

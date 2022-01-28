@@ -42,23 +42,23 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     return kEtcPalErrInvalid;
 
   TASK_TEMPLATE_STRUCT template;
-  template.TASK_ADDRESS = thread_func_internal;
-  template.TASK_NAME = (char*)(params->thread_name ? params->thread_name : "etcpal_thread");
-  template.TASK_PRIORITY = params->priority;
+  template.TASK_ADDRESS   = thread_func_internal;
+  template.TASK_NAME      = (char*)(params->thread_name ? params->thread_name : "etcpal_thread");
+  template.TASK_PRIORITY  = params->priority;
   template.TASK_STACKSIZE = params->stack_size;
   if (params->platform_data)
   {
     EtcPalThreadParamsMqx* platform_params = (EtcPalThreadParamsMqx*)params->platform_data;
-    template.TASK_ATTRIBUTES = platform_params->task_attributes;
-    template.DEFAULT_TIME_SLICE = platform_params->time_slice;
+    template.TASK_ATTRIBUTES               = platform_params->task_attributes;
+    template.DEFAULT_TIME_SLICE            = platform_params->time_slice;
   }
   else
   {
-    template.TASK_ATTRIBUTES = (_mqx_uint)ETCPAL_THREAD_MQX_DEFAULT_ATTRIBUTES;
+    template.TASK_ATTRIBUTES    = (_mqx_uint)ETCPAL_THREAD_MQX_DEFAULT_ATTRIBUTES;
     template.DEFAULT_TIME_SLICE = ETCPAL_THREAD_MQX_DEFAULT_TIME_SLICE;
   }
-  id->fn = thread_fn;
-  id->arg = thread_arg;
+  id->fn                      = thread_fn;
+  id->arg                     = thread_arg;
   template.CREATION_PARAMETER = (uint32_t)id;
 
   _task_id t_id = _task_create(0, 0, (uint32_t) & template);

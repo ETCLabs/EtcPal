@@ -12,30 +12,30 @@
 #define DBG_NEW new
 #endif
 
-#define START_LEAK_SNAPSHOT                                   \
-_CrtMemState s1;                                              \
-_CrtMemState s2;                                              \
-_CrtMemState s3;                                              \
-                                                              \
-_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);              \
-  _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT);          \
-  _CrtMemCheckpoint(&s1);                                     \
+#define START_LEAK_SNAPSHOT                          \
+  _CrtMemState s1;                                   \
+  _CrtMemState s2;                                   \
+  _CrtMemState s3;                                   \
+                                                     \
+  _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);   \
+  _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDOUT); \
+  _CrtMemCheckpoint(&s1);
 
-#define END_LEAK_SNAPSHOT(LEAK)                               \
-_CrtMemCheckpoint(&s2);                                       \
-                                                              \
-LEAK = false;                                                 \
-if (_CrtMemDifference(&s3, &s1, &s2))                         \
-{                                                             \
-  printf("\r\n----------------------------------------\r\n"); \
-  LEAK = true;                                                \
-  _CrtMemDumpStatistics(&s3);                                 \
-  printf("----------------------------------------\r\n");     \
-}                                                             \
+#define END_LEAK_SNAPSHOT(LEAK)                                 \
+  _CrtMemCheckpoint(&s2);                                       \
+                                                                \
+  LEAK = false;                                                 \
+  if (_CrtMemDifference(&s3, &s1, &s2))                         \
+  {                                                             \
+    printf("\r\n----------------------------------------\r\n"); \
+    LEAK = true;                                                \
+    _CrtMemDumpStatistics(&s3);                                 \
+    printf("----------------------------------------\r\n");     \
+  }
 
 bool leak_check_send_receive()
 {
-  bool true_if_leak;
+  bool                          true_if_leak;
   long long int                 val;
   etcpal::Queue<long long int>* q = new etcpal::Queue<long long int>(3);
 
@@ -48,7 +48,7 @@ bool leak_check_send_receive()
 
 bool leak_check_create_destroy()
 {
-  bool                          true_if_leak;
+  bool true_if_leak;
 
   START_LEAK_SNAPSHOT
   etcpal::Queue<long long int>* q = new etcpal::Queue<long long int>(10);

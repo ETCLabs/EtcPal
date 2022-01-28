@@ -33,7 +33,7 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
   if (id && (NULL != (id->sem = xSemaphoreCreateMutex())))
   {
     id->reader_count = 0;
-    id->valid = true;
+    id->valid        = true;
     return true;
   }
   return false;
@@ -176,7 +176,7 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
   if (id && id->valid)
   {
     vSemaphoreDelete(id->sem);
-    id->sem = NULL;
+    id->sem   = NULL;
     id->valid = false;
   }
 }

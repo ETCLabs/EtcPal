@@ -289,7 +289,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   // Translate the index to a name
   struct ifreq if_req;
   if_req.ifr_ifindex = (int)index;
-  int ioctl_res = ioctl(ioctl_sock, SIOCGIFNAME, &if_req);
+  int ioctl_res      = ioctl(ioctl_sock, SIOCGIFNAME, &if_req);
   if (ioctl_res != 0)
   {
     close(ioctl_sock);
@@ -331,8 +331,8 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
   // reply. If the buffer was not big enough, repeat (cannot reuse the same socket because we've
   // often received partial messages that must be discarded)
 
-  etcpal_error_t result = kEtcPalErrOk;
-  bool           done = false;
+  etcpal_error_t result        = kEtcPalErrOk;
+  bool           done          = false;
   size_t         recv_buf_size = 2048;  // Tests show this is usually enough for small routing tables
   while (result == kEtcPalErrOk && !done)
   {
@@ -380,12 +380,12 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
   // Build the request
   RtNetlinkRequest req;
   memset(&req, 0, sizeof(req));
-  req.nl_header.nlmsg_len = NLMSG_LENGTH(sizeof(struct rtmsg));
-  req.nl_header.nlmsg_type = RTM_GETROUTE;
+  req.nl_header.nlmsg_len   = NLMSG_LENGTH(sizeof(struct rtmsg));
+  req.nl_header.nlmsg_type  = RTM_GETROUTE;
   req.nl_header.nlmsg_flags = (__u16)(NLM_F_REQUEST | NLM_F_DUMP);
-  req.nl_header.nlmsg_pid = (__u32)getpid();
-  req.rt_msg.rtm_family = (unsigned char)family;
-  req.rt_msg.rtm_table = RT_TABLE_MAIN;
+  req.nl_header.nlmsg_pid   = (__u32)getpid();
+  req.rt_msg.rtm_family     = (unsigned char)family;
+  req.rt_msg.rtm_table      = RT_TABLE_MAIN;
 
   // Send it to the kernel
   struct sockaddr_nl naddr;
@@ -401,12 +401,12 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
 {
   // Allocate slightly larger than buf_size, so we can detect when more room is needed
   size_t real_size = buf_size + 20;
-  char*  buffer = (char*)malloc(real_size);
+  char*  buffer    = (char*)malloc(real_size);
   if (!buffer)
     return kEtcPalErrNoMem;
   memset(buffer, 0, real_size);
 
-  char*  cur_ptr = buffer;
+  char*  cur_ptr     = buffer;
   size_t nl_msg_size = 0;
 
   // Read from the socket until the NLMSG_DONE is returned in the type of the RTNETLINK message
@@ -445,8 +445,8 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
 
 etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table)
 {
-  table->size = 0;
-  table->entries = NULL;
+  table->size          = 0;
+  table->entries       = NULL;
   table->default_route = NULL;
 
   // Parse the result
@@ -469,7 +469,7 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     {
       // inner loop: loop thru all the attributes of one route entry.
       struct rtattr* rt_attributes = (struct rtattr*)RTM_RTA(rt_message);
-      unsigned int   rt_attr_size = (unsigned int)RTM_PAYLOAD(nl_header);
+      unsigned int   rt_attr_size  = (unsigned int)RTM_PAYLOAD(nl_header);
       for (; RTA_OK(rt_attributes, rt_attr_size); rt_attributes = RTA_NEXT(rt_attributes, rt_attr_size))
       {
         // We only care about the gateway and DST attribute
@@ -545,7 +545,7 @@ void init_routing_table_entry(RoutingTableEntry* entry)
   ETCPAL_IP_SET_INVALID(&entry->mask);
   ETCPAL_IP_SET_INVALID(&entry->gateway);
   entry->interface_index = -1;
-  entry->metric = INT_MAX;
+  entry->metric          = INT_MAX;
 }
 
 int compare_routing_table_entries(const void* a, const void* b)

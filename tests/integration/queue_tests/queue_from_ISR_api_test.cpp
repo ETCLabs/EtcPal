@@ -2,8 +2,8 @@
 
 bool send_to_empty_from_isr()
 {
-  bool                         true_if_success = false;
-  long long int                val = 0;
+  bool          true_if_success = false;
+  long long int val             = 0;
 
   etcpal::Queue<long long int> q(3);
 
@@ -33,7 +33,7 @@ bool send_to_full_from_isr()
 
 bool receive_from_empty_from_isr()
 {
-  long long int                val = 0;
+  long long int                val             = 0;
   bool                         true_if_success = false;
   etcpal::Queue<long long int> q(3);
 
@@ -45,8 +45,8 @@ bool receive_from_empty_from_isr()
 
 bool receive_from_full_from_isr()
 {
-  int val = 0;
-  bool          true_if_success = false;
+  int  val             = 0;
+  bool true_if_success = false;
 
   etcpal::Queue<int> q(3);
 

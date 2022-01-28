@@ -72,14 +72,13 @@ static etcpal_socket_t send_sock;
 static EtcPalSockAddr  send_addr;
 static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
 
-#if !ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS
 // Select the default interface if available, the very first non-loopback, non-link-local interface
 // if not.
 static void select_network_interface_v4()
 {
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &v4_netint))
   {
-    const EtcPalNetintInfo* netint_arr = NULL;
+    const EtcPalNetintInfo* netint_arr      = NULL;
     size_t                  netint_arr_size = 0;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->id, "utun"))
@@ -97,7 +96,7 @@ static void select_network_interface_v4()
         if (ETCPAL_IP_IS_V4(&netint->addr) && !etcpal_ip_is_link_local(&netint->addr) &&
             !etcpal_ip_is_loopback(&netint->addr) && NULL == strstr(netint->id, "utun"))
         {
-          v4_netint = netint->index;
+          v4_netint           = netint->index;
           run_ipv4_mcast_test = true;
           return;
         }
@@ -115,7 +114,7 @@ static void select_network_interface_v6()
 {
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &v6_netint))
   {
-    const EtcPalNetintInfo* netint_arr = NULL;
+    const EtcPalNetintInfo* netint_arr      = NULL;
     size_t                  netint_arr_size = 0;
     if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
         NULL == strstr(netint_arr->id, "utun"))
@@ -133,7 +132,7 @@ static void select_network_interface_v6()
         if (ETCPAL_IP_IS_V6(&netint->addr) && !etcpal_ip_is_loopback(&netint->addr) &&
             NULL == strstr(netint->id, "utun"))
         {
-          v6_netint = netint->index;
+          v6_netint           = netint->index;
           run_ipv6_mcast_test = true;
           return;
         }
@@ -145,7 +144,6 @@ static void select_network_interface_v6()
   }
 }
 #endif
-#endif
 
 TEST_GROUP(socket_integration_udp);
 
@@ -154,7 +152,8 @@ TEST_SETUP(socket_integration_udp)
   if (etcpal_init_result != kEtcPalErrOk)
   {
     char buf[100];
-    sprintf(buf, "This test could not be run because etcpal_init() failed with error '%s'", etcpal_strerror(etcpal_init_result));
+    sprintf(buf, "This test could not be run because etcpal_init() failed with error '%s'",
+            etcpal_strerror(etcpal_init_result));
     TEST_FAIL_MESSAGE(buf);
   }
 
@@ -495,11 +494,9 @@ TEST_GROUP_RUNNER(socket_integration_udp)
 
   if (etcpal_init_result == kEtcPalErrOk)
   {
-#if !ETCPAL_TEST_DISABLE_MCAST_INTEGRATION_TESTS
     select_network_interface_v4();
 #if ETCPAL_TEST_IPV6
     select_network_interface_v6();
-#endif
 #endif
   }
 

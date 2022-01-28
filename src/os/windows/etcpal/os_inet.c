@@ -29,7 +29,7 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
     ETCPAL_IP_SET_V4_ADDRESS(ip, ntohl(sin->sin_addr.s_addr));
     return true;
   }
-  else if (os_ip->sa_family == AF_INET6)
+  if (os_ip->sa_family == AF_INET6)
   {
     const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)os_ip;
     ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(ip, sin6->sin6_addr.s6_addr, sin6->sin6_scope_id);
@@ -45,15 +45,15 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
   {
     struct sockaddr_in* sin = (struct sockaddr_in*)os_ip;
     memset(sin, 0, sizeof(struct sockaddr_in));
-    sin->sin_family = AF_INET;
+    sin->sin_family      = AF_INET;
     sin->sin_addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(ip));
-    ret = sizeof(struct sockaddr_in);
+    ret                  = sizeof(struct sockaddr_in);
   }
   else if (ETCPAL_IP_IS_V6(ip))
   {
     struct sockaddr_in6* sin6 = (struct sockaddr_in6*)os_ip;
     memset(sin6, 0, sizeof(struct sockaddr_in6));
-    sin6->sin6_family = AF_INET6;
+    sin6->sin6_family   = AF_INET6;
     sin6->sin6_scope_id = (ULONG)ETCPAL_IP_V6_SCOPE_ID(ip);
     memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(ip), ETCPAL_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
@@ -70,7 +70,7 @@ bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa
       sa->port = ntohs(((const struct sockaddr_in*)os_sa)->sin_port);
       return true;
     }
-    else if (os_sa->sa_family == AF_INET6)
+    if (os_sa->sa_family == AF_INET6)
     {
       sa->port = ntohs(((const struct sockaddr_in6*)os_sa)->sin6_port);
       return true;
@@ -130,7 +130,7 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
       INT            res = inet_pton(AF_INET, src, &addr);
       if (res == 0)
         return kEtcPalErrInvalid;
-      else if (res < 0)
+      if (res < 0)
         return err_winsock_to_etcpal(WSAGetLastError());
 
       ETCPAL_IP_SET_V4_ADDRESS(dest, ntohl(addr.s_addr));
@@ -141,7 +141,7 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
       INT             res = inet_pton(AF_INET6, src, &addr);
       if (res == 0)
         return kEtcPalErrInvalid;
-      else if (res < 0)
+      if (res < 0)
         return err_winsock_to_etcpal(WSAGetLastError());
 
       ETCPAL_IP_SET_V6_ADDRESS(dest, addr.s6_addr);

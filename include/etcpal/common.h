@@ -92,7 +92,7 @@ extern "C" {
 #define ETCPAL_MSVC_NO_DEP_WRN __pragma(warning(suppress : 4996))
 
 #define ETCPAL_MSVC_BEGIN_NO_DEP_WARNINGS() __pragma(warning(push)) __pragma(warning(disable : 4996))
-#define ETCPAL_MSVC_END_NO_DEP_WARNINGS() __pragma(warning(pop))
+#define ETCPAL_MSVC_END_NO_DEP_WARNINGS()   __pragma(warning(pop))
 
 #else /* _MSC_VER */
 
@@ -126,9 +126,9 @@ typedef uint32_t etcpal_features_t;
 
 #define ETCPAL_FEATURE_SOCKETS ((etcpal_features_t)(1u << 0)) /**< Use the etcpal/socket module. */
 #define ETCPAL_FEATURE_NETINTS ((etcpal_features_t)(1u << 1)) /**< Use the etcpal/netint module. */
-#define ETCPAL_FEATURE_TIMERS ((etcpal_features_t)(1u << 2)) /**< Use the etcpal/timer module. */
+#define ETCPAL_FEATURE_TIMERS  ((etcpal_features_t)(1u << 2)) /**< Use the etcpal/timer module. */
 #define ETCPAL_FEATURE_LOGGING ((etcpal_features_t)(1u << 3)) /**< Use the etcpal/log module. */
-#define ETCPAL_FEATURES_ALL 0xffffffffu /**< Use every available module. */
+#define ETCPAL_FEATURES_ALL    0xffffffffu                    /**< Use every available module. */
 
 /**
  * @brief Use every available module except the ones passed in mask.

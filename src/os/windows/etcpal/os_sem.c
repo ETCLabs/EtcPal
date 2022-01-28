@@ -23,7 +23,7 @@ bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned in
 {
   if (id)
   {
-    *id = CreateSemaphore(NULL, initial_count, max_count, NULL);
+    *id = CreateSemaphore(NULL, (LONG)initial_count, (LONG)max_count, NULL);
     if (*id)
       return true;
   }

@@ -28,10 +28,10 @@
 extern "C" {
 #endif
 
-#define ETCPAL_THREAD_DEFAULT_PRIORITY 0 /* Priority ignored on Linux */
-#define ETCPAL_THREAD_DEFAULT_STACK 0 /* 0 means keep default */
-#define ETCPAL_THREAD_DEFAULT_NAME NULL /* Name ignored on Linux */
-#define ETCPAL_THREAD_HAS_TIMED_JOIN 0 /* Timeout unavailable on linux */
+#define ETCPAL_THREAD_DEFAULT_PRIORITY 0    /* Priority ignored on Linux */
+#define ETCPAL_THREAD_DEFAULT_STACK    0    /* 0 means keep default */
+#define ETCPAL_THREAD_DEFAULT_NAME     NULL /* Name ignored on Linux */
+#define ETCPAL_THREAD_HAS_TIMED_JOIN   0    /* Timeout unavailable on linux */
 
 #define ETCPAL_THREAD_NAME_MAX_LENGTH 16
 
@@ -46,7 +46,7 @@ typedef struct
   char      name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
 
-#define etcpal_thread_sleep(sleep_ms) usleep(((useconds_t)sleep_ms) * 1000)
+#define etcpal_thread_sleep(sleep_ms)       usleep(((useconds_t)sleep_ms) * 1000)
 #define etcpal_thread_get_current_os_handle pthread_self
 
 #ifdef __cplusplus

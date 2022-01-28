@@ -157,13 +157,13 @@ typedef struct EtcPalThreadParams
 } EtcPalThreadParams;
 
 /** Set the platform-default values for the EtcPalThreadParams struct. */
-#define ETCPAL_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)         \
-  do                                                              \
-  {                                                               \
-    (threadparamsptr)->priority = ETCPAL_THREAD_DEFAULT_PRIORITY; \
-    (threadparamsptr)->stack_size = ETCPAL_THREAD_DEFAULT_STACK;  \
-    (threadparamsptr)->thread_name = ETCPAL_THREAD_DEFAULT_NAME;  \
-    (threadparamsptr)->platform_data = NULL;                      \
+#define ETCPAL_THREAD_SET_DEFAULT_PARAMS(threadparamsptr)              \
+  do                                                                   \
+  {                                                                    \
+    (threadparamsptr)->priority      = ETCPAL_THREAD_DEFAULT_PRIORITY; \
+    (threadparamsptr)->stack_size    = ETCPAL_THREAD_DEFAULT_STACK;    \
+    (threadparamsptr)->thread_name   = ETCPAL_THREAD_DEFAULT_NAME;     \
+    (threadparamsptr)->platform_data = NULL;                           \
   } while (0)
 
 /**

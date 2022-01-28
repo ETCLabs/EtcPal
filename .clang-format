@@ -1,4 +1,4 @@
-# This file is written for ClangFormat 7.0.0 or higher.
+# This file is written for ClangFormat 9.0.0 or higher.
 
 Language: Cpp
 BasedOnStyle: Google
@@ -24,7 +24,9 @@ BraceWrapping:
 # Misc other options
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: Consecutive
 BinPackParameters: false
 AlignOperands: true
 AllowAllParametersOfDeclarationOnNextLine: false

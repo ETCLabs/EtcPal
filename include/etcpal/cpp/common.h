@@ -47,7 +47,7 @@
 /// @brief Defined to "constexpr" in C++14 or later, "inline" earlier.
 
 #if ((defined(_MSC_VER) && (_MSC_VER > 1900)) || (__cplusplus >= 201402L))
-#define ETCPAL_CONSTEXPR_14 constexpr
+#define ETCPAL_CONSTEXPR_14           constexpr
 #define ETCPAL_CONSTEXPR_14_OR_INLINE constexpr
 #else
 #define ETCPAL_CONSTEXPR_14
@@ -67,11 +67,11 @@
 /// @cond Internal Exception Macros
 
 #if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) && !defined(ETCPAL_NO_EXCEPTIONS)
-#define ETCPAL_THROW(exception) throw exception
+#define ETCPAL_THROW(exception)         throw exception
 #define ETCPAL_BUILDING_WITH_EXCEPTIONS 1
 #else
 #include <cstdlib>
-#define ETCPAL_THROW(exception) std::abort()
+#define ETCPAL_THROW(exception)         std::abort()
 #define ETCPAL_BUILDING_WITH_EXCEPTIONS 0
 #endif
 
@@ -89,7 +89,7 @@ enum class Enabler
 {
 };
 
-#define ETCPAL_ENABLE_IF_ARG(...) typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
+#define ETCPAL_ENABLE_IF_ARG(...)      typename std::enable_if<(__VA_ARGS__)>::type* = nullptr
 #define ETCPAL_ENABLE_IF_TEMPLATE(...) typename = typename std::enable_if<(__VA_ARGS__), detail::Enabler>::type
 
 }  // namespace detail

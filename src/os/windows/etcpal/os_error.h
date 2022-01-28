@@ -24,6 +24,6 @@
 #include "etcpal/error.h"
 
 etcpal_error_t err_winsock_to_etcpal(int wsaerror);
-etcpal_error_t err_os_to_etcpal(int error);
+etcpal_error_t err_os_to_etcpal(unsigned long error);
 
 #endif /* ETCPAL_OS_ERROR_H_ */

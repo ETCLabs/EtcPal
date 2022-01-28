@@ -64,9 +64,9 @@ EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value)
 {
   if (self)
   {
-    self->red = 1;
+    self->red     = 1;
     self->link[0] = self->link[1] = NULL;
-    self->value = value;
+    self->value                   = value;
   }
   return self;
 }
@@ -94,11 +94,11 @@ static EtcPalRbNode* rb_node_rotate(EtcPalRbNode* self, int dir)
   EtcPalRbNode* result = NULL;
   if (self)
   {
-    result = self->link[!dir];
-    self->link[!dir] = result->link[dir];
+    result            = self->link[!dir];
+    self->link[!dir]  = result->link[dir];
     result->link[dir] = self;
-    self->red = 1;
-    result->red = 0;
+    self->red         = 1;
+    result->red       = 0;
   }
   return result;
 }
@@ -109,7 +109,7 @@ static EtcPalRbNode* rb_node_rotate2(EtcPalRbNode* self, int dir)
   if (self)
   {
     self->link[!dir] = rb_node_rotate(self->link[!dir], !dir);
-    result = rb_node_rotate(self, dir);
+    result           = rb_node_rotate(self, dir);
   }
   return result;
 }
@@ -160,10 +160,10 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree*           self,
 {
   if (self)
   {
-    self->root = NULL;
-    self->size = 0;
-    self->cmp = node_cmp_cb ? node_cmp_cb : etcpal_rbtree_node_cmp_ptr_cb;
-    self->alloc_f = alloc_f;
+    self->root      = NULL;
+    self->size      = 0;
+    self->cmp       = node_cmp_cb ? node_cmp_cb : etcpal_rbtree_node_cmp_ptr_cb;
+    self->alloc_f   = alloc_f;
     self->dealloc_f = dealloc_f;
   }
   return self;
@@ -176,7 +176,7 @@ static int rb_iter_binary_search(EtcPalRbIter* self, EtcPalRbTree* tree, const v
 
   self->tree = tree;
   self->node = tree->root;
-  self->top = 0;
+  self->top  = 0;
 
   if (self->node)
   {
@@ -187,7 +187,7 @@ static int rb_iter_binary_search(EtcPalRbIter* self, EtcPalRbTree* tree, const v
       /* If the tree supports duplicates, they should be chained to the right subtree for this to
        * work */
       self->path[self->top++] = self->node;
-      self->node = self->node->link[cmp < 0];
+      self->node              = self->node->link[cmp < 0];
 
       cmp = tree->cmp(tree, self->node->value, value);
     }
@@ -288,7 +288,7 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
     if (self->root == NULL)
     {
       self->root = node;
-      result = kEtcPalErrOk;
+      result     = kEtcPalErrOk;
     }
     else
     {
@@ -299,8 +299,8 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
       /* Iterator & parent */
       EtcPalRbNode* p = NULL;
       EtcPalRbNode* q = t->link[1] = self->root;
-      int           dir = 0;
-      int           last = 0;
+      int           dir            = 0;
+      int           last           = 0;
 
       /* Search down the tree for a place to insert */
       while (1)
@@ -311,12 +311,12 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
         {
           /* Insert node at the first null link. */
           p->link[dir] = q = node;
-          inserted = true;
+          inserted         = true;
         }
         else if (rb_node_is_red(q->link[0]) && rb_node_is_red(q->link[1]))
         {
           /* Simple red violation: color flip */
-          q->red = 1;
+          q->red          = 1;
           q->link[0]->red = 0;
           q->link[1]->red = 0;
         }
@@ -339,7 +339,7 @@ etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree* self, EtcPalRbNode* node)
         }
 
         last = dir;
-        dir = self->cmp(self, q->value, node->value) < 0;
+        dir  = self->cmp(self, q->value, node->value) < 0;
 
         /* Move the helpers down */
         if (g != NULL)
@@ -422,7 +422,7 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* valu
   EtcPalRbNode* g = NULL;
   EtcPalRbNode* p = NULL;
   EtcPalRbNode* f = NULL; /* Found item */
-  q->link[1] = self->root;
+  q->link[1]      = self->root;
 
   int dir = 1;
 
@@ -433,7 +433,7 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* valu
 
     /* Move the helpers down */
     g = p, p = q;
-    q = q->link[dir];
+    q   = q->link[dir];
     dir = self->cmp(self, q->value, value) < 0;
 
     /* Save the node with matching value and keep going; we'll do removal tasks at the end */
@@ -481,8 +481,8 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* valu
   if (f)
   {
     void* tmp = f->value;
-    f->value = q->value;
-    q->value = tmp;
+    f->value  = q->value;
+    q->value  = tmp;
 
     p->link[p->link[1] == q] = q->link[q->link[0] == NULL];
 
@@ -559,7 +559,7 @@ etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, EtcPalRbTreeNodeF
       else
       {
         /* Rotate away the left link and check again */
-        save = node->link[0];
+        save          = node->link[0];
         node->link[0] = save->link[1];
         save->link[1] = node;
       }
@@ -567,7 +567,7 @@ etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree* self, EtcPalRbTreeNodeF
     }
     self->root = NULL;
     self->size = 0;
-    result = kEtcPalErrOk;
+    result     = kEtcPalErrOk;
   }
   return result;
 }
@@ -655,7 +655,7 @@ EtcPalRbIter* etcpal_rbiter_init(EtcPalRbIter* self)
   {
     self->tree = NULL;
     self->node = NULL;
-    self->top = 0;
+    self->top  = 0;
   }
   return self;
 }
@@ -669,7 +669,7 @@ static void* rb_iter_start(EtcPalRbIter* self, EtcPalRbTree* tree, int dir)
   {
     self->tree = tree;
     self->node = tree->root;
-    self->top = 0;
+    self->top  = 0;
 
     /* Save the path for later selfersal */
     if (self->node != NULL)
@@ -677,7 +677,7 @@ static void* rb_iter_start(EtcPalRbIter* self, EtcPalRbTree* tree, int dir)
       while (self->node->link[dir] != NULL)
       {
         self->path[self->top++] = self->node;
-        self->node = self->node->link[dir];
+        self->node              = self->node->link[dir];
       }
     }
 
@@ -693,11 +693,11 @@ static void* rb_iter_move(EtcPalRbIter* self, int dir)
   {
     /* Continue down this branch */
     self->path[self->top++] = self->node;
-    self->node = self->node->link[dir];
+    self->node              = self->node->link[dir];
     while (self->node->link[!dir] != NULL)
     {
       self->path[self->top++] = self->node;
-      self->node = self->node->link[!dir];
+      self->node              = self->node->link[!dir];
     }
   }
   else
@@ -711,7 +711,7 @@ static void* rb_iter_move(EtcPalRbIter* self, int dir)
         self->node = NULL;
         break;
       }
-      last = self->node;
+      last       = self->node;
       self->node = self->path[--self->top];
     } while (last == self->node->link[dir]);
   }

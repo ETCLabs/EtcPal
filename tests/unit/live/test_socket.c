@@ -29,10 +29,10 @@ static const char* test_hostname = "www.google.com";
 static const char* test_service = "http";
 #endif
 
-static const char* const kTestGaiIpStr = "10.101.1.1";
-static const uint32_t    kTestGaiIp = 0x0a650101;
+static const char* const kTestGaiIpStr   = "10.101.1.1";
+static const uint32_t    kTestGaiIp      = 0x0a650101;
 static const char* const kTestGaiPortStr = "8080";
-static const uint16_t    kTestGaiPort = 8080;
+static const uint16_t    kTestGaiPort    = 8080;
 
 TEST_GROUP(etcpal_socket);
 
@@ -79,7 +79,7 @@ TEST(etcpal_socket, blocking_state_is_consistent)
   // Set the socket to non-blocking, make sure it reads as non-blocking
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setblocking(sock, false));
   bool           is_blocking = true;
-  etcpal_error_t gb_result = etcpal_getblocking(sock, &is_blocking);
+  etcpal_error_t gb_result   = etcpal_getblocking(sock, &is_blocking);
 
   // Special case - this function isn't implemented on all platforms, so we abort this test
   // prematurely if that's the case.
@@ -166,8 +166,8 @@ TEST(etcpal_socket, poll_add_remove_socket_works)
 
 TEST(etcpal_socket, poll_user_data_works)
 {
-  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INVALID;
-  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_1      = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_2      = ETCPAL_SOCKET_INVALID;
   void*           user_data_1 = (void*)1;
   void*           user_data_2 = (void*)2;
 
@@ -262,8 +262,8 @@ TEST(etcpal_socket, poll_modify_socket_works)
 TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
 {
   etcpal_socket_t send_sock = ETCPAL_SOCKET_INVALID;
-  etcpal_socket_t rcvsock1 = ETCPAL_SOCKET_INVALID;
-  etcpal_socket_t rcvsock2 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t rcvsock1  = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t rcvsock2  = ETCPAL_SOCKET_INVALID;
 
   EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
@@ -299,7 +299,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
   send_addr.port = POLL_UDP_IN_TEST_PORT_BASE;
 
-#define POLL_UDP_IN_TEST_MESSAGE (const uint8_t*)"test message"
+#define POLL_UDP_IN_TEST_MESSAGE        (const uint8_t*)"test message"
 #define POLL_UDP_IN_TEST_MESSAGE_LENGTH sizeof("test message")
 
   etcpal_sendto(send_sock, POLL_UDP_IN_TEST_MESSAGE, POLL_UDP_IN_TEST_MESSAGE_LENGTH, 0, &send_addr);

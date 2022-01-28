@@ -32,7 +32,7 @@
 #pragma warning(disable : 4996)
 #endif
 
-#define INT_ARRAY_SIZE 100
+#define INT_ARRAY_SIZE        100
 #define RANDOM_INT_IN_ARRAY() (int)(rand() / ((RAND_MAX + 1.0) / INT_ARRAY_SIZE))
 
 static int incrementing_int_array[INT_ARRAY_SIZE];
@@ -74,15 +74,15 @@ void populate_int_arrays()
   for (int i = 0; i < INT_ARRAY_SIZE; ++i)
   {
     incrementing_int_array[i] = i;
-    random_int_array[i] = i;
+    random_int_array[i]       = i;
   }
 
   // Shuffle the random array
   for (int i = 0; i < INT_ARRAY_SIZE - 1; ++i)
   {
     // srand() is taken care of at the entry point.
-    int j = i + rand() / (RAND_MAX / (INT_ARRAY_SIZE - i) + 1);
-    int swap_val = random_int_array[j];
+    int j               = i + rand() / (RAND_MAX / (INT_ARRAY_SIZE - i) + 1);
+    int swap_val        = random_int_array[j];
     random_int_array[j] = random_int_array[i];
     random_int_array[i] = swap_val;
   }
@@ -159,7 +159,7 @@ void test_bound(int is_lower_bound)  // NOLINT(readability-function-cognitive-co
 
     // Check the iterator.
     int* last = NULL;
-    int* val = bound;
+    int* val  = bound;
     for (int j = 0; (j < 10) && (val != NULL); ++j, (val = (int*)etcpal_rbiter_prev(&iter)))
     {
       TEST_ASSERT_NOT_NULL(iter.tree);
@@ -343,7 +343,7 @@ TEST(etcpal_rbtree, iterators_work_as_expected)
 
   // Test iterating through the tree in forward order.
   int num_iterations = 1;
-  int last_val = *val;
+  int last_val       = *val;
   while ((val = (int*)etcpal_rbiter_next(&iter)) != NULL)
   {
     ++num_iterations;
@@ -360,7 +360,7 @@ TEST(etcpal_rbtree, iterators_work_as_expected)
 
   // Test iterating through the tree in reverse order.
   num_iterations = 1;
-  last_val = *val;
+  last_val       = *val;
   while ((val = (int*)etcpal_rbiter_prev(&iter)) != NULL)
   {
     ++num_iterations;

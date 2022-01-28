@@ -56,7 +56,7 @@ TEST(timer_controlled, timer_wraparound_works_as_expected)
 
 TEST(timer_controlled, elapsed_since_wraparound_works_as_expected)
 {
-  uint32_t start_time = 0xfffffff0u;
+  uint32_t start_time          = 0xfffffff0u;
   etcpal_getms_fake.return_val = 0x10;
   TEST_ASSERT_EQUAL_UINT32(ETCPAL_TIME_ELAPSED_SINCE(start_time), 0x20u);
 }
@@ -85,11 +85,11 @@ TEST(timer_controlled, remaining_works_as_expected)
 TEST(timer_controlled, time_point_now_works)
 {
   etcpal_getms_fake.return_val = 0;
-  auto tp = etcpal::TimePoint::Now();
+  auto tp                      = etcpal::TimePoint::Now();
   TEST_ASSERT_EQUAL_UINT32(tp.value(), 0u);
 
   etcpal_getms_fake.return_val = 0xffffffffu;
-  tp = etcpal::TimePoint::Now();
+  tp                           = etcpal::TimePoint::Now();
   TEST_ASSERT_EQUAL_UINT32(tp.value(), 0xffffffffu);
 }
 

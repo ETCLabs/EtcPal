@@ -30,8 +30,7 @@ etcpal_error_t etcpal_timer_init(void)
 {
   if (TIMERR_NOERROR == timeBeginPeriod(ETCPAL_WINDOWS_TIMER_RESOLUTION))
     return kEtcPalErrOk;
-  else
-    return kEtcPalErrSys;
+  return kEtcPalErrSys;
 }
 
 void etcpal_timer_deinit(void)

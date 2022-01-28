@@ -112,7 +112,8 @@ TEST(etcpal_handle_manager, handles_generate_without_max)
     TEST_ASSERT_EQUAL(num_in_use_checks, 0);
   }
 
-  for (int expected_handle = 1, expected_checks = 2; expected_handle <= 100000; expected_handle += 2, expected_checks += 2)
+  for (int expected_handle = 1, expected_checks = 2; expected_handle <= 100000;
+       expected_handle += 2, expected_checks += 2)
   {
     int actual_handle = get_next_int_handle(&manager);
     TEST_ASSERT_EQUAL(actual_handle, expected_handle);

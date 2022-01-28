@@ -90,7 +90,7 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
   const char* from_ptr = str;
   uint8_t     to_buf[ETCPAL_UUID_BYTES];
   uint8_t*    to_ptr = to_buf;
-  bool        first = true; /* Whether we are doing the first or second nibble of the byte */
+  bool        first  = true; /* Whether we are doing the first or second nibble of the byte */
 
   while ((to_ptr - to_buf < ETCPAL_UUID_BYTES) && (*from_ptr != '\0'))
   {
@@ -108,7 +108,7 @@ bool etcpal_string_to_uuid(const char* str, EtcPalUuid* uuid)
       {
         *to_ptr = (uint8_t)(*from_ptr - offset);
         *to_ptr = (uint8_t)(*to_ptr << 4);
-        first = false;
+        first   = false;
       }
       else
       {
@@ -322,7 +322,7 @@ etcpal_error_t etcpal_generate_device_uuid(const char*    dev_str,
 
   /* Concatenate the input data into a buffer of the form "[dev_str][mac_addr][uuid_num]" */
   uint8_t name[TOTAL_NAME_LEN];
-  strncpy((char*)name, dev_str, ETCPAL_UUID_DEV_STR_MAX_LEN);
+  strncpy((char*)name, dev_str, ETCPAL_UUID_DEV_STR_MAX_LEN);  // NOLINT
   memcpy(&name[ETCPAL_UUID_DEV_STR_MAX_LEN], mac_addr, 6);
   etcpal_pack_u32l(&name[ETCPAL_UUID_DEV_STR_MAX_LEN + 6], uuid_num);
 

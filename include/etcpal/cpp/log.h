@@ -130,12 +130,12 @@ public:
                          unsigned int hour,
                          unsigned int minute,
                          unsigned int second,
-                         unsigned int msec = 0,
+                         unsigned int msec       = 0,
                          int          utc_offset = 0);
 
   bool IsValid() const noexcept;
 
-  constexpr const EtcPalLogTimestamp& get() const noexcept;
+  constexpr const EtcPalLogTimestamp&     get() const noexcept;
   ETCPAL_CONSTEXPR_14 EtcPalLogTimestamp& get() noexcept;
 
   static LogTimestamp Invalid();
@@ -336,11 +336,11 @@ extern "C" inline void LogTimestampFn(void* context, EtcPalLogTimestamp* timesta
 inline Logger::Logger()
 {
   // Default logging parameters
-  log_params_.action = ETCPAL_LOG_CREATE_HUMAN_READABLE;
-  log_params_.log_fn = LogCallbackFn;
+  log_params_.action   = ETCPAL_LOG_CREATE_HUMAN_READABLE;
+  log_params_.log_fn   = LogCallbackFn;
   log_params_.log_mask = ETCPAL_LOG_UPTO(ETCPAL_LOG_DEBUG);
-  log_params_.time_fn = LogTimestampFn;
-  log_params_.context = nullptr;
+  log_params_.time_fn  = LogTimestampFn;
+  log_params_.context  = nullptr;
 }
 
 /// @brief Start logging.
@@ -371,8 +371,8 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
   // kQueued
   // Start the log dispatch thread
   running_ = true;
-  signal_ = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
-  mutex_ = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
+  signal_  = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
+  mutex_   = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
   if (!thread_.SetName("EtcPalLoggerThread").Start(&Logger::LogThreadRun, this))
   {
     etcpal_deinit(ETCPAL_FEATURE_LOGGING);

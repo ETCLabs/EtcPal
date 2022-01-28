@@ -37,8 +37,8 @@
 #pragma warning(disable : 4996)
 #endif
 
-#define NUM_V1_UUID_GENERATIONS 1000
-#define NUM_V4_UUID_GENERATIONS 1000
+#define NUM_V1_UUID_GENERATIONS           1000
+#define NUM_V4_UUID_GENERATIONS           1000
 #define NUM_OS_PREFERRED_UUID_GENERATIONS 1000
 
 TEST_GROUP(etcpal_uuid);
@@ -88,9 +88,9 @@ TEST(etcpal_uuid, uuid_is_null_works)
 
 TEST(etcpal_uuid, uuid_compare_works)
 {
-  const EtcPalUuid uuid1 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
+  const EtcPalUuid uuid1     = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
   const EtcPalUuid uuid1_dup = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}};
-  const EtcPalUuid uuid2 = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17}};
+  const EtcPalUuid uuid2     = {{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17}};
 
   TEST_ASSERT_EQUAL(0, ETCPAL_UUID_CMP(&uuid1, &uuid1_dup));
   TEST_ASSERT_GREATER_THAN(0, ETCPAL_UUID_CMP(&uuid2, &uuid1));
@@ -113,7 +113,7 @@ TEST(etcpal_uuid, uuid_to_string_conversion_works)
 TEST(etcpal_uuid, string_to_uuid_conversion_works)
 {
   EtcPalUuid       uuid;
-  const char*      good_str = "08090a0b-0C0D-0e0f-1011-121314151617";
+  const char*      good_str      = "08090a0b-0C0D-0e0f-1011-121314151617";
   const EtcPalUuid good_str_uuid = {{8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23}};
   // clang-format off
   const char* bad_strings[] = {

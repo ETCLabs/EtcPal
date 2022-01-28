@@ -154,7 +154,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
 
   struct sockaddr_storage ss;
   socklen_t               sa_size = sizeof ss;
-  int                     res = accept(id, (struct sockaddr*)&ss, &sa_size);
+  int                     res     = accept(id, (struct sockaddr*)&ss, &sa_size);
 
   if (res != -1)
   {
@@ -218,7 +218,7 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 
   struct sockaddr_storage ss;
   socklen_t               size = sizeof ss;
-  int                     res = getsockname(id, (struct sockaddr*)&ss, &size);
+  int                     res  = getsockname(id, (struct sockaddr*)&ss, &size);
   if (res == 0)
   {
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
@@ -252,7 +252,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
     return kEtcPalErrInvalid;
 
   int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
-  int res = (int)recv(id, buffer, length, impl_flags);
+  int res        = (int)recv(id, buffer, length, impl_flags);
   return (res >= 0 ? res : (int)errno_os_to_etcpal(errno));
 }
 
@@ -262,7 +262,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
     return (int)kEtcPalErrInvalid;
 
   struct sockaddr_storage fromaddr;
-  socklen_t               fromlen = sizeof fromaddr;
+  socklen_t               fromlen    = sizeof fromaddr;
   int                     impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
   int                     res = (int)recvfrom(id, buffer, length, impl_flags, (struct sockaddr*)&fromaddr, &fromlen);
 
@@ -374,7 +374,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
       {
         EtcPalLinger* ll = (EtcPalLinger*)option_value;
         struct linger val;
-        val.l_onoff = (u_short)ll->onoff;
+        val.l_onoff  = (u_short)ll->onoff;
         val.l_linger = (u_short)ll->linger;
         return setsockopt(id, SOL_SOCKET, SO_LINGER, &val, sizeof val);
       }
@@ -453,8 +453,8 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
-          sin->sin_family = AF_INET;
-          sin->sin_addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
+          sin->sin_family         = AF_INET;
+          sin->sin_addr.s_addr    = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
           return setsockopt(id, IPPROTO_IP, MCAST_JOIN_GROUP, &val, sizeof val);
         }
       }
@@ -470,8 +470,8 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in* sin = (struct sockaddr_in*)&val.gr_group;
-          sin->sin_family = AF_INET;
-          sin->sin_addr.s_addr = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
+          sin->sin_family         = AF_INET;
+          sin->sin_addr.s_addr    = htonl(ETCPAL_IP_V4_ADDRESS(&greq->group));
           return setsockopt(id, IPPROTO_IP, MCAST_LEAVE_GROUP, &val, sizeof val);
         }
       }
@@ -512,7 +512,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;
-          sin6->sin6_family = AF_INET6;
+          sin6->sin6_family         = AF_INET6;
           memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, MCAST_JOIN_GROUP, &val, sizeof val);
         }
@@ -529,7 +529,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
           memset(&val.gr_group, 0, sizeof val.gr_group);
           struct sockaddr_in6* sin6 = (struct sockaddr_in6*)&val.gr_group;
-          sin6->sin6_family = AF_INET6;
+          sin6->sin6_family         = AF_INET6;
           memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, MCAST_LEAVE_GROUP, &val, sizeof val);
         }
@@ -553,7 +553,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
 void ms_to_timeval(int ms, struct timeval* tv)
 {
-  tv->tv_sec = ms / 1000;
+  tv->tv_sec  = ms / 1000;
   tv->tv_usec = (ms % 1000) * 1000;
 }
 
@@ -649,9 +649,9 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
   if (!sock_desc)
     return kEtcPalErrNoMem;
 
-  sock_desc->sock = socket;
-  sock_desc->events = events;
-  sock_desc->user_data = user_data;
+  sock_desc->sock           = socket;
+  sock_desc->events         = events;
+  sock_desc->user_data      = user_data;
   etcpal_error_t insert_res = etcpal_rbtree_insert(&context->sockets, sock_desc);
   if (insert_res != kEtcPalErrOk)
   {
@@ -696,7 +696,7 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
   if (res != 0)
     return errno_os_to_etcpal(errno);
 
-  sock_desc->events = new_events;
+  sock_desc->events    = new_events;
   sock_desc->user_data = new_user_data;
   return kEtcPalErrOk;
 }
@@ -736,11 +736,11 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
 
   event->socket = sock_desc->sock;
   events_epoll_to_etcpal(&epoll_evt, sock_desc, &event->events);
-  event->err = kEtcPalErrOk;
+  event->err       = kEtcPalErrOk;
   event->user_data = sock_desc->user_data;
 
   // Check for errors
-  int       error = 0;
+  int       error      = 0;
   socklen_t error_size = sizeof error;
   if (getsockopt(sock_desc->sock, SOL_SOCKET, SO_ERROR, &error, &error_size) == 0)
   {
@@ -819,14 +819,14 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
-    pf_hints.ai_flags = (hints->ai_flags < ETCPAL_NUM_AIF) ? kAiFlagMap[hints->ai_flags] : 0;
-    pf_hints.ai_family = (hints->ai_family < ETCPAL_NUM_AF) ? kAiFamMap[hints->ai_family] : AF_UNSPEC;
+    pf_hints.ai_flags    = (hints->ai_flags < ETCPAL_NUM_AIF) ? kAiFlagMap[hints->ai_flags] : 0;
+    pf_hints.ai_family   = (hints->ai_family < ETCPAL_NUM_AF) ? kAiFamMap[hints->ai_family] : AF_UNSPEC;
     pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? kStMap[hints->ai_socktype] : 0;
     pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? kAiProtMap[hints->ai_protocol] : 0;
   }
 
   struct addrinfo* pf_res = NULL;
-  int              res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
+  int              res    = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
   if (res == 0)
   {
     result->pd[0] = pf_res;
@@ -842,7 +842,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
   if (ai && ai->pd[1])
   {
     struct addrinfo* pf_ai = (struct addrinfo*)ai->pd[1];
-    ai->ai_flags = 0;
+    ai->ai_flags           = 0;
     if (!sockaddr_os_to_etcpal(pf_ai->ai_addr, &ai->ai_addr))
       return false;
 
@@ -867,7 +867,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
     else
       ai->ai_protocol = 0;
     ai->ai_canonname = pf_ai->ai_canonname;
-    ai->pd[1] = pf_ai->ai_next;
+    ai->pd[1]        = pf_ai->ai_next;
 
     return true;
   }

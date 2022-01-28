@@ -104,7 +104,7 @@ TEST_GROUP(etcpal_cpp_log);
 
 TEST_SETUP(etcpal_cpp_log)
 {
-  logger = etcpal::Logger{};
+  logger           = etcpal::Logger{};
   test_log_handler = TestLogMessageHandler{};
 }
 
@@ -302,7 +302,7 @@ TEST(etcpal_cpp_log, syslog_params_work)
   std::string syslog_str;
   std::string legacy_syslog_str;
   test_log_handler.OnLogEvent([&](const EtcPalLogStrings& strings) {
-    syslog_str = strings.syslog;
+    syslog_str        = strings.syslog;
     legacy_syslog_str = strings.legacy_syslog;
   });
   logger.Log(ETCPAL_LOG_INFO, "Test Message");
