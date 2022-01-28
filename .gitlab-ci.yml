@@ -152,5 +152,6 @@ deploy-docs:
     GH_REPO_REF: github.com/ETCLabs/EtcPalDocs.git
     GH_REPO_TOKEN: $SVC_ETCLABS_REPO_TOKEN
   script:
+    - pip install --upgrade etcdevtool
     - chmod +x tools/ci/publish_docs.sh
     - tools/ci/publish_docs.sh
