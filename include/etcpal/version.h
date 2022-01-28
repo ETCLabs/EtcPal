@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2021 ETC Inc.
+ * Copyright 2022 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@
  */
 #define ETCPAL_VERSION_STRING "0.4.0.9"
 #define ETCPAL_VERSION_DATESTR "20.Sep.2021"
-#define ETCPAL_VERSION_COPYRIGHT "Copyright 2021 ETC Inc."
+#define ETCPAL_VERSION_COPYRIGHT "Copyright 2022 ETC Inc."
 #define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
 /**
  * @}

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2021 ETC Inc.
+ * Copyright 2022 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,6 @@
 #include "fff.h"
 
 #define ETC_FAKE_VALUE_FUNC(...) FAKE_VALUE_FUNC(__VA_ARGS__)  // NOLINT
-#define ETC_FAKE_VOID_FUNC(...) FAKE_VOID_FUNC(__VA_ARGS__)    // NOLINT
+#define ETC_FAKE_VOID_FUNC(...)  FAKE_VOID_FUNC(__VA_ARGS__)   // NOLINT
 
 #endif  // ETC_FFF_WRAPPER_H_
