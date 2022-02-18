@@ -9,6 +9,16 @@
         "buildReportTemplate": "tools/ci/templates/build_report.txt"
       }
     },
+    "release-lib": {
+      "projectName": "EtcPal",
+      "jira": {
+        "project": "ETCPAL"
+      },
+      "legacyP4Mirror": {
+        "name": "GITHUB_EtcPal",
+        "labelPrefix": "EtcPal"
+      }
+    },
     "docs": {
       "extraStylesheets": ["docs/etcpal_dox_styles.css"],
       "multiVersion": {
