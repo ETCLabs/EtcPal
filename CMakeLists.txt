@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 
 ########################## Global Project Attributes ##########################
 
-project(EtcPal VERSION 0.4.0)
+project(EtcPal)
 
 set(ETCPAL_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(ETCPAL_CMAKE ${ETCPAL_ROOT}/cmake)
