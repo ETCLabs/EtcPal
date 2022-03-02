@@ -162,6 +162,8 @@ deploy-docs:
     - etc-linux-docker
   image: etc-docker.artifactory-mid.etcconnect.com/common-tech/doxygen:1.9.1
   variables:
+    # Fetch all tags
+    GIT_DEPTH: 0
     GH_REPO_NAME: EtcPalDocs
     GH_REPO_REF: github.com/ETCLabs/EtcPalDocs.git
     GH_REPO_TOKEN: $SVC_ETCLABS_REPO_TOKEN
