@@ -86,6 +86,20 @@ linux-build-and-test:
     reports:
       junit: build/test_results_*.xml
 
+oss-build-and-test:
+  stage: build
+  image: etc-docker.artifactory-mid.etcconnect.com/etc/common-tech/gcc-cmake:latest
+  tags:
+    - etc-linux-docker
+  script:
+    # Remove the .git folder to simulate building from P4/zip archive
+    - rm -rf .git/
+    - mkdir build
+    - cd build
+    # Use default config, no options
+    - cmake -G "Unix Makefiles" ..
+    - cmake --build .
+
 # Build and test EtcPal with OS and network support disabled
 # This is currently done on Linux but with the OS and network targets set to none.
 bare-metal-build-and-test:
