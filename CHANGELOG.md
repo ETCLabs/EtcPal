@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-03-02
+
 ### Fixed
 - Fixed a CMake error when building in the default configuration when cloned or imported in VCS
   other than GitLab
@@ -117,7 +119,8 @@ Note: This is a pre-release version. This version changelog is not exhaustive.
 ### Added
 - Initial library modules, tests and documentation.
 
-[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/v0.4.0...main
+[Unreleased]: https://github.com/ETCLabs/EtcPal/compare/v0.4.1...main
+[0.4.1]: https://github.com/ETCLabs/EtcPal/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/ETCLabs/EtcPal/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ETCLabs/EtcPal/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ETCLabs/EtcPal/compare/v0.1.0...v0.2.0
