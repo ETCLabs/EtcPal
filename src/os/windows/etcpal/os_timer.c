@@ -21,6 +21,7 @@
 #include "etcpal/private/timer.h"
 
 #include <windows.h>
+#include <timeapi.h>
 
 #define ETCPAL_WINDOWS_TIMER_RESOLUTION 1  // ms
 
