@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+- Added implementations for the stream socket API functions for the MQX RTCS port.
+
 ### Fixed
 - Fixed an issue where the windows timer abstraction didn't build when WIN32_LEAN_AND_MEAN is enabled.
 

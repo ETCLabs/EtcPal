@@ -183,8 +183,24 @@ void etcpal_socket_deinit(void)
 
 etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal_socket_t* conn_sock)
 {
-  /* TODO */
-  return kEtcPalErrNotImpl;
+  if (!conn_sock)
+    return kEtcPalErrInvalid;
+
+  struct sockaddr ss;
+  uint16_t        sa_size = sizeof(ss);
+  uint32_t        res     = accept(id, &ss, &sa_size);
+
+  if (res != RTCS_SOCKET_ERROR)
+  {
+    if (address && !sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
+    {
+      closesocket(res);
+      return kEtcPalErrSys;
+    }
+    *conn_sock = res;
+    return kEtcPalErrOk;
+  }
+  return err_os_to_etcpal(RTCS_get_errno());
 }
 
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address)
@@ -209,13 +225,23 @@ etcpal_error_t etcpal_close(etcpal_socket_t id)
 
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
-  /* TODO */
-  return kEtcPalErrNotImpl;
+  if (!address)
+    return kEtcPalErrInvalid;
+
+  struct sockaddr ss;
+  size_t          sa_size = sockaddr_etcpal_to_os(address, &ss);
+  if (sa_size == 0)
+    return kEtcPalErrInvalid;
+
+  uint32_t res = connect(id, &ss, sa_size);
+  return err_os_to_etcpal(res);
 }
 
 etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 {
   /* TODO */
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(address);
   return kEtcPalErrNotImpl;
 }
 
@@ -245,14 +271,19 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
 
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
 {
-  /* TODO */
-  return kEtcPalErrNotImpl;
+  uint32_t res = listen(id, (uint16_t)backlog);
+  return err_os_to_etcpal(res);
 }
 
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
 {
-  /* TODO */
-  return kEtcPalErrNotImpl;
+  if (!buffer)
+    return (int)kEtcPalErrInvalid;
+
+  uint32_t impl_flags = (flags & ETCPAL_MSG_PEEK) ? RTCS_MSG_PEEK : 0;
+  int32_t  res        = recv(id, buffer, length, impl_flags);
+
+  return (res == RTCS_ERROR ? err_os_to_etcpal(RTCS_geterror(id)) : res);
 }
 
 int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockAddr* address)
@@ -280,8 +311,13 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
 {
-  /* TODO */
-  return kEtcPalErrNotImpl;
+  ETCPAL_UNUSED_ARG(flags);
+
+  if (!message)
+    return (int)kEtcPalErrInvalid;
+
+  int32_t res = send(id, (char*)message, length, 0);
+  return (res >= 0 ? res : err_os_to_etcpal(RTCS_geterror(id)));
 }
 
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr)
