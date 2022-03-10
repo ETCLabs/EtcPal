@@ -52,7 +52,6 @@ static const EtcPalModule kEtcPalModules[] = {
 #endif
 #if !ETCPAL_NO_NETWORKING_SUPPORT
   ETCPAL_MODULE(etcpal_socket, ETCPAL_FEATURE_SOCKETS),
-  ETCPAL_MODULE(etcpal_netint, ETCPAL_FEATURE_NETINTS),
 #endif
 };
 #define MODULE_ARRAY_SIZE (sizeof(kEtcPalModules) / sizeof(kEtcPalModules[0]))

@@ -17,12 +17,15 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
-#include "etc_fff_wrapper.h"
+#ifndef ETCPAL_PRIVATE_UTIL_H_
+#define ETCPAL_PRIVATE_UTIL_H_
 
-DEFINE_FFF_GLOBALS;
+#include <stdint.h>
+#include "etcpal/common.h"
 
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(timer_controlled);
-}
+#define GET_PADDING_FOR_ALIGNMENT(addr, type)        \
+  ((((uintptr_t)(addr)) % ETCPAL_ALIGNOF(type) == 0) \
+       ? 0                                           \
+       : (ETCPAL_ALIGNOF(type) - (((uintptr_t)(addr)) % ETCPAL_ALIGNOF(type))))
+
+#endif  // ETCPAL_PRIVATE_UTIL_H_

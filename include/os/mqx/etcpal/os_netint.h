@@ -17,12 +17,11 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
-#include "etc_fff_wrapper.h"
+#ifndef ETCPAL_OS_NETINT_H_
+#define ETCPAL_OS_NETINT_H_
 
-DEFINE_FFF_GLOBALS;
+// Based on internally contrived naming convention for MQX interfaces, 'enX' where X is the 0-based index
+#define ETCPAL_NETINT_NAME_HEURISTIC          4
+#define ETCPAL_NETINT_FRIENDLY_NAME_HEURISTIC 0
 
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(timer_controlled);
-}
+#endif /* ETCPAL_OS_NETINT_H_ */

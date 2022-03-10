@@ -33,13 +33,11 @@
 
 #include "etcpal/netint.h"
 
+#include <assert.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
-
-#ifdef ETCPAL_NETINT_DEBUG_OUTPUT
-#include <stdio.h>
-#endif
 
 #include <ifaddrs.h>
 #include <errno.h>
@@ -47,6 +45,7 @@
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
 #include <net/if.h>
+#include <net/if_arp.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -55,25 +54,10 @@
 #include "etcpal/common.h"
 #include "etcpal/socket.h"
 #include "etcpal/private/netint.h"
+#include "etcpal/private/util.h"
 #include "os_error.h"
 
 /***************************** Private types *********************************/
-
-typedef struct RoutingTableEntry
-{
-  EtcPalIpAddr addr;
-  EtcPalIpAddr mask;
-  EtcPalIpAddr gateway;
-  int          interface_index;
-  int          metric;
-} RoutingTableEntry;
-
-typedef struct RoutingTable
-{
-  RoutingTableEntry* entries;
-  RoutingTableEntry* default_route;
-  size_t             size;
-} RoutingTable;
 
 /* A composite struct representing an RT_NETLINK request sent over a netlink socket. */
 typedef struct RtNetlinkRequest
@@ -82,206 +66,192 @@ typedef struct RtNetlinkRequest
   struct rtmsg    rt_msg;
 } RtNetlinkRequest;
 
-/**************************** Private variables ******************************/
+typedef struct OsResources
+{
+  int             ioctl_sock;
+  struct ifaddrs* os_addrs;
+} OsResources;
 
-RoutingTable routing_table_v4;
-RoutingTable routing_table_v6;
+#define OS_RESOURCES_INIT \
+  {                       \
+    -1, NULL              \
+  }
+
+typedef struct UnixInterfaceName
+{
+  char name[IFNAMSIZ];
+} UnixInterfaceName;
 
 /*********************** Private function prototypes *************************/
 
-// Functions for building the routing tables
-static etcpal_error_t build_routing_tables(void);
-static etcpal_error_t build_routing_table(int family, RoutingTable* table);
-static void           free_routing_tables(void);
-static void           free_routing_table(RoutingTable* table);
+// Getting general network interface information.
+static etcpal_error_t get_interface_by_index_internal(unsigned int             index,
+                                                      uint8_t*                 buf,
+                                                      size_t*                  buf_size,
+                                                      const DefaultInterfaces* default_interfaces);
+
+static etcpal_error_t get_os_resources(OsResources* os_resources);
+static void           free_os_resources(OsResources* os_resources);
+
+static void calculate_size_needed(const OsResources* os_resources,
+                                  const uint8_t*     buf_addr,
+                                  unsigned int       index,
+                                  NetintArraySizes*  sizes);
+static void copy_all_netint_info(const OsResources*       os_resources,
+                                 uint8_t*                 buf,
+                                 const NetintArraySizes*  sizes,
+                                 const DefaultInterfaces* default_interfaces);
+static void copy_single_netint_info(const OsResources*       os_resources,
+                                    const struct ifaddrs*    addr,
+                                    EtcPalNetintInfo*        first_info,
+                                    NetintArrayContext*      context,
+                                    const DefaultInterfaces* default_interfaces);
+static bool has_valid_addr(const struct ifaddrs* netint);
+
+// Functions for getting the default interfaces
+static etcpal_error_t get_default_interfaces(DefaultInterfaces* default_interfaces);
+static etcpal_error_t get_default_interface_index(int family, unsigned int* default_interface);
 
 // Interacting with RTNETLINK
 static etcpal_error_t send_netlink_route_request(int socket, int family);
-static etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table);
-static etcpal_error_t parse_netlink_route_reply(int           family,
-                                                const char*   buffer,
-                                                size_t        nl_msg_size,
-                                                RoutingTable* table);
+static etcpal_error_t receive_netlink_route_reply(int           sock,
+                                                  int           family,
+                                                  size_t        buf_size,
+                                                  unsigned int* default_interface);
+static unsigned int   get_default_index_from_netlink_reply(int family, const char* buffer, size_t nl_msg_size);
 
-// Manipulating routing table entries
-static void init_routing_table_entry(RoutingTableEntry* entry);
-static int  compare_routing_table_entries(const void* a, const void* b);
-
-#if ETCPAL_NETINT_DEBUG_OUTPUT
-static void debug_print_routing_table(RoutingTable* table);
-#endif
+static bool unix_interface_name_exists(const char* name, UnixInterfaceName* begin, UnixInterfaceName* end);
 
 /*************************** Function definitions ****************************/
 
-/* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
-static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
+size_t etcpal_netint_get_num_interfaces(void)
 {
-  // Skip an entry if it doesn't have an address, or if the address is not IPv4 or IPv6.
-  return (!ifaddr->ifa_addr || (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
-}
-
-etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
-{
-  etcpal_error_t res = build_routing_tables();
-  if (res != kEtcPalErrOk)
-    return res;
-
-  // Fill in the default index information
-  if (routing_table_v4.default_route)
-  {
-    cache->def.v4_valid = true;
-    cache->def.v4_index = routing_table_v4.default_route->interface_index;
-  }
-  if (routing_table_v6.default_route)
-  {
-    cache->def.v6_valid = true;
-    cache->def.v6_index = routing_table_v6.default_route->interface_index;
-  }
-
-  // Create the OS resources necessary to enumerate the interfaces
-  int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
-  if (ioctl_sock == -1)
-    return errno_os_to_etcpal(errno);
-
   struct ifaddrs* os_addrs = NULL;
   if (getifaddrs(&os_addrs) < 0)
   {
-    close(ioctl_sock);
-    return errno_os_to_etcpal(errno);
+    return 0;
   }
 
-  // Pass 1: Total the number of addresses
-  cache->num_netints = 0;
-  for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  UnixInterfaceName* names     = NULL;
+  size_t             num_names = 0;
+
+  for (const struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
-    if (should_skip_ifaddr(ifaddr))
-      continue;
-
-    ++cache->num_netints;
-  }
-
-  if (cache->num_netints == 0)
-  {
-    freeifaddrs(os_addrs);
-    close(ioctl_sock);
-    return kEtcPalErrNoNetints;
-  }
-
-  // Allocate our interface array
-  cache->netints = (EtcPalNetintInfo*)calloc(cache->num_netints, sizeof(EtcPalNetintInfo));
-  if (!cache->netints)
-  {
-    freeifaddrs(os_addrs);
-    close(ioctl_sock);
-    return kEtcPalErrNoMem;
-  }
-
-  // Pass 2: Fill in all the info about each address
-  size_t current_etcpal_index = 0;
-  for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
-  {
-    if (should_skip_ifaddr(ifaddr))
-      continue;
-
-    EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
-
-    // Interface name
-    strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
-    current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
-    strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
-    current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
-
-    // Interface address
-    ip_os_to_etcpal(ifaddr->ifa_addr, &current_info->addr);
-
-    // Interface netmask
-    ip_os_to_etcpal(ifaddr->ifa_netmask, &current_info->mask);
-
-    // Struct ifreq to use with ioctl() calls
-    struct ifreq if_req;
-    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
-
-    // Hardware address
-    int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
-    if (ioctl_res == 0)
-      memcpy(current_info->mac.data, if_req.ifr_hwaddr.sa_data, ETCPAL_MAC_BYTES);
-    else
-      memset(current_info->mac.data, 0, ETCPAL_MAC_BYTES);
-
-    // Interface index
-    ioctl_res = ioctl(ioctl_sock, SIOCGIFINDEX, &if_req);
-    if (ioctl_res == 0)
-      current_info->index = (unsigned int)if_req.ifr_ifindex;
-    else
-      current_info->index = 0;
-
-    // Is Default
-    if (ETCPAL_IP_IS_V4(&current_info->addr) && routing_table_v4.default_route &&
-        current_info->index == routing_table_v4.default_route->interface_index)
+    if (!names)
     {
-      current_info->is_default = true;
+      names = (UnixInterfaceName*)malloc(sizeof(UnixInterfaceName));
+      assert(names);
+      strcpy(names[0].name, ifaddr->ifa_name);
+      ++num_names;
     }
-    else if (ETCPAL_IP_IS_V6(&current_info->addr) && routing_table_v6.default_route &&
-             current_info->index == routing_table_v6.default_route->interface_index)
+    else if (!unix_interface_name_exists(ifaddr->ifa_name, names, names + num_names))
     {
-      current_info->is_default = true;
+      names = (UnixInterfaceName*)realloc(names, sizeof(UnixInterfaceName) * (num_names + 1));
+      assert(names);
+      strcpy(names[num_names].name, ifaddr->ifa_name);
+      ++num_names;
     }
-
-    current_etcpal_index++;
   }
 
+  if (names)
+    free(names);
   freeifaddrs(os_addrs);
-  close(ioctl_sock);
+  return num_names;
+}
+
+etcpal_error_t etcpal_netint_get_interfaces(uint8_t* buf, size_t* buf_size)
+{
+  if (!buf || !buf_size)
+    return kEtcPalErrInvalid;
+
+  DefaultInterfaces default_interfaces = DEFAULT_INTERFACES_INIT;
+  get_default_interfaces(&default_interfaces);
+
+  OsResources    os_resources = OS_RESOURCES_INIT;
+  etcpal_error_t res          = get_os_resources(&os_resources);
+  if (res != kEtcPalErrOk)
+    return res;
+
+  NetintArraySizes sizes = NETINT_ARRAY_SIZES_INIT;
+  calculate_size_needed(&os_resources, buf, 0, &sizes);
+  if (sizes.total_size > *buf_size)
+  {
+    *buf_size = sizes.total_size;
+    free_os_resources(&os_resources);
+    return kEtcPalErrBufSize;
+  }
+
+  copy_all_netint_info(&os_resources, buf, &sizes, &default_interfaces);
+  *buf_size = sizes.total_size;
+  free_os_resources(&os_resources);
   return kEtcPalErrOk;
 }
 
-void os_free_interfaces(CachedNetintInfo* cache)
+etcpal_error_t etcpal_netint_get_interface_by_index(unsigned int index, uint8_t* buf, size_t* buf_size)
 {
-  if (cache->netints)
-  {
-    free(cache->netints);
-    cache->netints = NULL;
-  }
+  if (!buf || !buf_size)
+    return kEtcPalErrInvalid;
 
-  free_routing_tables();
+  DefaultInterfaces default_interfaces = DEFAULT_INTERFACES_INIT;
+  get_default_interfaces(&default_interfaces);
+
+  return get_interface_by_index_internal(index, buf, buf_size, &default_interfaces);
 }
 
-etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t etcpal_netint_get_default_interface_index(etcpal_iptype_t type, unsigned int* netint_index)
 {
-  ETCPAL_UNUSED_ARG(cache);
+  if (!netint_index)
+    return kEtcPalErrInvalid;
 
-  RoutingTable* table_to_use = (ETCPAL_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
+  etcpal_error_t res       = kEtcPalErrInvalid;
+  unsigned int   def_index = 0;
 
-  unsigned int index_found = 0;
-  for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
+  switch (type)
   {
-    if (entry->interface_index <= 0 || ETCPAL_IP_IS_INVALID(&entry->mask))
-      continue;
-
-    // Check each route to see if it matches the destination address explicitly
-    if (etcpal_ip_network_portions_equal(&entry->addr, dest, &entry->mask))
-    {
-      index_found = (unsigned int)entry->interface_index;
+    case kEtcPalIpTypeV4:
+      res = get_default_interface_index(AF_INET, &def_index);
       break;
-    }
+    case kEtcPalIpTypeV6:
+      res = get_default_interface_index(AF_INET6, &def_index);
+      break;
+    default:
+      break;
   }
 
-  // Fall back to the default route
-  if (index_found == 0 && table_to_use->default_route)
-    index_found = (unsigned int)table_to_use->default_route->interface_index;
+  if (res != kEtcPalErrOk)
+    return res;
+  if (def_index == 0)
+    return kEtcPalErrNotFound;
 
-  if (index_found > 0)
-  {
-    *index = index_found;
-    return kEtcPalErrOk;
-  }
-  return kEtcPalErrNotFound;
+  *netint_index = def_index;
+  return kEtcPalErrOk;
 }
 
-bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
+etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, uint8_t* buf, size_t* buf_size)
 {
-  ETCPAL_UNUSED_ARG(cache);
+  if (type != kEtcPalIpTypeV4 && type != kEtcPalIpTypeV6)
+    return kEtcPalErrInvalid;
 
+  // We will eventually need both defaults to populate the flags correctly, even though we are only
+  // getting the default for one IP type.
+  DefaultInterfaces default_interfaces = DEFAULT_INTERFACES_INIT;
+  etcpal_error_t    res                = get_default_interfaces(&default_interfaces);
+  if (res != kEtcPalErrOk)
+    return res;
+
+  if ((type == kEtcPalIpTypeV4 && default_interfaces.default_index_v4 == 0) ||
+      (type == kEtcPalIpTypeV6 && default_interfaces.default_index_v6 == 0))
+  {
+    return kEtcPalErrNotFound;
+  }
+
+  return get_interface_by_index_internal(
+      type == kEtcPalIpTypeV6 ? default_interfaces.default_index_v6 : default_interfaces.default_index_v4, buf,
+      buf_size, &default_interfaces);
+}
+
+bool etcpal_netint_is_up(unsigned int index)
+{
   int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (ioctl_sock == -1)
     return false;
@@ -301,31 +271,273 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   close(ioctl_sock);
   if (ioctl_res == 0)
   {
-    return (bool)(if_req.ifr_flags & IFF_UP);
+    return (if_req.ifr_flags & IFF_UP) != 0;
   }
   return false;
 }
 
-etcpal_error_t build_routing_tables(void)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Internal functions
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+etcpal_error_t get_interface_by_index_internal(unsigned int             index,
+                                               uint8_t*                 buf,
+                                               size_t*                  buf_size,
+                                               const DefaultInterfaces* default_interfaces)
 {
-  etcpal_error_t res = build_routing_table(AF_INET, &routing_table_v4);
-  if (res == kEtcPalErrOk)
+  OsResources    os_resources = OS_RESOURCES_INIT;
+  etcpal_error_t res          = get_os_resources(&os_resources);
+  if (res != kEtcPalErrOk)
+    return res;
+
+  // Pass 1: Total the number of addresses
+  NetintArraySizes sizes = NETINT_ARRAY_SIZES_INIT;
+  calculate_size_needed(&os_resources, buf, index, &sizes);
+  if (sizes.total_size > *buf_size)
   {
-    res = build_routing_table(AF_INET6, &routing_table_v6);
+    *buf_size = sizes.total_size;
+    free_os_resources(&os_resources);
+    return kEtcPalErrBufSize;
   }
 
-  if (res != kEtcPalErrOk)
-    free_routing_tables();
+  NetintArrayContext context = NETINT_ARRAY_CONTEXT_INIT(buf, &sizes);
 
-#if ETCPAL_NETINT_DEBUG_OUTPUT
-  debug_print_routing_table(&routing_table_v4);
-  debug_print_routing_table(&routing_table_v6);
-#endif
+  bool found_interface = false;
+  for (const struct ifaddrs* ifaddr = os_resources.os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    struct ifreq if_req;
+    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
+    int ioctl_res = ioctl(os_resources.ioctl_sock, SIOCGIFINDEX, &if_req);
+    if (ioctl_res == 0)
+    {
+      if (if_req.ifr_ifindex == index)
+      {
+        found_interface = true;
+        copy_single_netint_info(&os_resources, ifaddr, (EtcPalNetintInfo*)buf, &context, default_interfaces);
+      }
+    }
+  }
+
+  free_os_resources(&os_resources);
+  if (found_interface)
+  {
+    *buf_size = sizes.total_size;
+    return kEtcPalErrOk;
+  }
+  return kEtcPalErrNotFound;
+}
+
+etcpal_error_t get_os_resources(OsResources* os_resources)
+{
+  // Create the OS resources necessary to enumerate the interfaces
+  os_resources->ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
+  if (os_resources->ioctl_sock == -1)
+    return errno_os_to_etcpal(errno);
+
+  if (getifaddrs(&os_resources->os_addrs) < 0)
+  {
+    close(os_resources->ioctl_sock);
+    return errno_os_to_etcpal(errno);
+  }
+
+  return kEtcPalErrOk;
+}
+
+void free_os_resources(OsResources* os_resources)
+{
+  freeifaddrs(os_resources->os_addrs);
+  os_resources->os_addrs = NULL;
+  close(os_resources->ioctl_sock);
+  os_resources->ioctl_sock = -1;
+}
+
+void calculate_size_needed(const OsResources* os_resources,
+                           const uint8_t*     buf_addr,
+                           unsigned int       index,
+                           NetintArraySizes*  sizes)
+{
+  UnixInterfaceName* names               = NULL;
+  size_t             num_names           = 0;
+  size_t             size_needed         = 0;
+  size_t             netintinfo_arr_size = 0;
+  size_t             ip_addr_arr_size    = 0;
+
+  for (const struct ifaddrs* ifaddr = os_resources->os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    if (index != 0)
+    {
+      // Determine whether to include this interface, using its index
+      struct ifreq if_req;
+      strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
+
+      // Interface index
+      int ioctl_res = ioctl(os_resources->ioctl_sock, SIOCGIFINDEX, &if_req);
+      if (ioctl_res != 0 || if_req.ifr_ifindex != index)
+        continue;
+    }
+
+    bool new_netint = false;
+
+    if (!names)
+    {
+      names = (UnixInterfaceName*)malloc(sizeof(UnixInterfaceName));
+      assert(names);
+      strcpy(names[0].name, ifaddr->ifa_name);
+      ++num_names;
+      new_netint = true;
+    }
+    else if (!unix_interface_name_exists(ifaddr->ifa_name, names, names + num_names))
+    {
+      names = (UnixInterfaceName*)realloc(names, sizeof(UnixInterfaceName) * (num_names + 1));
+      assert(names);
+      strcpy(names[num_names].name, ifaddr->ifa_name);
+      ++num_names;
+      new_netint = true;
+    }
+
+    if (new_netint)
+    {
+      netintinfo_arr_size += sizeof(EtcPalNetintInfo);
+      size_needed += sizeof(EtcPalNetintInfo) + strlen(ifaddr->ifa_name) + 1;
+    }
+
+    if (has_valid_addr(ifaddr))
+    {
+      size_needed += sizeof(EtcPalNetintAddr);
+      ip_addr_arr_size += sizeof(EtcPalNetintAddr);
+    }
+  }
+
+  if (names)
+    free(names);
+
+  size_t padding = GET_PADDING_FOR_ALIGNMENT(buf_addr, EtcPalNetintInfo);
+  size_needed += padding;
+  sizes->total_size      = size_needed;
+  sizes->ip_addrs_offset = netintinfo_arr_size + padding;
+  sizes->names_offset    = netintinfo_arr_size + padding + ip_addr_arr_size;
+}
+
+void copy_all_netint_info(const OsResources*       os_resources,
+                          uint8_t*                 buf,
+                          const NetintArraySizes*  sizes,
+                          const DefaultInterfaces* default_interfaces)
+{
+  NetintArrayContext context = NETINT_ARRAY_CONTEXT_INIT(buf, sizes);
+
+  for (const struct ifaddrs* ifaddr = os_resources->os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    copy_single_netint_info(os_resources, ifaddr, (EtcPalNetintInfo*)buf, &context, default_interfaces);
+  }
+
+  // Link the EtcPalNetintInfo structures together
+  EtcPalNetintInfo* cur_netint = (EtcPalNetintInfo*)buf;
+  while (cur_netint + 1 != context.cur_info)
+  {
+    cur_netint->next = cur_netint + 1;
+    ++cur_netint;
+  }
+}
+
+void copy_single_netint_info(const OsResources*       os_resources,
+                             const struct ifaddrs*    os_addr,
+                             EtcPalNetintInfo*        first_info,
+                             NetintArrayContext*      context,
+                             const DefaultInterfaces* default_interfaces)
+{
+  bool              new_netint         = false;
+  EtcPalNetintAddr* last_existing_addr = NULL;
+  EtcPalNetintInfo* cur_info           = find_existing_netint(os_addr->ifa_name, first_info, context->cur_info);
+  if (cur_info)
+  {
+    if (cur_info->addrs)
+    {
+      last_existing_addr = (EtcPalNetintAddr*)cur_info->addrs;
+      while (last_existing_addr->next)
+        last_existing_addr = last_existing_addr->next;
+    }
+  }
+  else
+  {
+    new_netint = true;
+    cur_info   = context->cur_info;
+    memset(cur_info, 0, sizeof(EtcPalNetintInfo));
+  }
+
+  if (new_netint)
+  {
+    // Interface name
+    strcpy(context->cur_name, os_addr->ifa_name);
+    cur_info->id            = context->cur_name;
+    cur_info->friendly_name = context->cur_name;
+    context->cur_name += strlen(os_addr->ifa_name) + 1;
+
+    struct ifreq if_req;
+    // Struct ifreq to use with ioctl() calls
+    strncpy(if_req.ifr_name, os_addr->ifa_name, IFNAMSIZ);
+
+    // Hardware address
+    int ioctl_res = ioctl(os_resources->ioctl_sock, SIOCGIFHWADDR, &if_req);
+    // TODO verify ARPHRD_ETHER is the only value for which the MAC address should be copied out
+    if (ioctl_res == 0 && if_req.ifr_hwaddr.sa_family == ARPHRD_ETHER)
+      memcpy(cur_info->mac.data, if_req.ifr_hwaddr.sa_data, ETCPAL_MAC_BYTES);
+    else
+      memset(cur_info->mac.data, 0, ETCPAL_MAC_BYTES);
+
+    // Interface index
+    ioctl_res = ioctl(os_resources->ioctl_sock, SIOCGIFINDEX, &if_req);
+    if (ioctl_res == 0)
+      cur_info->index = (unsigned int)if_req.ifr_ifindex;
+    else
+      cur_info->index = 0;
+
+    // Flags
+    if (cur_info->index == default_interfaces->default_index_v4)
+      cur_info->flags |= ETCPAL_NETINT_FLAG_DEFAULT_V4;
+    if (cur_info->index == default_interfaces->default_index_v6)
+      cur_info->flags |= ETCPAL_NETINT_FLAG_DEFAULT_V6;
+  }
+
+  // Add the address
+  if (has_valid_addr(os_addr))
+  {
+    memset(context->cur_addr, 0, sizeof(EtcPalNetintAddr));
+
+    ip_os_to_etcpal(os_addr->ifa_addr, &context->cur_addr->addr);
+    EtcPalIpAddr mask;
+    ip_os_to_etcpal(os_addr->ifa_netmask, &mask);
+    context->cur_addr->mask_length = etcpal_ip_mask_length(&mask);
+
+    if (last_existing_addr)
+      last_existing_addr->next = context->cur_addr;
+    else
+      cur_info->addrs = context->cur_addr;
+
+    ++context->cur_addr;
+  }
+
+  if (new_netint)
+    ++context->cur_info;
+}
+
+bool has_valid_addr(const struct ifaddrs* netint)
+{
+  return netint->ifa_addr && netint->ifa_netmask &&
+         (netint->ifa_addr->sa_family == AF_INET || netint->ifa_addr->sa_family == AF_INET6);
+}
+
+etcpal_error_t get_default_interfaces(DefaultInterfaces* default_interfaces)
+{
+  etcpal_error_t res = get_default_interface_index(AF_INET, &default_interfaces->default_index_v4);
+  if (res == kEtcPalErrOk)
+  {
+    res = get_default_interface_index(AF_INET6, &default_interfaces->default_index_v6);
+  }
 
   return res;
 }
 
-etcpal_error_t build_routing_table(int family, RoutingTable* table)
+etcpal_error_t get_default_interface_index(int family, unsigned int* default_interface)
 {
   // Create a netlink socket, send a netlink request to get the routing table, and receive the
   // reply. If the buffer was not big enough, repeat (cannot reuse the same socket because we've
@@ -355,7 +567,7 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
 
     if (result == kEtcPalErrOk)
     {
-      result = receive_netlink_route_reply(sock, family, recv_buf_size, table);
+      result = receive_netlink_route_reply(sock, family, recv_buf_size, default_interface);
       switch (result)
       {
         case kEtcPalErrOk:
@@ -397,7 +609,7 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
   return errno_os_to_etcpal(errno);
 }
 
-etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
+etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, unsigned int* default_interface)
 {
   // Allocate slightly larger than buf_size, so we can detect when more room is needed
   size_t real_size = buf_size + 20;
@@ -437,28 +649,21 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
     nl_msg_size += (size_t)recv_res;
   }
 
-  etcpal_error_t parse_res = parse_netlink_route_reply(family, buffer, nl_msg_size, table);
-
+  *default_interface = get_default_index_from_netlink_reply(family, buffer, nl_msg_size);
   free(buffer);
-  return parse_res;
+  return kEtcPalErrOk;
 }
 
-etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table)
+unsigned int get_default_index_from_netlink_reply(int family, const char* buffer, size_t nl_msg_size)
 {
-  table->size          = 0;
-  table->entries       = NULL;
-  table->default_route = NULL;
+  int          lowest_metric     = INT_MAX;
+  unsigned int default_interface = 0;
 
   // Parse the result
   // outer loop: loops thru all the NETLINK headers that also include the route entry header
   struct nlmsghdr* nl_header = (struct nlmsghdr*)buffer;
   for (; NLMSG_OK(nl_header, nl_msg_size); nl_header = NLMSG_NEXT(nl_header, nl_msg_size))
   {
-    RoutingTableEntry new_entry;
-    init_routing_table_entry(&new_entry);
-
-    bool new_entry_valid = true;
-
     // get route entry header
     struct rtmsg* rt_message = (struct rtmsg*)NLMSG_DATA(nl_header);
 
@@ -467,6 +672,11 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     if (rt_message->rtm_type != RTN_LOCAL && rt_message->rtm_type != RTN_BROADCAST &&
         rt_message->rtm_type != RTN_ANYCAST)
     {
+      bool         has_dst        = false;
+      bool         has_gateway    = false;
+      int          current_metric = INT_MAX;
+      unsigned int current_index  = 0;
+
       // inner loop: loop thru all the attributes of one route entry.
       struct rtattr* rt_attributes = (struct rtattr*)RTM_RTA(rt_message);
       unsigned int   rt_attr_size  = (unsigned int)RTM_PAYLOAD(nl_header);
@@ -475,138 +685,49 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
         // We only care about the gateway and DST attribute
         if (rt_attributes->rta_type == RTA_DST)
         {
-          if (family == AF_INET6)
-            ETCPAL_IP_SET_V6_ADDRESS(&new_entry.addr, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
-          else
-            ETCPAL_IP_SET_V4_ADDRESS(&new_entry.addr, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
+          has_dst = true;
         }
         else if (rt_attributes->rta_type == RTA_GATEWAY)
         {
-          if (family == AF_INET6)
-            ETCPAL_IP_SET_V6_ADDRESS(&new_entry.gateway, ((struct in6_addr*)RTA_DATA(rt_attributes))->s6_addr);
-          else
-            ETCPAL_IP_SET_V4_ADDRESS(&new_entry.gateway, ntohl(((struct in_addr*)RTA_DATA(rt_attributes))->s_addr));
+          has_gateway = true;
         }
         else if (rt_attributes->rta_type == RTA_OIF)
         {
-          new_entry.interface_index = *((int*)RTA_DATA(rt_attributes));
+          current_index = *((int*)RTA_DATA(rt_attributes));
         }
         else if (rt_attributes->rta_type == RTA_PRIORITY)
         {
-          new_entry.metric = *((int*)RTA_DATA(rt_attributes));
+          current_metric = *((int*)RTA_DATA(rt_attributes));
+        }
+      }
+
+      // This route is a candidate for the default route if it does not have a destination but does
+      // have a gateway.
+      if (current_index != 0 && !has_dst && has_gateway)
+      {
+        // Select the default route with the lowest metric. Sometimes a default route does not have
+        // a metric associated with it. In that case, we accept it as a default route as long as a
+        // default route does not exist that *does* have a valid metric.
+        if (current_metric < lowest_metric || lowest_metric == INT_MAX)
+        {
+          lowest_metric     = current_metric;
+          default_interface = current_index;
         }
       }
     }
-    else
-    {
-      new_entry_valid = false;
-    }
+  }
 
-    if (!ETCPAL_IP_IS_INVALID(&new_entry.addr))
-    {
-      new_entry.mask = etcpal_ip_mask_from_length(new_entry.addr.type, rt_message->rtm_dst_len);
-    }
+  return default_interface;
+}
 
-    // Insert the new entry into the list
-    if (new_entry_valid)
+bool unix_interface_name_exists(const char* name, UnixInterfaceName* begin, UnixInterfaceName* end)
+{
+  for (UnixInterfaceName* cur_name = begin; cur_name < end; ++cur_name)
+  {
+    if (strcmp(cur_name->name, name) == 0)
     {
-      ++table->size;
-      if (table->entries)
-        table->entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
-      else
-        table->entries = (RoutingTableEntry*)malloc(sizeof(RoutingTableEntry));
-      table->entries[table->size - 1] = new_entry;
+      return true;
     }
   }
-
-  if (table->size > 0)
-  {
-    qsort(table->entries, table->size, sizeof(RoutingTableEntry), compare_routing_table_entries);
-
-    // Mark the default route with the lowest metric (the first one we encounter after sorting the
-    // table)
-    for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
-    {
-      if (ETCPAL_IP_IS_INVALID(&entry->addr) && ETCPAL_IP_IS_INVALID(&entry->mask) &&
-          !ETCPAL_IP_IS_INVALID(&entry->gateway))
-      {
-        table->default_route = entry;
-        break;
-      }
-    }
-  }
-
-  return kEtcPalErrOk;
+  return false;
 }
-
-void init_routing_table_entry(RoutingTableEntry* entry)
-{
-  ETCPAL_IP_SET_INVALID(&entry->addr);
-  ETCPAL_IP_SET_INVALID(&entry->mask);
-  ETCPAL_IP_SET_INVALID(&entry->gateway);
-  entry->interface_index = -1;
-  entry->metric          = INT_MAX;
-}
-
-int compare_routing_table_entries(const void* a, const void* b)
-{
-  RoutingTableEntry* e1 = (RoutingTableEntry*)a;
-  RoutingTableEntry* e2 = (RoutingTableEntry*)b;
-
-  unsigned int mask_length_1 = etcpal_ip_mask_length(&e1->mask);
-  unsigned int mask_length_2 = etcpal_ip_mask_length(&e2->mask);
-
-  // Sort by mask length in descending order - within the same mask length, sort by metric in
-  // ascending order.
-  if (mask_length_1 == mask_length_2)
-  {
-    return (e1->metric > e2->metric) - (e1->metric < e2->metric);
-  }
-  return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
-}
-
-void free_routing_tables(void)
-{
-  free_routing_table(&routing_table_v4);
-  free_routing_table(&routing_table_v6);
-}
-
-void free_routing_table(RoutingTable* table)
-{
-  if (table->entries)
-  {
-    free(table->entries);
-    table->entries = NULL;
-  }
-  table->size = 0;
-}
-
-#if ETCPAL_NETINT_DEBUG_OUTPUT
-void debug_print_routing_table(RoutingTable* table)
-{
-  printf("%-40s %-40s %-40s %-10s %s\n", "Address", "Mask", "Gateway", "Metric", "Index");
-  for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
-  {
-    char addr_str[ETCPAL_IP_STRING_BYTES];
-    char mask_str[ETCPAL_IP_STRING_BYTES];
-    char gw_str[ETCPAL_IP_STRING_BYTES];
-
-    if (!ETCPAL_IP_IS_INVALID(&entry->addr))
-      etcpal_ip_to_string(&entry->addr, addr_str);
-    else
-      strcpy(addr_str, "0.0.0.0");
-
-    if (!ETCPAL_IP_IS_INVALID(&entry->mask))
-      etcpal_ip_to_string(&entry->mask, mask_str);
-    else
-      strcpy(mask_str, "0.0.0.0");
-
-    if (!ETCPAL_IP_IS_INVALID(&entry->gateway))
-      etcpal_ip_to_string(&entry->gateway, gw_str);
-    else
-      strcpy(gw_str, "0.0.0.0");
-
-    printf("%-40s %-40s %-40s %-10d %d\n", addr_str, mask_str, gw_str, entry->metric, entry->interface_index);
-  }
-}
-#endif

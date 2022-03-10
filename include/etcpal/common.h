@@ -94,11 +94,24 @@ extern "C" {
 #define ETCPAL_MSVC_BEGIN_NO_DEP_WARNINGS() __pragma(warning(push)) __pragma(warning(disable : 4996))
 #define ETCPAL_MSVC_END_NO_DEP_WARNINGS()   __pragma(warning(pop))
 
+/* MSVC has only very recently added support for C11 and C17 features and only in an insider
+ * preview version of the Windows SDK. To enhance portability, we use Microsoft builtins to
+ * substitute for stdalign.h instead.
+ *
+ * TODO: We should be able to assume general C11 support sometime in 2023.
+ */
+
+#define ETCPAL_ALIGNOF(type) __alignof(type)
+
 #else /* _MSC_VER */
+
+#include <stdalign.h>
 
 #define ETCPAL_MSVC_NO_DEP_WRN
 #define ETCPAL_MSVC_BEGIN_NO_DEP_WARNINGS()
 #define ETCPAL_MSVC_END_NO_DEP_WARNINGS()
+
+#define ETCPAL_ALIGNOF(type) alignof(type)
 
 #endif /* _MSC_VER */
 
@@ -125,9 +138,8 @@ typedef uint32_t etcpal_features_t;
  */
 
 #define ETCPAL_FEATURE_SOCKETS ((etcpal_features_t)(1u << 0)) /**< Use the etcpal/socket module. */
-#define ETCPAL_FEATURE_NETINTS ((etcpal_features_t)(1u << 1)) /**< Use the etcpal/netint module. */
-#define ETCPAL_FEATURE_TIMERS  ((etcpal_features_t)(1u << 2)) /**< Use the etcpal/timer module. */
-#define ETCPAL_FEATURE_LOGGING ((etcpal_features_t)(1u << 3)) /**< Use the etcpal/log module. */
+#define ETCPAL_FEATURE_TIMERS  ((etcpal_features_t)(1u << 1)) /**< Use the etcpal/timer module. */
+#define ETCPAL_FEATURE_LOGGING ((etcpal_features_t)(1u << 2)) /**< Use the etcpal/log module. */
 #define ETCPAL_FEATURES_ALL    0xffffffffu                    /**< Use every available module. */
 
 /**

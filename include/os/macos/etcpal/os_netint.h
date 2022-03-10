@@ -17,12 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "unity_fixture.h"
-#include "etc_fff_wrapper.h"
+#ifndef ETCPAL_OS_NETINT_H_
+#define ETCPAL_OS_NETINT_H_
 
-DEFINE_FFF_GLOBALS;
+#include <net/if.h>
 
-void run_all_tests(void)
-{
-  RUN_TEST_GROUP(timer_controlled);
-}
+#define ETCPAL_NETINT_NAME_HEURISTIC          IFNAMSIZ
+#define ETCPAL_NETINT_FRIENDLY_NAME_HEURISTIC 0
+
+#endif /* ETCPAL_OS_NETINT_H_ */

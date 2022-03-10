@@ -9,8 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added implementations for the stream socket API functions for the MQX RTCS port.
 
+### Changed
+- The network interface (netint) API has been rewritten.
+  * An EtcPalNetintInfo type now represents a single NIC, which may have multiple IP addresses
+    (before, it represented a single IP address on a NIC)
+  * We copy interface information out rather than caching it internally, in order to bypass
+    thread-safety issues when refreshing interfaces on a system.
+  * The API uses the approach of copying disparate types into one big buffer, similar to the
+    GetAdaptersAddresses function in the Windows API. This helps us keep the memory management
+    requirements of the API simple while allowing us to represent a richer set of information.
+
 ### Fixed
 - Fixed an issue where the windows timer abstraction didn't build when WIN32_LEAN_AND_MEAN is enabled.
+
+### Removed
+- The API function `etcpal_netint_get_interface_for_dest()`.
+- The compile-time configuration options `ETCPAL_EMBOS_USE_MALLOC` and `ETCPAL_EMBOS_MAX_NETINTS`.
+  These definitions were no longer necessary with the new implementation of the netint API.
 
 ## [0.4.1] - 2022-03-02
 

@@ -17,10 +17,3 @@ target_link_libraries(etcpal_controlled_unit_tests PRIVATE
   ${ETCPAL_OS_ADDITIONAL_LIBS}
   ${ETCPAL_NET_ADDITIONAL_LIBS}
 )
-
-if(ETCPAL_HAVE_NETWORKING_SUPPORT)
-  target_sources(etcpal_controlled_unit_tests PRIVATE
-    ${ETCPAL_SRC}/etcpal/netint.c
-    test_netint_controlled.c
-  )
-endif()

@@ -95,16 +95,13 @@ target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE
   ${ETCPAL_OS_ADDITIONAL_DEFINES}
   ${ETCPAL_NET_ADDITIONAL_DEFINES}
 )
-if(ETCPAL_NETINT_DEBUG_OUTPUT)
-  target_compile_definitions(${ETCPAL_LIB_TARGET_NAME} PRIVATE ETCPAL_NETINT_DEBUG_OUTPUT)
-endif()
 target_link_libraries(${ETCPAL_LIB_TARGET_NAME} PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
 if(NOT COMPILING_AS_OSS)
   target_clang_tidy(${ETCPAL_LIB_TARGET_NAME})
 endif()
 
 if(NOT MSVC)
-  set_target_properties(${ETCPAL_LIB_TARGET_NAME} PROPERTIES C_STANDARD 99)
+  set_target_properties(${ETCPAL_LIB_TARGET_NAME} PROPERTIES C_STANDARD 11)
 endif()
 
 # Write a pkg-config file
@@ -181,6 +178,6 @@ if(ETCPAL_BUILD_MOCK_LIB)
   target_link_libraries(EtcPalMock PUBLIC meekrosoft::fff)
   target_link_libraries(EtcPalMock PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
   if(NOT MSVC)
-    set_target_properties(EtcPalMock PROPERTIES C_STANDARD 99)
+    set_target_properties(EtcPalMock PROPERTIES C_STANDARD 11)
   endif()
 endif()

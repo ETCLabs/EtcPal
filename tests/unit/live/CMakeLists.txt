@@ -8,8 +8,10 @@ etcpal_add_live_test(etcpal_live_unit_tests C
   test_mempool.c
   test_pack.c
   test_rbtree.c
+  test_util.c
   test_uuid.c
 )
+target_include_directories(etcpal_live_unit_tests PRIVATE ${ETCPAL_SRC})
 
 if(ETCPAL_HAVE_OS_SUPPORT)
   target_sources(etcpal_live_unit_tests PRIVATE

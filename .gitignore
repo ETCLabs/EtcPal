@@ -14,6 +14,7 @@ lib/
 
 # CMake
 build*/
+/CMakeUserPresets.json
 
 # MSVC2015 and Qt
 *.VC.db

@@ -29,8 +29,6 @@
  * @ingroup etcpal
  * @brief Compile-time configuration options for EtcPal
  *
- * Options starting with "ETCPAL_EMBOS_" are ignored on Windows, macOS and Linux.
- *
  * To override any of these options, either define them on your compiler command line, or provide a
  * file called etcpal_config.h and:
  *   * If not building EtcPal with CMake: add ETCPAL_HAVE_CONFIG_H to your preprocessor
@@ -49,24 +47,6 @@
  */
 #ifndef ETCPAL_INCLUDE_PACK_64
 #define ETCPAL_INCLUDE_PACK_64 1
-#endif
-
-/**
- * @brief Whether a malloc() implementation is available.
- *
- * Currently this only affects network interface enumeration using lwIP.
- */
-#ifndef ETCPAL_EMBOS_USE_MALLOC
-#define ETCPAL_EMBOS_USE_MALLOC 0
-#endif
-
-/**
- * @brief The maximum number of network interfaces that can be tracked by the @ref etcpal_netint module.
- *
- * Currently this limit is not necessary and therefore ignored on all targets except lwIP.
- */
-#ifndef ETCPAL_EMBOS_MAX_NETINTS
-#define ETCPAL_EMBOS_MAX_NETINTS 5
 #endif
 
 /**

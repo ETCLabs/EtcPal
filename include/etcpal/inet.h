@@ -131,8 +131,6 @@ typedef struct EtcPalIpAddr
  * EtcPalIpAddr v4 = { ETCPAL_IPV4_INIT_VALUES(0xc0a80101) }; // 192.168.1.1
  * @endcode
  *
- * Note: Using this macro requires support for C99 designated initializers in your compiler.
- *
  * To omit the enclosing brackets, use #ETCPAL_IPV4_INIT().
  */
 #define ETCPAL_IPV4_INIT_VALUES(v4_val) \
@@ -145,8 +143,6 @@ typedef struct EtcPalIpAddr
  * @code
  * EtcPalIpAddr v4 = ETCPAL_IPV4_INIT(0xc0a80101); // 192.168.1.1
  * @endcode
- *
- * Note: Using this macro requires support for C99 designated initializers in your compiler.
  */
 #define ETCPAL_IPV4_INIT(addr_val)    \
   {                                   \
@@ -167,9 +163,6 @@ typedef struct EtcPalIpAddr
  *
  * Any number of initializer values can be used (the remaining IPv6 bytes will be initialized to 0).
  * To omit the enclosing brackets, use #ETCPAL_IPV6_INIT().
- *
- * Note: Using this macro requires support for variadic macros and C99 designated initializers in
- * your compiler.
  */
 #define ETCPAL_IPV6_INIT_VALUES(...)                  \
   kEtcPalIpTypeV6,                                    \
@@ -188,9 +181,6 @@ typedef struct EtcPalIpAddr
  * @endcode
  *
  * Any number of initializer values can be used (the remaining IPv6 bytes will be initialized to 0).
- *
- * Note: Using this macro requires support for variadic macros and C99 designated initializers in
- * your compiler.
  */
 #define ETCPAL_IPV6_INIT(...)            \
   {                                      \
@@ -344,42 +334,6 @@ extern const EtcPalMacAddr kEtcPalNullMacAddr;
  * @return true (MAC address is null) or false (MAC address is not null).
  */
 #define ETCPAL_MAC_IS_NULL(macptr) (memcmp((macptr)->data, kEtcPalNullMacAddr.data, ETCPAL_MAC_BYTES) == 0)
-
-/** The maximum length of a network interface id. */
-#define ETCPAL_NETINTINFO_ID_LEN 64
-/** The maximum length of a user-friendly network interface name. */
-#define ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN 64
-
-/** A description of a single address assigned to a network interface. */
-typedef struct EtcPalNetintInfo
-{
-  /** The OS-specific network interface number. Since interfaces can have multiple IPv4 and IPv6
-   *  addresses assigned simultaneously, there can be a one-to-many relationship between physical
-   *  network interfaces and EtcPalNetintInfo descriptions on the same system, all of which will have
-   *  the same value for this field. It is also used for IPv6, multicast and IP-version-neutral
-   *  APIs. See @ref interface_indexes for more information. */
-  unsigned int index;
-  /** The interface ip address. */
-  EtcPalIpAddr addr;
-  /** The subnet mask for this interface. */
-  EtcPalIpAddr mask;
-  /** The adapter MAC address. */
-  EtcPalMacAddr mac;
-  /** The system name for the interface. This name can be used as a primary key to identify a
-   *  single network adapter. It will not change unless the adapter is removed or reconfigured.
-   *  Since interfaces can have multiple IPv4 and IPv6 addresses assigned simultaneously, there can
-   *  be a one-to-many relationship between physical network interfaces and EtcPalNetintInfo
-   *  structures on the same system, all of which have the same value for this field. */
-  char id[ETCPAL_NETINTINFO_ID_LEN];
-  /** A user-friendly name for the interface. On some systems, this is the same as the id field.
-   *  Others allow users to create and change a friendly name for network interfaces that's
-   *  different than the system name. This field should be used when printing the adapter list in a
-   *  UI. */
-  char friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN];
-  /** Whether this is the default network interface. The default network interface is defined as
-   *  the network interface chosen for the default IP route on a system. */
-  bool is_default;
-} EtcPalNetintInfo;
 
 /** A set of identifying information for a network interface, for multicast purposes. The primary key for a network
  *  interface is simply a combination of the interface index and the IP protocol used. The interface IP address is not

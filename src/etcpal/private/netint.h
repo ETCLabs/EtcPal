@@ -20,32 +20,50 @@
 #ifndef ETCPAL_PRIVATE_NETINT_H_
 #define ETCPAL_PRIVATE_NETINT_H_
 
+#include <stddef.h>
 #include "etcpal/netint.h"
-#include "etcpal/error.h"
 
-typedef struct DefaultNetint
+// Network interface arrays are currently arranged in a general-purpose buffer like so:
+//
+// [EtcPalNetintInfo 0..n] [padding for alignment] [EtcPalNetintAddr 0..m] [name0] [name1] ... [nameN]
+typedef struct NetintArraySizes
 {
-  bool         v4_valid;
-  unsigned int v4_index;
+  size_t ip_addrs_offset;
+  size_t names_offset;
+  size_t total_size;
+} NetintArraySizes;
 
-  bool         v6_valid;
-  unsigned int v6_index;
-} DefaultNetint;
+#define NETINT_ARRAY_SIZES_INIT \
+  {                             \
+    0u, 0u, 0u                  \
+  }
 
-typedef struct CachedNetintInfo
+typedef struct NetintArrayContext
 {
-  size_t            num_netints;
-  EtcPalNetintInfo* netints;
-  DefaultNetint     def;
-} CachedNetintInfo;
+  EtcPalNetintInfo* cur_info;
+  EtcPalNetintAddr* cur_addr;
+  char*             cur_name;
+  const uint8_t*    buf_end;
+} NetintArrayContext;
 
-etcpal_error_t etcpal_netint_init(void);
-void           etcpal_netint_deinit(void);
+// Pass buf (uint8_t*) and sizes (NetintArraySizes*)
+#define NETINT_ARRAY_CONTEXT_INIT(buf, sizes)                                        \
+  {                                                                                  \
+    (EtcPalNetintInfo*)(buf), (EtcPalNetintAddr*)(&(buf)[(sizes)->ip_addrs_offset]), \
+        (char*)(&(buf)[(sizes)->names_offset]), &(buf)[(sizes)->total_size]          \
+  }
 
-// These functions are defined in the os_netint.c files for each platform.
-etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache);
-void           os_free_interfaces(CachedNetintInfo* cache);
-etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index);
-bool           os_netint_is_up(unsigned int index, const CachedNetintInfo* cache);
+typedef struct DefaultInterfaces
+{
+  unsigned int default_index_v4;
+  unsigned int default_index_v6;
+} DefaultInterfaces;
+
+#define DEFAULT_INTERFACES_INIT \
+  {                             \
+    0, 0                        \
+  }
+
+EtcPalNetintInfo* find_existing_netint(const char* name, EtcPalNetintInfo* start, EtcPalNetintInfo* end);
 
 #endif /* ETCPAL_PRIVATE_NETINT_H_ */

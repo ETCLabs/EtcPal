@@ -30,6 +30,7 @@ void run_all_tests(void)
   RUN_TEST_GROUP(etcpal_mempool);
   RUN_TEST_GROUP(etcpal_pack);
   RUN_TEST_GROUP(etcpal_rbtree);
+  RUN_TEST_GROUP(etcpal_util);
   RUN_TEST_GROUP(etcpal_uuid);
 #if !ETCPAL_NO_OS_SUPPORT
 #if !DISABLE_EVENT_GROUP_TESTS

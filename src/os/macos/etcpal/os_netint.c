@@ -38,21 +38,18 @@
 
 #include "etcpal/netint.h"
 
+#include <assert.h>
 #include <errno.h>
 #include <limits.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef ETCPAL_NETINT_DEBUG_OUTPUT
-#include <stdio.h>
-#endif
-
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <net/if_dl.h>
-#include <net/route.h>
 #include <sys/ioctl.h>
+#include <net/route.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
@@ -60,6 +57,7 @@
 
 #include "etcpal/common.h"
 #include "etcpal/private/netint.h"
+#include "etcpal/private/util.h"
 #include "os_error.h"
 
 /***************************** Private types *********************************/
@@ -76,221 +74,203 @@ typedef struct RoutingTableEntry
   bool interface_scope;
 } RoutingTableEntry;
 
-typedef struct RoutingTable
+#define ROUTING_TABLE_ENTRY_INIT                                                     \
+  {                                                                                  \
+    ETCPAL_IP_INVALID_INIT, ETCPAL_IP_INVALID_INIT, ETCPAL_IP_INVALID_INIT, 0, false \
+  }
+
+typedef struct DarwinNetint
 {
-  RoutingTableEntry* entries;
-  RoutingTableEntry* default_route;
-  size_t             size;
-} RoutingTable;
+  char                name[IFNAMSIZ];
+  struct sockaddr_dl* link_addr;
+  unsigned int        num_addrs;
+} DarwinNetint;
 
-/**************************** Private variables ******************************/
+typedef struct DarwinNetints
+{
+  DarwinNetint* netints;
+  size_t        num_netints;
+} DarwinNetints;
 
-RoutingTable routing_table_v4;
-RoutingTable routing_table_v6;
+#define DARWIN_NETINTS_INIT \
+  {                         \
+    NULL, 0                 \
+  }
 
 /*********************** Private function prototypes *************************/
 
-// Functions for building the routing tables
-static etcpal_error_t build_routing_tables();
-static etcpal_error_t build_routing_table(int family, RoutingTable* table);
-static void           free_routing_tables();
-static void           free_routing_table(RoutingTable* table);
+// Getting general network interface information.
+static etcpal_error_t get_interface_by_index_internal(unsigned int             index,
+                                                      uint8_t*                 buf,
+                                                      size_t*                  buf_size,
+                                                      const DefaultInterfaces* default_interfaces);
+
+static void calculate_size_needed(const DarwinNetints* darwin_netints,
+                                  const uint8_t*       buf_addr,
+                                  unsigned int         index,
+                                  NetintArraySizes*    sizes);
+static void copy_all_netint_info(const struct ifaddrs*    os_addrs,
+                                 const DarwinNetints*     darwin_netints,
+                                 uint8_t*                 buf,
+                                 const NetintArraySizes*  sizes,
+                                 const DefaultInterfaces* default_interfaces);
+static void copy_single_netint_info(const struct ifaddrs*    os_addr,
+                                    const DarwinNetints*     darwin_netints,
+                                    EtcPalNetintInfo*        first_info,
+                                    NetintArrayContext*      context,
+                                    const DefaultInterfaces* default_interfaces);
+static bool has_valid_inet_addr(const struct ifaddrs* netint);
+static bool populate_darwin_netints(const struct ifaddrs* os_addrs, unsigned int index, DarwinNetints* netints_out);
+static void free_darwin_netints(DarwinNetints* netints);
+static DarwinNetint* find_darwin_netint(const char* name, DarwinNetint* begin, DarwinNetint* end);
+
+// Functions for getting the default interfaces
+static etcpal_error_t get_default_interfaces(DefaultInterfaces* default_interfaces);
+static etcpal_error_t get_default_interface_index(int family, unsigned int* default_interface);
 
 // Interacting with the BSD routing stack
 static etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len);
-static etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, RoutingTable* table);
+static etcpal_error_t get_default_interface_from_routing_table_dump(int           family,
+                                                                    uint8_t*      buf,
+                                                                    size_t        buf_len,
+                                                                    unsigned int* default_interface);
 
-// Manipulating routing table entries
-static void init_routing_table_entry(RoutingTableEntry* entry);
-static int  compare_routing_table_entries(const void* a, const void* b);
-
-#if ETCPAL_NETINT_DEBUG_OUTPUT
-static void debug_print_routing_table(RoutingTable* table);
-#endif
+static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct sockaddr** rti_info);
+static void dest_from_route_entry(int family, const struct sockaddr* os_dst, EtcPalIpAddr* etcpal_dst);
+static void netmask_from_route_entry(int family, const struct sockaddr* os_netmask, EtcPalIpAddr* etcpal_netmask);
+static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr* etcpal_gw);
 
 /*************************** Function definitions ****************************/
 
-/* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
-static size_t count_ifaddrs(const struct ifaddrs* ifaddrs)
+size_t etcpal_netint_get_num_interfaces(void)
 {
-  size_t total = 0;
-  for (const struct ifaddrs* ifaddr = ifaddrs; ifaddr; ifaddr = ifaddr->ifa_next)
-  {
-    // Skip an entry if it is down, doesn't have an address, or if the address is not IPv4 or IPv6.
-    if ((ifaddr->ifa_flags & IFF_UP) && ifaddr->ifa_addr &&
-        (ifaddr->ifa_addr->sa_family == AF_INET || ifaddr->ifa_addr->sa_family == AF_INET6))
-    {
-      ++total;
-    }
-  }
-  return total;
-}
-
-etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
-{
-  etcpal_error_t res = build_routing_tables();
-  if (res != kEtcPalErrOk)
-    return res;
-
-  // Fill in the default index information
-  if (routing_table_v4.default_route)
-  {
-    cache->def.v4_valid = true;
-    cache->def.v4_index = routing_table_v4.default_route->interface_index;
-  }
-  if (routing_table_v6.default_route)
-  {
-    cache->def.v6_valid = true;
-    cache->def.v6_index = routing_table_v6.default_route->interface_index;
-  }
-
-  struct ifaddrs* os_addrs;
+  struct ifaddrs* os_addrs = NULL;
   if (getifaddrs(&os_addrs) < 0)
   {
-    return errno_os_to_etcpal(errno);
+    return 0;
   }
 
-  // Pass 1: Total the number of addresses
-  cache->num_netints = count_ifaddrs(os_addrs);
+  size_t        num_netints = 0;
+  DarwinNetints netints     = DARWIN_NETINTS_INIT;
+  if (populate_darwin_netints(os_addrs, 0, &netints))
+  {
+    for (const DarwinNetint* netint = netints.netints; netint < netints.netints + netints.num_netints; ++netint)
+    {
+      // Only consider interfaces that have a link addr structure
+      if (netint->link_addr)
+      {
+        ++num_netints;
+      }
+    }
 
-  if (cache->num_netints == 0)
+    free_darwin_netints(&netints);
+  }
+
+  freeifaddrs(os_addrs);
+  return num_netints;
+}
+
+etcpal_error_t etcpal_netint_get_interfaces(uint8_t* buf, size_t* buf_size)
+{
+  if (!buf || !buf_size)
+    return kEtcPalErrInvalid;
+
+  DefaultInterfaces default_interfaces = DEFAULT_INTERFACES_INIT;
+  get_default_interfaces(&default_interfaces);
+
+  struct ifaddrs* os_addrs = NULL;
+  if (getifaddrs(&os_addrs) < 0)
+    return errno_os_to_etcpal(errno);
+
+  DarwinNetints darwin_netints = DARWIN_NETINTS_INIT;
+  if (!populate_darwin_netints(os_addrs, 0, &darwin_netints))
   {
     freeifaddrs(os_addrs);
     return kEtcPalErrNoNetints;
   }
 
-  // Allocate our interface array
-  cache->netints = (EtcPalNetintInfo*)calloc(cache->num_netints, sizeof(EtcPalNetintInfo));
-  if (!cache->netints)
+  NetintArraySizes sizes = NETINT_ARRAY_SIZES_INIT;
+  calculate_size_needed(&darwin_netints, buf, 0, &sizes);
+  if (sizes.total_size > *buf_size)
   {
+    *buf_size = sizes.total_size;
+    free_darwin_netints(&darwin_netints);
     freeifaddrs(os_addrs);
-    return kEtcPalErrNoMem;
+    return kEtcPalErrBufSize;
   }
 
-  // Pass 2: Fill in all the info about each address
-  size_t              current_etcpal_index = 0;
-  char*               link_name            = NULL;
-  struct sockaddr_dl* link_addr            = NULL;
-
-  for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
-  {
-    // An AF_LINK entry appears before one or more internet address entries for each interface.
-    // Save the current AF_LINK entry for later use. If the entry is an IPv4 or IPv6 address, we
-    // can proceed.
-    if (ifaddr->ifa_addr)
-    {
-      if (ifaddr->ifa_addr->sa_family == AF_LINK)
-      {
-        link_name = ifaddr->ifa_name;
-        link_addr = (struct sockaddr_dl*)(ifaddr->ifa_addr);
-        continue;
-      }
-      else if (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6)
-      {
-        continue;
-      }
-    }
-    else
-    {
-      continue;
-    }
-
-    EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
-
-    // Interface name
-    strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
-    current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
-    strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
-    current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
-
-    // Interface address
-    ip_os_to_etcpal(ifaddr->ifa_addr, &current_info->addr);
-
-    // Interface netmask
-    ip_os_to_etcpal(ifaddr->ifa_netmask, &current_info->mask);
-
-    // Make sure we match the corresponding link information
-    if (link_name && link_addr && 0 == strcmp(ifaddr->ifa_name, link_name))
-    {
-      current_info->index = link_addr->sdl_index;
-      memcpy(current_info->mac.data, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_MAC_BYTES);
-    }
-    else
-    {
-      // Backup - get the interface index using if_nametoindex
-      current_info->index = if_nametoindex(ifaddr->ifa_name);
-      memset(current_info->mac.data, 0, ETCPAL_MAC_BYTES);
-    }
-
-    // Is Default
-    if (ETCPAL_IP_IS_V4(&current_info->addr) && routing_table_v4.default_route &&
-        current_info->index == routing_table_v4.default_route->interface_index)
-    {
-      current_info->is_default = true;
-    }
-    else if (ETCPAL_IP_IS_V6(&current_info->addr) && routing_table_v6.default_route &&
-             current_info->index == routing_table_v6.default_route->interface_index)
-    {
-      current_info->is_default = true;
-    }
-
-    current_etcpal_index++;
-  }
-
+  copy_all_netint_info(os_addrs, &darwin_netints, buf, &sizes, &default_interfaces);
+  *buf_size = sizes.total_size;
+  free_darwin_netints(&darwin_netints);
   freeifaddrs(os_addrs);
   return kEtcPalErrOk;
 }
 
-void os_free_interfaces(CachedNetintInfo* cache)
+etcpal_error_t etcpal_netint_get_interface_by_index(unsigned int index, uint8_t* buf, size_t* buf_size)
 {
-  if (cache->netints)
-  {
-    free(cache->netints);
-    cache->netints = NULL;
-  }
+  if (!buf || !buf_size)
+    return kEtcPalErrInvalid;
 
-  free_routing_tables();
+  DefaultInterfaces default_interfaces = DEFAULT_INTERFACES_INIT;
+  get_default_interfaces(&default_interfaces);
+
+  return get_interface_by_index_internal(index, buf, buf_size, &default_interfaces);
 }
 
-etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
+etcpal_error_t etcpal_netint_get_default_interface_index(etcpal_iptype_t type, unsigned int* netint_index)
 {
-  ETCPAL_UNUSED_ARG(cache);
+  if (!netint_index)
+    return kEtcPalErrInvalid;
 
-  RoutingTable* table_to_use = (ETCPAL_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
+  etcpal_error_t res       = kEtcPalErrInvalid;
+  unsigned int   def_index = 0;
 
-  unsigned int index_found = 0;
-  for (RoutingTableEntry* entry = table_to_use->entries; entry < table_to_use->entries + table_to_use->size; ++entry)
+  switch (type)
   {
-    if (entry->interface_index == 0 || ETCPAL_IP_IS_INVALID(&entry->mask))
-      continue;
-
-    // Check each route to see if it matches the destination address explicitly
-    if (etcpal_ip_network_portions_equal(&entry->addr, dest, &entry->mask))
-    {
-      index_found = entry->interface_index;
+    case kEtcPalIpTypeV4:
+      res = get_default_interface_index(AF_INET, &def_index);
       break;
-    }
+    case kEtcPalIpTypeV6:
+      res = get_default_interface_index(AF_INET6, &def_index);
+      break;
+    default:
+      break;
   }
 
-  // Fall back to the default route
-  if (index_found == 0 && table_to_use->default_route)
-    index_found = table_to_use->default_route->interface_index;
+  if (res != kEtcPalErrOk)
+    return res;
+  if (def_index == 0)
+    return kEtcPalErrNotFound;
 
-  if (index_found > 0)
-  {
-    *index = index_found;
-    return kEtcPalErrOk;
-  }
-  else
+  *netint_index = def_index;
+  return kEtcPalErrOk;
+}
+
+etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, uint8_t* buf, size_t* buf_size)
+{
+  if (type != kEtcPalIpTypeV4 && type != kEtcPalIpTypeV6)
+    return kEtcPalErrInvalid;
+
+  // We will eventually need both defaults to populate the flags correctly, even though we are only
+  // getting the default for one IP type.
+  DefaultInterfaces default_interfaces = DEFAULT_INTERFACES_INIT;
+  etcpal_error_t    res                = get_default_interfaces(&default_interfaces);
+  if (res != kEtcPalErrOk)
+    return res;
+
+  if ((type == kEtcPalIpTypeV4 && default_interfaces.default_index_v4 == 0) ||
+      (type == kEtcPalIpTypeV6 && default_interfaces.default_index_v6 == 0))
   {
     return kEtcPalErrNotFound;
   }
+
+  return get_interface_by_index_internal(
+      type == kEtcPalIpTypeV6 ? default_interfaces.default_index_v6 : default_interfaces.default_index_v4, buf,
+      buf_size, &default_interfaces);
 }
 
-bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
+bool etcpal_netint_is_up(unsigned int index)
 {
-  ETCPAL_UNUSED_ARG(cache);
-
   int ioctl_sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (ioctl_sock == -1)
     return false;
@@ -308,7 +288,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   close(ioctl_sock);
   if (ioctl_res == 0)
   {
-    return (bool)(if_req.ifr_flags & IFF_UP);
+    return (if_req.ifr_flags & IFF_UP) != 0;
   }
   else
   {
@@ -316,30 +296,283 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   }
 }
 
-/******************************************************************************
- * Internal Functions
- *****************************************************************************/
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Internal functions
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-etcpal_error_t build_routing_tables()
+etcpal_error_t get_interface_by_index_internal(unsigned int             index,
+                                               uint8_t*                 buf,
+                                               size_t*                  buf_size,
+                                               const DefaultInterfaces* default_interfaces)
 {
-  etcpal_error_t res = build_routing_table(AF_INET, &routing_table_v4);
-  if (res == kEtcPalErrOk)
+  if (index == 0)
+    return kEtcPalErrInvalid;
+
+  struct ifaddrs* os_addrs = NULL;
+  if (getifaddrs(&os_addrs) < 0)
+    return errno_os_to_etcpal(errno);
+
+  DarwinNetints darwin_netints = DARWIN_NETINTS_INIT;
+  if (!populate_darwin_netints(os_addrs, index, &darwin_netints))
   {
-    res = build_routing_table(AF_INET6, &routing_table_v6);
+    freeifaddrs(os_addrs);
+    return kEtcPalErrNoNetints;
   }
 
-  if (res != kEtcPalErrOk)
-    free_routing_tables();
+  NetintArraySizes sizes = NETINT_ARRAY_SIZES_INIT;
+  calculate_size_needed(&darwin_netints, buf, index, &sizes);
+  if (sizes.total_size > *buf_size)
+  {
+    *buf_size = sizes.total_size;
+    free_darwin_netints(&darwin_netints);
+    freeifaddrs(os_addrs);
+    return kEtcPalErrBufSize;
+  }
 
-#if ETCPAL_NETINT_DEBUG_OUTPUT
-  debug_print_routing_table(&routing_table_v4);
-  debug_print_routing_table(&routing_table_v6);
-#endif
+  NetintArrayContext context = NETINT_ARRAY_CONTEXT_INIT(buf, &sizes);
+
+  bool found_interface = false;
+  for (const struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    if (if_nametoindex(ifaddr->ifa_name) == index)
+    {
+      found_interface = true;
+      copy_single_netint_info(ifaddr, &darwin_netints, (EtcPalNetintInfo*)buf, &context, default_interfaces);
+    }
+  }
+
+  free_darwin_netints(&darwin_netints);
+  freeifaddrs(os_addrs);
+  if (found_interface)
+  {
+    *buf_size = sizes.total_size;
+    return kEtcPalErrOk;
+  }
+  return kEtcPalErrNotFound;
+}
+
+void calculate_size_needed(const DarwinNetints* darwin_netints,
+                           const uint8_t*       buf_addr,
+                           unsigned int         index,
+                           NetintArraySizes*    sizes)
+{
+  size_t size_needed         = 0;
+  size_t netintinfo_arr_size = 0;
+  size_t ip_addr_arr_size    = 0;
+
+  for (const DarwinNetint* netint = darwin_netints->netints;
+       netint < darwin_netints->netints + darwin_netints->num_netints; ++netint)
+  {
+    // We only count network interfaces that have a sockaddr_dl/AF_LINK structure
+    if (netint->link_addr)
+    {
+      netintinfo_arr_size += sizeof(EtcPalNetintInfo);
+      size_needed += sizeof(EtcPalNetintInfo) + strlen(netint->name) + 1;
+      ip_addr_arr_size += (sizeof(EtcPalNetintAddr) * netint->num_addrs);
+      size_needed += (sizeof(EtcPalNetintAddr) * netint->num_addrs);
+    }
+  }
+
+  size_t padding = GET_PADDING_FOR_ALIGNMENT(buf_addr, EtcPalNetintInfo);
+  size_needed += padding;
+  sizes->total_size      = size_needed;
+  sizes->ip_addrs_offset = netintinfo_arr_size + padding;
+  sizes->names_offset    = netintinfo_arr_size + padding + ip_addr_arr_size;
+}
+
+void copy_all_netint_info(const struct ifaddrs*    os_addrs,
+                          const DarwinNetints*     darwin_netints,
+                          uint8_t*                 buf,
+                          const NetintArraySizes*  sizes,
+                          const DefaultInterfaces* default_interfaces)
+{
+  NetintArrayContext context = NETINT_ARRAY_CONTEXT_INIT(buf, sizes);
+
+  for (const struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    DarwinNetint* netint = find_darwin_netint(ifaddr->ifa_name, darwin_netints->netints,
+                                              darwin_netints->netints + darwin_netints->num_netints);
+    if (!netint->link_addr)
+      continue;
+
+    copy_single_netint_info(ifaddr, darwin_netints, (EtcPalNetintInfo*)buf, &context, default_interfaces);
+  }
+
+  // Link the EtcPalNetintInfo structures together
+  EtcPalNetintInfo* cur_netint = (EtcPalNetintInfo*)buf;
+  while (cur_netint + 1 != context.cur_info)
+  {
+    cur_netint->next = cur_netint + 1;
+    ++cur_netint;
+  }
+}
+
+void copy_single_netint_info(const struct ifaddrs*    os_addr,
+                             const DarwinNetints*     darwin_netints,
+                             EtcPalNetintInfo*        first_info,
+                             NetintArrayContext*      context,
+                             const DefaultInterfaces* default_interfaces)
+{
+  bool              new_netint         = false;
+  EtcPalNetintAddr* last_existing_addr = NULL;
+  EtcPalNetintInfo* cur_info           = find_existing_netint(os_addr->ifa_name, first_info, context->cur_info);
+  if (cur_info)
+  {
+    if (cur_info->addrs)
+    {
+      last_existing_addr = (EtcPalNetintAddr*)cur_info->addrs;
+      while (last_existing_addr->next)
+        last_existing_addr = last_existing_addr->next;
+    }
+  }
+  else
+  {
+    new_netint = true;
+    cur_info   = context->cur_info;
+    memset(cur_info, 0, sizeof(EtcPalNetintInfo));
+  }
+
+  if (new_netint)
+  {
+    // Interface name
+    strcpy(context->cur_name, os_addr->ifa_name);
+    cur_info->id            = context->cur_name;
+    cur_info->friendly_name = context->cur_name;
+    context->cur_name += strlen(os_addr->ifa_name) + 1;
+  }
+
+  if (has_valid_inet_addr(os_addr))
+  {
+    // Add an IP address
+    memset(context->cur_addr, 0, sizeof(EtcPalNetintAddr));
+
+    ip_os_to_etcpal(os_addr->ifa_addr, &context->cur_addr->addr);
+    EtcPalIpAddr mask;
+    ip_os_to_etcpal(os_addr->ifa_netmask, &mask);
+    context->cur_addr->mask_length = etcpal_ip_mask_length(&mask);
+
+    if (last_existing_addr)
+      last_existing_addr->next = context->cur_addr;
+    else
+      cur_info->addrs = context->cur_addr;
+
+    ++context->cur_addr;
+  }
+  else if (os_addr->ifa_addr->sa_family == AF_LINK)
+  {
+    // Add link information
+    struct sockaddr_dl* link_addr = (struct sockaddr_dl*)os_addr->ifa_addr;
+
+    cur_info->index = link_addr->sdl_index;
+    if (link_addr->sdl_alen == ETCPAL_MAC_BYTES)
+      memcpy(cur_info->mac.data, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_MAC_BYTES);
+
+    if (cur_info->index == default_interfaces->default_index_v4)
+      cur_info->flags |= ETCPAL_NETINT_FLAG_DEFAULT_V4;
+    if (cur_info->index == default_interfaces->default_index_v6)
+      cur_info->flags |= ETCPAL_NETINT_FLAG_DEFAULT_V6;
+  }
+
+  if (new_netint)
+    ++context->cur_info;
+}
+
+bool has_valid_inet_addr(const struct ifaddrs* netint)
+{
+  return netint->ifa_addr && netint->ifa_netmask &&
+         (netint->ifa_addr->sa_family == AF_INET || netint->ifa_addr->sa_family == AF_INET6);
+}
+
+bool populate_darwin_netints(const struct ifaddrs* os_addrs, unsigned int index, DarwinNetints* netints_out)
+{
+  DarwinNetint* netints     = NULL;
+  size_t        num_netints = 0;
+
+  for (const struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
+  {
+    if (index != 0)
+    {
+      // Determine whether to include this interface, using its index
+      if (if_nametoindex(ifaddr->ifa_name) != index)
+        continue;
+    }
+
+    DarwinNetint* netint = NULL;
+
+    if (!netints)
+    {
+      netints = (DarwinNetint*)malloc(sizeof(DarwinNetint));
+      assert(netints);
+      memset(netints, 0, sizeof(DarwinNetint));
+      strcpy(netints[0].name, ifaddr->ifa_name);
+      ++num_netints;
+      netint = netints;
+    }
+    else
+    {
+      netint = find_darwin_netint(ifaddr->ifa_name, netints, netints + num_netints);
+      if (!netint)
+      {
+        netints = (DarwinNetint*)realloc(netints, sizeof(DarwinNetint) * (num_netints + 1));
+        assert(netints);
+        memset(&netints[num_netints], 0, sizeof(DarwinNetint));
+        strcpy(netints[num_netints].name, ifaddr->ifa_name);
+        netint = &netints[num_netints];
+        ++num_netints;
+      }
+    }
+
+    // Invariant at this point: netint != NULL
+    if (has_valid_inet_addr(ifaddr))
+    {
+      ++netint->num_addrs;
+    }
+    else if (ifaddr->ifa_addr && ifaddr->ifa_addr->sa_family == AF_LINK)
+    {
+      // We have a link address
+      netint->link_addr = (struct sockaddr_dl*)ifaddr->ifa_addr;
+    }
+  }
+
+  if (netints && num_netints)
+  {
+    netints_out->netints     = netints;
+    netints_out->num_netints = num_netints;
+    return true;
+  }
+  return false;
+}
+
+void free_darwin_netints(DarwinNetints* netints)
+{
+  if (netints->netints)
+    free(netints->netints);
+}
+
+DarwinNetint* find_darwin_netint(const char* name, DarwinNetint* begin, DarwinNetint* end)
+{
+  for (DarwinNetint* cur_iface = begin; cur_iface < end; ++cur_iface)
+  {
+    if (strcmp(cur_iface->name, name) == 0)
+    {
+      return cur_iface;
+    }
+  }
+  return NULL;
+}
+
+etcpal_error_t get_default_interfaces(DefaultInterfaces* default_interfaces)
+{
+  etcpal_error_t res = get_default_interface_index(AF_INET, &default_interfaces->default_index_v4);
+  if (res == kEtcPalErrOk)
+  {
+    res = get_default_interface_index(AF_INET6, &default_interfaces->default_index_v6);
+  }
 
   return res;
 }
 
-etcpal_error_t build_routing_table(int family, RoutingTable* table)
+etcpal_error_t get_default_interface_index(int family, unsigned int* default_interface)
 {
   uint8_t* buf     = NULL;
   size_t   buf_len = 0;
@@ -347,7 +580,7 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
   etcpal_error_t res = get_routing_table_dump(family, &buf, &buf_len);
   if (res == kEtcPalErrOk)
   {
-    res = parse_routing_table_dump(family, buf, buf_len, table);
+    res = get_default_interface_from_routing_table_dump(family, buf, buf_len, default_interface);
   }
 
   if (buf)
@@ -388,6 +621,140 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   return kEtcPalErrOk;
 }
 
+/* Anyone debugging this code might benefit from this: a mapping of netstat -r flags to
+ * rmsg->rtm_flags values.
+ *
+ *  1       RTF_PROTO1       Protocol specific routing flag #1
+ *  2       RTF_PROTO2       Protocol specific routing flag #2
+ *  3       RTF_PROTO3       Protocol specific routing flag #3
+ *  B       RTF_BLACKHOLE    Just discard packets (during updates)
+ *  b       RTF_BROADCAST    The route represents a broadcast address
+ *  C       RTF_CLONING      Generate new routes on use
+ *  c       RTF_PRCLONING    Protocol-specified generate new routes on use
+ *  D       RTF_DYNAMIC      Created dynamically (by redirect)
+ *  G       RTF_GATEWAY      Destination requires forwarding by intermediary
+ *  H       RTF_HOST         Host entry (net otherwise)
+ *  I       RTF_IFSCOPE      Route is associated with an interface scope
+ *  i       RTF_IFREF        Route is holding a reference to the interface
+ *  L       RTF_LLINFO       Valid protocol to link address translation
+ *  M       RTF_MODIFIED     Modified dynamically (by redirect)
+ *  m       RTF_MULTICAST    The route represents a multicast address
+ *  R       RTF_REJECT       Host or net unreachable
+ *  r       RTF_ROUTER       Host is a default router
+ *  S       RTF_STATIC       Manually added
+ *  U       RTF_UP           Route usable
+ *  W       RTF_WASCLONED    Route was generated as a result of cloning
+ *  X       RTF_XRESOLVE     External daemon translates proto to link address
+ *  Y       RTF_PROXY        Proxying; cloned routes will not be scoped
+ */
+
+#ifdef RTF_LLDATA
+#define RTF_LINK_FLAG RTF_LLDATA
+#else
+#define RTF_LINK_FLAG RTF_LLINFO
+#endif
+
+/*
+ * Use the system routing table from the data buffer that sysctl() gives us to determine the
+ * default route for the given IP family. Relies on helper functions above. Much trial and error
+ * was involved in making this function work correctly.
+ */
+etcpal_error_t get_default_interface_from_routing_table_dump(int           family,
+                                                             uint8_t*      buf,
+                                                             size_t        buf_len,
+                                                             unsigned int* default_interface)
+{
+  // Note: There is a bit more code here than necessary. We don't have to parse out the addresses
+  // of all the routing table entries to extract a default route. The helper functions and
+  // RoutingTableEntry struct are left over from old code which relied on constructing the entire
+  // system routing table to serve removed API functions which attempted to predict the network
+  // interface that a packet to a given destination address would use.
+  //
+  // The helpers are left in here because they required quite a bit of investment of effort to
+  // create, and represent a nontrivial amount of undocumented knowledge of how to get routing
+  // information from the Darwin kernel. This information may be needed again in the future. This
+  // code is non-performance-critical, and only runs when enumerating network interfaces.
+
+  size_t            buf_pos           = 0;
+  RoutingTableEntry default_candidate = ROUTING_TABLE_ENTRY_INIT;
+
+  // Parse the dump
+  // Loop through all routing table entries returned in the buffer
+  while (buf_pos < buf_len)
+  {
+    RoutingTableEntry entry = ROUTING_TABLE_ENTRY_INIT;
+
+    // get route entry header
+    struct rt_msghdr* rmsg = (struct rt_msghdr*)(&buf[buf_pos]);
+
+    // Filter out entries:
+    // - from the local routing table (RTF_LOCAL)
+    // - Representing broadcast routes (RTF_BROADCAST)
+    // - Representing ARP routes (RTF_LLDATA or RTF_LLINFO on older versions)
+    // - Cloned routes (RTF_WASCLONED)
+    if (!(rmsg->rtm_flags & (RTF_LINK_FLAG | RTF_LOCAL | RTF_BROADCAST | RTF_WASCLONED)))
+    {
+      struct sockaddr* addr_start = (struct sockaddr*)(rmsg + 1);
+      struct sockaddr* rti_info[RTAX_MAX];
+      get_addrs_from_route_entry(rmsg->rtm_addrs, addr_start, rti_info);
+
+      if (rti_info[RTAX_DST] != NULL)
+      {
+        dest_from_route_entry(family, rti_info[RTAX_DST], &entry.addr);
+      }
+      if (rti_info[RTAX_GATEWAY] != NULL)
+      {
+        gateway_from_route_entry(rti_info[RTAX_GATEWAY], &entry.gateway);
+      }
+
+      // If this is a host route, it indicates that it has an address with a full netmask (and the
+      // netmask field is not included)
+      if (rmsg->rtm_flags & RTF_HOST)
+      {
+        if (family == AF_INET6)
+          entry.mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
+        else
+          entry.mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 32);
+      }
+      else if (rti_info[RTAX_NETMASK] != NULL)
+      {
+        netmask_from_route_entry(family, rti_info[RTAX_NETMASK], &entry.mask);
+      }
+
+      if (rmsg->rtm_flags & RTF_IFSCOPE)
+      {
+        entry.interface_scope = true;
+      }
+
+      entry.interface_index = rmsg->rtm_index;
+
+      // Default route candidates have invalid or wildcard addresses for the address and mask, and
+      // a valid default gateway. Among these candidates, routes with the "interface scope" flag
+      // unset have priority. If more than one route fits all of these criteria, the first one is
+      // chosen.
+      if ((ETCPAL_IP_IS_INVALID(&entry.addr) || etcpal_ip_is_wildcard(&entry.addr)) &&
+          (ETCPAL_IP_IS_INVALID(&entry.mask) || etcpal_ip_is_wildcard(&entry.mask)) &&
+          !ETCPAL_IP_IS_INVALID(&entry.gateway))
+      {
+        if (ETCPAL_IP_IS_INVALID(&default_candidate.gateway) ||
+            (!entry.interface_scope && default_candidate.interface_scope))
+        {
+          default_candidate = entry;
+        }
+      }
+    }
+
+    buf_pos += rmsg->rtm_msglen;
+  }
+
+  if (!ETCPAL_IP_IS_INVALID(&default_candidate.gateway))
+    *default_interface = default_candidate.interface_index;
+  else
+    *default_interface = 0;
+
+  return kEtcPalErrOk;
+}
+
 /* These two macros and the following function were taken from the Unix Network Programming book
  * (sect. 18.3) but they required some modification, because they mistakenly assert that the
  * sockaddr structures following a route message header are aligned to sizeof(unsigned long), when
@@ -397,7 +764,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
 #define SOCKADDR_ALIGN 4  // not sizeof(unsigned long)
 #define SA_SIZE(sa)    ((!(sa) || (sa)->sa_len == 0) ? SOCKADDR_ALIGN : (1 + (((sa)->sa_len - 1) | (SOCKADDR_ALIGN - 1))))
 
-static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
+void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
 {
   for (int i = 0; i < RTAX_MAX; ++i)
   {
@@ -416,7 +783,7 @@ static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct so
 /* Get the route destination from a normal socket address structure packed as part of a route
  * entry.
  */
-static void dest_from_route_entry(int family, const struct sockaddr* os_dst, EtcPalIpAddr* etcpal_dst)
+void dest_from_route_entry(int family, const struct sockaddr* os_dst, EtcPalIpAddr* etcpal_dst)
 {
   if (family == AF_INET6)
     ETCPAL_IP_SET_V6_ADDRESS(etcpal_dst, ((struct sockaddr_in6*)os_dst)->sin6_addr.s6_addr);
@@ -479,7 +846,7 @@ static void dest_from_route_entry(int family, const struct sockaddr* os_dst, Etc
  * | inferred to be zero.               |
  * +------------------------------------+
  */
-static void netmask_from_route_entry(int family, const struct sockaddr* os_netmask, EtcPalIpAddr* etcpal_netmask)
+void netmask_from_route_entry(int family, const struct sockaddr* os_netmask, EtcPalIpAddr* etcpal_netmask)
 {
   if (family == AF_INET)
   {
@@ -521,7 +888,7 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
  * can either be a network socket address (indicating an actual gateway route) or a datalink
  * sockaddr, indicating that this route is "on-link" (on a local subnet only).
  */
-static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr* etcpal_gw)
+void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr* etcpal_gw)
 {
   if (os_gw->sa_family == AF_INET6)
   {
@@ -532,233 +899,3 @@ static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr*
     ETCPAL_IP_SET_V4_ADDRESS(etcpal_gw, ntohl(((struct sockaddr_in*)os_gw)->sin_addr.s_addr));
   }
 }
-
-#ifdef RTF_LLDATA
-#define RTF_LINK_FLAG RTF_LLDATA
-#else
-#define RTF_LINK_FLAG RTF_LLINFO
-#endif
-
-/* Anyone debugging this code might benefit from this: a mapping of netstat -r flags to
- * rmsg->rtm_flags values.
- *
- *  1       RTF_PROTO1       Protocol specific routing flag #1
- *  2       RTF_PROTO2       Protocol specific routing flag #2
- *  3       RTF_PROTO3       Protocol specific routing flag #3
- *  B       RTF_BLACKHOLE    Just discard packets (during updates)
- *  b       RTF_BROADCAST    The route represents a broadcast address
- *  C       RTF_CLONING      Generate new routes on use
- *  c       RTF_PRCLONING    Protocol-specified generate new routes on use
- *  D       RTF_DYNAMIC      Created dynamically (by redirect)
- *  G       RTF_GATEWAY      Destination requires forwarding by intermediary
- *  H       RTF_HOST         Host entry (net otherwise)
- *  I       RTF_IFSCOPE      Route is associated with an interface scope
- *  i       RTF_IFREF        Route is holding a reference to the interface
- *  L       RTF_LLINFO       Valid protocol to link address translation
- *  M       RTF_MODIFIED     Modified dynamically (by redirect)
- *  m       RTF_MULTICAST    The route represents a multicast address
- *  R       RTF_REJECT       Host or net unreachable
- *  r       RTF_ROUTER       Host is a default router
- *  S       RTF_STATIC       Manually added
- *  U       RTF_UP           Route usable
- *  W       RTF_WASCLONED    Route was generated as a result of cloning
- *  X       RTF_XRESOLVE     External daemon translates proto to link address
- *  Y       RTF_PROXY        Proxying; cloned routes will not be scoped
- */
-
-/* Build our internal representation of the system routing tables from the data buffer that
- * sysctl() gives us. Relies on helper functions above. Much trial and error was involved in making
- * this function work correctly.
- */
-etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, RoutingTable* table)
-{
-  table->size          = 0;
-  table->entries       = NULL;
-  table->default_route = NULL;
-
-  size_t buf_pos = 0;
-
-  // Parse the result
-  // Loop through all routing table entries returned in the buffer
-  while (buf_pos < buf_len)
-  {
-    RoutingTableEntry new_entry;
-    init_routing_table_entry(&new_entry);
-
-    bool new_entry_valid = true;
-
-    // get route entry header
-    struct rt_msghdr* rmsg = (struct rt_msghdr*)(&buf[buf_pos]);
-
-    // Filter out entries:
-    // - from the local routing table (RTF_LOCAL)
-    // - Representing broadcast routes (RTF_BROADCAST)
-    // - Representing ARP routes (RTF_LLDATA or RTF_LLINFO on older versions)
-    // - Cloned routes (RTF_WASCLONED)
-    if (!(rmsg->rtm_flags & (RTF_LINK_FLAG | RTF_LOCAL | RTF_BROADCAST | RTF_WASCLONED)))
-    {
-      struct sockaddr* addr_start = (struct sockaddr*)(rmsg + 1);
-      struct sockaddr* rti_info[RTAX_MAX];
-      get_addrs_from_route_entry(rmsg->rtm_addrs, addr_start, rti_info);
-
-      if (rti_info[RTAX_DST] != NULL)
-      {
-        dest_from_route_entry(family, rti_info[RTAX_DST], &new_entry.addr);
-      }
-      if (rti_info[RTAX_GATEWAY] != NULL)
-      {
-        gateway_from_route_entry(rti_info[RTAX_GATEWAY], &new_entry.gateway);
-      }
-
-      // If this is a host route, it indicates that it has an address with a full netmask (and the
-      // netmask field is not included)
-      if (rmsg->rtm_flags & RTF_HOST)
-      {
-        if (family == AF_INET6)
-          new_entry.mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
-        else
-          new_entry.mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV4, 32);
-      }
-      else if (rti_info[RTAX_NETMASK] != NULL)
-      {
-        netmask_from_route_entry(family, rti_info[RTAX_NETMASK], &new_entry.mask);
-      }
-
-      if (rmsg->rtm_flags & RTF_IFSCOPE)
-      {
-        new_entry.interface_scope = true;
-      }
-
-      new_entry.interface_index = rmsg->rtm_index;
-    }
-    else
-    {
-      new_entry_valid = false;
-    }
-
-    // Insert the new entry into the list
-    if (new_entry_valid)
-    {
-      ++table->size;
-      if (table->entries)
-        table->entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
-      else
-        table->entries = (RoutingTableEntry*)malloc(sizeof(RoutingTableEntry));
-      table->entries[table->size - 1] = new_entry;
-    }
-
-    buf_pos += rmsg->rtm_msglen;
-  }
-
-  if (table->size > 0)
-  {
-    qsort(table->entries, table->size, sizeof(RoutingTableEntry), compare_routing_table_entries);
-
-    // Mark the system-wide default route: the first default route we encounter after sorting the table.
-    for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
-    {
-      if ((ETCPAL_IP_IS_INVALID(&entry->addr) || etcpal_ip_is_wildcard(&entry->addr)) &&
-          (ETCPAL_IP_IS_INVALID(&entry->mask) || etcpal_ip_is_wildcard(&entry->mask)) &&
-          !ETCPAL_IP_IS_INVALID(&entry->gateway))
-      {
-        table->default_route = entry;
-        break;
-      }
-    }
-    return kEtcPalErrOk;
-  }
-  else
-  {
-    return kEtcPalErrSys;
-  }
-}
-
-void init_routing_table_entry(RoutingTableEntry* entry)
-{
-  ETCPAL_IP_SET_INVALID(&entry->addr);
-  ETCPAL_IP_SET_INVALID(&entry->mask);
-  ETCPAL_IP_SET_INVALID(&entry->gateway);
-  entry->interface_index = 0;
-  entry->interface_scope = false;
-}
-
-int compare_routing_table_entries(const void* a, const void* b)
-{
-  RoutingTableEntry* e1 = (RoutingTableEntry*)a;
-  RoutingTableEntry* e2 = (RoutingTableEntry*)b;
-
-  unsigned int mask_length_1 = etcpal_ip_mask_length(&e1->mask);
-  unsigned int mask_length_2 = etcpal_ip_mask_length(&e2->mask);
-
-  // Sort by mask length in descending order - within the same mask length, sort by whether one
-  // entry has the "interface scope" flag set (unset gets priority, e.g. listed first).
-  if (mask_length_1 == mask_length_2)
-  {
-    return (e1->interface_scope && !e2->interface_scope) - (!e1->interface_scope && e2->interface_scope);
-  }
-  else
-  {
-    return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
-  }
-}
-
-void free_routing_tables()
-{
-  free_routing_table(&routing_table_v4);
-  free_routing_table(&routing_table_v6);
-}
-
-void free_routing_table(RoutingTable* table)
-{
-  if (table->entries)
-  {
-    free(table->entries);
-    table->entries = NULL;
-  }
-  table->size = 0;
-}
-
-#if ETCPAL_NETINT_DEBUG_OUTPUT
-void debug_print_routing_table(RoutingTable* table)
-{
-  printf("%-40s %-40s %-40s %s %s\n", "Address", "Mask", "Gateway", "Index", "Name");
-
-  for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
-  {
-    char addr_str[ETCPAL_IP_STRING_BYTES];
-    char mask_str[ETCPAL_IP_STRING_BYTES];
-    char gw_str[ETCPAL_IP_STRING_BYTES];
-    char ifname_str[IF_NAMESIZE];
-
-    if (!ETCPAL_IP_IS_INVALID(&entry->addr))
-      etcpal_ip_to_string(&entry->addr, addr_str);
-    else
-      strcpy(addr_str, "0.0.0.0");
-
-    if (!ETCPAL_IP_IS_INVALID(&entry->mask))
-      etcpal_ip_to_string(&entry->mask, mask_str);
-    else
-      strcpy(mask_str, "0.0.0.0");
-
-    if (!ETCPAL_IP_IS_INVALID(&entry->gateway))
-      etcpal_ip_to_string(&entry->gateway, gw_str);
-    else
-      strcpy(gw_str, "");
-
-    if_indextoname(entry->interface_index, ifname_str);
-
-    printf("%-40s %-40s %-40s %-5u %s\n", addr_str, mask_str, gw_str, entry->interface_index, ifname_str);
-  }
-
-  if (table->default_route)
-  {
-    char gw_str[ETCPAL_IP_STRING_BYTES];
-    etcpal_ip_to_string(&table->default_route->gateway, gw_str);
-    printf("Default route: %s (%u)\n", gw_str, table->default_route->interface_index);
-  }
-  else
-  {
-    printf("Default route not found.\n");
-  }
-}
-#endif

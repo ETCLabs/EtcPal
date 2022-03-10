@@ -20,8 +20,9 @@
 #include "etcpal/netint.h"
 #include "unity_fixture.h"
 
-#include <string.h>
+#include <stdalign.h>
 #include <stddef.h>
+#include <string.h>
 
 #ifdef __MQX__
 #define MQX_PROVIDES_STDIO !MQX_SUPPRESS_STDIO_MACROS
@@ -33,139 +34,108 @@
 #include <stdio.h>
 #endif
 
-static size_t num_netints;
+#if __APPLE__  // macOS has a lot of weird virtual interfaces
+#define NETINT_BUF_SIZE ETCPAL_NETINT_BUF_SIZE_ESTIMATE(15, 3)
+#else
+#define NETINT_BUF_SIZE ETCPAL_NETINT_BUF_SIZE_ESTIMATE(5, 3)
+#endif
 
-// Tests to run on the netint module without it being initialized first
-
-TEST_GROUP(etcpal_netint_no_init);
-
-TEST_SETUP(etcpal_netint_no_init)
-{
-}
-
-TEST_TEAR_DOWN(etcpal_netint_no_init)
-{
-}
-
-// Test that none of the API functions return successfully before the module is initialized. We
-// generate valid data to pass to each one, to be sure they don't return e.g. kEtcPalErrInvalid
-// instead.
-TEST(etcpal_netint_no_init, api_does_not_work_before_initialization)
-{
-  TEST_ASSERT_EQUAL(etcpal_netint_get_num_interfaces(), 0u);
-  TEST_ASSERT_EQUAL_PTR(etcpal_netint_get_interfaces(), NULL);
-
-  const EtcPalNetintInfo* netint_arr      = NULL;
-  size_t                  netint_arr_size = 0;
-  TEST_ASSERT_EQUAL(etcpal_netint_get_interfaces_by_index(1, &netint_arr, &netint_arr_size), kEtcPalErrNotInit);
-
-  unsigned int index = 0;
-  TEST_ASSERT_EQUAL(etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &index), kEtcPalErrNotInit);
-  TEST_ASSERT_EQUAL(etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &index), kEtcPalErrNotInit);
-
-  EtcPalIpAddr dest;
-  etcpal_string_to_ip(kEtcPalIpTypeV4, "8.8.8.8", &dest);
-  TEST_ASSERT_EQUAL(etcpal_netint_get_interface_for_dest(&dest, &index), kEtcPalErrNotInit);
-}
-
-// The main test group. This initializes the module before each test and deinits it after.
+alignas(EtcPalNetintInfo) uint8_t netint_buf[NETINT_BUF_SIZE];
 
 TEST_GROUP(etcpal_netint);
 
 TEST_SETUP(etcpal_netint)
 {
-  etcpal_init(ETCPAL_FEATURE_NETINTS);
-  num_netints = etcpal_netint_get_num_interfaces();
 }
 
 TEST_TEAR_DOWN(etcpal_netint)
 {
-  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
+}
+
+TEST(etcpal_netint, system_has_netints)
+{
+  TEST_ASSERT_GREATER_THAN_UINT(0u, etcpal_netint_get_num_interfaces());
 }
 
 TEST(etcpal_netint, netint_enumeration_works)
 {
-  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
+  size_t buf_size = NETINT_BUF_SIZE;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces(netint_buf, &buf_size));
 
-  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
-  TEST_ASSERT_NOT_NULL(netint_list);
-
-  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = (const EtcPalNetintInfo*)netint_buf; netint; netint = netint->next)
   {
     TEST_ASSERT_GREATER_THAN_UINT(0u, netint->index);
     TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->id));
     TEST_ASSERT_GREATER_THAN_UINT(0u, strlen(netint->friendly_name));
-  }
-}
-
-TEST(etcpal_netint, netints_are_in_index_order)
-{
-  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
-
-  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
-  unsigned int            last_index  = netint_list->index;
-  for (const EtcPalNetintInfo* netint = netint_list + 1; netint < netint_list + num_netints; ++netint)
-  {
-    TEST_ASSERT_GREATER_OR_EQUAL(last_index, netint->index);
-    last_index = netint->index;
-  }
-}
-
-/* TODO Figure out how we're gonna handle mallocing
-TEST(etcpal_netint, copy_interfaces_works)
-{
-  // Test copying the full array
-  auto netint_arr = std::make_unique<EtcPalNetintInfo[]>(num_netints);
-  size_t num_netints_returned = etcpal_netint_copy_interfaces(netint_arr.get(), num_netints);
-  ASSERT_EQ(num_netints_returned, num_netints);
-
-  // Make sure the array is equal to the list obtained from etcpal_netint_get_interfaces()
-  EXPECT_EQ(0, memcmp(netint_arr.get(), etcpal_netint_get_interfaces(), num_netints));
-}
-*/
-
-TEST(etcpal_netint, get_netints_by_index_works)
-{
-  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
-
-  const EtcPalNetintInfo* netint_list   = etcpal_netint_get_interfaces();
-  unsigned int            current_index = 0;
-  // There are other tests covering that the netint list should be in order by index and that the
-  // indexes must all be greater than 0, which simplifies this code.
-  const EtcPalNetintInfo* current_arr_by_index   = NULL;
-  size_t                  current_index_arr_size = 0;
-  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
-  {
-    if (netint->index > current_index)
+    for (const EtcPalNetintAddr* addr = netint->addrs; addr; addr = addr->next)
     {
-      // The previous get-by-index array should be exhausted
-      TEST_ASSERT_EQUAL_UINT(current_index_arr_size, 0u);
-
-      // Get the new one
-      current_index = netint->index;
-      TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces_by_index(netint->index, &current_arr_by_index,
-                                                                            &current_index_arr_size));
-      TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
+      TEST_ASSERT_TRUE(!ETCPAL_IP_IS_INVALID(&addr->addr));
+      TEST_ASSERT_GREATER_THAN_UINT(0u, addr->mask_length);
     }
+  }
+}
 
-    // Now check that we're still in the get-by-index array and it gives the correct slice of the
-    // total netint array.
-    TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
-    TEST_ASSERT_EQUAL_PTR(current_arr_by_index, netint);
-    ++current_arr_by_index;
-    --current_index_arr_size;
+TEST(etcpal_netint, netints_match_num_netints)
+{
+  size_t buf_size = NETINT_BUF_SIZE;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces(netint_buf, &buf_size));
+
+  size_t expected_num_interfaces = etcpal_netint_get_num_interfaces();
+  size_t num_interfaces          = 0;
+  for (const EtcPalNetintInfo* netint = (const EtcPalNetintInfo*)netint_buf; netint; netint = netint->next)
+  {
+    ++num_interfaces;
+  }
+  TEST_ASSERT_EQUAL_UINT(expected_num_interfaces, num_interfaces);
+}
+
+TEST(etcpal_netint, get_netint_by_index_works)
+{
+  size_t buf_size = NETINT_BUF_SIZE;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces(netint_buf, &buf_size));
+
+  size_t                                   get_by_index_buf_size = NETINT_BUF_SIZE;
+  alignas(EtcPalNetintInfo) static uint8_t get_by_index_buf[NETINT_BUF_SIZE];
+
+  for (const EtcPalNetintInfo* netint = (const EtcPalNetintInfo*)netint_buf; netint; netint = netint->next)
+  {
+    // For each network interface, retrieve it again using etcpal_netint_get_interface_by_index()
+    // and make sure it matches.
+    get_by_index_buf_size = NETINT_BUF_SIZE;
+    TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                      etcpal_netint_get_interface_by_index(netint->index, get_by_index_buf, &get_by_index_buf_size));
+    TEST_ASSERT_LESS_OR_EQUAL_UINT(buf_size, get_by_index_buf_size);
+
+    const EtcPalNetintInfo* netint_by_index = (const EtcPalNetintInfo*)get_by_index_buf;
+    TEST_ASSERT_EQUAL_UINT(netint->index, netint_by_index->index);
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(netint->mac.data, netint_by_index->mac.data, ETCPAL_MAC_BYTES);
+    TEST_ASSERT_EQUAL_STRING(netint->id, netint_by_index->id);
+    TEST_ASSERT_EQUAL_STRING(netint->friendly_name, netint_by_index->friendly_name);
+    TEST_ASSERT_EQUAL_UINT32(netint->flags, netint_by_index->flags);
+
+    // Quick heuristics - make sure they have the same number of addrs
+    size_t num_addrs          = 0;
+    size_t expected_num_addrs = 0;
+    for (const EtcPalNetintAddr* addr = netint->addrs; addr; addr = addr->next)
+      ++expected_num_addrs;
+    for (const EtcPalNetintAddr* addr = netint_by_index->addrs; addr; addr = addr->next)
+      ++num_addrs;
+    TEST_ASSERT_EQUAL(expected_num_addrs, num_addrs);
+
+    // Should be only one netint for each index.
+    TEST_ASSERT_NULL(netint_by_index->next);
   }
 }
 
 TEST(etcpal_netint, default_netint_is_consistent)
 {
-  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
+  TEST_ASSERT_GREATER_THAN_UINT(0u, etcpal_netint_get_num_interfaces());
 
   unsigned int def_v4 = 0;
   unsigned int def_v6 = 0;
 
-  bool have_default_v4 = (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_v4));
-  bool have_default_v6 = (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &def_v6));
+  bool have_default_v4 = (kEtcPalErrOk == etcpal_netint_get_default_interface_index(kEtcPalIpTypeV4, &def_v4));
+  bool have_default_v6 = (kEtcPalErrOk == etcpal_netint_get_default_interface_index(kEtcPalIpTypeV6, &def_v6));
 
   if (have_default_v4)
   {
@@ -176,69 +146,53 @@ TEST(etcpal_netint, default_netint_is_consistent)
     TEST_ASSERT_NOT_EQUAL(def_v6, 0u);
   }
 
-  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
-  TEST_ASSERT_NOT_NULL(netint_list);
-  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
+  size_t buf_size = NETINT_BUF_SIZE;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces(netint_buf, &buf_size));
+  for (const EtcPalNetintInfo* netint = (const EtcPalNetintInfo*)netint_buf; netint; netint = netint->next)
   {
-    if (netint->is_default)
+    if (netint->flags & ETCPAL_NETINT_FLAG_DEFAULT_V4)
     {
-      if (netint->addr.type == kEtcPalIpTypeV4)
-      {
-        TEST_ASSERT_EQUAL_UINT(netint->index, def_v4);
-      }
-      else if (netint->addr.type == kEtcPalIpTypeV6)
-      {
-        TEST_ASSERT_EQUAL_UINT(netint->index, def_v6);
-      }
+      TEST_ASSERT_TRUE(have_default_v4);
+      TEST_ASSERT_EQUAL_UINT(netint->index, def_v4);
+    }
+    if (netint->flags & ETCPAL_NETINT_FLAG_DEFAULT_V6)
+    {
+      TEST_ASSERT_TRUE(have_default_v6);
+      TEST_ASSERT_EQUAL_UINT(netint->index, def_v6);
     }
   }
 }
 
-TEST(etcpal_netint, get_interface_for_dest_works_ipv4)
+TEST(etcpal_netint, netint_addr_to_string_works)
 {
-  TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
+  EtcPalNetintAddr netint_addr;
+  ETCPAL_IP_SET_V4_ADDRESS(&netint_addr.addr, 0xffffffff);
+  netint_addr.mask_length = 32;
 
-  const EtcPalNetintInfo* netint_list = etcpal_netint_get_interfaces();
-  TEST_ASSERT_NOT_NULL(netint_list);
+  char str_buf[ETCPAL_NETINT_ADDR_STRING_BYTES];
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_addr_to_string(&netint_addr, str_buf));
+  TEST_ASSERT_EQUAL_STRING("255.255.255.255/32", str_buf);
 
-  // For each normally routable (non-loopback, non-link-local) network interface, check to make sure
-  // that etcpal_netint_get_interface_for_dest() resolves to that interface when asked for a route to
-  // the interface address itself.
-  for (const EtcPalNetintInfo* netint = netint_list; netint < netint_list + num_netints; ++netint)
-  {
-    if (!ETCPAL_IP_IS_V4(&netint->addr) || etcpal_ip_is_loopback(&netint->addr) ||
-        etcpal_ip_is_link_local(&netint->addr))
-      continue;
+  netint_addr.mask_length = 16;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_addr_to_string(&netint_addr, str_buf));
+  TEST_ASSERT_EQUAL_STRING("255.255.255.255/16", str_buf);
 
-    EtcPalIpAddr test_addr        = netint->addr;
-    unsigned int netint_index_res = 0;
-    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&test_addr, &netint_index_res));
+  uint8_t v6_addr[16];
+  memset(v6_addr, 0xff, 16);
+  ETCPAL_IP_SET_V6_ADDRESS(&netint_addr.addr, v6_addr);
+  netint_addr.mask_length = 64;
 
-    // Put addresses in print form to test meaningful information in case of test failure
-    char test_addr_str[ETCPAL_IP_STRING_BYTES];
-    etcpal_ip_to_string(&test_addr, test_addr_str);
-    char test_msg[150];
-    snprintf(test_msg, 150, "Address tried: %s (interface %u), interface returned: %u", test_addr_str, netint->index,
-             netint_index_res);
-
-    TEST_ASSERT_EQUAL_UINT_MESSAGE(netint_index_res, netint->index, test_msg);
-  }
-
-  EtcPalIpAddr ext_addr;
-  ETCPAL_IP_SET_V4_ADDRESS(&ext_addr, 0xc8dc0302);  // 200.220.3.2
-  unsigned int netint_index_res     = 0;
-  unsigned int netint_index_default = 0;
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &netint_index_default));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interface_for_dest(&ext_addr, &netint_index_res));
-  TEST_ASSERT_EQUAL_UINT(netint_index_res, netint_index_default);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_addr_to_string(&netint_addr, str_buf));
+  TEST_ASSERT((0 == strcmp(str_buf, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/64")) ||
+              (0 == strcmp(str_buf, "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF/64")));
 }
 
 TEST_GROUP_RUNNER(etcpal_netint)
 {
-  RUN_TEST_CASE(etcpal_netint_no_init, api_does_not_work_before_initialization);
+  RUN_TEST_CASE(etcpal_netint, system_has_netints);
   RUN_TEST_CASE(etcpal_netint, netint_enumeration_works);
-  RUN_TEST_CASE(etcpal_netint, netints_are_in_index_order);
-  RUN_TEST_CASE(etcpal_netint, get_netints_by_index_works);
+  RUN_TEST_CASE(etcpal_netint, netints_match_num_netints);
+  RUN_TEST_CASE(etcpal_netint, get_netint_by_index_works);
   RUN_TEST_CASE(etcpal_netint, default_netint_is_consistent);
-  RUN_TEST_CASE(etcpal_netint, get_interface_for_dest_works_ipv4);
+  RUN_TEST_CASE(etcpal_netint, netint_addr_to_string_works)
 }

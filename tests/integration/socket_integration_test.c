@@ -31,6 +31,7 @@
 #include "etcpal/socket.h"
 #include "unity_fixture.h"
 
+#include <stdalign.h>
 #include <string.h>
 #include "etcpal/common.h"
 #include "etcpal/netint.h"
@@ -62,6 +63,12 @@
 
 #define NUM_TEST_PACKETS 1000
 
+#if __APPLE__  // macOS has a lot of weird virtual interfaces
+#define STATIC_NETINT_BUF_SIZE ETCPAL_NETINT_BUF_SIZE_ESTIMATE(15, 3)
+#else
+#define STATIC_NETINT_BUF_SIZE ETCPAL_NETINT_BUF_SIZE_ESTIMATE(5, 3)
+#endif
+
 etcpal_error_t      etcpal_init_result;
 static unsigned int v4_netint;
 bool                run_ipv4_mcast_tests;
@@ -83,76 +90,93 @@ static etcpal_socket_t send_sock;
 static EtcPalSockAddr  send_addr;
 static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
 
-// Select the default interface if available, the very first non-loopback, non-link-local interface
-// if not.
 static void select_network_interface_v4()
 {
-  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &v4_netint))
+  size_t                                   netint_buf_size = STATIC_NETINT_BUF_SIZE;
+  alignas(EtcPalNetintInfo) static uint8_t netint_buf[STATIC_NETINT_BUF_SIZE];
+
+  // Select the default IPv4 interface if available
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, netint_buf, &netint_buf_size))
   {
-    const EtcPalNetintInfo* netint_arr      = NULL;
-    size_t                  netint_arr_size = 0;
-    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v4_netint, &netint_arr, &netint_arr_size) &&
-        NULL == strstr(netint_arr->id, "utun"))
+    EtcPalNetintInfo* info = (EtcPalNetintInfo*)netint_buf;
+    if (NULL == strstr(info->id, "utun"))
     {
+      v4_netint            = info->index;
       run_ipv4_mcast_tests = true;
+      return;
     }
   }
-  else
+
+  // Otherwise, select the very first interface with a non-loopback, non-link-loval IPv4 address.
+  if (kEtcPalErrOk == etcpal_netint_get_interfaces(netint_buf, &netint_buf_size))
   {
-    const EtcPalNetintInfo* arr = etcpal_netint_get_interfaces();
-    if (arr)
+    for (const EtcPalNetintInfo* netint = (const EtcPalNetintInfo*)netint_buf; netint; netint = netint->next)
     {
-      for (const EtcPalNetintInfo* netint = arr; netint < arr + etcpal_netint_get_num_interfaces(); ++netint)
+      if (NULL == strstr(netint->id, "utun"))
       {
-        if (ETCPAL_IP_IS_V4(&netint->addr) && !etcpal_ip_is_link_local(&netint->addr) &&
-            !etcpal_ip_is_loopback(&netint->addr) && NULL == strstr(netint->id, "utun"))
+        // See if the network interface has a non-loopback, non-link-local IPv4 address.
+        for (const EtcPalNetintAddr* addr = netint->addrs; addr; addr = addr->next)
         {
-          v4_netint            = netint->index;
-          run_ipv4_mcast_tests = true;
-          return;
+          if (ETCPAL_IP_IS_V4(&addr->addr) && !etcpal_ip_is_link_local(&addr->addr) &&
+              !etcpal_ip_is_loopback(&addr->addr))
+          {
+            v4_netint            = netint->index;
+            run_ipv4_mcast_tests = true;
+            return;
+          }
         }
       }
-      // We haven't found a network interface...
-      TEST_MESSAGE("No IPv4 non-loopback, non-link-local network interfaces found. Disabling multicast IPv4 test...");
-      run_ipv4_mcast_tests = false;
     }
   }
+
+  // We haven't found a network interface...
+  TEST_MESSAGE("No IPv4 non-loopback, non-link-local network interfaces found. Disabling multicast IPv4 test...");
+  run_ipv4_mcast_tests = false;
 }
 
 #if ETCPAL_TEST_IPV6
 // Select the default interface if available, the very first non-loopback interface if not.
 static void select_network_interface_v6()
 {
-  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &v6_netint))
+  size_t                                   netint_buf_size = STATIC_NETINT_BUF_SIZE;
+  alignas(EtcPalNetintInfo) static uint8_t netint_buf[STATIC_NETINT_BUF_SIZE];
+
+  // Select the default IPv6 interface if available
+  if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, netint_buf, &netint_buf_size))
   {
-    const EtcPalNetintInfo* netint_arr      = NULL;
-    size_t                  netint_arr_size = 0;
-    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(v6_netint, &netint_arr, &netint_arr_size) &&
-        NULL == strstr(netint_arr->id, "utun"))
+    EtcPalNetintInfo* info = (EtcPalNetintInfo*)netint_buf;
+    if (NULL == strstr(info->id, "utun"))
     {
+      v6_netint            = info->index;
       run_ipv6_mcast_tests = true;
+      return;
     }
   }
-  else
+
+  // Otherwise, select the very first interface with a non-loopback IPv6 address.
+  if (kEtcPalErrOk == etcpal_netint_get_interfaces(netint_buf, &netint_buf_size))
   {
-    const EtcPalNetintInfo* arr = etcpal_netint_get_interfaces();
-    if (arr)
+    for (const EtcPalNetintInfo* netint = (const EtcPalNetintInfo*)netint_buf; netint; netint = netint->next)
     {
-      for (const EtcPalNetintInfo* netint = arr; netint < arr + etcpal_netint_get_num_interfaces(); ++netint)
+      if (NULL == strstr(netint->id, "utun"))
       {
-        if (ETCPAL_IP_IS_V6(&netint->addr) && !etcpal_ip_is_loopback(&netint->addr) &&
-            NULL == strstr(netint->id, "utun"))
+        // See if the network interface has a non-loopback IPv6 address.
+        for (const EtcPalNetintAddr* addr = netint->addrs; addr; addr = addr->next)
         {
-          v6_netint            = netint->index;
-          run_ipv6_mcast_tests = true;
-          return;
+          if (ETCPAL_IP_IS_V6(&addr->addr) && !etcpal_ip_is_loopback(&addr->addr))
+          {
+            v6_netint            = netint->index;
+            run_ipv6_mcast_tests = true;
+            return;
+          }
         }
       }
-      // We haven't found a network interface...
-      TEST_MESSAGE("WARNING: No IPv6 non-loopback network interfaces found. Disabling multicast IPv6 test...");
-      run_ipv6_mcast_tests = false;
     }
   }
+
+  // We haven't found a network interface...
+  TEST_MESSAGE("WARNING: No IPv6 non-loopback network interfaces found. Disabling multicast IPv6 test...");
+  run_ipv6_mcast_tests = false;
 }
 #endif
 
@@ -792,7 +816,7 @@ TEST(socket_integration_udp, bulk_poll)
 
 TEST_GROUP_RUNNER(socket_integration_udp)
 {
-  etcpal_init_result = etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS);
+  etcpal_init_result = etcpal_init(ETCPAL_FEATURE_SOCKETS);
 
   if (etcpal_init_result == kEtcPalErrOk)
   {
@@ -822,5 +846,5 @@ TEST_GROUP_RUNNER(socket_integration_udp)
   RUN_TEST_CASE(socket_integration_udp, bulk_poll);
 
   if (etcpal_init_result == kEtcPalErrOk)
-    etcpal_deinit(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS);
+    etcpal_deinit(ETCPAL_FEATURE_SOCKETS);
 }

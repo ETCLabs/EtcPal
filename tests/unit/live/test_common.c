@@ -40,34 +40,15 @@ TEST_TEAR_DOWN(etcpal_common)
 TEST(etcpal_common, features_all_but_macro_works)
 {
   etcpal_features_t mask = ETCPAL_FEATURES_ALL_BUT(ETCPAL_FEATURE_SOCKETS);
-  TEST_ASSERT(mask & ETCPAL_FEATURE_NETINTS);
   TEST_ASSERT(mask & ETCPAL_FEATURE_TIMERS);
   TEST_ASSERT(mask & ETCPAL_FEATURE_LOGGING);
   TEST_ASSERT_UNLESS(mask & ETCPAL_FEATURE_SOCKETS);
 
   mask = ETCPAL_FEATURES_ALL_BUT(ETCPAL_FEATURE_LOGGING);
   TEST_ASSERT(mask & ETCPAL_FEATURE_SOCKETS);
-  TEST_ASSERT(mask & ETCPAL_FEATURE_NETINTS);
   TEST_ASSERT(mask & ETCPAL_FEATURE_TIMERS);
   TEST_ASSERT_UNLESS(mask & ETCPAL_FEATURE_LOGGING);
 }
-
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-// Test multiple calls of etcpal_init() for the netint module.
-TEST(etcpal_common, netint_double_init_works)
-{
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_NETINTS));
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_NETINTS));
-
-  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
-
-  // After 2 inits and one deinit, we should still be able to make valid calls to the module.
-  unsigned int def_netint = 0;
-  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_netint));
-
-  etcpal_deinit(ETCPAL_FEATURE_NETINTS);
-}
-#endif
 
 // A shim from the etcpal_log module to fff.
 ETC_FAKE_VOID_FUNC(common_test_log_callback, void*, const EtcPalLogStrings*);
@@ -101,8 +82,5 @@ TEST(etcpal_common, log_double_init_works)
 TEST_GROUP_RUNNER(etcpal_common)
 {
   RUN_TEST_CASE(etcpal_common, features_all_but_macro_works);
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_CASE(etcpal_common, netint_double_init_works);
-#endif
   RUN_TEST_CASE(etcpal_common, log_double_init_works);
 }

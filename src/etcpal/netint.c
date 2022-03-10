@@ -19,234 +19,158 @@
 
 #include "etcpal/netint.h"
 
-#include <stdlib.h>
-#include "etcpal/common.h"
 #include "etcpal/private/netint.h"
 
-/**************************** Private variables ******************************/
+#ifdef __MQX__
+#define MQX_PROVIDES_STDIO !MQX_SUPPRESS_STDIO_MACROS
+#else
+#define MQX_PROVIDES_STDIO 0
+#endif
 
-static unsigned int     init_count;
-static CachedNetintInfo netint_cache;
-
-/*********************** Private function prototypes *************************/
-
-static int compare_netints(const void* a, const void* b);
+#if !MQX_PROVIDES_STDIO
+#include <stdio.h>
+#endif
 
 /*************************** Function definitions ****************************/
 
-etcpal_error_t etcpal_netint_init(void)
-{
-  etcpal_error_t res = kEtcPalErrOk;
-  if (init_count == 0)
-  {
-    res = os_enumerate_interfaces(&netint_cache);
-    if (res == kEtcPalErrOk)
-    {
-      // Sort the interfaces by OS index
-      qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
-    }
-  }
-
-  if (res == kEtcPalErrOk)
-    ++init_count;
-
-  return res;
-}
-
-void etcpal_netint_deinit(void)
-{
-  if (--init_count == 0)
-  {
-    os_free_interfaces(&netint_cache);
-    memset(&netint_cache, 0, sizeof(netint_cache));
-  }
-}
-
 /**
+ * @fn void etcpal_netint_get_num_interfaces(void)
  * @brief Get the number of network interfaces present on the system.
  * @return Number of interfaces present.
  */
-size_t etcpal_netint_get_num_interfaces(void)
-{
-  return (init_count ? netint_cache.num_netints : 0);
-}
 
 /**
+ * @fn etcpal_error_t etcpal_netint_get_interfaces(uint8_t* buf, size_t* buf_size)
  * @brief Get a list of network interfaces on the system.
  *
- * For NICs with multiple IP addresses assigned, this module separates each address into its own
- * entry in the netint array. Because of this, multiple array entries could have the same value
- * for the index, mac and id parameters.
+ * Network interface information is read into the buffer specified by buf, which has a size
+ * specified by buf_size. The contents and ordering of the buffer after being filled in are
+ * implementation-defined, except that the beginning of the buffer can be cast to an
+ * EtcPalNetintInfo* representing the first interface retrieved, whose next member can in turn be
+ * used to iterate through all interfaces on the system as a linked list.
  *
- * @return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
- *         or NULL if there are no interfaces present or the module is not initialized.
- */
-const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
-{
-  return (init_count ? netint_cache.netints : NULL);
-}
-
-/**
- * @brief Get a set of network interface addresses that have the index specified.
+ * If using a statically allocated buffer for buf, it should be given the same alignment
+ * requirement as an EtcPalNetintInfo structure. This can be accomplished using the C11 or C++11
+ * alignas() specifier, or a complier-specific method.
  *
- * See @ref interface_indexes for more information.
+ * ETCPAL_NETINT_BUF_SIZE_ESTIMATE() can be used to get an estimated buffer size requirement for a
+ * given number of network interfaces and IP addresses per interface.
  *
- * @param[in] index Index for which to get interfaces.
- * @param[out] netint_arr Filled in on success with the array of matching interfaces.
- * @param[out] netint_arr_size Filled in on success with the size of the matching interface array.
- * @return #kEtcPalErrOk: netint_arr and netint_arr_size were filled in.
+ * @param[out] buf Buffer into which network interface information is read.
+ * @param[in,out] buf_size Size of the buffer provided. After returning, this parameter is set to
+ *                         the size of the network interface information that was filled in, or to
+ *                         the size that would be needed if the function failed due to a short
+ *                         buffer.
+ * @return #kEtcPalErrOk: Network interface information retrieved successfully.
  * @return #kEtcPalErrInvalid: Invalid argument provided.
- * @return #kEtcPalErrNotInit: Module not initialized.
- * @return #kEtcPalErrNotFound: No interfaces found for this index.
+ * @return #kEtcPalErrNoNetints: No network interfaces found on system.
+ * @return #kEtcPalErrBufSize: The provided buffer was not large enough. buf_size is set to the required size.
  */
-etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int             index,
-                                                     const EtcPalNetintInfo** netint_arr,
-                                                     size_t*                  netint_arr_size)
-{
-  if (index == 0 || !netint_arr || !netint_arr_size)
-    return kEtcPalErrInvalid;
-  if (!init_count)
-    return kEtcPalErrNotInit;
-
-  size_t arr_size = 0;
-  for (const EtcPalNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
-       ++netint)
-  {
-    if (netint->index == index)
-    {
-      if (arr_size == 0)
-      {
-        // Found the beginning of the array slice.
-        *netint_arr = netint;
-      }
-      ++arr_size;
-    }
-    else if (netint->index > index)
-    {
-      // Done.
-      break;
-    }
-    // Else we haven't gotten there yet, continue
-  }
-
-  if (arr_size != 0)
-  {
-    *netint_arr_size = arr_size;
-    return kEtcPalErrOk;
-  }
-
-  return kEtcPalErrNotFound;
-}
 
 /**
+ * @fn etcpal_error_t etcpal_netint_get_interface_by_index(unsigned int index, uint8_t* buf, size_t* buf_size)
+ * @brief Get the network interface that has the index specified.
+ *
+ * See @ref interface_indexes for more information about the index parameter.
+ *
+ * Information about the network interface is read into the provided buffer in the same way as
+ * described in etcpal_netint_get_interfaces().
+ *
+ * @param[in] index Index for which to get the corresponding interface.
+ * @param[out] buf Buffer into which network interface information is read.
+ * @param[in,out] buf_size Size of the buffer provided. After returning, this parameter is set to
+ *                         the size of the network interface information that was filled in, or to
+ *                         the size that would be needed if the function failed due to a short
+ *                         buffer.
+ * @return #kEtcPalErrOk: Network interface information retrieved successfully.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotFound: No interfaces found for this index.
+ * @return #kEtcPalErrBufSize: The provided buffer was not large enough. buf_size is set to the required size.
+ */
+
+/**
+ * @fn etcpal_error_t etcpal_netint_get_default_interface_index(etcpal_iptype_t type, unsigned int* netint_index)
+ * @brief Get the index of the default network interface.
+ *
+ * See @ref interface_indexes for more information about interface indexes.
+ *
+ * For our purposes, the 'default' network interface is defined as the interface that is chosen
+ * for the default IP route.
+ *
+ * @param[in] type The IP protocol for which to get the default network interface, either
+ *                 #kEtcPalIpTypeV4 or #kEtcPalIpTypeV6.
+ * @param[out] netint_index Pointer to value to fill with the index of the default interface.
+ * @return #kEtcPalErrOk: netint_index was filled in.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotFound: No default interface found for this type.
+ */
+
+/**
+ * @fn etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, uint8_t* buf, size_t* buf_size)
  * @brief Get information about the default network interface.
  *
  * For our purposes, the 'default' network interface is defined as the interface that is chosen
- * for the default IP route. The default interface is given as an OS network interface index - see
- * @ref interface_indexes for more information. Note that since network interfaces can have
- * multiple IP addresses assigned, this index may be shared by many entries returned by
- * etcpal_netint_get_interfaces().
+ * for the default IP route.
+ *
+ * Information about the network interface is read into the provided buffer in the same way as
+ * described in etcpal_netint_get_interfaces().
  *
  * @param[in] type The IP protocol for which to get the default network interface, either
- *                 #kEtcPalIpTypeV4 or #kEtcPalIpTypeV6. A separate default interface is maintained for
- *                 each.
- * @param[out] netint_index Pointer to value to fill with the index of the default interface.
- * @return #kEtcPalErrOk: netint was filled in.
+ *                 #kEtcPalIpTypeV4 or #kEtcPalIpTypeV6.
+ * @param[out] buf Buffer into which network interface information is read.
+ * @param[in,out] buf_size Size of the buffer provided. After returning, this parameter is set to
+ *                         the size of the network interface information that was filled in, or to
+ *                         the size that would be needed if the function failed due to a short
+ *                         buffer.
+ * @return #kEtcPalErrOk: Default network interface information retrieved successfully.
  * @return #kEtcPalErrInvalid: Invalid argument provided.
- * @return #kEtcPalErrNotInit: Module not initialized.
  * @return #kEtcPalErrNotFound: No default interface found for this type.
+ * @return #kEtcPalErrBufSize: The provided buffer was not large enough. buf_size is set to the required size.
  */
-etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index)
-{
-  if (!netint_index)
-    return kEtcPalErrInvalid;
-  if (!init_count)
-    return kEtcPalErrNotInit;
-
-  if (type == kEtcPalIpTypeV4)
-  {
-    if (!netint_cache.def.v4_valid)
-      return kEtcPalErrNotFound;
-    *netint_index = netint_cache.def.v4_index;
-    return kEtcPalErrOk;
-  }
-
-  if (type == kEtcPalIpTypeV6)
-  {
-    if (!netint_cache.def.v6_valid)
-      return kEtcPalErrNotFound;
-    *netint_index = netint_cache.def.v6_index;
-    return kEtcPalErrOk;
-  }
-
-  return kEtcPalErrInvalid;
-}
 
 /**
- * @brief Get the network interface that the system will choose when routing an IP packet to the
- *        specified destination.
- *
- * @param[in] dest IP address of the destination.
- * @param[out] netint_index Pointer to value to fill in with the index of the chosen interface.
- * @return #kEtcPalErrOk: Netint filled in successfully.
- * @return #kEtcPalErrInvalid: Invalid argument provided.
- * @return #kEtcPalErrNotInit: Module not initialized.
- * @return #kEtcPalErrNoNetints: No network interfaces found on system.
- * @return #kEtcPalErrNotFound: No route was able to be resolved to the destination.
- */
-etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index)
-{
-  if (!dest || !netint_index)
-    return kEtcPalErrInvalid;
-  if (!init_count)
-    return kEtcPalErrNotInit;
-  if (netint_cache.num_netints == 0)
-    return kEtcPalErrNoNetints;
-
-  return os_resolve_route(dest, &netint_cache, netint_index);
-}
-
-int compare_netints(const void* a, const void* b)
-{
-  EtcPalNetintInfo* netint1 = (EtcPalNetintInfo*)a;
-  EtcPalNetintInfo* netint2 = (EtcPalNetintInfo*)b;
-
-  return (netint1->index > netint2->index) - (netint1->index < netint2->index);
-}
-
-/**
- * @brief Refresh the list of network interfaces.
- *
- * Rebuilds the cached array of network interfaces that is returned via the
- * etcpal_netint_get_interfaces() function. If the refresh operation results in a different list
- * (there is a different number of network interfaces, or any interface has changed IP settings),
- * *list_changed is set to true.
- *
- * @param[out] list_changed Set to true if the set of interfaces has changed in any way.
- * @return #kEtcPalErrOk: Interfaces refreshed.
- * @return Other error codes from the underlying platform are possible here.
- */
-etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)  // NOLINT(readability-non-const-parameter)
-{
-  // TODO
-  ETCPAL_UNUSED_ARG(list_changed);
-  return kEtcPalErrNotImpl;
-}
-
-/**
+ * @fn bool etcpal_netint_is_up(unsigned int netint_index)
  * @brief Determine whether a network interface is currently up and running.
- *
- * @note On Windows, cached network interface information is used to determine this, so the result
- *       for a given index will not change until etcpal_netint_refresh_interfaces() is called.
- *
  * @param netint_index Index of the interface to check.
  * @return true: The interface indicated by netint_index is up.
  * @return false: The interface indicated by netint_index is down, or netint_index is invalid.
  */
-bool etcpal_netint_is_up(unsigned int netint_index)
-{
-  if (!init_count || netint_index == 0)
-    return false;
 
-  return os_netint_is_up(netint_index, &netint_cache);
+/**
+ * @brief Convert an EtcPalNetintAddr to a CIDR string representation.
+ *
+ * CIDR notation is used, e.g. "192.168.1.1/24"
+ *
+ * @param addr Network interface address to convert to string form.
+ * @param dest Filled in on success with the string-represented address. To avoid undefined
+ *             behavior, this buffer must be at least of size #ETCPAL_NETINT_ADDR_STRING_BYTES.
+ * @return #kEtcPalErrOk: Success.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrSys: System call failed.
+ */
+etcpal_error_t etcpal_netint_addr_to_string(const EtcPalNetintAddr* addr, char* dest)
+{
+  if (!addr || !dest)
+    return kEtcPalErrInvalid;
+
+  etcpal_error_t res = etcpal_ip_to_string(&addr->addr, dest);
+  if (res != kEtcPalErrOk)
+    return res;
+
+  sprintf(&dest[strlen(dest)], "/%u", addr->mask_length);
+  return kEtcPalErrOk;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// Internal functions
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+EtcPalNetintInfo* find_existing_netint(const char* name, EtcPalNetintInfo* start, EtcPalNetintInfo* end)
+{
+  for (EtcPalNetintInfo* info = start; info < end; ++info)
+  {
+    if (strcmp(info->id, name) == 0)
+      return info;
+  }
+  return NULL;
 }
