@@ -66,6 +66,12 @@ typedef struct EtcPalPollContext
   EtcPalPollFdSet writefds;
 } EtcPalPollContext;
 
+/* Definitions for the etcpal_recvmsg API */
+
+// MQX does not currently support PKTINFO
+#define ETCPAL_PLATFORM_IN_PKTINFO_SPACE  1
+#define ETCPAL_PLATFORM_IN6_PKTINFO_SPACE 1
+
 #ifdef __cplusplus
 }
 #endif

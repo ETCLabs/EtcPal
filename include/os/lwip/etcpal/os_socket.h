@@ -21,6 +21,7 @@
 #define ETCPAL_OS_SOCKET_H_
 
 #include <lwip/opt.h>
+#include <lwip/sockets.h>
 
 /* Avoid header clashes caused by the definition of the macro bind() in lwIP headers when the
  * LWIP_COMPAT_SOCKETS option is set to 1. Restores the value of LWIP_COMPAT_SOCKETS for future
@@ -78,6 +79,11 @@ typedef struct EtcPalPollContext
   EtcPalPollFdSet writefds;
   EtcPalPollFdSet exceptfds;
 } EtcPalPollContext;
+
+/* Definitions for the etcpal_recvmsg API */
+
+#define ETCPAL_PLATFORM_IN_PKTINFO_SPACE  CMSG_SPACE(sizeof(struct in_pktinfo))
+#define ETCPAL_PLATFORM_IN6_PKTINFO_SPACE 1  // TODO: Once lwIP supports IPv6 PKTINFO, update this.
 
 #ifdef __cplusplus
 }

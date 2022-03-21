@@ -168,6 +168,58 @@ int etcpal_recv(etcpal_socket_t id, void *buffer, size_t length, int flags);
  */
 int etcpal_recvfrom(etcpal_socket_t id, void *buffer, size_t length, int flags, EtcPalSockAddr *address);
 
+/**
+ * @brief Receive both datagram and ancillary data on a socket.
+ *
+ * Refer to your favorite recvmsg() man page for more information, but also note that the etcpal_cmsg_[...] functions
+ * must be used instead of the OS standard CMSG_[...] macros.
+ *
+ * @param[in] id Socket on which to receive.
+ * @param[in,out] msg Message data filled in when a message is received.
+ * @param[in] flags Receive flags.
+ * @return Number of bytes received (success) or #etcpal_error_t code from system (error occurred).
+ */
+int etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags);
+
+/**
+ * @brief Get the first control (ancillary) message associated with the passed in message.
+ *
+ * This function is used in place of the OS standard CMSG_FIRSTHDR macro. Refer to your favorite recvmsg() man page for
+ * more information.
+ *
+ * @param[in,out] msgh Message containing the desired control message.
+ * @param[out] firsthdr The first control message.
+ * @return True if the first CMSG header was found and outputted, or false otherwise.
+ */
+bool etcpal_cmsg_firsthdr(EtcPalMsgHdr* msgh, EtcPalCMsgHdr* firsthdr);
+
+/**
+ * @brief Get the next valid control (ancillary) message after the passed in control message.
+ *
+ * This function is used in place of the OS standard CMSG_NXTHDR macro. Refer to your favorite recvmsg() man page for
+ * more information.
+ *
+ * @param[in,out] msgh Message containing the desired control message.
+ * @param[in] cmsg The control message preceding the desired control message.
+ * @param[out] nxthdr The next control message.
+ * @return True if the next CMSG header was found and outputted, or false otherwise.
+ */
+bool etcpal_cmsg_nxthdr(EtcPalMsgHdr* msgh, const EtcPalCMsgHdr* cmsg, EtcPalCMsgHdr* nxthdr);
+
+/**
+ * @brief Convert a control (ancillary) message to EtcPalPktInfo. The application must check the cmsg level and type.
+ *
+ * This function is used in place of the OS standard CMSG_DATA macro. Refer to your favorite recvmsg() man page for more
+ * information.
+ *
+ * @param[in] cmsg The control message. The level should be #ETCPAL_IPPROTO_IP or #ETCPAL_IPPROTO_IPV6. If it's
+ * #ETCPAL_IPPROTO_IP, the type should be #ETCPAL_IP_PKTINFO. Otherwise if it's #ETCPAL_IPPROTO_IPV6, the type should be
+ * #ETCPAL_IPV6_PKTINFO.
+ * @param[out] pktinfo A EtcPalPktInfo struct filled in from the given control message.
+ * @return True if the EtcPalPktInfo struct was successfully filled in, or false otherwise.
+ */
+bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo);
+
 /** 
  * @brief Send data on a connected socket.
  *

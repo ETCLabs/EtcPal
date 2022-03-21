@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+#include <mswsock.h>
 #include <Windows.h>
 
 #include "etcpal/common.h"
@@ -123,6 +124,8 @@ static const int kAiProtMap[ETCPAL_NUM_IPPROTO] =
 
 /* clang-format on */
 
+static LPFN_WSARECVMSG wsa_recvmsg = NULL;
+
 /*********************** Private function prototypes *************************/
 
 static int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
@@ -142,6 +145,18 @@ static int           poll_socket_compare(const EtcPalRbTree* tree, const void* v
 static EtcPalRbNode* poll_socket_alloc(void);
 static void          poll_socket_free(EtcPalRbNode* node);
 
+static etcpal_error_t init_extension_functions();
+static etcpal_error_t get_wsarecvmsg(LPFN_WSARECVMSG* result);
+
+// Helpers for etcpal_recvmsg()
+static void  construct_wsamsg(const EtcPalMsgHdr* in_msg,
+                              LPSOCKADDR_STORAGE  name_store,
+                              LPWSABUF            buf_store,
+                              LPWSAMSG            out_msg);
+static int   rcvmsg_flags_os_to_etcpal(ULONG os_flags);
+static ULONG rcvmsg_flags_etcpal_to_os(int etcpal_flags);
+static bool  get_first_compatible_cmsg(LPWSAMSG msg, LPWSACMSGHDR start, EtcPalCMsgHdr* cmsg);
+
 /*************************** Function definitions ****************************/
 
 etcpal_error_t etcpal_socket_init(void)
@@ -153,7 +168,13 @@ etcpal_error_t etcpal_socket_init(void)
   {
     return err_winsock_to_etcpal(startup_res);
   }
-  return kEtcPalErrOk;
+
+  etcpal_error_t res = init_extension_functions();
+
+  if (res != kEtcPalErrOk)
+    WSACleanup();
+
+  return res;
 }
 
 void etcpal_socket_deinit(void)
@@ -297,6 +318,124 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
     return res;
   }
   return (int)err_winsock_to_etcpal(WSAGetLastError());
+}
+
+int etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags)
+{
+  if (!msg)
+    return (int)kEtcPalErrInvalid;
+
+  if (!wsa_recvmsg)
+    return (int)kEtcPalErrNotInit;
+
+  msg->flags = flags;
+
+  WSAMSG           impl_msg  = {0};
+  SOCKADDR_STORAGE impl_name = {0};
+  WSABUF           impl_buf  = {0};
+  construct_wsamsg(msg, &impl_name, &impl_buf, &impl_msg);
+
+  DWORD num_bytes_received = 0;
+  int   res                = wsa_recvmsg(id, &impl_msg, &num_bytes_received, NULL, NULL);
+
+  msg->flags = rcvmsg_flags_os_to_etcpal(impl_msg.dwFlags);
+
+  if (res == SOCKET_ERROR)
+  {
+    etcpal_error_t error = err_winsock_to_etcpal(WSAGetLastError());
+
+    // In the case of kEtcPalErrMsgSize, rely on error reporting via the TRUNC/CTRUNC flags and return bytes received.
+    if (error != kEtcPalErrMsgSize)
+      return (int)error;
+  }
+
+  if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&impl_name, &msg->name))
+    return kEtcPalErrSys;
+
+  return (int)num_bytes_received;
+}
+
+bool etcpal_cmsg_firsthdr(EtcPalMsgHdr* msgh, EtcPalCMsgHdr* firsthdr)
+{
+  bool result = false;
+
+  if (msgh && firsthdr)
+  {
+    WSAMSG           impl_msg  = {0};
+    SOCKADDR_STORAGE impl_name = {0};
+    WSABUF           impl_buf  = {0};
+    construct_wsamsg(msgh, &impl_name, &impl_buf, &impl_msg);
+
+    result = get_first_compatible_cmsg(&impl_msg, WSA_CMSG_FIRSTHDR(&impl_msg), firsthdr);
+  }
+
+  return result;
+}
+
+bool etcpal_cmsg_nxthdr(EtcPalMsgHdr* msgh, const EtcPalCMsgHdr* cmsg, EtcPalCMsgHdr* nxthdr)
+{
+  bool result = false;
+
+  if (msgh && cmsg && nxthdr)
+  {
+    WSAMSG           impl_msg  = {0};
+    SOCKADDR_STORAGE impl_name = {0};
+    WSABUF           impl_buf  = {0};
+    construct_wsamsg(msgh, &impl_name, &impl_buf, &impl_msg);
+
+    result = get_first_compatible_cmsg(&impl_msg, WSA_CMSG_NXTHDR(&impl_msg, (PWSACMSGHDR)cmsg->pd), nxthdr);
+  }
+
+  return result;
+}
+
+bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
+{
+  bool result = false;
+
+  if (cmsg && pktinfo)
+  {
+    PWSACMSGHDR impl_cmsg = (PWSACMSGHDR)cmsg->pd;
+
+    // Per the cmsg(3) manpage, impl_data "cannot be assumed to be suitably aligned for accessing arbitrary payload data
+    // types. Applications should not cast it to a pointer type matching the payload, but should instead use memcpy(3)
+    // to copy data to or from a suitably declared object."
+    void* impl_data = WSA_CMSG_DATA(impl_cmsg);
+
+    if (impl_data)
+    {
+      if ((cmsg->level == ETCPAL_IPPROTO_IP) && (cmsg->type == ETCPAL_IP_PKTINFO))
+      {
+        IN_PKTINFO impl_pktinfo;
+        memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
+
+        SOCKADDR_IN impl_addr;
+        impl_addr.sin_family = AF_INET;
+        impl_addr.sin_addr   = impl_pktinfo.ipi_addr;
+
+        ip_os_to_etcpal((SOCKADDR*)&impl_addr, &pktinfo->addr);
+        pktinfo->ifindex = impl_pktinfo.ipi_ifindex;
+
+        result = true;
+      }
+      else if ((cmsg->level == ETCPAL_IPPROTO_IPV6) && (cmsg->type == ETCPAL_IPV6_PKTINFO))
+      {
+        IN6_PKTINFO impl_pktinfo;
+        memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
+
+        SOCKADDR_IN6 impl_addr;
+        impl_addr.sin6_family = AF_INET6;
+        impl_addr.sin6_addr   = impl_pktinfo.ipi6_addr;
+
+        ip_os_to_etcpal((SOCKADDR*)&impl_addr, &pktinfo->addr);
+        pktinfo->ifindex = impl_pktinfo.ipi6_ifindex;
+
+        result = true;
+      }
+    }
+  }
+
+  return result;
 }
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
@@ -514,6 +653,13 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
         return setsockopt(id, IPPROTO_IP, IP_MULTICAST_LOOP, (char*)&val, sizeof val);
       }
       break;
+    case ETCPAL_IP_PKTINFO:
+      if (option_len == sizeof(int))
+      {
+        DWORD val = (DWORD) * (int*)option_value;
+        return setsockopt(id, IPPROTO_IP, IP_PKTINFO, (char*)&val, sizeof val);
+      }
+      break;
     default:
       break;
   }
@@ -586,6 +732,13 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
       {
         DWORD val = (DWORD) * (int*)option_value;
         return setsockopt(id, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&val, sizeof val);
+      }
+      break;
+    case ETCPAL_IPV6_PKTINFO:
+      if (option_len == sizeof(int))
+      {
+        DWORD val = (DWORD) * (int*)option_value;
+        return setsockopt(id, IPPROTO_IPV6, IPV6_PKTINFO, (char*)&val, sizeof val);
       }
       break;
     default: /* Other IPv6 options TODO on windows. */
@@ -939,6 +1092,120 @@ void poll_socket_free(EtcPalRbNode* node)
     free(node->value);
     free(node);
   }
+}
+
+etcpal_error_t init_extension_functions()
+{
+  etcpal_error_t res = get_wsarecvmsg(&wsa_recvmsg);
+
+  return res;
+}
+
+etcpal_error_t get_wsarecvmsg(LPFN_WSARECVMSG* result)
+{
+  LPFN_WSARECVMSG func  = NULL;
+  GUID            guid  = WSAID_WSARECVMSG;
+  SOCKET          sock  = INVALID_SOCKET;
+  DWORD           bytes = 0;
+
+  sock = socket(AF_INET6, SOCK_DGRAM, 0);
+
+  int err =
+      WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &func, sizeof(func), &bytes, NULL, NULL);
+
+  if (err == 0)
+    *result = func;
+
+  if (sock != INVALID_SOCKET)
+    closesocket(sock);
+
+  return (err == 0) ? kEtcPalErrOk : err_winsock_to_etcpal(err);
+}
+
+void construct_wsamsg(const EtcPalMsgHdr* in_msg, LPSOCKADDR_STORAGE name_store, LPWSABUF buf_store, LPWSAMSG out_msg)
+{
+  out_msg->name          = (SOCKADDR*)name_store;
+  out_msg->namelen       = sizeof(*name_store);
+  out_msg->lpBuffers     = buf_store;
+  out_msg->dwBufferCount = 1;
+  out_msg->Control.buf   = in_msg->control;
+  out_msg->Control.len   = (ULONG)in_msg->controllen;
+  out_msg->dwFlags       = rcvmsg_flags_etcpal_to_os(in_msg->flags);
+  buf_store->buf         = in_msg->buf;
+  buf_store->len         = (ULONG)in_msg->buflen;
+
+  sockaddr_etcpal_to_os(&in_msg->name, (etcpal_os_sockaddr_t*)name_store);
+}
+
+int rcvmsg_flags_os_to_etcpal(ULONG os_flags)
+{
+  int result = 0;
+
+  if (os_flags & MSG_TRUNC)
+    result |= ETCPAL_MSG_TRUNC;
+
+  if (os_flags & MSG_CTRUNC)
+    result |= ETCPAL_MSG_CTRUNC;
+
+  if (os_flags & MSG_PEEK)
+    result |= ETCPAL_MSG_PEEK;
+
+  return result;
+}
+
+ULONG rcvmsg_flags_etcpal_to_os(int etcpal_flags)
+{
+  ULONG result = 0;
+
+  if (etcpal_flags & ETCPAL_MSG_TRUNC)
+    result |= MSG_TRUNC;
+
+  if (etcpal_flags & ETCPAL_MSG_CTRUNC)
+    result |= MSG_CTRUNC;
+
+  if (etcpal_flags & ETCPAL_MSG_PEEK)
+    result |= MSG_PEEK;
+
+  return result;
+}
+
+bool get_first_compatible_cmsg(LPWSAMSG msg, LPWSACMSGHDR start, EtcPalCMsgHdr* cmsg)
+{
+  bool get_next_cmsg = true;
+  for (LPWSACMSGHDR hdr = start; hdr && (hdr->cmsg_len > 0) && get_next_cmsg; hdr = WSA_CMSG_NXTHDR(msg, hdr))
+  {
+    get_next_cmsg = false;
+
+    cmsg->pd  = hdr;
+    cmsg->len = hdr->cmsg_len;
+
+    if (hdr->cmsg_level == IPPROTO_IP)
+    {
+      cmsg->level = ETCPAL_IPPROTO_IP;
+
+      if (hdr->cmsg_type == IP_PKTINFO)
+        cmsg->type = ETCPAL_IP_PKTINFO;
+      else
+        get_next_cmsg = true;
+    }
+    else if (hdr->cmsg_level == IPPROTO_IPV6)
+    {
+      cmsg->level = ETCPAL_IPPROTO_IPV6;
+
+      if (hdr->cmsg_type == IPV6_PKTINFO)
+        cmsg->type = ETCPAL_IPV6_PKTINFO;
+      else
+        get_next_cmsg = true;
+    }
+    else
+    {
+      get_next_cmsg = true;
+    }
+  }
+
+  cmsg->valid = !get_next_cmsg;
+
+  return cmsg->valid;
 }
 
 etcpal_error_t etcpal_getaddrinfo(const char*           hostname,

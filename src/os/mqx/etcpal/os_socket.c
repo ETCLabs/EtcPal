@@ -309,6 +309,26 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
   return (res == RTCS_ERROR ? err_os_to_etcpal(RTCS_geterror(id)) : res);
 }
 
+int etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags)
+{
+  return kEtcPalErrNotImpl;  // Not supported
+}
+
+bool etcpal_cmsg_firsthdr(EtcPalMsgHdr* msgh, EtcPalCMsgHdr* firsthdr)
+{
+  return false;  // Not supported
+}
+
+bool etcpal_cmsg_nxthdr(EtcPalMsgHdr* msgh, const EtcPalCMsgHdr* cmsg, EtcPalCMsgHdr* nxthdr)
+{
+  return false;  // Not supported
+}
+
+bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
+{
+  return false;  // Not supported
+}
+
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
 {
   ETCPAL_UNUSED_ARG(flags);

@@ -17,6 +17,11 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+// This is defined before the includes to enable IPV6_PKTINFO support.
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+
 #include "etcpal/socket.h"
 
 #include <errno.h>
@@ -133,6 +138,15 @@ static void events_epoll_to_etcpal(const struct epoll_event* epoll_evt,
 static int           poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b);
 static EtcPalRbNode* poll_socket_alloc(void);
 static void          poll_socket_free(EtcPalRbNode* node);
+
+// Helpers for etcpal_recvmsg()
+static void construct_msghdr(const EtcPalMsgHdr*      in_msg,
+                             struct sockaddr_storage* name_store,
+                             struct iovec*            buf_store,
+                             struct msghdr*           out_msg);
+static int  rcvmsg_flags_os_to_etcpal(int os_flags);
+static int  rcvmsg_flags_etcpal_to_os(int etcpal_flags);
+static bool get_first_compatible_cmsg(struct msghdr* msg, struct cmsghdr* start, EtcPalCMsgHdr* cmsg);
 
 /*************************** Function definitions ****************************/
 
@@ -276,6 +290,112 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
     return res;
   }
   return (int)errno_os_to_etcpal(errno);
+}
+
+int etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags)
+{
+  if (!msg)
+    return (int)kEtcPalErrInvalid;
+
+  struct msghdr           impl_msg  = {0};
+  struct sockaddr_storage impl_name = {0};
+  struct iovec            impl_buf  = {0};
+  construct_msghdr(msg, &impl_name, &impl_buf, &impl_msg);
+
+  int res = (int)recvmsg(id, &impl_msg, rcvmsg_flags_etcpal_to_os(flags));
+
+  msg->flags = rcvmsg_flags_os_to_etcpal(impl_msg.msg_flags);
+
+  if (res < 0)
+    return (int)errno_os_to_etcpal(errno);
+
+  if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&impl_name, &msg->name))
+    return kEtcPalErrSys;
+
+  return res;
+}
+
+bool etcpal_cmsg_firsthdr(EtcPalMsgHdr* msgh, EtcPalCMsgHdr* firsthdr)
+{
+  bool result = false;
+
+  if (msgh && firsthdr)
+  {
+    struct msghdr           impl_msg  = {0};
+    struct sockaddr_storage impl_name = {0};
+    struct iovec            impl_buf  = {0};
+    construct_msghdr(msgh, &impl_name, &impl_buf, &impl_msg);
+
+    result = get_first_compatible_cmsg(&impl_msg, CMSG_FIRSTHDR(&impl_msg), firsthdr);
+  }
+
+  return result;
+}
+
+bool etcpal_cmsg_nxthdr(EtcPalMsgHdr* msgh, const EtcPalCMsgHdr* cmsg, EtcPalCMsgHdr* nxthdr)
+{
+  bool result = false;
+
+  if (msgh && cmsg && nxthdr)
+  {
+    struct msghdr           impl_msg  = {0};
+    struct sockaddr_storage impl_name = {0};
+    struct iovec            impl_buf  = {0};
+    construct_msghdr(msgh, &impl_name, &impl_buf, &impl_msg);
+
+    result = get_first_compatible_cmsg(&impl_msg, CMSG_NXTHDR(&impl_msg, (struct cmsghdr*)cmsg->pd), nxthdr);
+  }
+
+  return result;
+}
+
+bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
+{
+  bool result = false;
+
+  if (cmsg && pktinfo)
+  {
+    struct cmsghdr* impl_cmsg = (struct cmsghdr*)cmsg->pd;
+
+    // Per the cmsg(3) manpage, impl_data "cannot be assumed to be suitably aligned for accessing arbitrary payload data
+    // types. Applications should not cast it to a pointer type matching the payload, but should instead use memcpy(3)
+    // to copy data to or from a suitably declared object."
+    void* impl_data = CMSG_DATA(impl_cmsg);
+
+    if (impl_data)
+    {
+      if ((cmsg->level == ETCPAL_IPPROTO_IP) && (cmsg->type == ETCPAL_IP_PKTINFO))
+      {
+        struct in_pktinfo impl_pktinfo;
+        memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
+
+        struct sockaddr_in impl_addr;
+        impl_addr.sin_family = AF_INET;
+        impl_addr.sin_addr   = impl_pktinfo.ipi_addr;
+
+        ip_os_to_etcpal((struct sockaddr*)&impl_addr, &pktinfo->addr);
+        pktinfo->ifindex = impl_pktinfo.ipi_ifindex;
+
+        result = true;
+      }
+      else if ((cmsg->level == ETCPAL_IPPROTO_IPV6) && (cmsg->type == ETCPAL_IPV6_PKTINFO))
+      {
+        struct in6_pktinfo impl_pktinfo;
+        memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
+
+        struct sockaddr_in6 impl_addr;
+        impl_addr.sin6_family = AF_INET6;
+        impl_addr.sin6_addr   = impl_pktinfo.ipi6_addr;
+
+        ip_os_to_etcpal((struct sockaddr*)&impl_addr, &pktinfo->addr);
+        pktinfo->ifindex = impl_pktinfo.ipi6_ifindex;
+
+        result = true;
+      }
+    }
+  }
+
+  return result;
 }
 
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
@@ -489,6 +609,8 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       return setsockopt(id, IPPROTO_IP, IP_MULTICAST_TTL, option_value, (socklen_t)option_len);
     case ETCPAL_IP_MULTICAST_LOOP:
       return setsockopt(id, IPPROTO_IP, IP_MULTICAST_LOOP, option_value, (socklen_t)option_len);
+    case ETCPAL_IP_PKTINFO:
+      return setsockopt(id, IPPROTO_IP, IP_PKTINFO, option_value, (socklen_t)option_len);
     default:
       break;
   }
@@ -543,6 +665,8 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
       return setsockopt(id, IPPROTO_IPV6, IPV6_MULTICAST_LOOP, option_value, (socklen_t)option_len);
     case ETCPAL_IPV6_V6ONLY:
       return setsockopt(id, IPPROTO_IPV6, IPV6_V6ONLY, option_value, (socklen_t)option_len);
+    case ETCPAL_IPV6_PKTINFO:
+      return setsockopt(id, IPPROTO_IPV6, IPV6_RECVPKTINFO, option_value, (socklen_t)option_len);
     default: /* Other IPv6 options TODO on linux. */
       break;
   }
@@ -805,6 +929,95 @@ void poll_socket_free(EtcPalRbNode* node)
     free(node->value);
     free(node);
   }
+}
+
+void construct_msghdr(const EtcPalMsgHdr*      in_msg,
+                      struct sockaddr_storage* name_store,
+                      struct iovec*            buf_store,
+                      struct msghdr*           out_msg)
+{
+  out_msg->msg_name       = name_store;
+  out_msg->msg_namelen    = sizeof(*name_store);
+  out_msg->msg_iov        = buf_store;
+  out_msg->msg_iovlen     = 1;
+  out_msg->msg_control    = in_msg->control;
+  out_msg->msg_controllen = in_msg->controllen;
+  out_msg->msg_flags      = rcvmsg_flags_etcpal_to_os(in_msg->flags);
+  buf_store->iov_base     = in_msg->buf;
+  buf_store->iov_len      = in_msg->buflen;
+
+  sockaddr_etcpal_to_os(&in_msg->name, (etcpal_os_sockaddr_t*)name_store);
+}
+
+int rcvmsg_flags_os_to_etcpal(int os_flags)
+{
+  int result = 0;
+
+  if (os_flags & MSG_TRUNC)
+    result |= ETCPAL_MSG_TRUNC;
+
+  if (os_flags & MSG_CTRUNC)
+    result |= ETCPAL_MSG_CTRUNC;
+
+  if (os_flags & MSG_PEEK)
+    result |= ETCPAL_MSG_PEEK;
+
+  return result;
+}
+
+int rcvmsg_flags_etcpal_to_os(int etcpal_flags)
+{
+  int result = 0;
+
+  if (etcpal_flags & ETCPAL_MSG_TRUNC)
+    result |= MSG_TRUNC;
+
+  if (etcpal_flags & ETCPAL_MSG_CTRUNC)
+    result |= MSG_CTRUNC;
+
+  if (etcpal_flags & ETCPAL_MSG_PEEK)
+    result |= MSG_PEEK;
+
+  return result;
+}
+
+bool get_first_compatible_cmsg(struct msghdr* msg, struct cmsghdr* start, EtcPalCMsgHdr* cmsg)
+{
+  bool get_next_cmsg = true;
+  for (struct cmsghdr* hdr = start; hdr && (hdr->cmsg_len > 0) && get_next_cmsg; hdr = CMSG_NXTHDR(msg, hdr))
+  {
+    get_next_cmsg = false;
+
+    cmsg->pd  = hdr;
+    cmsg->len = hdr->cmsg_len;
+
+    if (hdr->cmsg_level == IPPROTO_IP)
+    {
+      cmsg->level = ETCPAL_IPPROTO_IP;
+
+      if (hdr->cmsg_type == IP_PKTINFO)
+        cmsg->type = ETCPAL_IP_PKTINFO;
+      else
+        get_next_cmsg = true;
+    }
+    else if (hdr->cmsg_level == IPPROTO_IPV6)
+    {
+      cmsg->level = ETCPAL_IPPROTO_IPV6;
+
+      if (hdr->cmsg_type == IPV6_PKTINFO)
+        cmsg->type = ETCPAL_IPV6_PKTINFO;
+      else
+        get_next_cmsg = true;
+    }
+    else
+    {
+      get_next_cmsg = true;
+    }
+  }
+
+  cmsg->valid = !get_next_cmsg;
+
+  return cmsg->valid;
 }
 
 etcpal_error_t etcpal_getaddrinfo(const char*           hostname,

@@ -23,10 +23,12 @@
 #ifndef NOMINMAX
 #define NOMINMAX 1 /* Suppress some conflicting definitions in the Windows headers */
 #include <winsock2.h>
+#include <WS2tcpip.h>
 #include <windows.h>
 #undef NOMINMAX
 #else
 #include <winsock2.h>
+#include <WS2tcpip.h>
 #include <windows.h>
 #endif
 
@@ -71,6 +73,11 @@ typedef struct EtcPalPollContext
   EtcPalPollFdSet writefds;
   EtcPalPollFdSet exceptfds;
 } EtcPalPollContext;
+
+/* Definitions for the etcpal_recvmsg API */
+
+#define ETCPAL_PLATFORM_IN_PKTINFO_SPACE  CMSG_SPACE(sizeof(IN_PKTINFO))
+#define ETCPAL_PLATFORM_IN6_PKTINFO_SPACE CMSG_SPACE(sizeof(IN6_PKTINFO))
 
 #ifdef __cplusplus
 }

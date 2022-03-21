@@ -17,7 +17,10 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#define _GNU_SOURCE  // for pthread_setname_np() - this is a Linux-specific file
+// For pthread_setname_np() - this is a Linux-specific file
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 
 #include "etcpal/thread.h"
 

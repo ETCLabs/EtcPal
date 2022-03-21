@@ -29,6 +29,10 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getsockopt, etcpal_socket_t, int, 
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_listen, etcpal_socket_t, int);
 DEFINE_FAKE_VALUE_FUNC(int, etcpal_recv, etcpal_socket_t, void*, size_t, int);
 DEFINE_FAKE_VALUE_FUNC(int, etcpal_recvfrom, etcpal_socket_t, void*, size_t, int, EtcPalSockAddr*);
+DEFINE_FAKE_VALUE_FUNC(int, etcpal_recvmsg, etcpal_socket_t, EtcPalMsgHdr*, int);
+DEFINE_FAKE_VALUE_FUNC(bool, etcpal_cmsg_firsthdr, EtcPalMsgHdr*, EtcPalCMsgHdr*);
+DEFINE_FAKE_VALUE_FUNC(bool, etcpal_cmsg_nxthdr, EtcPalMsgHdr*, const EtcPalCMsgHdr*, EtcPalCMsgHdr*);
+DEFINE_FAKE_VALUE_FUNC(bool, etcpal_cmsg_to_pktinfo, const EtcPalCMsgHdr*, EtcPalPktInfo*);
 DEFINE_FAKE_VALUE_FUNC(int, etcpal_send, etcpal_socket_t, const void*, size_t, int);
 DEFINE_FAKE_VALUE_FUNC(int, etcpal_sendto, etcpal_socket_t, const void*, size_t, int, const EtcPalSockAddr*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setsockopt, etcpal_socket_t, int, int, const void*, size_t);
@@ -75,6 +79,10 @@ void etcpal_socket_reset_all_fakes(void)
   RESET_FAKE(etcpal_listen);
   RESET_FAKE(etcpal_recv);
   RESET_FAKE(etcpal_recvfrom);
+  RESET_FAKE(etcpal_recvmsg);
+  RESET_FAKE(etcpal_cmsg_firsthdr);
+  RESET_FAKE(etcpal_cmsg_nxthdr);
+  RESET_FAKE(etcpal_cmsg_to_pktinfo);
   RESET_FAKE(etcpal_send);
   RESET_FAKE(etcpal_sendto);
   RESET_FAKE(etcpal_setsockopt);

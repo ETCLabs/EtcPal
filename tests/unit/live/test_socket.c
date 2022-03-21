@@ -397,6 +397,150 @@ TEST(etcpal_socket, getaddrinfo_works_as_expected)
   etcpal_freeaddrinfo(&ai);
 }
 
+#define RECVMSG_TEST_PORT_BASE      9000
+#define RECVMSG_TEST_MESSAGE        (const uint8_t*)"test message"
+#define RECVMSG_TEST_MESSAGE_LENGTH sizeof("test message")
+
+static void recvmsg_test_setup(etcpal_socket_t* recv_sock)
+{
+  etcpal_socket_t send_sock = ETCPAL_SOCKET_INVALID;
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, recv_sock));
+  TEST_ASSERT_NOT_EQUAL(*recv_sock, ETCPAL_SOCKET_INVALID);
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &send_sock));
+  TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
+
+  int intval = 1;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_setsockopt(*recv_sock, ETCPAL_IPPROTO_IP, ETCPAL_IP_PKTINFO, &intval, sizeof(int)));
+  intval = 10;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_setsockopt(*recv_sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_RCVTIMEO, &intval, sizeof(int)));
+
+  EtcPalSockAddr bind_addr;
+  etcpal_ip_set_wildcard(kEtcPalIpTypeV4, &bind_addr.ip);
+  bind_addr.port = RECVMSG_TEST_PORT_BASE;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_bind(*recv_sock, &bind_addr));
+
+  EtcPalSockAddr send_addr;
+  ETCPAL_IP_SET_V4_ADDRESS(&send_addr.ip, 0x7f000001);
+  send_addr.port = RECVMSG_TEST_PORT_BASE;
+
+  etcpal_sendto(send_sock, RECVMSG_TEST_MESSAGE, RECVMSG_TEST_MESSAGE_LENGTH, 0, &send_addr);
+
+  etcpal_close(send_sock);
+}
+
+TEST(etcpal_socket, recvmsg_works)
+{
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  recvmsg_test_setup(&recv_sock);
+
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]    = {0};
+  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+
+  EtcPalMsgHdr msg = {0};
+  msg.buf          = buf;
+  msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
+  msg.control      = control;
+  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+
+  TEST_ASSERT_EQUAL(RECVMSG_TEST_MESSAGE_LENGTH, etcpal_recvmsg(recv_sock, &msg, 0));
+
+  buf[RECVMSG_TEST_MESSAGE_LENGTH] = '\0';
+  TEST_ASSERT_EQUAL_STRING((char*)buf, RECVMSG_TEST_MESSAGE);
+
+  // Verify nothing remains on the input queue.
+  etcpal_error_t result = etcpal_recvmsg(recv_sock, &msg, 0);
+  TEST_ASSERT((result == kEtcPalErrTimedOut) || (result == kEtcPalErrWouldBlock));
+
+  etcpal_close(recv_sock);
+}
+
+TEST(etcpal_socket, recvmsg_trunc_flag_works)
+{
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  recvmsg_test_setup(&recv_sock);
+
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]        = {0};
+  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+
+  EtcPalMsgHdr msg = {0};
+  msg.buf          = buf;
+  msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH - 1;  // Intentionally 1 byte short to trigger TRUNC flag.
+  msg.control      = control;
+  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+
+  // Windows, Mac, and Linux return the truncated length here, but lwIP returns the full length.
+  TEST_ASSERT(etcpal_recvmsg(recv_sock, &msg, 0) >= (RECVMSG_TEST_MESSAGE_LENGTH - 1));
+  TEST_ASSERT_EQUAL(ETCPAL_MSG_TRUNC, msg.flags);
+
+  // Verify nothing remains on the input queue.
+  etcpal_error_t result = etcpal_recvmsg(recv_sock, &msg, 0);
+  TEST_ASSERT((result == kEtcPalErrTimedOut) || (result == kEtcPalErrWouldBlock));
+
+  etcpal_close(recv_sock);
+}
+
+TEST(etcpal_socket, recvmsg_ctrunc_flag_works)
+{
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  recvmsg_test_setup(&recv_sock);
+
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]        = {0};
+  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+
+  EtcPalMsgHdr msg = {0};
+  msg.buf          = buf;
+  msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
+  msg.control      = control;
+  msg.controllen   = 1u;  // Intentionally too short to trigger CTRUNC flag.
+
+  TEST_ASSERT_EQUAL(RECVMSG_TEST_MESSAGE_LENGTH, etcpal_recvmsg(recv_sock, &msg, 0));
+  TEST_ASSERT_EQUAL(ETCPAL_MSG_CTRUNC, msg.flags);
+
+  // Verify nothing remains on the input queue.
+  etcpal_error_t result = etcpal_recvmsg(recv_sock, &msg, 0);
+  TEST_ASSERT((result == kEtcPalErrTimedOut) || (result == kEtcPalErrWouldBlock));
+
+  etcpal_close(recv_sock);
+}
+
+TEST(etcpal_socket, recvmsg_peek_flag_works)
+{
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  recvmsg_test_setup(&recv_sock);
+
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]    = {0};
+  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+
+  EtcPalMsgHdr msg = {0};
+  msg.buf          = buf;
+  msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
+  msg.control      = control;
+  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+
+  TEST_ASSERT_EQUAL(RECVMSG_TEST_MESSAGE_LENGTH, etcpal_recvmsg(recv_sock, &msg, ETCPAL_MSG_PEEK));
+
+  buf[RECVMSG_TEST_MESSAGE_LENGTH] = '\0';
+  TEST_ASSERT_EQUAL_STRING((char*)buf, RECVMSG_TEST_MESSAGE);
+
+  // Verify the same data remained in the input queue, and this time remove it.
+  memset(buf, 0, RECVMSG_TEST_MESSAGE_LENGTH);
+
+  TEST_ASSERT_EQUAL(RECVMSG_TEST_MESSAGE_LENGTH, etcpal_recvmsg(recv_sock, &msg, 0));
+
+  buf[RECVMSG_TEST_MESSAGE_LENGTH] = '\0';
+  TEST_ASSERT_EQUAL_STRING((char*)buf, RECVMSG_TEST_MESSAGE);
+
+  // Verify nothing remains on the input queue.
+  etcpal_error_t result = etcpal_recvmsg(recv_sock, &msg, 0);
+  TEST_ASSERT((result == kEtcPalErrTimedOut) || (result == kEtcPalErrWouldBlock));
+
+  etcpal_close(recv_sock);
+}
+
 TEST_GROUP_RUNNER(etcpal_socket)
 {
   RUN_TEST_CASE(etcpal_socket, bind_works_as_expected);
@@ -409,4 +553,8 @@ TEST_GROUP_RUNNER(etcpal_socket)
   RUN_TEST_CASE(etcpal_socket, poll_for_readability_on_udp_sockets_works);
   RUN_TEST_CASE(etcpal_socket, poll_for_writability_on_udp_sockets_works);
   RUN_TEST_CASE(etcpal_socket, getaddrinfo_works_as_expected);
+  RUN_TEST_CASE(etcpal_socket, recvmsg_works);
+  RUN_TEST_CASE(etcpal_socket, recvmsg_trunc_flag_works);
+  RUN_TEST_CASE(etcpal_socket, recvmsg_ctrunc_flag_works);
+  RUN_TEST_CASE(etcpal_socket, recvmsg_peek_flag_works);
 }

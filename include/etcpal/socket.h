@@ -61,10 +61,10 @@ typedef uint32_t etcpal_poll_events_t;
 /* clang-format off */
 
 /**
- * @name Flags for etcpal_recvfrom()
+ * @name Flags for etcpal_recvfrom() and etcpal_recvmsg()
  * @{
  */
-#define ETCPAL_MSG_PEEK 0x1
+#define ETCPAL_MSG_PEEK 0x1 /**< Input flag to cause the packet to remain in the input queue when received. */
 /**
  * @}
  */
@@ -130,6 +130,8 @@ typedef uint32_t etcpal_poll_events_t;
 #define ETCPAL_MCAST_JOIN_GROUP   17 /**< Set only, value is EtcPalGroupReq */
 #define ETCPAL_MCAST_LEAVE_GROUP  18 /**< Set only, value is EtcPalGroupReq */
 #define ETCPAL_IPV6_V6ONLY        19 /**< Get/Set, value is boolean int */
+#define ETCPAL_IP_PKTINFO         20 /**< Get/Set, value is boolean int */
+#define ETCPAL_IPV6_PKTINFO       21 /**< Get/Set, value is boolean int (note that this equates to IPV6_RECVPKTINFO on Mac and Linux) */
 
 /**
  * @}
@@ -165,6 +167,37 @@ typedef struct EtcPalGroupReq
   EtcPalIpAddr group;
 } EtcPalGroupReq;
 
+/** Message data received from etcpal_recvmsg. */
+typedef struct EtcPalMsgHdr
+{
+  EtcPalSockAddr name;       /**< The address of the sender (set by etcpal_recvmsg) */
+  void*          buf;        /**< Packet data (allocated by the caller, filled in by etcpal_recvmsg) */
+  size_t         buflen;     /**< Packet data buffer length (set by the caller) */
+  void*          control;    /**< Ancillary data (allocated by the caller, filled in by etcpal_recvmsg) */
+  size_t         controllen; /**< Ancillary data buffer length (set by the caller) */
+  int            flags;      /**< Flags on received message (set by etcpal_recvmsg) */
+} EtcPalMsgHdr;
+
+/** Ancillary data received from etcpal_recvmsg. */
+typedef struct EtcPalCMsgHdr
+{
+  bool   valid; /**< Whether or not this represents a valid cmsg */
+  size_t len;   /**< Length of the ancillary data */
+  int    level; /**< Originating protocol */
+  int    type;  /**< Protocol-specific type */
+  void*  pd;    /**< Used by internal platform logic; don't touch */
+} EtcPalCMsgHdr;
+
+/** This takes a pointer to a control (ancillary) message and determines if it's valid or not. */
+#define ETCPAL_CMSG_IS_VALID(cmsg) ((cmsg)->valid)
+
+/** Information about a datagram packet received with etcpal_recvmsg. */
+typedef struct EtcPalPktInfo
+{
+  EtcPalIpAddr addr;    /**< The destination address of the packet */
+  unsigned int ifindex; /**< The index of the interface the packet was received on */
+} EtcPalPktInfo;
+
 /**
  * @name 'how' values for etcpal_shutdown()
  * @{
@@ -197,6 +230,33 @@ typedef struct EtcPalGroupReq
  * @}
  */
 
+/**
+ * @name Output 'flags' values for etcpal_recvmsg()
+ * @{
+ */
+#define ETCPAL_MSG_TRUNC  0x2 /**< Packet data was truncated due to insufficient space in the buffer */
+#define ETCPAL_MSG_CTRUNC 0x4 /**< Ancillary data was truncated due to insufficient space in the buffer */
+/**
+ * @}
+ */
+
+/**
+ * @name Defines for CMSG buffer sizes required for various CMSG types
+ * @{
+ */
+/** The minimum size a CMSG buffer needs to store one IPv4 PKTINFO message. */
+#define ETCPAL_CONTROL_SIZE_IP_PKTINFO ETCPAL_PLATFORM_IN_PKTINFO_SPACE
+
+/** The minimum size a CMSG buffer needs to store one IPv6 PKTINFO message.
+ *
+ * In order for this to be used on Linux, the application must define _GNU_SOURCE. In order for this to be used on Mac,
+ * the application must define _GNU_SOURCE and __APPLE_USE_RFC_3542.
+ */
+#define ETCPAL_CONTROL_SIZE_IPV6_PKTINFO ETCPAL_PLATFORM_IN6_PKTINFO_SPACE
+/**
+ * @}
+ */
+
 /********************** Mimic sys/socket.h functions *************************/
 
 #ifdef __cplusplus
@@ -217,8 +277,11 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id,
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog);
 int            etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags);
 int            etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockAddr* address);
-/* recvmsg - not implemented */
-int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags);
+int            etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags);
+bool           etcpal_cmsg_firsthdr(EtcPalMsgHdr* msgh, EtcPalCMsgHdr* firsthdr);
+bool           etcpal_cmsg_nxthdr(EtcPalMsgHdr* msgh, const EtcPalCMsgHdr* cmsg, EtcPalCMsgHdr* nxthdr);
+bool           etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo);
+int            etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags);
 /* sendmsg - not implemented */
 int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int flags, const EtcPalSockAddr* dest_addr);
 etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,

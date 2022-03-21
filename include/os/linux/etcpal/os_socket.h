@@ -20,6 +20,7 @@
 #ifndef ETCPAL_OS_SOCKET_H_
 #define ETCPAL_OS_SOCKET_H_
 
+#include <sys/socket.h>
 #include "etcpal/inet.h"
 #include "etcpal/rbtree.h"
 
@@ -45,6 +46,11 @@ typedef struct EtcPalPollContext
   int          epoll_fd;
   EtcPalRbTree sockets;
 } EtcPalPollContext;
+
+/* Definitions for the etcpal_recvmsg API */
+
+#define ETCPAL_PLATFORM_IN_PKTINFO_SPACE  CMSG_SPACE(sizeof(struct in_pktinfo))
+#define ETCPAL_PLATFORM_IN6_PKTINFO_SPACE CMSG_SPACE(sizeof(struct in6_pktinfo))
 
 #ifdef __cplusplus
 }
