@@ -17,6 +17,17 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+// These are defined before the includes to enable ETCPAL_MAX_CONTROL_SIZE_PKTINFO support on Mac & Linux.
+#if defined(__linux__) || defined(__APPLE__)
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif  // _GNU_SOURCE
+
+#ifndef __APPLE_USE_RFC_3542
+#define __APPLE_USE_RFC_3542
+#endif  // __APPLE_USE_RFC_3542
+#endif  // defined(__linux__) || defined(__APPLE__)
+
 #include "etcpal/socket.h"
 #include "unity_fixture.h"
 
@@ -437,14 +448,14 @@ TEST(etcpal_socket, recvmsg_works)
   etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
   recvmsg_test_setup(&recv_sock);
 
-  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]    = {0};
-  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
   EtcPalMsgHdr msg = {0};
   msg.buf          = buf;
   msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
   msg.control      = control;
-  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+  msg.controllen   = ETCPAL_MAX_CONTROL_SIZE_PKTINFO;
 
   TEST_ASSERT_EQUAL(RECVMSG_TEST_MESSAGE_LENGTH, etcpal_recvmsg(recv_sock, &msg, 0));
 
@@ -463,14 +474,14 @@ TEST(etcpal_socket, recvmsg_trunc_flag_works)
   etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
   recvmsg_test_setup(&recv_sock);
 
-  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]        = {0};
-  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]         = {0};
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
   EtcPalMsgHdr msg = {0};
   msg.buf          = buf;
   msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH - 1;  // Intentionally 1 byte short to trigger TRUNC flag.
   msg.control      = control;
-  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+  msg.controllen   = ETCPAL_MAX_CONTROL_SIZE_PKTINFO;
 
   // Windows, Mac, and Linux return the truncated length here, but lwIP returns the full length.
   TEST_ASSERT(etcpal_recvmsg(recv_sock, &msg, 0) >= (RECVMSG_TEST_MESSAGE_LENGTH - 1));
@@ -488,8 +499,8 @@ TEST(etcpal_socket, recvmsg_ctrunc_flag_works)
   etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
   recvmsg_test_setup(&recv_sock);
 
-  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]        = {0};
-  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]         = {0};
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
   EtcPalMsgHdr msg = {0};
   msg.buf          = buf;
@@ -512,14 +523,14 @@ TEST(etcpal_socket, recvmsg_peek_flag_works)
   etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
   recvmsg_test_setup(&recv_sock);
 
-  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]    = {0};
-  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
   EtcPalMsgHdr msg = {0};
   msg.buf          = buf;
   msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
   msg.control      = control;
-  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+  msg.controllen   = ETCPAL_MAX_CONTROL_SIZE_PKTINFO;
 
   TEST_ASSERT_EQUAL(RECVMSG_TEST_MESSAGE_LENGTH, etcpal_recvmsg(recv_sock, &msg, ETCPAL_MSG_PEEK));
 
@@ -546,14 +557,14 @@ TEST(etcpal_socket, recvmsg_trunc_peek_works)
   etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
   recvmsg_test_setup(&recv_sock);
 
-  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]    = {0};
-  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
   EtcPalMsgHdr msg = {0};
   msg.buf          = buf;
   msg.buflen       = 1u;  // Intentionally too short to trigger TRUNC flag.
   msg.control      = control;
-  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+  msg.controllen   = ETCPAL_MAX_CONTROL_SIZE_PKTINFO;
 
   // Windows, Mac, and Linux return the truncated length here, but lwIP returns the full length.
   TEST_ASSERT(etcpal_recvmsg(recv_sock, &msg, ETCPAL_MSG_PEEK) >= 1);

@@ -17,7 +17,7 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-// These are defined before the includes to enable ETCPAL_CONTROL_SIZE_IPV6_PKTINFO support on Mac & Linux.
+// These are defined before the includes to enable ETCPAL_MAX_CONTROL_SIZE_PKTINFO support on Mac & Linux.
 #if defined(__linux__) || defined(__APPLE__)
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -409,8 +409,8 @@ TEST(socket_integration_udp, unicast_udp_ipv4_sendto_recvmsg)
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], ETCPAL_IPPROTO_IP, ETCPAL_IP_PKTINFO, &intval, sizeof(int)));
 
-  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
-  unicast_udp_sendto_recvmsg_test(kEtcPalIpTypeV4, control, ETCPAL_CONTROL_SIZE_IP_PKTINFO);
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
+  unicast_udp_sendto_recvmsg_test(kEtcPalIpTypeV4, control, ETCPAL_MAX_CONTROL_SIZE_PKTINFO);
   unicast_udp_cleanup();
 }
 
@@ -432,8 +432,8 @@ TEST(socket_integration_udp, unicast_udp_ipv6_sendto_recvmsg)
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], ETCPAL_IPPROTO_IPV6, ETCPAL_IPV6_PKTINFO, &intval, sizeof(int)));
 
-  uint8_t control[ETCPAL_CONTROL_SIZE_IPV6_PKTINFO] = {0};
-  unicast_udp_sendto_recvmsg_test(kEtcPalIpTypeV6, control, ETCPAL_CONTROL_SIZE_IPV6_PKTINFO);
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
+  unicast_udp_sendto_recvmsg_test(kEtcPalIpTypeV6, control, ETCPAL_MAX_CONTROL_SIZE_PKTINFO);
   unicast_udp_cleanup();
 }
 #endif  // ETCPAL_TEST_IPV6
@@ -702,8 +702,8 @@ TEST(socket_integration_udp, multicast_udp_ipv4_sendto_recvmsg)
   EtcPalIpAddr pktinfo_expected_addr;
   ETCPAL_IP_SET_V4_ADDRESS(&pktinfo_expected_addr, kTestMcastAddrIPv4);
 
-  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
-  multicast_udp_sendto_recvmsg_test(&pktinfo_expected_addr, v4_netint, control, ETCPAL_CONTROL_SIZE_IP_PKTINFO);
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
+  multicast_udp_sendto_recvmsg_test(&pktinfo_expected_addr, v4_netint, control, ETCPAL_MAX_CONTROL_SIZE_PKTINFO);
 
   multicast_udp_cleanup();
 }
@@ -729,8 +729,8 @@ TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvmsg)
   EtcPalIpAddr pktinfo_expected_addr;
   ETCPAL_IP_SET_V6_ADDRESS(&pktinfo_expected_addr, kTestMcastAddrIPv6);
 
-  uint8_t control[ETCPAL_CONTROL_SIZE_IPV6_PKTINFO] = {0};
-  multicast_udp_sendto_recvmsg_test(&pktinfo_expected_addr, v6_netint, control, ETCPAL_CONTROL_SIZE_IPV6_PKTINFO);
+  uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
+  multicast_udp_sendto_recvmsg_test(&pktinfo_expected_addr, v6_netint, control, ETCPAL_MAX_CONTROL_SIZE_PKTINFO);
 
   multicast_udp_cleanup();
 }

@@ -253,6 +253,16 @@ typedef struct EtcPalPktInfo
  * the application must define _GNU_SOURCE and __APPLE_USE_RFC_3542.
  */
 #define ETCPAL_CONTROL_SIZE_IPV6_PKTINFO ETCPAL_PLATFORM_IN6_PKTINFO_SPACE
+
+/** The minimum size a CMSG buffer needs to store one PKTINFO message (IPv4 or IPv6).
+ *
+ * In order for this to be used on Linux, the application must define _GNU_SOURCE. In order for this to be used on Mac,
+ * the application must define _GNU_SOURCE and __APPLE_USE_RFC_3542.
+ */
+#define ETCPAL_MAX_CONTROL_SIZE_PKTINFO                                                               \
+  (ETCPAL_CONTROL_SIZE_IP_PKTINFO > ETCPAL_CONTROL_SIZE_IPV6_PKTINFO ? ETCPAL_CONTROL_SIZE_IP_PKTINFO \
+                                                                     : ETCPAL_CONTROL_SIZE_IPV6_PKTINFO)
+
 /**
  * @}
  */
