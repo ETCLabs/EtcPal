@@ -541,6 +541,41 @@ TEST(etcpal_socket, recvmsg_peek_flag_works)
   etcpal_close(recv_sock);
 }
 
+TEST(etcpal_socket, recvmsg_trunc_peek_works)
+{
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  recvmsg_test_setup(&recv_sock);
+
+  uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]    = {0};
+  uint8_t control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
+
+  EtcPalMsgHdr msg = {0};
+  msg.buf          = buf;
+  msg.buflen       = 1u;  // Intentionally too short to trigger TRUNC flag.
+  msg.control      = control;
+  msg.controllen   = ETCPAL_CONTROL_SIZE_IP_PKTINFO;
+
+  // Windows, Mac, and Linux return the truncated length here, but lwIP returns the full length.
+  TEST_ASSERT(etcpal_recvmsg(recv_sock, &msg, ETCPAL_MSG_PEEK) >= 1);
+  TEST_ASSERT(msg.flags & ETCPAL_MSG_TRUNC);
+
+  // Verify the full, non-truncatad data can still be received, removing it from the input queue.
+  memset(buf, 0, RECVMSG_TEST_MESSAGE_LENGTH);
+  msg.buflen = RECVMSG_TEST_MESSAGE_LENGTH;
+  TEST_ASSERT_EQUAL(RECVMSG_TEST_MESSAGE_LENGTH, etcpal_recvmsg(recv_sock, &msg, 0));
+
+  buf[RECVMSG_TEST_MESSAGE_LENGTH] = '\0';
+  TEST_ASSERT_EQUAL_STRING((char*)buf, RECVMSG_TEST_MESSAGE);
+
+  TEST_ASSERT_EQUAL(0, msg.flags);
+
+  // Verify nothing remains on the input queue.
+  etcpal_error_t result = etcpal_recvmsg(recv_sock, &msg, 0);
+  TEST_ASSERT((result == kEtcPalErrTimedOut) || (result == kEtcPalErrWouldBlock));
+
+  etcpal_close(recv_sock);
+}
+
 TEST_GROUP_RUNNER(etcpal_socket)
 {
   RUN_TEST_CASE(etcpal_socket, bind_works_as_expected);
@@ -557,4 +592,5 @@ TEST_GROUP_RUNNER(etcpal_socket)
   RUN_TEST_CASE(etcpal_socket, recvmsg_trunc_flag_works);
   RUN_TEST_CASE(etcpal_socket, recvmsg_ctrunc_flag_works);
   RUN_TEST_CASE(etcpal_socket, recvmsg_peek_flag_works);
+  RUN_TEST_CASE(etcpal_socket, recvmsg_trunc_peek_works);
 }
