@@ -525,6 +525,40 @@ inline bool operator>=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
   return !(a < b);
 }
 
+/* Comparison operators for McastNetintIds */
+
+inline bool operator==(const EtcPalMcastNetintId& a, const EtcPalMcastNetintId& b)
+{
+  return (a.index == b.index) && (a.ip_type == b.ip_type);
+}
+
+inline bool operator!=(const EtcPalMcastNetintId& a, const EtcPalMcastNetintId& b)
+{
+  return !(a == b);
+}
+
+inline bool operator<(const EtcPalMcastNetintId& a, const EtcPalMcastNetintId& b)
+{
+  if (a.index == b.index)
+    return a.ip_type < b.ip_type;
+  return a.index < b.index;
+}
+
+inline bool operator>(const EtcPalMcastNetintId& a, const EtcPalMcastNetintId& b)
+{
+  return b < a;
+}
+
+inline bool operator<=(const EtcPalMcastNetintId& a, const EtcPalMcastNetintId& b)
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const EtcPalMcastNetintId& a, const EtcPalMcastNetintId& b)
+{
+  return !(a < b);
+}
+
 #endif
 
 /**
