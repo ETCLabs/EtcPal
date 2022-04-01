@@ -29,6 +29,7 @@
 #include <string>
 #include "etcpal/pack.h"
 #include "etcpal/uuid.h"
+#include "etcpal/cpp/hash.h"
 
 namespace etcpal
 {
@@ -403,5 +404,29 @@ inline bool operator>=(const Uuid& a, const Uuid& b) noexcept
 /// @}
 
 };  // namespace etcpal
+
+/// @cond std namespace specializations
+
+namespace std
+{
+// Inject a new std::hash specialization for etcpal::Uuid, so that UUIDs can be used in hash-based containers (e.g.
+// unordered_map and unordered_set) without a user needing to create a hash specialization.
+//
+// The std::hash specialization combines hashes of each byte of the underlying data.
+template <>
+struct hash<::etcpal::Uuid>
+{
+  std::size_t operator()(const ::etcpal::Uuid& uuid) const noexcept
+  {
+    size_t seed = 0u;
+    for (int i = 0; i < ETCPAL_UUID_BYTES; ++i)
+      ::etcpal::HashCombine(seed, uuid.data()[i]);
+
+    return seed;
+  }
+};
+};  // namespace std
+
+/// @endcond
 
 #endif  // ETCPAL_CPP_UUID_H_

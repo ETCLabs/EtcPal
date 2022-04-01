@@ -25,6 +25,7 @@
 #include <cctype>
 #include <cstring>
 #include <string>
+#include <unordered_set>
 
 static void ConvertStringToLowercase(std::string& str)
 {
@@ -630,6 +631,130 @@ TEST(etcpal_cpp_inet, mac_to_array_works)
   TEST_ASSERT_TRUE(mac.ToArray() == mac_data);
 }
 
+TEST(etcpal_cpp_inet, adding_ips_to_unordered_set_works)
+{
+  std::unordered_set<etcpal::IpAddr> ips;
+  ips.insert(etcpal::IpAddr::FromString("10.101.0.1"));
+  ips.insert(etcpal::IpAddr::FromString("10.101.0.2"));
+  ips.insert(etcpal::IpAddr::FromString("10.101.0.3"));
+  ips.insert(etcpal::IpAddr::FromString("10.101.0.4"));
+  ips.insert(etcpal::IpAddr::FromString("2001:db8::2222:3333"));
+  ips.insert(etcpal::IpAddr::FromString("2001:db8::4444:5555"));
+
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.1")) != ips.end());
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.2")) != ips.end());
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.3")) != ips.end());
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.4")) != ips.end());
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("2001:db8::2222:3333")) != ips.end());
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("2001:db8::4444:5555")) != ips.end());
+
+  ips.erase(etcpal::IpAddr::FromString("10.101.0.1"));
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.1")) == ips.end());
+  ips.erase(etcpal::IpAddr::FromString("10.101.0.2"));
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.2")) == ips.end());
+  ips.erase(etcpal::IpAddr::FromString("10.101.0.3"));
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.3")) == ips.end());
+  ips.erase(etcpal::IpAddr::FromString("10.101.0.4"));
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("10.101.0.4")) == ips.end());
+  ips.erase(etcpal::IpAddr::FromString("2001:db8::2222:3333"));
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("2001:db8::2222:3333")) == ips.end());
+  ips.erase(etcpal::IpAddr::FromString("2001:db8::4444:5555"));
+  TEST_ASSERT_TRUE(ips.find(etcpal::IpAddr::FromString("2001:db8::4444:5555")) == ips.end());
+}
+
+TEST(etcpal_cpp_inet, adding_sockaddrs_to_unordered_set_works)
+{
+  std::unordered_set<etcpal::SockAddr> sockaddrs;
+  sockaddrs.insert(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.1"), 1234u));
+  sockaddrs.insert(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.2"), 1234u));
+  sockaddrs.insert(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.3"), 1234u));
+  sockaddrs.insert(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.4"), 1234u));
+  sockaddrs.insert(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 1234u));
+  sockaddrs.insert(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::4444:5555"), 1234u));
+
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.1"), 1234u)) !=
+                   sockaddrs.end());
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.2"), 1234u)) !=
+                   sockaddrs.end());
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.3"), 1234u)) !=
+                   sockaddrs.end());
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.4"), 1234u)) !=
+                   sockaddrs.end());
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 1234u)) !=
+                   sockaddrs.end());
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::4444:5555"), 1234u)) !=
+                   sockaddrs.end());
+
+  sockaddrs.erase(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.1"), 1234u));
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.1"), 1234u)) ==
+                   sockaddrs.end());
+  sockaddrs.erase(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.2"), 1234u));
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.2"), 1234u)) ==
+                   sockaddrs.end());
+  sockaddrs.erase(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.3"), 1234u));
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.3"), 1234u)) ==
+                   sockaddrs.end());
+  sockaddrs.erase(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.4"), 1234u));
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("10.101.0.4"), 1234u)) ==
+                   sockaddrs.end());
+  sockaddrs.erase(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 1234u));
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 1234u)) ==
+                   sockaddrs.end());
+  sockaddrs.erase(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::4444:5555"), 1234u));
+  TEST_ASSERT_TRUE(sockaddrs.find(etcpal::SockAddr(etcpal::IpAddr::FromString("2001:db8::4444:5555"), 1234u)) ==
+                   sockaddrs.end());
+}
+
+TEST(etcpal_cpp_inet, adding_macaddrs_to_unordered_set_works)
+{
+  std::unordered_set<etcpal::MacAddr> macaddrs;
+  macaddrs.insert(etcpal::MacAddr::FromString("00:00:00:00:00:00"));
+  macaddrs.insert(etcpal::MacAddr::FromString("11:11:11:11:11:11"));
+  macaddrs.insert(etcpal::MacAddr::FromString("22:22:22:22:22:22"));
+  macaddrs.insert(etcpal::MacAddr::FromString("33:33:33:33:33:33"));
+
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("00:00:00:00:00:00")) != macaddrs.end());
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("11:11:11:11:11:11")) != macaddrs.end());
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("22:22:22:22:22:22")) != macaddrs.end());
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("33:33:33:33:33:33")) != macaddrs.end());
+
+  macaddrs.erase(etcpal::MacAddr::FromString("00:00:00:00:00:00"));
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("00:00:00:00:00:00")) == macaddrs.end());
+  macaddrs.erase(etcpal::MacAddr::FromString("11:11:11:11:11:11"));
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("11:11:11:11:11:11")) == macaddrs.end());
+  macaddrs.erase(etcpal::MacAddr::FromString("22:22:22:22:22:22"));
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("22:22:22:22:22:22")) == macaddrs.end());
+  macaddrs.erase(etcpal::MacAddr::FromString("33:33:33:33:33:33"));
+  TEST_ASSERT_TRUE(macaddrs.find(etcpal::MacAddr::FromString("33:33:33:33:33:33")) == macaddrs.end());
+}
+
+TEST(etcpal_cpp_inet, invalid_ips_hash_to_same_value)
+{
+  auto addr1 = etcpal::IpAddr::FromString("10.101.0.1");
+  auto addr2 = etcpal::IpAddr::FromString("10.101.0.2");
+  auto addr3 = etcpal::IpAddr::FromString("10.101.0.3");
+  auto addr4 = etcpal::IpAddr::FromString("10.101.0.4");
+  auto addr5 = etcpal::IpAddr::FromString("2001:db8::2222:3333");
+  auto addr6 = etcpal::IpAddr::FromString("2001:db8::4444:5555");
+
+  addr1.get().type = kEtcPalIpTypeInvalid;
+  addr2.get().type = kEtcPalIpTypeInvalid;
+  addr3.get().type = kEtcPalIpTypeInvalid;
+  addr4.get().type = kEtcPalIpTypeInvalid;
+  addr5.get().type = kEtcPalIpTypeInvalid;
+  addr6.get().type = kEtcPalIpTypeInvalid;
+
+  std::unordered_set<etcpal::IpAddr> ips;
+  ips.insert(addr1);
+  ips.insert(addr2);
+  ips.insert(addr3);
+  ips.insert(addr4);
+  ips.insert(addr5);
+  ips.insert(addr6);
+
+  TEST_ASSERT_EQUAL(1u, ips.size());
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_inet)
 {
   RUN_TEST_CASE(etcpal_cpp_inet, c_ipaddr_equality_operators_work);
@@ -666,5 +791,9 @@ TEST_GROUP_RUNNER(etcpal_cpp_inet)
   RUN_TEST_CASE(etcpal_cpp_inet, mac_to_string_works);
   RUN_TEST_CASE(etcpal_cpp_inet, mac_from_string_works);
   RUN_TEST_CASE(etcpal_cpp_inet, mac_to_array_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, adding_ips_to_unordered_set_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, adding_sockaddrs_to_unordered_set_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, adding_macaddrs_to_unordered_set_works);
+  RUN_TEST_CASE(etcpal_cpp_inet, invalid_ips_hash_to_same_value);
 }
 }

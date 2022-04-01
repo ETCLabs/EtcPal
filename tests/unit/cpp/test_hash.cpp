@@ -17,36 +17,38 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/cpp/hash.h"
 #include "unity_fixture.h"
 
-extern "C" void run_all_tests(void)  // NOLINT
+#include <functional>
+#include <string>
+
+extern "C" {
+TEST_GROUP(etcpal_cpp_hash);
+
+TEST_SETUP(etcpal_cpp_hash)
 {
-  RUN_TEST_GROUP(etcpal_cpp_error);
-  RUN_TEST_GROUP(etcpal_cpp_hash);
-  RUN_TEST_GROUP(etcpal_cpp_uuid);
-  RUN_TEST_GROUP(etcpal_cpp_opaque_id);
-#if !ETCPAL_NO_OS_SUPPORT
-#if !DISABLE_EVENT_GROUP_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_event_group);
-#endif
-  RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
-  RUN_TEST_GROUP(etcpal_cpp_log);
-  RUN_TEST_GROUP(etcpal_cpp_mutex);
-#if !DISABLE_RECURSIVE_MUTEX_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_recursive_mutex);
-#endif
-  RUN_TEST_GROUP(etcpal_cpp_rwlock);
-  RUN_TEST_GROUP(etcpal_cpp_sem);
-  RUN_TEST_GROUP(etcpal_cpp_signal);
-  RUN_TEST_GROUP(etcpal_cpp_thread);
-  RUN_TEST_GROUP(etcpal_cpp_timer);
+}
 
-#if !DISABLE_QUEUE_TESTS
-  RUN_TEST_GROUP(etcpal_cpp_queue);
-#endif
+TEST_TEAR_DOWN(etcpal_cpp_hash)
+{
+}
 
-#endif
-#if !ETCPAL_NO_NETWORKING_SUPPORT
-  RUN_TEST_GROUP(etcpal_cpp_inet);
-#endif
+TEST(etcpal_cpp_hash, hash_combine_works)
+{
+  int         val1 = 1234;
+  std::string val2("5678");
+
+  size_t seed = std::hash<int>()(val1);
+  etcpal::HashCombine(seed, val2);
+
+  TEST_ASSERT_NOT_EQUAL(seed, 0u);
+  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
+  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
+}
+
+TEST_GROUP_RUNNER(etcpal_cpp_hash)
+{
+  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
+}
 }

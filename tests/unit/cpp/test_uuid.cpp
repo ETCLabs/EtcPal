@@ -20,6 +20,8 @@
 #include "etcpal/cpp/uuid.h"
 #include "unity_fixture.h"
 
+#include <unordered_set>
+
 extern "C" {
 TEST_GROUP(etcpal_cpp_uuid);
 
@@ -345,6 +347,29 @@ TEST(etcpal_cpp_uuid, accessors_work)
   TEST_ASSERT_EQUAL_UINT8_ARRAY(uuid.data(), uuid_data.data(), 16);
 }
 
+TEST(etcpal_cpp_uuid, adding_uuids_to_unordered_set_works)
+{
+  std::unordered_set<etcpal::Uuid> uuids;
+  uuids.insert(etcpal::Uuid::FromString("00000000-0000-0000-0000-000000000000"));
+  uuids.insert(etcpal::Uuid::FromString("11111111-1111-1111-1111-111111111111"));
+  uuids.insert(etcpal::Uuid::FromString("22222222-2222-2222-2222-222222222222"));
+  uuids.insert(etcpal::Uuid::FromString("33333333-3333-3333-3333-333333333333"));
+
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("00000000-0000-0000-0000-000000000000")) != uuids.end());
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("11111111-1111-1111-1111-111111111111")) != uuids.end());
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("22222222-2222-2222-2222-222222222222")) != uuids.end());
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("33333333-3333-3333-3333-333333333333")) != uuids.end());
+
+  uuids.erase(etcpal::Uuid::FromString("00000000-0000-0000-0000-000000000000"));
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("00000000-0000-0000-0000-000000000000")) == uuids.end());
+  uuids.erase(etcpal::Uuid::FromString("11111111-1111-1111-1111-111111111111"));
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("11111111-1111-1111-1111-111111111111")) == uuids.end());
+  uuids.erase(etcpal::Uuid::FromString("22222222-2222-2222-2222-222222222222"));
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("22222222-2222-2222-2222-222222222222")) == uuids.end());
+  uuids.erase(etcpal::Uuid::FromString("33333333-3333-3333-3333-333333333333"));
+  TEST_ASSERT_TRUE(uuids.find(etcpal::Uuid::FromString("33333333-3333-3333-3333-333333333333")) == uuids.end());
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_uuid)
 {
   RUN_TEST_CASE(etcpal_cpp_uuid, default_constructor_works);
@@ -364,5 +389,6 @@ TEST_GROUP_RUNNER(etcpal_cpp_uuid)
   RUN_TEST_CASE(etcpal_cpp_uuid, comparison_operators_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, special_equality_operators_work);
   RUN_TEST_CASE(etcpal_cpp_uuid, accessors_work);
+  RUN_TEST_CASE(etcpal_cpp_uuid, adding_uuids_to_unordered_set_works);
 }
 }

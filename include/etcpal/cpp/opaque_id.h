@@ -244,10 +244,10 @@ namespace std
 // relational operators other than == and != to avoid the temptation to treat OpaqueIds like
 // numbers.
 template <class IdType, class ValueType, ValueType InvalidValue>
-struct less<etcpal::OpaqueId<IdType, ValueType, InvalidValue>>
+struct less<::etcpal::OpaqueId<IdType, ValueType, InvalidValue>>
 {
-  ETCPAL_CONSTEXPR_14 bool operator()(const etcpal::OpaqueId<IdType, ValueType, InvalidValue>& a,
-                                      const etcpal::OpaqueId<IdType, ValueType, InvalidValue>& b) const
+  ETCPAL_CONSTEXPR_14 bool operator()(const ::etcpal::OpaqueId<IdType, ValueType, InvalidValue>& a,
+                                      const ::etcpal::OpaqueId<IdType, ValueType, InvalidValue>& b) const
   {
     return a.value() < b.value();
   }
@@ -261,9 +261,9 @@ struct less<etcpal::OpaqueId<IdType, ValueType, InvalidValue>>
 // underlying value is not hashable, this specialization should simply be eliminated without a
 // compile error through SFINAE.
 template <class IdType, class ValueType, ValueType InvalidValue>
-struct hash<etcpal::OpaqueId<IdType, ValueType, InvalidValue>>
+struct hash<::etcpal::OpaqueId<IdType, ValueType, InvalidValue>>
 {
-  std::size_t operator()(const etcpal::OpaqueId<IdType, ValueType, InvalidValue>& id) const noexcept
+  std::size_t operator()(const ::etcpal::OpaqueId<IdType, ValueType, InvalidValue>& id) const noexcept
   {
     return std::hash<ValueType>()(id.value());
   }

@@ -30,6 +30,7 @@
 #include <string>
 #include "etcpal/inet.h"
 #include "etcpal/cpp/common.h"
+#include "etcpal/cpp/hash.h"
 
 namespace etcpal
 {
@@ -940,5 +941,65 @@ inline bool operator>=(const MacAddr& a, const MacAddr& b) noexcept
 /// @}
 
 };  // namespace etcpal
+
+/// @cond std namespace specializations
+
+// Inject new std::hash specializations for etcpal::IpAddr, SockAddr, and MacAddr, so that they can be used in
+// hash-based containers (e.g. unordered_map and unordered_set) without a user needing to create a hash specialization.
+//
+// The std::hash specializations use an efficient combination of hashes of the underlying data.
+namespace std
+{
+template <>
+struct hash<::etcpal::IpAddr>
+{
+  std::size_t operator()(const ::etcpal::IpAddr& addr) const noexcept
+  {
+    size_t seed = 0u;
+
+    if (addr.IsV6())
+    {
+      for (int i = 0; i < ETCPAL_IPV6_BYTES; ++i)
+        ::etcpal::HashCombine(seed, addr.v6_data()[i]);
+
+      ::etcpal::HashCombine(seed, addr.scope_id());
+    }
+    else if (addr.IsV4())
+    {
+      ::etcpal::HashCombine(seed, addr.v4_data());
+    }
+
+    ::etcpal::HashCombine(seed, static_cast<int>(addr.type()));
+
+    return seed;
+  }
+};
+
+template <>
+struct hash<::etcpal::SockAddr>
+{
+  std::size_t operator()(const ::etcpal::SockAddr& addr) const noexcept
+  {
+    size_t seed = 0u;
+    ::etcpal::HashCombine(seed, addr.ip());
+    ::etcpal::HashCombine(seed, addr.port());
+
+    return seed;
+  }
+};
+
+template <>
+struct hash<::etcpal::MacAddr>
+{
+  std::size_t operator()(const ::etcpal::MacAddr& addr) const noexcept
+  {
+    size_t seed = 0u;
+    for (int i = 0; i < ETCPAL_MAC_BYTES; ++i)
+      ::etcpal::HashCombine(seed, addr.data()[i]);
+
+    return seed;
+  }
+};
+};  // namespace std
 
 #endif  // ETCPAL_CPP_LOCK_H_
