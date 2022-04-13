@@ -56,6 +56,7 @@ DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_shutdown, etcpal_socket_t, int);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_socket, unsigned int, unsigned int, etcpal_socket_t*);
 
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setblocking, etcpal_socket_t, bool);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getblocking, etcpal_socket_t, bool*);
 
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_context_init, EtcPalPollContext*);
 DECLARE_FAKE_VOID_FUNC(etcpal_poll_context_deinit, EtcPalPollContext*);

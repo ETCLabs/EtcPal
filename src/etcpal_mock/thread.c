@@ -26,12 +26,15 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
                        EtcPalThreadFunc,
                        void*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_join, etcpal_thread_t*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_timed_join, etcpal_thread_t*, int);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_terminate, etcpal_thread_t*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_thread_os_handle_t, etcpal_thread_get_os_handle, etcpal_thread_t*);
 
 void etcpal_thread_reset_all_fakes(void)
 {
   RESET_FAKE(etcpal_thread_create);
   RESET_FAKE(etcpal_thread_join);
-
-  etcpal_thread_create_fake.return_val = kEtcPalErrOk;
-  etcpal_thread_join_fake.return_val   = kEtcPalErrOk;
+  RESET_FAKE(etcpal_thread_timed_join);
+  RESET_FAKE(etcpal_thread_terminate);
+  RESET_FAKE(etcpal_thread_get_os_handle);
 }

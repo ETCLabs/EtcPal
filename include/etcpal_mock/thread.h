@@ -38,7 +38,11 @@ DECLARE_FAKE_VALUE_FUNC(etcpal_error_t,
                         EtcPalThreadFunc,
                         void*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_join, etcpal_thread_t*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_timed_join, etcpal_thread_t*, int);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_terminate, etcpal_thread_t*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_thread_os_handle_t, etcpal_thread_get_os_handle, etcpal_thread_t*);
 // Not mocked: etcpal_thread_sleep()
+// Not mocked: etcpal_thread_get_current_os_handle()
 
 void etcpal_thread_reset_all_fakes(void);
 

@@ -40,6 +40,7 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_shutdown, etcpal_socket_t, int);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_socket, unsigned int, unsigned int, etcpal_socket_t*);
 
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_setblocking, etcpal_socket_t, bool);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_getblocking, etcpal_socket_t, bool*);
 
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_poll_context_init, EtcPalPollContext*);
 DEFINE_FAKE_VOID_FUNC(etcpal_poll_context_deinit, EtcPalPollContext*);
@@ -89,6 +90,7 @@ void etcpal_socket_reset_all_fakes(void)
   RESET_FAKE(etcpal_shutdown);
   RESET_FAKE(etcpal_socket);
   RESET_FAKE(etcpal_setblocking);
+  RESET_FAKE(etcpal_getblocking);
   RESET_FAKE(etcpal_poll_context_init);
   RESET_FAKE(etcpal_poll_context_deinit);
   RESET_FAKE(etcpal_poll_add_socket);
