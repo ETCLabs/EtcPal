@@ -34,6 +34,7 @@ DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interfaces, uint8_t*, 
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interface_by_index, unsigned int, uint8_t*, size_t*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_default_interface_index, etcpal_iptype_t, unsigned int*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_default_interface, etcpal_iptype_t, uint8_t*, size_t*);
+DECLARE_FAKE_VALUE_FUNC(bool, etcpal_netint_is_up, unsigned int);
 
 void etcpal_netint_reset_all_fakes(void);
 
