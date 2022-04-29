@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The compile-time configuration options `ETCPAL_EMBOS_USE_MALLOC` and `ETCPAL_EMBOS_MAX_NETINTS`.
   These definitions were no longer necessary with the new implementation of the netint API.
 - The EtcPal feature flag `ETCPAL_FEATURE_NETINTS` (`etcpal_init()` is no longer needed to use the
-  network interface API
+  network interface API)
 
 ## [0.4.1] - 2022-03-02
 
