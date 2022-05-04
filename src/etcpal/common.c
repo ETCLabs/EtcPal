@@ -33,19 +33,20 @@
 
 typedef struct EtcPalModule
 {
-  etcpal_features_t feature_mask;
   etcpal_error_t (*init_fn)();
   void (*deinit_fn)();
+  etcpal_features_t feature_mask;
+  unsigned int      init_count;
 } EtcPalModule;
 
-#define ETCPAL_MODULE(module_name, feature_mask)           \
-  {                                                        \
-    feature_mask, module_name##_init, module_name##_deinit \
+#define ETCPAL_MODULE(module_name, feature_mask)              \
+  {                                                           \
+    module_name##_init, module_name##_deinit, feature_mask, 0 \
   }
 
 /* clang-format off */
 
-static const EtcPalModule kEtcPalModules[] = {
+static EtcPalModule etcpal_modules[] = {
   ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),
 #if !ETCPAL_NO_OS_SUPPORT
   ETCPAL_MODULE(etcpal_timer, ETCPAL_FEATURE_TIMERS),
@@ -55,7 +56,7 @@ static const EtcPalModule kEtcPalModules[] = {
   ETCPAL_MODULE(etcpal_netint, ETCPAL_FEATURE_NETINTS),
 #endif
 };
-#define MODULE_ARRAY_SIZE (sizeof(kEtcPalModules) / sizeof(kEtcPalModules[0]))
+#define MODULE_ARRAY_SIZE (sizeof(etcpal_modules) / sizeof(etcpal_modules[0]))
 
 /* clang-format on */
 
@@ -70,15 +71,16 @@ static const EtcPalModule kEtcPalModules[] = {
  * etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_NETINTS);
  * @endcode
  *
- * This function can be called multiple times from the same application. Each call to etcpal_init()
- * must be paired with a call to etcpal_deinit() with the same argument for features.
+ * This function can be called multiple times from the same application. Each call to etcpal_init() must be paired with
+ * a call to etcpal_deinit() with the same argument for features. Counters are tracked for each feature so that
+ * etcpal_init() and etcpal_deinit() can be called multiple times for the same feature(s) (useful if running multiple
+ * libraries that depend on common EtcPal features).
  *
- * If you are using a library that depends on EtcPal, and not using EtcPal directly, that library
- * will call this function for you with the features it needs; you do not need to call it
- * explicitly.
+ * If you are using a library that depends on EtcPal, and not using EtcPal directly, please refer to that library's
+ * documentation to determine if you need to call this with the features the library needs.
  *
- * etcpal_init() and etcpal_deinit() are not thread-safe; you should make sure your init-time and
- * deinit-time code is serialized.
+ * etcpal_init() and etcpal_deinit() are not thread-safe; you should make sure your init-time and deinit-time code is
+ * serialized.
  *
  * @param[in] features Mask of EtcPal features required.
  * @return #kEtcPalErrOk: EtcPal library initialized successfully.
@@ -86,14 +88,11 @@ static const EtcPalModule kEtcPalModules[] = {
  */
 etcpal_error_t etcpal_init(etcpal_features_t features)
 {
-  // In this function and the deinit() function below, we create an array of structs for each EtcPal
-  // module that must be initialized, using the macros defined in etcpal/common.h and above in .his
-  // file. The structs contain the init and deinit functions for each module that is enabled by the
-  // feature macros.
-  //
-  // If any init fails, each struct contains a flag indicating whether it has already been
-  // initialized, so it can be cleaned up.
+  // In this function and the deinit() function below, we iterate the etcpal_modules array for each EtcPal module that
+  // must be initialized. The array contains the init and deinit functions and an init counter for each supported
+  // module.
 
+  // If any init fails, use this to track what has already been initialized, so it can be cleaned up.
   bool modules_initialized[MODULE_ARRAY_SIZE] = {false};
 
   etcpal_error_t init_res = kEtcPalErrOk;
@@ -101,14 +100,20 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   // Initialize each module in turn.
   for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
   {
-    const EtcPalModule* module = &kEtcPalModules[i];
+    EtcPalModule* module = &etcpal_modules[i];
     if (features & module->feature_mask)
     {
-      init_res = module->init_fn();
+      init_res = (module->init_count == 0) ? module->init_fn() : kEtcPalErrOk;
+
       if (init_res == kEtcPalErrOk)
+      {
+        ++(module->init_count);
         modules_initialized[i] = true;
+      }
       else
+      {
         break;
+      }
     }
   }
 
@@ -118,7 +123,12 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
     for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
     {
       if (modules_initialized[i])
-        kEtcPalModules[i].deinit_fn();
+      {
+        --(etcpal_modules[i].init_count);
+
+        if (etcpal_modules[i].init_count == 0)
+          etcpal_modules[i].deinit_fn();
+      }
     }
   }
 
@@ -128,17 +138,25 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
 /**
  * @brief Deinitialize the EtcPal library.
  *
- * This must be called with the same argument as the corresponding call to etcpal_init() to clean up
- * resources held by the feature modules.
+ * This must be called with the same argument as the corresponding call to etcpal_init() to clean up resources held by
+ * the feature modules.
+ *
+ * For each feature, this must be called the same number of times as etcpal_init() was called for that feature. The
+ * feature will be deinitialized on the final call.
  *
  * @param[in] features Feature mask that was previously passed to etcpal_init().
  */
 void etcpal_deinit(etcpal_features_t features)
 {
   // Deinitialize each module in turn.
-  for (const EtcPalModule* module = kEtcPalModules; module < kEtcPalModules + MODULE_ARRAY_SIZE; ++module)
+  for (EtcPalModule* module = etcpal_modules; module < etcpal_modules + MODULE_ARRAY_SIZE; ++module)
   {
-    if (features & module->feature_mask)
-      module->deinit_fn();
+    if ((features & module->feature_mask) && (module->init_count > 0))
+    {
+      --(module->init_count);
+
+      if (module->init_count == 0)
+        module->deinit_fn();
+    }
   }
 }

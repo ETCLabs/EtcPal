@@ -25,7 +25,7 @@
 
 /**************************** Private variables ******************************/
 
-static unsigned int     init_count;
+static bool             initialized = false;
 static CachedNetintInfo netint_cache;
 
 /*********************** Private function prototypes *************************/
@@ -36,30 +36,24 @@ static int compare_netints(const void* a, const void* b);
 
 etcpal_error_t etcpal_netint_init(void)
 {
-  etcpal_error_t res = kEtcPalErrOk;
-  if (init_count == 0)
-  {
-    res = os_enumerate_interfaces(&netint_cache);
-    if (res == kEtcPalErrOk)
-    {
-      // Sort the interfaces by OS index
-      qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
-    }
-  }
+  etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
 
   if (res == kEtcPalErrOk)
-    ++init_count;
+  {
+    // Sort the interfaces by OS index
+    qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+
+    initialized = true;
+  }
 
   return res;
 }
 
 void etcpal_netint_deinit(void)
 {
-  if (--init_count == 0)
-  {
-    os_free_interfaces(&netint_cache);
-    memset(&netint_cache, 0, sizeof(netint_cache));
-  }
+  os_free_interfaces(&netint_cache);
+  memset(&netint_cache, 0, sizeof(netint_cache));
+  initialized = false;
 }
 
 /**
@@ -68,7 +62,7 @@ void etcpal_netint_deinit(void)
  */
 size_t etcpal_netint_get_num_interfaces(void)
 {
-  return (init_count ? netint_cache.num_netints : 0);
+  return (initialized ? netint_cache.num_netints : 0);
 }
 
 /**
@@ -83,7 +77,7 @@ size_t etcpal_netint_get_num_interfaces(void)
  */
 const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
 {
-  return (init_count ? netint_cache.netints : NULL);
+  return (initialized ? netint_cache.netints : NULL);
 }
 
 /**
@@ -105,7 +99,7 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int             in
 {
   if (index == 0 || !netint_arr || !netint_arr_size)
     return kEtcPalErrInvalid;
-  if (!init_count)
+  if (!initialized)
     return kEtcPalErrNotInit;
 
   size_t arr_size = 0;
@@ -160,7 +154,7 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
 {
   if (!netint_index)
     return kEtcPalErrInvalid;
-  if (!init_count)
+  if (!initialized)
     return kEtcPalErrNotInit;
 
   if (type == kEtcPalIpTypeV4)
@@ -198,7 +192,7 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, un
 {
   if (!dest || !netint_index)
     return kEtcPalErrInvalid;
-  if (!init_count)
+  if (!initialized)
     return kEtcPalErrNotInit;
   if (netint_cache.num_netints == 0)
     return kEtcPalErrNoNetints;
@@ -245,7 +239,7 @@ etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)  // NOLINT(r
  */
 bool etcpal_netint_is_up(unsigned int netint_index)
 {
-  if (!init_count || netint_index == 0)
+  if (!initialized || netint_index == 0)
     return false;
 
   return os_netint_is_up(netint_index, &netint_cache);

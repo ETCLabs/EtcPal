@@ -66,6 +66,9 @@ TEST(etcpal_common, netint_double_init_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_netint));
 
   etcpal_deinit(ETCPAL_FEATURE_NETINTS);
+
+  // After the second deinit, calling the module should return an error.
+  TEST_ASSERT_EQUAL(kEtcPalErrNotInit, etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &def_netint));
 }
 #endif
 
@@ -96,6 +99,10 @@ TEST(etcpal_common, log_double_init_works)
   TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 2);
 
   etcpal_deinit(ETCPAL_FEATURE_LOGGING);
+
+  // After the second deinit, etcpal_log() should no longer fire the callback.
+  etcpal_log(&params, ETCPAL_LOG_INFO, "Log message");
+  TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 2);
 }
 
 TEST_GROUP_RUNNER(etcpal_common)

@@ -82,7 +82,7 @@ static const char* const kMonthNames[12] = {
 
 /**************************** Private variables ******************************/
 
-static unsigned int init_count;
+static bool initialized = false;
 #if !ETCPAL_NO_OS_SUPPORT
 static etcpal_mutex_t buf_lock;
 #endif
@@ -124,28 +124,20 @@ static bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestam
 etcpal_error_t etcpal_log_init(void)
 {
 #if !ETCPAL_NO_OS_SUPPORT
-  if (init_count == 0)
-  {
-    if (!etcpal_mutex_create(&buf_lock))
-    {
-      return kEtcPalErrSys;
-    }
-  }
+  if (!etcpal_mutex_create(&buf_lock))
+    return kEtcPalErrSys;
 #endif
-  ++init_count;
+  initialized = true;
   return kEtcPalErrOk;
 }
 
 /* Deinitialize the etcpal_log module. */
 void etcpal_log_deinit(void)
 {
-  --init_count;
 #if !ETCPAL_NO_OS_SUPPORT
-  if (init_count == 0)
-  {
-    etcpal_mutex_destroy(&buf_lock);
-  }
+  etcpal_mutex_destroy(&buf_lock);
 #endif
+  initialized = false;
 }
 
 /**
@@ -423,7 +415,7 @@ void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
  */
 void etcpal_vlog(const EtcPalLogParams* params, int pri, const char* format, va_list args)
 {
-  if (!init_count || !params || !params->log_fn || !format || !(ETCPAL_LOG_MASK(pri) & params->log_mask))
+  if (!initialized || !params || !params->log_fn || !format || !(ETCPAL_LOG_MASK(pri) & params->log_mask))
     return;
 
   EtcPalLogTimestamp timestamp;
