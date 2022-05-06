@@ -23,18 +23,19 @@
 #include "etcpal/common.h"
 #include "etcpal/sem.h"
 #include "etcpal/thread.h"
+#include "zephyr/kernel.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define ETCPAL_THREAD_DEFAULT_PRIORITY (configMAX_PRIORITIES / 2)
+#define ETCPAL_THREAD_DEFAULT_PRIORITY (5)
 #define ETCPAL_THREAD_DEFAULT_STACK    2000
 #define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
 #define ETCPAL_THREAD_HAS_TIMED_JOIN   1
 #define ETCPAL_THREAD_NAME_MAX_LENGTH  16
 
-typedef int etcpal_thread_os_handle_t;
+typedef k_tid_t etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
 
 typedef struct
@@ -43,6 +44,7 @@ typedef struct
   void*             arg;
   etcpal_sem_t sig;
   etcpal_thread_os_handle_t      tid;
+  //k_thread data;
 } etcpal_thread_t;
 
 #define etcpal_thread_sleep(sleep_ms)       void()

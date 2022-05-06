@@ -18,39 +18,55 @@
  ******************************************************************************/
 
 #include "etcpal/thread.h"
+#include "zephyr/kernel/thread.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
 static void thread_func_internal(void* pvParameters)
 {
-
+  // Zephyr Threads terminate synchronously by returning from their entry point
+  // function (this function)
+  // https://docs.zephyrproject.org/3.0.0/reference/kernel/threads/index.html#thread-termination
+  
 }
 
+/*
+ * From the Zephyr docs:
+ *   A cooperative thread has a negative priority value. Once it becomes the
+ *   current thread, a cooperative thread remains the current thread until it
+ *   performs an action that makes it unready.
+ *  
+ *   A preemptible thread has a non-negative priority value. Once it becomes the
+ *   current thread, a preemptible thread may be supplanted at any time if a
+ *   cooperative thread, or a preemptible thread of higher or equal priority, becomes
+ *   ready.
+ **/
 etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
                                     const EtcPalThreadParams* params,
                                     void (*thread_fn)(void*),
                                     void* thread_arg)
 {
-
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
-
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 {
-
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 {
-
+  return kEtcPalErrNotImpl;
 }
 
 etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id)
 {
+  return kEtcPalErrNotImpl;
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
