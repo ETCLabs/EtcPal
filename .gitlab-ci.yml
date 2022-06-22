@@ -17,11 +17,11 @@ variables:
 include:
   # Helper for environment setup for native Ninja builds with Windows/MSVC
   - project: "etc/common-tech/tools/gitlab-ci-util"
-    ref: v2.0.0
+    ref: v2.0.1
     file: "/ci-yml/msvc-environment.yml"
   # Versioned build automation
   - project: "etc/common-tech/tools/gitlab-ci-util"
-    ref: v2.0.0
+    ref: v2.0.1
     file: "/ci-yml/deploy-versioned-build.yml"
 
 windows-build-and-test:
