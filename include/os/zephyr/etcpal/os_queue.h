@@ -21,6 +21,10 @@
 #define ETCPAL_OS_QUEUE_H_
 
 #include "etcpal/common.h"
+#include "etcpal/os_common.h"
+
+#include "kernel.h"
+
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -28,12 +32,14 @@
 extern "C" {
 #endif
 
-typedef int etcpal_queue_t;
+typedef struct k_msgq etcpal_queue_t;
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS 1
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS 1
 
 bool etcpal_queue_create(etcpal_queue_t *id, size_t size, size_t item_size);
+bool etcpal_queue_create_static(etcpal_queue_t *id, size_t size,
+                                size_t item_size, uint8_t* buffer);
 void etcpal_queue_destroy(etcpal_queue_t *id);
 
 bool etcpal_queue_send(etcpal_queue_t *id, const void *data);

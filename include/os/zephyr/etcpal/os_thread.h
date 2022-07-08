@@ -23,6 +23,7 @@
 #include "etcpal/common.h"
 #include "etcpal/sem.h"
 #include "etcpal/thread.h"
+#include "etcpal/os_common.h"
 #include "zephyr/kernel.h"
 
 

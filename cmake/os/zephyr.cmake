@@ -11,3 +11,5 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
 	)
 set(ETCPAL_OS_INCLUDE_DIR ${ETCPAL_ROOT}/include/os/zephyr)
 set(ETCPAL_OS_ADDITIONAL_LIBS kernel)
+
+add_compile_definitions(ETCPAL_OS_IS_ZEPHYR)
