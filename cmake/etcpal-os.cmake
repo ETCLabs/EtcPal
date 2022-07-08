@@ -7,6 +7,7 @@ set(VALID_ETCPAL_OS_TARGETS
   macos
   mqx
   windows
+  zephyr
 )
 set(VALID_ETCPAL_NET_TARGETS
   ios
