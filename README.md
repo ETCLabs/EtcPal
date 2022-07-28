@@ -11,23 +11,46 @@ portable. The EtcPal library serves this purpose in two main ways:
   of platform-neutral software libraries.
 * Provides a common location for utilities that are used by multiple other software libraries.
 
-## Docs
+## Documentation
 
-EtcPal's API documentation is located [here](https://etclabs.github.io/EtcPalDocs). The
-"modules" entry on the sidebar provides module-by-module documentation.
+EtcPal's API documentation is located [here](https://etclabs.github.io/EtcPalDocs). The "modules" entry on the sidebar provides module-by-module documentation.
 
-## Platform Ports
+## Supported Platforms
 
 EtcPal is currently ported for the following platforms:
-+ FreeRTOS (OS abstraction only)
-+ Linux
-+ lwIP (Network abstraction only)
-+ macOS
-+ Microsoft Windows
-+ MQX
+
+* FreeRTOS (OS abstraction only)
+* Linux
+* lwIP (Network abstraction only)
+* macOS
+* Microsoft Windows
+* MQX
 
 EtcPal is also buildable in no-OS (bare-metal) environments, with its platform-neutral utility
 functionality still available.
+
+## Supported Languages
+
+C++ wrappers support C++ version 14.
+
+C functionality supports C99 with the exception of the following features:
+
+* variable-length arrays
+* flexible array members
+* designated initializers
+* the "restrict" keyword
+
+## Quality Gates
+
+* Automated Testing
+* Automated Static Analysis
+* Automated Style Checking
+* Continuous Integration
+* Automated Dynamic Analysis
+
+## Revision Control
+
+EtcPal development is using Git for revision control.
 
 ## Building
 
@@ -39,7 +62,7 @@ like to build EtcPal on its own, there are instructions in the
 
 EtcPal is licensed under the Apache License 2.0. EtcPal also incorporates some third-party software
 with different license terms, disclosed in ThirdPartySoftware.txt in the directory containing this
-README file. 
+README file.
 
 ## About this ETCLabs Project
 
