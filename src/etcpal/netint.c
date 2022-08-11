@@ -40,7 +40,7 @@ etcpal_error_t etcpal_netint_init(void)
 {
   etcpal_error_t res = kEtcPalErrSys;
 
-  if (etcpal_mutex_create(&mutex) && etcpal_mutex_lock(&mutex))
+  if (etcpal_mutex_create(&mutex))
   {
     res = os_enumerate_interfaces(&netint_cache);
 
@@ -51,8 +51,6 @@ etcpal_error_t etcpal_netint_init(void)
 
       initialized = true;
     }
-
-    etcpal_mutex_unlock(&mutex);
   }
 
   return res;
@@ -60,14 +58,8 @@ etcpal_error_t etcpal_netint_init(void)
 
 void etcpal_netint_deinit(void)
 {
-  if (etcpal_mutex_lock(&mutex))
-  {
-    os_free_interfaces(&netint_cache);
-    memset(&netint_cache, 0, sizeof(netint_cache));
-
-    etcpal_mutex_unlock(&mutex);
-  }
-
+  os_free_interfaces(&netint_cache);
+  memset(&netint_cache, 0, sizeof(netint_cache));
   etcpal_mutex_destroy(&mutex);
   initialized = false;
 }
