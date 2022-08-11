@@ -32,7 +32,9 @@ etcpal_mutex_t          mutex;
 
 /*********************** Private function prototypes *************************/
 
-static int compare_netints(const void* a, const void* b);
+static int            compare_netints(const void* a, const void* b);
+static etcpal_error_t populate_netint_cache();
+static void           clear_netint_cache();
 
 /*************************** Function definitions ****************************/
 
@@ -42,15 +44,10 @@ etcpal_error_t etcpal_netint_init(void)
 
   if (etcpal_mutex_create(&mutex))
   {
-    res = os_enumerate_interfaces(&netint_cache);
+    res = populate_netint_cache();
 
     if (res == kEtcPalErrOk)
-    {
-      // Sort the interfaces by OS index
-      qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
-
       initialized = true;
-    }
   }
 
   return res;
@@ -58,8 +55,7 @@ etcpal_error_t etcpal_netint_init(void)
 
 void etcpal_netint_deinit(void)
 {
-  os_free_interfaces(&netint_cache);
-  memset(&netint_cache, 0, sizeof(netint_cache));
+  clear_netint_cache();
   etcpal_mutex_destroy(&mutex);
   initialized = false;
 }
@@ -257,6 +253,22 @@ int compare_netints(const void* a, const void* b)
   return (netint1->index > netint2->index) - (netint1->index < netint2->index);
 }
 
+etcpal_error_t populate_netint_cache()
+{
+  etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
+
+  if (res == kEtcPalErrOk)  // Sort the interfaces by OS index
+    qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+
+  return res;
+}
+
+void clear_netint_cache()
+{
+  os_free_interfaces(&netint_cache);
+  memset(&netint_cache, 0, sizeof(netint_cache));
+}
+
 /**
  * @brief Refresh the list of network interfaces.
  *
@@ -275,14 +287,10 @@ etcpal_error_t etcpal_netint_refresh_interfaces()
     return kEtcPalErrSys;
 
   // First clean up the old cache
-  os_free_interfaces(&netint_cache);
-  memset(&netint_cache, 0, sizeof(netint_cache));
+  clear_netint_cache();
 
   // Now re-populate the new cache
-  etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
-
-  if (res == kEtcPalErrOk)  // Sort the interfaces by OS index
-    qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+  etcpal_error_t res = populate_netint_cache();
 
   etcpal_mutex_unlock(&mutex);
   return res;
