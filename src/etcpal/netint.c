@@ -212,19 +212,26 @@ int compare_netints(const void* a, const void* b)
  * @brief Refresh the list of network interfaces.
  *
  * Rebuilds the cached array of network interfaces that is returned via the
- * etcpal_netint_get_interfaces() function. If the refresh operation results in a different list
- * (there is a different number of network interfaces, or any interface has changed IP settings),
- * *list_changed is set to true.
+ * etcpal_netint_get_interfaces() function.
  *
- * @param[out] list_changed Set to true if the set of interfaces has changed in any way.
  * @return #kEtcPalErrOk: Interfaces refreshed.
  * @return Other error codes from the underlying platform are possible here.
  */
-etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)  // NOLINT(readability-non-const-parameter)
+etcpal_error_t etcpal_netint_refresh_interfaces()
 {
-  // TODO
-  ETCPAL_UNUSED_ARG(list_changed);
-  return kEtcPalErrNotImpl;
+  if (!initialized)
+    return kEtcPalErrNotInit;
+
+  // First clean up the old cache
+  os_free_interfaces(&netint_cache);
+  memset(&netint_cache, 0, sizeof(netint_cache));
+
+  // Now re-populate the new cache
+  etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
+  if (res == kEtcPalErrOk)  // Sort the interfaces by OS index
+    qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+
+  return res;
 }
 
 /**

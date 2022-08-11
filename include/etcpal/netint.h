@@ -93,7 +93,7 @@ etcpal_error_t          etcpal_netint_get_interfaces_by_index(unsigned int      
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index);
 etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index);
 
-etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed);
+etcpal_error_t etcpal_netint_refresh_interfaces();
 
 bool etcpal_netint_is_up(unsigned int netint_index);
 
