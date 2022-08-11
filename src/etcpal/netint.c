@@ -21,12 +21,14 @@
 
 #include <stdlib.h>
 #include "etcpal/common.h"
+#include "etcpal/mutex.h"
 #include "etcpal/private/netint.h"
 
 /**************************** Private variables ******************************/
 
 static bool             initialized = false;
 static CachedNetintInfo netint_cache;
+etcpal_mutex_t          mutex;
 
 /*********************** Private function prototypes *************************/
 
@@ -36,14 +38,21 @@ static int compare_netints(const void* a, const void* b);
 
 etcpal_error_t etcpal_netint_init(void)
 {
-  etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
+  etcpal_error_t res = kEtcPalErrSys;
 
-  if (res == kEtcPalErrOk)
+  if (etcpal_mutex_create(&mutex) && etcpal_mutex_lock(&mutex))
   {
-    // Sort the interfaces by OS index
-    qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+    res = os_enumerate_interfaces(&netint_cache);
 
-    initialized = true;
+    if (res == kEtcPalErrOk)
+    {
+      // Sort the interfaces by OS index
+      qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+
+      initialized = true;
+    }
+
+    etcpal_mutex_unlock(&mutex);
   }
 
   return res;
@@ -51,8 +60,15 @@ etcpal_error_t etcpal_netint_init(void)
 
 void etcpal_netint_deinit(void)
 {
-  os_free_interfaces(&netint_cache);
-  memset(&netint_cache, 0, sizeof(netint_cache));
+  if (etcpal_mutex_lock(&mutex))
+  {
+    os_free_interfaces(&netint_cache);
+    memset(&netint_cache, 0, sizeof(netint_cache));
+
+    etcpal_mutex_unlock(&mutex);
+  }
+
+  etcpal_mutex_destroy(&mutex);
   initialized = false;
 }
 
@@ -62,7 +78,17 @@ void etcpal_netint_deinit(void)
  */
 size_t etcpal_netint_get_num_interfaces(void)
 {
-  return (initialized ? netint_cache.num_netints : 0);
+  size_t res = 0;
+
+  if (etcpal_mutex_lock(&mutex))
+  {
+    if (initialized)
+      res = netint_cache.num_netints;
+
+    etcpal_mutex_unlock(&mutex);
+  }
+
+  return res;
 }
 
 /**
@@ -77,7 +103,17 @@ size_t etcpal_netint_get_num_interfaces(void)
  */
 const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
 {
-  return (initialized ? netint_cache.netints : NULL);
+  const EtcPalNetintInfo* res = NULL;
+
+  if (etcpal_mutex_lock(&mutex))
+  {
+    if (initialized)
+      res = netint_cache.netints;
+
+    etcpal_mutex_unlock(&mutex);
+  }
+
+  return res;
 }
 
 /**
@@ -102,6 +138,9 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int             in
   if (!initialized)
     return kEtcPalErrNotInit;
 
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
   size_t arr_size = 0;
   for (const EtcPalNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
        ++netint)
@@ -123,13 +162,14 @@ etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int             in
     // Else we haven't gotten there yet, continue
   }
 
-  if (arr_size != 0)
-  {
+  etcpal_error_t res = kEtcPalErrOk;
+  if (arr_size == 0)
+    res = kEtcPalErrNotFound;
+  else
     *netint_arr_size = arr_size;
-    return kEtcPalErrOk;
-  }
 
-  return kEtcPalErrNotFound;
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }
 
 /**
@@ -157,23 +197,31 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
   if (!initialized)
     return kEtcPalErrNotInit;
 
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
+  etcpal_error_t res = kEtcPalErrOk;
   if (type == kEtcPalIpTypeV4)
   {
-    if (!netint_cache.def.v4_valid)
-      return kEtcPalErrNotFound;
-    *netint_index = netint_cache.def.v4_index;
-    return kEtcPalErrOk;
+    if (netint_cache.def.v4_valid)
+      *netint_index = netint_cache.def.v4_index;
+    else
+      res = kEtcPalErrNotFound;
   }
-
-  if (type == kEtcPalIpTypeV6)
+  else if (type == kEtcPalIpTypeV6)
   {
-    if (!netint_cache.def.v6_valid)
-      return kEtcPalErrNotFound;
-    *netint_index = netint_cache.def.v6_index;
-    return kEtcPalErrOk;
+    if (netint_cache.def.v6_valid)
+      *netint_index = netint_cache.def.v6_index;
+    else
+      res = kEtcPalErrNotFound;
+  }
+  else
+  {
+    res = kEtcPalErrInvalid;
   }
 
-  return kEtcPalErrInvalid;
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }
 
 /**
@@ -194,10 +242,19 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, un
     return kEtcPalErrInvalid;
   if (!initialized)
     return kEtcPalErrNotInit;
-  if (netint_cache.num_netints == 0)
-    return kEtcPalErrNoNetints;
 
-  return os_resolve_route(dest, &netint_cache, netint_index);
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
+  etcpal_error_t res = kEtcPalErrOk;
+  if (netint_cache.num_netints == 0)
+    res = kEtcPalErrNoNetints;
+
+  if (res == kEtcPalErrOk)
+    res = os_resolve_route(dest, &netint_cache, netint_index);
+
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }
 
 int compare_netints(const void* a, const void* b)
@@ -222,15 +279,20 @@ etcpal_error_t etcpal_netint_refresh_interfaces()
   if (!initialized)
     return kEtcPalErrNotInit;
 
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
   // First clean up the old cache
   os_free_interfaces(&netint_cache);
   memset(&netint_cache, 0, sizeof(netint_cache));
 
   // Now re-populate the new cache
   etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
+
   if (res == kEtcPalErrOk)  // Sort the interfaces by OS index
     qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
 
+  etcpal_mutex_unlock(&mutex);
   return res;
 }
 
@@ -249,5 +311,11 @@ bool etcpal_netint_is_up(unsigned int netint_index)
   if (!initialized || netint_index == 0)
     return false;
 
-  return os_netint_is_up(netint_index, &netint_cache);
+  if (!etcpal_mutex_lock(&mutex))
+    return false;
+
+  bool res = os_netint_is_up(netint_index, &netint_cache);
+
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }

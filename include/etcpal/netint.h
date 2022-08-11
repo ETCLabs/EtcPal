@@ -30,7 +30,7 @@
 /**
  * @defgroup etcpal_netint netint (Network Interfaces)
  * @ingroup etcpal_net
- * @brief A platform-neutral method for enumerating network interfaces.
+ * @brief A platform-neutral, thread-safe method for enumerating network interfaces.
  *
  * ```c
  * #include "etcpal/netint.h"
