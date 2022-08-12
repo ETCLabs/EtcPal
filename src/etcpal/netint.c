@@ -253,6 +253,7 @@ int compare_netints(const void* a, const void* b)
   return (netint1->index > netint2->index) - (netint1->index < netint2->index);
 }
 
+// Needs lock
 etcpal_error_t populate_netint_cache()
 {
   etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
@@ -263,6 +264,7 @@ etcpal_error_t populate_netint_cache()
   return res;
 }
 
+// Needs lock
 void clear_netint_cache()
 {
   os_free_interfaces(&netint_cache);
