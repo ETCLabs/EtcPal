@@ -29,7 +29,7 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
                        size_t*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_default_interface, etcpal_iptype_t, unsigned int*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interface_for_dest, const EtcPalIpAddr*, unsigned int*);
-DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_refresh_interfaces, bool*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_refresh_interfaces);
 DEFINE_FAKE_VALUE_FUNC(bool, etcpal_netint_is_up, unsigned int);
 
 void etcpal_netint_reset_all_fakes(void)
