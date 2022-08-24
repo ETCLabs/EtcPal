@@ -84,11 +84,11 @@
 extern "C" {
 #endif
 
-size_t                  etcpal_netint_get_num_interfaces(void);
-const EtcPalNetintInfo* etcpal_netint_get_interfaces(void);
-etcpal_error_t          etcpal_netint_get_interfaces_by_index(unsigned int             index,
-                                                              const EtcPalNetintInfo** netint_arr,
-                                                              size_t*                  netint_arr_size);
+etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints /*could be NULL*/,
+                                            size_t*           num_netints /* could be 0 */);
+etcpal_error_t etcpal_netint_get_interfaces_for_index(unsigned int      netint_index,
+                                                      EtcPalNetintInfo* netints /*could be NULL*/,
+                                                      size_t*           num_netints /* could be 0 */);
 
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index);
 etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index);
