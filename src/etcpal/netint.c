@@ -244,7 +244,7 @@ etcpal_error_t get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints, bo
     if (!specific_index || (index == netint_cache.netints[i].index))
     {
       res = kEtcPalErrOk;
-      if (netint_count < *num_netints)
+      if (netints && (netint_count < *num_netints))
         netints[netint_count] = netint_cache.netints[i];
       else
         res = kEtcPalErrBufSize;
