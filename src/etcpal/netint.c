@@ -71,11 +71,11 @@ void etcpal_netint_deinit(void)
  * entry in the netint array. Because of this, multiple array entries could have the same value
  * for the index, mac and id parameters.
  *
- * @param[out] netint_arr Application-provided array to be filled in on success with the array of network interfaces.
+ * @param[out] netints Application-provided array to be filled in on success with the array of network interfaces.
  * This can be set to NULL if only interested in the number of interfaces.
- * @param[in,out] netint_arr_size Initialize this with the size of the netints array (0 if it's NULL). Filled in on
+ * @param[in,out] num_netints Initialize this with the size of the netints array (0 if it's NULL). Filled in on
  * success with the number of network interfaces on the system (reallocate the netints array if this ends up being
- * larger).
+ * larger). Cannot be a NULL pointer.
  * @return #kEtcPalErrOk: netints and num_netints were filled in with all system interfaces.
  * @return #kEtcPalErrInvalid: Invalid argument provided.
  * @return #kEtcPalErrNotInit: Module not initialized.
@@ -94,11 +94,11 @@ etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints, size_t* n
  * See @ref interface_indexes for more information.
  *
  * @param[in] index Index for which to get interfaces.
- * @param[out] netint_arr Application-provided array to be filled in on success with the array of network interfaces.
+ * @param[out] netints Application-provided array to be filled in on success with the array of network interfaces.
  * This can be set to NULL if only interested in the number of interfaces.
- * @param[in,out] netint_arr_size Initialize this with the size of the netints array (0 if it's NULL). Filled in on
+ * @param[in,out] num_netints Initialize this with the size of the netints array (0 if it's NULL). Filled in on
  * success with the number of network interfaces that match the index (reallocate the netints array if this ends up
- * being larger).
+ * being larger). Cannot be NULL.
  * @return #kEtcPalErrOk: netints and num_netints were filled in with all matching interfaces.
  * @return #kEtcPalErrInvalid: Invalid argument provided.
  * @return #kEtcPalErrNotInit: Module not initialized.
