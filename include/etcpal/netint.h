@@ -44,15 +44,24 @@
  *
  * After initialization, an array of the set of network interfaces which were present on the system
  * at initialization time is kept internally. This array can be retrieved using
- * etcpal_netint_get_num_interfaces() and etcpal_netint_get_interfaces():
+ * etcpal_netint_get_interfaces() and refreshed using etcpal_netint_refresh_interfaces(). Here is
+ * the best way to retrieve the interfaces if a refresh could happen on a different thread at any
+ * time:
  *
  * @code
- * size_t num_netints = etcpal_netint_get_num_interfaces();
- * const EtcPalNetintInfo* netint_array = etcpal_netint_get_interfaces();
- * for (const EtcPalNetintInfo* netint = netint_array; netint < netint_array + num_netints; ++netint)
+ * size_t num_netints = 4;  // Start with estimate which eventually has the actual number written to it
+ * EtcPalNetintInfo* netints = calloc(num_netints, sizeof(EtcPalNetintInfo));
+ * while(etcpal_netint_get_interfaces(netints, &num_netints) == kEtcPalErrBufSize)
+ * {
+ *   netints = realloc(netints, num_netints * sizeof(EtcPalNetintInfo));
+ * }
+ *
+ * for (const EtcPalNetintInfo* netint = netints; netint < netints + num_netints; ++netint)
  * {
  *   // Record information or do something with each network interface in turn
  * }
+ *
+ * free(netints);
  * @endcode
  *
  * The network interface array is sorted by interface index (see @ref interface_indexes); multiple
@@ -74,8 +83,9 @@
  * etcpal_netint_get_interface_for_dest(&dest, &index); // Index now holds the interface that will be used
  * @endcode
  *
- * The list of network interfaces is cached and does not change at runtime, unless the
- * etcpal_netint_refresh_interfaces() function is called.
+ * The list of network interfaces is cached and will only change if the
+ * etcpal_netint_refresh_interfaces() function is called. These functions are all thread-safe, so
+ * the interfaces can be refreshed on one thread while other queries are made on another thread.
  *
  * @{
  */
@@ -84,11 +94,10 @@
 extern "C" {
 #endif
 
-size_t                  etcpal_netint_get_num_interfaces(void);
-const EtcPalNetintInfo* etcpal_netint_get_interfaces(void);
-etcpal_error_t          etcpal_netint_get_interfaces_by_index(unsigned int             index,
-                                                              const EtcPalNetintInfo** netint_arr,
-                                                              size_t*                  netint_arr_size);
+etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints);
+etcpal_error_t etcpal_netint_get_interfaces_for_index(unsigned int      netint_index,
+                                                      EtcPalNetintInfo* netints,
+                                                      size_t*           num_netints);
 
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index);
 etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index);
