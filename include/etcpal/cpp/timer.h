@@ -41,11 +41,9 @@ namespace etcpal
 /// etcpal_init(ETCPAL_FEATURE_TIMERS);
 /// @endcode
 ///
-/// **NOTE:** The constructs in this module are available in similar form in the C++ standard
-/// library using the &lt;chrono&gt; header, with the advantage that this module will work on any
-/// platform for which EtcPal is ported, including embedded RTOS platforms, using their native tick
-/// count. If your application or library does not need to run on these platforms, consider using
-/// &lt;chrono&gt; instead.
+/// **NOTE:** This module is intended to provide a platform-neutral time layer that is similar to the C++ standard
+/// library &lt;chrono&gt;. The advantage over &lt;chrono&gt; is that this module supports all EtcPal ports -- including
+/// embedded RTOS platform with native tick counts.
 ///
 /// Provides a class for representing points in time (TimePoint) and one which implements a passive
 /// monotonic timer (Timer).
