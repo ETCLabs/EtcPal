@@ -17,30 +17,32 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_MUTEX_H_
-#define ETCPAL_OS_MUTEX_H_
+#ifndef ETCPAL_OS_SIGNAL_H_
+#define ETCPAL_OS_SIGNAL_H_
 
-#include "etcpal/common.h"
-#include <kernel.h>
 #include <stdbool.h>
+#include <zephyr/kernel.h>
+#include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct k_mutex etcpal_mutex_t;
+typedef struct k_sem etcpal_signal_t;
 
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT    0
+#define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 0
 
-bool etcpal_mutex_create(etcpal_mutex_t *id);
-bool etcpal_mutex_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms);
-void etcpal_mutex_unlock(etcpal_mutex_t *id);
-void etcpal_mutex_destroy(etcpal_mutex_t *id);
+bool etcpal_signal_create(etcpal_signal_t* id);
+bool etcpal_signal_wait(etcpal_signal_t* id);
+bool etcpal_signal_try_wait(etcpal_signal_t* id);
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
+void etcpal_signal_post(etcpal_signal_t* id);
+#define etcpal_signal_post_from_isr etcpal_signal_post
+void etcpal_signal_destroy(etcpal_signal_t* id);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_MUTEX_H_ */
+#endif /* ETCPAL_OS_SIGNAL_H_ */

@@ -17,30 +17,43 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_MUTEX_H_
-#define ETCPAL_OS_MUTEX_H_
+#ifndef ETCPAL_OS_SOCKET_H_
+#define ETCPAL_OS_SOCKET_H_
 
-#include "etcpal/common.h"
-#include <kernel.h>
-#include <stdbool.h>
+#include <zephyr/net/socket.h>
+#include "etcpal/inet.h"
+#include "etcpal/rbtree.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct k_mutex etcpal_mutex_t;
+/* Definitions for the EtcPal socket type */
 
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
+typedef int etcpal_socket_t;
 
-bool etcpal_mutex_create(etcpal_mutex_t *id);
-bool etcpal_mutex_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms);
-void etcpal_mutex_unlock(etcpal_mutex_t *id);
-void etcpal_mutex_destroy(etcpal_mutex_t *id);
+#define PRIepsock "d"
+
+#define ETCPAL_SOCKET_INVALID -1
+
+#define ETCPAL_SOCKET_MAX_POLL_SIZE -1
+
+/* Definitions for etcpal_poll API */
+
+typedef struct EtcPalPollContext
+{
+  bool         valid;
+  int          epoll_fd;
+  EtcPalRbTree sockets;
+} EtcPalPollContext;
+
+/* Definitions for the etcpal_recvmsg API */
+
+#define ETCPAL_PLATFORM_IN_PKTINFO_SPACE  CMSG_SPACE(sizeof(struct in_pktinfo))
+#define ETCPAL_PLATFORM_IN6_PKTINFO_SPACE CMSG_SPACE(sizeof(struct in6_pktinfo))
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_MUTEX_H_ */
+#endif /* ETCPAL_OS_SOCKET_H_ */

@@ -17,30 +17,28 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_MUTEX_H_
-#define ETCPAL_OS_MUTEX_H_
+#include "etcpal/timer.h"
+#include "etcpal/private/timer.h"
 
-#include "etcpal/common.h"
 #include <kernel.h>
-#include <stdbool.h>
+#include <unistd.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
-typedef struct k_mutex etcpal_mutex_t;
-
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
-
-bool etcpal_mutex_create(etcpal_mutex_t *id);
-bool etcpal_mutex_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms);
-void etcpal_mutex_unlock(etcpal_mutex_t *id);
-void etcpal_mutex_destroy(etcpal_mutex_t *id);
-
-#ifdef __cplusplus
+etcpal_error_t etcpal_timer_init(void)
+{
+  // No init necessary
 }
-#endif
 
-#endif /* ETCPAL_OS_MUTEX_H_ */
+void etcpal_timer_deinit(void)
+{
+  // No deinitialization necessary on this platform.
+}
+
+uint32_t etcpal_getms(void)
+{
+  // https://docs.zephyrproject.org/3.1.0/kernel/timeutil.html
+	return k_uptime_get();
+}
+
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

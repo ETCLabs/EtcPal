@@ -17,30 +17,19 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_MUTEX_H_
-#define ETCPAL_OS_MUTEX_H_
-
-#include "etcpal/common.h"
-#include <kernel.h>
-#include <stdbool.h>
+#ifndef ETCPAL_OS_ERROR_H_
+#define ETCPAL_OS_ERROR_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+	
+#include <errno.h>
+#include "etcpal/error.h"
 
-typedef struct k_mutex etcpal_mutex_t;
-
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
-
-bool etcpal_mutex_create(etcpal_mutex_t *id);
-bool etcpal_mutex_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms);
-void etcpal_mutex_unlock(etcpal_mutex_t *id);
-void etcpal_mutex_destroy(etcpal_mutex_t *id);
-
+etcpal_error_t errno_os_to_etcpal(int os_errno);
+	
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* ETCPAL_OS_MUTEX_H_ */
+#endif /* ETCPAL_OS_ERROR_H_ */

@@ -17,30 +17,56 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_MUTEX_H_
-#define ETCPAL_OS_MUTEX_H_
+#include "etcpal/signal.h"
+#include <zephyr/kernel.h>
 
-#include "etcpal/common.h"
-#include <kernel.h>
-#include <stdbool.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef struct k_mutex etcpal_mutex_t;
-
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
-
-bool etcpal_mutex_create(etcpal_mutex_t *id);
-bool etcpal_mutex_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms);
-void etcpal_mutex_unlock(etcpal_mutex_t *id);
-void etcpal_mutex_destroy(etcpal_mutex_t *id);
-
-#ifdef __cplusplus
+bool etcpal_signal_create(etcpal_signal_t* id)
+{
+  if (id)
+  {
+	  k_sem_init(id, 0, 1);
+  }
+  return false;
 }
-#endif
 
-#endif /* ETCPAL_OS_MUTEX_H_ */
+bool etcpal_signal_wait(etcpal_signal_t* id)
+{
+	if (id)
+	{
+		if (k_sem_take(id, K_FOREVER) == 0)
+		{
+			return true;
+		}
+	}
+  return false;
+}
+
+bool etcpal_signal_try_wait(etcpal_signal_t* id)
+{
+	if (id)
+	{
+		if (k_sem_take(id, K_NO_WAIT) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
+{
+  return (timeout_ms == 0 ? etcpal_signal_try_wait(id) : etcpal_signal_wait(id));
+}
+
+void etcpal_signal_post(etcpal_signal_t* id)
+{
+	if (id)
+	{
+	  k_sem_give(id);
+	}
+}
+
+void etcpal_signal_destroy(etcpal_signal_t* id)
+{
+	// Not implemented
+}

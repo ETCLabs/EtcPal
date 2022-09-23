@@ -17,30 +17,20 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_MUTEX_H_
-#define ETCPAL_OS_MUTEX_H_
+#ifndef ETCPAL_OS_INET_H_
+#define ETCPAL_OS_INET_H_
 
-#include "etcpal/common.h"
-#include <kernel.h>
-#include <stdbool.h>
+#include <zephyr/net/socket.h>
 
-#ifdef __cplusplus
-extern "C" {
+#if defined(CONFIG_NET_NATIVE_IPV4)
+  #if CONFIG_NET_IF_UNICAST_IPV4_ADDR_COUNT > 1
+    #error ("ETCPal Allows only 1 IP configuration per interface. Adjust Kconfig value of NET_IF_UNICAST_IPV4_ADDR_COUNT")
+  #elseif CONFIG_NET_IF_MCAST_IPV4_ADDR_COUNT > 1
+    #error ("ETCPal Allows only 1 IP configuration per interface. Adjust Kconfig value of NET_IF_UNICAST_IPV6_ADDR_COUNT")
+  #endif
 #endif
 
-typedef struct k_mutex etcpal_mutex_t;
+typedef struct sockaddr etcpal_os_sockaddr_t;
+typedef struct sockaddr etcpal_os_ipaddr_t;
 
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
-
-bool etcpal_mutex_create(etcpal_mutex_t *id);
-bool etcpal_mutex_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms);
-void etcpal_mutex_unlock(etcpal_mutex_t *id);
-void etcpal_mutex_destroy(etcpal_mutex_t *id);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* ETCPAL_OS_MUTEX_H_ */
+#endif /* ETCPAL_OS_INET_H_ */
