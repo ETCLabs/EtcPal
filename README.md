@@ -42,11 +42,37 @@ C functionality supports C99 with the exception of the following features:
 
 ## Quality Gates
 
-* Automated Testing
-* Automated Static Analysis
-* Automated Style Checking
-* Continuous Integration
-* Automated Dynamic Analysis
+### Code Reviews
+
+* At least 2 developers must approve all code changes made before they can be merged into the integration branch.
+* API and major functionality reviews typically include application developers as well.
+
+### Automated testing
+
+* This consists primarily of unit tests covering the individual API modules.
+* Some integration tests have also been made.
+
+### Automated Static Analysis
+
+* Treating warnings as errors is enabled on all platforms.
+* Adding Clang Tidy (in phases) is on the TODO list. Once implemented, refer to
+.clang-tidy to see which rulesets have been added.
+
+### Automated Style Checking
+
+* Clang format is enabled – currently this follows the style guidelines established for our libraries,
+ and it may be updated from time to time. See .clang-format for more details.
+* Non-conformance to .clang-format will result in pipeline failures.  The code is not automatically re-formatted.
+
+### Continuous Integration
+
+* A GitLab CI pipeline is being used to run builds and tests that enforce all supported quality gates for all merge
+requests, and for generating new library builds from main. See .gitlab-ci.yml for details.
+* All merge requests are also required to be approved by two other developers before being integrated.
+
+### Automated Dynamic Analysis
+
+* ASAN is currently being used when running all automated tests on Linux to catch various memory errors during runtime.
 
 ## Revision Control
 
