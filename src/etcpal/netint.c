@@ -17,6 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#ifndef ETCPAL_NO_NETWORKING_SUPPORT
+
 #include "etcpal/netint.h"
 
 #include <stdlib.h>
@@ -309,3 +311,5 @@ bool etcpal_netint_is_up(unsigned int netint_index)
   etcpal_mutex_unlock(&mutex);
   return res;
 }
+
+#endif  // ETCPAL_NO_NETWORKING_SUPPORT

@@ -17,6 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#ifndef ETCPAL_NO_NETWORKING_SUPPORT
+
 #include "etcpal/inet.h"
 
 /***************************** Global variables ******************************/
@@ -568,3 +570,5 @@ etcpal_error_t etcpal_string_to_mac(const char* src, EtcPalMacAddr* dest)
   }
   return kEtcPalErrInvalid;
 }
+
+#endif  // ETCPAL_NO_NETWORKING_SUPPORT
