@@ -26,6 +26,8 @@
 #endif
 #include "etcpal/log.h"
 
+#include <assert.h>
+
 TEST_GROUP(etcpal_common);
 
 TEST_SETUP(etcpal_common)
@@ -105,6 +107,25 @@ TEST(etcpal_common, log_double_init_works)
   TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 2);
 }
 
+bool sacn_assert_verify_fail(const char* exp, const char* file, const char* func, const int line)
+{
+  printf("Assertion \"%s\" failed (file:%s function:%s line:%d)", exp ? exp : "", file ? file : "", func ? func : "",
+         line);
+  assert(false);
+  return false;
+}
+
+#define SACN_ASSERT_VERIFY(exp) ((exp) ? true : sacn_assert_verify_fail(#exp, __FILE__, __func__, __LINE__))
+
+TEST(etcpal_common, assert_metadata_works)
+{
+  int i = 1;
+  int j = 1;
+  int k = 2;
+  TEST_ASSERT_TRUE(SACN_ASSERT_VERIFY(i == j));
+  TEST_ASSERT_FALSE(SACN_ASSERT_VERIFY(j == k));
+}
+
 TEST_GROUP_RUNNER(etcpal_common)
 {
   RUN_TEST_CASE(etcpal_common, features_all_but_macro_works);
@@ -112,4 +133,5 @@ TEST_GROUP_RUNNER(etcpal_common)
   RUN_TEST_CASE(etcpal_common, netint_double_init_works);
 #endif
   RUN_TEST_CASE(etcpal_common, log_double_init_works);
+  RUN_TEST_CASE(etcpal_common, assert_metadata_works);
 }
