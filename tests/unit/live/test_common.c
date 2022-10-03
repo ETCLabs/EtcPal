@@ -105,22 +105,34 @@ TEST(etcpal_common, log_double_init_works)
   TEST_ASSERT_EQUAL(common_test_log_callback_fake.call_count, 2);
 }
 
-bool sacn_assert_verify_fail(const char* exp, const char* file, const char* func, const int line)
+bool verify_metadata(int         expected_line,
+                     const char* expected_exp_str,
+                     const char* exp,
+                     const char* file,
+                     const char* func,
+                     const int   line)
 {
-  printf("Assertion \"%s\" failed (file:%s function:%s line:%d)", exp ? exp : "", file ? file : "", func ? func : "",
-         line);
-  return false;
+  if (strcmp(exp, expected_exp_str) != 0)
+    return false;
+  if (strcmp(file + strlen(file) - strlen("test_common.c"), "test_common.c") != 0)
+    return false;
+  if (strcmp(func, "TEST_etcpal_common_assert_metadata_works_") != 0)
+    return false;
+  if (line != expected_line)
+    return false;
+
+  return true;
 }
 
-#define SACN_ASSERT_VERIFY(exp) ((exp) ? true : sacn_assert_verify_fail(#exp, __FILE__, __func__, __LINE__))
+#define TEST_ASSERT_METADATA(exp, expected_line, expected_exp_str) \
+  verify_metadata(expected_line, expected_exp_str, #exp, __FILE__, __func__, __LINE__)
 
 TEST(etcpal_common, assert_metadata_works)
 {
-  int i = 1;
-  int j = 1;
-  int k = 2;
-  TEST_ASSERT_TRUE(SACN_ASSERT_VERIFY(i == j));
-  TEST_ASSERT_FALSE(SACN_ASSERT_VERIFY(j == k));
+  int i = 0, j = i + 1, k = j + 1;
+  i = k + 1;
+  TEST_ASSERT_TRUE(TEST_ASSERT_METADATA(i == j, 134, "i == j"));
+  TEST_ASSERT_TRUE(TEST_ASSERT_METADATA(j == k, 135, "j == k"));
 }
 
 TEST_GROUP_RUNNER(etcpal_common)
