@@ -26,8 +26,6 @@
 #endif
 #include "etcpal/log.h"
 
-#include <assert.h>
-
 TEST_GROUP(etcpal_common);
 
 TEST_SETUP(etcpal_common)
@@ -111,7 +109,6 @@ bool sacn_assert_verify_fail(const char* exp, const char* file, const char* func
 {
   printf("Assertion \"%s\" failed (file:%s function:%s line:%d)", exp ? exp : "", file ? file : "", func ? func : "",
          line);
-  assert(false);
   return false;
 }
 
