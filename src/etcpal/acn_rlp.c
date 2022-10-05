@@ -304,7 +304,7 @@ size_t acn_root_layer_buf_size(const AcnRootLayerPdu* pdu_block, size_t num_pdus
 {
   size_t block_size = 0;
 
-  for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
+  for (const AcnRootLayerPdu* pdu = pdu_block; pdu && (pdu < (pdu_block + num_pdus)); ++pdu)
   {
     block_size += pdu->data_len;
     // We assume no inheritance here, so the largest possible buffer is allocated.
