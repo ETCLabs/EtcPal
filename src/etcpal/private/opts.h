@@ -70,6 +70,54 @@
 #endif
 
 /**
+ * @brief Enable message logging from the EtcPal library.
+ *
+ * If defined nonzero, the etcpal_init_log_handler() function can be used to register the application for logging
+ * messages from EtcPal. These messages typically indicate critical assertion failures that may not otherwise be visible
+ * in a release environment.
+ *
+ * Note that this only toggles logging from the EtcPal library and does not control if the logging API is enabled as a
+ * feature (that is determined by the features passed to etcpal_init()).
+ */
+#ifndef ETCPAL_LOGGING_ENABLED
+#define ETCPAL_LOGGING_ENABLED 1
+#endif
+
+/**
+ * @brief A string which will be prepended to all log messages from the EtcPal library.
+ */
+#ifndef ETCPAL_LOG_MSG_PREFIX
+#define ETCPAL_LOG_MSG_PREFIX "EtcPal: "
+#endif
+
+/* Assertion failure handler */
+bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* func, const int line);
+
+/**
+ * @brief The assertion handler used by the EtcPal library.
+ *
+ * By default, evaluates to true on success, or false on failure (additionally asserting and logging). If redefining
+ * this, it must be redefined as a macro taking a single argument (the assertion expression).
+ */
+#ifndef ETCPAL_ASSERT_VERIFY
+#define ETCPAL_ASSERT_VERIFY(exp) ((exp) ? true : etcpal_assert_verify_fail(#exp, __FILE__, __func__, __LINE__))
+#endif
+
+/**
+ * @brief The lower-level debug assert used by the EtcPal library.
+ *
+ * This is the assertion that gets called by #ETCPAL_ASSERT_VERIFY on failure. Redefine this to retain the logging done
+ * by the default #ETCPAL_ASSERT_VERIFY macro.
+ *
+ * By default, just uses the C library assert. If redefining this, it must be redefined as a macro taking a single
+ * argument (the assertion expression).
+ */
+#ifndef ETCPAL_ASSERT
+#include <assert.h>
+#define ETCPAL_ASSERT(expr) assert(expr)
+#endif
+
+/**
  * @}
  */
 

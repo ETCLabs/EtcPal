@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -47,7 +48,7 @@ typedef struct EtcPalModule
 /* clang-format off */
 
 static EtcPalModule etcpal_modules[] = {
-  ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),
+  ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),  // Initialize this first for best EtcPal log coverage
 #if !ETCPAL_NO_OS_SUPPORT
   ETCPAL_MODULE(etcpal_timer, ETCPAL_FEATURE_TIMERS),
 #endif
@@ -59,6 +60,17 @@ static EtcPalModule etcpal_modules[] = {
 #define MODULE_ARRAY_SIZE (sizeof(etcpal_modules) / sizeof(etcpal_modules[0]))
 
 /* clang-format on */
+
+/***************************** Global variables ******************************/
+
+const EtcPalLogParams* etcpal_log_params = NULL;
+
+/**************************** Private variables ******************************/
+
+static struct EtcPalState
+{
+  EtcPalLogParams log_params;
+} etcpal_state;
 
 /*************************** Function definitions ****************************/
 
@@ -159,4 +171,32 @@ void etcpal_deinit(etcpal_features_t features)
         module->deinit_fn();
     }
   }
+}
+
+bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* func, const int line)
+{
+#if !ETCPAL_LOGGING_ENABLED
+  ETCPAL_UNUSED_ARG(exp);
+  ETCPAL_UNUSED_ARG(file);
+  ETCPAL_UNUSED_ARG(func);
+  ETCPAL_UNUSED_ARG(line);
+#endif
+  ETCPAL_PRINT_LOG_CRIT("ASSERTION \"%s\" FAILED (FILE: \"%s\" FUNCTION: \"%s\" LINE: %d)", exp ? exp : "",
+                        file ? file : "", func ? func : "", line);
+  ETCPAL_ASSERT(false);
+  return false;
+}
+
+bool set_etcpal_log_params(const EtcPalLogParams* params)
+{
+  if (etcpal_log_params)
+    return false;
+
+  if (params)
+  {
+    etcpal_state.log_params = *params;
+    etcpal_log_params       = &etcpal_state.log_params;
+  }
+
+  return true;
 }

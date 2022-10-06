@@ -128,6 +128,12 @@
  * // Log message gets built and forwarded to my_log_callback, where I can do with it what I please.
  * @endcode
  *
+ * In addition to enabling other libraries to log messages, this module also provides a mechanism for logs originating
+ * from EtcPal itself. Simply call the etcpal_init_log_handler() function (before the first call to etcpal_init()),
+ * passing in the application's log parameters (EtcPalLogParams). This allows the application to handle log messages
+ * coming from the EtcPal library (typically these are logged due to critical assertion failures which may not
+ * otherwise be visible in a release environment).
+ *
  * @{
  */
 
@@ -407,6 +413,8 @@ typedef struct EtcPalLogParams
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+etcpal_error_t etcpal_init_log_handler(const EtcPalLogParams* log_params);
 
 /*
  * The various compiler ifdefs are to use each compiler's method of checking printf-style

@@ -141,6 +141,34 @@ void etcpal_log_deinit(void)
 }
 
 /**
+ * @brief Register the handler for log messages from EtcPal.
+ *
+ * Call this once before the first call to etcpal_init(). This avoids thread safety issues and results in the best log
+ * coverage.
+ *
+ * Make sure to enable the logging feature in etcpal_init() so that the logs will actually be printed.
+ *
+ * The messages that will typically be logged by EtcPal indicate critical assertion failures that may not be otherwise
+ * visible in a release environment. If your application supports logging, it is highly recommended to register with
+ * this.
+ *
+ * @param[in] log_params A struct used by the library to log messages. Must not be NULL.
+ * @return #kEtcPalErrOk: Registered logging handler sucessfully.
+ * @return #kEtcPalErrInvalid: Invalid parameter provided.
+ * @return #kEtcPalErrAlready: The logging parameters have already been configured.
+ */
+etcpal_error_t etcpal_init_log_handler(const EtcPalLogParams* log_params)
+{
+  if (!log_params)
+    return kEtcPalErrInvalid;
+
+  if (!set_etcpal_log_params(log_params))
+    return kEtcPalErrAlready;
+
+  return kEtcPalErrOk;
+}
+
+/**
  * @brief Create a log message with a human-readable prefix in the given buffer.
  *
  * Buffer must be at least #ETCPAL_LOG_STR_MIN_LEN in length.
