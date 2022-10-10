@@ -424,6 +424,12 @@ void evaluate_pdu_inheritance(const AcnRootLayerPdu* pdu_block,
                               uint8_t*               cur_ptr,
                               PduInheritance*        inheritance)
 {
+  if (!ETCPAL_ASSERT_VERIFY(pdu_block) || !ETCPAL_ASSERT_VERIFY(current_pdu) || !ETCPAL_ASSERT_VERIFY(last_pdu) ||
+      !ETCPAL_ASSERT_VERIFY(cur_ptr) || !ETCPAL_ASSERT_VERIFY(inheritance))
+  {
+    return;
+  }
+
   inheritance->vector = true;
   inheritance->header = true;
   inheritance->data   = true;
