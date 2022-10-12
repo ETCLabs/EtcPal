@@ -87,6 +87,13 @@ void etcpal_netint_deinit(void)
  */
 etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints)
 {
+  if (!num_netints)
+    return kEtcPalErrInvalid;
+  if ((!netints && (*num_netints > 0)) && (netints && (*num_netints == 0)))
+    return kEtcPalErrInvalid;
+  if (!initialized)
+    return kEtcPalErrNotInit;
+
   return get_interfaces(netints, num_netints, false, 0);
 }
 
@@ -112,6 +119,13 @@ etcpal_error_t etcpal_netint_get_interfaces_for_index(unsigned int      netint_i
                                                       EtcPalNetintInfo* netints,
                                                       size_t*           num_netints)
 {
+  if (!num_netints)
+    return kEtcPalErrInvalid;
+  if ((!netints && (*num_netints > 0)) && (netints && (*num_netints == 0)))
+    return kEtcPalErrInvalid;
+  if (!initialized)
+    return kEtcPalErrNotInit;
+
   return get_interfaces(netints, num_netints, true, netint_index);
 }
 
@@ -202,6 +216,9 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, un
 
 int compare_netints(const void* a, const void* b)
 {
+  if (!ETCPAL_ASSERT_VERIFY(a) || !ETCPAL_ASSERT_VERIFY(b))
+    return 0;
+
   EtcPalNetintInfo* netint1 = (EtcPalNetintInfo*)a;
   EtcPalNetintInfo* netint2 = (EtcPalNetintInfo*)b;
 
@@ -229,12 +246,12 @@ void clear_netint_cache()
 // Takes lock
 etcpal_error_t get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints, bool specific_index, unsigned int index)
 {
-  if (!num_netints)
-    return kEtcPalErrInvalid;
-  if ((!netints && (*num_netints > 0)) && (netints && (*num_netints == 0)))
-    return kEtcPalErrInvalid;
-  if (!initialized)
-    return kEtcPalErrNotInit;
+  if (!ETCPAL_ASSERT_VERIFY(num_netints) ||
+      !ETCPAL_ASSERT_VERIFY((netints || (*num_netints == 0)) && (!netints || (*num_netints > 0))) ||
+      !ETCPAL_ASSERT_VERIFY(initialized))
+  {
+    return kEtcPalErrSys;
+  }
 
   if (!etcpal_mutex_lock(&mutex))
     return kEtcPalErrSys;

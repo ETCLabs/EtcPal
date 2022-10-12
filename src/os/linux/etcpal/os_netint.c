@@ -116,12 +116,18 @@ static void debug_print_routing_table(RoutingTable* table);
 /* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
 static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
 {
+  if (!ETCPAL_ASSERT_VERIFY(ifaddr))
+    return true;
+
   // Skip an entry if it doesn't have an address, or if the address is not IPv4 or IPv6.
   return (!ifaddr->ifa_addr || (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
 }
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return kEtcPalErrSys;
+
   etcpal_error_t res = build_routing_tables();
   if (res != kEtcPalErrOk)
     return res;
@@ -237,6 +243,9 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 void os_free_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return;
+
   if (cache->netints)
   {
     free(cache->netints);
@@ -249,6 +258,9 @@ void os_free_interfaces(CachedNetintInfo* cache)
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   ETCPAL_UNUSED_ARG(cache);
+
+  if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(index))
+    return kEtcPalErrSys;
 
   RoutingTable* table_to_use = (ETCPAL_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
@@ -327,6 +339,9 @@ etcpal_error_t build_routing_tables(void)
 
 etcpal_error_t build_routing_table(int family, RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(table))
+    return kEtcPalErrSys;
+
   // Create a netlink socket, send a netlink request to get the routing table, and receive the
   // reply. If the buffer was not big enough, repeat (cannot reuse the same socket because we've
   // often received partial messages that must be discarded)
@@ -399,6 +414,9 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
 
 etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size, RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(table))
+    return kEtcPalErrSys;
+
   // Allocate slightly larger than buf_size, so we can detect when more room is needed
   size_t real_size = buf_size + 20;
   char*  buffer    = (char*)malloc(real_size);
@@ -445,6 +463,9 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
 
 etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t nl_msg_size, RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(buffer) || !ETCPAL_ASSERT_VERIFY(table))
+    return kEtcPalErrSys;
+
   table->size          = 0;
   table->entries       = NULL;
   table->default_route = NULL;
@@ -541,6 +562,9 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
 
 void init_routing_table_entry(RoutingTableEntry* entry)
 {
+  if (!ETCPAL_ASSERT_VERIFY(entry))
+    return;
+
   ETCPAL_IP_SET_INVALID(&entry->addr);
   ETCPAL_IP_SET_INVALID(&entry->mask);
   ETCPAL_IP_SET_INVALID(&entry->gateway);
@@ -550,6 +574,9 @@ void init_routing_table_entry(RoutingTableEntry* entry)
 
 int compare_routing_table_entries(const void* a, const void* b)
 {
+  if (!ETCPAL_ASSERT_VERIFY(a) || !ETCPAL_ASSERT_VERIFY(b))
+    return 0;
+
   RoutingTableEntry* e1 = (RoutingTableEntry*)a;
   RoutingTableEntry* e2 = (RoutingTableEntry*)b;
 
@@ -573,6 +600,9 @@ void free_routing_tables(void)
 
 void free_routing_table(RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(table))
+    return;
+
   if (table->entries)
   {
     free(table->entries);
@@ -584,6 +614,9 @@ void free_routing_table(RoutingTable* table)
 #if ETCPAL_NETINT_DEBUG_OUTPUT
 void debug_print_routing_table(RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(table))
+    return;
+
   printf("%-40s %-40s %-40s %-10s %s\n", "Address", "Mask", "Gateway", "Metric", "Index");
   for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)
   {
