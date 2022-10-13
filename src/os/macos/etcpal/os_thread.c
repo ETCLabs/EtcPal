@@ -103,13 +103,14 @@ etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 void* thread_func_internal(void* arg)
 {
   etcpal_thread_t* thread_data = (etcpal_thread_t*)arg;
-  if (thread_data && thread_data->fn)
-  {
-    if (thread_data->name[0] != '\0')
-      pthread_setname_np(thread_data->name);
+  if (!ETCPAL_ASSERT_VERIFY(thread_data) || !ETCPAL_ASSERT_VERIFY(thread_data->fn))
+    return NULL;
 
-    thread_data->fn(thread_data->arg);
-  }
+  if (thread_data->name[0] != '\0')
+    pthread_setname_np(thread_data->name);
+
+  thread_data->fn(thread_data->arg);
+
   return NULL;
 }
 

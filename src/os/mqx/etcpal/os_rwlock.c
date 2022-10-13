@@ -204,6 +204,9 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 
 void reader_atomic_increment(etcpal_rwlock_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+    return;
+
   _int_disable();
   ++id->reader_count;
   _int_enable();
@@ -211,6 +214,9 @@ void reader_atomic_increment(etcpal_rwlock_t* id)
 
 void reader_atomic_decrement(etcpal_rwlock_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+    return;
+
   _int_disable();
   --id->reader_count;
   _int_enable();

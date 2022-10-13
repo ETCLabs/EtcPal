@@ -28,6 +28,9 @@
 
 bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
 {
+  if (!os_ip || !ip)
+    return false;
+
 #if LWIP_IPV4
   if (os_ip->sa_family == AF_INET)
   {
@@ -49,6 +52,9 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
 
 size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
 {
+  if (!ip || !os_ip)
+    return 0;
+
   size_t ret = 0;
 #if LWIP_IPV4
   if (ETCPAL_IP_IS_V4(ip))
@@ -76,6 +82,9 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
 
 bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa)
 {
+  if (!os_sa || !sa)
+    return false;
+
   if (ip_os_to_etcpal(os_sa, &sa->ip))
   {
 #if LWIP_IPV4
@@ -98,6 +107,9 @@ bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa
 
 size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_sa)
 {
+  if (!sa || !os_sa)
+    return 0;
+
   size_t ret = ip_etcpal_to_os(&sa->ip, os_sa);
   if (ret != 0)
   {

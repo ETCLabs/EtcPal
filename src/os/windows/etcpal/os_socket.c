@@ -496,6 +496,9 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
 
 int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_SO_RCVBUF:
@@ -560,6 +563,9 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
 
 int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_IP_TTL:
@@ -670,6 +676,9 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 
 int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_MCAST_JOIN_GROUP:
@@ -823,6 +832,9 @@ void etcpal_poll_context_deinit(EtcPalPollContext* context)
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock_desc)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(sock_desc))
+    return;
+
   if (sock_desc->events & ETCPAL_POLL_IN)
   {
     ETCPAL_FD_SET(sock_desc->sock, &context->readfds);
@@ -839,6 +851,9 @@ void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock_des
 
 void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock_desc)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(sock_desc))
+    return;
+
   if (sock_desc->events & ETCPAL_POLL_IN)
   {
     ETCPAL_FD_CLEAR(sock_desc->sock, &context->readfds);
@@ -903,7 +918,9 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
 {
   if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID ||
       !(new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
+  {
     return kEtcPalErrInvalid;
+  }
 
   etcpal_error_t res = kEtcPalErrSys;
   if (etcpal_mutex_lock(&context->lock))
@@ -1005,6 +1022,12 @@ etcpal_error_t handle_select_result(EtcPalPollContext*     context,
                                     const EtcPalPollFdSet* writefds,
                                     const EtcPalPollFdSet* exceptfds)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(event) || !ETCPAL_ASSERT_VERIFY(readfds) ||
+      !ETCPAL_ASSERT_VERIFY(writefds) || !ETCPAL_ASSERT_VERIFY(exceptfds))
+  {
+    return kEtcPalErrSys;
+  }
+
   // Init the event data.
   event->socket = ETCPAL_SOCKET_INVALID;
   event->events = 0;
@@ -1074,6 +1097,9 @@ int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const voi
 {
   ETCPAL_UNUSED_ARG(tree);
 
+  if (!ETCPAL_ASSERT_VERIFY(value_a) || !ETCPAL_ASSERT_VERIFY(value_b))
+    return 0;
+
   const EtcPalPollSocket* a = (const EtcPalPollSocket*)value_a;
   const EtcPalPollSocket* b = (const EtcPalPollSocket*)value_b;
 
@@ -1087,11 +1113,11 @@ EtcPalRbNode* poll_socket_alloc(void)
 
 void poll_socket_free(EtcPalRbNode* node)
 {
-  if (node)
-  {
-    free(node->value);
-    free(node);
-  }
+  if (!ETCPAL_ASSERT_VERIFY(node))
+    return;
+
+  free(node->value);
+  free(node);
 }
 
 etcpal_error_t init_extension_functions()
@@ -1103,6 +1129,9 @@ etcpal_error_t init_extension_functions()
 
 etcpal_error_t get_wsarecvmsg(LPFN_WSARECVMSG* result)
 {
+  if (!ETCPAL_ASSERT_VERIFY(result))
+    return kEtcPalErrSys;
+
   LPFN_WSARECVMSG func  = NULL;
   GUID            guid  = WSAID_WSARECVMSG;
   SOCKET          sock  = INVALID_SOCKET;
@@ -1124,6 +1153,12 @@ etcpal_error_t get_wsarecvmsg(LPFN_WSARECVMSG* result)
 
 void construct_wsamsg(const EtcPalMsgHdr* in_msg, LPSOCKADDR_STORAGE name_store, LPWSABUF buf_store, LPWSAMSG out_msg)
 {
+  if (!ETCPAL_ASSERT_VERIFY(in_msg) || !ETCPAL_ASSERT_VERIFY(name_store) || !ETCPAL_ASSERT_VERIFY(buf_store) ||
+      !ETCPAL_ASSERT_VERIFY(out_msg))
+  {
+    return;
+  }
+
   out_msg->name          = (SOCKADDR*)name_store;
   out_msg->namelen       = sizeof(*name_store);
   out_msg->lpBuffers     = buf_store;
@@ -1171,6 +1206,9 @@ ULONG rcvmsg_flags_etcpal_to_os(int etcpal_flags)
 
 bool get_first_compatible_cmsg(LPWSAMSG msg, LPWSACMSGHDR start, EtcPalCMsgHdr* cmsg)
 {
+  if (!ETCPAL_ASSERT_VERIFY(msg) || !ETCPAL_ASSERT_VERIFY(cmsg))
+    return false;
+
   bool get_next_cmsg = true;
   for (LPWSACMSGHDR hdr = start; hdr && (hdr->cmsg_len > 0) && get_next_cmsg; hdr = WSA_CMSG_NXTHDR(msg, hdr))
   {

@@ -22,6 +22,9 @@
 
 bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
 {
+  if (!id)
+    return false;
+
   if (timeout_ms < 0)
   {
     return (MQX_OK == _lwevent_wait_ticks(id, 1u, true, 0u));

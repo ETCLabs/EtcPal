@@ -451,6 +451,9 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
 
 int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_SO_RCVBUF:
@@ -506,6 +509,9 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
 #if LWIP_IPV4
 static bool netif_index_to_ipv4_addr(unsigned int netif_index, struct in_addr* addr)
 {
+  if (!ETCPAL_ASSERT_VERIFY(addr))
+    return false;
+
   bool result = false;
   LOCK_TCPIP_CORE();
   struct netif* lwip_netif = netif_get_by_index((u8_t)netif_index);
@@ -521,6 +527,9 @@ static bool netif_index_to_ipv4_addr(unsigned int netif_index, struct in_addr* a
 
 int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_IP_TTL:
@@ -609,6 +618,9 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 #if LWIP_IPV6
 int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_MCAST_JOIN_GROUP:
@@ -650,6 +662,9 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
 void ms_to_timeval(int ms, struct timeval* tv)
 {
+  if (!ETCPAL_ASSERT_VERIFY(tv))
+    return;
+
   tv->tv_sec  = ms / 1000;
   tv->tv_usec = (ms % 1000) * 1000;
 }
@@ -774,7 +789,9 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
 {
   if (!context || !context->valid || socket == ETCPAL_SOCKET_INVALID ||
       !(new_events & ETCPAL_POLL_VALID_INPUT_EVENT_MASK))
+  {
     return kEtcPalErrInvalid;
+  }
 
   EtcPalPollSocket* sock_desc = find_socket(context, socket);
   if (sock_desc)
@@ -857,6 +874,12 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context,
                                     const fd_set*      writefds,
                                     const fd_set*      exceptfds)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(event) || !ETCPAL_ASSERT_VERIFY(readfds) ||
+      !ETCPAL_ASSERT_VERIFY(writefds) || !ETCPAL_ASSERT_VERIFY(exceptfds))
+  {
+    return kEtcPalErrSys;
+  }
+
   // Init the event data.
   event->socket = ETCPAL_SOCKET_INVALID;
   event->events = 0;
@@ -913,6 +936,12 @@ void construct_msghdr(const EtcPalMsgHdr*      in_msg,
                       struct iovec*            buf_store,
                       struct msghdr*           out_msg)
 {
+  if (!ETCPAL_ASSERT_VERIFY(in_msg) || !ETCPAL_ASSERT_VERIFY(name_store) || !ETCPAL_ASSERT_VERIFY(buf_store) ||
+      !ETCPAL_ASSERT_VERIFY(out_msg))
+  {
+    return;
+  }
+
   out_msg->msg_name       = name_store;
   out_msg->msg_namelen    = sizeof(*name_store);
   out_msg->msg_iov        = buf_store;
@@ -960,6 +989,9 @@ int rcvmsg_flags_etcpal_to_os(int etcpal_flags)
 
 bool get_first_compatible_cmsg(struct msghdr* msg, struct cmsghdr* start, EtcPalCMsgHdr* cmsg)
 {
+  if (!ETCPAL_ASSERT_VERIFY(msg) || !ETCPAL_ASSERT_VERIFY(cmsg))
+    return false;
+
   bool get_next_cmsg = true;
   for (struct cmsghdr* hdr = start; hdr && (hdr->cmsg_len > 0) && get_next_cmsg; hdr = CMSG_NXTHDR(msg, hdr))
   {
@@ -990,6 +1022,9 @@ bool get_first_compatible_cmsg(struct msghdr* msg, struct cmsghdr* start, EtcPal
 
 void init_context_socket_array(EtcPalPollContext* context)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context))
+    return;
+
   context->num_valid_sockets = 0;
   for (EtcPalPollSocket* poll_sock = context->sockets; poll_sock < context->sockets + ETCPAL_SOCKET_MAX_POLL_SIZE;
        ++poll_sock)
@@ -1000,6 +1035,9 @@ void init_context_socket_array(EtcPalPollContext* context)
 
 EtcPalPollSocket* find_socket(EtcPalPollContext* context, etcpal_socket_t sock)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context))
+    return NULL;
+
   for (EtcPalPollSocket* poll_sock = context->sockets; poll_sock < context->sockets + ETCPAL_SOCKET_MAX_POLL_SIZE;
        ++poll_sock)
   {
@@ -1011,11 +1049,17 @@ EtcPalPollSocket* find_socket(EtcPalPollContext* context, etcpal_socket_t sock)
 
 EtcPalPollSocket* find_hole(EtcPalPollContext* context)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context))
+    return NULL;
+
   return find_socket(context, ETCPAL_SOCKET_INVALID);
 }
 
 void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* poll_sock)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(poll_sock))
+    return;
+
   if (poll_sock->events & ETCPAL_POLL_IN)
   {
     ETCPAL_FD_SET(poll_sock->sock, &context->readfds);
@@ -1030,6 +1074,9 @@ void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* poll_soc
 
 void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* poll_sock)
 {
+  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(poll_sock))
+    return;
+
   if (poll_sock->events & ETCPAL_POLL_IN)
   {
     ETCPAL_FD_CLEAR(poll_sock->sock, &context->readfds);

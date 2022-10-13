@@ -47,6 +47,9 @@ static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_add
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return kEtcPalErrSys;
+
   struct netif* lwip_netif;
 
   LOCK_TCPIP_CORE();
@@ -137,6 +140,9 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 void os_free_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return;
+
 #if ETCPAL_EMBOS_USE_MALLOC
   if (cache->netints)
   {
@@ -148,6 +154,9 @@ void os_free_interfaces(CachedNetintInfo* cache)
 
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
+  if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(cache) || !ETCPAL_ASSERT_VERIFY(index))
+    return kEtcPalErrSys;
+
   unsigned int index_found = 0;
 
   for (const EtcPalNetintInfo* netint = static_netints; netint < static_netints + num_static_netints; ++netint)
@@ -194,6 +203,9 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 // Must be called with lwIP TCP/IP core locked
 void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
 {
+  if (!ETCPAL_ASSERT_VERIFY(lwip_netif) || !ETCPAL_ASSERT_VERIFY(netint))
+    return;
+
   netint->index = netif_get_index(lwip_netif);
   memset(netint->mac.data, 0, ETCPAL_MAC_BYTES);
   memcpy(netint->mac.data, lwip_netif->hwaddr, lwip_netif->hwaddr_len);
@@ -209,6 +221,9 @@ void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo
 // Must be called with lwIP TCP/IP core locked
 void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* netint)
 {
+  if (!ETCPAL_ASSERT_VERIFY(lwip_netif) || !ETCPAL_ASSERT_VERIFY(netint))
+    return;
+
   copy_common_interface_info(lwip_netif, netint);
 
   if (!ip_addr_isany(netif_ip_addr4(lwip_netif)))
@@ -227,6 +242,9 @@ void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* ne
 // Must be called with lwIP TCP/IP core locked
 bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
 {
+  if (!ETCPAL_ASSERT_VERIFY(lwip_netif) || !ETCPAL_ASSERT_VERIFY(netint))
+    return false;
+
   copy_common_interface_info(lwip_netif, netint);
 
   /* Finish filling in a netintinfo for a single IPv6 address. */

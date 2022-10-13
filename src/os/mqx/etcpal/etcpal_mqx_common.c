@@ -21,6 +21,9 @@
 
 bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct)
 {
+  if (!ETCPAL_ASSERT_VERIFY(tick_struct))
+    return false;
+
   TIME_STRUCT ts;
   ts.SECONDS      = (ms < 0 ? 0 : (ms / 1000));
   ts.MILLISECONDS = (ms <= 0 ? 1 : (ms % 1000));
@@ -29,6 +32,9 @@ bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct)
 
 bool lwsem_timed_wait(LWSEM_STRUCT* sem, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(sem))
+    return false;
+
   if (timeout_ms < 0)
   {
     return (MQX_OK == _lwsem_wait(sem));

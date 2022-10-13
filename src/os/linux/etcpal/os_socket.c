@@ -1016,7 +1016,7 @@ int rcvmsg_flags_etcpal_to_os(int etcpal_flags)
 bool get_first_compatible_cmsg(struct msghdr* msg, struct cmsghdr* start, EtcPalCMsgHdr* cmsg)
 {
   if (!ETCPAL_ASSERT_VERIFY(msg) || !ETCPAL_ASSERT_VERIFY(cmsg))
-    return;
+    return false;
 
   bool get_next_cmsg = true;
   for (struct cmsghdr* hdr = start; hdr && (hdr->cmsg_len > 0) && get_next_cmsg; hdr = CMSG_NXTHDR(msg, hdr))
