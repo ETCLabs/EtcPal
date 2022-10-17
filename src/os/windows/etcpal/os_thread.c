@@ -94,11 +94,12 @@ void set_thread_name(DWORD thread_id, const char* thread_name)
 unsigned __stdcall thread_func_internal(void* pthread)
 {
   etcpal_thread_t* thread_data = (etcpal_thread_t*)pthread;
-  if (!ETCPAL_ASSERT_VERIFY(thread_data) || !ETCPAL_ASSERT_VERIFY(thread_data->fn))
-    return 1;
+  if (thread_data && thread_data->fn)
+  {
+    set_thread_name((DWORD)-1, thread_data->name);
+    thread_data->fn(thread_data->arg);
+  }
 
-  set_thread_name((DWORD)-1, thread_data->name);
-  thread_data->fn(thread_data->arg);
   return 0;
 }
 
