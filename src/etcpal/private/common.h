@@ -63,6 +63,7 @@ extern "C" {
  *****************************************************************************/
 
 extern const EtcPalLogParams* etcpal_log_params;
+extern bool etcpal_init_called;
 
 bool set_etcpal_log_params(const EtcPalLogParams* params);
 

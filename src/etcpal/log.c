@@ -143,18 +143,21 @@ void etcpal_log_deinit(void)
 /**
  * @brief Register the handler for log messages from EtcPal.
  *
- * Call this once before the first call to etcpal_init(). This avoids thread safety issues and results in the best log
- * coverage.
+ * If this is called, it must be before the first call to etcpal_init() - otherwise an error will be returned.
  *
- * Make sure to enable the logging feature in etcpal_init() so that the logs will actually be printed.
+ * If this is called, the first call to etcpal_init() must initialize the logging feature - otherwise it will return an
+ * error.
  *
  * The messages that will typically be logged by EtcPal indicate critical assertion failures that may not be otherwise
  * visible in a release environment. If your application supports logging, it is highly recommended to register with
  * this.
  *
+ * etcpal_init_log_handler() is not thread-safe; you should make sure your init-time code is serialized.
+ *
  * @param[in] log_params A struct used by the library to log messages. Must not be NULL.
  * @return #kEtcPalErrOk: Registered logging handler sucessfully.
- * @return #kEtcPalErrInvalid: Invalid parameter provided.
+ * @return #kEtcPalErrInvalid: Either an invalid parameter was provided or this function wasn't called before
+ * etcpal_init().
  * @return #kEtcPalErrAlready: The logging parameters have already been configured.
  */
 etcpal_error_t etcpal_init_log_handler(const EtcPalLogParams* log_params)
@@ -162,12 +165,11 @@ etcpal_error_t etcpal_init_log_handler(const EtcPalLogParams* log_params)
   if (!log_params)
     return kEtcPalErrInvalid;
 
+  if (etcpal_init_called)
+    return kEtcPalErrInvalid;
+
   if (!set_etcpal_log_params(log_params))
     return kEtcPalErrAlready;
-
-  // TODO: Fail if called after etcpal_init
-  // TODO: Add "this implicitly enables the logging feature" and implement that
-  // TODO: Make sure etcpal_init docs mention to call this function
 
   return kEtcPalErrOk;
 }

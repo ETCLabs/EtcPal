@@ -63,7 +63,8 @@ static EtcPalModule etcpal_modules[] = {
 
 /***************************** Global variables ******************************/
 
-const EtcPalLogParams* etcpal_log_params = NULL;
+const EtcPalLogParams* etcpal_log_params  = NULL;
+bool                   etcpal_init_called = false;
 
 /**************************** Private variables ******************************/
 
@@ -91,15 +92,42 @@ static struct EtcPalState
  * If you are using a library that depends on EtcPal, and not using EtcPal directly, please refer to that library's
  * documentation to determine if you need to call this with the features the library needs.
  *
+ * If you've set up a handler for logs from the library via etcpal_init_log_handler(), make sure to enable the logging
+ * feature in the first call to etcpal_init() - otherwise an error will be returned.
+ *
+ * It's highly recommended to call etcpal_init_log_handler() before this, since it will enable the application to log
+ * critical assertions that may occur within EtcPal.
+ *
  * etcpal_init() and etcpal_deinit() are not thread-safe; you should make sure your init-time and deinit-time code is
  * serialized.
  *
  * @param[in] features Mask of EtcPal features required.
  * @return #kEtcPalErrOk: EtcPal library initialized successfully.
+ * @return #kEtcPalErrInvalid: A log handler was enabled via etcpal_init_log_handler(), but the logging feature is not
+ * enabled and was not specified in the feature mask.
  * @return Various error codes possible from initialization of feature modules.
  */
 etcpal_error_t etcpal_init(etcpal_features_t features)
 {
+  etcpal_init_called = true;
+
+  // First check if the logging feature needs to be initialized due to the EtcPal log handler
+  if (etcpal_log_params)
+  {
+    bool logging_enabled = false;
+    for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
+    {
+      if ((module->feature_mask & ETCPAL_FEATURE_LOGGING) && (module->init_count > 0))
+      {
+        logging_enabled = true;
+        break;
+      }
+    }
+
+    if (!logging_enabled && !(features & ETCPAL_FEATURE_LOGGING))
+      return kEtcPalErrInvalid;
+  }
+
   // In this function and the deinit() function below, we iterate the etcpal_modules array for each EtcPal module that
   // must be initialized. The array contains the init and deinit functions and an init counter for each supported
   // module.
