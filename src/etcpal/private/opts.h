@@ -102,7 +102,8 @@ bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* fu
  * this, it must be redefined as a macro taking a single argument (the assertion expression).
  */
 #ifndef ETCPAL_ASSERT_VERIFY
-#define ETCPAL_ASSERT_VERIFY(exp) ((exp) ? true : etcpal_assert_verify_fail(#exp, __FILE__, __func__, __LINE__))
+#define ETCPAL_ASSERT_VERIFY(exp) \
+  ((exp) ? true : (etcpal_assert_verify_fail(#exp, __FILE__, __func__, __LINE__) && false))
 #endif
 
 /**
