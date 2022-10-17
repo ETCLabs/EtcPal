@@ -850,6 +850,7 @@ void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock_des
   }
 }
 
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* sock_desc)
 {
   if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(sock_desc))
