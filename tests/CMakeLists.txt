@@ -67,7 +67,7 @@ function(etcpal_add_live_test target_name language)
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
   target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS} ETCPAL_HAVE_CONFIG_H)
   target_link_libraries(${target_name} PUBLIC EtcPal ThrowTheSwitch::Unity meekrosoft::fff)
-  target_include_directories(${target_name} PRIVATE
+  target_include_directories(${target_name} PUBLIC
     ${ETCPAL_TEST}/config
   )
 endfunction()
@@ -96,7 +96,7 @@ function(etcpal_add_custom_test target_name language)
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
   target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS} ETCPAL_HAVE_CONFIG_H)
   target_link_libraries(${target_name} PUBLIC ThrowTheSwitch::Unity meekrosoft::fff)
-  target_include_directories(${target_name} PRIVATE
+  target_include_directories(${target_name} PUBLIC
     ${ETCPAL_TEST}/config
   )
 endfunction()
