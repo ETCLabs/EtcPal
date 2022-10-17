@@ -206,7 +206,7 @@ void etcpal_deinit(etcpal_features_t features)
   }
 }
 
-bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* func, const int line)
+bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* func, int line)
 {
 #if !ETCPAL_LOGGING_ENABLED
   ETCPAL_UNUSED_ARG(exp);

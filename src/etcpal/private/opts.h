@@ -93,7 +93,7 @@
 #endif
 
 /* Assertion failure handler */
-bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* func, const int line);
+bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* func, int line);
 
 /**
  * @brief The assertion handler used by the EtcPal library.
