@@ -47,8 +47,10 @@ typedef struct EtcPalModule
 
 /* clang-format off */
 
+// The order of this array determines the init & deinit order of the modules.
+// They are initialized in order and deinitialized in reverse order.
 static EtcPalModule etcpal_modules[] = {
-  ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),  // Initialize this first for best EtcPal log coverage
+  ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),  // Logging is first for best EtcPal log coverage
 #if !ETCPAL_NO_OS_SUPPORT
   ETCPAL_MODULE(etcpal_timer, ETCPAL_FEATURE_TIMERS),
 #endif
@@ -160,14 +162,15 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   if (init_res != kEtcPalErrOk)
   {
     // Clean up on failure.
-    for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
+    for (size_t i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
     {
+      EtcPalModule* module = &etcpal_modules[i];
       if (modules_initialized[i])
       {
-        --(etcpal_modules[i].init_count);
+        --(module->init_count);
 
-        if (etcpal_modules[i].init_count == 0)
-          etcpal_modules[i].deinit_fn();
+        if (module->init_count == 0)
+          module->deinit_fn();
       }
     }
   }
@@ -189,8 +192,9 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
 void etcpal_deinit(etcpal_features_t features)
 {
   // Deinitialize each module in turn.
-  for (EtcPalModule* module = etcpal_modules; module < etcpal_modules + MODULE_ARRAY_SIZE; ++module)
+  for (size_t i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
   {
+    EtcPalModule* module = &etcpal_modules[i];
     if ((features & module->feature_mask) && (module->init_count > 0))
     {
       --(module->init_count);
