@@ -601,7 +601,7 @@ static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr*
 etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, RoutingTable* table)
 {
   if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(table))
-    return;
+    return kEtcPalErrSys;
 
   table->size          = 0;
   table->entries       = NULL;
