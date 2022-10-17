@@ -25,6 +25,19 @@ extern "C" {
 
 extern "C" void run_all_tests(void);
 
+extern "C" bool EtcPalTestingAssertVerify(bool         condition,
+                                          const char*  expr,
+                                          const char*  file,
+                                          const char*  func,
+                                          unsigned int line)
+{
+  char msg[1000];
+  sprintf(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d", expr,
+          file, func, line);
+  TEST_ASSERT_MESSAGE(condition, msg);
+  return condition;
+}
+
 int main(int argc, char* argv[])
 {
   srand((unsigned int)time(nullptr));
