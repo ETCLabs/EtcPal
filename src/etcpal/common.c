@@ -117,7 +117,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   if (etcpal_log_params)
   {
     bool logging_enabled = false;
-    for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
+    for (int i = 0; i < MODULE_ARRAY_SIZE; ++i)
     {
       EtcPalModule* module = &etcpal_modules[i];
       if ((module->feature_mask & ETCPAL_FEATURE_LOGGING) && (module->init_count > 0))
@@ -141,7 +141,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   etcpal_error_t init_res = kEtcPalErrOk;
 
   // Initialize each module in turn.
-  for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
+  for (int i = 0; i < MODULE_ARRAY_SIZE; ++i)
   {
     EtcPalModule* module = &etcpal_modules[i];
     if (features & module->feature_mask)
@@ -163,7 +163,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   if (init_res != kEtcPalErrOk)
   {
     // Clean up on failure.
-    for (size_t i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
+    for (int i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
     {
       EtcPalModule* module = &etcpal_modules[i];
       if (modules_initialized[i])
@@ -193,7 +193,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
 void etcpal_deinit(etcpal_features_t features)
 {
   // Deinitialize each module in turn.
-  for (size_t i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
+  for (int i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
   {
     EtcPalModule* module = &etcpal_modules[i];
     if ((features & module->feature_mask) && (module->init_count > 0))
