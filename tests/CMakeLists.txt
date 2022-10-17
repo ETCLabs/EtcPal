@@ -44,8 +44,6 @@ if(NOT ETCPAL_HAVE_NETWORKING_SUPPORT)
   list(APPEND ETCPAL_TEST_COMPILE_DEFINITIONS ETCPAL_NO_NETWORKING_SUPPORT)
 endif()
 
-list(APPEND ETCPAL_TEST_COMPILE_DEFINITIONS ETCPAL_HAVE_CONFIG_H)
-
 # Add a "live" test, which links the entire EtcPal library, unmodified
 function(etcpal_add_live_test target_name language)
   if(ETCPAL_TEST_BUILD_AS_LIBRARIES)
@@ -67,7 +65,7 @@ function(etcpal_add_live_test target_name language)
   endif()
 
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
-  target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS})
+  target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS} ETCPAL_HAVE_CONFIG_H)
   target_link_libraries(${target_name} PUBLIC EtcPal ThrowTheSwitch::Unity meekrosoft::fff)
   target_include_directories(${target_name} PRIVATE
     ${ETCPAL_TEST}/config
@@ -96,7 +94,7 @@ function(etcpal_add_custom_test target_name language)
   endif()
 
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
-  target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS})
+  target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS} ETCPAL_HAVE_CONFIG_H)
   target_link_libraries(${target_name} PUBLIC ThrowTheSwitch::Unity meekrosoft::fff)
   target_include_directories(${target_name} PRIVATE
     ${ETCPAL_TEST}/config
