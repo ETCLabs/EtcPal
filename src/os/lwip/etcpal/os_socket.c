@@ -26,6 +26,7 @@
 #include <lwip/tcpip.h>
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 #include "os_error.h"
 
 /***************************** Private macros ********************************/

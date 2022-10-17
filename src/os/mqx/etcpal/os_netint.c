@@ -25,6 +25,7 @@
 #include <stdint.h>
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 
 static EtcPalNetintInfo netints[BSP_ENET_DEVICE_COUNT];

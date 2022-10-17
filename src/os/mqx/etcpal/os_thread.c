@@ -20,6 +20,7 @@
 #include "etcpal/thread.h"
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 

@@ -119,6 +119,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
     bool logging_enabled = false;
     for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
     {
+      EtcPalModule* module = &etcpal_modules[i];
       if ((module->feature_mask & ETCPAL_FEATURE_LOGGING) && (module->init_count > 0))
       {
         logging_enabled = true;

@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/rwlock.h"
+#include "etcpal/private/common.h"
 #include <task.h>
 #include "freertos_timed_wait.h"
 

@@ -17,6 +17,7 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/private/common.h"
 #include "etcpal_mqx_common.h"
 
 bool milliseconds_to_ticks(int ms, MQX_TICK_STRUCT* tick_struct)

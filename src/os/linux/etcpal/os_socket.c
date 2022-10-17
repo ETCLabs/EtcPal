@@ -39,6 +39,7 @@
 #include <unistd.h>
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 #include "os_error.h"
 
 /**************************** Private constants ******************************/

@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/event_group.h"
+#include "etcpal/private/common.h"
 
 /*********************** Private function prototypes *************************/
 

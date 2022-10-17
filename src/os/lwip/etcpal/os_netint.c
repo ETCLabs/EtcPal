@@ -21,7 +21,7 @@
 #include <string.h>
 #include <lwip/netif.h>
 #include <lwip/tcpip.h>
-#include "etcpal/private/opts.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 
 /**************************** Private variables ******************************/

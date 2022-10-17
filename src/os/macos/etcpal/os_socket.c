@@ -27,6 +27,7 @@
 #endif
 
 #include "etcpal/socket.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/socket.h"
 
 #include <errno.h>

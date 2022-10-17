@@ -19,6 +19,8 @@
 
 #include "etcpal/event_group.h"
 
+#include "etcpal/private/common.h"
+
 /*********************** Private function prototypes *************************/
 
 static bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags);

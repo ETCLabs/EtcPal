@@ -26,6 +26,7 @@
 
 #include <string.h>
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 #include "os_error.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)

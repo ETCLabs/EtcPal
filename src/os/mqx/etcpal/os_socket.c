@@ -24,6 +24,7 @@
 #include <bsp.h>
 #include <rtcs.h>
 
+#include "etcpal/private/common.h"
 #include "etcpal/private/socket.h"
 
 /***************************** Private macros ********************************/

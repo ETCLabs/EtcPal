@@ -29,6 +29,7 @@
 
 #include "etcpal/common.h"
 #include "etcpal/socket.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"
 

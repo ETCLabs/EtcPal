@@ -21,6 +21,7 @@
 
 #include <string.h>
 #include "etcpal/pack.h"
+#include "etcpal/private/common.h"
 
 #define ACN_RLP_HEADER_SIZE 16u
 #define RLP_VECTOR_SIZE     4u

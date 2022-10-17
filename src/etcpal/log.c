@@ -29,6 +29,7 @@
 #include "etcpal/mutex.h"
 #endif
 #include "etcpal/mempool.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/log.h"
 
 #ifdef _MSC_VER

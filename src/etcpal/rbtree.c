@@ -39,6 +39,7 @@
 
 #include <stdbool.h>
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 
 /* etcpal_rbnode */
 

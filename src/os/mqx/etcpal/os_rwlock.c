@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/rwlock.h"
+#include "etcpal/private/common.h"
 #include "etcpal_mqx_common.h"
 
 /**************************** Private constants ******************************/

@@ -27,6 +27,7 @@
 #include <Windows.h>
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/socket.h"
 #include "os_error.h"
 

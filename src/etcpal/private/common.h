@@ -22,6 +22,8 @@
 #ifndef ETCPAL_PRIVATE_COMMON_H_
 #define ETCPAL_PRIVATE_COMMON_H_
 
+#include "etcpal/private/opts.h"
+
 #include "etcpal/log.h"
 
 #ifdef __cplusplus
@@ -63,7 +65,7 @@ extern "C" {
  *****************************************************************************/
 
 extern const EtcPalLogParams* etcpal_log_params;
-extern bool etcpal_init_called;
+extern bool                   etcpal_init_called;
 
 bool set_etcpal_log_params(const EtcPalLogParams* params);
 

@@ -20,6 +20,8 @@
 #ifndef ETCPAL_PRIVATE_OPTS_H_
 #define ETCPAL_PRIVATE_OPTS_H_
 
+#include "stdbool.h"
+
 #if ETCPAL_HAVE_CONFIG_H
 #include "etcpal_config.h"
 #endif

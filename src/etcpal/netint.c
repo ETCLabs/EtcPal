@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include "etcpal/common.h"
 #include "etcpal/mutex.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 
 /**************************** Private variables ******************************/

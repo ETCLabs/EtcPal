@@ -1,6 +1,7 @@
 // Author: Noah Meltzer
 
 #include "etcpal/queue.h"
+#include "etcpal/private/common.h"
 #include <string.h>
 
 static inline bool wait_for_space_timed(const etcpal_queue_t* queue, int timeout_ms)
