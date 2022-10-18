@@ -54,7 +54,7 @@ target_include_directories(LiveTestEtcPal PUBLIC
 )
 
 target_sources(LiveTestEtcPal PRIVATE ${ETCPAL_TEST}/config/assert_verify.c)
-target_link_libraries(LiveTestEtcPal PUBLIC LiveTestEtcPal ThrowTheSwitch::Unity)
+target_link_libraries(LiveTestEtcPal PUBLIC ThrowTheSwitch::Unity)
 
 function(etcpal_add_live_test target_name language)
   if(ETCPAL_TEST_BUILD_AS_LIBRARIES)
