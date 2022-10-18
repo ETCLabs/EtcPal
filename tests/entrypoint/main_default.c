@@ -19,22 +19,9 @@
 
 #include <stdlib.h>
 #include <time.h>
-#include "stdbool.h"
 #include "unity_fixture.h"
 
 extern void run_all_tests(void);
-
-bool EtcPalTestingAssertVerify(bool condition, const char* expr, const char* file, const char* func, unsigned int line)
-{
-  if (!condition)
-  {
-    char msg[1000];
-    sprintf(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d", expr,
-            file, func, line);
-    TEST_FAIL_MESSAGE(msg);
-  }
-  return condition;
-}
 
 int main(int argc, char* argv[])
 {

@@ -17,16 +17,17 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include <stdlib.h>
-#include <time.h>
-extern "C" {
+#include "stdbool.h"
 #include "unity_fixture.h"
-}
 
-extern "C" void run_all_tests(void);
-
-int main(int argc, char* argv[])
+bool EtcPalTestingAssertVerify(bool condition, const char* expr, const char* file, const char* func, unsigned int line)
 {
-  srand((unsigned int)time(nullptr));
-  return UnityMain(argc, (const char**)argv, run_all_tests);
+  if (!condition)
+  {
+    char msg[1000];
+    sprintf(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d", expr,
+            file, func, line);
+    TEST_FAIL_MESSAGE(msg);
+  }
+  return condition;
 }
