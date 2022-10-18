@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "stdbool.h"
+#include "stdio.h"
 #include "unity_fixture.h"
 
 bool EtcPalTestingAssertVerify(bool condition, const char* expr, const char* file, const char* func, unsigned int line)
