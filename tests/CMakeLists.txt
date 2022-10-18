@@ -54,6 +54,7 @@ target_include_directories(LiveTestEtcPal PUBLIC
 )
 
 target_sources(LiveTestEtcPal PRIVATE ${ETCPAL_TEST}/config/assert_verify.c)
+target_link_libraries(${target_name} PUBLIC LiveTestEtcPal ThrowTheSwitch::Unity)
 
 function(etcpal_add_live_test target_name language)
   if(ETCPAL_TEST_BUILD_AS_LIBRARIES)
@@ -76,7 +77,7 @@ function(etcpal_add_live_test target_name language)
 
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
   target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS})
-  target_link_libraries(${target_name} PUBLIC LiveTestEtcPal ThrowTheSwitch::Unity meekrosoft::fff)
+  target_link_libraries(${target_name} PUBLIC LiveTestEtcPal meekrosoft::fff)
 endfunction()
 
 # Add a "custom" test, which doesn't link the EtcPal library - EtcPal sources must then be selectively
