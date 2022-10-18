@@ -53,15 +53,17 @@ target_include_directories(LiveTestEtcPal PUBLIC
   ${ETCPAL_TEST}/config
 )
 
+target_sources(LiveTestEtcPal PRIVATE ${ETCPAL_TEST}/config/assert_verify.c)
+
 function(etcpal_add_live_test target_name language)
   if(ETCPAL_TEST_BUILD_AS_LIBRARIES)
-    add_library(${target_name} ${ARGN} ${ETCPAL_TEST}/config/assert_verify.c)
+    add_library(${target_name} ${ARGN})
     install(TARGETS ${target_name} ARCHIVE DESTINATION lib)
   else()
     if(${language} STREQUAL C)
-      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/config/assert_verify.c ${ETCPAL_TEST}/entrypoint/main_default.c)
+      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/entrypoint/main_default.c)
     elseif(${language} STREQUAL CXX)
-      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/config/assert_verify.c ${ETCPAL_TEST}/entrypoint/main_default.cpp)
+      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/entrypoint/main_default.cpp)
     endif()
   endif()
 
