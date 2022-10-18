@@ -26,10 +26,13 @@ extern void run_all_tests(void);
 
 bool EtcPalTestingAssertVerify(bool condition, const char* expr, const char* file, const char* func, unsigned int line)
 {
-  char msg[1000];
-  sprintf(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d", expr,
-          file, func, line);
-  TEST_ASSERT_MESSAGE(condition, msg);
+  if (!condition)
+  {
+    char msg[1000];
+    sprintf(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d", expr,
+            file, func, line);
+    TEST_FAIL_MESSAGE(msg);
+  }
   return condition;
 }
 
