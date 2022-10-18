@@ -91,10 +91,7 @@ static void rb_node_dealloc(EtcPalRbNode* self, const EtcPalRbTree* tree)
 
 static int rb_node_is_red(const EtcPalRbNode* self)
 {
-  if (!ETCPAL_ASSERT_VERIFY(self))
-    return 0;
-
-  return self->red;
+  return self ? self->red : 0;
 }
 
 static EtcPalRbNode* rb_node_rotate(EtcPalRbNode* self, int dir)
