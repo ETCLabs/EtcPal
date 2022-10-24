@@ -39,6 +39,7 @@
 
 #include <stdbool.h>
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 
 /* etcpal_rbnode */
 
@@ -73,15 +74,19 @@ EtcPalRbNode* etcpal_rbnode_init(EtcPalRbNode* self, void* value)
 
 static EtcPalRbNode* rb_node_create(EtcPalRbTree* tree, void* value)
 {
+  if (!ETCPAL_ASSERT_VERIFY(tree))
+    return NULL;
+
   return etcpal_rbnode_init(etcpal_rbnode_alloc(tree), value);
 }
 
 static void rb_node_dealloc(EtcPalRbNode* self, const EtcPalRbTree* tree)
 {
-  if (self && tree && tree->dealloc_f)
-  {
+  if (!ETCPAL_ASSERT_VERIFY(self) || !ETCPAL_ASSERT_VERIFY(tree))
+    return;
+
+  if (tree->dealloc_f)
     tree->dealloc_f(self);
-  }
 }
 
 static int rb_node_is_red(const EtcPalRbNode* self)
@@ -91,27 +96,24 @@ static int rb_node_is_red(const EtcPalRbNode* self)
 
 static EtcPalRbNode* rb_node_rotate(EtcPalRbNode* self, int dir)
 {
-  EtcPalRbNode* result = NULL;
-  if (self)
-  {
-    result            = self->link[!dir];
-    self->link[!dir]  = result->link[dir];
-    result->link[dir] = self;
-    self->red         = 1;
-    result->red       = 0;
-  }
+  if (!ETCPAL_ASSERT_VERIFY(self))
+    return NULL;
+
+  EtcPalRbNode* result = self->link[!dir];
+  self->link[!dir]     = result->link[dir];
+  result->link[dir]    = self;
+  self->red            = 1;
+  result->red          = 0;
   return result;
 }
 
 static EtcPalRbNode* rb_node_rotate2(EtcPalRbNode* self, int dir)
 {
-  EtcPalRbNode* result = NULL;
-  if (self)
-  {
-    self->link[!dir] = rb_node_rotate(self->link[!dir], !dir);
-    result           = rb_node_rotate(self, dir);
-  }
-  return result;
+  if (!ETCPAL_ASSERT_VERIFY(self))
+    return NULL;
+
+  self->link[!dir] = rb_node_rotate(self->link[!dir], !dir);
+  return rb_node_rotate(self, dir);
 }
 
 /* etcpal_rbtree - default callbacks */
@@ -172,6 +174,9 @@ EtcPalRbTree* etcpal_rbtree_init(EtcPalRbTree*           self,
 /* Iterate the tree in a binary search pattern as far as it can go. Returns the final comparison result. */
 static int rb_iter_binary_search(EtcPalRbIter* self, EtcPalRbTree* tree, const void* value)
 {
+  if (!ETCPAL_ASSERT_VERIFY(self) || !ETCPAL_ASSERT_VERIFY(tree))
+    return 0;
+
   int cmp = 0;
 
   self->tree = tree;
@@ -208,6 +213,9 @@ static int rb_iter_binary_search(EtcPalRbIter* self, EtcPalRbTree* tree, const v
  */
 void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value)
 {
+  if (!self)
+    return NULL;
+
   void*        result = NULL;
   EtcPalRbIter tree_iter;
 
@@ -246,6 +254,9 @@ void* etcpal_rbtree_find(EtcPalRbTree* self, const void* value)
  */
 etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree* self, void* value)
 {
+  if (!self)
+    return kEtcPalErrInvalid;
+
   void* found_val = etcpal_rbtree_find(self, value);
   if (found_val)
     return kEtcPalErrExists;
@@ -600,7 +611,9 @@ size_t etcpal_rbtree_size(EtcPalRbTree* self)
  */
 int etcpal_rbtree_test(EtcPalRbTree* self, EtcPalRbNode* root)
 {
-  if (root == NULL)
+  if (!self)
+    return 0;
+  if (!root)
     return 1;
 
   EtcPalRbNode* ln = root->link[0];
@@ -664,6 +677,9 @@ EtcPalRbIter* etcpal_rbiter_init(EtcPalRbIter* self)
  * smallest or largest valued node. */
 static void* rb_iter_start(EtcPalRbIter* self, EtcPalRbTree* tree, int dir)
 {
+  if (!ETCPAL_ASSERT_VERIFY(self) || !ETCPAL_ASSERT_VERIFY(tree))
+    return NULL;
+
   void* result = NULL;
   if (self)
   {
@@ -689,6 +705,9 @@ static void* rb_iter_start(EtcPalRbIter* self, EtcPalRbTree* tree, int dir)
 /* Traverse a red black tree in the user-specified direction (0 asc, 1 desc) */
 static void* rb_iter_move(EtcPalRbIter* self, int dir)
 {
+  if (!ETCPAL_ASSERT_VERIFY(self))
+    return NULL;
+
   if (self->node->link[dir] != NULL)
   {
     /* Continue down this branch */
@@ -730,6 +749,9 @@ static void* rb_iter_move(EtcPalRbIter* self, int dir)
  */
 void* etcpal_rbiter_first(EtcPalRbIter* self, EtcPalRbTree* tree)
 {
+  if (!self || !tree)
+    return NULL;
+
   return rb_iter_start(self, tree, 0);
 }
 
@@ -745,6 +767,9 @@ void* etcpal_rbiter_first(EtcPalRbIter* self, EtcPalRbTree* tree)
  */
 void* etcpal_rbiter_last(EtcPalRbIter* self, EtcPalRbTree* tree)
 {
+  if (!self || !tree)
+    return NULL;
+
   return rb_iter_start(self, tree, 1);
 }
 
@@ -759,6 +784,9 @@ void* etcpal_rbiter_last(EtcPalRbIter* self, EtcPalRbTree* tree)
  */
 void* etcpal_rbiter_next(EtcPalRbIter* self)
 {
+  if (!self)
+    return NULL;
+
   return rb_iter_move(self, 1);
 }
 
@@ -773,6 +801,9 @@ void* etcpal_rbiter_next(EtcPalRbIter* self)
  */
 void* etcpal_rbiter_prev(EtcPalRbIter* self)
 {
+  if (!self)
+    return NULL;
+
   return rb_iter_move(self, 0);
 }
 

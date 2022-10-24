@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 
 #include <stdbool.h>
 #include <string.h>
@@ -46,8 +47,10 @@ typedef struct EtcPalModule
 
 /* clang-format off */
 
+// The order of this array determines the init & deinit order of the modules.
+// They are initialized in order and deinitialized in reverse order.
 static EtcPalModule etcpal_modules[] = {
-  ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),
+  ETCPAL_MODULE(etcpal_log, ETCPAL_FEATURE_LOGGING),  // Logging is first for best EtcPal log coverage
 #if !ETCPAL_NO_OS_SUPPORT
   ETCPAL_MODULE(etcpal_timer, ETCPAL_FEATURE_TIMERS),
 #endif
@@ -59,6 +62,18 @@ static EtcPalModule etcpal_modules[] = {
 #define MODULE_ARRAY_SIZE (sizeof(etcpal_modules) / sizeof(etcpal_modules[0]))
 
 /* clang-format on */
+
+/***************************** Global variables ******************************/
+
+const EtcPalLogParams* etcpal_log_params  = NULL;
+bool                   etcpal_init_called = false;
+
+/**************************** Private variables ******************************/
+
+static struct EtcPalState
+{
+  EtcPalLogParams log_params;
+} etcpal_state;
 
 /*************************** Function definitions ****************************/
 
@@ -79,15 +94,43 @@ static EtcPalModule etcpal_modules[] = {
  * If you are using a library that depends on EtcPal, and not using EtcPal directly, please refer to that library's
  * documentation to determine if you need to call this with the features the library needs.
  *
+ * If you've set up a handler for logs from the library via etcpal_init_log_handler(), make sure to enable the logging
+ * feature in the first call to etcpal_init() - otherwise an error will be returned.
+ *
+ * It's highly recommended to call etcpal_init_log_handler() before this, since it will enable the application to log
+ * critical assertions that may occur within EtcPal.
+ *
  * etcpal_init() and etcpal_deinit() are not thread-safe; you should make sure your init-time and deinit-time code is
  * serialized.
  *
  * @param[in] features Mask of EtcPal features required.
  * @return #kEtcPalErrOk: EtcPal library initialized successfully.
+ * @return #kEtcPalErrInvalid: A log handler was enabled via etcpal_init_log_handler(), but the logging feature is not
+ * enabled and was not specified in the feature mask.
  * @return Various error codes possible from initialization of feature modules.
  */
 etcpal_error_t etcpal_init(etcpal_features_t features)
 {
+  etcpal_init_called = true;
+
+  // First check if the logging feature needs to be initialized due to the EtcPal log handler
+  if (etcpal_log_params)
+  {
+    bool logging_enabled = false;
+    for (int i = 0; i < MODULE_ARRAY_SIZE; ++i)
+    {
+      EtcPalModule* module = &etcpal_modules[i];
+      if ((module->feature_mask & ETCPAL_FEATURE_LOGGING) && (module->init_count > 0))
+      {
+        logging_enabled = true;
+        break;
+      }
+    }
+
+    if (!logging_enabled && !(features & ETCPAL_FEATURE_LOGGING))
+      return kEtcPalErrInvalid;
+  }
+
   // In this function and the deinit() function below, we iterate the etcpal_modules array for each EtcPal module that
   // must be initialized. The array contains the init and deinit functions and an init counter for each supported
   // module.
@@ -98,7 +141,7 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   etcpal_error_t init_res = kEtcPalErrOk;
 
   // Initialize each module in turn.
-  for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
+  for (int i = 0; i < MODULE_ARRAY_SIZE; ++i)
   {
     EtcPalModule* module = &etcpal_modules[i];
     if (features & module->feature_mask)
@@ -120,14 +163,15 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
   if (init_res != kEtcPalErrOk)
   {
     // Clean up on failure.
-    for (size_t i = 0; i < MODULE_ARRAY_SIZE; ++i)
+    for (int i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
     {
+      EtcPalModule* module = &etcpal_modules[i];
       if (modules_initialized[i])
       {
-        --(etcpal_modules[i].init_count);
+        --(module->init_count);
 
-        if (etcpal_modules[i].init_count == 0)
-          etcpal_modules[i].deinit_fn();
+        if (module->init_count == 0)
+          module->deinit_fn();
       }
     }
   }
@@ -149,8 +193,9 @@ etcpal_error_t etcpal_init(etcpal_features_t features)
 void etcpal_deinit(etcpal_features_t features)
 {
   // Deinitialize each module in turn.
-  for (EtcPalModule* module = etcpal_modules; module < etcpal_modules + MODULE_ARRAY_SIZE; ++module)
+  for (int i = MODULE_ARRAY_SIZE - 1; i >= 0; --i)  // Deinit in reverse order
   {
+    EtcPalModule* module = &etcpal_modules[i];
     if ((features & module->feature_mask) && (module->init_count > 0))
     {
       --(module->init_count);
@@ -159,4 +204,32 @@ void etcpal_deinit(etcpal_features_t features)
         module->deinit_fn();
     }
   }
+}
+
+bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* func, int line)
+{
+#if !ETCPAL_LOGGING_ENABLED
+  ETCPAL_UNUSED_ARG(exp);
+  ETCPAL_UNUSED_ARG(file);
+  ETCPAL_UNUSED_ARG(func);
+  ETCPAL_UNUSED_ARG(line);
+#endif
+  ETCPAL_PRINT_LOG_CRIT("ASSERTION \"%s\" FAILED (FILE: \"%s\" FUNCTION: \"%s\" LINE: %d)", exp ? exp : "",
+                        file ? file : "", func ? func : "", line);
+  ETCPAL_ASSERT(false);
+  return false;
+}
+
+bool set_etcpal_log_params(const EtcPalLogParams* params)
+{
+  if (etcpal_log_params)
+    return false;
+
+  if (params)
+  {
+    etcpal_state.log_params = *params;
+    etcpal_log_params       = &etcpal_state.log_params;
+  }
+
+  return true;
 }

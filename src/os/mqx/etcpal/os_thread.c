@@ -20,13 +20,14 @@
 #include "etcpal/thread.h"
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
 static void thread_func_internal(uint32_t initial_data)
 {
   etcpal_thread_t* thread_data = (etcpal_thread_t*)initial_data;
-  if (thread_data)
+  if (thread_data && thread_data->fn)
   {
     thread_data->fn(thread_data->arg);
     _lwsem_post(&thread_data->sig);

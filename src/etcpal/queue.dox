@@ -124,7 +124,7 @@ void etcpal_queue_destroy(etcpal_queue_t* id);
  * @brief Add an item to a queue.
  * @details Blocks until there is room in the queue to add a new item.
  * @param[in] id Identifier for the queue to which to add an item.
- * @param[in] data Pointer to item to add to the queue.
+ * @param[in] data Pointer to item to add to the queue. Must not be NULL.
  * @return true: Item added successfully.
  * @return false: An error occurred while trying to add an item to the queue.
  */
@@ -133,7 +133,7 @@ bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
 /**
  * @brief Add an item to a queue, giving up after a timeout.
  * @param[in] id Identifier for the queue to which to add an item.
- * @param[in] data Pointer to item to add to the queue.
+ * @param[in] data Pointer to item to add to the queue. Must not be NULL.
  * @param[in] timeout_ms Maximum amount of time to wait for space to be available, in milliseconds.
  *                       If #ETCPAL_WAIT_FOREVER is given, the result is the same as if
  *                       etcpal_queue_send() was called.
@@ -150,7 +150,7 @@ bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_m
  * calling etcpal_queue_timed_send() with a value of 0 for the timeout_ms parameter.
  *
  * @param[in] id Identifier for the queue to which to add an item.
- * @param[in] data Pointer to item to add to the queue.
+ * @param[in] data Pointer to item to add to the queue. Must not be NULL.
  * @return true: Item added successfully.
  * @return false: Timeout or error occurred while trying to add an item to the queue.
  */
@@ -160,7 +160,7 @@ bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data);
  * @brief Retrieve the first item from a queue.
  * @details Blocks until there is an item available to retrieve from the queue.
  * @param[in] id Identifier for the queue from which to retrieve an item.
- * @param[out] data Pointer to a location to write the object's data.
+ * @param[out] data Pointer to a location to write the object's data. Must not be NULL.
  * @return true: Item retrieved successfully.
  * @return false: Error occurred while trying to retrieve an item from the queue.
  */
@@ -169,7 +169,7 @@ bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
 /**
  * @brief Retrieve the first item from a queue, giving up after a timeout.
  * @param[in] id Identifier for the queue from which to retrieve an item.
- * @param[out] data Pointer to a location to write the object's data.
+ * @param[out] data Pointer to a location to write the object's data. Must not be NULL.
  * @param[in] timeout_ms Maximum amount of time to wait for an item to be available, in
  *                       milliseconds. If #ETCPAL_WAIT_FOREVER is given, the result is the same as
  *                       if etcpal_queue_receive() was called.
@@ -186,7 +186,7 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
  * calling etcpal_queue_timed_receive() with a value of 0 for the timeout_ms parameter.
  *
  * @param[in] id Identifier for the queue from which to retrieve an item.
- * @param[out] data Pointer to a location to write the object's data.
+ * @param[out] data Pointer to a location to write the object's data. Must not be NULL.
  * @return true: Item retrieved successfully.
  * @return false: Error occurred while trying to retrieve an item from the queue.
  */

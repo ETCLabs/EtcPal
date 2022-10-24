@@ -41,7 +41,7 @@ void etcpal_queue_destroy(etcpal_queue_t* id)
 
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 {
-  if (id)
+  if (id && data)
   {
     BaseType_t status = xQueueSendToBack(*id, data, portMAX_DELAY);
     return (status == pdPASS);
@@ -51,7 +51,7 @@ bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 
 bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms)
 {
-  if (id)
+  if (id && data)
   {
     BaseType_t status = xQueueSendToBack(*id, data, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms));
     return (status == pdPASS);
@@ -61,7 +61,7 @@ bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_m
 
 bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data)
 {
-  if (id)
+  if (id && data)
   {
     BaseType_t higherPriorityTaskWoken;
     BaseType_t status = xQueueSendToBackFromISR(*id, data, &higherPriorityTaskWoken);
@@ -73,7 +73,7 @@ bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data)
 
 bool etcpal_queue_receive(etcpal_queue_t* id, void* data)
 {
-  if (id)
+  if (id && data)
   {
     BaseType_t status = xQueueReceive(*id, data, portMAX_DELAY);
     return (status == pdPASS);
@@ -83,7 +83,7 @@ bool etcpal_queue_receive(etcpal_queue_t* id, void* data)
 
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 {
-  if (id)
+  if (id && data)
   {
     BaseType_t status = xQueueReceive(*id, data, ETCPAL_TIMEOUT_TO_FREERTOS(timeout_ms));
     return (status == pdPASS);
@@ -94,7 +94,7 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
 {
   BaseType_t higherPrioTaskWoken = pdFALSE;
-  if (id)
+  if (id && data)
   {
     BaseType_t status = xQueueReceiveFromISR(*id, data, &higherPrioTaskWoken);
     // if 'higherPrioTaskWoken' is pdTRUE, it indicates to

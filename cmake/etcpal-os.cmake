@@ -1,4 +1,3 @@
-
 # The set of supported target OS
 set(VALID_ETCPAL_OS_TARGETS
   freertos
@@ -23,6 +22,7 @@ set(ETCPAL_NET_TARGET "" CACHE STRING "Network stack provider for EtcPal. Often 
 # Assume defaults for ETCPAL_OS_TARGET
 if(NOT ETCPAL_OS_TARGET)
   message(STATUS "ETCPAL_OS_TARGET not supplied.")
+
   if(WIN32)
     set(ETCPAL_OS_TARGET windows)
   elseif(APPLE)
@@ -45,6 +45,7 @@ endif()
 # Assume defaults for ETCPAL_NET_TARGET
 if(NOT ETCPAL_NET_TARGET)
   message(STATUS "ETCPAL_NET_TARGET not supplied.")
+
   if(WIN32)
     set(ETCPAL_NET_TARGET windows)
   elseif(APPLE)
@@ -86,7 +87,7 @@ endif()
 if(ETCPAL_NET_TARGET AND NOT ETCPAL_NET_TARGET STREQUAL "none")
   if(NOT ${ETCPAL_NET_TARGET} IN_LIST VALID_ETCPAL_NET_TARGETS)
     message(FATAL_ERROR "\"${ETCPAL_NET_TARGET}\" is not a valid target network stack. "
-            "Specify ETCPAL_NET_TARGET from these options: ${VALID_ETCPAL_NET_TARGETS}")
+      "Specify ETCPAL_NET_TARGET from these options: ${VALID_ETCPAL_NET_TARGETS}")
   endif()
 
   set(ETCPAL_HAVE_NETWORKING_SUPPORT TRUE)

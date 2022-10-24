@@ -94,6 +94,12 @@
  * log messages in whatever way it chooses (print to console, syslog, etc.), and an
  * #EtcPalLogTimeFn which is called to get the current time for each log message.
  *
+ * In addition to enabling other libraries to log messages, this module also provides a mechanism for logs originating
+ * from EtcPal itself. Simply call the etcpal_init_log_handler() function (before the first call to etcpal_init()),
+ * passing in the application's log parameters (EtcPalLogParams). This allows the application to handle log messages
+ * coming from the EtcPal library (typically these are logged due to critical assertion failures which may not
+ * otherwise be visible in a release environment).
+ *
  * @code
  * void my_time_callback(void* context, EtcPalLogTimestamp* timestamp)
  * {
@@ -119,6 +125,11 @@
  * log_params.syslog_params.facility = ETCPAL_LOG_USER;
  * strcpy(log_params.syslog_params.hostname, my_ip_addr_string);
  * strcpy(log_params.syslog_params.app_name, "My App");
+ *
+ * // Assuming etcpal_init() hasn't been called yet, register for logs from EtcPal:
+ * etcpal_init_log_handler(&log_params);
+ * // After this is called, the first call to etcpal_init() must enable the logging feature.
+ * // For this example, assume that the somelib_init() call below already does this.
  *
  * // Pass to some library, maybe...
  * somelib_init(&log_params);
@@ -407,6 +418,8 @@ typedef struct EtcPalLogParams
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+etcpal_error_t etcpal_init_log_handler(const EtcPalLogParams* log_params);
 
 /*
  * The various compiler ifdefs are to use each compiler's method of checking printf-style

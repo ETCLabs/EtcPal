@@ -18,6 +18,7 @@ option(ETCPAL_EXPLICITLY_DISABLE_EXCEPTIONS "Disable throwing of exceptions thro
 
 include(${ETCPAL_CMAKE}/OSS.cmake)
 determine_compile_environment()
+
 if(NOT COMPILING_AS_OSS)
   include(${ETCPAL_CMAKE}/AddCMakeTools.cmake)
   include(${CMAKE_TOOLS_MODULES}/QualityGateHelpers.cmake)
@@ -27,8 +28,9 @@ if(NOT COMPILING_AS_OSS)
   setup_address_sanitizer()
 endif()
 
-# Platform support
+# Platform support + core sources
 include(${ETCPAL_CMAKE}/etcpal-os.cmake)
+include(${ETCPAL_CMAKE}/etcpal-core-sources.cmake)
 
 if(ETCPAL_BUILD_MOCK_LIB OR ETCPAL_BUILD_TESTS)
   add_subdirectory(external/fff)

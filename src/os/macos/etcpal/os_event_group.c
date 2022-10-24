@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/event_group.h"
+#include "etcpal/private/common.h"
 
 /*********************** Private function prototypes *************************/
 
@@ -144,6 +145,9 @@ void etcpal_event_group_destroy(etcpal_event_group_t* id)
 
 bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags)
 {
+  if (!ETCPAL_ASSERT_VERIFY(bits))
+    return false;
+
   bool result = false;
 
   if (flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL)
