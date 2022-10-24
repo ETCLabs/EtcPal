@@ -130,8 +130,18 @@ typedef uint32_t etcpal_poll_events_t;
 #define ETCPAL_MCAST_JOIN_GROUP   17 /**< Set only, value is EtcPalGroupReq */
 #define ETCPAL_MCAST_LEAVE_GROUP  18 /**< Set only, value is EtcPalGroupReq */
 #define ETCPAL_IPV6_V6ONLY        19 /**< Get/Set, value is boolean int */
-#define ETCPAL_IP_PKTINFO         20 /**< Get/Set, value is boolean int */
-#define ETCPAL_IPV6_PKTINFO       21 /**< Get/Set, value is boolean int (note that this equates to IPV6_RECVPKTINFO on Mac and Linux) */
+
+/** Get/Set, value is boolean int.
+ * 
+ * On lwIP, this option will not be supported unless the LWIP_NETBUF_RECVINFO compiler definition is set to 1.
+ */
+#define ETCPAL_IP_PKTINFO         20
+
+/** Get/Set, value is boolean int (note that this equates to IPV6_RECVPKTINFO on Mac and Linux).
+ * 
+ * This option is not currently supported on lwIP.
+ */
+#define ETCPAL_IPV6_PKTINFO       21
 
 /**
  * @}

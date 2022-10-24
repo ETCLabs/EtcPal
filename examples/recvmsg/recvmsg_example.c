@@ -19,6 +19,8 @@
 
 /*
  * A platform-neutral example application showing usage of the etcpal_recvmsg and etcpal_cmsg_ functions.
+ *
+ * For this to work on lwIP, make sure to enable the LWIP_NETBUF_RECVINFO compiler definition.
  */
 
 #include <stdio.h>
