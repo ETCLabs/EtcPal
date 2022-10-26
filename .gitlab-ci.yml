@@ -160,7 +160,7 @@ deploy-docs:
     - if: '$CI_COMMIT_REF_NAME == "main"'
   tags:
     - etc-linux-docker
-  image: etc-docker.artifactory.etcconnect.com/common-tech/doxygen:1.9.1
+  image: etc-docker.artifactory.etcconnect.com/common-tech/doxygen:1.9.1_2
   variables:
     # Fetch all tags
     GIT_DEPTH: 0
