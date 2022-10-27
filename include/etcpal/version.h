@@ -31,10 +31,10 @@
  * @name EtcPal version numbers
  * @{
  */
-#define ETCPAL_VERSION_MAJOR 0
-#define ETCPAL_VERSION_MINOR 5
+#define ETCPAL_VERSION_MAJOR 1
+#define ETCPAL_VERSION_MINOR 0
 #define ETCPAL_VERSION_PATCH 0
-#define ETCPAL_VERSION_BUILD 12
+#define ETCPAL_VERSION_BUILD 1
 /**
  * @}
  */
@@ -43,8 +43,8 @@
  * @name EtcPal version strings
  * @{
  */
-#define ETCPAL_VERSION_STRING "0.5.0.12"
-#define ETCPAL_VERSION_DATESTR "27.Sep.2022"
+#define ETCPAL_VERSION_STRING "1.0.0.1"
+#define ETCPAL_VERSION_DATESTR "27.Oct.2022"
 #define ETCPAL_VERSION_COPYRIGHT "Copyright 2022 ETC Inc."
 #define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
 /**
