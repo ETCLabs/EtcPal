@@ -92,6 +92,8 @@ namespace etcpal
 template <class T>
 class Queue
 {
+  static_assert(std::is_trivially_copyable<T>::value, "Type T in etcpal::Queue<T> must be trivially copyable.");
+
 public:
   explicit Queue(size_t size);
   ~Queue();
