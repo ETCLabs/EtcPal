@@ -376,7 +376,7 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
   AcnRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
   for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
-    PduInheritance inheritance;
+    PduInheritance inheritance = {false, false, false};
     evaluate_pdu_inheritance(pdu_block, pdu, &last_pdu, cur_ptr, &inheritance);
 
     // Check if we are required to use the 3-byte length field, either by the higher-level protocol
