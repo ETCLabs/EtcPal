@@ -108,8 +108,7 @@ extern "C" {
 /** @endcond */
 
 /** For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely. */
-#if !defined(ETCPAL_WAIT_FOREVER) & !defined(ETCPAL_OS_IS_ZEPHYR)
-
+#if !defined(ETCPAL_WAIT_FOREVER)
 #define ETCPAL_WAIT_FOREVER -1
 
 #endif // !ETCPAL_WAIT_FOREVER

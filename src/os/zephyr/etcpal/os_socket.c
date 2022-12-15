@@ -32,10 +32,12 @@
 
 #include <zephyr/net/socket.h>
 #include <zephyr/net/net_if.h>
+
 #include <fcntl.h>
 
 #include "etcpal/common.h"
-
+#include "etcpal/socket.h"
+#include "etcpal/timer.h"
 /**************************** Private constants ******************************/
 
 /* Per the docs, this constant is ignored in Linux 2.6.8 and later, but must be > 0.
@@ -519,6 +521,9 @@ static int ip4_ifindex_to_addr(unsigned int ifindex, struct in_addr* addr)
 
 int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+	EtcPalGroupReq group;
+	struct net_if_mcast_addr mcast_addr;
+		
 	switch (option_name)
 	{
 	case ETCPAL_IP_TTL:
@@ -528,9 +533,21 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 	case ETCPAL_IP_DROP_MEMBERSHIP:
 		return -1;
 	case ETCPAL_MCAST_JOIN_GROUP:
-		return -1;
+		memcpy(&group, option_value, option_len);
+		// Unsure if this is the correct type
+		mcast_addr.address.family = IPPROTO_IP;
+		mcast_addr.address.in_addr.s4_addr32[0] = group.group.addr.v4;
+		net_if_ipv4_maddr_join(&mcast_addr);
+		return 0;
+
 	case ETCPAL_MCAST_LEAVE_GROUP:
-		return -1;
+		memcpy(&group, option_value, option_len);
+		// Unsure if this is the correct type
+		mcast_addr.address.family = IPPROTO_IP;
+		mcast_addr.address.in_addr.s4_addr32[0] = group.group.addr.v4;
+		net_if_ipv4_maddr_leave(&mcast_addr);
+		return 0;
+		
 	case ETCPAL_IP_MULTICAST_IF:
 		return -1;
 	case ETCPAL_IP_MULTICAST_TTL:
@@ -638,16 +655,28 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
 
 etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
 {
+	// Taken from LWIP port
 	if (!context)
 		return kEtcPalErrInvalid;
-	struct zsock_pollfd* poll = &(context->epoll_fd);
-	if (poll->fd >= 0)
+
+	//init_context_socket_array(context);
+	context->valid = true;
+	return kEtcPalErrOk;
+#ifdef NAM
+	// TODO: Populate this?
+	if (!context)
+		return kEtcPalErrInvalid;
+
+  //k_poll_event_init(K_POLL_TYPE_DATA_AVAILABLE, K_POLL_MODE_NOTIFY_ONLY, )
+
+	if (context->zpoll_fd >= 0)
 	{
 		etcpal_rbtree_init(&context->sockets, poll_socket_compare, poll_socket_alloc, poll_socket_free);
 		context->valid = true;
 		return kEtcPalErrOk;
 	}
-	return errno_os_to_etcpal(errno);
+//	return errno_os_to_etcpal(errno);
+#endif // NAM
 }
 
 void etcpal_poll_context_deinit(EtcPalPollContext* context)
@@ -685,8 +714,25 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
 
 etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* event, int timeout_ms)
 {
-	return kEtcPalErrNotImpl;
+	if (!context || !context->valid || !event)
+	{
+		return kEtcPalErrInvalid;
+	}
 
+	if (context->sockets.size == 0)
+	{
+		return kEtcPalErrNoSockets;
+	}
+
+	int sys_timeout = (timeout_ms == ETCPAL_WAIT_FOREVER ? -1 : timeout_ms);
+
+	//struct epoll_event epoll_evt;
+	//int wait_res = epoll_wait(context->epoll_fd, &epoll_fd, 1, sys_timeout);
+	//if (wait_res == 0)
+	//{
+	//	return kEtcPalErrTimedOut;
+	//}
+	
 }
 
 

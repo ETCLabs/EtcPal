@@ -44,16 +44,19 @@
 #include <errno.h>
 #include <net/net_if.h>
 #include <sys/types.h>
-#include <net/if.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
+//#include <sys/ioctl.h>
+#include <net/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "etcpal/common.h"
 #include "etcpal/socket.h"
 #include "etcpal/private/netint.h"
-#include "os_error.h"
+
+#include "logging/log.h"
+LOG_MODULE_REGISTER(ETCPAL_OS_NETINT);
+
+//#include "os_error.h"
 
 /***************************** Private types *********************************/
 
@@ -103,36 +106,102 @@ static void debug_print_routing_table(RoutingTable* table);
 #endif
 
 /*************************** Function definitions ****************************/
-void _if_lister(struct net_if *iface, void *user_data)
+void _if_counter(struct net_if *iface, void *user_data)
 {
 	CachedNetintInfo* cache = (CachedNetintInfo*)user_data;
-	EtcPalNetintInfo* netIntInfo = malloc(sizeof(EtcPalNetintInfo));
+	cache->num_netints++;
+}
+
+typedef struct CacheAndIfaceIndex
+{
+	uint32_t index;
+	CachedNetintInfo* cache;
+}CacheAndIfaceIndex;
+
+void _if_lister(struct net_if *iface, void *user_data)
+{
+	CacheAndIfaceIndex* ud = (CacheAndIfaceIndex*)user_data;
+	EtcPalNetintInfo* netIntInfo = &ud->cache->netints[ud->index];
   
+	struct in_addr* addr = &iface->config.ip.ipv4->unicast[0].address.in_addr;
+	struct in_addr* mask = &iface->config.ip.ipv4->netmask;
 	netIntInfo->index = net_if_get_by_iface(iface);
-	struct in_addr* addr = iface->config.ip.ipv4->;
 	
 	// Right now, only support v4. Can add v6 later
 	// Zephyr also has the ability to assign more than one ip configuration
 	// to a single iface; this does not seem to be exposed in etcpal networking
 	// for now, we'll only look a the first ip configuration on the iface.
-	netIntInfo->addr.addr.v4 = iface->config.ip.ipv4->unicast[0].address.in_addr;
+	netIntInfo->addr.addr.v4 = addr->s4_addr32[0];
 	netIntInfo->addr.type = kEtcPalIpTypeV4;
 
-	netIntInfo->mask.addr.vr = addr
+	netIntInfo->mask.addr.v4 = mask->s4_addr32[0];
 	netIntInfo->mask.type = kEtcPalIpTypeV4;
-	struct net_if_ipv4 *ipv4;
-	//net_if_config_ipv4_get(iface, &ipv4);
-	//netIntInfo->addr = ipv4->unicast;
-	cache->num_netints++;
 	
+	netIntInfo->mac.data[0] = iface->if_dev->link_addr.addr[0];
+	netIntInfo->mac.data[1] = iface->if_dev->link_addr.addr[1];
+	netIntInfo->mac.data[2] = iface->if_dev->link_addr.addr[2];
+	netIntInfo->mac.data[3] = iface->if_dev->link_addr.addr[3];
+	netIntInfo->mac.data[4] = iface->if_dev->link_addr.addr[4];
+	netIntInfo->mac.data[5] = iface->if_dev->link_addr.addr[5];
+	
+	strncpy(netIntInfo->id, iface->if_dev->dev->name, ETCPAL_NETINTINFO_ID_LEN);
+	strncpy(netIntInfo->friendly_name, iface->if_dev->dev->name, ETCPAL_NETINTINFO_ID_LEN);
+
+	if (net_if_get_default() == iface)
+	{
+		netIntInfo->is_default = true;
+	}
+	else
+	{
+		netIntInfo->is_default = false;
+	}
+
+	ud->index++;
+}
+
+/*!
+    \brief Get the number of network interfaces from Zephyr
+    \param cache The cache data, to be referenced in order to more quickly get interface data without going through the operating system.
+           The num_netints field is modified!
+    \return The number of network interfaces that Zephyr is aware of.
+*/
+unsigned os_count_interfaces(CachedNetintInfo* cache)
+{
+	cache->num_netints = 0;
+	net_if_foreach(_if_counter, cache);
+	return cache->num_netints;
 }
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
-	cache->num_netints = 0;
+	etcpal_error_t err = kEtcPalErrOk;
+	CacheAndIfaceIndex cache_and_index;
+	cache_and_index.cache = cache;
+	cache_and_index.index = 0;
 	
-	net_if_foreach(_if_lister, cache);
-  return kEtcPalErrOk;
+  // Populates cache->num_netints
+	os_count_interfaces(cache_and_index.cache);
+
+	// Throw out old data
+	if (cache->netints)
+	{
+		free(cache->netints);
+	}
+
+	// Allocate an array large enough to hold pointers to each NetInt structure
+	cache->netints = calloc(sizeof(CachedNetintInfo), cache->num_netints);
+	if (cache->netints)
+	{
+		// Go through all interfaces and get data about each iface
+		net_if_foreach(_if_lister, &cache_and_index);
+	}
+	else
+	{
+		LOG_ERR("Could not allocate network interface cache!");
+		err = kEtcPalErrNoMem;
+	}
+	
+	return err;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -142,8 +211,6 @@ void os_free_interfaces(CachedNetintInfo* cache)
     free(cache->netints);
     cache->netints = NULL;
   }
-
-  free_routing_tables();
 }
 
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)

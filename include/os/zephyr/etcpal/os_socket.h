@@ -21,6 +21,8 @@
 #define ETCPAL_OS_SOCKET_H_
 
 #include <zephyr/net/socket.h>
+#include <zephyr/posix/poll.h>
+
 #include "etcpal/inet.h"
 #include "etcpal/rbtree.h"
 
@@ -43,7 +45,7 @@ typedef int etcpal_socket_t;
 typedef struct EtcPalPollContext
 {
   bool         valid;
-  int          epoll_fd;
+	struct zsock_pollfd *zpoll_fd;
   EtcPalRbTree sockets;
 } EtcPalPollContext;
 
