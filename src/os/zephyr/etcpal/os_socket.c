@@ -299,7 +299,7 @@ int etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags)
 	struct iovec            impl_buf = { 0 };
 	construct_msghdr(msg, &impl_name, &impl_buf, &impl_msg);
 
-	int res = (int)recvmsg(id, &impl_msg, rcvmsg_flags_etcpal_to_os(flags));
+	int res = (int)zsock_recv(id, msg->buf, msg->buflen, msg->flags);
 
 	msg->flags = rcvmsg_flags_os_to_etcpal(impl_msg.msg_flags);
 
@@ -345,6 +345,8 @@ bool etcpal_cmsg_nxthdr(EtcPalMsgHdr* msgh, const EtcPalCMsgHdr* cmsg, EtcPalCMs
 
 	return result;
 }
+
+// Zephyr does not really have a pktinfo analog that I could find
 #ifdef NAM
 bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
 {
@@ -363,6 +365,8 @@ bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
 		{
 			if ((cmsg->level == ETCPAL_IPPROTO_IP) && (cmsg->type == ETCPAL_IP_PKTINFO))
 			{
+				
+#ifdef NAM
 				struct in_pktinfo impl_pktinfo;
 				memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
 
@@ -372,11 +376,13 @@ bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
 
 				ip_os_to_etcpal((struct sockaddr*)&impl_addr, &pktinfo->addr);
 				pktinfo->ifindex = impl_pktinfo.ipi_ifindex;
-
+#endif // NAM
 				result = true;
 			}
 			else if ((cmsg->level == ETCPAL_IPPROTO_IPV6) && (cmsg->type == ETCPAL_IPV6_PKTINFO))
 			{
+				// No IPV6 for now
+#ifdef NAM
 				struct in6_pktinfo impl_pktinfo;
 				memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
 
@@ -386,8 +392,9 @@ bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
 
 				ip_os_to_etcpal((struct sockaddr*)&impl_addr, &pktinfo->addr);
 				pktinfo->ifindex = impl_pktinfo.ipi6_ifindex;
-
+#endif // NAM
 				result = true;
+				
 			}
 		}
 	}
@@ -395,6 +402,7 @@ bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
 	return result;
 }
 #endif // NAM
+
 int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flags)
 {
 	ETCPAL_UNUSED_ARG(flags);
