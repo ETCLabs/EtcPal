@@ -27,6 +27,7 @@
 #endif
 
 #include "etcpal/socket.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/socket.h"
 
 #include <errno.h>
@@ -461,6 +462,9 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
 
 int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_SO_RCVBUF:
@@ -517,6 +521,9 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
  * translate interface indexes to addresses for IPv4 MCAST_JOIN_GROUP sockopts. */
 static int ip4_ifindex_to_addr(unsigned int ifindex, struct in_addr* addr)
 {
+  if (!ETCPAL_ASSERT_VERIFY(addr))
+    return -1;
+
   struct ifreq req;
   if (if_indextoname(ifindex, req.ifr_name) != NULL)
   {
@@ -538,6 +545,9 @@ static int ip4_ifindex_to_addr(unsigned int ifindex, struct in_addr* addr)
 
 int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_IP_TTL:
@@ -621,6 +631,9 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 
 int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(option_value))
+    return -1;
+
   switch (option_name)
   {
     case ETCPAL_MCAST_JOIN_GROUP:
@@ -669,6 +682,9 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
 
 void ms_to_timeval(int ms, struct timeval* tv)
 {
+  if (!ETCPAL_ASSERT_VERIFY(tv))
+    return;
+
   tv->tv_sec  = ms / 1000;
   tv->tv_usec = (ms % 1000) * 1000;
 }
@@ -937,6 +953,9 @@ int events_etcpal_to_kqueue(etcpal_socket_t      socket,
                             void*                user_data,
                             struct kevent*       kevents)
 {
+  if (!ETCPAL_ASSERT_VERIFY(kevents))
+    return 0;
+
   int num_events = 0;
 
   // Process EVFILT_READ changes
@@ -987,6 +1006,9 @@ int events_etcpal_to_kqueue(etcpal_socket_t      socket,
 
 etcpal_poll_events_t events_kqueue_to_etcpal(const struct kevent* kevent, const EtcPalPollSocket* sock_desc)
 {
+  if (!ETCPAL_ASSERT_VERIFY(kevent) || !ETCPAL_ASSERT_VERIFY(sock_desc))
+    return (etcpal_poll_events_t)0;
+
   etcpal_poll_events_t events_out = 0;
   if (kevent->filter == EVFILT_READ)
   {
@@ -1019,6 +1041,11 @@ etcpal_poll_events_t events_kqueue_to_etcpal(const struct kevent* kevent, const 
 
 int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b)
 {
+  ETCPAL_UNUSED_ARG(tree);
+
+  if (!ETCPAL_ASSERT_VERIFY(value_a) || !ETCPAL_ASSERT_VERIFY(value_b))
+    return 0;
+
   const EtcPalPollSocket* a = (const EtcPalPollSocket*)value_a;
   const EtcPalPollSocket* b = (const EtcPalPollSocket*)value_b;
 
@@ -1032,11 +1059,11 @@ EtcPalRbNode* poll_socket_alloc(void)
 
 void poll_socket_free(EtcPalRbNode* node)
 {
-  if (node)
-  {
-    free(node->value);
-    free(node);
-  }
+  if (!ETCPAL_ASSERT_VERIFY(node))
+    return;
+
+  free(node->value);
+  free(node);
 }
 
 void construct_msghdr(const EtcPalMsgHdr*      in_msg,
@@ -1044,6 +1071,12 @@ void construct_msghdr(const EtcPalMsgHdr*      in_msg,
                       struct iovec*            buf_store,
                       struct msghdr*           out_msg)
 {
+  if (!ETCPAL_ASSERT_VERIFY(in_msg) || !ETCPAL_ASSERT_VERIFY(name_store) || !ETCPAL_ASSERT_VERIFY(buf_store) ||
+      !ETCPAL_ASSERT_VERIFY(out_msg))
+  {
+    return;
+  }
+
   out_msg->msg_name       = name_store;
   out_msg->msg_namelen    = sizeof(*name_store);
   out_msg->msg_iov        = buf_store;
@@ -1091,6 +1124,9 @@ int rcvmsg_flags_etcpal_to_os(int etcpal_flags)
 
 bool get_first_compatible_cmsg(struct msghdr* msg, struct cmsghdr* start, EtcPalCMsgHdr* cmsg)
 {
+  if (!ETCPAL_ASSERT_VERIFY(msg) || !ETCPAL_ASSERT_VERIFY(cmsg))
+    return false;
+
   bool get_next_cmsg = true;
   for (struct cmsghdr* hdr = start; hdr && (hdr->cmsg_len > 0) && get_next_cmsg; hdr = CMSG_NXTHDR(msg, hdr))
   {

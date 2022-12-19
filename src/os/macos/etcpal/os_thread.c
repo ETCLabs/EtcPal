@@ -20,6 +20,7 @@
 #include "etcpal/thread.h"
 
 #include <string.h>
+#include "etcpal/private/common.h"
 #include "etcpal/common.h"
 #include "os_error.h"
 
@@ -110,6 +111,7 @@ void* thread_func_internal(void* arg)
 
     thread_data->fn(thread_data->arg);
   }
+
   return NULL;
 }
 

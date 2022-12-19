@@ -17,33 +17,44 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#ifndef ETCPAL_NO_NETWORKING_SUPPORT
+
 #include "etcpal/netint.h"
 
 #include <stdlib.h>
 #include "etcpal/common.h"
+#include "etcpal/mutex.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 
 /**************************** Private variables ******************************/
 
 static bool             initialized = false;
 static CachedNetintInfo netint_cache;
+etcpal_mutex_t          mutex;
 
 /*********************** Private function prototypes *************************/
 
-static int compare_netints(const void* a, const void* b);
+static int            compare_netints(const void* a, const void* b);
+static etcpal_error_t populate_netint_cache();
+static void           clear_netint_cache();
+static etcpal_error_t get_interfaces(EtcPalNetintInfo* netints,
+                                     size_t*           num_netints,
+                                     bool              specific_index,
+                                     unsigned int      index);
 
 /*************************** Function definitions ****************************/
 
 etcpal_error_t etcpal_netint_init(void)
 {
-  etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
+  etcpal_error_t res = kEtcPalErrSys;
 
-  if (res == kEtcPalErrOk)
+  if (etcpal_mutex_create(&mutex))
   {
-    // Sort the interfaces by OS index
-    qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+    res = populate_netint_cache();
 
-    initialized = true;
+    if (res == kEtcPalErrOk)
+      initialized = true;
   }
 
   return res;
@@ -51,85 +62,72 @@ etcpal_error_t etcpal_netint_init(void)
 
 void etcpal_netint_deinit(void)
 {
-  os_free_interfaces(&netint_cache);
-  memset(&netint_cache, 0, sizeof(netint_cache));
+  clear_netint_cache();
+  etcpal_mutex_destroy(&mutex);
   initialized = false;
 }
 
 /**
- * @brief Get the number of network interfaces present on the system.
- * @return Number of interfaces present.
- */
-size_t etcpal_netint_get_num_interfaces(void)
-{
-  return (initialized ? netint_cache.num_netints : 0);
-}
-
-/**
- * @brief Get a list of network interfaces on the system.
+ * @brief Get a list of network interfaces on the system (or just the number of interfaces).
  *
  * For NICs with multiple IP addresses assigned, this module separates each address into its own
  * entry in the netint array. Because of this, multiple array entries could have the same value
  * for the index, mac and id parameters.
  *
- * @return Pointer to an array of network interfaces of length etcpal_netint_get_num_interfaces(),
- *         or NULL if there are no interfaces present or the module is not initialized.
- */
-const EtcPalNetintInfo* etcpal_netint_get_interfaces(void)
-{
-  return (initialized ? netint_cache.netints : NULL);
-}
-
-/**
- * @brief Get a set of network interface addresses that have the index specified.
- *
- * See @ref interface_indexes for more information.
- *
- * @param[in] index Index for which to get interfaces.
- * @param[out] netint_arr Filled in on success with the array of matching interfaces.
- * @param[out] netint_arr_size Filled in on success with the size of the matching interface array.
- * @return #kEtcPalErrOk: netint_arr and netint_arr_size were filled in.
+ * @param[out] netints Application-provided array to be filled in on success with the array of network interfaces.
+ * This can be set to NULL if only interested in the number of interfaces.
+ * @param[in,out] num_netints Initialize this with the size of the netints array (0 if it's NULL). Filled in on
+ * success with the number of network interfaces on the system (reallocate the netints array if this ends up being
+ * larger). Cannot be a NULL pointer.
+ * @return #kEtcPalErrOk: netints and num_netints were filled in with all system interfaces.
  * @return #kEtcPalErrInvalid: Invalid argument provided.
  * @return #kEtcPalErrNotInit: Module not initialized.
- * @return #kEtcPalErrNotFound: No interfaces found for this index.
+ * @return #kEtcPalErrBufSize: The netints array was not large enough to hold all of the network interfaces. See the
+ * value of num_netints to determine how large the array needs to be.
+ * @return #kEtcPalErrNotFound: No system interfaces were found.
  */
-etcpal_error_t etcpal_netint_get_interfaces_by_index(unsigned int             index,
-                                                     const EtcPalNetintInfo** netint_arr,
-                                                     size_t*                  netint_arr_size)
+etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints)
 {
-  if (index == 0 || !netint_arr || !netint_arr_size)
+  if (!num_netints)
+    return kEtcPalErrInvalid;
+  if ((!netints && (*num_netints > 0)) && (netints && (*num_netints == 0)))
     return kEtcPalErrInvalid;
   if (!initialized)
     return kEtcPalErrNotInit;
 
-  size_t arr_size = 0;
-  for (const EtcPalNetintInfo* netint = netint_cache.netints; netint < netint_cache.netints + netint_cache.num_netints;
-       ++netint)
-  {
-    if (netint->index == index)
-    {
-      if (arr_size == 0)
-      {
-        // Found the beginning of the array slice.
-        *netint_arr = netint;
-      }
-      ++arr_size;
-    }
-    else if (netint->index > index)
-    {
-      // Done.
-      break;
-    }
-    // Else we haven't gotten there yet, continue
-  }
+  return get_interfaces(netints, num_netints, false, 0);
+}
 
-  if (arr_size != 0)
-  {
-    *netint_arr_size = arr_size;
-    return kEtcPalErrOk;
-  }
+/**
+ * @brief Get a list of network interfaces (or just the number of interfaces) that have the index specified.
+ *
+ * See @ref interface_indexes for more information.
+ *
+ * @param[in] index Index for which to get interfaces.
+ * @param[out] netints Application-provided array to be filled in on success with the array of network interfaces.
+ * This can be set to NULL if only interested in the number of interfaces.
+ * @param[in,out] num_netints Initialize this with the size of the netints array (0 if it's NULL). Filled in on
+ * success with the number of network interfaces that match the index (reallocate the netints array if this ends up
+ * being larger). Cannot be NULL.
+ * @return #kEtcPalErrOk: netints and num_netints were filled in with all matching interfaces.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotInit: Module not initialized.
+ * @return #kEtcPalErrBufSize: The netints array was not large enough to hold all of the network interfaces. See the
+ * value of num_netints to determine how large the array needs to be.
+ * @return #kEtcPalErrNotFound: No interfaces found for this index.
+ */
+etcpal_error_t etcpal_netint_get_interfaces_for_index(unsigned int      netint_index,
+                                                      EtcPalNetintInfo* netints,
+                                                      size_t*           num_netints)
+{
+  if (!num_netints)
+    return kEtcPalErrInvalid;
+  if ((!netints && (*num_netints > 0)) && (netints && (*num_netints == 0)))
+    return kEtcPalErrInvalid;
+  if (!initialized)
+    return kEtcPalErrNotInit;
 
-  return kEtcPalErrNotFound;
+  return get_interfaces(netints, num_netints, true, netint_index);
 }
 
 /**
@@ -157,23 +155,31 @@ etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigne
   if (!initialized)
     return kEtcPalErrNotInit;
 
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
+  etcpal_error_t res = kEtcPalErrOk;
   if (type == kEtcPalIpTypeV4)
   {
-    if (!netint_cache.def.v4_valid)
-      return kEtcPalErrNotFound;
-    *netint_index = netint_cache.def.v4_index;
-    return kEtcPalErrOk;
+    if (netint_cache.def.v4_valid)
+      *netint_index = netint_cache.def.v4_index;
+    else
+      res = kEtcPalErrNotFound;
   }
-
-  if (type == kEtcPalIpTypeV6)
+  else if (type == kEtcPalIpTypeV6)
   {
-    if (!netint_cache.def.v6_valid)
-      return kEtcPalErrNotFound;
-    *netint_index = netint_cache.def.v6_index;
-    return kEtcPalErrOk;
+    if (netint_cache.def.v6_valid)
+      *netint_index = netint_cache.def.v6_index;
+    else
+      res = kEtcPalErrNotFound;
+  }
+  else
+  {
+    res = kEtcPalErrInvalid;
   }
 
-  return kEtcPalErrInvalid;
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }
 
 /**
@@ -194,37 +200,110 @@ etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, un
     return kEtcPalErrInvalid;
   if (!initialized)
     return kEtcPalErrNotInit;
-  if (netint_cache.num_netints == 0)
-    return kEtcPalErrNoNetints;
 
-  return os_resolve_route(dest, &netint_cache, netint_index);
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
+  etcpal_error_t res = kEtcPalErrOk;
+  if (netint_cache.num_netints == 0)
+    res = kEtcPalErrNoNetints;
+
+  if (res == kEtcPalErrOk)
+    res = os_resolve_route(dest, &netint_cache, netint_index);
+
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }
 
 int compare_netints(const void* a, const void* b)
 {
+  if (!ETCPAL_ASSERT_VERIFY(a) || !ETCPAL_ASSERT_VERIFY(b))
+    return 0;
+
   EtcPalNetintInfo* netint1 = (EtcPalNetintInfo*)a;
   EtcPalNetintInfo* netint2 = (EtcPalNetintInfo*)b;
 
   return (netint1->index > netint2->index) - (netint1->index < netint2->index);
 }
 
+// Needs lock
+etcpal_error_t populate_netint_cache()
+{
+  etcpal_error_t res = os_enumerate_interfaces(&netint_cache);
+
+  if (res == kEtcPalErrOk)  // Sort the interfaces by OS index
+    qsort(netint_cache.netints, netint_cache.num_netints, sizeof(EtcPalNetintInfo), compare_netints);
+
+  return res;
+}
+
+// Needs lock
+void clear_netint_cache()
+{
+  os_free_interfaces(&netint_cache);
+  memset(&netint_cache, 0, sizeof(netint_cache));
+}
+
+// Takes lock
+etcpal_error_t get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints, bool specific_index, unsigned int index)
+{
+  if (!ETCPAL_ASSERT_VERIFY(num_netints) ||
+      !ETCPAL_ASSERT_VERIFY((netints || (*num_netints == 0)) && (!netints || (*num_netints > 0))) ||
+      !ETCPAL_ASSERT_VERIFY(initialized))
+  {
+    return kEtcPalErrSys;
+  }
+
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
+  etcpal_error_t res          = kEtcPalErrNotFound;
+  size_t         netint_count = 0;
+  for (size_t i = 0; i < netint_cache.num_netints; ++i)
+  {
+    if (!specific_index || (index == netint_cache.netints[i].index))
+    {
+      res = kEtcPalErrOk;
+      if (netints && (netint_count < *num_netints))
+        netints[netint_count] = netint_cache.netints[i];
+      else
+        res = kEtcPalErrBufSize;
+
+      ++netint_count;
+    }
+  }
+
+  *num_netints = netint_count;
+
+  etcpal_mutex_unlock(&mutex);
+  return res;
+}
+
 /**
  * @brief Refresh the list of network interfaces.
  *
  * Rebuilds the cached array of network interfaces that is returned via the
- * etcpal_netint_get_interfaces() function. If the refresh operation results in a different list
- * (there is a different number of network interfaces, or any interface has changed IP settings),
- * *list_changed is set to true.
+ * etcpal_netint_get_interfaces() function.
  *
- * @param[out] list_changed Set to true if the set of interfaces has changed in any way.
  * @return #kEtcPalErrOk: Interfaces refreshed.
  * @return Other error codes from the underlying platform are possible here.
  */
-etcpal_error_t etcpal_netint_refresh_interfaces(bool* list_changed)  // NOLINT(readability-non-const-parameter)
+etcpal_error_t etcpal_netint_refresh_interfaces()
 {
-  // TODO
-  ETCPAL_UNUSED_ARG(list_changed);
-  return kEtcPalErrNotImpl;
+  if (!initialized)
+    return kEtcPalErrNotInit;
+
+  if (!etcpal_mutex_lock(&mutex))
+    return kEtcPalErrSys;
+
+  // First clean up the old cache
+  clear_netint_cache();
+
+  // Now re-populate the new cache
+  etcpal_error_t res = populate_netint_cache();
+
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }
 
 /**
@@ -242,5 +321,13 @@ bool etcpal_netint_is_up(unsigned int netint_index)
   if (!initialized || netint_index == 0)
     return false;
 
-  return os_netint_is_up(netint_index, &netint_cache);
+  if (!etcpal_mutex_lock(&mutex))
+    return false;
+
+  bool res = os_netint_is_up(netint_index, &netint_cache);
+
+  etcpal_mutex_unlock(&mutex);
+  return res;
 }
+
+#endif  // ETCPAL_NO_NETWORKING_SUPPORT

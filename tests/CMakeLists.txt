@@ -25,7 +25,7 @@ else()
   set(ETCPAL_TEST_COMPILE_OPTIONS "")
 endif()
 
-# Set the platform-dependent compile definitions for the tests 
+# Set the platform-dependent compile definitions for the tests
 if(ETCPAL_TEST_IPV6)
   list(APPEND ETCPAL_TEST_COMPILE_DEFINITIONS ETCPAL_TEST_IPV6)
 endif()
@@ -45,6 +45,17 @@ if(NOT ETCPAL_HAVE_NETWORKING_SUPPORT)
 endif()
 
 # Add a "live" test, which links the entire EtcPal library, unmodified
+# Start by setting up a custom EtcPal target
+add_etcpal_library(LiveTestEtcPal)
+
+target_compile_definitions(LiveTestEtcPal PUBLIC ETCPAL_HAVE_CONFIG_H)
+target_include_directories(LiveTestEtcPal PUBLIC
+  ${ETCPAL_TEST}/config
+)
+
+target_sources(LiveTestEtcPal PRIVATE ${ETCPAL_TEST}/config/assert_verify.c)
+target_link_libraries(LiveTestEtcPal PUBLIC ThrowTheSwitch::Unity)
+
 function(etcpal_add_live_test target_name language)
   if(ETCPAL_TEST_BUILD_AS_LIBRARIES)
     add_library(${target_name} ${ARGN})
@@ -56,34 +67,45 @@ function(etcpal_add_live_test target_name language)
       add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/entrypoint/main_default.cpp)
     endif()
   endif()
+
   etcpal_record_test(${target_name})
   set_target_properties(${target_name} PROPERTIES FOLDER tests)
+
   if(${language} STREQUAL CXX)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
   endif()
+
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
   target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS})
-  target_link_libraries(${target_name} PUBLIC EtcPal ThrowTheSwitch::Unity meekrosoft::fff)
+  target_link_libraries(${target_name} PUBLIC LiveTestEtcPal meekrosoft::fff)
 endfunction()
 
 # Add a "custom" test, which doesn't link the EtcPal library - EtcPal sources must then be selectively
 # added to the target.
 function(etcpal_add_custom_test target_name language)
   if(ETCPAL_TEST_BUILD_AS_LIBRARIES)
-    add_library(${target_name} ${ARGN})
+    add_library(${target_name} ${ARGN} ${ETCPAL_TEST}/config/assert_verify.c)
     install(TARGETS ${target_name} ARCHIVE DESTINATION lib)
   else()
     if(${language} STREQUAL C)
-      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/entrypoint/main_default.c)
+      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/config/assert_verify.c ${ETCPAL_TEST}/entrypoint/main_default.c)
     elseif(${language} STREQUAL CXX)
-      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/entrypoint/main_default.cpp)
+      add_executable(${target_name} ${ARGN} ${ETCPAL_TEST}/config/assert_verify.c ${ETCPAL_TEST}/entrypoint/main_default.cpp)
     endif()
   endif()
+
+  target_compile_definitions(${target_name} PUBLIC ETCPAL_HAVE_CONFIG_H)
+  target_include_directories(${target_name} PUBLIC
+    ${ETCPAL_TEST}/config
+  )
+
   etcpal_record_test(${target_name})
   set_target_properties(${target_name} PROPERTIES FOLDER tests)
+
   if(${language} STREQUAL CXX)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
   endif()
+
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
   target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS})
   target_link_libraries(${target_name} PUBLIC ThrowTheSwitch::Unity meekrosoft::fff)

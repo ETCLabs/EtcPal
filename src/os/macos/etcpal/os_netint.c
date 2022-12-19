@@ -59,6 +59,7 @@
 #include <unistd.h>
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"
 
@@ -128,6 +129,9 @@ static size_t count_ifaddrs(const struct ifaddrs* ifaddrs)
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return kEtcPalErrSys;
+
   etcpal_error_t res = build_routing_tables();
   if (res != kEtcPalErrOk)
     return res;
@@ -243,6 +247,9 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 void os_free_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return;
+
   if (cache->netints)
   {
     free(cache->netints);
@@ -255,6 +262,9 @@ void os_free_interfaces(CachedNetintInfo* cache)
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   ETCPAL_UNUSED_ARG(cache);
+
+  if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(index))
+    return kEtcPalErrSys;
 
   RoutingTable* table_to_use = (ETCPAL_IP_IS_V6(dest) ? &routing_table_v6 : &routing_table_v4);
 
@@ -341,6 +351,9 @@ etcpal_error_t build_routing_tables()
 
 etcpal_error_t build_routing_table(int family, RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(table))
+    return kEtcPalErrSys;
+
   uint8_t* buf     = NULL;
   size_t   buf_len = 0;
 
@@ -358,6 +371,9 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
 // Get the routing table information from the system.
 etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len)
 {
+  if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(buf_len))
+    return kEtcPalErrSys;
+
   // The MIB is a heirarchical series of codes determining the systcl operation to perform.
   int mib[6];
   mib[0] = CTL_NET;      // Networking messages
@@ -399,6 +415,9 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
 
 static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
 {
+  if (!ETCPAL_ASSERT_VERIFY(sa) || !ETCPAL_ASSERT_VERIFY(rti_info))
+    return;
+
   for (int i = 0; i < RTAX_MAX; ++i)
   {
     if (addrs & (1 << i))
@@ -418,6 +437,9 @@ static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct so
  */
 static void dest_from_route_entry(int family, const struct sockaddr* os_dst, EtcPalIpAddr* etcpal_dst)
 {
+  if (!ETCPAL_ASSERT_VERIFY(os_dst) || !ETCPAL_ASSERT_VERIFY(etcpal_dst))
+    return;
+
   if (family == AF_INET6)
     ETCPAL_IP_SET_V6_ADDRESS(etcpal_dst, ((struct sockaddr_in6*)os_dst)->sin6_addr.s6_addr);
   else
@@ -481,6 +503,9 @@ static void dest_from_route_entry(int family, const struct sockaddr* os_dst, Etc
  */
 static void netmask_from_route_entry(int family, const struct sockaddr* os_netmask, EtcPalIpAddr* etcpal_netmask)
 {
+  if (!ETCPAL_ASSERT_VERIFY(os_netmask) || !ETCPAL_ASSERT_VERIFY(etcpal_netmask))
+    return;
+
   if (family == AF_INET)
   {
     size_t      mask_offset = offsetof(struct sockaddr_in, sin_addr);
@@ -523,6 +548,9 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
  */
 static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr* etcpal_gw)
 {
+  if (!ETCPAL_ASSERT_VERIFY(os_gw) || !ETCPAL_ASSERT_VERIFY(etcpal_gw))
+    return;
+
   if (os_gw->sa_family == AF_INET6)
   {
     ETCPAL_IP_SET_V6_ADDRESS(etcpal_gw, ((struct sockaddr_in6*)os_gw)->sin6_addr.s6_addr);
@@ -572,6 +600,9 @@ static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr*
  */
 etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len, RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(table))
+    return kEtcPalErrSys;
+
   table->size          = 0;
   table->entries       = NULL;
   table->default_route = NULL;
@@ -675,6 +706,9 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
 
 void init_routing_table_entry(RoutingTableEntry* entry)
 {
+  if (!ETCPAL_ASSERT_VERIFY(entry))
+    return;
+
   ETCPAL_IP_SET_INVALID(&entry->addr);
   ETCPAL_IP_SET_INVALID(&entry->mask);
   ETCPAL_IP_SET_INVALID(&entry->gateway);
@@ -684,6 +718,9 @@ void init_routing_table_entry(RoutingTableEntry* entry)
 
 int compare_routing_table_entries(const void* a, const void* b)
 {
+  if (!ETCPAL_ASSERT_VERIFY(a) || !ETCPAL_ASSERT_VERIFY(b))
+    return 0;
+
   RoutingTableEntry* e1 = (RoutingTableEntry*)a;
   RoutingTableEntry* e2 = (RoutingTableEntry*)b;
 
@@ -710,6 +747,9 @@ void free_routing_tables()
 
 void free_routing_table(RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(table))
+    return;
+
   if (table->entries)
   {
     free(table->entries);
@@ -721,6 +761,9 @@ void free_routing_table(RoutingTable* table)
 #if ETCPAL_NETINT_DEBUG_OUTPUT
 void debug_print_routing_table(RoutingTable* table)
 {
+  if (!ETCPAL_ASSERT_VERIFY(table))
+    return;
+
   printf("%-40s %-40s %-40s %s %s\n", "Address", "Mask", "Gateway", "Index", "Name");
 
   for (RoutingTableEntry* entry = table->entries; entry < table->entries + table->size; ++entry)

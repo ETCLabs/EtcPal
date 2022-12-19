@@ -1,56 +1,87 @@
 // Author: Noah Meltzer
 
 #include "etcpal/queue.h"
+#include "etcpal/private/common.h"
 #include <string.h>
 
 static inline bool wait_for_space_timed(const etcpal_queue_t* queue, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return false;
+
   return etcpal_sem_timed_wait((etcpal_sem_t*)&queue->spots_available, timeout_ms);
 }
 
 static inline bool notify_space_available(const etcpal_queue_t* queue)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return false;
+
   return etcpal_sem_post((etcpal_sem_t*)&queue->spots_available);
 }
 
 static inline bool notify_space_available_from_isr(const etcpal_queue_t* queue)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return false;
+
   return etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->spots_available);
 }
 
 static inline bool wait_for_data_timed(const etcpal_queue_t* queue, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return false;
+
   return etcpal_sem_timed_wait((etcpal_sem_t*)&queue->spots_filled, timeout_ms);
 }
 
 static inline bool notify_data_available(const etcpal_queue_t* queue)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return false;
+
   return etcpal_sem_post((etcpal_sem_t*)&queue->spots_filled);
 }
 
 static inline bool notify_data_available_from_isr(const etcpal_queue_t* queue)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return false;
+
   return etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->spots_filled);
 }
 
 static inline bool lock(const etcpal_queue_t* queue)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return false;
+
   bool success = etcpal_sem_wait((etcpal_sem_t*)&queue->lock);
   return success;
 }
 
 static inline void unlock(const etcpal_queue_t* queue)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return;
+
   (void)etcpal_sem_post((etcpal_sem_t*)&queue->lock);
 }
 
 static inline void unlock_from_isr(const etcpal_queue_t* queue)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue))
+    return;
+
   (void)etcpal_sem_post_from_isr((etcpal_sem_t*)&queue->lock);
 }
 
 static inline bool push_data_timed(etcpal_queue_t* queue, const void* data, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue) || !ETCPAL_ASSERT_VERIFY(data))
+    return false;
+
   bool true_if_success = false;
 
   if (wait_for_space_timed(queue, timeout_ms))
@@ -74,6 +105,9 @@ static inline bool push_data_timed(etcpal_queue_t* queue, const void* data, int 
 
 static inline bool push_data_from_isr(etcpal_queue_t* queue, const void* data)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue) || !ETCPAL_ASSERT_VERIFY(data))
+    return false;
+
   bool true_if_success = false;
 
   if (wait_for_space_timed(queue, 0))
@@ -97,6 +131,9 @@ static inline bool push_data_from_isr(etcpal_queue_t* queue, const void* data)
 
 static inline bool pop_data_timed(etcpal_queue_t* queue, void* data, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue) || !ETCPAL_ASSERT_VERIFY(data))
+    return false;
+
   bool true_if_success = false;
   if (wait_for_data_timed(queue, timeout_ms))
   {
@@ -119,6 +156,9 @@ static inline bool pop_data_timed(etcpal_queue_t* queue, void* data, int timeout
 
 static inline bool pop_data_from_isr(etcpal_queue_t* queue, void* data)
 {
+  if (!ETCPAL_ASSERT_VERIFY(queue) || !ETCPAL_ASSERT_VERIFY(data))
+    return false;
+
   bool true_if_success = false;
   if (wait_for_data_timed(queue, 0))
   {
@@ -141,13 +181,11 @@ static inline bool pop_data_from_isr(etcpal_queue_t* queue, void* data)
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {
+  if (!id)
+    return false;
+
   // Initialize queue
   memset(id, 0, sizeof(etcpal_queue_t));
-
-  if (!id)
-  {
-    return false;
-  }
 
   id->element_size = item_size;
 
@@ -190,6 +228,9 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 
 void etcpal_queue_destroy(etcpal_queue_t* id)
 {
+  if (!id)
+    return;
+
   lock(id);
   if (id->node_list)
   {
@@ -219,6 +260,9 @@ void etcpal_queue_destroy(etcpal_queue_t* id)
 
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 {
+  if (!id || !data)
+    return false;
+
   bool true_if_success = false;
 
   true_if_success = push_data_timed(id, data, ETCPAL_WAIT_FOREVER);
@@ -228,6 +272,9 @@ bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 
 bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms)
 {
+  if (!id || !data)
+    return false;
+
   bool true_if_success = false;
 
   true_if_success = push_data_timed(id, data, timeout_ms);
@@ -237,6 +284,9 @@ bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_m
 
 bool etcpal_queue_receive(etcpal_queue_t* id, void* data)
 {
+  if (!id || !data)
+    return false;
+
   bool true_if_success = false;
 
   true_if_success = pop_data_timed(id, data, ETCPAL_WAIT_FOREVER);
@@ -246,6 +296,9 @@ bool etcpal_queue_receive(etcpal_queue_t* id, void* data)
 
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 {
+  if (!id || !data)
+    return false;
+
   bool true_if_success = false;
 
   true_if_success = pop_data_timed(id, data, timeout_ms);
@@ -255,6 +308,9 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 
 bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data)
 {
+  if (!id || !data)
+    return false;
+
   bool true_if_success = false;
 
   true_if_success = push_data_from_isr(id, data);
@@ -264,6 +320,9 @@ bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data)
 
 bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
 {
+  if (!id || !data)
+    return false;
+
   bool true_if_success = false;
 
   true_if_success = pop_data_from_isr(id, data);
@@ -273,6 +332,9 @@ bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
 
 bool etcpal_queue_reset(etcpal_queue_t* id)
 {
+  if (!id)
+    return false;
+
   bool true_if_success = true;
 
   lock(id);
@@ -288,6 +350,9 @@ bool etcpal_queue_reset(etcpal_queue_t* id)
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
+  if (!id)
+    return true;
+
   bool true_if_empty = false;
   lock(id);
   true_if_empty = (id->queue_size == 0);
@@ -297,6 +362,9 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 {
+  if (!id)
+    return true;
+
   bool true_if_empty = true;
   if (lock(id))
   {
@@ -308,6 +376,9 @@ bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
+  if (!id)
+    return true;
+
   bool true_if_full = false;
   lock(id);
   true_if_full = (id->queue_size == id->max_queue_size);
@@ -317,6 +388,9 @@ bool etcpal_queue_is_full(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
 {
+  if (!id)
+    return true;
+
   bool true_if_full = true;
   if (lock(id))
   {
@@ -328,6 +402,9 @@ bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
+  if (!id)
+    return 0;
+
   size_t size = 0;
   lock(id);
   size = id->queue_size;
@@ -338,6 +415,9 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 {
+  if (!id)
+    return 0;
+
   size_t size = 0;
   if (lock(id))
   {
@@ -348,6 +428,9 @@ size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
+  if (!id)
+    return 0;
+
   lock(id);
   size_t elements = id->max_queue_size - id->queue_size;
   unlock(id);

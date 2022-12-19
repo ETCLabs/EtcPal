@@ -40,12 +40,19 @@
  * Some EtcPal modules must be initialized before use. These modules have a prominent notice in
  * the "detailed description" portion of their documentation. To initialize the EtcPal library,
  * call etcpal_init() with a mask of your desired features. The feature masks can be combined with
- * a bitwise OR.
+ * a bitwise OR. If your application supports logging, make sure to call etcpal_init_log_handler()
+ * before the first call to etcpal_init() so that critical assertions within EtcPal can be logged
+ * (then remember to specify the logging feature in the first call to etcpal_init()).
  *
  * @code
  * #include "etcpal/common.h"
  *
- * etcpal_error_t result = etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_LOGGING);
+ * EtcPalLogParams log_params = ETCPAL_LOG_PARAMS_INIT;
+ * // Initialize log_params...
+ * etcpal_error_t result = etcpal_init_log_handler(&log_params);
+ *
+ * if (result == kEtcPalErrOk)
+ *   result = etcpal_init(ETCPAL_FEATURE_SOCKETS | ETCPAL_FEATURE_LOGGING);
  * @endcode
  *
  * etcpal_init() can be called multiple times for the same or different sets of features, with no

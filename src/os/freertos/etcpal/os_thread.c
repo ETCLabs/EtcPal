@@ -25,7 +25,7 @@
 static void thread_func_internal(void* pvParameters)
 {
   etcpal_thread_t* thread_data = (etcpal_thread_t*)pvParameters;
-  if (thread_data)
+  if (thread_data && thread_data->fn)
   {
     thread_data->fn(thread_data->arg);
     xSemaphoreGive(thread_data->sig);

@@ -29,6 +29,7 @@
 
 #include "etcpal/common.h"
 #include "etcpal/socket.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 #include "os_error.h"
 
@@ -43,6 +44,9 @@ static void                  copy_all_netint_info(const IP_ADAPTER_ADDRESSES* ad
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return kEtcPalErrSys;
+
   IP_ADAPTER_ADDRESSES* padapters = get_windows_adapters();
   if (!padapters)
     return kEtcPalErrSys;
@@ -89,6 +93,9 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 void os_free_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return;
+
   if (cache->netints)
   {
     free(cache->netints);
@@ -99,6 +106,9 @@ void os_free_interfaces(CachedNetintInfo* cache)
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   ETCPAL_UNUSED_ARG(cache);  // unused
+
+  if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(index))
+    return kEtcPalErrSys;
 
   struct sockaddr_storage os_addr;
   if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
@@ -121,6 +131,9 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
 
 bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return false;
+
   // Note: I have not found a way to dynamically get whether an adapter is enabled based on its
   // index. Trial and error shows a lot of false positives, like NT is reserving indexes and giving
   // them names even though they do not correspond to adapters on the system. For this reason, the
@@ -166,6 +179,9 @@ IP_ADAPTER_ADDRESSES* get_windows_adapters()
 
 void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info)
 {
+  if (!ETCPAL_ASSERT_VERIFY(pip) || !ETCPAL_ASSERT_VERIFY(info))
+    return;
+
   const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
 
   ETCPAL_IP_SET_V4_ADDRESS(&info->addr, ntohl(sin->sin_addr.s_addr));
@@ -174,6 +190,9 @@ void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* inf
 
 void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info)
 {
+  if (!ETCPAL_ASSERT_VERIFY(pip) || !ETCPAL_ASSERT_VERIFY(info))
+    return;
+
   const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;
 
   ETCPAL_IP_SET_V6_ADDRESS(&info->addr, sin6->sin6_addr.s6_addr);
@@ -182,6 +201,9 @@ void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* inf
 
 void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(adapters) || !ETCPAL_ASSERT_VERIFY(cache))
+    return;
+
   const IP_ADAPTER_ADDRESSES* pcur = adapters;
 
   // Get the index of the default interface for IPv4

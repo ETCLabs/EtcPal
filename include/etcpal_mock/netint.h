@@ -29,17 +29,15 @@
 extern "C" {
 #endif
 
-DECLARE_FAKE_VALUE_FUNC(size_t, etcpal_netint_get_num_interfaces);
-DECLARE_FAKE_VALUE_FUNC(const EtcPalNetintInfo*, etcpal_netint_get_interfaces);
-DECLARE_FAKE_VALUE_FUNC(size_t, etcpal_netint_copy_interfaces, EtcPalNetintInfo*, size_t);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interfaces, EtcPalNetintInfo*, size_t*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t,
-                        etcpal_netint_get_interfaces_by_index,
+                        etcpal_netint_get_interfaces_for_index,
                         unsigned int,
-                        const EtcPalNetintInfo**,
+                        EtcPalNetintInfo*,
                         size_t*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_default_interface, etcpal_iptype_t, unsigned int*);
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interface_for_dest, const EtcPalIpAddr*, unsigned int*);
-DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_refresh_interfaces, bool*);
+DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_refresh_interfaces);
 DECLARE_FAKE_VALUE_FUNC(bool, etcpal_netint_is_up, unsigned int);
 
 void etcpal_netint_reset_all_fakes(void);

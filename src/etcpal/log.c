@@ -29,6 +29,7 @@
 #include "etcpal/mutex.h"
 #endif
 #include "etcpal/mempool.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/log.h"
 
 #ifdef _MSC_VER
@@ -141,6 +142,40 @@ void etcpal_log_deinit(void)
 }
 
 /**
+ * @brief Register the handler for log messages from EtcPal.
+ *
+ * If this is called, it must be before the first call to etcpal_init() - otherwise an error will be returned.
+ *
+ * If this is called, the first call to etcpal_init() must initialize the logging feature - otherwise it will return an
+ * error.
+ *
+ * The messages that will typically be logged by EtcPal indicate critical assertion failures that may not be otherwise
+ * visible in a release environment. If your application supports logging, it is highly recommended to register with
+ * this.
+ *
+ * etcpal_init_log_handler() is not thread-safe; you should make sure your init-time code is serialized.
+ *
+ * @param[in] log_params A struct used by the library to log messages. Must not be NULL.
+ * @return #kEtcPalErrOk: Registered logging handler sucessfully.
+ * @return #kEtcPalErrInvalid: Either an invalid parameter was provided or this function wasn't called before
+ * etcpal_init().
+ * @return #kEtcPalErrAlready: The logging parameters have already been configured.
+ */
+etcpal_error_t etcpal_init_log_handler(const EtcPalLogParams* log_params)
+{
+  if (!log_params)
+    return kEtcPalErrInvalid;
+
+  if (etcpal_init_called)
+    return kEtcPalErrInvalid;
+
+  if (!set_etcpal_log_params(log_params))
+    return kEtcPalErrAlready;
+
+  return kEtcPalErrOk;
+}
+
+/**
  * @brief Create a log message with a human-readable prefix in the given buffer.
  *
  * Buffer must be at least #ETCPAL_LOG_STR_MIN_LEN in length.
@@ -160,6 +195,9 @@ bool etcpal_create_log_str(char*                     buf,
                            const char*               format,
                            ...)
 {
+  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
+    return false;
+
   va_list args;  // NOLINT
   va_start(args, format);
   bool res = (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
@@ -190,6 +228,9 @@ bool etcpal_vcreate_log_str(char*                     buf,
                             const char*               format,
                             va_list                   args)
 {
+  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
+    return false;
+
   return (create_log_str(buf, buflen, timestamp, pri, format, args) != NULL);
 }
 
@@ -215,6 +256,9 @@ bool etcpal_create_syslog_str(char*                     buf,
                               const char*               format,
                               ...)
 {
+  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+    return false;
+
   va_list args;  // NOLINT
   va_start(args, format);
   bool res = (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
@@ -247,6 +291,9 @@ bool etcpal_vcreate_syslog_str(char*                     buf,
                                const char*               format,
                                va_list                   args)
 {
+  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+    return false;
+
   return (create_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
 }
 
@@ -272,6 +319,9 @@ bool etcpal_create_legacy_syslog_str(char*                     buf,
                                      const char*               format,
                                      ...)
 {
+  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+    return false;
+
   va_list args;  // NOLINT
   va_start(args, format);
   bool res = (create_legacy_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
@@ -304,6 +354,9 @@ bool etcpal_vcreate_legacy_syslog_str(char*                     buf,
                                       const char*               format,
                                       va_list                   args)
 {
+  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+    return false;
+
   return (create_legacy_syslog_str(buf, buflen, timestamp, syslog_params, pri, format, args) != NULL);
 }
 
@@ -319,6 +372,9 @@ bool etcpal_vcreate_legacy_syslog_str(char*                     buf,
  */
 void etcpal_sanitize_syslog_params(EtcPalSyslogParams* params)
 {
+  if (!params)
+    return;
+
   if (ETCPAL_LOG_FAC(params->facility) >= ETCPAL_LOG_NFACILITIES)
     params->facility = DEFAULT_FACILITY;
 
@@ -360,6 +416,9 @@ bool etcpal_validate_log_params(EtcPalLogParams* params)
  */
 bool etcpal_validate_log_timestamp(const EtcPalLogTimestamp* timestamp)
 {
+  if (!timestamp)
+    return false;
+
   return (timestamp->year <= 9999 && timestamp->month >= 1 && timestamp->month <= 12 && timestamp->day >= 1 &&
           timestamp->day <= 31 && timestamp->hour <= 23 && timestamp->minute <= 59 && timestamp->second <= 60 &&
           timestamp->msec <= 999);
@@ -396,6 +455,9 @@ bool etcpal_can_log(const EtcPalLogParams* params, int pri)
  */
 void etcpal_log(const EtcPalLogParams* params, int pri, const char* format, ...)
 {
+  if (!initialized || !params || !params->log_fn || !format || !(ETCPAL_LOG_MASK(pri) & params->log_mask))
+    return;
+
   va_list args;  // NOLINT
   va_start(args, format);
   etcpal_vlog(params, pri, format, args);
@@ -499,8 +561,12 @@ char* create_log_str(char*                     buf,
                      const char*               format,
                      va_list                   args)
 {
-  if (!buf || buflen < ETCPAL_LOG_TIMESTAMP_LEN + 1 || pri < 0 || pri > ETCPAL_LOG_DEBUG || !format)
+  if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(buflen >= ETCPAL_LOG_TIMESTAMP_LEN + 1) ||
+      !ETCPAL_ASSERT_VERIFY(pri >= 0) || !ETCPAL_ASSERT_VERIFY(pri <= ETCPAL_LOG_DEBUG) ||
+      !ETCPAL_ASSERT_VERIFY(format))
+  {
     return NULL;
+  }
 
   char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
   make_iso_timestamp(timestamp, timestamp_str, true);
@@ -538,8 +604,11 @@ char* create_syslog_str(char*                     buf,
                         const char*               format,
                         va_list                   args)
 {
-  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+  if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(buflen >= ETCPAL_SYSLOG_HEADER_MAX_LEN) ||
+      !ETCPAL_ASSERT_VERIFY(syslog_params) || !ETCPAL_ASSERT_VERIFY(format))
+  {
     return NULL;
+  }
 
   char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
   make_iso_timestamp(timestamp, timestamp_str, false);
@@ -573,8 +642,11 @@ char* create_legacy_syslog_str(char*                     buf,
                                const char*               format,
                                va_list                   args)
 {
-  if (!buf || buflen < ETCPAL_SYSLOG_HEADER_MAX_LEN || !syslog_params || !format)
+  if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(buflen >= ETCPAL_SYSLOG_HEADER_MAX_LEN) ||
+      !ETCPAL_ASSERT_VERIFY(syslog_params) || !ETCPAL_ASSERT_VERIFY(format))
+  {
     return NULL;
+  }
 
   char timestamp_str[ETCPAL_LOG_TIMESTAMP_LEN];
   make_legacy_syslog_timestamp(timestamp, timestamp_str);
@@ -613,6 +685,9 @@ char* create_legacy_syslog_str(char*                     buf,
 /* Replace non-printing characters and spaces with '_'. Replace characters above 127 with '?'. */
 void sanitize_str(char* str)
 {
+  if (!ETCPAL_ASSERT_VERIFY(str))
+    return;
+
   // C library functions like isprint()/isgraph() are not used here because their behavior is not
   // well-defined in the presence of non-ASCII characters.
   for (unsigned char* cp = (unsigned char*)str; *cp != '\0'; ++cp)
@@ -627,6 +702,9 @@ void sanitize_str(char* str)
 /* Build the current timestamp. Buffer must be of length ETCPAL_LOG_TIMESTAMP_LEN. */
 void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool human_readable)
 {
+  if (!ETCPAL_ASSERT_VERIFY(buf))
+    return;
+
   bool timestamp_created = false;
 
   if (timestamp && etcpal_validate_log_timestamp(timestamp))
@@ -666,6 +744,9 @@ void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool hum
 
 void make_legacy_syslog_timestamp(const EtcPalLogTimestamp* timestamp, char* buf)
 {
+  if (!ETCPAL_ASSERT_VERIFY(buf))
+    return;
+
   bool timestamp_created = false;
 
   if (timestamp && etcpal_validate_log_timestamp(timestamp))
@@ -686,6 +767,9 @@ void make_legacy_syslog_timestamp(const EtcPalLogTimestamp* timestamp, char* buf
 
 void make_legacy_syslog_tag_str(const EtcPalSyslogParams* syslog_params, char* buf)
 {
+  if (!ETCPAL_ASSERT_VERIFY(syslog_params) || !ETCPAL_ASSERT_VERIFY(buf))
+    return;
+
   int tag_str_len = 0;
   if (syslog_params->app_name[0] != '\0' && syslog_params->procid[0] != '\0')
   {
@@ -714,6 +798,9 @@ void make_legacy_syslog_tag_str(const EtcPalSyslogParams* syslog_params, char* b
 /* Attempt to get the current time via a time callback. */
 bool get_time(const EtcPalLogParams* params, EtcPalLogTimestamp* timestamp)
 {
+  if (!ETCPAL_ASSERT_VERIFY(params) || !ETCPAL_ASSERT_VERIFY(timestamp))
+    return false;
+
   if (params->time_fn)
   {
     memset(timestamp, 0, sizeof(EtcPalLogTimestamp));

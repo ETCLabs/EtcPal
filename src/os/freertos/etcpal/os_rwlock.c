@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/rwlock.h"
+#include "etcpal/private/common.h"
 #include <task.h>
 #include "freertos_timed_wait.h"
 
@@ -183,6 +184,9 @@ void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 
 void reader_atomic_increment(etcpal_rwlock_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+    return;
+
   portENTER_CRITICAL();
   ++id->reader_count;
   portEXIT_CRITICAL();
@@ -190,6 +194,9 @@ void reader_atomic_increment(etcpal_rwlock_t* id)
 
 void reader_atomic_decrement(etcpal_rwlock_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+    return;
+
   portENTER_CRITICAL();
   --id->reader_count;
   portEXIT_CRITICAL();

@@ -25,12 +25,16 @@
 #include <stdint.h>
 
 #include "etcpal/common.h"
+#include "etcpal/private/common.h"
 #include "etcpal/private/netint.h"
 
 static EtcPalNetintInfo netints[BSP_ENET_DEVICE_COUNT];
 
 static void copy_interface_info(uint32_t mqx_index, EtcPalNetintInfo* netint)
 {
+  if (!ETCPAL_ASSERT_VERIFY(netint))
+    return;
+
   IPCFG_IP_ADDRESS_DATA ip_data;
 
   // This module is quick and dirty and needs some work.
@@ -56,6 +60,9 @@ static void copy_interface_info(uint32_t mqx_index, EtcPalNetintInfo* netint)
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return kEtcPalErrSys;
+
   for (uint32_t i = 0; i < BSP_ENET_DEVICE_COUNT; ++i)
   {
     copy_interface_info(i, &netints[i]);
@@ -72,12 +79,18 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 void os_free_interfaces(CachedNetintInfo* cache)
 {
+  if (!ETCPAL_ASSERT_VERIFY(cache))
+    return;
+
   cache->netints = NULL;
 }
 
 etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo* cache, unsigned int* index)
 {
   ETCPAL_UNUSED_ARG(cache);  // unused
+
+  if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(index))
+    return kEtcPalErrSys;
 
   unsigned int index_found = 0;
 

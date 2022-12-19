@@ -24,6 +24,9 @@
 
 bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
 {
+  if (!os_ip || !ip)
+    return false;
+
   if (os_ip->sa_family == AF_INET)
   {
     const struct sockaddr_in* sin = (const struct sockaddr_in*)os_ip;
@@ -57,6 +60,9 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
 
 size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
 {
+  if (!ip || !os_ip)
+    return 0;
+
   size_t ret = 0;
   if (ETCPAL_IP_IS_V4(ip))
   {
@@ -80,6 +86,9 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
 
 bool sockaddr_os_to_etcpal(const struct sockaddr* os_sa, EtcPalSockAddr* sa)
 {
+  if (!os_sa || !sa)
+    return false;
+
   if (ip_os_to_etcpal(os_sa, &sa->ip))
   {
     if (os_sa->sa_family == AF_INET)
@@ -98,6 +107,9 @@ bool sockaddr_os_to_etcpal(const struct sockaddr* os_sa, EtcPalSockAddr* sa)
 
 size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, struct sockaddr* os_sa)
 {
+  if (!sa || !os_sa)
+    return 0;
+
   size_t ret = ip_etcpal_to_os(&sa->ip, os_sa);
   if (ret != 0)
   {

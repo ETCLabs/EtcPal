@@ -22,5 +22,8 @@
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
+  if (!id)
+    return false;
+
   return lwsem_timed_wait(id, timeout_ms);
 }

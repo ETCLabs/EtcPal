@@ -23,4 +23,13 @@ if(ETCPAL_HAVE_NETWORKING_SUPPORT)
     ${ETCPAL_SRC}/etcpal/netint.c
     test_netint_controlled.c
   )
+  if (ETCPAL_OS_TARGET STREQUAL "freertos")
+    target_sources(etcpal_controlled_unit_tests PRIVATE
+      ${ETCPAL_SRC}/os/freertos/etcpal/os_mutex.c
+    )
+  elseif (ETCPAL_OS_TARGET STREQUAL "windows")
+    target_sources(etcpal_controlled_unit_tests PRIVATE
+      ${ETCPAL_SRC}/os/windows/etcpal/os_mutex.c
+    )
+  endif()
 endif()

@@ -21,6 +21,7 @@
 
 #include <string.h>
 #include "etcpal/pack.h"
+#include "etcpal/private/common.h"
 
 #define ACN_RLP_HEADER_SIZE 16u
 #define RLP_VECTOR_SIZE     4u
@@ -304,7 +305,7 @@ size_t acn_root_layer_buf_size(const AcnRootLayerPdu* pdu_block, size_t num_pdus
 {
   size_t block_size = 0;
 
-  for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
+  for (const AcnRootLayerPdu* pdu = pdu_block; pdu && (pdu < (pdu_block + num_pdus)); ++pdu)
   {
     block_size += pdu->data_len;
     // We assume no inheritance here, so the largest possible buffer is allocated.
@@ -375,7 +376,7 @@ size_t acn_pack_root_layer_block(uint8_t* buf, size_t buflen, const AcnRootLayer
   AcnRootLayerPdu last_pdu = {{{0}}, 0, NULL, 0};
   for (const AcnRootLayerPdu* pdu = pdu_block; pdu < pdu_block + num_pdus; ++pdu)
   {
-    PduInheritance inheritance;
+    PduInheritance inheritance = {false, false, false};
     evaluate_pdu_inheritance(pdu_block, pdu, &last_pdu, cur_ptr, &inheritance);
 
     // Check if we are required to use the 3-byte length field, either by the higher-level protocol
@@ -424,6 +425,12 @@ void evaluate_pdu_inheritance(const AcnRootLayerPdu* pdu_block,
                               uint8_t*               cur_ptr,
                               PduInheritance*        inheritance)
 {
+  if (!ETCPAL_ASSERT_VERIFY(pdu_block) || !ETCPAL_ASSERT_VERIFY(current_pdu) || !ETCPAL_ASSERT_VERIFY(last_pdu) ||
+      !ETCPAL_ASSERT_VERIFY(cur_ptr) || !ETCPAL_ASSERT_VERIFY(inheritance))
+  {
+    return;
+  }
+
   inheritance->vector = true;
   inheritance->header = true;
   inheritance->data   = true;

@@ -21,6 +21,7 @@
 #define ETCPAL_MOCK_COMMON_H_
 
 #include "etcpal/common.h"
+#include "etcpal/log.h"
 #include "fff.h"
 
 #ifdef __cplusplus
@@ -29,6 +30,7 @@ extern "C" {
 
 DECLARE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_init, etcpal_features_t);
 DECLARE_FAKE_VOID_FUNC(etcpal_deinit, etcpal_features_t);
+DECLARE_FAKE_VALUE_FUNC(bool, set_etcpal_log_params, const EtcPalLogParams*);
 
 void etcpal_reset_all_fakes(void);
 

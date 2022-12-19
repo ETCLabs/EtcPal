@@ -174,6 +174,9 @@ int etcpal_recvfrom(etcpal_socket_t id, void *buffer, size_t length, int flags, 
  * Refer to your favorite recvmsg() man page for more information, but also note that the etcpal_cmsg_[...] functions
  * must be used instead of the OS standard CMSG_[...] macros.
  *
+ * On lwIP, in order to receive ancillary data (e.g. PKTINFO), make sure to enable the LWIP_NETBUF_RECVINFO compiler
+ * definition to enable setting the relevant socket options (e.g. ETCPAL_IP_PKTINFO).
+ *
  * @param[in] id Socket on which to receive.
  * @param[in,out] msg Message data filled in when a message is received.
  * @param[in] flags Receive flags.
@@ -187,6 +190,9 @@ int etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags);
  * This function is used in place of the OS standard CMSG_FIRSTHDR macro. Refer to your favorite recvmsg() man page for
  * more information.
  *
+ * On lwIP, in order to receive ancillary data (e.g. PKTINFO), make sure to enable the LWIP_NETBUF_RECVINFO compiler
+ * definition to enable setting the relevant socket options (e.g. ETCPAL_IP_PKTINFO).
+ *
  * @param[in,out] msgh Message containing the desired control message.
  * @param[out] firsthdr The first control message.
  * @return True if the first CMSG header was found and outputted, or false otherwise.
@@ -198,6 +204,9 @@ bool etcpal_cmsg_firsthdr(EtcPalMsgHdr* msgh, EtcPalCMsgHdr* firsthdr);
  *
  * This function is used in place of the OS standard CMSG_NXTHDR macro. Refer to your favorite recvmsg() man page for
  * more information.
+ *
+ * On lwIP, in order to receive ancillary data (e.g. PKTINFO), make sure to enable the LWIP_NETBUF_RECVINFO compiler
+ * definition to enable setting the relevant socket options (e.g. ETCPAL_IP_PKTINFO).
  *
  * @param[in,out] msgh Message containing the desired control message.
  * @param[in] cmsg The control message preceding the desired control message.
@@ -211,6 +220,9 @@ bool etcpal_cmsg_nxthdr(EtcPalMsgHdr* msgh, const EtcPalCMsgHdr* cmsg, EtcPalCMs
  *
  * This function is used in place of the OS standard CMSG_DATA macro. Refer to your favorite recvmsg() man page for more
  * information.
+ *
+ * On lwIP, in order to receive ancillary data (e.g. PKTINFO), make sure to enable the LWIP_NETBUF_RECVINFO compiler
+ * definition to enable setting the relevant socket options (e.g. ETCPAL_IP_PKTINFO).
  *
  * @param[in] cmsg The control message. The level should be #ETCPAL_IPPROTO_IP or #ETCPAL_IPPROTO_IPV6. If it's
  * #ETCPAL_IPPROTO_IP, the type should be #ETCPAL_IP_PKTINFO. Otherwise if it's #ETCPAL_IPPROTO_IPV6, the type should be

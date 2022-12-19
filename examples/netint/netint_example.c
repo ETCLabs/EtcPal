@@ -89,7 +89,9 @@ int main(void)
     return 1;
   }
 
-  size_t num_interfaces = etcpal_netint_get_num_interfaces();
+  size_t num_interfaces = 0;
+  etcpal_netint_get_interfaces(NULL, &num_interfaces);
+
   if (num_interfaces == 0)
   {
     printf("Error: No network interfaces found on system.\n");
@@ -97,7 +99,7 @@ int main(void)
     return 1;
   }
 
-  const EtcPalNetintInfo* netint_arr = etcpal_netint_get_interfaces();
+  EtcPalNetintInfo* netint_arr = calloc(num_interfaces, sizeof(EtcPalNetintInfo));
   assert(netint_arr);
 
   create_format_strings(netint_arr, num_interfaces);
@@ -121,24 +123,32 @@ int main(void)
   unsigned int default_v4 = 0;
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV4, &default_v4))
   {
-    const EtcPalNetintInfo* addr_arr      = NULL;
-    size_t                  addr_arr_size = 0;
-    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v4, &addr_arr, &addr_arr_size))
+    EtcPalNetintInfo addr;
+    size_t           addr_arr_size = 1;
+
+    etcpal_error_t res = etcpal_netint_get_interfaces_for_index(default_v4, &addr, &addr_arr_size);
+
+    if ((res == kEtcPalErrOk) || (res == kEtcPalErrBufSize))  // Either way we got the first netint
     {
-      printf("Default IPv4 interface: %s (%u)\n", addr_arr->friendly_name, default_v4);
+      printf("Default IPv4 interface: %s (%u)\n", addr.friendly_name, default_v4);
     }
   }
 
   unsigned int default_v6 = 0;
   if (kEtcPalErrOk == etcpal_netint_get_default_interface(kEtcPalIpTypeV6, &default_v6))
   {
-    const EtcPalNetintInfo* addr_arr      = NULL;
-    size_t                  addr_arr_size = 0;
-    if (kEtcPalErrOk == etcpal_netint_get_interfaces_by_index(default_v6, &addr_arr, &addr_arr_size))
+    EtcPalNetintInfo addr;
+    size_t           addr_arr_size = 1;
+
+    etcpal_error_t res = etcpal_netint_get_interfaces_for_index(default_v6, &addr, &addr_arr_size);
+
+    if ((res == kEtcPalErrOk) || (res == kEtcPalErrBufSize))  // Either way we got the first netint
     {
-      printf("Default IPv6 interface: %s (%u)\n", addr_arr->friendly_name, default_v6);
+      printf("Default IPv6 interface: %s (%u)\n", addr.friendly_name, default_v6);
     }
   }
+
+  free(netint_arr);
 
   etcpal_deinit(ETCPAL_FEATURE_NETINTS);
 

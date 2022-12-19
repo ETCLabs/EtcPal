@@ -87,7 +87,7 @@ bool etcpal_timer_is_expired(const EtcPalTimer* timer)
 uint32_t etcpal_timer_remaining(const EtcPalTimer* timer)
 {
   uint32_t res = 0;
-  if (timer->interval != 0)
+  if (timer && (timer->interval != 0))
   {
     uint32_t cur_ms = etcpal_getms();
     if (cur_ms - timer->reset_time < timer->interval)
