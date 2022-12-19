@@ -21,6 +21,9 @@
 #define ETCPAL_OS_SOCKET_H_
 
 #include <zephyr/net/socket.h>
+#include <zephyr/net/net_ip.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/net/net_pkt.h>
 #include <zephyr/posix/poll.h>
 
 #include "etcpal/inet.h"
@@ -50,9 +53,10 @@ typedef struct EtcPalPollContext
 } EtcPalPollContext;
 
 /* Definitions for the etcpal_recvmsg API */
-
-#define ETCPAL_PLATFORM_IN_PKTINFO_SPACE  CMSG_SPACE(sizeof(struct in_pktinfo))
-#define ETCPAL_PLATFORM_IN6_PKTINFO_SPACE CMSG_SPACE(sizeof(struct in6_pktinfo))
+// NAM: Not sure sockaddr_in and sockaddr_in6 are correct, should be something like
+// in_pktinfo and in6_pktinfo 
+#define ETCPAL_PLATFORM_IN_PKTINFO_SPACE  CMSG_SPACE(sizeof(struct sockaddr_in))
+#define ETCPAL_PLATFORM_IN6_PKTINFO_SPACE CMSG_SPACE(sizeof(struct sockaddr_in6))
 
 #ifdef __cplusplus
 }
