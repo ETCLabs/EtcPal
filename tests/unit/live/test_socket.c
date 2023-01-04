@@ -594,7 +594,12 @@ TEST(etcpal_socket, set_so_sndbuf_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
-  int sndbuf_size = 115000;
+#if defined(_WIN32) || defined(__APPLE__) || defined(__linux__)
+  int sndbuf_size = 128000;
+#else  // lwIP, MQX
+  int sndbuf_size = 32000;
+#endif
+
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDBUF, &sndbuf_size, sizeof(int)));
 
