@@ -281,13 +281,8 @@ int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, s
 
   switch (option_name)
   {
-    case ETCPAL_SO_SNDBUF: {
-      int res = getsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, (socklen_t*)option_len);
-      if (res == 0)
-        (*((int*)option_value)) /= 2;  // Mac returns a value double the configured size
-
-      return res;
-    }
+    case ETCPAL_SO_SNDBUF:
+      return getsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, (socklen_t*)option_len);
     case ETCPAL_SO_RCVBUF:     // TODO
     case ETCPAL_SO_RCVTIMEO:   // TODO
     case ETCPAL_SO_SNDTIMEO:   // TODO
