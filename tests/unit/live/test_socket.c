@@ -587,6 +587,20 @@ TEST(etcpal_socket, recvmsg_trunc_peek_works)
   etcpal_close(recv_sock);
 }
 
+TEST(etcpal_socket, set_so_sndbuf_works)
+{
+  etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
+  TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
+
+  int sndbuf_size = 115000;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_setsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDBUF, &sndbuf_size, sizeof(int)));
+
+  etcpal_close(sock);
+}
+
 TEST_GROUP_RUNNER(etcpal_socket)
 {
   RUN_TEST_CASE(etcpal_socket, bind_works_as_expected);
