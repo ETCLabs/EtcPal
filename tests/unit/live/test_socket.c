@@ -618,4 +618,5 @@ TEST_GROUP_RUNNER(etcpal_socket)
   RUN_TEST_CASE(etcpal_socket, recvmsg_ctrunc_flag_works);
   RUN_TEST_CASE(etcpal_socket, recvmsg_peek_flag_works);
   RUN_TEST_CASE(etcpal_socket, recvmsg_trunc_peek_works);
+  RUN_TEST_CASE(etcpal_socket, set_so_sndbuf_works);
 }
