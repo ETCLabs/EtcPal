@@ -597,7 +597,7 @@ TEST(etcpal_socket, set_so_sndbuf_works)
 #if defined(_WIN32) || defined(__APPLE__) || defined(__linux__)
   int sndbuf_size = 128000;
 #else  // lwIP, MQX
-  int sndbuf_size = 32000;
+  int sndbuf_size = 2000;
 #endif
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
