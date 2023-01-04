@@ -28,6 +28,12 @@
 #endif  // __APPLE_USE_RFC_3542
 #endif  // defined(__linux__) || defined(__APPLE__)
 
+#if defined(_WIN32) || defined(__APPLE__) || defined(__linux__) || defined(__unix__) || defined(_POSIX_VERSION)
+#define TEST_SOCKET_FULL_OS_AVAILABLE 1
+#else
+#define TEST_SOCKET_FULL_OS_AVAILABLE 0
+#endif
+
 #include "etcpal/socket.h"
 #include "unity_fixture.h"
 
@@ -587,24 +593,28 @@ TEST(etcpal_socket, recvmsg_trunc_peek_works)
   etcpal_close(recv_sock);
 }
 
-TEST(etcpal_socket, set_so_sndbuf_works)
+#if TEST_SOCKET_FULL_OS_AVAILABLE
+TEST(etcpal_socket, so_sndbuf_works)
 {
   etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
-#if defined(_WIN32) || defined(__APPLE__) || defined(__linux__)
-  int sndbuf_size = 128000;
-#else  // lwIP, MQX
-  int sndbuf_size = 2000;
-#endif
-
+  int set_sndbuf_val = 115000;
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
-                    etcpal_setsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDBUF, &sndbuf_size, sizeof(int)));
+                    etcpal_setsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDBUF, &set_sndbuf_val, sizeof(int)));
+
+  int    get_sndbuf_val  = 0;
+  size_t get_sndbuf_size = sizeof(int);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_getsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDBUF, &get_sndbuf_val, &get_sndbuf_size));
+  TEST_ASSERT_EQUAL(set_sndbuf_val, get_sndbuf_val);
+  TEST_ASSERT_EQUAL(sizeof(int), get_sndbuf_size);
 
   etcpal_close(sock);
 }
+#endif  // TEST_SOCKET_FULL_OS_AVAILABLE
 
 TEST_GROUP_RUNNER(etcpal_socket)
 {
@@ -623,5 +633,7 @@ TEST_GROUP_RUNNER(etcpal_socket)
   RUN_TEST_CASE(etcpal_socket, recvmsg_ctrunc_flag_works);
   RUN_TEST_CASE(etcpal_socket, recvmsg_peek_flag_works);
   RUN_TEST_CASE(etcpal_socket, recvmsg_trunc_peek_works);
-  RUN_TEST_CASE(etcpal_socket, set_so_sndbuf_works);
+#if TEST_SOCKET_FULL_OS_AVAILABLE
+  RUN_TEST_CASE(etcpal_socket, so_sndbuf_works);
+#endif  // TEST_SOCKET_FULL_OS_AVAILABLE
 }
