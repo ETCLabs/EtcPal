@@ -130,6 +130,9 @@ static int  setsockopt_socket(etcpal_socket_t id, int option_name, const void* o
 static int  setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 static int  setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 
+// Helpers for etcpal_getsockopt()
+static int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, size_t* option_len);
+
 // Helpers for etcpal_poll API
 static void events_etcpal_to_epoll(etcpal_poll_events_t events, struct epoll_event* epoll_evt);
 static void events_epoll_to_etcpal(const struct epoll_event* epoll_evt,
@@ -246,13 +249,57 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 // NOLINTNEXTLINE(readability-non-const-parameter)
 etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name, void* option_value, size_t* option_len)
 {
-  /* TODO */
-  ETCPAL_UNUSED_ARG(id);
-  ETCPAL_UNUSED_ARG(level);
-  ETCPAL_UNUSED_ARG(option_name);
-  ETCPAL_UNUSED_ARG(option_value);
-  ETCPAL_UNUSED_ARG(option_len);
-  return kEtcPalErrNotImpl;
+  int res = -1;
+
+  if (!option_value || !option_len)
+    return kEtcPalErrInvalid;
+
+  // TODO this OS implementation could be simplified by use of socket option lookup arrays.
+  switch (level)
+  {
+    case ETCPAL_SOL_SOCKET:
+      res = getsockopt_socket(id, option_name, option_value, option_len);
+      break;
+    case ETCPAL_IPPROTO_IP:
+      return kEtcPalErrNotImpl;  // TODO
+    case ETCPAL_IPPROTO_IPV6:
+      return kEtcPalErrNotImpl;  // TODO
+    default:
+      return kEtcPalErrInvalid;
+  }
+  return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
+}
+
+int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, size_t* option_len)
+{
+  if (!ETCPAL_ASSERT_VERIFY(option_value) || !ETCPAL_ASSERT_VERIFY(option_len))
+    return -1;
+
+  switch (option_name)
+  {
+    case ETCPAL_SO_SNDBUF: {
+      int res = getsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, (socklen_t*)option_len);
+      if (res == 0)
+        (*((int*)option_value)) /= 2;  // Linux returns a value double the configured size
+
+      return res;
+    }
+    case ETCPAL_SO_RCVBUF:     // TODO
+    case ETCPAL_SO_RCVTIMEO:   // TODO
+    case ETCPAL_SO_SNDTIMEO:   // TODO
+    case ETCPAL_SO_REUSEADDR:  // TODO
+    case ETCPAL_SO_REUSEPORT:  // TODO
+    case ETCPAL_SO_BROADCAST:  // TODO
+    case ETCPAL_SO_KEEPALIVE:  // TODO
+    case ETCPAL_SO_LINGER:     // TODO
+    case ETCPAL_SO_ERROR:      // Set not supported
+    case ETCPAL_SO_TYPE:       // Set not supported
+    default:
+      break;
+  }
+  // If we got here, something was invalid. Set errno accordingly
+  errno = EINVAL;
+  return -1;
 }
 
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
