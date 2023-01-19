@@ -131,7 +131,8 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 
   struct k_msgq_attrs attrs;
 
-  k_msgq_get_attrs(id, &attrs);
+  // etcpal_queue_t and k_msgq are the same under the covers	
+	k_msgq_get_attrs((struct k_msgq*)id, &attrs);
 
   if (attrs.used_msgs == 0)
   {
