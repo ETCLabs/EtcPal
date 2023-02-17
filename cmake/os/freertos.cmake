@@ -23,7 +23,7 @@ if(NOT TARGET FreeRTOS)
                       "See the comment in this file for more information.")
 endif()
 
-set(ETCPAL_OS_ADDITIONAL_SOURCES
+set(ETCPAL_OS_ADDITIONAL_HEADERS
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_event_group.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_mutex.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_recursive_mutex.h
@@ -32,7 +32,9 @@ set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_sem.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_signal.h
   ${ETCPAL_ROOT}/include/os/freertos/etcpal/os_thread.h
+)
 
+set(ETCPAL_OS_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_event_group.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_mutex.c
   ${ETCPAL_ROOT}/src/os/freertos/etcpal/os_recursive_mutex.c
