@@ -53,13 +53,13 @@ function(add_etcpal_library target_name)
   endif()
 
   # Organize sources in IDEs
-  source_group(TREE ${ETCPAL_ROOT}/src/etcpal PREFIX src FILES
-    ${ETCPAL_CORE_SOURCES}
+  source_group(TREE ${ETCPAL_ROOT}/src/etcpal PREFIX src FILES ${ETCPAL_CORE_SOURCES})
+  source_group(src/os FILES
     ${ETCPAL_OS_ADDITIONAL_SOURCES}
     ${ETCPAL_NET_ADDITIONAL_SOURCES}
   )
-  source_group(TREE ${ETCPAL_ROOT}/include/etcpal PREFIX include FILES
-    ${ETCPAL_CORE_HEADERS}
+  source_group(TREE ${ETCPAL_ROOT}/include/etcpal PREFIX include FILES ${ETCPAL_CORE_HEADERS})
+  source_group(include/os FILES
     ${ETCPAL_OS_ADDITIONAL_HEADERS}
     ${ETCPAL_NET_ADDITIONAL_HEADERS}
   )
