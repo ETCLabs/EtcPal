@@ -419,7 +419,7 @@ struct hash<::etcpal::Uuid>
   std::size_t operator()(const ::etcpal::Uuid& uuid) const noexcept
   {
     size_t seed = 0u;
-    for (int i = 0; i < ETCPAL_UUID_BYTES; ++i)
+    for (size_t i = 0; i < ETCPAL_UUID_BYTES; ++i)
       ::etcpal::HashCombine(seed, uuid.data()[i]);
 
     return seed;
