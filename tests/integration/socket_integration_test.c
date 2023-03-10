@@ -555,8 +555,12 @@ void multicast_udp_ipv6_setup(void)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
+#ifdef TESTING_LWIP
+  TEST_IGNORE_MESSAGE("ETCPAL_IPPROTO_IPV6 ETCPAL_IP_MULTICAST_LOOP not implemented on this platform.");
+#else
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+#endif
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_IF, &v6_netint,
                                                     sizeof v6_netint));
 
