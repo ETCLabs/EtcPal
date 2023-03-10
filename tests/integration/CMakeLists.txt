@@ -33,6 +33,12 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     )
   endif()
 
+  if(ETCPAL_NET_TARGET STREQUAL "lwip")
+    target_compile_definitions(etcpal_integration_tests PRIVATE
+      TESTING_LWIP
+    )
+  endif()
+
   # Queues not supported on MQX or Apple platforms.
   # TODO On our FreeRTOS test bed we currently don't have enough memory available to run the
   # integration tests, so those are also disabled for now. ETCPAL-91

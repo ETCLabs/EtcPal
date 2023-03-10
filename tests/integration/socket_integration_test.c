@@ -465,7 +465,7 @@ TEST(socket_integration_udp, unicast_udp_ipv6_sendto_recvmsg)
 {
   unicast_udp_ipv6_setup();
 
-#ifdef ETCPAL_USING_LWIP_NETWORKING_SUPPORT
+#ifdef TESTING_LWIP
   TEST_IGNORE_MESSAGE("ETCPAL_IPV6_PKTINFO not implemented on this platform.");
 #else
   int intval = 1;
@@ -759,7 +759,7 @@ TEST(socket_integration_udp, multicast_udp_ipv4_sendto_recvmsg)
 TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvfrom)
 {
   // TODO: Figure out why IPv6 multicast packets aren't coming across on lwIP.
-#ifdef ETCPAL_USING_LWIP_NETWORKING_SUPPORT
+#ifdef TESTING_LWIP
   TEST_IGNORE_MESSAGE("This test is temporarily disabled on this platform.");
 #else
   multicast_udp_ipv6_setup();
@@ -772,7 +772,7 @@ TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvmsg)
 {
   multicast_udp_ipv6_setup();
 
-#ifdef ETCPAL_USING_LWIP_NETWORKING_SUPPORT
+#ifdef TESTING_LWIP
   TEST_IGNORE_MESSAGE("ETCPAL_IPV6_PKTINFO not implemented on this platform.");
 #else
   int intval = 1;
