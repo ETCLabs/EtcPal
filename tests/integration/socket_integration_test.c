@@ -555,10 +555,10 @@ void multicast_udp_ipv6_setup(void)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
-  // TEST_ASSERT_EQUAL(kEtcPalErrOk,
-  etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_LOOP, &intval, sizeof(int));  //);
-  // TEST_ASSERT_EQUAL(kEtcPalErrOk,
-  etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_IF, &v6_netint, sizeof v6_netint);  //);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_IF, &v6_netint,
+                                                    sizeof v6_netint));
 
   // Bind socket 1 to the wildcard address and a specific port.
   etcpal_ip_set_wildcard(kEtcPalIpTypeV6, &bind_addr.ip);
@@ -758,14 +758,9 @@ TEST(socket_integration_udp, multicast_udp_ipv4_sendto_recvmsg)
 #if ETCPAL_TEST_IPV6
 TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvfrom)
 {
-  // TODO: Figure out why IPv6 multicast packets aren't coming across on lwIP.
-#ifdef TESTING_LWIP
-  TEST_IGNORE_MESSAGE("This test is temporarily disabled on this platform.");
-#else
   multicast_udp_ipv6_setup();
   multicast_udp_sendto_recvfrom_test();
   multicast_udp_cleanup();
-#endif
 }
 
 TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvmsg)
