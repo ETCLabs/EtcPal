@@ -429,8 +429,12 @@ static void recvmsg_test_setup(etcpal_socket_t* recv_sock)
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
   int intval = 1;
+#ifdef __MQX__
+  TEST_IGNORE_MESSAGE("ETCPAL_IP_PKTINFO not implemented on this platform.");
+#else
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(*recv_sock, ETCPAL_IPPROTO_IP, ETCPAL_IP_PKTINFO, &intval, sizeof(int)));
+#endif
   intval = 10;
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(*recv_sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_RCVTIMEO, &intval, sizeof(int)));
