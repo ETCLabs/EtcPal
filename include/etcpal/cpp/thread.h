@@ -186,9 +186,9 @@ public:
   Error Join(int timeout_ms = ETCPAL_WAIT_FOREVER) noexcept;
   Error Terminate() noexcept;
 
-  static void Sleep(unsigned int ms) noexcept;
+  static Error Sleep(unsigned int ms) noexcept;
   template <typename Rep, typename Period>
-  static void Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept;
+  static Error Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept;
 
   /// @cond
   using FunctionType = std::function<void()>;
@@ -488,9 +488,12 @@ inline Error Thread::Terminate() noexcept
 }
 
 /// @brief Blocks the current thread for the specified number of milliseconds.
-inline void Thread::Sleep(unsigned int ms) noexcept
+///
+/// @return #kEtcPalErrOk: The sleep completed.
+/// @return #kEtcPalErrSys: The system call may have been interrupted and awoke early.
+inline Error Thread::Sleep(unsigned int ms) noexcept
 {
-  etcpal_thread_sleep(ms);
+  return etcpal_thread_sleep(ms);
 }
 
 /// @brief Blocks the current thread for the specified duration.
@@ -503,7 +506,7 @@ void Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noe
   unsigned int sleep_ms_clamped = static_cast<unsigned int>(
       std::min(std::chrono::milliseconds(sleep_duration).count(),
                static_cast<std::chrono::milliseconds::rep>(std::numeric_limits<unsigned int>::max())));
-  Sleep(sleep_ms_clamped);
+  return Sleep(sleep_ms_clamped);
 }
 
 };  // namespace etcpal

@@ -59,7 +59,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
   return kEtcPalErrNoMem;
 }
 
-etcpal_error_t etcpal_thread_sleep(uint32_t sleep_ms)
+etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
 {
   vTaskDelay(pdMS_TO_TICKS(sleep_ms));
   return kEtcPalErrOk;

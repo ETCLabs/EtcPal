@@ -78,7 +78,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
   return res;
 }
 
-void etcpal_thread_sleep(uint32_t sleep_ms)
+etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
 {
   struct timespec t;
   t.tv_sec = sleep_ms / 1000;
