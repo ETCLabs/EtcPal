@@ -500,7 +500,7 @@ inline Error Thread::Sleep(unsigned int ms) noexcept
 ///
 /// Note: Duration will be clamped to [0, UINT_MAX] milliseconds.
 template <typename Rep, typename Period>
-void Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept
+Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept
 {
   // This implementation cannot sleep longer than UINT_MAX.
   unsigned int sleep_ms_clamped = static_cast<unsigned int>(

@@ -81,7 +81,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
 etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
 {
   struct timespec t;
-  t.tv_sec = sleep_ms / 1000;
+  t.tv_sec  = sleep_ms / 1000;
   t.tv_nsec = (sleep_ms % 1000) * 1000000;
 
   if (nanosleep(&t, NULL) == 0)
