@@ -20,6 +20,8 @@
 #include "etcpal/thread.h"
 
 #include <string.h>
+#include <time.h>
+
 #include "etcpal/private/common.h"
 #include "etcpal/common.h"
 #include "os_error.h"
@@ -70,6 +72,19 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     pthread_attr_destroy(p_thread_attr);
 
   return res;
+}
+
+void etcpal_thread_sleep(uint32_t sleep_ms)
+{
+  struct timespec t;
+  t.tv_sec = sleep_ms / 1000;
+  t.tv_nsec = (sleep_ms % 1000) * 1000000;
+
+  if (nanosleep(&t, NULL) == 0)
+  {
+    return kEtcPalErrOk;
+  }
+  return kEtcPalErrSys;
 }
 
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)

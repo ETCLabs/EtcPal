@@ -52,7 +52,6 @@ typedef struct
   _task_id     tid;
 } etcpal_thread_t;
 
-#define etcpal_thread_sleep(sleep_ms)       _time_delay((uint32_t)sleep_ms)
 #define etcpal_thread_get_current_os_handle _task_get_id
 
 #ifdef __cplusplus

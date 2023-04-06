@@ -20,6 +20,8 @@
 #ifndef ETCPAL_THREAD_H_
 #define ETCPAL_THREAD_H_
 
+#include <stdint.h>
+
 #include "etcpal/error.h"
 #include "etcpal/os_thread.h"
 
@@ -194,14 +196,11 @@ etcpal_error_t            etcpal_thread_create(etcpal_thread_t*          id,
                                                const EtcPalThreadParams* params,
                                                void (*thread_fn)(void*),
                                                void* thread_arg);
+etcpal_error_t            etcpal_thread_sleep(uint32_t sleep_ms);
 etcpal_error_t            etcpal_thread_join(etcpal_thread_t* id);
 etcpal_error_t            etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms);
 etcpal_error_t            etcpal_thread_terminate(etcpal_thread_t* id);
 etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id);
-
-#if !defined(etcpal_thread_sleep) || DOXYGEN
-void etcpal_thread_sleep(unsigned int sleep_ms);
-#endif
 
 #if !defined(etcpal_thread_get_current_os_handle) || DOXYGEN
 etcpal_thread_os_handle_t etcpal_thread_get_current_os_handle(void);
