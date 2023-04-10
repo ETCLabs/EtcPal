@@ -46,7 +46,6 @@ typedef struct
   TaskHandle_t      tid;
 } etcpal_thread_t;
 
-#define etcpal_thread_sleep(sleep_ms)       vTaskDelay(pdMS_TO_TICKS(sleep_ms))
 #define etcpal_thread_get_current_os_handle xTaskGetCurrentTaskHandle
 
 #ifdef __cplusplus

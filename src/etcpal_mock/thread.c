@@ -25,6 +25,7 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
                        const EtcPalThreadParams*,
                        EtcPalThreadFunc,
                        void*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_sleep, unsigned int);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_join, etcpal_thread_t*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_timed_join, etcpal_thread_t*, int);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_thread_terminate, etcpal_thread_t*);
@@ -33,6 +34,7 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_thread_os_handle_t, etcpal_thread_get_os_handle, e
 void etcpal_thread_reset_all_fakes(void)
 {
   RESET_FAKE(etcpal_thread_create);
+  RESET_FAKE(etcpal_thread_sleep);
   RESET_FAKE(etcpal_thread_join);
   RESET_FAKE(etcpal_thread_timed_join);
   RESET_FAKE(etcpal_thread_terminate);

@@ -20,6 +20,8 @@
 #include "etcpal/thread.h"
 
 #include <string.h>
+#include <unistd.h>
+
 #include "etcpal/private/common.h"
 #include "etcpal/common.h"
 #include "os_error.h"
@@ -70,6 +72,15 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     pthread_attr_destroy(p_thread_attr);
 
   return res;
+}
+
+etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
+{
+  if (usleep((useconds_t)(sleep_ms * 1000U)) == 0)
+  {
+    return kEtcPalErrOk;
+  }
+  return kEtcPalErrSys;
 }
 
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)

@@ -76,6 +76,14 @@ typedef PLATFORM_DEFINED etcpal_thread_os_handle_t;
 etcpal_error_t etcpal_thread_create(etcpal_thread_t* id, const EtcPalThreadParams* params, void (*thread_fn)(void *), void *thread_arg);
 
 /**
+ * @brief Provides a platform-neutral sleep.
+ * @param[in] sleep_ms How long to sleep, in milliseconds.
+ * @return #kEtcPalErrOk: The sleep completed.
+ * @return #kEtcPalErrSys: The system call may have been interrupted and awoke early.
+ */
+etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms);
+
+/**
  * @brief Wait for a thread to finish execution.
  *
  * Blocks until the thread has exited.
@@ -119,12 +127,6 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id);
  * @return Other codes translated from system error codes are possible.
  */
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id);
-
-/**
- * @brief Provides a platform-neutral sleep.
- * @param[in] sleep_ms How long to sleep, in milliseconds.
- */
-void etcpal_thread_sleep(unsigned int sleep_ms);
 
 /**
  * @brief Get the native OS handle of an EtcPal thread.
