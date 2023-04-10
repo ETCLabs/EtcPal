@@ -76,7 +76,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
 
 etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
 {
-  if (usleep(sleep_ms * 1000) == 0)
+  if (usleep((useconds_t)(sleep_ms * 1000U) == 0)
   {
     return kEtcPalErrOk;
   }

@@ -125,7 +125,11 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
 
 etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
 {
+#ifdef __cplusplus
+  ::Sleep(static_cast<DWORD>(sleep_ms));
+#else
   Sleep((DWORD)sleep_ms);
+#endif
   return kEtcPalErrOk;
 }
 
