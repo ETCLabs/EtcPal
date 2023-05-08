@@ -4,6 +4,8 @@
 #include "etcpal/private/common.h"
 #include <string.h>
 
+#if !ETCPAL_TARGETING_FREERTOS
+
 static inline bool wait_for_space_timed(const etcpal_queue_t* queue, int timeout_ms)
 {
   if (!ETCPAL_ASSERT_VERIFY(queue))
@@ -437,3 +439,5 @@ size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 
   return elements;
 }
+
+#endif  // !ETCPAL_TARGETING_FREERTOS
