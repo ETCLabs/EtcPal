@@ -30,6 +30,13 @@
 extern "C" {
 #endif
 
+#ifdef SDK_OS_FREE_RTOS
+#ifdef ETCPAL_TARGETING_FREERTOS
+#undef ETCPAL_TARGETING_FREERTOS
+#endif
+#define ETCPAL_TARGETING_FREERTOS 1
+#endif
+
 /******************************************************************************
  * Logging
  *****************************************************************************/

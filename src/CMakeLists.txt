@@ -46,6 +46,12 @@ function(add_etcpal_library target_name)
     ${ETCPAL_NET_ADDITIONAL_DEFINES}
   )
 
+  if(ETCPAL_OS_TARGET STREQUAL "freertos")
+    target_compile_definitions(${target_name} PRIVATE
+      ETCPAL_TARGETING_FREERTOS=1
+    )
+  endif()
+
   target_link_libraries(${target_name} PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
 
   if(NOT MSVC)
