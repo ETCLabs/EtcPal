@@ -7,6 +7,12 @@
    100% Public Domain
  */
 
+/**************************************************************************************************
+ * ETC made the following changes:
+ * 05-30-2023 CGR
+ *   - Switched names of SHA1_CTX struct and SHA1 functions to EtcPal-specific names to avoid conflicts
+ *************************************************************************************************/
+
 #include "stdint.h"
 
 typedef struct
@@ -14,16 +20,16 @@ typedef struct
   uint32_t      state[5];
   uint32_t      count[2];
   unsigned char buffer[64];
-} SHA1_CTX;
+} EtcPalSha1Ctx;
 
-void SHA1Transform(uint32_t state[5], const unsigned char buffer[64]);
+void etcpal_sha1_transform(uint32_t state[5], const unsigned char buffer[64]);
 
-void SHA1Init(SHA1_CTX* context);
+void etcpal_sha1_init(EtcPalSha1Ctx* context);
 
-void SHA1Update(SHA1_CTX* context, const unsigned char* data, uint32_t len);
+void etcpal_sha1_update(EtcPalSha1Ctx* context, const unsigned char* data, uint32_t len);
 
-void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
+void etcpal_sha1_final(unsigned char digest[20], EtcPalSha1Ctx* context);
 
-void SHA1(char* hash_out, const char* str, int len);
+void etcpal_sha1(char* hash_out, const char* str, int len);
 
 #endif /* SHA1_H */
