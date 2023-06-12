@@ -189,6 +189,9 @@ typedef struct EtcPalThreadParams
   {                                  \
     ETCPAL_THREAD_PARAMS_INIT_VALUES \
   }
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 etcpal_error_t            etcpal_thread_create(etcpal_thread_t*          id,
                                                const EtcPalThreadParams* params,
@@ -206,7 +209,9 @@ void etcpal_thread_sleep(unsigned int sleep_ms);
 #if !defined(etcpal_thread_get_current_os_handle) || DOXYGEN
 etcpal_thread_os_handle_t etcpal_thread_get_current_os_handle(void);
 #endif
-
+#ifdef __cplusplus
+}
+#endif
 /**
  * @}
  */

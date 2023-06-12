@@ -27,6 +27,9 @@
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 // THIS IS WINDOWS MAGIC to set the thread name on versions older than Win10 1607. It is copied
 // directly from the sample code at Microsoft.
 // Lasciate ogne speranza, voi ch'intrate
@@ -167,5 +170,9 @@ etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id)
 {
   return (id ? GetThreadId(id->tid) : ETCPAL_THREAD_OS_HANDLE_INVALID);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

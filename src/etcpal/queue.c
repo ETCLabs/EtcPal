@@ -226,6 +226,15 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
   return true;
 }
 
+bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer)
+{
+  bool true_if_success = false;
+
+  true_if_success = etcpal_queue_create(id, size, item_size);
+
+  return true_if_success;
+}
+
 void etcpal_queue_destroy(etcpal_queue_t* id)
 {
   if (!id)
