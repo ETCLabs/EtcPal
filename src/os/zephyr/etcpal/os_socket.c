@@ -126,11 +126,13 @@ static int  setsockopt_socket(etcpal_socket_t id, int option_name, const void* o
 static int  setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 static int  setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 
+#ifdef NAM
 // Helpers for etcpal_poll API
 static void events_etcpal_to_epoll(etcpal_poll_events_t events, struct epoll_event* epoll_evt);
 static void events_epoll_to_etcpal(const struct epoll_event* epoll_evt,
 	const EtcPalPollSocket*   sock_desc,
 	etcpal_poll_events_t*     events);
+#endif // NAM
 
 static int           poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b);
 static EtcPalRbNode* poll_socket_alloc(void);

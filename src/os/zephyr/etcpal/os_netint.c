@@ -82,7 +82,7 @@ RoutingTable routing_table_v4;
 RoutingTable routing_table_v6;
 
 /*********************** Private function prototypes *************************/
-
+#ifdef NAM
 // Functions for building the routing tables
 static etcpal_error_t build_routing_tables(void);
 static etcpal_error_t build_routing_table(int family, RoutingTable* table);
@@ -100,6 +100,7 @@ static etcpal_error_t parse_netlink_route_reply(int           family,
 // Manipulating routing table entries
 static void init_routing_table_entry(RoutingTableEntry* entry);
 static int  compare_routing_table_entries(const void* a, const void* b);
+#endif // NAM
 
 #if ETCPAL_NETINT_DEBUG_OUTPUT
 static void debug_print_routing_table(RoutingTable* table);

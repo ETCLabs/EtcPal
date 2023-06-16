@@ -28,6 +28,7 @@
 etcpal_error_t etcpal_timer_init(void)
 {
   // No init necessary
+  return kEtcPalErrNotImpl;
 }
 
 void etcpal_timer_deinit(void)

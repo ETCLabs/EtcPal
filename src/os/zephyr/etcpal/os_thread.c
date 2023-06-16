@@ -184,14 +184,15 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 {
+	// TODO: ensure I'm properly killing a thread
   k_thread_abort(id->tid);
-  k_stack_cleanup(&id->my_stack);
+  //k_stack_cleanup(&id->my_stack);
   return kEtcPalErrOk;
 }
 
 etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id)
 {
-  return kEtcPalErrNotImpl;
+	return (etcpal_thread_os_handle_t)(0);
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
