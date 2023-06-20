@@ -23,7 +23,7 @@
 #include "etcpal/common.h"
 #include "etcpal/os_common.h"
 
-#include "kernel.h"
+#include <zephyr/kernel.h>
 
 #include <stdbool.h>
 #include <stddef.h>

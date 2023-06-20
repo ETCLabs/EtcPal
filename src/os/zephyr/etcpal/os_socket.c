@@ -547,7 +547,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 		// Unsure if this is the correct type
 		mcast_addr.address.family = IPPROTO_IP;
 		mcast_addr.address.in_addr.s4_addr32[0] = group.group.addr.v4;
-		net_if_ipv4_maddr_join(&mcast_addr);
+		// net_if_ipv4_maddr_join(&mcast_addr);
 		return 0;
 
 	case ETCPAL_MCAST_LEAVE_GROUP:
@@ -555,7 +555,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 		// Unsure if this is the correct type
 		mcast_addr.address.family = IPPROTO_IP;
 		mcast_addr.address.in_addr.s4_addr32[0] = group.group.addr.v4;
-		net_if_ipv4_maddr_leave(&mcast_addr);
+		// net_if_ipv4_maddr_leave(&mcast_addr);
 		return 0;
 		
 	case ETCPAL_IP_MULTICAST_IF:

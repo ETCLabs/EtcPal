@@ -20,7 +20,7 @@
 #include "etcpal/timer.h"
 #include "etcpal/private/timer.h"
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <unistd.h>
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)

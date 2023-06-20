@@ -19,7 +19,7 @@
 
 #include "etcpal/thread.h"
 #include "pthread.h"
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <assert.h>
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)

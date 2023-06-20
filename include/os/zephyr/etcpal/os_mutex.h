@@ -21,7 +21,7 @@
 #define ETCPAL_OS_MUTEX_H_
 
 #include "etcpal/common.h"
-#include <kernel.h>
+#include <zephyr/kernel.h>
 #include <stdbool.h>
 
 #ifdef __cplusplus

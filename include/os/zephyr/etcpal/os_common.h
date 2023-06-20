@@ -1,5 +1,5 @@
 #pragma once
 
-#include <kernel.h>
+#include <zephyr/kernel.h>
 
 #define ETCPAL_WAIT_FOREVER -1

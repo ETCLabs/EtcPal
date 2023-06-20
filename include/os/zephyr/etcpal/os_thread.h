@@ -19,12 +19,12 @@
 
 #ifndef ETCPAL_OS_THREAD_H_
 #define ETCPAL_OS_THREAD_H_
-#include "kernel.h"
+
 #include "etcpal/common.h"
 #include "etcpal/sem.h"
 #include "etcpal/thread.h"
 #include "etcpal/os_common.h"
-#include "zephyr/kernel.h"
+#include <zephyr/kernel.h>
 
 
 

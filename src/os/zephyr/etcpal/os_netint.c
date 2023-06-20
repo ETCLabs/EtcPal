@@ -42,10 +42,10 @@
 #endif
 
 #include <errno.h>
-#include <net/net_if.h>
+#include <zephyr/net/net_if.h>
 #include <sys/types.h>
 //#include <sys/ioctl.h>
-#include <net/socket.h>
+#include <zephyr/net/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -53,7 +53,7 @@
 #include "etcpal/socket.h"
 #include "etcpal/private/netint.h"
 
-#include "logging/log.h"
+#include "zephyr/logging/log.h"
 LOG_MODULE_REGISTER(ETCPAL_OS_NETINT);
 
 //#include "os_error.h"
