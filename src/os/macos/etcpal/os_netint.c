@@ -398,6 +398,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   if (sysctl_res != 0 || *buf_len == 0)
   {
     free(*buf);
+    *buf = NULL;
     return errno_os_to_etcpal(errno);
   }
 
