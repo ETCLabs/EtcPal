@@ -85,8 +85,8 @@ typedef struct RtNetlinkRequest
 
 /**************************** Private variables ******************************/
 
-RoutingTable routing_table_v4;
-RoutingTable routing_table_v6;
+RoutingTable routing_table_v4 = {0};
+RoutingTable routing_table_v6 = {0};
 
 /*********************** Private function prototypes *************************/
 
@@ -205,7 +205,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     ip_os_to_etcpal(ifaddr->ifa_netmask, &current_info->mask);
 
     // Struct ifreq to use with ioctl() calls
-    struct ifreq if_req;
+    struct ifreq if_req = {0};
     strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
 
     // Hardware address
@@ -300,7 +300,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
     return false;
 
   // Translate the index to a name
-  struct ifreq if_req;
+  struct ifreq if_req = {0};
   if_req.ifr_ifindex = (int)index;
   int ioctl_res      = ioctl(ioctl_sock, SIOCGIFNAME, &if_req);
   if (ioctl_res != 0)
@@ -471,6 +471,8 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
   table->entries       = NULL;
   table->default_route = NULL;
 
+  etcpal_error_t res = kEtcPalErrOk;
+
   // Parse the result
   // outer loop: loops thru all the NETLINK headers that also include the route entry header
   struct nlmsghdr* nl_header = (struct nlmsghdr*)buffer;
@@ -534,14 +536,29 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     {
       ++table->size;
       if (table->entries)
-        table->entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
+      {
+        RoutingTableEntry* new_entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
+        if (new_entries)
+          table->entries = new_entries;
+        else
+          res = kEtcPalErrNoMem;
+      }
       else
+      {
         table->entries = (RoutingTableEntry*)malloc(sizeof(RoutingTableEntry));
-      table->entries[table->size - 1] = new_entry;
+        if (!table->entries)
+          res = kEtcPalErrNoMem;
+      }
+
+      if (table->entries)
+        table->entries[table->size - 1] = new_entry;
     }
+
+    if (res != kEtcPalErrOk)
+      break;
   }
 
-  if (table->size > 0)
+  if ((table->size > 0) && table->entries)
   {
     qsort(table->entries, table->size, sizeof(RoutingTableEntry), compare_routing_table_entries);
 
@@ -558,7 +575,7 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     }
   }
 
-  return kEtcPalErrOk;
+  return res;
 }
 
 void init_routing_table_entry(RoutingTableEntry* entry)
