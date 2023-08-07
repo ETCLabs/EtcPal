@@ -90,7 +90,7 @@ etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints, size_t* n
 {
   if (!num_netints)
     return kEtcPalErrInvalid;
-  if ((!netints && (*num_netints > 0)) && (netints && (*num_netints == 0)))
+  if ((!netints && (*num_netints > 0)) || (netints && (*num_netints == 0)))
     return kEtcPalErrInvalid;
   if (!initialized)
     return kEtcPalErrNotInit;
