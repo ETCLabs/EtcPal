@@ -534,25 +534,18 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     // Insert the new entry into the list
     if (new_entry_valid)
     {
-      ++table->size;
-      if (table->entries)
-      {
-        RoutingTableEntry* new_entries =
-            (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
-        if (new_entries)
-          table->entries = new_entries;
-        else
-          res = kEtcPalErrNoMem;
-      }
+      RoutingTableEntry* new_entries =
+          (RoutingTableEntry*)realloc(table->entries, (table->size + 1) * sizeof(RoutingTableEntry));
+      if (new_entries)
+        table->entries = new_entries;
       else
-      {
-        table->entries = (RoutingTableEntry*)malloc(sizeof(RoutingTableEntry));
-        if (!table->entries)
-          res = kEtcPalErrNoMem;
-      }
+        res = kEtcPalErrNoMem;
 
       if (table->entries)
-        table->entries[table->size - 1] = new_entry;
+      {
+        table->entries[table->size] = new_entry;
+        ++table->size;
+      }
     }
 
     if (res != kEtcPalErrOk)
