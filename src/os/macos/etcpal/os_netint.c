@@ -621,7 +621,7 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
 
   // Parse the result
   // Loop through all routing table entries returned in the buffer
-  while (buf_pos <= (buf_len - sizeof(struct rt_msghdr)))
+  while (buf_pos <= ((int)buf_len - sizeof(struct rt_msghdr)))
   {
     RoutingTableEntry new_entry;
     init_routing_table_entry(&new_entry);
