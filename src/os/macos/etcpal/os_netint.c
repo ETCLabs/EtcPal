@@ -180,7 +180,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   {
     if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index < cache->num_netints))
       return kEtcPalErrSys;
-    
+
     // An AF_LINK entry appears before one or more internet address entries for each interface.
     // Save the current AF_LINK entry for later use. If the entry is an IPv4 or IPv6 address, we
     // can proceed.
@@ -683,7 +683,8 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
       ++table->size;
       if (table->entries)
       {
-        RoutingTableEntry* new_entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
+        RoutingTableEntry* new_entries =
+            (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
         if (new_entries)
           table->entries = new_entries;
         else

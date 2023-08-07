@@ -29,7 +29,7 @@
 
 /**************************** Private variables ******************************/
 
-static bool             initialized = false;
+static bool             initialized  = false;
 static CachedNetintInfo netint_cache = {0};
 etcpal_mutex_t          mutex;
 

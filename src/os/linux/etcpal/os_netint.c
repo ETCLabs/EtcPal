@@ -301,8 +301,8 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 
   // Translate the index to a name
   struct ifreq if_req = {0};
-  if_req.ifr_ifindex = (int)index;
-  int ioctl_res      = ioctl(ioctl_sock, SIOCGIFNAME, &if_req);
+  if_req.ifr_ifindex  = (int)index;
+  int ioctl_res       = ioctl(ioctl_sock, SIOCGIFNAME, &if_req);
   if (ioctl_res != 0)
   {
     close(ioctl_sock);
@@ -537,7 +537,8 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
       ++table->size;
       if (table->entries)
       {
-        RoutingTableEntry* new_entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
+        RoutingTableEntry* new_entries =
+            (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
         if (new_entries)
           table->entries = new_entries;
         else
