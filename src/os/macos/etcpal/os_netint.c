@@ -112,7 +112,7 @@ static void debug_print_routing_table(RoutingTable* table);
 /*************************** Function definitions ****************************/
 
 /* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
-static size_t count_ifaddrs(const struct ifaddrs* ifaddrs)
+static size_t count_up_ifaddrs(const struct ifaddrs* ifaddrs)
 {
   size_t total = 0;
   for (const struct ifaddrs* ifaddr = ifaddrs; ifaddr; ifaddr = ifaddr->ifa_next)
@@ -155,7 +155,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   }
 
   // Pass 1: Total the number of addresses
-  cache->num_netints = count_ifaddrs(os_addrs);
+  cache->num_netints = count_up_ifaddrs(os_addrs);
 
   if (cache->num_netints == 0)
   {
@@ -178,6 +178,9 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
+    if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index < cache->num_netints))
+      return kEtcPalErrSys;
+
     // An AF_LINK entry appears before one or more internet address entries for each interface.
     // Save the current AF_LINK entry for later use. If the entry is an IPv4 or IPv6 address, we
     // can proceed.
@@ -190,6 +193,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
         continue;
       }
       else if (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6)
+      {
+        continue;
+      }
+      else if ((ifaddr->ifa_flags & IFF_UP) == 0)
       {
         continue;
       }
@@ -608,11 +615,13 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
   table->entries       = NULL;
   table->default_route = NULL;
 
+  etcpal_error_t res = kEtcPalErrOk;
+
   size_t buf_pos = 0;
 
   // Parse the result
   // Loop through all routing table entries returned in the buffer
-  while (buf_pos < buf_len)
+  while ((buf_pos + sizeof(struct rt_msghdr)) <= buf_len)
   {
     RoutingTableEntry new_entry;
     init_routing_table_entry(&new_entry);
@@ -671,18 +680,27 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
     // Insert the new entry into the list
     if (new_entry_valid)
     {
-      ++table->size;
-      if (table->entries)
-        table->entries = (RoutingTableEntry*)realloc(table->entries, table->size * sizeof(RoutingTableEntry));
+      RoutingTableEntry* new_entries =
+          (RoutingTableEntry*)realloc(table->entries, (table->size + 1) * sizeof(RoutingTableEntry));
+      if (new_entries)
+        table->entries = new_entries;
       else
-        table->entries = (RoutingTableEntry*)malloc(sizeof(RoutingTableEntry));
-      table->entries[table->size - 1] = new_entry;
+        res = kEtcPalErrNoMem;
+
+      if (table->entries)
+      {
+        table->entries[table->size] = new_entry;
+        ++table->size;
+      }
     }
 
     buf_pos += rmsg->rtm_msglen;
+
+    if (res != kEtcPalErrOk)
+      break;
   }
 
-  if (table->size > 0)
+  if ((table->size > 0) && table->entries)
   {
     qsort(table->entries, table->size, sizeof(RoutingTableEntry), compare_routing_table_entries);
 
@@ -697,12 +715,13 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
         break;
       }
     }
-    return kEtcPalErrOk;
   }
-  else
+  else if (res == kEtcPalErrOk)
   {
-    return kEtcPalErrSys;
+    res = kEtcPalErrSys;
   }
+
+  return res;
 }
 
 void init_routing_table_entry(RoutingTableEntry* entry)
