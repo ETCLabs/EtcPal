@@ -110,7 +110,7 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(index))
     return kEtcPalErrSys;
 
-  struct sockaddr_storage os_addr;
+  struct sockaddr_storage os_addr = {0};
   if (ip_etcpal_to_os(dest, (etcpal_os_ipaddr_t*)&os_addr))
   {
     DWORD resolved_index = 0;
@@ -219,7 +219,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
 
   // And the same for IPv6
   DWORD               def_ifindex_v6 = 0;
-  struct sockaddr_in6 v6_dest;
+  struct sockaddr_in6 v6_dest        = {0};
   memset(&v6_dest, 0, sizeof v6_dest);
   v6_dest.sin6_family = AF_INET6;
   if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v6_dest, &def_ifindex_v6))

@@ -133,14 +133,14 @@ etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
   switch (src->type)
   {
     case kEtcPalIpTypeV4: {
-      struct in_addr addr;
-      addr.s_addr = lwip_htonl(ETCPAL_IP_V4_ADDRESS(src));
+      struct in_addr addr = {0};
+      addr.s_addr         = lwip_htonl(ETCPAL_IP_V4_ADDRESS(src));
       if (NULL != lwip_inet_ntop(AF_INET, &addr, dest, ETCPAL_IP_STRING_BYTES))
         return kEtcPalErrOk;
       return errno_lwip_to_etcpal(errno);
     }
     case kEtcPalIpTypeV6: {
-      struct in6_addr addr;
+      struct in6_addr addr = {0};
       memcpy(addr.s6_addr, ETCPAL_IP_V6_ADDRESS(src), ETCPAL_IPV6_BYTES);
       if (NULL != lwip_inet_ntop(AF_INET6, &addr, dest, ETCPAL_IP_STRING_BYTES))
         return kEtcPalErrOk;
@@ -159,14 +159,14 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
   switch (type)
   {
     case kEtcPalIpTypeV4: {
-      struct in_addr addr;
+      struct in_addr addr = {0};
       if (lwip_inet_pton(AF_INET, src, &addr) <= 0)
         return kEtcPalErrInvalid;
       ETCPAL_IP_SET_V4_ADDRESS(dest, lwip_ntohl(addr.s_addr));
       return kEtcPalErrOk;
     }
     case kEtcPalIpTypeV6: {
-      struct in6_addr addr;
+      struct in6_addr addr = {0};
       if (lwip_inet_pton(AF_INET6, src, &addr) <= 0)
         return kEtcPalErrInvalid;
       ETCPAL_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
