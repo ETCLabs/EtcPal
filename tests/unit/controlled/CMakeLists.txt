@@ -22,8 +22,8 @@ target_include_directories(etcpal_controlled_unit_tests PUBLIC
 target_link_libraries(etcpal_controlled_unit_tests PRIVATE
   ${ETCPAL_OS_ADDITIONAL_LIBS}
   ${ETCPAL_NET_ADDITIONAL_LIBS}
-  ThrowTheSwitch::Unity
 )
+target_link_libraries(etcpal_controlled_unit_tests PUBLIC ThrowTheSwitch::Unity)
 
 if(ETCPAL_HAVE_NETWORKING_SUPPORT)
   target_sources(etcpal_controlled_unit_tests PRIVATE
