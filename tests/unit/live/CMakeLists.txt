@@ -53,4 +53,13 @@ if(ETCPAL_HAVE_NETWORKING_SUPPORT)
       test_socket.c
     )
   endif()
+
+  if(ETCPAL_NET_TARGET STREQUAL "lwip")
+    add_etcpal_test_library(LiveTestEtcPalWithMalloc ${ETCPAL_TEST}/config/embos_use_malloc)
+
+    etcpal_add_custom_test(etcpal_live_unit_tests_with_malloc C
+      test_netint.c
+    )
+    target_link_libraries(etcpal_live_unit_tests_with_malloc PUBLIC LiveTestEtcPalWithMalloc)
+  endif()
 endif()

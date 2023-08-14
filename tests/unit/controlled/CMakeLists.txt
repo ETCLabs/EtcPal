@@ -6,6 +6,8 @@ etcpal_add_custom_test(etcpal_controlled_unit_tests CXX
   test_main.c
 
   ${ETCPAL_SRC}/etcpal/timer.c
+
+  ${ETCPAL_TEST}/config/assert_verify.c
 )
 target_include_directories(etcpal_controlled_unit_tests PRIVATE
   ${ETCPAL_INCLUDE}
@@ -13,9 +15,14 @@ target_include_directories(etcpal_controlled_unit_tests PRIVATE
   ${ETCPAL_OS_INCLUDE_DIR}
   ${ETCPAL_NET_INCLUDE_DIR}
 )
+target_compile_definitions(etcpal_controlled_unit_tests PUBLIC ETCPAL_HAVE_CONFIG_H)
+target_include_directories(etcpal_controlled_unit_tests PUBLIC
+  ${ETCPAL_TEST}/config
+)
 target_link_libraries(etcpal_controlled_unit_tests PRIVATE
   ${ETCPAL_OS_ADDITIONAL_LIBS}
   ${ETCPAL_NET_ADDITIONAL_LIBS}
+  ThrowTheSwitch::Unity
 )
 
 if(ETCPAL_HAVE_NETWORKING_SUPPORT)
