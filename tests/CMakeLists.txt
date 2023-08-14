@@ -60,13 +60,8 @@ endfunction()
 
 add_etcpal_test_library(LiveTestEtcPal ${ETCPAL_TEST}/config)
 
-function(etcpal_add_live_test target_name language)
-  etcpal_add_custom_test(target_name language ${ARGN})
-  target_link_libraries(${target_name} PUBLIC LiveTestEtcPal)
-endfunction()
-
 # Add a "custom" test, which doesn't link the EtcPal library - EtcPal sources must then be selectively
-# added to the target.
+# added to the target, or a custom library must be linked.
 function(etcpal_add_custom_test target_name language)
   if(ETCPAL_TEST_BUILD_AS_LIBRARIES)
     add_library(${target_name} ${ARGN})
@@ -89,6 +84,12 @@ function(etcpal_add_custom_test target_name language)
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
   target_compile_definitions(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_DEFINITIONS})
   target_link_libraries(${target_name} PUBLIC meekrosoft::fff)
+endfunction()
+
+# Then a standard test which links the EtcPal library.
+function(etcpal_add_live_test target_name language)
+  etcpal_add_custom_test(target_name language ${ARGN})
+  target_link_libraries(${target_name} PUBLIC LiveTestEtcPal)
 endfunction()
 
 add_subdirectory(unit)
