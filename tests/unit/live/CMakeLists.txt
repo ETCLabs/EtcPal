@@ -59,6 +59,7 @@ if(ETCPAL_HAVE_NETWORKING_SUPPORT)
 
     etcpal_add_custom_test(etcpal_live_unit_tests_with_malloc C
       test_netint.c
+      test_with_malloc_main.c
     )
     target_link_libraries(etcpal_live_unit_tests_with_malloc PUBLIC LiveTestEtcPalWithMalloc)
   endif()
