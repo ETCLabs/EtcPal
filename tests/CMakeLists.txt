@@ -47,15 +47,15 @@ endif()
 # Add a "live" test, which links the entire EtcPal library, unmodified
 # Start by setting up a custom EtcPal target
 function(add_etcpal_test_library target_name config_h_directory)
-  add_etcpal_library(target_name)
+  add_etcpal_library(${target_name})
 
-  target_compile_definitions(target_name PUBLIC ETCPAL_HAVE_CONFIG_H)
-  target_include_directories(target_name PUBLIC
+  target_compile_definitions(${target_name} PUBLIC ETCPAL_HAVE_CONFIG_H)
+  target_include_directories(${target_name} PUBLIC
     ${config_h_directory}
   )
 
-  target_sources(target_name PRIVATE ${ETCPAL_TEST}/config/assert_verify.c)
-  target_link_libraries(target_name PUBLIC ThrowTheSwitch::Unity)
+  target_sources(${target_name} PRIVATE ${ETCPAL_TEST}/config/assert_verify.c)
+  target_link_libraries(${target_name} PUBLIC ThrowTheSwitch::Unity)
 endfunction()
 
 add_etcpal_test_library(LiveTestEtcPal ${ETCPAL_TEST}/config)
@@ -88,7 +88,7 @@ endfunction()
 
 # Then a standard test which links the EtcPal library.
 function(etcpal_add_live_test target_name language)
-  etcpal_add_custom_test(target_name language ${ARGN})
+  etcpal_add_custom_test(${target_name} ${language} ${ARGN})
   target_link_libraries(${target_name} PUBLIC LiveTestEtcPal)
 endfunction()
 
