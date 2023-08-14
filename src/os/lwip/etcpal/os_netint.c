@@ -69,8 +69,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     }
 #endif
   }
-  cache->netints = (EtcPalNetintInfo*)calloc(sizeof(EtcPalNetintInfo), num_lwip_netints);
-  if (!cache->netints)
+
+  ETCPAL_ASSERT_VERIFY(!static_netints);
+  static_netints = (EtcPalNetintInfo*)calloc(sizeof(EtcPalNetintInfo), num_lwip_netints);
+  if (!static_netints)
   {
     UNLOCK_TCPIP_CORE();
     return kEtcPalErrNoMem;
@@ -144,10 +146,17 @@ void os_free_interfaces(CachedNetintInfo* cache)
     return;
 
 #if ETCPAL_EMBOS_USE_MALLOC
-  if (cache->netints)
+  if (static_netints)
   {
-    free(cache->netints);
+    free(static_netints);
+    static_netints = NULL;
+
+    ETCPAL_ASSERT_VERIFY(cache->netints);
     cache->netints = NULL;
+  }
+  else
+  {
+    ETCPAL_ASSERT_VERIFY(!cache->netints);
   }
 #endif
 }
@@ -156,6 +165,10 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
 {
   if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(cache) || !ETCPAL_ASSERT_VERIFY(index))
     return kEtcPalErrSys;
+#if ETCPAL_EMBOS_USE_MALLOC
+  if (!ETCPAL_ASSERT_VERIFY(static_netints))
+    return kEtcPalErrSys;
+#endif
 
   unsigned int index_found = 0;
 
