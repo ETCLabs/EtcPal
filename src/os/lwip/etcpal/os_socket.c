@@ -597,12 +597,18 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       }
       break;
     case ETCPAL_IP_MULTICAST_TTL: {
-      unsigned char val = (unsigned char)*(int*)option_value;
-      return lwip_setsockopt(id, IPPROTO_IP, IP_MULTICAST_TTL, &val, sizeof val);
+      if (option_len == sizeof(int))
+      {
+        unsigned char val = (unsigned char)*(int*)option_value;
+        return lwip_setsockopt(id, IPPROTO_IP, IP_MULTICAST_TTL, &val, sizeof val);
+      }
     }
     case ETCPAL_IP_MULTICAST_LOOP: {
-      unsigned char val = (unsigned char)*(int*)option_value;
-      return lwip_setsockopt(id, IPPROTO_IP, IP_MULTICAST_LOOP, &val, sizeof val);
+      if (option_len == sizeof(int))
+      {
+        unsigned char val = (unsigned char)*(int*)option_value;
+        return lwip_setsockopt(id, IPPROTO_IP, IP_MULTICAST_LOOP, &val, sizeof val);
+      }
     }
     case ETCPAL_IP_PKTINFO:
       return lwip_setsockopt(id, IPPROTO_IP, IP_PKTINFO, option_value, option_len);
@@ -773,7 +779,7 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
       new_sock->events    = events;
       new_sock->user_data = user_data;
       set_in_fd_sets(context, new_sock);
-      context->num_valid_sockets++;
+      ++context->num_valid_sockets;
       if (socket > context->max_fd)
         context->max_fd = socket;
 
@@ -819,12 +825,12 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
   {
     clear_in_fd_sets(context, sock_desc);
     sock_desc->sock = ETCPAL_SOCKET_INVALID;
-    context->num_valid_sockets--;
+    --context->num_valid_sockets;
     if (socket == context->max_fd)
     {
-      while (context->max_fd > 0 && (ETCPAL_FD_ISSET(context->max_fd, &context->readfds) ||
-                                     ETCPAL_FD_ISSET(context->max_fd, &context->writefds) ||
-                                     ETCPAL_FD_ISSET(context->max_fd, &context->exceptfds)))
+      while (context->max_fd > 0 && (!ETCPAL_FD_ISSET(context->max_fd, &context->readfds) &&
+                                     !ETCPAL_FD_ISSET(context->max_fd, &context->writefds) &&
+                                     !ETCPAL_FD_ISSET(context->max_fd, &context->exceptfds)))
       {
         --context->max_fd;
       }
@@ -1095,8 +1101,8 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
                                   EtcPalAddrinfo*       result)
 {
 #if LWIP_DNS
-  int              res;
-  struct addrinfo* pf_res;
+  int              res      = 0;
+  struct addrinfo* pf_res   = NULL;
   struct addrinfo  pf_hints = {0};
 
   if ((!hostname && !service) || !result)
@@ -1109,6 +1115,10 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
     pf_hints.ai_family   = (hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
     pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
     pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
+  }
+  else
+  {
+    pf_hints.ai_family = AF_UNSPEC;
   }
 
   res = lwip_getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
@@ -1167,7 +1177,11 @@ void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
 {
 #if LWIP_DNS
   if (ai)
+  {
     lwip_freeaddrinfo((struct addrinfo*)ai->pd[0]);
+    ai->pd[0] = NULL;
+    ai->pd[1] = NULL;
+  }
 #endif  // LWIP_DNS
 }
 

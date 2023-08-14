@@ -1120,6 +1120,10 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
     pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? kStMap[hints->ai_socktype] : 0;
     pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? kAiProtMap[hints->ai_protocol] : 0;
   }
+  else
+  {
+    pf_hints.ai_family = AF_UNSPEC;
+  }
 
   struct addrinfo* pf_res = NULL;
   int              res    = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
@@ -1173,7 +1177,11 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
 void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
 {
   if (ai)
+  {
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
+    ai->pd[0] = NULL;
+    ai->pd[1] = NULL;
+  }
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
