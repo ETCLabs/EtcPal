@@ -97,7 +97,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     cache->def.v6_index = netif_get_index(netif_default);
     for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
     {
-#if !ETCPAL_EMBOS_USE_MALLOC
+#if ETCPAL_EMBOS_USE_MALLOC
+      if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+        break;
+#else
       if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
         break;
 #endif
@@ -112,7 +115,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     if (lwip_netif == netif_default)
       continue;
 
-#if !ETCPAL_EMBOS_USE_MALLOC
+#if ETCPAL_EMBOS_USE_MALLOC
+    if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+      break;
+#else
     if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
       break;
 #endif
@@ -123,7 +129,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 #if LWIP_IPV6
     for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
     {
-#if !ETCPAL_EMBOS_USE_MALLOC
+#if ETCPAL_EMBOS_USE_MALLOC
+      if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+        break;
+#else
       if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
         break;
 #endif
