@@ -126,7 +126,7 @@ TEST_GROUP(etcpal_netint);
 
 TEST_SETUP(etcpal_netint)
 {
-  etcpal_init(ETCPAL_FEATURE_NETINTS);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_NETINTS));
   init_netints();
 }
 
