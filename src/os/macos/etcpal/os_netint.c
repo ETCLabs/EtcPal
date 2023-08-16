@@ -477,12 +477,10 @@ static struct sockaddr* get_next_rt_addr(struct rt_msghdr* rmsg, struct sockaddr
   size_t next_addr_offset = ((uint8_t*)next_addr - (uint8_t*)rmsg);
 
   // We need sa_len to determine the actual addr size since it may be truncated, so sanity check we can get that first.
-  // Use assertions for these checks specifically since they should never fail.
-  if (ETCPAL_ASSERT_VERIFY((next_addr_offset + offsetof(struct sockaddr, sa_len) + sizeof(next_addr->sa_len)) <=
-                           rmsg->rtm_msglen))
+  if ((next_addr_offset + offsetof(struct sockaddr, sa_len) + sizeof(next_addr->sa_len)) <= rmsg->rtm_msglen)
   {
     // Now use sa_len to check if we can read the full truncated addr length.
-    if (ETCPAL_ASSERT_VERIFY((next_addr_offset + next_addr->sa_len) <= rmsg->rtm_msglen))
+    if ((next_addr_offset + next_addr->sa_len) <= rmsg->rtm_msglen)
       return next_addr;
   }
 
@@ -507,7 +505,7 @@ static void get_addrs_from_route_entry(struct rt_msghdr* rmsg, struct sockaddr**
     {
       rti_info[i] = sa;
 
-      if (sa)
+      if (ETCPAL_ASSERT_VERIFY(sa))
         sa = get_next_rt_addr(rmsg, sa);
     }
     else
