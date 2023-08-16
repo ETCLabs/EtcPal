@@ -769,7 +769,7 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
           (RoutingTableEntry*)realloc(table->entries, (table->size + 1) * sizeof(RoutingTableEntry));
       if (new_entries)
       {
-        table->entries = new_entries;
+        table->entries              = new_entries;
         table->entries[table->size] = new_entry;
         ++table->size;
       }
