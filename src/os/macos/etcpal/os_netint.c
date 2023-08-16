@@ -478,7 +478,7 @@ static struct sockaddr* get_next_rt_addr(struct rt_msghdr* rmsg, struct sockaddr
 
   // We need sa_len to determine the actual addr size since it may be truncated, so sanity check we can get that first.
   // Use assertions for these checks specifically since they should never fail.
-  if (ETCPAL_ASSERT_VERIFY((next_addr_offset + offsetof(struct sockaddr, sa_len) + sizeof(sa->sa_len)) <=
+  if (ETCPAL_ASSERT_VERIFY((next_addr_offset + offsetof(struct sockaddr, sa_len) + sizeof(next_addr->sa_len)) <=
                            rmsg->rtm_msglen))
   {
     // Now use sa_len to check if we can read the full truncated addr length.
