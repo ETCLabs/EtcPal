@@ -193,10 +193,13 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
-    strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
-    current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
-    strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
-    current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
+    if (ifaddr->ifa_name)
+    {
+      strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
+      current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
+      strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
+      current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
+    }
 
     // Interface address
     ip_os_to_etcpal(ifaddr->ifa_addr, &current_info->addr);
@@ -206,7 +209,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
     // Struct ifreq to use with ioctl() calls
     struct ifreq if_req = {0};
-    strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
+    if (ifaddr->ifa_name)
+      strncpy(if_req.ifr_name, ifaddr->ifa_name, IFNAMSIZ);
 
     // Hardware address
     int ioctl_res = ioctl(ioctl_sock, SIOCGIFHWADDR, &if_req);
@@ -616,11 +620,11 @@ void free_routing_table(RoutingTable* table)
     return;
 
   if (table->entries)
-  {
     free(table->entries);
-    table->entries = NULL;
-  }
-  table->size = 0;
+
+  table->entries       = NULL;
+  table->default_route = NULL;
+  table->size          = 0;
 }
 
 #if ETCPAL_NETINT_DEBUG_OUTPUT

@@ -32,8 +32,8 @@ static EtcPalNetintInfo* static_netints = NULL;
 #else
 static EtcPalNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS] = {{0}};
 #endif
-size_t num_static_netints;
-size_t default_index;
+size_t num_static_netints = 0;
+size_t default_index      = 0;
 
 /*********************** Private function prototypes *************************/
 
