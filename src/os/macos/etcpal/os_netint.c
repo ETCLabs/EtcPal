@@ -86,8 +86,8 @@ typedef struct RoutingTable
 
 /**************************** Private variables ******************************/
 
-RoutingTable routing_table_v4;
-RoutingTable routing_table_v6;
+RoutingTable routing_table_v4 = {0};
+RoutingTable routing_table_v6 = {0};
 
 /*********************** Private function prototypes *************************/
 
@@ -112,7 +112,7 @@ static void debug_print_routing_table(RoutingTable* table);
 /*************************** Function definitions ****************************/
 
 /* Quick helper for enumerate_netints() to determine entries to skip in the linked list. */
-static size_t count_up_ifaddrs(const struct ifaddrs* ifaddrs)
+static size_t count_online_ifaddrs(const struct ifaddrs* ifaddrs)
 {
   size_t total = 0;
   for (const struct ifaddrs* ifaddr = ifaddrs; ifaddr; ifaddr = ifaddr->ifa_next)
@@ -148,14 +148,14 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     cache->def.v6_index = routing_table_v6.default_route->interface_index;
   }
 
-  struct ifaddrs* os_addrs;
+  struct ifaddrs* os_addrs = NULL;
   if (getifaddrs(&os_addrs) < 0)
   {
     return errno_os_to_etcpal(errno);
   }
 
   // Pass 1: Total the number of addresses
-  cache->num_netints = count_up_ifaddrs(os_addrs);
+  cache->num_netints = count_online_ifaddrs(os_addrs);
 
   if (cache->num_netints == 0)
   {
@@ -209,10 +209,13 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
-    strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
-    current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
-    strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
-    current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
+    if (ifaddr->ifa_name)
+    {
+      strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
+      current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
+      strncpy(current_info->friendly_name, ifaddr->ifa_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
+      current_info->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
+    }
 
     // Interface address
     ip_os_to_etcpal(ifaddr->ifa_addr, &current_info->addr);
@@ -221,16 +224,19 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     ip_os_to_etcpal(ifaddr->ifa_netmask, &current_info->mask);
 
     // Make sure we match the corresponding link information
-    if (link_name && link_addr && 0 == strcmp(ifaddr->ifa_name, link_name))
+    if (ifaddr->ifa_name)
     {
-      current_info->index = link_addr->sdl_index;
-      memcpy(current_info->mac.data, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_MAC_BYTES);
-    }
-    else
-    {
-      // Backup - get the interface index using if_nametoindex
-      current_info->index = if_nametoindex(ifaddr->ifa_name);
-      memset(current_info->mac.data, 0, ETCPAL_MAC_BYTES);
+      if (link_name && link_addr && (0 == strcmp(ifaddr->ifa_name, link_name)))
+      {
+        current_info->index = link_addr->sdl_index;
+        if (link_addr->sdl_data)
+          memcpy(current_info->mac.data, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_MAC_BYTES);
+      }
+      else
+      {
+        // Backup - get the interface index using if_nametoindex
+        current_info->index = if_nametoindex(ifaddr->ifa_name);
+      }
     }
 
     // Is Default
@@ -313,7 +319,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
     return false;
 
   // Translate the index to a name
-  struct ifreq if_req;
+  struct ifreq if_req = {0};
   if (!if_indextoname(index, if_req.ifr_name))
   {
     close(ioctl_sock);
@@ -400,6 +406,8 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   if (!(*buf))
     return kEtcPalErrNoMem;
 
+  size_t malloc_size = *buf_len;
+
   // Second pass to actually get the info
   sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
   if (sysctl_res != 0 || *buf_len == 0)
@@ -412,31 +420,123 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   return kEtcPalErrOk;
 }
 
-/* These two macros and the following function were taken from the Unix Network Programming book
- * (sect. 18.3) but they required some modification, because they mistakenly assert that the
- * sockaddr structures following a route message header are aligned to sizeof(unsigned long), when
- * in fact on 64-bit macOS platforms they still seem to be aligned on 4-byte boundaries.
+/* These two macros were taken from the Unix Network Programming book (sect. 18.3) but they required some modification,
+ * because they mistakenly assert that the sockaddr structures following a route message header are aligned to
+ * sizeof(unsigned long), when in fact on 64-bit macOS platforms they still seem to be aligned on 4-byte boundaries.
  * (sizeof(unsigned long) is 8 on 64-bit platforms)
  */
 #define SOCKADDR_ALIGN 4  // not sizeof(unsigned long)
 #define SA_SIZE(sa)    ((!(sa) || (sa)->sa_len == 0) ? SOCKADDR_ALIGN : (1 + (((sa)->sa_len - 1) | (SOCKADDR_ALIGN - 1))))
 
-static void get_addrs_from_route_entry(int addrs, struct sockaddr* sa, struct sockaddr** rti_info)
+// If there's room to read it, a pointer to the next routing table entry (or first if current_msg is NULL) is returned.
+// Otherwise NULL is returned.
+static struct rt_msghdr* get_next_rt_msghdr(uint8_t* buf, size_t buf_len, struct rt_msghdr* current_msg)
 {
-  if (!ETCPAL_ASSERT_VERIFY(sa) || !ETCPAL_ASSERT_VERIFY(rti_info))
+  if (!ETCPAL_ASSERT_VERIFY(buf))
+    return NULL;
+
+  struct rt_msghdr* next_msg =
+      current_msg ? (struct rt_msghdr*)((uint8_t*)current_msg + current_msg->rtm_msglen) : (struct rt_msghdr*)(buf);
+
+  if (!ETCPAL_ASSERT_VERIFY((uint8_t*)next_msg > buf))
+    return NULL;
+
+  size_t next_msg_offset = ((uint8_t*)next_msg - buf);
+
+  // We need rtm_msglen to determine the actual msg size since addrs are appended after the rt_msghdr struct, so sanity
+  // check we can get that first.
+  if ((next_msg_offset + sizeof(struct rt_msghdr)) <= buf_len)
+  {
+    // Now use rtm_msglen to check if we can read the full message.
+    if ((next_msg->rtm_msglen > 0) && ((next_msg_offset + next_msg->rtm_msglen) <= buf_len))
+      return next_msg;
+  }
+
+  return NULL;
+}
+
+// If there's room to read it, a pointer to the first routing table entry is returned. Otherwise NULL is returned.
+static struct rt_msghdr* get_first_rt_msghdr(uint8_t* buf, size_t buf_len)
+{
+  return get_next_rt_msghdr(buf, buf_len, NULL);
+}
+
+// If there's room to read it, a pointer to the next address (or first if current_addr is NULL) is returned. Otherwise
+// NULL is returned.
+static struct sockaddr* get_next_rt_addr(struct rt_msghdr* rmsg, struct sockaddr* current_addr)
+{
+  if (!ETCPAL_ASSERT_VERIFY(rmsg))
+    return NULL;
+
+  struct sockaddr* next_addr =
+      current_addr ? (struct sockaddr*)((uint8_t*)current_addr + SA_SIZE(current_addr)) : (struct sockaddr*)(rmsg + 1);
+
+  if (!ETCPAL_ASSERT_VERIFY((uint8_t*)next_addr > (uint8_t*)rmsg))
+    return NULL;
+
+  size_t next_addr_offset = ((uint8_t*)next_addr - (uint8_t*)rmsg);
+
+  // We need sa_len to determine the actual addr size since it may be truncated, so sanity check we can get that first.
+  // Use assertions for these checks specifically since they should never fail.
+  if (ETCPAL_ASSERT_VERIFY((next_addr_offset + offsetof(struct sockaddr, sa_len) + sizeof(sa->sa_len)) <=
+                           rmsg->rtm_msglen))
+  {
+    // Now use sa_len to check if we can read the full truncated addr length.
+    if (ETCPAL_ASSERT_VERIFY((next_addr_offset + next_addr->sa_len) <= rmsg->rtm_msglen))
+      return next_addr;
+  }
+
+  return NULL;
+}
+
+// If there's room to read it, a pointer to the first address is returned. Otherwise NULL is returned.
+static struct sockaddr* get_first_rt_addr(struct rt_msghdr* rmsg)
+{
+  return get_next_rt_addr(rmsg, NULL);
+}
+
+static void get_addrs_from_route_entry(struct rt_msghdr* rmsg, struct sockaddr** rti_info)
+{
+  if (!ETCPAL_ASSERT_VERIFY(rmsg) || !ETCPAL_ASSERT_VERIFY(rti_info))
     return;
 
+  struct sockaddr* sa = get_first_rt_addr(rmsg);
   for (int i = 0; i < RTAX_MAX; ++i)
   {
-    if (addrs & (1 << i))
+    if (rmsg->rtm_addrs & (1 << i))
     {
       rti_info[i] = sa;
-      sa          = (struct sockaddr*)((char*)sa + SA_SIZE(sa));
+
+      if (sa)
+        sa = get_next_rt_addr(rmsg, sa);
     }
     else
     {
       rti_info[i] = NULL;
     }
+  }
+}
+
+static void rt_addr_os_to_etcpal(int family, const struct sockaddr* os_addr, EtcPalIpAddr* etcpal_addr)
+{
+  if (!ETCPAL_ASSERT_VERIFY(os_addr) || !ETCPAL_ASSERT_VERIFY(etcpal_addr))
+    return;
+
+  if (family == AF_INET6)
+  {
+    struct sockaddr_in6* os_dst_v6   = (struct sockaddr_in6*)os_addr;
+    size_t               addr_offset = (uint8_t*)(&os_dst_v6->sin6_addr.s6_addr) - (uint8_t*)os_addr;
+
+    if (ETCPAL_ASSERT_VERIFY((addr_offset + ETCPAL_IPV6_BYTES) <= os_addr->sa_len))
+      ETCPAL_IP_SET_V6_ADDRESS(etcpal_addr, os_dst_v6->sin6_addr.s6_addr);
+  }
+  else if (family == AF_INET)
+  {
+    struct sockaddr_in* os_dst_v4   = (struct sockaddr_in*)os_addr;
+    size_t              addr_offset = (uint8_t*)(&os_dst_v4->sin_addr.s_addr) - (uint8_t*)os_addr;
+
+    if (ETCPAL_ASSERT_VERIFY((addr_offset + sizeof(os_dst_v4->sin_addr.s_addr)) <= os_addr->sa_len))
+      ETCPAL_IP_SET_V4_ADDRESS(etcpal_addr, ntohl(os_dst_v4->sin_addr.s_addr));
   }
 }
 
@@ -448,10 +548,7 @@ static void dest_from_route_entry(int family, const struct sockaddr* os_dst, Etc
   if (!ETCPAL_ASSERT_VERIFY(os_dst) || !ETCPAL_ASSERT_VERIFY(etcpal_dst))
     return;
 
-  if (family == AF_INET6)
-    ETCPAL_IP_SET_V6_ADDRESS(etcpal_dst, ((struct sockaddr_in6*)os_dst)->sin6_addr.s6_addr);
-  else
-    ETCPAL_IP_SET_V4_ADDRESS(etcpal_dst, ntohl(((struct sockaddr_in*)os_dst)->sin_addr.s_addr));
+  rt_addr_os_to_etcpal(family, os_dst, etcpal_dst);
 }
 
 /* Get the netmask from a socket address structure packed as part of a route entry.
@@ -516,8 +613,8 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
 
   if (family == AF_INET)
   {
-    size_t      mask_offset = offsetof(struct sockaddr_in, sin_addr);
-    const char* mask_ptr    = &((char*)os_netmask)[mask_offset];
+    size_t         mask_offset = offsetof(struct sockaddr_in, sin_addr);
+    const uint8_t* mask_ptr    = &((const uint8_t*)os_netmask)[mask_offset];
 
     if (os_netmask->sa_len > mask_offset)
     {
@@ -534,17 +631,20 @@ static void netmask_from_route_entry(int family, const struct sockaddr* os_netma
   }
   else if (family == AF_INET6)
   {
-    size_t      mask_offset = offsetof(struct sockaddr_in6, sin6_addr);
-    const char* mask_ptr    = &((char*)os_netmask)[mask_offset];
+    size_t         mask_offset = offsetof(struct sockaddr_in6, sin6_addr);
+    const uint8_t* mask_ptr    = &((uint8_t*)os_netmask)[mask_offset];
 
     if (os_netmask->sa_len > mask_offset)
     {
-      uint8_t ip_buf[ETCPAL_IPV6_BYTES];
+      uint8_t ip_buf[ETCPAL_IPV6_BYTES] = {0};
       memset(ip_buf, 0, ETCPAL_IPV6_BYTES);
-      for (size_t mask_pos = 0; mask_pos < os_netmask->sa_len - mask_offset; ++mask_pos)
+
+      for (size_t mask_pos = 0; (mask_pos < ETCPAL_IPV6_BYTES) && (mask_pos < (os_netmask->sa_len - mask_offset));
+           ++mask_pos)
       {
         ip_buf[mask_pos] = mask_ptr[mask_pos];
       }
+
       ETCPAL_IP_SET_V6_ADDRESS(etcpal_netmask, ip_buf);
     }
   }
@@ -559,14 +659,7 @@ static void gateway_from_route_entry(const struct sockaddr* os_gw, EtcPalIpAddr*
   if (!ETCPAL_ASSERT_VERIFY(os_gw) || !ETCPAL_ASSERT_VERIFY(etcpal_gw))
     return;
 
-  if (os_gw->sa_family == AF_INET6)
-  {
-    ETCPAL_IP_SET_V6_ADDRESS(etcpal_gw, ((struct sockaddr_in6*)os_gw)->sin6_addr.s6_addr);
-  }
-  else if (os_gw->sa_family == AF_INET)
-  {
-    ETCPAL_IP_SET_V4_ADDRESS(etcpal_gw, ntohl(((struct sockaddr_in*)os_gw)->sin_addr.s_addr));
-  }
+  rt_addr_os_to_etcpal(os_gw->sa_family, os_gw, etcpal_gw);
 }
 
 #ifdef RTF_LLDATA
@@ -617,19 +710,14 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
 
   etcpal_error_t res = kEtcPalErrOk;
 
-  size_t buf_pos = 0;
-
   // Parse the result
   // Loop through all routing table entries returned in the buffer
-  while ((buf_pos + sizeof(struct rt_msghdr)) <= buf_len)
+  for (struct rt_msghdr* rmsg = get_first_rt_msghdr(buf, buf_len); rmsg; rmsg = get_next_rt_msghdr(buf, buf_len, rmsg))
   {
-    RoutingTableEntry new_entry;
+    RoutingTableEntry new_entry = {0};
     init_routing_table_entry(&new_entry);
 
     bool new_entry_valid = true;
-
-    // get route entry header
-    struct rt_msghdr* rmsg = (struct rt_msghdr*)(&buf[buf_pos]);
 
     // Filter out entries:
     // - from the local routing table (RTF_LOCAL)
@@ -638,9 +726,8 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
     // - Cloned routes (RTF_WASCLONED)
     if (!(rmsg->rtm_flags & (RTF_LINK_FLAG | RTF_LOCAL | RTF_BROADCAST | RTF_WASCLONED)))
     {
-      struct sockaddr* addr_start = (struct sockaddr*)(rmsg + 1);
-      struct sockaddr* rti_info[RTAX_MAX];
-      get_addrs_from_route_entry(rmsg->rtm_addrs, addr_start, rti_info);
+      struct sockaddr* rti_info[RTAX_MAX] = {0};
+      get_addrs_from_route_entry(rmsg, rti_info);
 
       if (rti_info[RTAX_DST] != NULL)
       {
@@ -683,18 +770,16 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
       RoutingTableEntry* new_entries =
           (RoutingTableEntry*)realloc(table->entries, (table->size + 1) * sizeof(RoutingTableEntry));
       if (new_entries)
-        table->entries = new_entries;
-      else
-        res = kEtcPalErrNoMem;
-
-      if (table->entries)
       {
+        table->entries = new_entries;
         table->entries[table->size] = new_entry;
         ++table->size;
       }
+      else
+      {
+        res = kEtcPalErrNoMem;
+      }
     }
-
-    buf_pos += rmsg->rtm_msglen;
 
     if (res != kEtcPalErrOk)
       break;
@@ -771,11 +856,11 @@ void free_routing_table(RoutingTable* table)
     return;
 
   if (table->entries)
-  {
     free(table->entries);
-    table->entries = NULL;
-  }
-  table->size = 0;
+
+  table->entries       = NULL;
+  table->default_route = NULL;
+  table->size          = 0;
 }
 
 #if ETCPAL_NETINT_DEBUG_OUTPUT
