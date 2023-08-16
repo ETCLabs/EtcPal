@@ -438,7 +438,7 @@ static struct rt_msghdr* get_next_rt_msghdr(uint8_t* buf, size_t buf_len, struct
   struct rt_msghdr* next_msg =
       current_msg ? (struct rt_msghdr*)((uint8_t*)current_msg + current_msg->rtm_msglen) : (struct rt_msghdr*)(buf);
 
-  if (!ETCPAL_ASSERT_VERIFY((uint8_t*)next_msg > buf))
+  if (!ETCPAL_ASSERT_VERIFY((uint8_t*)next_msg >= buf))
     return NULL;
 
   size_t next_msg_offset = ((uint8_t*)next_msg - buf);
@@ -471,7 +471,7 @@ static struct sockaddr* get_next_rt_addr(struct rt_msghdr* rmsg, struct sockaddr
   struct sockaddr* next_addr =
       current_addr ? (struct sockaddr*)((uint8_t*)current_addr + SA_SIZE(current_addr)) : (struct sockaddr*)(rmsg + 1);
 
-  if (!ETCPAL_ASSERT_VERIFY((uint8_t*)next_addr > (uint8_t*)rmsg))
+  if (!ETCPAL_ASSERT_VERIFY((uint8_t*)next_addr >= (uint8_t*)rmsg))
     return NULL;
 
   size_t next_addr_offset = ((uint8_t*)next_addr - (uint8_t*)rmsg);
