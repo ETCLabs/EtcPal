@@ -178,9 +178,11 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
       lwip_close(res);
       return kEtcPalErrSys;
     }
+
     *conn_sock = res;
     return kEtcPalErrOk;
   }
+
   return errno_lwip_to_etcpal(errno);
 }
 
@@ -241,8 +243,10 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
   {
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
       return kEtcPalErrSys;
+
     return kEtcPalErrOk;
   }
+
   return errno_lwip_to_etcpal(errno);
 }
 
@@ -293,8 +297,10 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
       if (!sockaddr_os_to_etcpal((const etcpal_os_sockaddr_t*)&fromaddr, address))
         return (int)kEtcPalErrSys;
     }
+
     return res;
   }
+
   return (int)errno_lwip_to_etcpal(errno);
 }
 
@@ -508,6 +514,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
     default:
       break;
   }
+  
   // If we got here, something was invalid. Set errno accordingly.
   errno = EINVAL;
   return -1;
@@ -528,6 +535,7 @@ static bool netif_index_to_ipv4_addr(unsigned int netif_index, struct in_addr* a
     addr->s_addr                = lwip_addr->addr;
     result                      = true;
   }
+
   UNLOCK_TCPIP_CORE();
   return result;
 }
@@ -622,6 +630,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
     default:
       break;
   }
+
   // If we got here, something was invalid. Set errno accordingly.
   errno = EINVAL;
   return -1;
@@ -667,6 +676,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
     default:  // lwIP does not have support for the IPv6 multicast TX options or pktinfo option yet.
       break;
   }
+
   // If we got here, something was invalid. Set errno accordingly.
   errno = EINVAL;
   return -1;
@@ -689,6 +699,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
     int res = lwip_shutdown(id, shutmap[how]);
     return (res == 0 ? kEtcPalErrOk : errno_lwip_to_etcpal(errno));
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -704,17 +715,14 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
         *id = sock;
         return kEtcPalErrOk;
       }
-      else
-      {
-        *id = ETCPAL_SOCKET_INVALID;
-        return errno_lwip_to_etcpal(errno);
-      }
-    }
-    else
-    {
+
       *id = ETCPAL_SOCKET_INVALID;
+      return errno_lwip_to_etcpal(errno);
     }
+
+    *id = ETCPAL_SOCKET_INVALID;
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -728,6 +736,7 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
   {
     val = lwip_fcntl(id, F_SETFL, (blocking ? (val & (int)(~O_NONBLOCK)) : (val | O_NONBLOCK)));
   }
+
   return (val >= 0 ? kEtcPalErrOk : errno_lwip_to_etcpal(errno));
 }
 
@@ -741,8 +750,10 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
       *blocking = ((val & O_NONBLOCK) == 0);
       return kEtcPalErrOk;
     }
+
     return errno_lwip_to_etcpal(errno);
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -757,6 +768,7 @@ etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
   ETCPAL_FD_ZERO(&context->writefds);
   ETCPAL_FD_ZERO(&context->exceptfds);
   context->valid = true;
+
   return kEtcPalErrOk;
 }
 
@@ -764,6 +776,7 @@ void etcpal_poll_context_deinit(EtcPalPollContext* context)
 {
   if (!context)
     return;
+
   context->valid = false;
 }
 
@@ -776,26 +789,23 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
     return kEtcPalErrInvalid;
 
   if (context->num_valid_sockets >= ETCPAL_SOCKET_MAX_POLL_SIZE)
-  {
     return kEtcPalErrNoMem;
-  }
-  else
-  {
-    EtcPalPollSocket* new_sock = find_hole(context);
-    if (new_sock)
-    {
-      new_sock->sock      = socket;
-      new_sock->events    = events;
-      new_sock->user_data = user_data;
-      set_in_fd_sets(context, new_sock);
-      ++context->num_valid_sockets;
-      if (socket > context->max_fd)
-        context->max_fd = socket;
 
-      return kEtcPalErrOk;
-    }
-    return kEtcPalErrNoMem;
+  EtcPalPollSocket* new_sock = find_hole(context);
+  if (new_sock)
+  {
+    new_sock->sock      = socket;
+    new_sock->events    = events;
+    new_sock->user_data = user_data;
+    set_in_fd_sets(context, new_sock);
+    ++context->num_valid_sockets;
+    if (socket > context->max_fd)
+      context->max_fd = socket;
+
+    return kEtcPalErrOk;
   }
+
+  return kEtcPalErrNoMem;
 }
 
 etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
@@ -818,10 +828,8 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
     set_in_fd_sets(context, sock_desc);
     return kEtcPalErrOk;
   }
-  else
-  {
-    return kEtcPalErrNotFound;
-  }
+
+  return kEtcPalErrNotFound;
 }
 
 void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socket)
@@ -871,17 +879,11 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
                             timeout_ms == ETCPAL_WAIT_FOREVER ? NULL : &os_timeout);
 
   if (sel_res < 0)
-  {
     return errno_lwip_to_etcpal(errno);
-  }
   else if (sel_res == 0)
-  {
     return kEtcPalErrTimedOut;
-  }
-  else
-  {
-    return handle_select_result(context, event, &readfds, &writefds, &exceptfds);
-  }
+
+  return handle_select_result(context, event, &readfds, &writefds, &exceptfds);
 }
 
 etcpal_error_t handle_select_result(EtcPalPollContext* context,
@@ -944,6 +946,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext* context,
       break;  // We handle one event at a time.
     }
   }
+
   return res;
 }
 
@@ -1060,6 +1063,7 @@ EtcPalPollSocket* find_socket(EtcPalPollContext* context, etcpal_socket_t sock)
     if (poll_sock->sock == sock)
       return poll_sock;
   }
+
   return NULL;
 }
 
@@ -1084,6 +1088,7 @@ void set_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* poll_soc
   {
     ETCPAL_FD_SET(poll_sock->sock, &context->writefds);
   }
+
   // exceptfds is used for errors on this platform, so set it regardless
   ETCPAL_FD_SET(poll_sock->sock, &context->exceptfds);
 }
@@ -1101,6 +1106,7 @@ void clear_in_fd_sets(EtcPalPollContext* context, const EtcPalPollSocket* poll_s
   {
     ETCPAL_FD_CLEAR(poll_sock->sock, &context->writefds);
   }
+
   ETCPAL_FD_CLEAR(poll_sock->sock, &context->exceptfds);
 }
 

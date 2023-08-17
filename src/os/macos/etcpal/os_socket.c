@@ -191,9 +191,11 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
       close(res);
       return kEtcPalErrSys;
     }
+
     *conn_sock = res;
     return kEtcPalErrOk;
   }
+
   return errno_os_to_etcpal(errno);
 }
 
@@ -254,8 +256,10 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
   {
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
       return kEtcPalErrSys;
+
     return kEtcPalErrOk;
   }
+
   return errno_os_to_etcpal(errno);
 }
 
@@ -279,6 +283,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
     default:
       return kEtcPalErrInvalid;
   }
+
   return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
@@ -348,8 +353,10 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
       if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&fromaddr, address))
         return kEtcPalErrSys;
     }
+
     return res;
   }
+
   return (int)errno_os_to_etcpal(errno);
 }
 
@@ -513,6 +520,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
     default:
       return kEtcPalErrInvalid;
   }
+
   return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
@@ -568,6 +576,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
     default:
       break;
   }
+
   // If we got here, something was invalid. Set errno accordingly
   errno = EINVAL;
   return -1;
@@ -593,9 +602,11 @@ static int ip4_ifindex_to_addr(unsigned int ifindex, struct in_addr* addr)
         close(ioctl_sock);
         return 0;
       }
+
       close(ioctl_sock);
     }
   }
+
   return -1;
 }
 
@@ -752,6 +763,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
     int res = shutdown(id, shutmap[how]);
     return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -1234,6 +1246,7 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
     if (!etcpal_nextaddr(result))
       res = -1;
   }
+
   return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(res));
 }
 

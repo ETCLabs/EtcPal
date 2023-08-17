@@ -124,6 +124,7 @@ static size_t count_online_ifaddrs(const struct ifaddrs* ifaddrs)
       ++total;
     }
   }
+
   return total;
 }
 
@@ -304,10 +305,8 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
     *index = index_found;
     return kEtcPalErrOk;
   }
-  else
-  {
-    return kEtcPalErrNotFound;
-  }
+
+  return kEtcPalErrNotFound;
 }
 
 bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
@@ -330,13 +329,9 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   int ioctl_res = ioctl(ioctl_sock, SIOCGIFFLAGS, &if_req);
   close(ioctl_sock);
   if (ioctl_res == 0)
-  {
     return (bool)(if_req.ifr_flags & IFF_UP);
-  }
-  else
-  {
-    return false;
-  }
+
+  return false;
 }
 
 /******************************************************************************
@@ -378,6 +373,7 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
 
   if (buf)
     free(buf);
+
   return res;
 }
 
@@ -833,13 +829,9 @@ int compare_routing_table_entries(const void* a, const void* b)
   // Sort by mask length in descending order - within the same mask length, sort by whether one
   // entry has the "interface scope" flag set (unset gets priority, e.g. listed first).
   if (mask_length_1 == mask_length_2)
-  {
     return (e1->interface_scope && !e2->interface_scope) - (!e1->interface_scope && e2->interface_scope);
-  }
-  else
-  {
-    return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
-  }
+
+  return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
 }
 
 void free_routing_tables()

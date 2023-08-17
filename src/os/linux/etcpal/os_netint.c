@@ -292,6 +292,7 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
     *index = index_found;
     return kEtcPalErrOk;
   }
+
   return kEtcPalErrNotFound;
 }
 
@@ -317,9 +318,8 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   ioctl_res = ioctl(ioctl_sock, SIOCGIFFLAGS, &if_req);
   close(ioctl_sock);
   if (ioctl_res == 0)
-  {
     return (bool)(if_req.ifr_flags & IFF_UP);
-  }
+
   return false;
 }
 
@@ -392,6 +392,7 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
 
     close(sock);
   }
+
   return result;
 }
 
@@ -414,6 +415,7 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
 
   if (sendto(socket, &req.nl_header, req.nl_header.nlmsg_len, 0, (struct sockaddr*)&naddr, sizeof(naddr)) >= 0)
     return kEtcPalErrOk;
+
   return errno_os_to_etcpal(errno);
 }
 
@@ -427,6 +429,7 @@ etcpal_error_t receive_netlink_route_reply(int sock, int family, size_t buf_size
   char*  buffer    = (char*)malloc(real_size);
   if (!buffer)
     return kEtcPalErrNoMem;
+
   memset(buffer, 0, real_size);
 
   char*  cur_ptr     = buffer;
@@ -531,9 +534,7 @@ etcpal_error_t parse_netlink_route_reply(int family, const char* buffer, size_t 
     }
 
     if (!ETCPAL_IP_IS_INVALID(&new_entry.addr))
-    {
       new_entry.mask = etcpal_ip_mask_from_length(new_entry.addr.type, rt_message->rtm_dst_len);
-    }
 
     // Insert the new entry into the list
     if (new_entry_valid)
@@ -602,9 +603,8 @@ int compare_routing_table_entries(const void* a, const void* b)
   // Sort by mask length in descending order - within the same mask length, sort by metric in
   // ascending order.
   if (mask_length_1 == mask_length_2)
-  {
     return (e1->metric > e2->metric) - (e1->metric < e2->metric);
-  }
+
   return (mask_length_1 < mask_length_2) - (mask_length_1 > mask_length_2);
 }
 

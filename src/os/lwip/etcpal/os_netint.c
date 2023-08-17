@@ -183,11 +183,9 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   {
     return kEtcPalErrNotFound;
   }
-  else
-  {
-    *index = index_found;
-    return kEtcPalErrOk;
-  }
+
+  *index = index_found;
+  return kEtcPalErrOk;
 }
 
 bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
@@ -196,9 +194,11 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 
   bool res = false;
   LOCK_TCPIP_CORE();
+
   struct netif* netif = netif_get_by_index(index);
   if (netif)
     res = netif_is_up(netif);
+
   UNLOCK_TCPIP_CORE();
   return res;
 }

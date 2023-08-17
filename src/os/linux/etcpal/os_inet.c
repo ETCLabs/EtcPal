@@ -37,6 +37,7 @@ bool ip_os_to_etcpal(const etcpal_os_ipaddr_t* os_ip, EtcPalIpAddr* ip)
     ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(ip, sin6->sin6_addr.s6_addr, sin6->sin6_scope_id);
     return true;
   }
+
   return false;
 }
 
@@ -63,6 +64,7 @@ size_t ip_etcpal_to_os(const EtcPalIpAddr* ip, etcpal_os_ipaddr_t* os_ip)
     memcpy(sin6->sin6_addr.s6_addr, ETCPAL_IP_V6_ADDRESS(ip), ETCPAL_IPV6_BYTES);
     ret = sizeof(struct sockaddr_in6);
   }
+
   return ret;
 }
 
@@ -84,6 +86,7 @@ bool sockaddr_os_to_etcpal(const etcpal_os_sockaddr_t* os_sa, EtcPalSockAddr* sa
       return true;
     }
   }
+
   return false;
 }
 
@@ -100,6 +103,7 @@ size_t sockaddr_etcpal_to_os(const EtcPalSockAddr* sa, etcpal_os_sockaddr_t* os_
     else if (ETCPAL_IP_IS_V6(&sa->ip))
       ((struct sockaddr_in6*)os_sa)->sin6_port = htons(sa->port);
   }
+
   return ret;
 }
 
@@ -124,9 +128,9 @@ etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
         return kEtcPalErrOk;
       return kEtcPalErrInvalid;
     }
-    default:
-      return kEtcPalErrInvalid;
   }
+
+  return kEtcPalErrInvalid;
 }
 
 etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPalIpAddr* dest)
@@ -150,7 +154,7 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
       ETCPAL_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kEtcPalErrOk;
     }
-    default:
-      return kEtcPalErrInvalid;
   }
+
+  return kEtcPalErrInvalid;
 }

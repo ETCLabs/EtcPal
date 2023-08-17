@@ -120,12 +120,13 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
       *index = resolved_index;
       return kEtcPalErrOk;
     }
+
     if (res == ERROR_INVALID_PARAMETER)
-    {
       return kEtcPalErrInvalid;
-    }
+
     return kEtcPalErrNotFound;
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -145,6 +146,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
     if (netint->index == index)
       return true;
   }
+
   return false;
 }
 
@@ -166,13 +168,13 @@ IP_ADAPTER_ADDRESSES* get_windows_adapters()
     buffer = malloc(buflen);
     if (!buffer)
       return NULL;
+
     result = GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen);
   }
 
   if (result == NO_ERROR)
-  {
     return (IP_ADAPTER_ADDRESSES*)buffer;
-  }
+
   free(buffer);
   return NULL;
 }
@@ -284,6 +286,7 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
 
       pip = pip->Next;
     }
+
     pcur = pcur->Next;
   }
 }

@@ -204,9 +204,11 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
       closesocket(res);
       return kEtcPalErrSys;
     }
+
     *conn_sock = res;
     return kEtcPalErrOk;
   }
+
   return err_winsock_to_etcpal(WSAGetLastError());
 }
 
@@ -271,8 +273,10 @@ etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
   {
     if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&ss, address))
       return kEtcPalErrSys;
+
     return kEtcPalErrOk;
   }
+
   return err_winsock_to_etcpal(WSAGetLastError());
 }
 
@@ -297,6 +301,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
     default:
       return kEtcPalErrInvalid;
   }
+
   return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
 }
 
@@ -325,6 +330,7 @@ int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, s
     default:
       break;
   }
+
   // If we got here, something was invalid. Set errno accordingly
   WSASetLastError(WSAEINVAL);
   return -1;
@@ -368,8 +374,10 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
       if (!sockaddr_os_to_etcpal((etcpal_os_sockaddr_t*)&fromaddr, address))
         return kEtcPalErrSys;
     }
+
     return res;
   }
+
   return (int)err_winsock_to_etcpal(WSAGetLastError());
 }
 
@@ -806,6 +814,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
     default: /* Other IPv6 options TODO on windows. */
       break;
   }
+
   // If we got here, something was invalid. Set errno accordingly
   WSASetLastError(WSAEINVAL);
   return -1;
@@ -818,6 +827,7 @@ etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
     int res = shutdown(id, kShutMap[how]);
     return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError()));
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -833,11 +843,14 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
         *id = sock;
         return kEtcPalErrOk;
       }
+
       *id = ETCPAL_SOCKET_INVALID;
       return err_winsock_to_etcpal(WSAGetLastError());
     }
+
     *id = ETCPAL_SOCKET_INVALID;
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -963,8 +976,10 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
         res = kEtcPalErrNoMem;
       }
     }
+
     etcpal_mutex_unlock(&context->lock);
   }
+
   return res;
 }
 
@@ -995,8 +1010,10 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
     {
       res = kEtcPalErrNotFound;
     }
+
     etcpal_mutex_unlock(&context->lock);
   }
+
   return res;
 }
 
@@ -1013,6 +1030,7 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
       clear_in_fd_sets(context, sock_desc);
       etcpal_rbtree_remove(&context->sockets, sock_desc);
     }
+
     etcpal_mutex_unlock(&context->lock);
   }
 }
@@ -1070,6 +1088,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
     res = handle_select_result(context, event, &readfds, &writefds, &exceptfds);
     etcpal_mutex_unlock(&context->lock);
   }
+
   return res;
 }
 
@@ -1147,6 +1166,7 @@ etcpal_error_t handle_select_result(EtcPalPollContext*     context,
       break;  // We handle one event at a time.
     }
   }
+
   return res;
 }
 
@@ -1331,6 +1351,7 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
     if (!etcpal_nextaddr(result))
       res = -1;
   }
+
   return (res == 0 ? kEtcPalErrOk : err_winsock_to_etcpal(res));
 }
 
