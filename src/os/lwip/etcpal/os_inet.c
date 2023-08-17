@@ -150,6 +150,8 @@ etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
         return kEtcPalErrOk;
       return errno_lwip_to_etcpal(errno);
     }
+    default:
+      break;
   }
 
   return kEtcPalErrInvalid;
@@ -176,6 +178,8 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
       ETCPAL_IP_SET_V6_ADDRESS(dest, addr.s6_addr);
       return kEtcPalErrOk;
     }
+    default:
+      break;
   }
 
   return kEtcPalErrInvalid;
