@@ -1007,7 +1007,7 @@ int events_etcpal_to_kqueue(etcpal_socket_t      socket,
                             void*                user_data,
                             struct kevent*       kevents)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(kevents))
+  if (!ETCPAL_ASSERT_VERIFY(socket != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(kevents))
     return 0;
 
   int num_events = 0;
