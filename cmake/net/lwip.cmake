@@ -22,10 +22,12 @@ if(NOT TARGET lwIP)
                       "See the comment in this file for more information.")
 endif()
 
-set(ETCPAL_NET_ADDITIONAL_SOURCES
+set(ETCPAL_NET_ADDITIONAL_HEADERS
   ${ETCPAL_ROOT}/include/os/lwip/etcpal/os_socket.h
   ${ETCPAL_ROOT}/include/os/lwip/etcpal/os_inet.h
+)
 
+set(ETCPAL_NET_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/lwip/etcpal/os_error.h
   ${ETCPAL_ROOT}/src/os/lwip/etcpal/os_error.c
   ${ETCPAL_ROOT}/src/os/lwip/etcpal/os_inet.c

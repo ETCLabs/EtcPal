@@ -21,10 +21,12 @@ if(NOT TARGET MQX)
                       "See the comment in this file for more information.")
 endif()
 
-set(ETCPAL_NET_ADDITIONAL_SOURCES
+set(ETCPAL_NET_ADDITIONAL_HEADERS
   ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_inet.h
   ${ETCPAL_ROOT}/include/os/mqx/etcpal/os_socket.h
+)
 
+set(ETCPAL_NET_ADDITIONAL_SOURCES
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_inet.c
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_netint.c
   ${ETCPAL_ROOT}/src/os/mqx/etcpal/os_socket.c

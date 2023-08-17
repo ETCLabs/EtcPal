@@ -121,6 +121,19 @@ bool etcpal_assert_verify_fail(const char* exp, const char* file, const char* fu
 #endif
 
 /**
+ * @brief Indicates whether certain sources should be built based on if the target OS is FreeRTOS.
+ *
+ * Set this to 1 to indicate that the target OS is FreeRTOS. Otherwise, set to 0.
+ *
+ * Only useful when not using CMake. CMake sets this automatically, and already handles selection of correct sources.
+ *
+ * If SDK_OS_FREE_RTOS is defined, EtcPal will automatically define this to 1.
+ */
+#ifndef ETCPAL_TARGETING_FREERTOS
+#define ETCPAL_TARGETING_FREERTOS 0
+#endif
+
+/**
  * @}
  */
 

@@ -59,10 +59,8 @@ typedef struct
 } etcpal_thread_t;
 
 #ifdef __cplusplus
-#define etcpal_thread_sleep(sleep_ms)         ::Sleep(static_cast<DWORD>(sleep_ms))
 #define etcpal_thread_get_current_os_handle() ::GetCurrentThreadId()
 #else
-#define etcpal_thread_sleep(sleep_ms)         Sleep((DWORD)sleep_ms)
 #define etcpal_thread_get_current_os_handle() GetCurrentThreadId()
 #endif
 

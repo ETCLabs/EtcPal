@@ -245,13 +245,13 @@ etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid* ns, const void* name, s
   if (!ns || !name || name_len == 0 || !uuid)
     return kEtcPalErrInvalid;
 
-  SHA1_CTX      sha1;
+  EtcPalSha1Ctx sha1;
   unsigned char hash[20];
 
-  SHA1Init(&sha1);
-  SHA1Update(&sha1, ns->data, ETCPAL_UUID_BYTES);
-  SHA1Update(&sha1, name, (uint32_t)name_len);
-  SHA1Final(hash, &sha1);
+  etcpal_sha1_init(&sha1);
+  etcpal_sha1_update(&sha1, ns->data, ETCPAL_UUID_BYTES);
+  etcpal_sha1_update(&sha1, name, (uint32_t)name_len);
+  etcpal_sha1_final(hash, &sha1);
 
   // Add the UUID flags into the buffer
   // The Version bits to say this is a name-based UUID using SHA-1

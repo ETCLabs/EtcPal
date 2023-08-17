@@ -23,9 +23,12 @@ set(ETCPAL_LIB_TARGET_NAME EtcPal)
 # This is used for creating the main EtcPal target as well as the one used by the live unit tests
 function(add_etcpal_library target_name)
   add_library(${target_name}
+    ${ETCPAL_CORE_HEADERS}
     ${ETCPAL_CORE_SOURCES}
     $<TARGET_OBJECTS:EtcPalThirdParty>
+    ${ETCPAL_OS_ADDITIONAL_HEADERS}
     ${ETCPAL_OS_ADDITIONAL_SOURCES}
+    ${ETCPAL_NET_ADDITIONAL_HEADERS}
     ${ETCPAL_NET_ADDITIONAL_SOURCES}
   )
 
@@ -43,11 +46,29 @@ function(add_etcpal_library target_name)
     ${ETCPAL_NET_ADDITIONAL_DEFINES}
   )
 
+  if(ETCPAL_OS_TARGET STREQUAL "freertos")
+    target_compile_definitions(${target_name} PRIVATE
+      ETCPAL_TARGETING_FREERTOS=1
+    )
+  endif()
+
   target_link_libraries(${target_name} PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
 
   if(NOT MSVC)
     set_target_properties(${target_name} PROPERTIES C_STANDARD 99)
   endif()
+
+  # Organize sources in IDEs
+  source_group(TREE ${ETCPAL_ROOT}/src/etcpal PREFIX src FILES ${ETCPAL_CORE_SOURCES})
+  source_group(src/os FILES
+    ${ETCPAL_OS_ADDITIONAL_SOURCES}
+    ${ETCPAL_NET_ADDITIONAL_SOURCES}
+  )
+  source_group(TREE ${ETCPAL_ROOT}/include/etcpal PREFIX include FILES ${ETCPAL_CORE_HEADERS})
+  source_group(include/os FILES
+    ${ETCPAL_OS_ADDITIONAL_HEADERS}
+    ${ETCPAL_NET_ADDITIONAL_HEADERS}
+  )
 endfunction()
 
 # Set up the main EtcPal target here
@@ -120,6 +141,9 @@ if(ETCPAL_BUILD_MOCK_LIB)
     ${ETCPAL_ROOT}/include/etcpal_mock/socket.h
     ${ETCPAL_ROOT}/include/etcpal_mock/timer.h
     ${ETCPAL_ROOT}/include/etcpal_mock/thread.h
+
+    ${ETCPAL_OS_ADDITIONAL_HEADERS}
+    ${ETCPAL_NET_ADDITIONAL_HEADERS}
 
     # EtcPal sources
     # We will gradually substitute these with mocks as needed

@@ -17,6 +17,8 @@ A million repetitions of "a"
  * 01-23-2020 SMK
  *   - Added clang-format off directive to preserve original formatting of 3rd-party code
  *   - SHA1(): changed type of ii from unsigned int to int to avoid compiler warning
+ * 05-30-2023 CGR
+ *   - Switched names of SHA1_CTX struct and SHA1 functions to EtcPal-specific names to avoid conflicts
  *************************************************************************************************/
 
 /* clang-format off */
@@ -60,7 +62,7 @@ A million repetitions of "a"
 
 /* Hash a single 512-bit block. This is the core of the algorithm. */
 
-void SHA1Transform(
+void etcpal_sha1_transform(
     uint32_t state[5],
     const unsigned char buffer[64]
 )
@@ -186,10 +188,10 @@ void SHA1Transform(
 }
 
 
-/* SHA1Init - Initialize new context */
+/* etcpal_sha1_init - Initialize new context */
 
-void SHA1Init(
-    SHA1_CTX * context
+void etcpal_sha1_init(
+    EtcPalSha1Ctx * context
 )
 {
     /* SHA1 initialization constants */
@@ -204,8 +206,8 @@ void SHA1Init(
 
 /* Run your data through this. */
 
-void SHA1Update(
-    SHA1_CTX * context,
+void etcpal_sha1_update(
+    EtcPalSha1Ctx * context,
     const unsigned char *data,
     uint32_t len
 )
@@ -222,10 +224,10 @@ void SHA1Update(
     if ((j + len) > 63)
     {
         memcpy(&context->buffer[j], data, (i = 64 - j));
-        SHA1Transform(context->state, context->buffer);
+        etcpal_sha1_transform(context->state, context->buffer);
         for (; i + 63 < len; i += 64)
         {
-            SHA1Transform(context->state, &data[i]);
+            etcpal_sha1_transform(context->state, &data[i]);
         }
         j = 0;
     }
@@ -237,9 +239,9 @@ void SHA1Update(
 
 /* Add padding and return the message digest. */
 
-void SHA1Final(
+void etcpal_sha1_final(
     unsigned char digest[20],
-    SHA1_CTX * context
+    EtcPalSha1Ctx * context
 )
 {
     unsigned i;
@@ -271,13 +273,13 @@ void SHA1Final(
     }
 #endif
     c = 0200;
-    SHA1Update(context, &c, 1);
+    etcpal_sha1_update(context, &c, 1);
     while ((context->count[0] & 504) != 448)
     {
         c = 0000;
-        SHA1Update(context, &c, 1);
+        etcpal_sha1_update(context, &c, 1);
     }
-    SHA1Update(context, finalcount, 8); /* Should cause a SHA1Transform() */
+    etcpal_sha1_update(context, finalcount, 8); /* Should cause a etcpal_sha1_transform() */
     for (i = 0; i < 20; i++)
     {
         digest[i] = (unsigned char)
@@ -288,18 +290,18 @@ void SHA1Final(
     memset(&finalcount, '\0', sizeof(finalcount));
 }
 
-void SHA1(
+void etcpal_sha1(
     char *hash_out,
     const char *str,
     int len)
 {
-    SHA1_CTX ctx;
+    EtcPalSha1Ctx ctx;
     int ii;
 
-    SHA1Init(&ctx);
+    etcpal_sha1_init(&ctx);
     for (ii=0; ii<len; ii+=1)
-        SHA1Update(&ctx, (const unsigned char*)str + ii, 1);
-    SHA1Final((unsigned char *)hash_out, &ctx);
+        etcpal_sha1_update(&ctx, (const unsigned char*)str + ii, 1);
+    etcpal_sha1_final((unsigned char *)hash_out, &ctx);
     hash_out[20] = '\0';
 }
 

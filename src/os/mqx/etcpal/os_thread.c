@@ -71,6 +71,13 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
   return kEtcPalErrSys;
 }
 
+etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
+{
+  _time_delay((uint32_t)sleep_ms);
+
+  return kEtcPalErrOk;
+}
+
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
   if (!id)

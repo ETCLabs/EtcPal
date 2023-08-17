@@ -438,11 +438,15 @@ TEST(socket_integration_udp, unicast_udp_ipv4_sendto_recvmsg)
 {
   unicast_udp_ipv4_setup();
 
+#ifdef __MQX__
+  TEST_IGNORE_MESSAGE("ETCPAL_IP_PKTINFO not implemented on this platform.");
+#else
   int intval = 1;
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], ETCPAL_IPPROTO_IP, ETCPAL_IP_PKTINFO, &intval, sizeof(int)));
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], ETCPAL_IPPROTO_IP, ETCPAL_IP_PKTINFO, &intval, sizeof(int)));
+#endif
 
   uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
   unicast_udp_sendto_recvmsg_test(kEtcPalIpTypeV4, control, ETCPAL_MAX_CONTROL_SIZE_PKTINFO);
@@ -461,11 +465,15 @@ TEST(socket_integration_udp, unicast_udp_ipv6_sendto_recvmsg)
 {
   unicast_udp_ipv6_setup();
 
+#ifdef TESTING_LWIP
+  TEST_IGNORE_MESSAGE("ETCPAL_IPV6_PKTINFO not implemented on this platform.");
+#else
   int intval = 1;
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], ETCPAL_IPPROTO_IPV6, ETCPAL_IPV6_PKTINFO, &intval, sizeof(int)));
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], ETCPAL_IPPROTO_IPV6, ETCPAL_IPV6_PKTINFO, &intval, sizeof(int)));
+#endif
 
   uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
   unicast_udp_sendto_recvmsg_test(kEtcPalIpTypeV6, control, ETCPAL_MAX_CONTROL_SIZE_PKTINFO);
@@ -494,8 +502,12 @@ void multicast_udp_ipv4_setup(void)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
+#ifdef __MQX__
+  TEST_IGNORE_MESSAGE("ETCPAL_IP_MULTICAST_LOOP not implemented on this platform.");
+#else
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IP, ETCPAL_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+#endif
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IP, ETCPAL_IP_MULTICAST_IF, &v4_netint,
                                                     sizeof v4_netint));
 
@@ -543,10 +555,14 @@ void multicast_udp_ipv6_setup(void)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET6, ETCPAL_SOCK_DGRAM, &send_sock));
   TEST_ASSERT_NOT_EQUAL(send_sock, ETCPAL_SOCKET_INVALID);
 
-  // TEST_ASSERT_EQUAL(kEtcPalErrOk,
-  etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_LOOP, &intval, sizeof(int));  //);
-  // TEST_ASSERT_EQUAL(kEtcPalErrOk,
-  etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_IF, &v6_netint, sizeof v6_netint);  //);
+#ifdef TESTING_LWIP
+  TEST_IGNORE_MESSAGE("ETCPAL_IPPROTO_IPV6 ETCPAL_IP_MULTICAST_LOOP not implemented on this platform.");
+#else
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_LOOP, &intval, sizeof(int)));
+#endif
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_setsockopt(send_sock, ETCPAL_IPPROTO_IPV6, ETCPAL_IP_MULTICAST_IF, &v6_netint,
+                                                    sizeof v6_netint));
 
   // Bind socket 1 to the wildcard address and a specific port.
   etcpal_ip_set_wildcard(kEtcPalIpTypeV6, &bind_addr.ip);
@@ -755,11 +771,15 @@ TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvmsg)
 {
   multicast_udp_ipv6_setup();
 
+#ifdef TESTING_LWIP
+  TEST_IGNORE_MESSAGE("ETCPAL_IPV6_PKTINFO not implemented on this platform.");
+#else
   int intval = 1;
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[0], ETCPAL_IPPROTO_IPV6, ETCPAL_IPV6_PKTINFO, &intval, sizeof(int)));
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(recv_socks[1], ETCPAL_IPPROTO_IPV6, ETCPAL_IPV6_PKTINFO, &intval, sizeof(int)));
+#endif
 
   EtcPalIpAddr pktinfo_expected_addr;
   ETCPAL_IP_SET_V6_ADDRESS(&pktinfo_expected_addr, kTestMcastAddrIPv6);
