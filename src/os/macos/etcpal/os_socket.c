@@ -172,7 +172,7 @@ void etcpal_socket_deinit(void)
 
 etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal_socket_t* conn_sock)
 {
-  if (!conn_sock)
+  if ((id == ETCPAL_SOCKET_INVALID) || !conn_sock)
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss      = {0};
@@ -194,7 +194,7 @@ etcpal_error_t etcpal_accept(etcpal_socket_t id, EtcPalSockAddr* address, etcpal
 
 etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
-  if (!address)
+  if ((id == ETCPAL_SOCKET_INVALID) || !address)
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss      = {0};
@@ -208,13 +208,16 @@ etcpal_error_t etcpal_bind(etcpal_socket_t id, const EtcPalSockAddr* address)
 
 etcpal_error_t etcpal_close(etcpal_socket_t id)
 {
+  if (id == ETCPAL_SOCKET_INVALID)
+    return kEtcPalErrInvalid;
+
   int res = close(id);
   return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 etcpal_error_t etcpal_connect(etcpal_socket_t id, const EtcPalSockAddr* address)
 {
-  if (!address)
+  if ((id == ETCPAL_SOCKET_INVALID) || !address)
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss      = {0};
@@ -236,7 +239,7 @@ etcpal_error_t etcpal_getpeername(etcpal_socket_t id, EtcPalSockAddr* address)
 
 etcpal_error_t etcpal_getsockname(etcpal_socket_t id, EtcPalSockAddr* address)
 {
-  if (!address)
+  if ((id == ETCPAL_SOCKET_INVALID) || !address)
     return kEtcPalErrInvalid;
 
   struct sockaddr_storage ss   = {0};
@@ -255,7 +258,7 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
 {
   int res = -1;
 
-  if (!option_value || !option_len)
+  if ((id == ETCPAL_SOCKET_INVALID) || !option_value || !option_len)
     return kEtcPalErrInvalid;
 
   // TODO this OS implementation could be simplified by use of socket option lookup arrays.
@@ -276,8 +279,11 @@ etcpal_error_t etcpal_getsockopt(etcpal_socket_t id, int level, int option_name,
 
 int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, size_t* option_len)
 {
-  if (!ETCPAL_ASSERT_VERIFY(option_value) || !ETCPAL_ASSERT_VERIFY(option_len))
+  if (!ETCPAL_ASSERT_VERIFY(id != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(option_value) ||
+      !ETCPAL_ASSERT_VERIFY(option_len))
+  {
     return -1;
+  }
 
   switch (option_name)
   {
@@ -303,13 +309,16 @@ int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, s
 
 etcpal_error_t etcpal_listen(etcpal_socket_t id, int backlog)
 {
+  if (id == ETCPAL_SOCKET_INVALID)
+    return kEtcPalErrInvalid;
+
   int res = listen(id, backlog);
   return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
 int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
 {
-  if (!buffer)
+  if ((id == ETCPAL_SOCKET_INVALID) || !buffer)
     return kEtcPalErrInvalid;
 
   int impl_flags = (flags & ETCPAL_MSG_PEEK) ? MSG_PEEK : 0;
@@ -319,7 +328,7 @@ int etcpal_recv(etcpal_socket_t id, void* buffer, size_t length, int flags)
 
 int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, EtcPalSockAddr* address)
 {
-  if (!buffer)
+  if ((id == ETCPAL_SOCKET_INVALID) || !buffer)
     return (int)kEtcPalErrInvalid;
 
   struct sockaddr_storage fromaddr   = {0};
@@ -341,7 +350,7 @@ int etcpal_recvfrom(etcpal_socket_t id, void* buffer, size_t length, int flags, 
 
 int etcpal_recvmsg(etcpal_socket_t id, EtcPalMsgHdr* msg, int flags)
 {
-  if (!msg)
+  if ((id == ETCPAL_SOCKET_INVALID) || !msg)
     return (int)kEtcPalErrInvalid;
 
   struct msghdr           impl_msg  = {0};
@@ -449,7 +458,7 @@ int etcpal_send(etcpal_socket_t id, const void* message, size_t length, int flag
 {
   ETCPAL_UNUSED_ARG(flags);
 
-  if (!message)
+  if ((id == ETCPAL_SOCKET_INVALID) || !message)
     return (int)kEtcPalErrInvalid;
 
   int res = (int)send(id, message, length, 0);
@@ -460,7 +469,7 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
 {
   ETCPAL_UNUSED_ARG(flags);
 
-  if (!dest_addr || !message)
+  if ((id == ETCPAL_SOCKET_INVALID) || !dest_addr || !message)
     return (int)kEtcPalErrInvalid;
 
   struct sockaddr_storage ss      = {0};
@@ -481,7 +490,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
 {
   int res = -1;
 
-  if (!option_value)
+  if ((id == ETCPAL_SOCKET_INVALID) || !option_value)
     return kEtcPalErrInvalid;
 
   // TODO this OS implementation could be simplified by use of socket option lookup arrays.
@@ -504,7 +513,7 @@ etcpal_error_t etcpal_setsockopt(etcpal_socket_t id,
 
 int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
-  if (!ETCPAL_ASSERT_VERIFY(option_value))
+  if (!ETCPAL_ASSERT_VERIFY(id != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(option_value))
     return -1;
 
   switch (option_name)
@@ -587,7 +596,7 @@ static int ip4_ifindex_to_addr(unsigned int ifindex, struct in_addr* addr)
 
 int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
-  if (!ETCPAL_ASSERT_VERIFY(option_value))
+  if (!ETCPAL_ASSERT_VERIFY(id != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(option_value))
     return -1;
 
   switch (option_name)
@@ -673,7 +682,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
 
 int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len)
 {
-  if (!ETCPAL_ASSERT_VERIFY(option_value))
+  if (!ETCPAL_ASSERT_VERIFY(id != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(option_value))
     return -1;
 
   switch (option_name)
@@ -733,7 +742,7 @@ void ms_to_timeval(int ms, struct timeval* tv)
 
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
 {
-  if (how >= 0 && how < ETCPAL_NUM_SHUT)
+  if ((id != ETCPAL_SOCKET_INVALID) && (how >= 0) && (how < ETCPAL_NUM_SHUT))
   {
     int res = shutdown(id, shutmap[how]);
     return (res == 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
@@ -769,6 +778,9 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
 
 etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
 {
+  if (id == ETCPAL_SOCKET_INVALID)
+    return kEtcPalErrInvalid;
+
   int val = fcntl(id, F_GETFL, 0);
   if (val >= 0)
   {
@@ -779,7 +791,7 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
 
 etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
 {
-  if (blocking)
+  if ((id != ETCPAL_SOCKET_INVALID) && blocking)
   {
     int val = fcntl(id, F_GETFL, 0);
     if (val >= 0)
@@ -995,7 +1007,7 @@ int events_etcpal_to_kqueue(etcpal_socket_t      socket,
                             void*                user_data,
                             struct kevent*       kevents)
 {
-  if (!ETCPAL_ASSERT_VERIFY(kevents))
+  if (!ETCPAL_ASSERT_VERIFY(id != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(kevents))
     return 0;
 
   int num_events = 0;
