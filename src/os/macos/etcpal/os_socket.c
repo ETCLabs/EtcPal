@@ -1004,47 +1004,54 @@ int events_etcpal_to_kqueue(etcpal_socket_t      socket,
   int num_events = 0;
 
   // Process EVFILT_READ changes
-  if ((new_events & ETCPAL_POLL_IN) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
+  if (ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
-    // Re-add the socket even if it was already added before - user data might be modified.
-    EV_SET(&kevents->events[num_events], socket, EVFILT_READ, EV_ADD, 0, 0, user_data);
-    ++num_events;
-  }
-  else if ((prev_events & ETCPAL_POLL_IN) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
-  {
-    EV_SET(&kevents->events[num_events], socket, EVFILT_READ, EV_DELETE, 0, 0, user_data);
-    ++num_events;
+    if (new_events & ETCPAL_POLL_IN)
+    {
+      // Re-add the socket even if it was already added before - user data might be modified.
+      EV_SET(&kevents->events[num_events], socket, EVFILT_READ, EV_ADD, 0, 0, user_data);
+      ++num_events;
+    }
+    else if (prev_events & ETCPAL_POLL_IN)
+    {
+      EV_SET(&kevents->events[num_events], socket, EVFILT_READ, EV_DELETE, 0, 0, user_data);
+      ++num_events;
+    }
   }
 
   // Process EVFILT_WRITE changes
-  if ((new_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT)) &&
-      ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
+  if (ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
-    // Re-add the socket even if it was already added before - user data might be modified.
-    EV_SET(&kevents->events[num_events], socket, EVFILT_WRITE, EV_ADD, 0, 0, user_data);
-    ++num_events;
-  }
-  else if ((prev_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT)) &&
-           ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
-  {
-    EV_SET(&kevents->events[num_events], socket, EVFILT_WRITE, EV_DELETE, 0, 0, user_data);
-    ++num_events;
+    if (new_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT))
+    {
+      // Re-add the socket even if it was already added before - user data might be modified.
+      EV_SET(&kevents->events[num_events], socket, EVFILT_WRITE, EV_ADD, 0, 0, user_data);
+      ++num_events;
+    }
+    else if (prev_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT))
+    {
+      EV_SET(&kevents->events[num_events], socket, EVFILT_WRITE, EV_DELETE, 0, 0, user_data);
+      ++num_events;
+    }
   }
 
   // EVFILT_EXCEPT is not available on older versions of macOS. It was added somewhere between
   // 10.11 and 10.14.
 #ifdef EVFILT_EXCEPT
   // Process EVFILT_EXCEPT changes
-  if ((new_events & ETCPAL_POLL_OOB) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
+  if (ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
-    // Re-add the socket even if it was already added before - user data might be modified.
-    EV_SET(&kevents->events[num_events], socket, EVFILT_EXCEPT, EV_ADD, NOTE_OOB, 0, user_data);
-    ++num_events;
-  }
-  else if ((prev_events & ETCPAL_POLL_OOB) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
-  {
-    EV_SET(&kevents->events[num_events], socket, EVFILT_EXCEPT, EV_DELETE, 0, 0, user_data);
-    ++num_events;
+    if (new_events & ETCPAL_POLL_OOB)
+    {
+      // Re-add the socket even if it was already added before - user data might be modified.
+      EV_SET(&kevents->events[num_events], socket, EVFILT_EXCEPT, EV_ADD, NOTE_OOB, 0, user_data);
+      ++num_events;
+    }
+    else if (prev_events & ETCPAL_POLL_OOB)
+    {
+      EV_SET(&kevents->events[num_events], socket, EVFILT_EXCEPT, EV_DELETE, 0, 0, user_data);
+      ++num_events;
+    }
   }
 #endif
 
