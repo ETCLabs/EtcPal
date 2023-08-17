@@ -1371,13 +1371,18 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
 
     return true;
   }
+
   return false;
 }
 
 void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
 {
   if (ai)
+  {
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
+    ai->pd[0] = NULL;
+    ai->pd[1] = NULL;
+  }
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

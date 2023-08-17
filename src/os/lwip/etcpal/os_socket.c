@@ -1153,6 +1153,7 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
     ai->ai_flags           = 0;
     if (!sockaddr_os_to_etcpal(pf_ai->ai_addr, &ai->ai_addr))
       return false;
+
     /* Can't use reverse maps, because we have no guarantee of the numeric
      * values of the os constants. Ugh. */
     if (pf_ai->ai_family == AF_INET)
@@ -1161,24 +1162,28 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
       ai->ai_family = ETCPAL_AF_INET6;
     else
       ai->ai_family = ETCPAL_AF_UNSPEC;
+
     if (pf_ai->ai_socktype == SOCK_DGRAM)
       ai->ai_socktype = ETCPAL_SOCK_DGRAM;
     else if (pf_ai->ai_socktype == SOCK_STREAM)
       ai->ai_socktype = ETCPAL_SOCK_STREAM;
     else
       ai->ai_socktype = 0;
+
     if (pf_ai->ai_protocol == IPPROTO_UDP)
       ai->ai_protocol = ETCPAL_IPPROTO_UDP;
     else if (pf_ai->ai_protocol == IPPROTO_TCP)
       ai->ai_protocol = ETCPAL_IPPROTO_TCP;
     else
       ai->ai_protocol = 0;
+
     ai->ai_canonname = pf_ai->ai_canonname;
     ai->pd[1]        = pf_ai->ai_next;
 
     return true;
   }
 #endif  // LWIP_DNS
+
   return false;
 }
 

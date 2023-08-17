@@ -63,6 +63,11 @@ typedef struct EtcPalPollSocket
   etcpal_poll_events_t events;
 } EtcPalPollSocket;
 
+typedef struct EtcPalOsEvents
+{
+  struct kevent events[ETCPAL_SOCKET_MAX_KEVENTS];
+} EtcPalOsEvents;
+
 /**************************** Private variables ******************************/
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
@@ -141,7 +146,7 @@ static int                  events_etcpal_to_kqueue(etcpal_socket_t      socket,
                                                     etcpal_poll_events_t prev_events,
                                                     etcpal_poll_events_t new_events,
                                                     void*                user_data,
-                                                    struct kevent*       events);
+                                                    EtcPalOsEvents*      events);
 static etcpal_poll_events_t events_kqueue_to_etcpal(const struct kevent* kevent, const EtcPalPollSocket* sock_desc);
 
 static int           poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const void* value_b);
@@ -762,17 +767,14 @@ etcpal_error_t etcpal_socket(unsigned int family, unsigned int type, etcpal_sock
         *id = sock;
         return kEtcPalErrOk;
       }
-      else
-      {
-        *id = ETCPAL_SOCKET_INVALID;
-        return errno_os_to_etcpal(errno);
-      }
-    }
-    else
-    {
+
       *id = ETCPAL_SOCKET_INVALID;
+      return errno_os_to_etcpal(errno);
     }
+
+    *id = ETCPAL_SOCKET_INVALID;
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -786,6 +788,7 @@ etcpal_error_t etcpal_setblocking(etcpal_socket_t id, bool blocking)
   {
     val = fcntl(id, F_SETFL, (blocking ? (val & (int)(~O_NONBLOCK)) : (val | O_NONBLOCK)));
   }
+
   return (val >= 0 ? kEtcPalErrOk : errno_os_to_etcpal(errno));
 }
 
@@ -799,8 +802,10 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking)
       *blocking = ((val & O_NONBLOCK) == 0);
       return kEtcPalErrOk;
     }
+
     return errno_os_to_etcpal(errno);
   }
+
   return kEtcPalErrInvalid;
 }
 
@@ -816,10 +821,8 @@ etcpal_error_t etcpal_poll_context_init(EtcPalPollContext* context)
     context->valid = true;
     return kEtcPalErrOk;
   }
-  else
-  {
-    return errno_os_to_etcpal(errno);
-  }
+
+  return errno_os_to_etcpal(errno);
 }
 
 void etcpal_poll_context_deinit(EtcPalPollContext* context)
@@ -847,36 +850,26 @@ etcpal_error_t etcpal_poll_add_socket(EtcPalPollContext*   context,
       etcpal_error_t insert_res = etcpal_rbtree_insert(&context->sockets, sock_desc);
       if (insert_res == kEtcPalErrOk)
       {
-        struct kevent os_events[ETCPAL_SOCKET_MAX_KEVENTS] = {{0}};
-        int           num_events = events_etcpal_to_kqueue(socket, 0, events, user_data, os_events);
+        EtcPalOsEvents os_events  = {{{0}}};
+        int            num_events = events_etcpal_to_kqueue(socket, 0, events, user_data, &os_events);
 
-        int res = kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
+        int res = kevent(context->kq_fd, os_events.events, num_events, NULL, 0, NULL);
         if (res == 0)
-        {
           return kEtcPalErrOk;
-        }
-        else
-        {
-          // Our node dealloc function also deallocates sock_desc, so no need to free it here.
-          etcpal_rbtree_remove(&context->sockets, sock_desc);
-          return errno_os_to_etcpal(errno);
-        }
+
+        // Our node dealloc function also deallocates sock_desc, so no need to free it here.
+        etcpal_rbtree_remove(&context->sockets, sock_desc);
+        return errno_os_to_etcpal(errno);
       }
-      else
-      {
-        free(sock_desc);
-        return insert_res;
-      }
+
+      free(sock_desc);
+      return insert_res;
     }
-    else
-    {
-      return kEtcPalErrNoMem;
-    }
+
+    return kEtcPalErrNoMem;
   }
-  else
-  {
-    return kEtcPalErrInvalid;
-  }
+
+  return kEtcPalErrInvalid;
 }
 
 etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
@@ -889,29 +882,23 @@ etcpal_error_t etcpal_poll_modify_socket(EtcPalPollContext*   context,
     EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
     if (sock_desc)
     {
-      struct kevent os_events[ETCPAL_SOCKET_MAX_KEVENTS] = {{0}};
-      int num_events = events_etcpal_to_kqueue(socket, sock_desc->events, new_events, new_user_data, os_events);
+      EtcPalOsEvents os_events = {{{0}}};
+      int num_events = events_etcpal_to_kqueue(socket, sock_desc->events, new_events, new_user_data, &os_events);
 
-      int res = kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
+      int res = kevent(context->kq_fd, os_events.events, num_events, NULL, 0, NULL);
       if (res == 0)
       {
         sock_desc->events = new_events;
         return kEtcPalErrOk;
       }
-      else
-      {
-        return errno_os_to_etcpal(errno);
-      }
+
+      return errno_os_to_etcpal(errno);
     }
-    else
-    {
-      return kEtcPalErrNotFound;
-    }
+
+    return kEtcPalErrNotFound;
   }
-  else
-  {
-    return kEtcPalErrInvalid;
-  }
+
+  return kEtcPalErrInvalid;
 }
 
 void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socket)
@@ -921,10 +908,10 @@ void etcpal_poll_remove_socket(EtcPalPollContext* context, etcpal_socket_t socke
     EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &socket);
     if (sock_desc)
     {
-      struct kevent os_events[ETCPAL_SOCKET_MAX_KEVENTS] = {{0}};
-      int           num_events = events_etcpal_to_kqueue(socket, sock_desc->events, 0, NULL, os_events);
+      EtcPalOsEvents os_events  = {{{0}}};
+      int            num_events = events_etcpal_to_kqueue(socket, sock_desc->events, 0, NULL, &os_events);
 
-      kevent(context->kq_fd, os_events, num_events, NULL, 0, NULL);
+      kevent(context->kq_fd, os_events.events, num_events, NULL, 0, NULL);
       etcpal_rbtree_remove(&context->sockets, sock_desc);
     }
   }
@@ -955,7 +942,7 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
       {
         etcpal_socket_t   sock      = (etcpal_socket_t)kevt.ident;
         EtcPalPollSocket* sock_desc = (EtcPalPollSocket*)etcpal_rbtree_find(&context->sockets, &sock);
-        if (sock_desc)
+        if (ETCPAL_ASSERT_VERIFY(sock_desc))
         {
           event->socket    = sock_desc->sock;
           event->events    = events_kqueue_to_etcpal(&kevt, sock_desc);
@@ -976,36 +963,28 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
 
           return kEtcPalErrOk;
         }
-        else
-        {
-          return kEtcPalErrSys;
-        }
+
+        return kEtcPalErrSys;
       }
       else if (wait_res == 0)
       {
         return kEtcPalErrTimedOut;
       }
-      else
-      {
-        return errno_os_to_etcpal(errno);
-      }
+
+      return errno_os_to_etcpal(errno);
     }
-    else
-    {
-      return kEtcPalErrNoSockets;
-    }
+
+    return kEtcPalErrNoSockets;
   }
-  else
-  {
-    return kEtcPalErrInvalid;
-  }
+
+  return kEtcPalErrInvalid;
 }
 
 int events_etcpal_to_kqueue(etcpal_socket_t      socket,
                             etcpal_poll_events_t prev_events,
                             etcpal_poll_events_t new_events,
                             void*                user_data,
-                            struct kevent*       kevents)
+                            EtcPalOsEvents*      kevents)
 {
   if (!ETCPAL_ASSERT_VERIFY(socket != ETCPAL_SOCKET_INVALID) || !ETCPAL_ASSERT_VERIFY(kevents))
     return 0;
@@ -1013,28 +992,30 @@ int events_etcpal_to_kqueue(etcpal_socket_t      socket,
   int num_events = 0;
 
   // Process EVFILT_READ changes
-  if (new_events & ETCPAL_POLL_IN)
+  if ((new_events & ETCPAL_POLL_IN) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
     // Re-add the socket even if it was already added before - user data might be modified.
-    EV_SET(&kevents[num_events], socket, EVFILT_READ, EV_ADD, 0, 0, user_data);
+    EV_SET(&kevents->events[num_events], socket, EVFILT_READ, EV_ADD, 0, 0, user_data);
     ++num_events;
   }
-  else if (prev_events & ETCPAL_POLL_IN)
+  else if ((prev_events & ETCPAL_POLL_IN) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
-    EV_SET(&kevents[num_events], socket, EVFILT_READ, EV_DELETE, 0, 0, user_data);
+    EV_SET(&kevents->events[num_events], socket, EVFILT_READ, EV_DELETE, 0, 0, user_data);
     ++num_events;
   }
 
   // Process EVFILT_WRITE changes
-  if (new_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT))
+  if ((new_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT)) &&
+      ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
     // Re-add the socket even if it was already added before - user data might be modified.
-    EV_SET(&kevents[num_events], socket, EVFILT_WRITE, EV_ADD, 0, 0, user_data);
+    EV_SET(&kevents->events[num_events], socket, EVFILT_WRITE, EV_ADD, 0, 0, user_data);
     ++num_events;
   }
-  else if (prev_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT))
+  else if ((prev_events & (ETCPAL_POLL_OUT | ETCPAL_POLL_CONNECT)) &&
+           ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
-    EV_SET(&kevents[num_events], socket, EVFILT_WRITE, EV_DELETE, 0, 0, user_data);
+    EV_SET(&kevents->events[num_events], socket, EVFILT_WRITE, EV_DELETE, 0, 0, user_data);
     ++num_events;
   }
 
@@ -1042,15 +1023,15 @@ int events_etcpal_to_kqueue(etcpal_socket_t      socket,
   // 10.11 and 10.14.
 #ifdef EVFILT_EXCEPT
   // Process EVFILT_EXCEPT changes
-  if (new_events & ETCPAL_POLL_OOB)
+  if ((new_events & ETCPAL_POLL_OOB) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
     // Re-add the socket even if it was already added before - user data might be modified.
-    EV_SET(&kevents[num_events], socket, EVFILT_EXCEPT, EV_ADD, NOTE_OOB, 0, user_data);
+    EV_SET(&kevents->events[num_events], socket, EVFILT_EXCEPT, EV_ADD, NOTE_OOB, 0, user_data);
     ++num_events;
   }
-  else if (prev_events & ETCPAL_POLL_OOB)
+  else if ((prev_events & ETCPAL_POLL_OOB) && ETCPAL_ASSERT_VERIFY(num_events < ETCPAL_SOCKET_MAX_KEVENTS))
   {
-    EV_SET(&kevents[num_events], socket, EVFILT_EXCEPT, EV_DELETE, 0, 0, user_data);
+    EV_SET(&kevents->events[num_events], socket, EVFILT_EXCEPT, EV_DELETE, 0, 0, user_data);
     ++num_events;
   }
 #endif
@@ -1116,7 +1097,9 @@ void poll_socket_free(EtcPalRbNode* node)
   if (!ETCPAL_ASSERT_VERIFY(node))
     return;
 
-  free(node->value);
+  if (ETCPAL_ASSERT_VERIFY(node->value))
+    free(node->value);
+
   free(node);
 }
 
@@ -1223,9 +1206,9 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
                                   const EtcPalAddrinfo* hints,
                                   EtcPalAddrinfo*       result)
 {
-  int              res;
-  struct addrinfo* pf_res;
-  struct addrinfo  pf_hints;
+  int              res      = 0;
+  struct addrinfo* pf_res   = NULL;
+  struct addrinfo  pf_hints = {0};
 
   if ((!hostname && !service) || !result)
     return kEtcPalErrInvalid;
@@ -1237,6 +1220,10 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
     pf_hints.ai_family   = (hints->ai_family < ETCPAL_NUM_AF) ? aifammap[hints->ai_family] : AF_UNSPEC;
     pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? stmap[hints->ai_socktype] : 0;
     pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? aiprotmap[hints->ai_protocol] : 0;
+  }
+  else
+  {
+    pf_hints.ai_family = AF_UNSPEC;
   }
 
   res = getaddrinfo(hostname, service, hints ? &pf_hints : NULL, &pf_res);
@@ -1267,30 +1254,38 @@ bool etcpal_nextaddr(EtcPalAddrinfo* ai)
       ai->ai_family = ETCPAL_AF_INET6;
     else
       ai->ai_family = ETCPAL_AF_UNSPEC;
+
     if (pf_ai->ai_socktype == SOCK_DGRAM)
       ai->ai_socktype = ETCPAL_SOCK_DGRAM;
     else if (pf_ai->ai_socktype == SOCK_STREAM)
       ai->ai_socktype = ETCPAL_SOCK_STREAM;
     else
       ai->ai_socktype = 0;
+
     if (pf_ai->ai_protocol == IPPROTO_UDP)
       ai->ai_protocol = ETCPAL_IPPROTO_UDP;
     else if (pf_ai->ai_protocol == IPPROTO_TCP)
       ai->ai_protocol = ETCPAL_IPPROTO_TCP;
     else
       ai->ai_protocol = 0;
+
     ai->ai_canonname = pf_ai->ai_canonname;
     ai->pd[1]        = pf_ai->ai_next;
 
     return true;
   }
+
   return false;
 }
 
 void etcpal_freeaddrinfo(EtcPalAddrinfo* ai)
 {
   if (ai)
+  {
     freeaddrinfo((struct addrinfo*)ai->pd[0]);
+    ai->pd[0] = NULL;
+    ai->pd[1] = NULL;
+  }
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
