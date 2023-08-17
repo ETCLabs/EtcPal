@@ -514,7 +514,7 @@ int setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_va
     default:
       break;
   }
-  
+
   // If we got here, something was invalid. Set errno accordingly.
   errno = EINVAL;
   return -1;
