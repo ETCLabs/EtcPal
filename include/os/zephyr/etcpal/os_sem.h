@@ -20,14 +20,16 @@
 #ifndef ETCPAL_OS_SEM_H_
 #define ETCPAL_OS_SEM_H_
 
-#include <stdbool.h>
 #include "etcpal/common.h"
+
+#include <stdbool.h>
+#include <zephyr/kernel.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef int etcpal_sem_t;
+typedef struct k_sem etcpal_sem_t;
 
 #define ETCPAL_SEM_HAS_TIMED_WAIT    1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 1
