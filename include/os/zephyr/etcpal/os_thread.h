@@ -24,6 +24,7 @@
 #include "etcpal/sem.h"
 #include "etcpal/thread.h"
 #include "etcpal/os_common.h"
+#include "etcpal/error.h"
 #include <zephyr/kernel.h>
 
 
@@ -75,18 +76,18 @@ typedef struct {
   scheduling_mode_t sched_mode;
 } EtcPalThreadParamsZephyr;
 
+//static  etcpal_error_t zephyr_sleep_ms(int sleep_ms) {
+//  if (sleep_ms == ETCPAL_WAIT_FOREVER) {
+//    k_sleep(K_FOREVER);
+//  } else {
+//    k_msleep(sleep_ms);
+//    }
+//    return kEtcPalErrOk;
+//  }
 
-static inline void zephyr_sleep_ms(int sleep_ms) {
-  if (sleep_ms == ETCPAL_WAIT_FOREVER) {
-    k_sleep(K_FOREVER);
-  } else {
-    k_msleep(sleep_ms);
-    }
-  }
-
-#define etcpal_thread_sleep(sleep_ms) zephyr_sleep_ms(sleep_ms)
-#define etcpal_thread_sleep_us(sleep_us) k_usleep(sleep_us)
-#define etcpal_thread_get_current_os_handle xTaskGetCurrentTaskHandle
+//#define etcpal_thread_sleep(sleep_ms) zephyr_sleep_ms(sleep_ms)
+//#define etcpal_thread_sleep_us(sleep_us) k_usleep(sleep_us)
+//#define etcpal_thread_get_current_os_handle xTaskGetCurrentTaskHandle
 
 #ifdef __cplusplus
 }
