@@ -70,7 +70,7 @@ typedef struct EtcPalPollSocket
     --(setptr)->count;                \
   }
 
-#define ETCPAL_FD_ISSET(sock, setptr) ETCPAL_ASSERT_VERIFY(setptr) ? FD_ISSET(sock, &(setptr)->set) : false
+#define ETCPAL_FD_ISSET(sock, setptr) (ETCPAL_ASSERT_VERIFY(setptr) ? FD_ISSET(sock, &(setptr)->set) : false)
 
 /**************************** Private variables ******************************/
 
