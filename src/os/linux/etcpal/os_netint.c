@@ -183,8 +183,6 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     return kEtcPalErrNoMem;
   }
 
-  etcpal_error_t res = kEtcPalErrOk;
-
   // Pass 2: Fill in all the info about each address
   size_t current_etcpal_index = 0;
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
