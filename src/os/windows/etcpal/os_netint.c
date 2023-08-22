@@ -59,14 +59,17 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
     while (pip)
     {
-      switch (pip->Address.lpSockaddr->sa_family)
+      if (pip->Address.lpSockaddr)
       {
-        case AF_INET:
-        case AF_INET6:
-          ++cache->num_netints;
-          break;
-        default:
-          break;
+        switch (pip->Address.lpSockaddr->sa_family)
+        {
+          case AF_INET:
+          case AF_INET6:
+            ++cache->num_netints;
+            break;
+          default:
+            break;
+        }
       }
       pip = pip->Next;
     }
@@ -152,31 +155,30 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 
 IP_ADAPTER_ADDRESSES* get_windows_adapters()
 {
-  ULONG buflen = 0;
-  ULONG flags  = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
+  ULONG flags = GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER;
 
   // Preallocating a buffer specifically this size is expressly recommended by the Microsoft usage
   // page.
-  uint8_t* buffer = malloc(15000);
-  if (!buffer)
-    return NULL;
-
-  DWORD result = GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen);
-  if (result == ERROR_BUFFER_OVERFLOW)
+  ULONG    buflen = 15000;
+  uint8_t* buffer = NULL;
+  for (int i = 0; i < 3; ++i)  // Maximum of 3 attempts
   {
-    free(buffer);
     buffer = malloc(buflen);
     if (!buffer)
-      return NULL;
+      break;
 
-    result = GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen);
+    DWORD result = GetAdaptersAddresses(AF_UNSPEC, flags, NULL, (IP_ADAPTER_ADDRESSES*)buffer, &buflen);
+    if (result != NO_ERROR)
+    {
+      free(buffer);
+      buffer = NULL;
+    }
+
+    if (result != ERROR_BUFFER_OVERFLOW)
+      break;
   }
 
-  if (result == NO_ERROR)
-    return (IP_ADAPTER_ADDRESSES*)buffer;
-
-  free(buffer);
-  return NULL;
+  return (IP_ADAPTER_ADDRESSES*)buffer;
 }
 
 void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info)

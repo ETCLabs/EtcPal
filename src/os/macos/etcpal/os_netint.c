@@ -392,28 +392,37 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   mib[4] = NET_RT_DUMP;  // Dump routing table entries
   mib[5] = 0;            // Reserved for this command, always 0
 
-  // First pass just determines the size of buffer that is needed.
-  int sysctl_res = sysctl(mib, 6, NULL, buf_len, NULL, 0);
-  if ((sysctl_res != 0 && errno != ENOMEM) || *buf_len == 0)
-    return errno_os_to_etcpal(errno);
+  etcpal_error_t res = kEtcPalErrOk;
 
-  // Allocate the buffer
-  *buf = (uint8_t*)malloc(*buf_len);
-  if (!(*buf))
-    return kEtcPalErrNoMem;
-
-  size_t malloc_size = *buf_len;
-
-  // Second pass to actually get the info
-  sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
-  if (sysctl_res != 0 || *buf_len == 0)
+  // Start by allocating an estimated size.
+  *buf_len = 15000;
+  for (int i = 0; i < 3; ++i)  // Maximum of 3 attempts
   {
-    free(*buf);
-    *buf = NULL;
-    return errno_os_to_etcpal(errno);
+    *buf = (uint8_t*)malloc(*buf_len);
+    if (!(*buf))
+    {
+      res = kEtcPalErrNoMem;
+      break;
+    }
+
+    int sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
+    if ((sysctl_res != 0) || (*buf_len == 0))
+    {
+      free(*buf);
+      *buf = NULL;
+      res  = errno_os_to_etcpal(errno);
+    }
+    else
+    {
+      res = kEtcPalErrOk;
+      ETCPAL_ASSERT_VERIFY(errno != ENOMEM);
+    }
+
+    if (errno != ENOMEM)
+      break;
   }
 
-  return kEtcPalErrOk;
+  return res;
 }
 
 /* These two macros were taken from the Unix Network Programming book (sect. 18.3) but they required some modification,
