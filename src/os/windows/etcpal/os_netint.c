@@ -156,7 +156,8 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
   // Windows implementation uses the cached netint list and interprets an index being present as
   // that interface being up.
 
-  for (const EtcPalNetintInfo* netint = cache->netints; netint < cache->netints + cache->num_netints; ++netint)
+  for (const EtcPalNetintInfo* netint = cache->netints; netint && (netint < (cache->netints + cache->num_netints));
+       ++netint)
   {
     if (netint->index == index)
       return true;
@@ -195,7 +196,7 @@ IP_ADAPTER_ADDRESSES* get_windows_adapters()
 
 void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info)
 {
-  if (!ETCPAL_ASSERT_VERIFY(pip) || !ETCPAL_ASSERT_VERIFY(info))
+  if (!ETCPAL_ASSERT_VERIFY(pip) || !ETCPAL_ASSERT_VERIFY(pip->Address.lpSockaddr) || !ETCPAL_ASSERT_VERIFY(info))
     return;
 
   const struct sockaddr_in* sin = (const struct sockaddr_in*)pip->Address.lpSockaddr;
@@ -206,7 +207,7 @@ void copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* inf
 
 void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info)
 {
-  if (!ETCPAL_ASSERT_VERIFY(pip) || !ETCPAL_ASSERT_VERIFY(info))
+  if (!ETCPAL_ASSERT_VERIFY(pip) || !ETCPAL_ASSERT_VERIFY(pip->Address.lpSockaddr) || !ETCPAL_ASSERT_VERIFY(info))
     return;
 
   const struct sockaddr_in6* sin6 = (const struct sockaddr_in6*)pip->Address.lpSockaddr;

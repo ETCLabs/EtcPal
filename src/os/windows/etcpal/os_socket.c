@@ -49,19 +49,28 @@ typedef struct EtcPalPollSocket
 
 /***************************** Private macros ********************************/
 
-#define ETCPAL_FD_ZERO(setptr) \
-  FD_ZERO(&(setptr)->set);     \
-  (setptr)->count = 0
+#define ETCPAL_FD_ZERO(setptr)      \
+  if (ETCPAL_ASSERT_VERIFY(setptr)) \
+  {                                 \
+    FD_ZERO(&(setptr)->set);        \
+    (setptr)->count = 0;            \
+  }
 
 #define ETCPAL_FD_SET(sock, setptr) \
-  FD_SET(sock, &(setptr)->set);     \
-  (setptr)->count++
+  if (ETCPAL_ASSERT_VERIFY(setptr)) \
+  {                                 \
+    FD_SET(sock, &(setptr)->set);   \
+    ++(setptr)->count;              \
+  }
 
 #define ETCPAL_FD_CLEAR(sock, setptr) \
-  FD_CLR(sock, &(setptr)->set);       \
-  (setptr)->count--
+  if (ETCPAL_ASSERT_VERIFY(setptr))   \
+  {                                   \
+    FD_CLR(sock, &(setptr)->set);     \
+    --(setptr)->count;                \
+  }
 
-#define ETCPAL_FD_ISSET(sock, setptr) FD_ISSET(sock, &(setptr)->set)
+#define ETCPAL_FD_ISSET(sock, setptr) ETCPAL_ASSERT_VERIFY(setptr) ? FD_ISSET(sock, &(setptr)->set) : false
 
 /**************************** Private variables ******************************/
 
@@ -166,7 +175,7 @@ static bool  get_first_compatible_cmsg(LPWSAMSG msg, LPWSACMSGHDR start, EtcPalC
 
 etcpal_error_t etcpal_socket_init(void)
 {
-  WSADATA wsdata;
+  WSADATA wsdata      = {0};
   WORD    wsver       = MAKEWORD(2, 2);
   int     startup_res = WSAStartup(wsver, &wsdata);
   if (startup_res != 0)
@@ -465,28 +474,30 @@ bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
 
     if (impl_data)
     {
-      if ((cmsg->level == ETCPAL_IPPROTO_IP) && (cmsg->type == ETCPAL_IP_PKTINFO))
+      if ((cmsg->level == ETCPAL_IPPROTO_IP) && (cmsg->type == ETCPAL_IP_PKTINFO) &&
+          ETCPAL_ASSERT_VERIFY(cmsg->len >= sizeof(IN_PKTINFO)))
       {
-        IN_PKTINFO impl_pktinfo;
+        IN_PKTINFO impl_pktinfo = {0};
         memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
 
-        SOCKADDR_IN impl_addr;
-        impl_addr.sin_family = AF_INET;
-        impl_addr.sin_addr   = impl_pktinfo.ipi_addr;
+        SOCKADDR_IN impl_addr = {0};
+        impl_addr.sin_family  = AF_INET;
+        impl_addr.sin_addr    = impl_pktinfo.ipi_addr;
 
         ip_os_to_etcpal((SOCKADDR*)&impl_addr, &pktinfo->addr);
         pktinfo->ifindex = impl_pktinfo.ipi_ifindex;
 
         result = true;
       }
-      else if ((cmsg->level == ETCPAL_IPPROTO_IPV6) && (cmsg->type == ETCPAL_IPV6_PKTINFO))
+      else if ((cmsg->level == ETCPAL_IPPROTO_IPV6) && (cmsg->type == ETCPAL_IPV6_PKTINFO) &&
+               ETCPAL_ASSERT_VERIFY(cmsg->len >= sizeof(IN6_PKTINFO)))
       {
-        IN6_PKTINFO impl_pktinfo;
+        IN6_PKTINFO impl_pktinfo = {0};
         memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
 
-        SOCKADDR_IN6 impl_addr;
-        impl_addr.sin6_family = AF_INET6;
-        impl_addr.sin6_addr   = impl_pktinfo.ipi6_addr;
+        SOCKADDR_IN6 impl_addr = {0};
+        impl_addr.sin6_family  = AF_INET6;
+        impl_addr.sin6_addr    = impl_pktinfo.ipi6_addr;
 
         ip_os_to_etcpal((SOCKADDR*)&impl_addr, &pktinfo->addr);
         pktinfo->ifindex = impl_pktinfo.ipi6_ifindex;
@@ -517,11 +528,12 @@ int etcpal_sendto(etcpal_socket_t id, const void* message, size_t length, int fl
   if ((id == ETCPAL_SOCKET_INVALID) || !dest_addr || !message)
     return (int)kEtcPalErrInvalid;
 
-  int                     res     = -1;
   struct sockaddr_storage ss      = {0};
   size_t                  ss_size = sockaddr_etcpal_to_os(dest_addr, (etcpal_os_sockaddr_t*)&ss);
-  if (ss_size > 0)
-    res = sendto(id, message, (int)length, 0, (struct sockaddr*)&ss, (int)ss_size);
+  if (ss_size == 0)
+    return (int)kEtcPalErrSys;
+
+  int res = sendto(id, message, (int)length, 0, (struct sockaddr*)&ss, (int)ss_size);
 
   return (res >= 0 ? res : (int)err_winsock_to_etcpal(WSAGetLastError()));
 }
@@ -1041,11 +1053,11 @@ etcpal_error_t etcpal_poll_wait(EtcPalPollContext* context, EtcPalPollEvent* eve
     return kEtcPalErrInvalid;
 
   // Get the sets of sockets that we will select on.
-  EtcPalPollFdSet readfds;
+  EtcPalPollFdSet readfds = {0};
   ETCPAL_FD_ZERO(&readfds);
-  EtcPalPollFdSet writefds;
+  EtcPalPollFdSet writefds = {0};
   ETCPAL_FD_ZERO(&writefds);
-  EtcPalPollFdSet exceptfds;
+  EtcPalPollFdSet exceptfds = {0};
   ETCPAL_FD_ZERO(&exceptfds);
   if (etcpal_mutex_lock(&context->lock))
   {
@@ -1098,8 +1110,8 @@ etcpal_error_t handle_select_result(EtcPalPollContext*     context,
                                     const EtcPalPollFdSet* writefds,
                                     const EtcPalPollFdSet* exceptfds)
 {
-  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(event) || !ETCPAL_ASSERT_VERIFY(readfds) ||
-      !ETCPAL_ASSERT_VERIFY(writefds) || !ETCPAL_ASSERT_VERIFY(exceptfds))
+  if (!ETCPAL_ASSERT_VERIFY(context) || !ETCPAL_ASSERT_VERIFY(context->valid) || !ETCPAL_ASSERT_VERIFY(event) ||
+      !ETCPAL_ASSERT_VERIFY(readfds) || !ETCPAL_ASSERT_VERIFY(writefds) || !ETCPAL_ASSERT_VERIFY(exceptfds))
   {
     return kEtcPalErrSys;
   }
@@ -1331,7 +1343,7 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
   if ((!hostname && !service) || !result)
     return kEtcPalErrInvalid;
 
-  struct addrinfo pf_hints = {0};
+  struct addrinfo pf_hints;
   memset(&pf_hints, 0, sizeof pf_hints);
   if (hints)
   {
@@ -1339,6 +1351,10 @@ etcpal_error_t etcpal_getaddrinfo(const char*           hostname,
     pf_hints.ai_family   = (hints->ai_family < ETCPAL_NUM_AF) ? kAiFamMap[hints->ai_family] : AF_UNSPEC;
     pf_hints.ai_socktype = (hints->ai_socktype < ETCPAL_NUM_TYPE) ? kStMap[hints->ai_socktype] : 0;
     pf_hints.ai_protocol = (hints->ai_protocol < ETCPAL_NUM_IPPROTO) ? kAiProtMap[hints->ai_protocol] : 0;
+  }
+  else
+  {
+    pf_hints.ai_family = AF_UNSPEC;
   }
 
   struct addrinfo* pf_res = NULL;
