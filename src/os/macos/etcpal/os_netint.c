@@ -172,6 +172,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     return kEtcPalErrNoMem;
   }
 
+  etcpal_error_t res = kEtcPalErrOk;
+
   // Pass 2: Fill in all the info about each address
   size_t              current_etcpal_index = 0;
   char*               link_name            = NULL;
@@ -180,7 +182,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
     if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index < cache->num_netints))
-      return kEtcPalErrSys;
+    {
+      res = kEtcPalErrSys;
+      break;
+    }
 
     // An AF_LINK entry appears before one or more internet address entries for each interface.
     // Save the current AF_LINK entry for later use. If the entry is an IPv4 or IPv6 address, we
@@ -255,8 +260,24 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     current_etcpal_index++;
   }
 
+  if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index == cache->num_netints))
+    res = kEtcPalErrSys;
+
+  if (res != kEtcPalErrOk)
+  {
+    if (cache->netints)
+    {
+      free(cache->netints);
+      cache->netints = NULL;
+    }
+
+    cache->num_netints  = 0;
+    cache->def.v4_valid = false;
+    cache->def.v6_valid = false;
+  }
+
   freeifaddrs(os_addrs);
-  return kEtcPalErrOk;
+  return res;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)

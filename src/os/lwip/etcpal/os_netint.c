@@ -81,6 +81,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   num_static_netints = 0;
 
+  etcpal_error_t res = kEtcPalErrOk;
   NETIF_FOREACH(lwip_netif)
   {
 #if LWIP_IPV4
@@ -92,7 +93,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 #if ETCPAL_EMBOS_USE_MALLOC
     if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+    {
+      res = kEtcPalErrSys;
       break;
+    }
 #else
     if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
       break;
@@ -112,7 +116,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
       {
 #if ETCPAL_EMBOS_USE_MALLOC
         if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+        {
+          res = kEtcPalErrSys;
           break;
+        }
 #else
         if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
           break;
@@ -125,9 +132,29 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   UNLOCK_TCPIP_CORE();
 
-  cache->netints     = static_netints;
-  cache->num_netints = num_static_netints;
-  return kEtcPalErrOk;
+#if ETCPAL_EMBOS_USE_MALLOC
+  if (!ETCPAL_ASSERT_VERIFY(num_static_netints == num_lwip_netints))
+    res = kEtcPalErrSys;
+#endif
+
+  if (res == kEtcPalErrOk)
+  {
+    cache->netints     = static_netints;
+    cache->num_netints = num_static_netints;
+  }
+  else
+  {
+#if ETCPAL_EMBOS_USE_MALLOC
+    free(static_netints);
+    static_netints = NULL;
+#endif
+    num_static_netints = 0;
+
+    cache->def.v4_valid = false;
+    cache->def.v6_valid = false;
+  }
+
+  return res;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)

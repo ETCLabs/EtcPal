@@ -183,12 +183,20 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     return kEtcPalErrNoMem;
   }
 
+  etcpal_error_t res = kEtcPalErrOk;
+
   // Pass 2: Fill in all the info about each address
   size_t current_etcpal_index = 0;
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
     if (should_skip_ifaddr(ifaddr))
       continue;
+
+    if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index < cache->num_netints))
+    {
+      res = kEtcPalErrSys;
+      break;
+    }
 
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
@@ -241,9 +249,25 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     current_etcpal_index++;
   }
 
+  if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index == cache->num_netints))
+    res = kEtcPalErrSys;
+
+  if (res != kEtcPalErrOk)
+  {
+    if (cache->netints)
+    {
+      free(cache->netints);
+      cache->netints = NULL;
+    }
+
+    cache->num_netints  = 0;
+    cache->def.v4_valid = false;
+    cache->def.v6_valid = false;
+  }
+
   freeifaddrs(os_addrs);
   close(ioctl_sock);
-  return kEtcPalErrOk;
+  return res;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)

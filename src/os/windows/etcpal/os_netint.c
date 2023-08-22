@@ -38,7 +38,7 @@
 static IP_ADAPTER_ADDRESSES* get_windows_adapters();
 static void                  copy_ipv4_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
 static void                  copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* info);
-static void                  copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache);
+static etcpal_error_t        copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache);
 
 /*************************** Function definitions ****************************/
 
@@ -86,12 +86,24 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   if (!cache->netints)
   {
     free(padapters);
+    cache->num_netints = 0;
     return kEtcPalErrNoMem;
   }
 
-  copy_all_netint_info(padapters, cache);
+  etcpal_error_t res = copy_all_netint_info(padapters, cache);
   free(padapters);
-  return kEtcPalErrOk;
+
+  if (res != kEtcPalErrOk)
+  {
+    if (cache->netints)
+      free(cache->netints);
+
+    cache->num_netints  = 0;
+    cache->def.v4_valid = false;
+    cache->def.v6_valid = false;
+  }
+
+  return res;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -203,12 +215,10 @@ void copy_ipv6_info(const IP_ADAPTER_UNICAST_ADDRESS* pip, EtcPalNetintInfo* inf
   info->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, pip->OnLinkPrefixLength);
 }
 
-void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache)
+etcpal_error_t copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo* cache)
 {
   if (!ETCPAL_ASSERT_VERIFY(adapters) || !ETCPAL_ASSERT_VERIFY(cache))
-    return;
-
-  const IP_ADAPTER_ADDRESSES* pcur = adapters;
+    return kEtcPalErrSys;
 
   // Get the index of the default interface for IPv4
   DWORD              def_ifindex_v4 = 0;
@@ -218,21 +228,22 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
   if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v4_dest, &def_ifindex_v4))
   {
     cache->def.v4_valid = true;
-    cache->def.v4_index = def_ifindex_v4;
+    cache->def.v4_index = (unsigned int)def_ifindex_v4;
   }
 
   // And the same for IPv6
   DWORD               def_ifindex_v6 = 0;
-  struct sockaddr_in6 v6_dest        = {0};
+  struct sockaddr_in6 v6_dest;
   memset(&v6_dest, 0, sizeof v6_dest);
   v6_dest.sin6_family = AF_INET6;
   if (NO_ERROR == GetBestInterfaceEx((struct sockaddr*)&v6_dest, &def_ifindex_v6))
   {
     cache->def.v6_valid = true;
-    cache->def.v6_index = def_ifindex_v6;
+    cache->def.v6_index = (unsigned int)def_ifindex_v6;
   }
 
-  size_t netint_index = 0;
+  size_t                      netint_index = 0;
+  const IP_ADAPTER_ADDRESSES* pcur         = adapters;
 
   while (pcur)
   {
@@ -240,55 +251,72 @@ void copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, CachedNetintInfo
     IP_ADAPTER_UNICAST_ADDRESS* pip = pcur->FirstUnicastAddress;
     while (pip)
     {
+      if (!ETCPAL_ASSERT_VERIFY(netint_index < cache->num_netints))
+        return kEtcPalErrSys;
+
       EtcPalNetintInfo* info = &cache->netints[netint_index];
-      switch (pip->Address.lpSockaddr->sa_family)
+
+      bool adding_to_cache_netints = false;
+      if (pip->Address.lpSockaddr)
       {
-        case AF_INET:
-          copy_ipv4_info(pip, info);
-          if (cache->def.v4_valid && pcur->IfIndex == def_ifindex_v4)
-          {
-            info->is_default = true;
-          }
-          else
-          {
-            info->is_default = false;
-          }
-          info->index = pcur->IfIndex;
-          break;
-        case AF_INET6:
-          copy_ipv6_info(pip, info);
-          if (cache->def.v6_valid && pcur->IfIndex == def_ifindex_v6)
-          {
-            info->is_default = true;
-          }
-          else
-          {
-            info->is_default = false;
-          }
-          info->index = pcur->Ipv6IfIndex;
-          break;
-        default:
-          pip = pip->Next;
-          continue;
+        switch (pip->Address.lpSockaddr->sa_family)
+        {
+          case AF_INET:
+            adding_to_cache_netints = true;
+            copy_ipv4_info(pip, info);
+            if (cache->def.v4_valid && (pcur->IfIndex == def_ifindex_v4))
+            {
+              info->is_default = true;
+            }
+            else
+            {
+              info->is_default = false;
+            }
+            info->index = pcur->IfIndex;
+            break;
+          case AF_INET6:
+            adding_to_cache_netints = true;
+            copy_ipv6_info(pip, info);
+            if (cache->def.v6_valid && (pcur->IfIndex == def_ifindex_v6))
+            {
+              info->is_default = true;
+            }
+            else
+            {
+              info->is_default = false;
+            }
+            info->index = pcur->Ipv6IfIndex;
+            break;
+          default:
+            break;
+        }
       }
 
-      strncpy_s(info->id, ETCPAL_NETINTINFO_ID_LEN, pcur->AdapterName, _TRUNCATE);
+      if (adding_to_cache_netints)
+      {
+        strncpy_s(info->id, ETCPAL_NETINTINFO_ID_LEN, pcur->AdapterName, _TRUNCATE);
 
-      // The friendly name requires special handling because it must be converted to UTF-8
-      memset(info->friendly_name, 0, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
-      WideCharToMultiByte(CP_UTF8, 0, pcur->FriendlyName, -1, info->friendly_name,
-                          ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1, NULL, NULL);
+        // The friendly name requires special handling because it must be converted to UTF-8
+        memset(info->friendly_name, 0, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
+        WideCharToMultiByte(CP_UTF8, 0, pcur->FriendlyName, -1, info->friendly_name,
+                            ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1, NULL, NULL);
 
-      if (pcur->PhysicalAddressLength == ETCPAL_MAC_BYTES)
-        memcpy(info->mac.data, pcur->PhysicalAddress, ETCPAL_MAC_BYTES);
-      else
-        memset(info->mac.data, 0, ETCPAL_MAC_BYTES);
+        if (pcur->PhysicalAddressLength == ETCPAL_MAC_BYTES)
+          memcpy(info->mac.data, pcur->PhysicalAddress, ETCPAL_MAC_BYTES);
+        else
+          memset(info->mac.data, 0, ETCPAL_MAC_BYTES);
 
-      ++netint_index;
+        ++netint_index;
+      }
 
       pip = pip->Next;
     }
 
     pcur = pcur->Next;
   }
+
+  if (!ETCPAL_ASSERT_VERIFY(netint_index == cache->num_netints))
+    return kEtcPalErrSys;
+
+  return kEtcPalErrOk;
 }
