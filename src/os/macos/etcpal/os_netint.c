@@ -413,10 +413,18 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
 
   etcpal_error_t res = kEtcPalErrOk;
 
-  // Start by allocating an estimated size.
-  *buf_len = 15000;
-  for (int i = 0; i < 3; ++i)  // Maximum of 3 attempts
+  for (int i = 0; i < 3; ++i)  // 3 attempts (for edge case where table size increases between sysctl calls)
   {
+    // First pass just determines the size of buffer that is needed.
+    *buf_len       = 0;
+    int sysctl_res = sysctl(mib, 6, NULL, buf_len, NULL, 0);
+    if ((sysctl_res != 0 && errno != ENOMEM) || *buf_len == 0)
+    {
+      res = errno_os_to_etcpal(errno);
+      break;
+    }
+
+    // Allocate the buffer
     *buf = (uint8_t*)malloc(*buf_len);
     if (!(*buf))
     {
@@ -424,21 +432,21 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
       break;
     }
 
-    int sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
-    if ((sysctl_res != 0) || (*buf_len == 0))
+    // Second pass to actually get the info
+    sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
+    if (sysctl_res != 0 || *buf_len == 0)
     {
       free(*buf);
       *buf = NULL;
       res  = errno_os_to_etcpal(errno);
+
+      if (errno != ENOMEM)
+        break;
     }
     else
     {
       res = kEtcPalErrOk;
-      ETCPAL_ASSERT_VERIFY(errno != ENOMEM);
     }
-
-    if (errno != ENOMEM)
-      break;
   }
 
   return res;
