@@ -121,7 +121,8 @@ static bool should_skip_ifaddr(const struct ifaddrs* ifaddr)
     return true;
 
   // Skip an entry if it doesn't have an address, or if the address is not IPv4 or IPv6.
-  return (!ifaddr->ifa_addr || (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
+  return (!ifaddr->ifa_addr || !ifaddr->ifa_name ||
+          (ifaddr->ifa_addr->sa_family != AF_INET && ifaddr->ifa_addr->sa_family != AF_INET6));
 }
 
 etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
@@ -199,7 +200,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
-    if (ifaddr->ifa_name)
+    if (ETCPAL_ASSERT_VERIFY(ifaddr->ifa_name))
     {
       strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
       current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';

@@ -213,7 +213,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
 
     // Interface name
-    if (ifaddr->ifa_name)
+    if (ETCPAL_ASSERT_VERIFY(ifaddr->ifa_name))
     {
       strncpy(current_info->id, ifaddr->ifa_name, ETCPAL_NETINTINFO_ID_LEN);
       current_info->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
