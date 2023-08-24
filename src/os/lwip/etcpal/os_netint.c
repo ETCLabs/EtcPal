@@ -70,8 +70,14 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 #endif
   }
 
+  if (num_lwip_netints == 0)
+  {
+    UNLOCK_TCPIP_CORE();
+    return kEtcPalErrNoNetints;
+  }
+
   ETCPAL_ASSERT_VERIFY(!static_netints);
-  static_netints = (EtcPalNetintInfo*)calloc(sizeof(EtcPalNetintInfo), num_lwip_netints);
+  static_netints = (EtcPalNetintInfo*)calloc(num_lwip_netints, sizeof(EtcPalNetintInfo));
   if (!static_netints)
   {
     UNLOCK_TCPIP_CORE();
