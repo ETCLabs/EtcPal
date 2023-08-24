@@ -29,7 +29,7 @@ windows-build-and-test:
   tags:
     - ct-windows
   variables:
-    CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON
+    CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON -DETCPAL_ENABLE_ASAN=ON
   script:
     - mkdir build
     - cd build
