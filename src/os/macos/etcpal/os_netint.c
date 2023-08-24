@@ -399,11 +399,13 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
 // Get the routing table information from the system.
 etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len)
 {
+  const unsigned int kMibSize = 6;
+
   if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(buf_len))
     return kEtcPalErrSys;
 
   // The MIB is a heirarchical series of codes determining the systcl operation to perform.
-  int mib[6];
+  int mib[kMibSize];
   mib[0] = CTL_NET;      // Networking messages
   mib[1] = PF_ROUTE;     // Routing messages
   mib[2] = 0;            // Reserved for this command, always 0
@@ -417,7 +419,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
   {
     // First pass just determines the size of buffer that is needed.
     *buf_len       = 0;
-    int sysctl_res = sysctl(mib, 6, NULL, buf_len, NULL, 0);
+    int sysctl_res = sysctl(mib, kMibSize, NULL, buf_len, NULL, 0);
     if ((sysctl_res != 0 && errno != ENOMEM) || *buf_len == 0)
     {
       res = errno_os_to_etcpal(errno);
@@ -433,7 +435,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
     }
 
     // Second pass to actually get the info
-    sysctl_res = sysctl(mib, 6, *buf, buf_len, NULL, 0);
+    sysctl_res = sysctl(mib, kMibSize, *buf, buf_len, NULL, 0);
     if (sysctl_res != 0 || *buf_len == 0)
     {
       free(*buf);
