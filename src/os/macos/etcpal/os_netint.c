@@ -446,6 +446,7 @@ etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len
     else
     {
       res = kEtcPalErrOk;
+      break;
     }
   }
 
