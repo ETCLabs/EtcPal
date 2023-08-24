@@ -316,8 +316,8 @@ etcpal_error_t copy_all_netint_info(const IP_ADAPTER_ADDRESSES* adapters, Cached
     pcur = pcur->Next;
   }
 
-  if (!ETCPAL_ASSERT_VERIFY(netint_index == cache->num_netints))
-    return kEtcPalErrSys;
+  // At this point, the number of netints written should exactly match the amount allocated for.
+  ETCPAL_ASSERT_VERIFY(netint_index == cache->num_netints);
 
   return kEtcPalErrOk;
 }

@@ -139,8 +139,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   UNLOCK_TCPIP_CORE();
 
 #if ETCPAL_EMBOS_USE_MALLOC
-  if (!ETCPAL_ASSERT_VERIFY(num_static_netints == num_lwip_netints))
-    res = kEtcPalErrSys;
+  // At this point, the number of netints written should exactly match the amount allocated for.
+  ETCPAL_ASSERT_VERIFY(num_static_netints == num_lwip_netints);
 #endif
 
   if (res == kEtcPalErrOk)

@@ -248,8 +248,8 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     current_etcpal_index++;
   }
 
-  if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index == cache->num_netints))
-    res = kEtcPalErrSys;
+  // At this point, the number of netints written should exactly match the amount allocated for.
+  ETCPAL_ASSERT_VERIFY(current_etcpal_index == cache->num_netints);
 
   if (res != kEtcPalErrOk)
   {
