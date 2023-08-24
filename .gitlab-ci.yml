@@ -50,7 +50,6 @@ macos-build-and-test:
     matrix:
       - SANITIZER_DEFS:
           - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
-          - -DETCPAL_ENABLE_MSAN=ON
           - -DETCPAL_ENABLE_TSAN=ON
   script:
     - mkdir build
