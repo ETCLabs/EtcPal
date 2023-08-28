@@ -43,7 +43,7 @@ def main():
 
         print(result_output)
         print(f"result_output length: {len(result_output)}")
-        print(result_output[:10])
+        print(result_output[:len(result_output)])
         print(f"result_error_output length: {len(result_error_output)}")
 
         if len(result_error_output) > 0:
