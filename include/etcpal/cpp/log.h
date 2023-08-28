@@ -308,9 +308,9 @@ private:
   // being tracked with ETCPAL-43 and ETCPAL-46.
   std::queue<LogMessage>          msg_q_;
   std::unique_ptr<etcpal::Signal> signal_;
+  std::unique_ptr<etcpal::Signal> stop_signal_;
   std::unique_ptr<etcpal::Mutex>  mutex_;
   etcpal::Thread                  thread_;
-  etcpal::Signal                  stop_signal_;
   bool                            initialized_{false};
 };
 
@@ -361,6 +361,16 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
     return false;
   }
 
+  signal_      = std::make_unique<etcpal::Signal>();
+  stop_signal_ = std::make_unique<etcpal::Signal>();
+  mutex_       = std::make_unique<etcpal::Mutex>();
+
+  if (!signal_ || !stop_signal_ || !mutex_)
+  {
+    etcpal_deinit(ETCPAL_FEATURE_LOGGING);
+    return false;
+  }
+
   log_params_.context = &message_handler;
   initialized_        = true;
 
@@ -369,8 +379,6 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
 
   // kQueued
   // Start the log dispatch thread
-  signal_  = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
-  mutex_   = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
   if (!thread_.SetName("EtcPalLoggerThread").Start(&Logger::LogThreadRun, this))
   {
     initialized_ = false;
@@ -389,7 +397,7 @@ inline void Logger::Shutdown()
   if (initialized_)
   {
     initialized_ = false;
-    stop_signal_.Notify();
+    stop_signal_->Notify();
     if (dispatch_policy_ == LogDispatchPolicy::kQueued)
     {
       signal_->Notify();
@@ -707,7 +715,7 @@ inline void Logger::LogInternal(int pri, const char* format, std::va_list args)
 
 inline void Logger::LogThreadRun()
 {
-  while (!stop_signal_.TryWait())
+  while (!stop_signal_->TryWait())
   {
     EmptyLogQueue();
     signal_->Wait();
