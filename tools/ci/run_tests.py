@@ -33,7 +33,7 @@ def main():
 
         # Run the test
         print(f"############# Running test '{test_name}'... #############")
-        process_result = subprocess.run([test_exe_name, "-v"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        process_result = subprocess.run([test_exe_name, "-v"], capture_output=True)
 
         # Interpret the output
         if process_result.returncode != 0:
