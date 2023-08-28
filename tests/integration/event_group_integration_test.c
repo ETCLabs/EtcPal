@@ -128,7 +128,7 @@ TEST(event_group_integration, one_wait_one_signal_multiple_events)
   TEST_ASSERT_EQUAL(event_2_num_received, 4);
 }
 
-static int num_events_received;
+static atomic_int num_wait_calls;
 
 static void unrequested_bits_test_thread(void* arg)
 {
@@ -139,7 +139,7 @@ static void unrequested_bits_test_thread(void* arg)
     etcpal_event_bits_t result =
         etcpal_event_group_wait(&event, 0x88, ETCPAL_EVENT_GROUP_WAIT_FOR_ALL | ETCPAL_EVENT_GROUP_AUTO_CLEAR);
     if (result != 0)
-      ++num_events_received;
+      ++num_wait_calls;
   }
 }
 
@@ -149,13 +149,13 @@ TEST(event_group_integration, wait_does_not_return_on_unrequested_bits)
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
   TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, unrequested_bits_test_thread, NULL), kEtcPalErrOk);
 
-  num_events_received = 0;
+  num_wait_calls = 0;
 
   etcpal_event_group_set_bits(&event, 0x77);
   etcpal_event_group_set_bits(&event, 0x80);
   etcpal_event_group_set_bits(&event, 0x88);
   etcpal_thread_sleep(10);
-  TEST_ASSERT_EQUAL(num_events_received, 1);
+  TEST_ASSERT_EQUAL(num_wait_calls, 1);
   etcpal_event_group_set_bits(&event, 0x88);
 
   TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
