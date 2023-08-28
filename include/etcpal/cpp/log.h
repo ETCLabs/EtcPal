@@ -310,7 +310,8 @@ private:
   std::unique_ptr<etcpal::Signal> signal_;
   std::unique_ptr<etcpal::Mutex>  mutex_;
   etcpal::Thread                  thread_;
-  bool                            running_{false};
+  etcpal::Signal                  stop_signal_;
+  bool                            initialized_{false};
 };
 
 /// @cond Internal log callback functions
@@ -361,20 +362,18 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
   }
 
   log_params_.context = &message_handler;
+  initialized_        = true;
 
   if (dispatch_policy_ == LogDispatchPolicy::kDirect)
-  {
-    running_ = true;
     return true;
-  }
 
   // kQueued
   // Start the log dispatch thread
-  running_ = true;
   signal_  = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
   mutex_   = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
   if (!thread_.SetName("EtcPalLoggerThread").Start(&Logger::LogThreadRun, this))
   {
+    initialized_ = false;
     etcpal_deinit(ETCPAL_FEATURE_LOGGING);
     return false;
   }
@@ -387,9 +386,10 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
 /// of the log messages and wait for the dispatch thread to join.
 inline void Logger::Shutdown()
 {
-  if (running_)
+  if (initialized_)
   {
-    running_ = false;
+    initialized_ = false;
+    stop_signal_.Notify();
     if (dispatch_policy_ == LogDispatchPolicy::kQueued)
     {
       signal_->Notify();
@@ -686,7 +686,7 @@ inline Logger& Logger::SetSyslogProcId(int proc_id) noexcept
 
 inline void Logger::LogInternal(int pri, const char* format, std::va_list args)
 {
-  if (running_)
+  if (initialized_)
   {
     if (dispatch_policy_ == LogDispatchPolicy::kDirect)
     {
@@ -707,7 +707,7 @@ inline void Logger::LogInternal(int pri, const char* format, std::va_list args)
 
 inline void Logger::LogThreadRun()
 {
-  while (running_)
+  while (!stop_signal_.TryWait())
   {
     EmptyLogQueue();
     signal_->Wait();
