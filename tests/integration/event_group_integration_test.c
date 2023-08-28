@@ -20,10 +20,11 @@
 #include "etcpal/event_group.h"
 
 #include "etcpal/common.h"
-#include "etcpal/mutex.h"
 #include "etcpal/signal.h"
 #include "etcpal/thread.h"
 #include "unity_fixture.h"
+
+#include <stdatomic.h>
 
 #define NUM_ITERATIONS 3
 
@@ -43,7 +44,7 @@ TEST_TEAR_DOWN(event_group_integration)
   etcpal_thread_sleep(200);
 }
 
-static int num_events_received;
+static atomic_int num_events_received;
 
 static void single_event_wait_thread(void* arg)
 {
@@ -128,7 +129,6 @@ TEST(event_group_integration, one_wait_one_signal_multiple_events)
 }
 
 static int num_events_received;
-static etcpal_mutex_t num_events_received_lock;
 
 static void unrequested_bits_test_thread(void* arg)
 {
@@ -147,25 +147,18 @@ TEST(event_group_integration, wait_does_not_return_on_unrequested_bits)
 {
   etcpal_thread_t    wait_thread;
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, unrequested_bits_test_thread, NULL), kEtcPalErrOk);
 
   num_events_received = 0;
-  TEST_ASSERT_TRUE(etcpal_mutex_create(&num_events_received_lock));
-
-  TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, unrequested_bits_test_thread, NULL), kEtcPalErrOk);
 
   etcpal_event_group_set_bits(&event, 0x77);
   etcpal_event_group_set_bits(&event, 0x80);
   etcpal_event_group_set_bits(&event, 0x88);
   etcpal_thread_sleep(10);
-
-  TEST_ASSERT_TRUE(etcpal_mutex_lock(&num_events_received_lock));
   TEST_ASSERT_EQUAL(num_events_received, 1);
-  TEST_ASSERT_TRUE(etcpal_mutex_unlock(&num_events_received_lock));
-
   etcpal_event_group_set_bits(&event, 0x88);
-  TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
 
-  etcpal_mutex_destroy(&num_events_received_lock);
+  TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
 }
 
 TEST_GROUP_RUNNER(event_group_integration)
