@@ -361,9 +361,9 @@ inline bool Logger::Startup(LogMessageHandler& message_handler)
     return false;
   }
 
-  signal_      = std::make_unique<etcpal::Signal>();
-  stop_signal_ = std::make_unique<etcpal::Signal>();
-  mutex_       = std::make_unique<etcpal::Mutex>();
+  signal_      = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
+  stop_signal_ = std::unique_ptr<etcpal::Signal>(new etcpal::Signal);
+  mutex_       = std::unique_ptr<etcpal::Mutex>(new etcpal::Mutex);
 
   if (!signal_ || !stop_signal_ || !mutex_)
   {
