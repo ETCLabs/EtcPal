@@ -38,17 +38,21 @@ def main():
         # Interpret the output
         if process_result.returncode != 0:
             failed = True
+
         result_output = process_result.stdout.decode("utf-8")
         result_error_output = process_result.stderr.decode("utf-8")
 
-        print(result_output)
-        print(f"result_output length: {len(result_output)}")
-        print(result_output[:len(result_output)])
-        print(f"result_error_output length: {len(result_error_output)}")
+        # For whatever reason, print() won't work for this in GitLab CI on Windows unless we print line-by-line.
+        result_output_lines = result_output.splitlines()
+        result_error_output_lines = result_error_output.splitlines()
+
+        for line in result_output_lines:
+            print(line)
 
         if len(result_error_output) > 0:
             print("ERROR OUTPUT:")
-            print(result_error_output)
+            for line in result_error_output_lines:
+                print(line)
             failed = True
         
         results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
