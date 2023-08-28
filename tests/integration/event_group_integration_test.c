@@ -139,7 +139,11 @@ static void unrequested_bits_test_thread(void* arg)
     etcpal_event_bits_t result =
         etcpal_event_group_wait(&event, 0x88, ETCPAL_EVENT_GROUP_WAIT_FOR_ALL | ETCPAL_EVENT_GROUP_AUTO_CLEAR);
     if (result != 0)
+    {
+      TEST_ASSERT_TRUE(etcpal_mutex_lock(&num_events_received_lock));
       ++num_events_received;
+      etcpal_mutex_unlock(&num_events_received_lock);
+    }
   }
 }
 
