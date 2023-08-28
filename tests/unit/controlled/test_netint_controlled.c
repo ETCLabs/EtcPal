@@ -22,6 +22,18 @@
 #include "unity_fixture.h"
 #include "etc_fff_wrapper.h"
 
+#define NUM_TEST_NETINTS 1
+
+static EtcPalNetintInfo test_netints[NUM_TEST_NETINTS] = {{0}};
+
+etcpal_error_t test_enum_interfaces(CachedNetintInfo* cache)
+{
+  cache->netints = &test_netints;
+  cache->num_netints = NUM_TEST_NETINTS;
+
+  return kEtcPalErrOk;
+}
+
 ETC_FAKE_VALUE_FUNC(etcpal_error_t, os_enumerate_interfaces, CachedNetintInfo*);
 ETC_FAKE_VOID_FUNC(os_free_interfaces, CachedNetintInfo*);
 ETC_FAKE_VALUE_FUNC(etcpal_error_t, os_resolve_route, const EtcPalIpAddr*, const CachedNetintInfo*, unsigned int*);
@@ -31,12 +43,14 @@ TEST_GROUP(netint_controlled);
 
 TEST_SETUP(netint_controlled)
 {
-  TEST_ASSERT_EQUAL(etcpal_netint_init(), kEtcPalErrOk);
-
   RESET_FAKE(os_enumerate_interfaces);
   RESET_FAKE(os_free_interfaces);
   RESET_FAKE(os_resolve_route);
   RESET_FAKE(os_netint_is_up);
+
+  os_enumerate_interfaces_fake.custom_fake = test_enum_interfaces;
+
+  TEST_ASSERT_EQUAL(etcpal_netint_init(), kEtcPalErrOk);
 }
 
 TEST_TEAR_DOWN(netint_controlled)
