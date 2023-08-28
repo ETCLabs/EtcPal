@@ -127,7 +127,7 @@ TEST(event_group_integration, one_wait_one_signal_multiple_events)
   TEST_ASSERT_EQUAL(event_2_num_received, 4);
 }
 
-static int num_events_received;
+static int            num_events_received;
 static etcpal_mutex_t num_events_received_lock;
 
 static void unrequested_bits_test_thread(void* arg)
