@@ -88,7 +88,7 @@ TEST(etcpal_thread, timed_join_works)
 #endif
 
 etcpal_signal_t spin_task_stop_signal;
-volatile bool spin_task_ran;
+volatile bool   spin_task_ran;
 
 void increment_and_spin(void* param)
 {
@@ -100,7 +100,7 @@ void increment_and_spin(void* param)
 }
 
 etcpal_signal_t oneshot_task_stop_signal;
-volatile bool oneshot_task_ran;
+volatile bool   oneshot_task_ran;
 
 void oneshot(void* param)
 {
