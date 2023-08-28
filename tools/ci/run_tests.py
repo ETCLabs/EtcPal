@@ -40,7 +40,10 @@ def main():
             failed = True
         result_output = process_result.stdout.decode("utf-8")
         result_error_output = process_result.stderr.decode("utf-8")
+
         print(result_output)
+        print(f"result_output length: {len(result_output)}")
+        print(f"result_error_output length: {len(result_error_output)}")
 
         if len(result_error_output) > 0:
             print("ERROR OUTPUT:")
