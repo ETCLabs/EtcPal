@@ -32,14 +32,20 @@ def main():
         test_name = file_name.replace(".txt", "")
 
         # Run the test
-        print("############# Running test '{}'... #############".format(test_name))
+        print(f"############# Running test '{test_name}'... #############")
         process_result = subprocess.run([test_exe_name, "-v"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         # Interpret the output
         if process_result.returncode != 0:
             failed = True
         result_output = process_result.stdout.decode("utf-8")
+        result_error_output = process_result.stderr.decode("utf-8")
         print(result_output)
+
+        if len(result_error_output) > 0:
+            print(f"ERROR OUTPUT: {result_error_output}")
+            failed = True
+        
         results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
 
         with open(os.path.join(args.build_dir, "test_results_{}.xml".format(test_name)), "w") as output_file:
