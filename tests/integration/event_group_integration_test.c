@@ -160,7 +160,7 @@ TEST(event_group_integration, wait_does_not_return_on_unrequested_bits)
 
   TEST_ASSERT_TRUE(etcpal_mutex_lock(&num_events_received_lock));
   TEST_ASSERT_EQUAL(num_events_received, 1);
-  TEST_ASSERT_TRUE(etcpal_mutex_unlock(&num_events_received_lock));
+  etcpal_mutex_unlock(&num_events_received_lock);
 
   etcpal_event_group_set_bits(&event, 0x88);
   TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
