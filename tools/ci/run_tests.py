@@ -43,7 +43,8 @@ def main():
         print(result_output)
 
         if len(result_error_output) > 0:
-            print(f"ERROR OUTPUT: {result_error_output}")
+            print("ERROR OUTPUT:")
+            print(result_error_output)
             failed = True
         
         results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
