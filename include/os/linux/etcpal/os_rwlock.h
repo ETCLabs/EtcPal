@@ -33,7 +33,8 @@ typedef struct
   bool            valid;
   unsigned int    reader_count;
   pthread_mutex_t readcount_mutex;
-  pthread_mutex_t mutex;
+  pthread_mutex_t write_lock;  // Locked when there is a writer
+  pthread_mutex_t read_lock;   // Locked when there is at least one reader
 } etcpal_rwlock_t;
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 0

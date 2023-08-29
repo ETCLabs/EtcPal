@@ -27,7 +27,7 @@
 
 /*********************** Private function prototypes *************************/
 
-static void reader_atomic_increment(etcpal_rwlock_t* id);
+static bool reader_atomic_increment(etcpal_rwlock_t* id);
 static void reader_atomic_decrement(etcpal_rwlock_t* id);
 
 /*************************** Function definitions ****************************/
@@ -36,15 +36,19 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
   if (id)
   {
-    if (0 == pthread_mutex_init(&id->mutex, NULL))
+    if (0 == pthread_mutex_init(&id->write_lock, NULL))
     {
-      if (0 == pthread_mutex_init(&id->readcount_mutex, NULL))
+      if (0 == pthread_mutex_init(&id->read_lock, NULL))
       {
-        id->valid        = true;
-        id->reader_count = 0;
-        return true;
+        if (0 == pthread_mutex_init(&id->readcount_mutex, NULL))
+        {
+          id->valid        = true;
+          id->reader_count = 0;
+          return true;
+        }
+        pthread_mutex_destroy(&id->read_lock);
       }
-      pthread_mutex_destroy(&id->mutex);
+      pthread_mutex_destroy(&id->write_lock);
     }
   }
   return false;
@@ -55,14 +59,11 @@ bool etcpal_rwlock_readlock(etcpal_rwlock_t* id)
   bool res = false;
   if (id && id->valid)
   {
-    if (0 == pthread_mutex_lock(&id->mutex))
+    // Yield to write lock, it takes precedence
+    if (0 == pthread_mutex_lock(&id->write_lock))
     {
-      if (id->reader_count < MAX_READERS)
-      {
-        reader_atomic_increment(id);
-        res = true;
-      }
-      pthread_mutex_unlock(&id->mutex);
+      res = reader_atomic_increment(id);
+      pthread_mutex_unlock(&id->write_lock);
     }
   }
   return res;
@@ -73,14 +74,11 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
   bool res = false;
   if (id && id->valid)
   {
-    if (0 == pthread_mutex_trylock(&id->mutex))
+    // Yield to write lock, it takes precedence
+    if (0 == pthread_mutex_trylock(&id->write_lock))
     {
-      if (id->reader_count < MAX_READERS)
-      {
-        reader_atomic_increment(id);
-        res = true;
-      }
-      pthread_mutex_unlock(&id->mutex);
+      res = reader_atomic_increment(id);
+      pthread_mutex_unlock(&id->write_lock);
     }
   }
   return res;
@@ -101,15 +99,20 @@ bool etcpal_rwlock_writelock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    if (0 == pthread_mutex_lock(&id->mutex))
+    // Yield to other write locks, block additional readers
+    if (0 == pthread_mutex_lock(&id->write_lock))
     {
-      // Wait until there are no readers, keeping the lock so that no new readers can get in.
-      while (id->reader_count > 0)
+      // Wait until reader count returns to 0
+      if (0 == pthread_mutex_lock(&id->read_lock))
       {
-        usleep(1000);
+        pthread_mutex_unlock(&id->read_lock);
+
+        // Hold on to the write lock until writeunlock() is called
+        return true;
       }
-      // Hold on to the lock until writeunlock() is called
-      return true;
+
+      // Error case, unlock & return false below
+      pthread_mutex_unlock(&id->write_lock);
     }
   }
   return false;
@@ -119,19 +122,20 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    if (0 == pthread_mutex_trylock(&id->mutex))
+    // Yield to other write locks, block additional readers
+    if (0 == pthread_mutex_trylock(&id->write_lock))
     {
-      // Just check once to see if there are still readers
-      if (id->reader_count > 0)
+      // If read_lock can be taken successfully, then there are no readers
+      if (0 == pthread_mutex_trylock(&id->read_lock))
       {
-        // Readers are present, give up the lock and return false below
-        pthread_mutex_unlock(&id->mutex);
-      }
-      else
-      {
-        // Return, holding the lock
+        pthread_mutex_unlock(&id->read_lock);
+
+        // Hold on to the write lock until writeunlock() is called
         return true;
       }
+
+      // Otherwise there are still readers, so release the write lock & return false below
+      pthread_mutex_unlock(&id->write_lock);
     }
   }
   return false;
@@ -145,30 +149,42 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
-    pthread_mutex_unlock(&id->mutex);
+    pthread_mutex_unlock(&id->write_lock);
 }
 
 void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 {
   if (id && id->valid)
   {
-    pthread_mutex_destroy(&id->mutex);
+    pthread_mutex_destroy(&id->write_lock);
+    pthread_mutex_destroy(&id->read_lock);
     pthread_mutex_destroy(&id->readcount_mutex);
     id->valid = false;
   }
 }
 
 // TODO investigate C11 atomics for this
-void reader_atomic_increment(etcpal_rwlock_t* id)
+bool reader_atomic_increment(etcpal_rwlock_t* id)
 {
   if (!ETCPAL_ASSERT_VERIFY(id))
-    return;
+    return false;
 
+  bool res = false;
   if (0 == pthread_mutex_lock(&id->readcount_mutex))
   {
-    ++id->reader_count;
+    if (id->reader_count < MAX_READERS)
+    {
+      // Only lock read_lock when reader_count increments to 1
+      if ((id->reader_count > 0) || (0 == pthread_mutex_lock(&id->read_lock)))
+      {
+        ++id->reader_count;
+        res = true;
+      }
+    }
     pthread_mutex_unlock(&id->readcount_mutex);
   }
+
+  return res;
 }
 
 void reader_atomic_decrement(etcpal_rwlock_t* id)
@@ -178,7 +194,15 @@ void reader_atomic_decrement(etcpal_rwlock_t* id)
 
   if (0 == pthread_mutex_lock(&id->readcount_mutex))
   {
-    --id->reader_count;
+    if (id->reader_count > 0)
+    {
+      --id->reader_count;
+
+      // Only unlock read_lock when reader_count decrements to 0
+      if (id->reader_count == 0)
+        pthread_mutex_unlock(&id->read_lock);
+    }
+
     pthread_mutex_unlock(&id->readcount_mutex);
   }
 }
