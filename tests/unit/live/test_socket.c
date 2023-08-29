@@ -391,6 +391,38 @@ TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
   etcpal_poll_context_deinit(&context);
 }
 
+// The lwIP select function requires the max socket fd + 1 as the first parameter. This test ensures an edge case is
+// correctly handled where the max fd is removed.
+TEST(etcpal_socket, poll_still_works_when_max_fd_removed)
+{
+  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INVALID;
+
+  EtcPalPollContext context;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock_1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock_2));
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_1, ETCPAL_POLL_OUT, NULL));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_add_socket(&context, sock_2, ETCPAL_POLL_OUT, NULL));
+
+  etcpal_socket_t max_fd = (sock_1 > sock_2) ? sock_1 : sock_2;
+  etcpal_socket_t min_fd = (sock_1 > sock_2) ? sock_2 : sock_1;
+
+  etcpal_poll_remove_socket(&context, max_fd);
+
+  EtcPalPollEvent event;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100));
+  TEST_ASSERT_EQUAL(event.socket, min_fd);
+  TEST_ASSERT_EQUAL(event.events, ETCPAL_POLL_OUT);
+  TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock_1));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_close(sock_2));
+  etcpal_poll_context_deinit(&context);
+}
+
 TEST(etcpal_socket, getaddrinfo_works_as_expected)
 {
   EtcPalAddrinfo ai_hints;
