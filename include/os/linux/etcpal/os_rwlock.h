@@ -28,27 +28,20 @@
 extern "C" {
 #endif
 
-typedef struct
-{
-  bool            valid;
-  unsigned int    reader_count;
-  pthread_mutex_t readcount_mutex;
-  pthread_mutex_t write_lock;  // Locked when there is a writer
-  pthread_mutex_t read_lock;   // Locked when there is at least one reader
-} etcpal_rwlock_t;
+typedef pthread_rwlock_t etcpal_rwlock_t;
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 0
 
-bool etcpal_rwlock_create(etcpal_rwlock_t* id);
-bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
-bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id);
-bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
-void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
-bool etcpal_rwlock_writelock(etcpal_rwlock_t* id);
-bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id);
-bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
-void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
-void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
+#define etcpal_rwlock_create(idptr)       ((bool)(!pthread_rwlock_init((idptr), NULL)))
+#define etcpal_rwlock_readlock(idptr)     ((bool)(!pthread_rwlock_rdlock(idptr)))
+#define etcpal_rwlock_try_readlock(idptr) ((bool)(!pthread_rwlock_tryrdlock(idptr)))
+bool etcpal_rwlock_timed_readlock(etcpal_mutex_t* id, int timeout_ms);
+#define etcpal_rwlock_readunlock(idptr)    ((void)pthread_rwlock_unlock(idptr))
+#define etcpal_rwlock_writelock(idptr)     ((bool)(!pthread_rwlock_wrlock(idptr)))
+#define etcpal_rwlock_try_writelock(idptr) ((bool)(!pthread_rwlock_trywrlock(idptr)))
+bool etcpal_rwlock_timed_writelock(etcpal_mutex_t* id, int timeout_ms);
+#define etcpal_rwlock_writeunlock(idptr) ((void)pthread_rwlock_unlock(idptr))
+#define etcpal_rwlock_destroy(idptr)     ((void)pthread_rwlock_destroy(idptr))
 
 #ifdef __cplusplus
 }
