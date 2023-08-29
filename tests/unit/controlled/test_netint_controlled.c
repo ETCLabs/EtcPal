@@ -28,7 +28,7 @@ static EtcPalNetintInfo test_netints[NUM_TEST_NETINTS] = {{0}};
 
 etcpal_error_t test_enum_interfaces(CachedNetintInfo* cache)
 {
-  cache->netints     = &test_netints;
+  cache->netints     = test_netints;
   cache->num_netints = NUM_TEST_NETINTS;
 
   return kEtcPalErrOk;
