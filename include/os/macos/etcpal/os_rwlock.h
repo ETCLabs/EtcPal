@@ -35,11 +35,11 @@ typedef pthread_rwlock_t etcpal_rwlock_t;
 #define etcpal_rwlock_create(idptr)       ((bool)(!pthread_rwlock_init((idptr), NULL)))
 #define etcpal_rwlock_readlock(idptr)     ((bool)(!pthread_rwlock_rdlock(idptr)))
 #define etcpal_rwlock_try_readlock(idptr) ((bool)(!pthread_rwlock_tryrdlock(idptr)))
-bool etcpal_rwlock_timed_readlock(etcpal_mutex_t* id, int timeout_ms);
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
 #define etcpal_rwlock_readunlock(idptr)    ((void)pthread_rwlock_unlock(idptr))
 #define etcpal_rwlock_writelock(idptr)     ((bool)(!pthread_rwlock_wrlock(idptr)))
 #define etcpal_rwlock_try_writelock(idptr) ((bool)(!pthread_rwlock_trywrlock(idptr)))
-bool etcpal_rwlock_timed_writelock(etcpal_mutex_t* id, int timeout_ms);
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
 #define etcpal_rwlock_writeunlock(idptr) ((void)pthread_rwlock_unlock(idptr))
 #define etcpal_rwlock_destroy(idptr)     ((void)pthread_rwlock_destroy(idptr))
 
