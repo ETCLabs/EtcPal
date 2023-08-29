@@ -19,6 +19,7 @@
 
 #include "etcpal/rwlock.h"
 #include "etcpal/private/common.h"
+#include <errno.h>
 #include <unistd.h>
 
 /**************************** Private constants ******************************/
