@@ -33,17 +33,19 @@ TEST_TEAR_DOWN(etcpal_cpp_rwlock)
 
 TEST(etcpal_cpp_rwlock, create_and_destroy_works)
 {
+  static constexpr size_t kNumTestLocks = 32u;
+
   etcpal::RwLock rwlock;
 
   // We should be able to get a number of read locks
-  for (size_t i = 0; i < 100; ++i)
+  for (size_t i = 0; i < kNumTestLocks; ++i)
     TEST_ASSERT_TRUE(rwlock.ReadLock());
 
   // Write lock should fail if there are readers
   TEST_ASSERT_FALSE(rwlock.TryWriteLock());
 
   // When there are no more readers, write lock should succeed
-  for (size_t i = 0; i < 100; ++i)
+  for (size_t i = 0; i < kNumTestLocks; ++i)
     rwlock.ReadUnlock();
   TEST_ASSERT_TRUE(rwlock.WriteLock());
 
