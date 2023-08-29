@@ -169,19 +169,27 @@ bool reader_atomic_increment(etcpal_rwlock_t* id)
   if (!ETCPAL_ASSERT_VERIFY(id))
     return false;
 
+  // Since there is to be at least one reader after this call, make sure read_lock is locked
+  int read_lock_res = pthread_mutex_trylock(&id->read_lock);
+
+  // It's ok if read_lock is already locked, but return false on any other failure
+  if ((read_lock_res != 0) && (read_lock_res != EBUSY))
+    return false;
+
   bool res = false;
   if (0 == pthread_mutex_lock(&id->readcount_mutex))
   {
     if (id->reader_count < MAX_READERS)
     {
-      // Only lock read_lock when reader_count increments to 1
-      if ((id->reader_count > 0) || (0 == pthread_mutex_lock(&id->read_lock)))
-      {
-        ++id->reader_count;
-        res = true;
-      }
+      ++id->reader_count;
+      res = true;
     }
     pthread_mutex_unlock(&id->readcount_mutex);
+  }
+  else if (read_lock_res == 0)  // System call failed - check if we locked read_lock
+  {
+    // If we did, that means reader_count is still 0, so unlock read_lock
+    pthread_mutex_unlock(&id->read_lock);
   }
 
   return res;
@@ -192,17 +200,21 @@ void reader_atomic_decrement(etcpal_rwlock_t* id)
   if (!ETCPAL_ASSERT_VERIFY(id))
     return;
 
+  bool no_more_readers = false;
   if (0 == pthread_mutex_lock(&id->readcount_mutex))
   {
     if (id->reader_count > 0)
     {
       --id->reader_count;
 
-      // Only unlock read_lock when reader_count decrements to 0
       if (id->reader_count == 0)
-        pthread_mutex_unlock(&id->read_lock);
+        no_more_readers = true;
     }
 
     pthread_mutex_unlock(&id->readcount_mutex);
   }
+
+  // Once no readers remain, unlock read_lock (do it here to avoid lock order inversion)
+  if (no_more_readers)
+    pthread_mutex_unlock(&id->read_lock);
 }
