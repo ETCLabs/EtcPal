@@ -88,7 +88,7 @@ etcpal_error_t print_packet_info(int bytes_received, EtcPalMsgHdr* msg)
       {
         if (cmsg.type == ETCPAL_IP_PKTINFO)
         {
-          EtcPalPktInfo pktinfo = {0};
+          EtcPalPktInfo pktinfo = {{0}};
           if (etcpal_cmsg_to_pktinfo(&cmsg, &pktinfo))
           {
             char dest_ip_str[ETCPAL_IP_STRING_BYTES] = {0};
@@ -131,7 +131,7 @@ int main(void)
 
   uint8_t      buf[RECVMSG_EXAMPLE_MTU]                = {0};
   uint8_t      control[ETCPAL_CONTROL_SIZE_IP_PKTINFO] = {0};
-  EtcPalMsgHdr msg                                     = {0};
+  EtcPalMsgHdr msg                                     = {{0}};
   int          bytes_received                          = 0;
   if (res == kEtcPalErrOk)
   {
