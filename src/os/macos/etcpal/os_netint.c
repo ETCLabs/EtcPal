@@ -233,8 +233,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
       if (link_name && link_addr && (0 == strcmp(ifaddr->ifa_name, link_name)))
       {
         current_info->index = link_addr->sdl_index;
-        if (link_addr->sdl_data)
-          memcpy(current_info->mac.data, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_MAC_BYTES);
+        memcpy(current_info->mac.data, link_addr->sdl_data + link_addr->sdl_nlen, ETCPAL_MAC_BYTES);
       }
       else
       {
@@ -337,7 +336,7 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
     return false;
 
   // Translate the index to a name
-  struct ifreq if_req = {0};
+  struct ifreq if_req = {{0}};
   if (!if_indextoname(index, if_req.ifr_name))
   {
     close(ioctl_sock);
@@ -747,7 +746,7 @@ etcpal_error_t parse_routing_table_dump(int family, uint8_t* buf, size_t buf_len
   // Loop through all routing table entries returned in the buffer
   for (struct rt_msghdr* rmsg = get_first_rt_msghdr(buf, buf_len); rmsg; rmsg = get_next_rt_msghdr(buf, buf_len, rmsg))
   {
-    RoutingTableEntry new_entry = {0};
+    RoutingTableEntry new_entry = {{0}};
     init_routing_table_entry(&new_entry);
 
     bool new_entry_valid = true;

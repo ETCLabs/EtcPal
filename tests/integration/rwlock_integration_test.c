@@ -42,7 +42,7 @@ static void write_test_thread(void* arg)
 
   for (size_t i = 0; i < NUM_ITERATIONS; ++i)
   {
-    etcpal_rwlock_writelock(&rwlock);
+    TEST_ASSERT(etcpal_rwlock_writelock(&rwlock));
     ++shared_var;
     etcpal_rwlock_writeunlock(&rwlock);
     // Had to insert an artificial delay to get it to fail reliably when the mutexes don't work.
@@ -59,7 +59,7 @@ static void read_test_thread(void* arg)
   read_thread_pass = true;
   for (int i = 0; i < 10; ++i)
   {
-    etcpal_rwlock_readlock(&rwlock);
+    TEST_ASSERT(etcpal_rwlock_readlock(&rwlock));
     int val = shared_var;
 
     etcpal_thread_sleep(5);
