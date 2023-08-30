@@ -79,8 +79,6 @@ function(etcpal_add_custom_test target_name language)
 
   if(${language} STREQUAL CXX)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
-  else()
-    set_target_properties(${target_name} PROPERTIES C_STANDARD 11)
   endif()
 
   target_compile_options(${target_name} PRIVATE ${ETCPAL_TEST_COMPILE_OPTIONS})
