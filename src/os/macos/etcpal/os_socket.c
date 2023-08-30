@@ -450,7 +450,7 @@ bool etcpal_cmsg_to_pktinfo(const EtcPalCMsgHdr* cmsg, EtcPalPktInfo* pktinfo)
       else if ((cmsg->level == ETCPAL_IPPROTO_IPV6) && (cmsg->type == ETCPAL_IPV6_PKTINFO) &&
                ETCPAL_ASSERT_VERIFY(cmsg->len >= sizeof(struct in6_pktinfo)))
       {
-        struct in6_pktinfo impl_pktinfo = {{{0}}};
+        struct in6_pktinfo impl_pktinfo = {{{{0}}}};
         memcpy(&impl_pktinfo, impl_data, sizeof(impl_pktinfo));
 
         struct sockaddr_in6 impl_addr = {0};
@@ -711,7 +711,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
         if (ETCPAL_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
-          struct ipv6_mreq val = {{{0}}};
+          struct ipv6_mreq val = {{{{0}}}};
           val.ipv6mr_interface = (uint32_t)greq->ifindex;
           memcpy(val.ipv6mr_multiaddr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, IPV6_JOIN_GROUP, &val, sizeof val);
@@ -724,7 +724,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
         if (ETCPAL_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
         {
-          struct ipv6_mreq val = {{{0}}};
+          struct ipv6_mreq val = {{{{0}}}};
           val.ipv6mr_interface = (uint32_t)greq->ifindex;
           memcpy(val.ipv6mr_multiaddr.s6_addr, ETCPAL_IP_V6_ADDRESS(&greq->group), ETCPAL_IPV6_BYTES);
           return setsockopt(id, IPPROTO_IPV6, IPV6_LEAVE_GROUP, &val, sizeof val);
