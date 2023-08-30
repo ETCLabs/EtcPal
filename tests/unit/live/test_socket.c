@@ -493,7 +493,7 @@ TEST(etcpal_socket, recvmsg_works)
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
   uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
-  EtcPalMsgHdr msg = {0};
+  EtcPalMsgHdr msg = {{0}};
   msg.buf          = buf;
   msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
   msg.control      = control;
@@ -519,7 +519,7 @@ TEST(etcpal_socket, recvmsg_trunc_flag_works)
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]         = {0};
   uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
-  EtcPalMsgHdr msg = {0};
+  EtcPalMsgHdr msg = {{0}};
   msg.buf          = buf;
   msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH - 1;  // Intentionally 1 byte short to trigger TRUNC flag.
   msg.control      = control;
@@ -544,7 +544,7 @@ TEST(etcpal_socket, recvmsg_ctrunc_flag_works)
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]         = {0};
   uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
-  EtcPalMsgHdr msg = {0};
+  EtcPalMsgHdr msg = {{0}};
   msg.buf          = buf;
   msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
   msg.control      = control;
@@ -568,7 +568,7 @@ TEST(etcpal_socket, recvmsg_peek_flag_works)
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
   uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
-  EtcPalMsgHdr msg = {0};
+  EtcPalMsgHdr msg = {{0}};
   msg.buf          = buf;
   msg.buflen       = RECVMSG_TEST_MESSAGE_LENGTH;
   msg.control      = control;
@@ -602,7 +602,7 @@ TEST(etcpal_socket, recvmsg_trunc_peek_works)
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
   uint8_t control[ETCPAL_MAX_CONTROL_SIZE_PKTINFO] = {0};
 
-  EtcPalMsgHdr msg = {0};
+  EtcPalMsgHdr msg = {{0}};
   msg.buf          = buf;
   msg.buflen       = 1u;  // Intentionally too short to trigger TRUNC flag.
   msg.control      = control;
