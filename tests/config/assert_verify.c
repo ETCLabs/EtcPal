@@ -21,16 +21,19 @@
 #include "stdio.h"
 #include "unity_fixture.h"
 
-#define MSG_BUF_SIZE 1000
+#ifdef _MSC_VER
+#define ETCPAL_SPRINTF __pragma(warning(suppress : 4996)) sprintf
+#else
+#define ETCPAL_SPRINTF sprintf
+#endif
 
 bool EtcPalTestingAssertVerify(bool condition, const char* expr, const char* file, const char* func, unsigned int line)
 {
   if (!condition)
   {
-    char msg[MSG_BUF_SIZE] = {0};
-    sprintf_s(msg, MSG_BUF_SIZE,
-              "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d", expr, file,
-              func, line);
+    char msg[1000];
+    ETCPAL_SPRINTF(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d",
+                   expr, file, func, line);
     TEST_FAIL_MESSAGE(msg);
   }
   return condition;
