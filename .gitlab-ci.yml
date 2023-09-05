@@ -12,7 +12,7 @@ stages:
   - deploy
 
 variables:
-  COMMON_CMAKE_DEFS: -DETCPAL_BUILD_MOCK_LIB=ON -DETCPAL_BUILD_TESTS=ON -DETCPAL_BUILD_EXAMPLES=ON
+  COMMON_CMAKE_DEFS: -DETCPAL_BUILD_MOCK_LIB=ON -DETCPAL_BUILD_TESTS=ON -DETCPAL_BUILD_EXAMPLES=ON -DETCPAL_WARN_AS_ERROR=ON
 
 include:
   # Helper for environment setup for native Ninja builds with Windows/MSVC
@@ -29,13 +29,12 @@ windows-build-and-test:
   tags:
     - ct-windows
   variables:
-    CMAKE_DEFS: -DCMAKE_BUILD_TYPE=Release -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON
+    CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON -DETCPAL_ENABLE_ASAN=ON
   script:
-    - !reference [.setup-environment-msvc-2019-64-buildtools, script]
     - mkdir build
     - cd build
-    - cmake -G Ninja $env:COMMON_CMAKE_DEFS.Split(" ") $env:CMAKE_DEFS.Split(" ") ..
-    - cmake --build . -j
+    - cmake -G "Visual Studio 16 2019" -A x64 $env:COMMON_CMAKE_DEFS.Split(" ") $env:CMAKE_DEFS.Split(" ") ..
+    - cmake --build . --config Release -j
     - cd ..
     - python tools\ci\run_tests.py build --config Release
   artifacts:
@@ -47,10 +46,15 @@ macos-build-and-test:
   stage: build
   tags:
     - ct-macos
+  parallel:
+    matrix:
+      - SANITIZER_DEFS:
+          - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
+          - -DETCPAL_ENABLE_TSAN=ON
   script:
     - mkdir build
     - cd build
-    - cmake ${COMMON_CMAKE_DEFS} ..
+    - cmake ${COMMON_CMAKE_DEFS} ${SANITIZER_DEFS} ..
     - cmake --build .
     - cd ..
     - python3 tools/ci/run_tests.py build
@@ -66,18 +70,22 @@ linux-build-and-test:
     - etc-linux-docker
   variables:
     # TODO remove ETCPAL_TEST_IPV6=OFF when DEVOPS-1383 is completed
-    CMAKE_DEFS: -DETCPAL_ENABLE_ASAN=ON -DETCPAL_TEST_IPV6=OFF
+    CMAKE_DEFS: -DETCPAL_TEST_IPV6=OFF
   parallel:
     matrix:
-      - CMAKE_CXX_FLAGS: -fexceptions
-      - CMAKE_CXX_FLAGS: -fno-exceptions
+      - CMAKE_CXX_FLAGS:
+          - -fexceptions
+          - -fno-exceptions
+        SANITIZER_DEFS:
+          - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
+          - -DETCPAL_ENABLE_TSAN=ON
   script:
     - python3 -m pip install unity-test-parser
     - mkdir build
     - cd build
     # The CMAKE_CXX_FLAGS var must be quoted here and not in the variable because of this bug:
     # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1742
-    - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ${CMAKE_DEFS} -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}" ..
+    - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ${CMAKE_DEFS} ${SANITIZER_DEFS} -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}" ..
     - cmake --build .
     - cd ..
     - python3 tools/ci/run_tests.py build

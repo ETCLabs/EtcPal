@@ -366,7 +366,7 @@ void unicast_udp_sendto_recvmsg_test(etcpal_iptype_t ip_type, uint8_t* control, 
     EtcPalSockAddr from_addr;
     uint8_t        buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
 
-    EtcPalMsgHdr msg = {0};
+    EtcPalMsgHdr msg = {{0}};
     msg.buf          = buf;
     msg.buflen       = SOCKET_TEST_MESSAGE_LENGTH;
     msg.control      = control;
@@ -415,7 +415,7 @@ void unicast_udp_sendto_recvmsg_test(etcpal_iptype_t ip_type, uint8_t* control, 
   // timeout option on this socket.
   uint8_t buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
 
-  EtcPalMsgHdr msg = {0};
+  EtcPalMsgHdr msg = {{0}};
   msg.buf          = buf;
   msg.buflen       = SOCKET_TEST_MESSAGE_LENGTH;
   msg.control      = control;
@@ -673,7 +673,7 @@ void multicast_udp_sendto_recvmsg_test(const EtcPalIpAddr* pktinfo_expected_addr
     EtcPalSockAddr from_addr;
     uint8_t        buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
 
-    EtcPalMsgHdr msg = {0};
+    EtcPalMsgHdr msg = {{0}};
     msg.buf          = buf;
     msg.buflen       = SOCKET_TEST_MESSAGE_LENGTH;
     msg.control      = control;
@@ -719,7 +719,7 @@ void multicast_udp_sendto_recvmsg_test(const EtcPalIpAddr* pktinfo_expected_addr
 
   uint8_t buf[SOCKET_TEST_MESSAGE_LENGTH + 1];
 
-  EtcPalMsgHdr msg = {0};
+  EtcPalMsgHdr msg = {{0}};
   msg.buf          = buf;
   msg.buflen       = SOCKET_TEST_MESSAGE_LENGTH;
   msg.control      = control;

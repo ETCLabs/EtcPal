@@ -1014,10 +1014,10 @@ int poll_socket_compare(const EtcPalRbTree* tree, const void* value_a, const voi
   if (!ETCPAL_ASSERT_VERIFY(value_a) || !ETCPAL_ASSERT_VERIFY(value_b))
     return 0;
 
-  const EtcPalPollSocket* a = (const EtcPalPollSocket*)value_a;
-  const EtcPalPollSocket* b = (const EtcPalPollSocket*)value_b;
+  const etcpal_socket_t* a = (const etcpal_socket_t*)value_a;
+  const etcpal_socket_t* b = (const etcpal_socket_t*)value_b;
 
-  return (a->sock > b->sock) - (a->sock < b->sock);
+  return (*a > *b) - (*a < *b);
 }
 
 EtcPalRbNode* poll_socket_alloc(void)

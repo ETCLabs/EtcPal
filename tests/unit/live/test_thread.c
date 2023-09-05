@@ -22,6 +22,7 @@
 #include <stdbool.h>
 
 #include "etcpal/common.h"
+#include "etcpal/signal.h"
 #include "etcpal/timer.h"
 #include "unity_fixture.h"
 
@@ -35,13 +36,13 @@ TEST_TEAR_DOWN(etcpal_thread)
 {
 }
 
-volatile bool waitthread_run;
+etcpal_signal_t wait_thread_stop_signal;
 
 void wait_and_exit(void* param)
 {
   ETCPAL_UNUSED_ARG(param);
 
-  while (waitthread_run)
+  while (!etcpal_signal_try_wait(&wait_thread_stop_signal))
     etcpal_thread_sleep(5);
 }
 
@@ -51,12 +52,14 @@ TEST(etcpal_thread, create_and_destroy_functions_work)
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
   etcpal_thread_t    wait_thread;
 
-  waitthread_run = true;
+  TEST_ASSERT_TRUE(etcpal_signal_create(&wait_thread_stop_signal));
   TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL), kEtcPalErrOk);
 
   // Join should work if the thread has exited.
-  waitthread_run = false;
+  etcpal_signal_post(&wait_thread_stop_signal);
+
   TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
+  etcpal_signal_destroy(&wait_thread_stop_signal);
 }
 
 #if ETCPAL_THREAD_HAS_TIMED_JOIN
@@ -65,7 +68,7 @@ TEST(etcpal_thread, timed_join_works)
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
   etcpal_thread_t    wait_thread;
 
-  waitthread_run = true;
+  TEST_ASSERT_TRUE(etcpal_signal_create(&wait_thread_stop_signal));
   TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL), kEtcPalErrOk);
 
   EtcPalTimer timer;
@@ -77,31 +80,33 @@ TEST(etcpal_thread, timed_join_works)
   TEST_ASSERT_GREATER_THAN_UINT32(5, etcpal_timer_elapsed(&timer));
 
   // Timed join should work if the thread has exited.
-  waitthread_run = false;
+  etcpal_signal_post(&wait_thread_stop_signal);
+
   TEST_ASSERT_EQUAL(etcpal_thread_timed_join(&wait_thread, 100), kEtcPalErrOk);
+  etcpal_signal_destroy(&wait_thread_stop_signal);
 }
 #endif
 
-volatile bool spin_task_run;
-volatile bool spin_task_ran;
+etcpal_signal_t spin_task_stop_signal;
+volatile bool   spin_task_ran;
 
 void increment_and_spin(void* param)
 {
   ETCPAL_UNUSED_ARG(param);
 
   spin_task_ran = true;
-  while (spin_task_run)
+  while (!etcpal_signal_try_wait(&spin_task_stop_signal))
     ;
 }
 
-volatile bool oneshot_task_run;
-volatile bool oneshot_task_ran;
+etcpal_signal_t oneshot_task_stop_signal;
+volatile bool   oneshot_task_ran;
 
 void oneshot(void* param)
 {
   ETCPAL_UNUSED_ARG(param);
 
-  if (oneshot_task_run)
+  if (!etcpal_signal_try_wait(&oneshot_task_stop_signal))
     oneshot_task_ran = true;
 }
 
@@ -125,21 +130,30 @@ TEST(etcpal_thread, threads_are_time_sliced)
 #endif
 
   etcpal_thread_t spin_task;
-  spin_task_run = true;
+  TEST_ASSERT_TRUE(etcpal_signal_create(&spin_task_stop_signal));
+
   etcpal_thread_t oneshot_task;
-  oneshot_task_run = true;
+  TEST_ASSERT_TRUE(etcpal_signal_create(&oneshot_task_stop_signal));
 
   // Create the spin task.
   TEST_ASSERT_EQUAL(etcpal_thread_create(&spin_task, &params, increment_and_spin, NULL), kEtcPalErrOk);
+
   // Create the oneshot task.
   TEST_ASSERT_EQUAL(etcpal_thread_create(&oneshot_task, &params, oneshot, NULL), kEtcPalErrOk);
+
   // Give both tasks time to run.
   etcpal_thread_sleep(100);
+
   // Stop the tasks
-  oneshot_task_run = false;
+  etcpal_signal_post(&oneshot_task_stop_signal);
   TEST_ASSERT_EQUAL(etcpal_thread_join(&oneshot_task), kEtcPalErrOk);
-  spin_task_run = false;
+
+  etcpal_signal_post(&spin_task_stop_signal);
   TEST_ASSERT_EQUAL(etcpal_thread_join(&spin_task), kEtcPalErrOk);
+
+  etcpal_signal_destroy(&oneshot_task_stop_signal);
+  etcpal_signal_destroy(&spin_task_stop_signal);
+
   TEST_ASSERT_TRUE(spin_task_ran);
   TEST_ASSERT_TRUE(oneshot_task_ran);
 }

@@ -123,7 +123,7 @@ etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr* src, char* dest)
       return kEtcPalErrInvalid;
     }
     case kEtcPalIpTypeV6: {
-      struct in6_addr addr = {0};
+      struct in6_addr addr = {{{0}}};
       memcpy(addr.s6_addr, ETCPAL_IP_V6_ADDRESS(src), ETCPAL_IPV6_BYTES);
       if (NULL != inet_ntop(AF_INET6, &addr, dest, ETCPAL_IP_STRING_BYTES))
         return kEtcPalErrOk;
@@ -153,7 +153,7 @@ etcpal_error_t etcpal_string_to_ip(etcpal_iptype_t type, const char* src, EtcPal
       return kEtcPalErrOk;
     }
     case kEtcPalIpTypeV6: {
-      struct in6_addr addr = {0};
+      struct in6_addr addr = {{{0}}};
       if (1 != inet_pton(AF_INET6, src, &addr))
         return kEtcPalErrInvalid;
 

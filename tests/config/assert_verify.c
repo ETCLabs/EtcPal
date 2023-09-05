@@ -21,13 +21,19 @@
 #include "stdio.h"
 #include "unity_fixture.h"
 
+#ifdef _MSC_VER
+#define ETCPAL_SPRINTF __pragma(warning(suppress : 4996)) sprintf
+#else
+#define ETCPAL_SPRINTF sprintf
+#endif
+
 bool EtcPalTestingAssertVerify(bool condition, const char* expr, const char* file, const char* func, unsigned int line)
 {
   if (!condition)
   {
     char msg[1000];
-    sprintf(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d", expr,
-            file, func, line);
+    ETCPAL_SPRINTF(msg, "Assertion failure from inside EtcPal library. Expression: %s File: %s Function: %s Line: %d",
+                   expr, file, func, line);
     TEST_FAIL_MESSAGE(msg);
   }
   return condition;

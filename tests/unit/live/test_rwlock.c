@@ -23,6 +23,8 @@
 #include "etcpal/timer.h"
 #include "unity_fixture.h"
 
+#define NUM_TEST_LOCKS 32
+
 TEST_GROUP(etcpal_rwlock);
 
 TEST_SETUP(etcpal_rwlock)
@@ -51,13 +53,13 @@ TEST(etcpal_rwlock, read_and_write_interaction)
   etcpal_rwlock_t rwlock;
   TEST_ASSERT_TRUE(etcpal_rwlock_create(&rwlock));
 
-  for (int i = 0; i < 100; ++i)
+  for (int i = 0; i < NUM_TEST_LOCKS; ++i)
     TEST_ASSERT_TRUE(etcpal_rwlock_readlock(&rwlock));
 
   // Write lock should fail if there are readers
   TEST_ASSERT_FALSE(etcpal_rwlock_try_writelock(&rwlock));
 
-  for (int i = 0; i < 100; ++i)
+  for (int i = 0; i < NUM_TEST_LOCKS; ++i)
     etcpal_rwlock_readunlock(&rwlock);
 
   TEST_ASSERT_TRUE(etcpal_rwlock_writelock(&rwlock));

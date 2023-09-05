@@ -19,6 +19,8 @@
 
 #include "etcpal/handle_manager.h"
 
+#include <limits.h>
+
 /**
  * @brief Initialize an IntHandleManager instance.
  *
@@ -59,15 +61,18 @@ int get_next_int_handle(IntHandleManager* manager)
     return -1;
 
   int  new_handle = manager->last_handle;
+  int  max_handle = (manager->max_value >= 0) ? manager->max_value : INT_MAX;
   bool is_used    = false;
   do
   {
-    ++new_handle;
-
-    if ((new_handle < 0) || ((manager->max_value >= 0) && (new_handle > manager->max_value)))
+    if (new_handle >= max_handle)
     {
       new_handle                  = 0;
       manager->check_value_in_use = true;
+    }
+    else
+    {
+      ++new_handle;
     }
 
     if (manager->check_value_in_use)
