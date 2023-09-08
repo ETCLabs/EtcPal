@@ -796,12 +796,6 @@ TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvmsg)
 // reasonable).
 TEST(socket_integration_udp, bulk_poll)
 {
-  unsigned int* x = (unsigned int*)malloc(10 * sizeof(unsigned int));
-  free(x);
-  unsigned int x5 = x[5];
-
-  TEST_ASSERT_TRUE(x5 > 0u);
-
   EtcPalPollContext context;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
