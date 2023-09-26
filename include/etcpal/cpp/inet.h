@@ -405,14 +405,15 @@ public:
   std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
   constexpr unsigned long                scope_id() const noexcept;
 
-  constexpr bool       IsValid() const noexcept;
-  constexpr IpAddrType type() const noexcept;
-  constexpr bool       IsV4() const noexcept;
-  constexpr bool       IsV6() const noexcept;
-  bool                 IsLinkLocal() const noexcept;
-  bool                 IsLoopback() const noexcept;
-  bool                 IsMulticast() const noexcept;
-  bool                 IsWildcard() const noexcept;
+  constexpr bool            IsValid() const noexcept;
+  constexpr IpAddrType      type() const noexcept;
+  constexpr etcpal_iptype_t EtcPalType() const noexcept;
+  constexpr bool            IsV4() const noexcept;
+  constexpr bool            IsV6() const noexcept;
+  bool                      IsLinkLocal() const noexcept;
+  bool                      IsLoopback() const noexcept;
+  bool                      IsMulticast() const noexcept;
+  bool                      IsWildcard() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -575,6 +576,12 @@ constexpr bool SockAddr::IsValid() const noexcept
 constexpr IpAddrType SockAddr::type() const noexcept
 {
   return static_cast<IpAddrType>(addr_.ip.type);
+}
+
+/// @brief Get the type of the SockAddr's IP address as a raw EtcPal ip type.
+constexpr etcpal_iptype_t SockAddr::EtcPalType() const noexcept
+{
+  return addr_.ip.type;
 }
 
 /// @brief Whether a SockAddr contains a valid IPv4 address.
