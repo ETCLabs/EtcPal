@@ -584,7 +584,7 @@ constexpr IpAddrType SockAddr::type() const noexcept
   return static_cast<IpAddrType>(addr_.ip.type);
 }
 
-/// @brief Get the type of the SockAddr's IP address as a raw EtcPal ip type.
+/// @brief Get the underlying etcpal C type of the SockAddr's IP address.
 constexpr etcpal_iptype_t SockAddr::type_raw() const noexcept
 {
   return addr_.ip.type;
