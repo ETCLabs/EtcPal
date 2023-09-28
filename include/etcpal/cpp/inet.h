@@ -77,7 +77,7 @@ public:
 
   constexpr bool            IsValid() const noexcept;
   constexpr IpAddrType      type() const noexcept;
-  constexpr etcpal_iptype_t type_raw() const noexcept;
+  constexpr etcpal_iptype_t raw_type() const noexcept;
   constexpr bool            IsV4() const noexcept;
   constexpr bool            IsV6() const noexcept;
   bool                      IsLinkLocal() const noexcept;
@@ -229,7 +229,7 @@ constexpr IpAddrType IpAddr::type() const noexcept
 }
 
 /// @brief Get the underlying etcpal C type of the IP address.
-constexpr etcpal_iptype_t IpAddr::type_raw() const noexcept
+constexpr etcpal_iptype_t IpAddr::raw_type() const noexcept
 {
   return addr_.type;
 }
@@ -413,7 +413,7 @@ public:
 
   constexpr bool            IsValid() const noexcept;
   constexpr IpAddrType      type() const noexcept;
-  constexpr etcpal_iptype_t type_raw() const noexcept;
+  constexpr etcpal_iptype_t raw_type() const noexcept;
   constexpr bool            IsV4() const noexcept;
   constexpr bool            IsV6() const noexcept;
   bool                      IsLinkLocal() const noexcept;
@@ -585,7 +585,7 @@ constexpr IpAddrType SockAddr::type() const noexcept
 }
 
 /// @brief Get the underlying etcpal C type of the SockAddr's IP address.
-constexpr etcpal_iptype_t SockAddr::type_raw() const noexcept
+constexpr etcpal_iptype_t SockAddr::raw_type() const noexcept
 {
   return addr_.ip.type;
 }
