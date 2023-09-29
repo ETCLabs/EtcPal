@@ -75,15 +75,16 @@ public:
   std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
   constexpr unsigned long                scope_id() const noexcept;
 
-  constexpr bool       IsValid() const noexcept;
-  constexpr IpAddrType type() const noexcept;
-  constexpr bool       IsV4() const noexcept;
-  constexpr bool       IsV6() const noexcept;
-  bool                 IsLinkLocal() const noexcept;
-  bool                 IsLoopback() const noexcept;
-  bool                 IsMulticast() const noexcept;
-  bool                 IsWildcard() const noexcept;
-  unsigned int         MaskLength() const noexcept;
+  constexpr bool            IsValid() const noexcept;
+  constexpr IpAddrType      type() const noexcept;
+  constexpr etcpal_iptype_t raw_type() const noexcept;
+  constexpr bool            IsV4() const noexcept;
+  constexpr bool            IsV6() const noexcept;
+  bool                      IsLinkLocal() const noexcept;
+  bool                      IsLoopback() const noexcept;
+  bool                      IsMulticast() const noexcept;
+  bool                      IsWildcard() const noexcept;
+  unsigned int              MaskLength() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -225,6 +226,12 @@ constexpr bool IpAddr::IsValid() const noexcept
 constexpr IpAddrType IpAddr::type() const noexcept
 {
   return static_cast<IpAddrType>(addr_.type);
+}
+
+/// @brief Get the underlying etcpal C type of the IP address.
+constexpr etcpal_iptype_t IpAddr::raw_type() const noexcept
+{
+  return addr_.type;
 }
 
 /// @brief Whether an IpAddr contains a valid IPv4 address.
@@ -394,25 +401,25 @@ public:
   SockAddr(const uint8_t* v6_data, unsigned long scope_id, uint16_t port) noexcept;
   ETCPAL_CONSTEXPR_14 SockAddr(IpAddr ip, uint16_t port) noexcept;
 
-  constexpr const EtcPalSockAddr&     get() const noexcept;
-  ETCPAL_CONSTEXPR_14 EtcPalSockAddr& get() noexcept;
-  std::string                         ToString() const;
-  constexpr IpAddr                    ip() const noexcept;
-  constexpr uint16_t                  port() const noexcept;
-
+  constexpr const EtcPalSockAddr&        get() const noexcept;
+  ETCPAL_CONSTEXPR_14 EtcPalSockAddr&    get() noexcept;
+  std::string                            ToString() const;
+  constexpr IpAddr                       ip() const noexcept;
+  constexpr uint16_t                     port() const noexcept;
   constexpr uint32_t                     v4_data() const noexcept;
   constexpr const uint8_t*               v6_data() const noexcept;
   std::array<uint8_t, ETCPAL_IPV6_BYTES> ToV6Array() const;
   constexpr unsigned long                scope_id() const noexcept;
 
-  constexpr bool       IsValid() const noexcept;
-  constexpr IpAddrType type() const noexcept;
-  constexpr bool       IsV4() const noexcept;
-  constexpr bool       IsV6() const noexcept;
-  bool                 IsLinkLocal() const noexcept;
-  bool                 IsLoopback() const noexcept;
-  bool                 IsMulticast() const noexcept;
-  bool                 IsWildcard() const noexcept;
+  constexpr bool            IsValid() const noexcept;
+  constexpr IpAddrType      type() const noexcept;
+  constexpr etcpal_iptype_t raw_type() const noexcept;
+  constexpr bool            IsV4() const noexcept;
+  constexpr bool            IsV6() const noexcept;
+  bool                      IsLinkLocal() const noexcept;
+  bool                      IsLoopback() const noexcept;
+  bool                      IsMulticast() const noexcept;
+  bool                      IsWildcard() const noexcept;
 
   void SetAddress(uint32_t v4_data) noexcept;
   void SetAddress(const uint8_t* v6_data) noexcept;
@@ -575,6 +582,12 @@ constexpr bool SockAddr::IsValid() const noexcept
 constexpr IpAddrType SockAddr::type() const noexcept
 {
   return static_cast<IpAddrType>(addr_.ip.type);
+}
+
+/// @brief Get the underlying etcpal C type of the SockAddr's IP address.
+constexpr etcpal_iptype_t SockAddr::raw_type() const noexcept
+{
+  return addr_.ip.type;
 }
 
 /// @brief Whether a SockAddr contains a valid IPv4 address.
