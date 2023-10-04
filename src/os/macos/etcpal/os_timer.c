@@ -27,6 +27,8 @@
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
+static const double kMsWrapPoint = UINT32_MAX + 1.0;
+
 double ticks_to_ms = 0;
 
 etcpal_error_t etcpal_timer_init(void)
@@ -46,7 +48,7 @@ void etcpal_timer_deinit(void)
 uint32_t etcpal_getms(void)
 {
   uint64_t ticks = mach_absolute_time();
-  return ((uint32_t)fmod(ticks * ticks_to_ms, UINT32_MAX));  // Placate UBSAN by using mod to wrap if needed
+  return ((uint32_t)fmod(ticks * ticks_to_ms, kMsWrapPoint));  // Placate UBSAN by using mod to wrap if needed
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

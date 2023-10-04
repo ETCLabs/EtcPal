@@ -26,6 +26,8 @@
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
+static const uint64_t kMsWrapPoint = (uint64_t)UINT32_MAX + 1;
+
 etcpal_error_t etcpal_timer_init(void)
 {
   if (sysconf(_SC_MONOTONIC_CLOCK) < 0)
@@ -44,7 +46,7 @@ uint32_t etcpal_getms(void)
   if (0 == clock_gettime(CLOCK_MONOTONIC, &os_time))
   {
     // Placate UBSAN by using mod to wrap if needed
-    return (uint32_t)((os_time.tv_sec * 1000 + (os_time.tv_nsec / 1000000)) % UINT32_MAX);
+    return (uint32_t)((os_time.tv_sec * 1000 + (os_time.tv_nsec / 1000000)) % kMsWrapPoint);
   }
   return 0;
 }
