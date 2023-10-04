@@ -20,6 +20,8 @@
 #include "etcpal/timer.h"
 #include "etcpal/private/timer.h"
 
+#include "stdint.h"
+
 #include <mach/mach_time.h>
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
@@ -42,8 +44,8 @@ void etcpal_timer_deinit(void)
 
 uint32_t etcpal_getms(void)
 {
-  uint64_t ticks = mach_absolute_time();  //
-  return ((uint32_t)(ticks * ticks_to_ms));
+  uint64_t ticks = mach_absolute_time();
+  return ((uint32_t)((ticks * ticks_to_ms) % UINT32_MAX));  // Placate UBSAN by intentionally wrapping if needed
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
