@@ -42,7 +42,7 @@ void etcpal_timer_deinit(void)
 
 uint32_t etcpal_getms(void)
 {
-  uint64_t ticks = mach_absolute_time();
+  uint64_t ticks = mach_absolute_time();  //
   return ((uint32_t)(ticks * ticks_to_ms));
 }
 
