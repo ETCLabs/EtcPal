@@ -20,8 +20,8 @@
 #include "etcpal/timer.h"
 #include "etcpal/private/timer.h"
 
-#include "math.h"
-#include "stdint.h"
+#include <math.h>
+#include <stdint.h>
 
 #include <mach/mach_time.h>
 
