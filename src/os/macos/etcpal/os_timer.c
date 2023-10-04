@@ -46,7 +46,7 @@ void etcpal_timer_deinit(void)
 uint32_t etcpal_getms(void)
 {
   uint64_t ticks = mach_absolute_time();
-  return ((uint32_t)fmod(ticks * ticks_to_ms, UINT32_MAX));  // Placate UBSAN by intentionally wrapping if needed
+  return ((uint32_t)fmod(ticks * ticks_to_ms, UINT32_MAX));  // Placate UBSAN by using mod to wrap if needed
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)
