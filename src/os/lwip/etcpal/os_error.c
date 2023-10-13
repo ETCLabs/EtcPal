@@ -48,6 +48,7 @@ etcpal_error_t errno_lwip_to_etcpal(int lwip_errno)
     case EDESTADDRREQ:
     case EPROTOTYPE:
     case EOPNOTSUPP:
+    case ENOPROTOOPT:
       return kEtcPalErrInvalid;
       // case EAGAIN: // EWOULDBLOCK defined to EAGAIN
     case EWOULDBLOCK:
