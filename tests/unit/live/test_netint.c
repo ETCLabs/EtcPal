@@ -43,6 +43,7 @@ static void init_netints()
   num_netints = 0;
   TEST_ASSERT_EQUAL(kEtcPalErrBufSize, etcpal_netint_get_interfaces(NULL, &num_netints));
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_netints);
+  TEST_ASSERT_LESS_THAN_UINT(20u, num_netints);  // Sanity check num_netints isn't a garbage value
 
   netints = calloc(num_netints, sizeof(EtcPalNetintInfo));
   TEST_ASSERT_NOT_NULL(netints);
@@ -125,7 +126,7 @@ TEST_GROUP(etcpal_netint);
 
 TEST_SETUP(etcpal_netint)
 {
-  etcpal_init(ETCPAL_FEATURE_NETINTS);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_NETINTS));
   init_netints();
 }
 

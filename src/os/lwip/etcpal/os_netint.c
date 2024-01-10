@@ -28,19 +28,19 @@
 
 #if ETCPAL_EMBOS_USE_MALLOC
 #include <stdlib.h>
-static EtcPalNetintInfo* static_netints;
+static EtcPalNetintInfo* static_netints = NULL;
 #else
-static EtcPalNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS];
+static EtcPalNetintInfo static_netints[ETCPAL_EMBOS_MAX_NETINTS] = {{0}};
 #endif
-size_t num_static_netints;
-size_t default_index;
+size_t num_static_netints = 0;
+size_t default_index      = 0;
 
 /*********************** Private function prototypes *************************/
 
 static void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo* netint);
 static void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* netint);
 #if LWIP_IPV6
-static bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint);
+static void copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint);
 #endif
 
 /*************************** Function definitions ****************************/
@@ -50,7 +50,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
   if (!ETCPAL_ASSERT_VERIFY(cache))
     return kEtcPalErrSys;
 
-  struct netif* lwip_netif;
+  struct netif* lwip_netif = NULL;
 
   LOCK_TCPIP_CORE();
 
@@ -69,8 +69,16 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     }
 #endif
   }
-  cache->netints = (EtcPalNetintInfo*)calloc(sizeof(EtcPalNetintInfo), num_lwip_netints);
-  if (!cache->netints)
+
+  if (num_lwip_netints == 0)
+  {
+    UNLOCK_TCPIP_CORE();
+    return kEtcPalErrNoNetints;
+  }
+
+  ETCPAL_ASSERT_VERIFY(!static_netints);
+  static_netints = (EtcPalNetintInfo*)calloc(num_lwip_netints, sizeof(EtcPalNetintInfo));
+  if (!static_netints)
   {
     UNLOCK_TCPIP_CORE();
     return kEtcPalErrNoMem;
@@ -79,63 +87,80 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   num_static_netints = 0;
 
-  // Make sure the default netint is included
-#if LWIP_IPV4
-  if (netif_default)
-  {
-    cache->def.v4_valid = true;
-    cache->def.v4_index = netif_get_index(netif_default);
-    copy_interface_info_v4(netif_default, &static_netints[num_static_netints++]);
-  }
-#endif
-#if LWIP_IPV6
-  if (netif_default)
-  {
-    cache->def.v6_valid = true;
-    cache->def.v6_index = netif_get_index(netif_default);
-    for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
-    {
-#if !ETCPAL_EMBOS_USE_MALLOC
-      if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
-        break;
-#endif
-      if (copy_interface_info_v6(netif_default, i, &static_netints[num_static_netints]))
-        ++num_static_netints;
-    }
-  }
-#endif
-
+  etcpal_error_t res = kEtcPalErrOk;
   NETIF_FOREACH(lwip_netif)
   {
+#if LWIP_IPV4
     if (lwip_netif == netif_default)
-      continue;
+    {
+      cache->def.v4_valid = true;
+      cache->def.v4_index = netif_get_index(netif_default);
+    }
 
-#if !ETCPAL_EMBOS_USE_MALLOC
+#if ETCPAL_EMBOS_USE_MALLOC
+    if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+    {
+      res = kEtcPalErrSys;
+      break;
+    }
+#else
     if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
       break;
 #endif
-
-#if LWIP_IPV4
     copy_interface_info_v4(lwip_netif, &static_netints[num_static_netints++]);
 #endif
 #if LWIP_IPV6
+    if (lwip_netif == netif_default)
+    {
+      cache->def.v6_valid = true;
+      cache->def.v6_index = netif_get_index(netif_default);
+    }
+
     for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
     {
-#if !ETCPAL_EMBOS_USE_MALLOC
-      if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
-        break;
+      if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[i]))
+      {
+#if ETCPAL_EMBOS_USE_MALLOC
+        if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+        {
+          res = kEtcPalErrSys;
+          break;
+        }
+#else
+        if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
+          break;
 #endif
-      if (copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints]))
-        ++num_static_netints;
+        copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints++]);
+      }
     }
 #endif
   }
 
   UNLOCK_TCPIP_CORE();
 
-  cache->netints     = static_netints;
-  cache->num_netints = num_static_netints;
-  return kEtcPalErrOk;
+#if ETCPAL_EMBOS_USE_MALLOC
+  // At this point, the number of netints written should exactly match the amount allocated for.
+  ETCPAL_ASSERT_VERIFY(num_static_netints == num_lwip_netints);
+#endif
+
+  if (res == kEtcPalErrOk)
+  {
+    cache->netints     = static_netints;
+    cache->num_netints = num_static_netints;
+  }
+  else
+  {
+#if ETCPAL_EMBOS_USE_MALLOC
+    free(static_netints);
+    static_netints = NULL;
+#endif
+    num_static_netints = 0;
+
+    cache->def.v4_valid = false;
+    cache->def.v6_valid = false;
+  }
+
+  return res;
 }
 
 void os_free_interfaces(CachedNetintInfo* cache)
@@ -144,10 +169,17 @@ void os_free_interfaces(CachedNetintInfo* cache)
     return;
 
 #if ETCPAL_EMBOS_USE_MALLOC
-  if (cache->netints)
+  if (static_netints)
   {
-    free(cache->netints);
+    free(static_netints);
+    static_netints = NULL;
+
+    ETCPAL_ASSERT_VERIFY(cache->netints);
     cache->netints = NULL;
+  }
+  else
+  {
+    ETCPAL_ASSERT_VERIFY(!cache->netints);
   }
 #endif
 }
@@ -156,6 +188,10 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
 {
   if (!ETCPAL_ASSERT_VERIFY(dest) || !ETCPAL_ASSERT_VERIFY(cache) || !ETCPAL_ASSERT_VERIFY(index))
     return kEtcPalErrSys;
+#if ETCPAL_EMBOS_USE_MALLOC
+  if (!ETCPAL_ASSERT_VERIFY(static_netints))
+    return kEtcPalErrSys;
+#endif
 
   unsigned int index_found = 0;
 
@@ -180,11 +216,9 @@ etcpal_error_t os_resolve_route(const EtcPalIpAddr* dest, const CachedNetintInfo
   {
     return kEtcPalErrNotFound;
   }
-  else
-  {
-    *index = index_found;
-    return kEtcPalErrOk;
-  }
+
+  *index = index_found;
+  return kEtcPalErrOk;
 }
 
 bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
@@ -193,9 +227,11 @@ bool os_netint_is_up(unsigned int index, const CachedNetintInfo* cache)
 
   bool res = false;
   LOCK_TCPIP_CORE();
+
   struct netif* netif = netif_get_by_index(index);
   if (netif)
     res = netif_is_up(netif);
+
   UNLOCK_TCPIP_CORE();
   return res;
 }
@@ -240,33 +276,29 @@ void copy_interface_info_v4(const struct netif* lwip_netif, EtcPalNetintInfo* ne
 
 #if LWIP_IPV6
 // Must be called with lwIP TCP/IP core locked
-bool copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
+void copy_interface_info_v6(const struct netif* lwip_netif, size_t v6_addr_index, EtcPalNetintInfo* netint)
 {
-  if (!ETCPAL_ASSERT_VERIFY(lwip_netif) || !ETCPAL_ASSERT_VERIFY(netint))
-    return false;
+  if (!ETCPAL_ASSERT_VERIFY(lwip_netif) || !ETCPAL_ASSERT_VERIFY(netint) ||
+      !ETCPAL_ASSERT_VERIFY(ip6_addr_isvalid(lwip_netif->ip6_addr_state[v6_addr_index])))
+  {
+    return;
+  }
 
   copy_common_interface_info(lwip_netif, netint);
 
   /* Finish filling in a netintinfo for a single IPv6 address. */
-
-  if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[v6_addr_index]))
-  {
 #if LWIP_IPV6_SCOPES
-    ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
-                                           ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
+  ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr),
+                                         ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->zone);
 #else
-    ETCPAL_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
-    // TODO revisit
-    netint->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
+  ETCPAL_IP_SET_V6_ADDRESS(&netint->addr, &(ip_2_ip6(&lwip_netif->ip6_addr[v6_addr_index])->addr));
+  // TODO revisit
+  netint->mask = etcpal_ip_mask_from_length(kEtcPalIpTypeV6, 128);
 #endif
 
-    if (lwip_netif == netif_default)
-      netint->is_default = true;
-    else
-      netint->is_default = false;
-
-    return true;
-  }
-  return false;
+  if (lwip_netif == netif_default)
+    netint->is_default = true;
+  else
+    netint->is_default = false;
 }
 #endif

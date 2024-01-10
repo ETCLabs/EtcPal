@@ -20,9 +20,14 @@
 #include "etcpal/timer.h"
 #include "etcpal/private/timer.h"
 
+#include <math.h>
+#include <stdint.h>
+
 #include <mach/mach_time.h>
 
 #if !defined(ETCPAL_BUILDING_MOCK_LIB)
+
+static const double kMsWrapPoint = UINT32_MAX + 1.0;
 
 double ticks_to_ms = 0;
 
@@ -43,7 +48,7 @@ void etcpal_timer_deinit(void)
 uint32_t etcpal_getms(void)
 {
   uint64_t ticks = mach_absolute_time();
-  return ((uint32_t)(ticks * ticks_to_ms));
+  return ((uint32_t)fmod(ticks * ticks_to_ms, kMsWrapPoint));  // Placate UBSAN by using mod to wrap if needed
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

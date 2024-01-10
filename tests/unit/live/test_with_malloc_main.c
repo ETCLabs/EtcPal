@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2023 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/rwlock.h"
+#include "unity_fixture.h"
+#include "etc_fff_wrapper.h"
 
-bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
-{
-  return (timeout_ms == 0 ? etcpal_rwlock_try_readlock(id) : etcpal_rwlock_readlock(id));
-}
+DEFINE_FFF_GLOBALS;
 
-bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
+void run_all_tests(void)
 {
-  return (timeout_ms == 0 ? etcpal_rwlock_try_writelock(id) : etcpal_rwlock_writelock(id));
+  RUN_TEST_GROUP(etcpal_netint);
 }
