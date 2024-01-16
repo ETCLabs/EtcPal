@@ -221,8 +221,8 @@ inline bool NetintIsUp(NetintIndex index) noexcept
   return etcpal_netint_is_up(index.value());
 }
 
-};  // namespace etcpal
-
 /// @}
+
+};  // namespace etcpal
 
 #endif  // ETCPAL_CPP_NETINT_H_
