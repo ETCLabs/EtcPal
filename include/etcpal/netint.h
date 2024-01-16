@@ -51,12 +51,21 @@
  * @code
  * size_t num_netints = 4;  // Start with estimate which eventually has the actual number written to it
  * EtcPalNetintInfo* netints = calloc(num_netints, sizeof(EtcPalNetintInfo));
- * while(etcpal_netint_get_interfaces(netints, &num_netints) == kEtcPalErrBufSize)
+ * while(netints && etcpal_netint_get_interfaces(netints, &num_netints) == kEtcPalErrBufSize)
  * {
- *   netints = realloc(netints, num_netints * sizeof(EtcPalNetintInfo));
+ *   EtcPalNetintInfo* new_netints = realloc(netints, num_netints * sizeof(EtcPalNetintInfo));
+ *   if (new_netints)
+ *   {
+ *     netints = new_netints;
+ *   }
+ *   else
+ *   {
+ *     free(netints);
+ *     netints = NULL;
+ *   }
  * }
  *
- * for (const EtcPalNetintInfo* netint = netints; netint < netints + num_netints; ++netint)
+ * for (const EtcPalNetintInfo* netint = netints; netint && (netint < netints + num_netints); ++netint)
  * {
  *   // Record information or do something with each network interface in turn
  * }
