@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <vector>
 #include "etcpal/netint.h"
+#include "etcpal/cpp/common.h"
 #include "etcpal/cpp/error.h"
 #include "etcpal/cpp/inet.h"
 
@@ -77,6 +78,54 @@ namespace etcpal
 /// etcpal::NetintRefreshInterfaces() function is called. These functions are all thread-safe, so
 /// the interfaces can be refreshed on one thread while other queries are made on another thread.
 
+/// @cond Implementation detail functions
+
+namespace detail
+{
+inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces(
+    size_t                                                           est_num_netints,
+    const std::function<etcpal_error_t(EtcPalNetintInfo*, size_t*)>& c_fn)
+#if !ETCPAL_BUILDING_WITH_EXCEPTIONS
+    noexcept
+#endif
+{
+#if ETCPAL_BUILDING_WITH_EXCEPTIONS
+  int resize_count = 0;
+#endif
+
+  size_t                        num_netints = est_num_netints;  // Start with estimate
+  std::vector<EtcPalNetintInfo> c_netints(num_netints);
+  auto                          err = kEtcPalErrOk;
+  while ((err = c_fn(c_netints.data(), &num_netints)) == kEtcPalErrBufSize)
+  {
+    // std::vector::resize throws exceptions, so only compile it if exceptions are enabled. Otherwise we're most likely
+    // on an embedded platform where the initial estimate will suffice.
+#if ETCPAL_BUILDING_WITH_EXCEPTIONS
+    if (resize_count > 10)
+      return kEtcPalErrBufSize;  // Something screwy is going on, so avoid a potentially infinite loop
+
+    c_netints.resize(num_netints);
+    ++resize_count;
+#else
+    return kEtcPalErrBufSize;
+#endif
+  }
+
+  if (err == kEtcPalErrOk)
+  {
+    std::vector<etcpal::NetintInfo> netints(num_netints);
+    for (int i = 0; i < num_netints; ++i)  // c_netints may be slightly bigger, so iterate the actual range for this
+      netints[i] = etcpal::NetintInfo(c_netints[i]);
+
+    return netints;
+  }
+
+  return err;
+}
+}  // namespace detail
+
+/// @endcond
+
 /// @addtogroup etcpal_cpp_netint
 /// @{
 
@@ -86,30 +135,23 @@ namespace etcpal
 /// entry in the netint array. Because of this, multiple array entries could have the same value
 /// for the index, mac and id parameters.
 ///
+/// @param[in] est_num_netints Determines the initial size of the netint array where the resulting per-interface data is
+/// stored. This only really matters if exceptions are disabled, in which case #kEtcPalErrBufSize will be returned if
+/// this is too small.
 /// @return The array of network interfaces on success.
 /// @return #kEtcPalErrInvalid: Invalid argument provided.
 /// @return #kEtcPalErrNotInit: Module not initialized.
 /// @return #kEtcPalErrNotFound: No system interfaces were found.
-inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfaces() noexcept
+/// @return #kEtcPalErrBufSize: If exceptions are disabled, this means that est_num_netints was smaller than the actual
+/// interface count.
+inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfaces(size_t est_num_netints = 4u)
+#if !ETCPAL_BUILDING_WITH_EXCEPTIONS
+    noexcept
+#endif
 {
-  size_t                        num_netints = 4u;  // Start with estimate
-  std::vector<EtcPalNetintInfo> c_netints(num_netints);
-  auto                          err = kEtcPalErrOk;
-  while ((err = etcpal_netint_get_interfaces(c_netints.data(), &num_netints)) == kEtcPalErrBufSize)
-    c_netints.resize(num_netints);
-
-  if (err == kEtcPalErrOk)
-  {
-    c_netints.resize(num_netints);
-
-    std::vector<etcpal::NetintInfo> netints(num_netints);
-    std::transform(c_netints.begin(), c_netints.end(), netints.begin(),
-                   [](const EtcPalNetintInfo& c_info) { return etcpal::NetintInfo(c_info); });
-
-    return netints;
-  }
-
-  return err;
+  return detail::GetInterfaces(est_num_netints, [](EtcPalNetintInfo* netints, size_t* num_netints) {
+    return etcpal_netint_get_interfaces(netints, num_netints);
+  });
 }
 
 /// @brief Get a list of network interfaces that have the index specified.
@@ -117,36 +159,27 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfaces() n
 /// See @ref interface_indexes for more information.
 ///
 /// @param[in] index Index for which to get interfaces.
+/// @param[in] est_num_netints Determines the initial size of the netint array where the resulting per-interface data is
+/// stored. This only really matters if exceptions are disabled, in which case #kEtcPalErrBufSize will be returned if
+/// this is too small.
 /// @return The array of matching network interfaces on success.
 /// @return #kEtcPalErrInvalid: Invalid argument provided.
 /// @return #kEtcPalErrNotInit: Module not initialized.
 /// @return #kEtcPalErrNotFound: No interfaces found for this index.
-inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfacesForIndex(NetintIndex index) noexcept
+/// @return #kEtcPalErrBufSize: If exceptions are disabled, this means that est_num_netints was smaller than the actual
+/// interface count.
+inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfacesForIndex(NetintIndex index,
+                                                                                     size_t      est_num_netints = 4u)
+#if !ETCPAL_BUILDING_WITH_EXCEPTIONS
+    noexcept
+#endif
 {
   if (!index)
     return kEtcPalErrInvalid;
 
-  size_t                        num_netints = 4u;  // Start with estimate
-  std::vector<EtcPalNetintInfo> c_netints(num_netints);
-  auto                          err = kEtcPalErrOk;
-  while ((err = etcpal_netint_get_interfaces_for_index(index.value(), c_netints.data(), &num_netints)) ==
-         kEtcPalErrBufSize)
-  {
-    c_netints.resize(num_netints);
-  }
-
-  if (err == kEtcPalErrOk)
-  {
-    c_netints.resize(num_netints);
-
-    std::vector<etcpal::NetintInfo> netints(num_netints);
-    std::transform(c_netints.begin(), c_netints.end(), netints.begin(),
-                   [](const EtcPalNetintInfo& c_info) { return etcpal::NetintInfo(c_info); });
-
-    return netints;
-  }
-
-  return err;
+  return detail::GetInterfaces(est_num_netints, [=](EtcPalNetintInfo* netints, size_t* num_netints) {
+    return etcpal_netint_get_interfaces_for_index(index.value(), netints, num_netints);
+  });
 }
 
 /// @brief Get information about the default network interface.
