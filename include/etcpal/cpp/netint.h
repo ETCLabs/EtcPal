@@ -24,6 +24,7 @@
 #define ETCPAL_CPP_NETINT_H_
 
 #include <algorithm>
+#include <vector>
 #include "etcpal/netint.h"
 #include "etcpal/cpp/error.h"
 #include "etcpal/cpp/inet.h"
@@ -90,15 +91,15 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfaces() n
 {
   size_t                        num_netints = 4u;  // Start with estimate
   std::vector<EtcPalNetintInfo> c_netints(num_netints);
-  etcpal::Error                 err;
+  auto                          err = kEtcPalErrOk;
   while ((err = etcpal_netint_get_interfaces(c_netints.data(), &num_netints)) == kEtcPalErrBufSize)
     c_netints.resize(num_netints);
 
-  if (err.IsOk())
+  if (err == kEtcPalErrOk)
   {
     c_netints.resize(num_netints);
 
-    std::vector<etcpal::NetintInfo> netints;
+    std::vector<etcpal::NetintInfo> netints(num_netints);
     std::transform(c_netints.begin(), c_netints.end(), netints.begin(),
                    [](const EtcPalNetintInfo& c_info) { return etcpal::NetintInfo(c_info); });
 
@@ -124,18 +125,18 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfacesForI
 
   size_t                        num_netints = 4u;  // Start with estimate
   std::vector<EtcPalNetintInfo> c_netints(num_netints);
-  etcpal::Error                 err;
+  auto                          err = kEtcPalErrOk;
   while ((err = etcpal_netint_get_interfaces_for_index(index.value(), c_netints.data(), &num_netints)) ==
          kEtcPalErrBufSize)
   {
     c_netints.resize(num_netints);
   }
 
-  if (err.IsOk())
+  if (err == kEtcPalErrOk)
   {
     c_netints.resize(num_netints);
 
-    std::vector<etcpal::NetintInfo> netints;
+    std::vector<etcpal::NetintInfo> netints(num_netints);
     std::transform(c_netints.begin(), c_netints.end(), netints.begin(),
                    [](const EtcPalNetintInfo& c_info) { return etcpal::NetintInfo(c_info); });
 
@@ -165,7 +166,7 @@ inline etcpal::Expected<NetintIndex> NetintGetDefaultInterface(etcpal::IpAddrTyp
   unsigned int index = 0u;
   auto         err   = etcpal_netint_get_default_interface(static_cast<etcpal_iptype_t>(type), &index);
 
-  if (err = kEtcPalErrOk)
+  if (err == kEtcPalErrOk)
     return NetintIndex(index);
 
   return err;
@@ -186,7 +187,7 @@ inline etcpal::Expected<NetintIndex> NetintGetInterfaceForDest(const etcpal::IpA
   unsigned int index = 0u;
   auto         err   = etcpal_netint_get_interface_for_dest(&dest.get(), &index);
 
-  if (err = kEtcPalErrOk)
+  if (err == kEtcPalErrOk)
     return NetintIndex(index);
 
   return err;
