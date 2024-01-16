@@ -101,9 +101,11 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces(
 
   if (err == kEtcPalErrOk)
   {
+    c_netints.resize(num_netints);
+
     std::vector<etcpal::NetintInfo> netints(num_netints);
-    for (int i = 0; i < num_netints; ++i)  // c_netints may be slightly bigger, so iterate the actual range for this
-      netints[i] = etcpal::NetintInfo(c_netints[i]);
+    std::transform(c_netints.begin(), c_netints.end(), netints.begin(),
+                   [](const EtcPalNetintInfo& c_info) { return etcpal::NetintInfo(c_info); });
 
     return netints;
   }
