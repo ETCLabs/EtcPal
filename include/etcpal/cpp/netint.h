@@ -77,6 +77,9 @@ namespace etcpal
 /// etcpal::NetintRefreshInterfaces() function is called. These functions are all thread-safe, so
 /// the interfaces can be refreshed on one thread while other queries are made on another thread.
 
+/// @addtogroup etcpal_cpp_inet
+/// @{
+
 /// @brief Get a list of network interfaces on the system.
 ///
 /// For NICs with multiple IP addresses assigned, this module separates each address into its own
@@ -219,5 +222,7 @@ inline bool NetintIsUp(NetintIndex index) noexcept
 }
 
 };  // namespace etcpal
+
+/// @}
 
 #endif  // ETCPAL_CPP_NETINT_H_
