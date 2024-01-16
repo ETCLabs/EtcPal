@@ -800,6 +800,8 @@ class NetintIndexType
 
 /// @ingroup etcpal_cpp_inet
 /// @brief A handle that represents a network interface index.
+///
+/// You can get the raw integer by calling value() on the handle, assuming it's valid.
 using NetintIndex = etcpal::OpaqueId<detail::NetintIndexType, unsigned int, 0>;
 
 /// @ingroup etcpal_cpp_inet
