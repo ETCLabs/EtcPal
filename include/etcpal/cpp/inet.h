@@ -823,6 +823,9 @@ public:
   std::string           friendly_name() const noexcept;
   constexpr bool        is_default() const noexcept;
 
+  constexpr bool IsValid() const noexcept;
+  constexpr      operator NetintIndex() const noexcept;
+
 private:
   EtcPalNetintInfo info_{};
 };
@@ -905,6 +908,18 @@ constexpr bool NetintInfo::is_default() const noexcept
   return info_.is_default;
 }
 
+/// @brief Determine whether this netint info is valid.
+constexpr bool NetintInfo::IsValid() const noexcept
+{
+  return index().IsValid();
+}
+
+/// @brief Enables implicit conversion to the interface index.
+constexpr NetintInfo::operator NetintIndex() const noexcept
+{
+  return index();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Operators
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -975,6 +990,26 @@ inline bool operator==(const MacAddr& mac, const EtcPalMacAddr& c_mac) noexcept
 inline bool operator!=(const MacAddr& mac, const EtcPalMacAddr& c_mac) noexcept
 {
   return !(mac == c_mac);
+}
+
+inline bool operator==(const EtcPalNetintInfo& c_info, const NetintInfo& info) noexcept
+{
+  return c_info == info.get();
+}
+
+inline bool operator!=(const EtcPalNetintInfo& c_info, const NetintInfo& info) noexcept
+{
+  return !(c_info == info);
+}
+
+inline bool operator==(const NetintInfo& info, const EtcPalNetintInfo& c_info) noexcept
+{
+  return info.get() == c_info;
+}
+
+inline bool operator!=(const NetintInfo& info, const EtcPalNetintInfo& c_info) noexcept
+{
+  return !(info == c_info);
 }
 
 // Standard operators
@@ -1065,6 +1100,36 @@ inline bool operator<=(const MacAddr& a, const MacAddr& b) noexcept
 }
 
 inline bool operator>=(const MacAddr& a, const MacAddr& b) noexcept
+{
+  return !(a < b);
+}
+
+inline bool operator==(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return a.get() == b.get();
+}
+
+inline bool operator!=(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return !(a == b);
+}
+
+inline bool operator<(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return a.get() < b.get();
+}
+
+inline bool operator>(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return b < a;
+}
+
+inline bool operator<=(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const NetintInfo& a, const NetintInfo& b) noexcept
 {
   return !(a < b);
 }

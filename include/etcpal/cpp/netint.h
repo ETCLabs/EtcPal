@@ -44,11 +44,11 @@ namespace etcpal
 ///
 /// After initialization, an array of the set of network interfaces which were present on the system
 /// at initialization time is kept internally. This array can be retrieved using
-/// etcpal::NetintGetInterfaces() and refreshed using etcpal::NetintRefreshInterfaces(). Here's how
+/// etcpal::netint::GetInterfaces() and refreshed using etcpal::netint::RefreshInterfaces(). Here's how
 /// to retrieve the interfaces:
 ///
 /// @code
-/// auto netints = etcpal::NetintGetInterfaces();
+/// auto netints = etcpal::netint::GetInterfaces();
 /// if (netints)
 /// {
 ///   for (const auto& netint :///netints)
@@ -64,33 +64,40 @@ namespace etcpal
 ///
 /// The module also attempts to determine the interface used for the system's default route (the
 /// route used to get to an arbitrary internet destination) and calls that the "default interface",
-/// which can be retrieved using etcpal::NetintGetDefaultInterface().
+/// which can be retrieved using etcpal::netint::GetDefaultInterface().
 ///
 /// The routing information can also be used to determine which network interface will be used for a
 /// given IP address destination, which can be handy for multicasting.
 ///
 /// @code
 /// // Index will either hold an error or the index of the interface that will be used
-/// auto index = etcpal::NetintGetInterfaceForDest(etcpal::IpAddr::FromString("192.168.200.35"));
+/// auto index = etcpal::netint::GetInterfaceForDest(etcpal::IpAddr::FromString("192.168.200.35"));
 /// @endcode
 ///
 /// The list of network interfaces is cached and will only change if the
-/// etcpal::NetintRefreshInterfaces() function is called. These functions are all thread-safe, so
+/// etcpal::netint::RefreshInterfaces() function is called. These functions are all thread-safe, so
 /// the interfaces can be refreshed on one thread while other queries are made on another thread.
 
+/// @addtogroup etcpal_cpp_netint
+/// @{
+
+namespace netint
+{
 /// @cond Implementation detail functions
 
 namespace detail
 {
-inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces(
-    const std::function<etcpal_error_t(EtcPalNetintInfo*, size_t*)>& c_fn) noexcept
+inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces(NetintIndex index = NetintIndex()) noexcept
 {
+  static constexpr size_t kInitialEstimatedCount = 4u;
+
   int resize_count = 0;
 
-  size_t                        num_netints = 4u;  // Start with estimate
+  size_t                        num_netints = kInitialEstimatedCount;  // Start with estimate
   std::vector<EtcPalNetintInfo> c_netints(num_netints);
   auto                          err = kEtcPalErrOk;
-  while ((err = c_fn(c_netints.data(), &num_netints)) == kEtcPalErrBufSize)
+  while ((err = (index.IsValid() ? etcpal_netint_get_interfaces_for_index(index.value(), c_netints.data(), &num_netints)
+                                 : etcpal_netint_get_interfaces(c_netints.data(), &num_netints))) == kEtcPalErrBufSize)
   {
     if (resize_count > 10)
       return kEtcPalErrBufSize;  // Something screwy is going on, so avoid a potentially infinite loop
@@ -101,11 +108,9 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces(
 
   if (err == kEtcPalErrOk)
   {
-    c_netints.resize(num_netints);
-
     std::vector<etcpal::NetintInfo> netints(num_netints);
-    std::transform(c_netints.begin(), c_netints.end(), netints.begin(),
-                   [](const EtcPalNetintInfo& c_info) { return etcpal::NetintInfo(c_info); });
+    for (int i = 0; i < num_netints; ++i)
+      netints[i] = etcpal::NetintInfo(c_netints[i]);
 
     return netints;
   }
@@ -129,11 +134,9 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces(
 /// @return #kEtcPalErrInvalid: Invalid argument provided.
 /// @return #kEtcPalErrNotInit: Module not initialized.
 /// @return #kEtcPalErrNotFound: No system interfaces were found.
-inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfaces() noexcept
+inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces() noexcept
 {
-  return detail::GetInterfaces([](EtcPalNetintInfo* netints, size_t* num_netints) {
-    return etcpal_netint_get_interfaces(netints, num_netints);
-  });
+  return detail::GetInterfaces();
 }
 
 /// @brief Get a list of network interfaces that have the index specified.
@@ -145,14 +148,33 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfaces() n
 /// @return #kEtcPalErrInvalid: Invalid argument provided.
 /// @return #kEtcPalErrNotInit: Module not initialized.
 /// @return #kEtcPalErrNotFound: No interfaces found for this index.
-inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfacesForIndex(NetintIndex index) noexcept
+inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfacesForIndex(NetintIndex index) noexcept
 {
   if (!index)
     return kEtcPalErrInvalid;
 
-  return detail::GetInterfaces([=](EtcPalNetintInfo* netints, size_t* num_netints) {
-    return etcpal_netint_get_interfaces_for_index(index.value(), netints, num_netints);
-  });
+  return detail::GetInterfaces(index);
+}
+
+/// @brief Get the network interface that has the specified IP address.
+///
+/// @param[in] ip The IP address assigned to the desired interface.
+/// @return Information for the matching interface if found.
+/// @return #kEtcPalErrInvalid: Invalid argument provided.
+/// @return #kEtcPalErrNotInit: Module not initialized.
+/// @return #kEtcPalErrNotFound: No interfaces found for this IP address.
+inline etcpal::Expected<etcpal::NetintInfo> GetInterfaceWithIp(const IpAddr& ip) noexcept
+{
+  if (!ip.IsValid())
+    return kEtcPalErrInvalid;
+
+  EtcPalNetintInfo c_netint{};
+  auto             err = etcpal_netint_get_interface_with_ip(&ip.get(), &c_netint);
+
+  if (err == kEtcPalErrOk)
+    return etcpal::NetintInfo(c_netint);
+
+  return err;
 }
 
 /// @brief Get information about the default network interface.
@@ -170,7 +192,7 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> NetintGetInterfacesForI
 /// @return #kEtcPalErrInvalid: Invalid argument provided.
 /// @return #kEtcPalErrNotInit: Module not initialized.
 /// @return #kEtcPalErrNotFound: No default interface found for this type.
-inline etcpal::Expected<NetintIndex> NetintGetDefaultInterface(etcpal::IpAddrType type) noexcept
+inline etcpal::Expected<NetintIndex> GetDefaultInterface(etcpal::IpAddrType type) noexcept
 {
   unsigned int index = 0u;
   auto         err   = etcpal_netint_get_default_interface(static_cast<etcpal_iptype_t>(type), &index);
@@ -191,7 +213,7 @@ inline etcpal::Expected<NetintIndex> NetintGetDefaultInterface(etcpal::IpAddrTyp
 /// @return #kEtcPalErrNotInit: Module not initialized.
 /// @return #kEtcPalErrNoNetints: No network interfaces found on system.
 /// @return #kEtcPalErrNotFound: No route was able to be resolved to the destination.
-inline etcpal::Expected<NetintIndex> NetintGetInterfaceForDest(const etcpal::IpAddr& dest) noexcept
+inline etcpal::Expected<NetintIndex> GetInterfaceForDest(const etcpal::IpAddr& dest) noexcept
 {
   unsigned int index = 0u;
   auto         err   = etcpal_netint_get_interface_for_dest(&dest.get(), &index);
@@ -205,11 +227,11 @@ inline etcpal::Expected<NetintIndex> NetintGetInterfaceForDest(const etcpal::IpA
 /// @brief Refresh the list of network interfaces.
 ///
 /// Rebuilds the cached array of network interfaces that is returned via the
-/// etcpal::NetintGetInterfaces() function.
+/// etcpal::netint::GetInterfaces() function.
 ///
 /// @return #kEtcPalErrOk: Interfaces refreshed.
 /// @return Other error codes from the underlying platform are possible here.
-inline etcpal::Error NetintRefreshInterfaces() noexcept
+inline etcpal::Error RefreshInterfaces() noexcept
 {
   return etcpal_netint_refresh_interfaces();
 }
@@ -217,18 +239,20 @@ inline etcpal::Error NetintRefreshInterfaces() noexcept
 /// @brief Determine whether a network interface is currently up and running.
 ///
 /// @note On Windows, cached network interface information is used to determine this, so the result
-///       for a given index will not change until etcpal::NetintRefreshInterfaces() is called.
+///       for a given index will not change until etcpal::netint::RefreshInterfaces() is called.
 ///
 /// @param index Index of the interface to check.
 /// @return true: The interface indicated by index is up.
 /// @return false: The interface indicated by index is down, or index is invalid.
-inline bool NetintIsUp(NetintIndex index) noexcept
+inline bool IsUp(NetintIndex index) noexcept
 {
   return etcpal_netint_is_up(index.value());
 }
 
+}  // namespace netint
+
 /// @}
 
-};  // namespace etcpal
+}  // namespace etcpal
 
 #endif  // ETCPAL_CPP_NETINT_H_

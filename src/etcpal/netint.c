@@ -38,10 +38,11 @@ etcpal_mutex_t          mutex;
 static int            compare_netints(const void* a, const void* b);
 static etcpal_error_t populate_netint_cache();
 static void           clear_netint_cache();
-static etcpal_error_t get_interfaces(EtcPalNetintInfo* netints,
-                                     size_t*           num_netints,
-                                     bool              specific_index,
-                                     unsigned int      index);
+static etcpal_error_t get_interfaces(EtcPalNetintInfo*   netints,
+                                     size_t*             num_netints,
+                                     bool                specific_index,
+                                     unsigned int        index,
+                                     const EtcPalIpAddr* specific_ip);
 
 /*************************** Function definitions ****************************/
 
@@ -95,7 +96,7 @@ etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints, size_t* n
   if (!initialized)
     return kEtcPalErrNotInit;
 
-  return get_interfaces(netints, num_netints, false, 0);
+  return get_interfaces(netints, num_netints, false, 0, NULL);
 }
 
 /**
@@ -127,7 +128,32 @@ etcpal_error_t etcpal_netint_get_interfaces_for_index(unsigned int      netint_i
   if (!initialized)
     return kEtcPalErrNotInit;
 
-  return get_interfaces(netints, num_netints, true, netint_index);
+  return get_interfaces(netints, num_netints, true, netint_index, NULL);
+}
+
+/**
+ * @brief Get the network interface that has the specified IP address.
+ *
+ * @param[in] ip The IP address assigned to the desired interface.
+ * @param[out] netint If an interface with the specified IP assigned is found, its information will be filled in here.
+ * @return #kEtcPalErrOk: netint was filled in with a matching interface's information.
+ * @return #kEtcPalErrInvalid: Invalid argument provided.
+ * @return #kEtcPalErrNotInit: Module not initialized.
+ * @return #kEtcPalErrNotFound: No interfaces found for this IP address.
+ */
+etcpal_error_t etcpal_netint_get_interface_with_ip(const EtcPalIpAddr* ip, EtcPalNetintInfo* netint)
+{
+  if (!ip || !netint)
+    return kEtcPalErrInvalid;
+  if (!initialized)
+    return kEtcPalErrNotInit;
+
+  size_t         num_netints = 1u;  // Only one interface should match the given IP
+  etcpal_error_t res         = get_interfaces(netint, &num_netints, false, 0, ip);
+  if (res == kEtcPalErrBufSize)
+    res = kEtcPalErrOk;  // Just use the first matching interface (shouldn't happen on a properly configured system)
+
+  return res;
 }
 
 /**
@@ -245,7 +271,11 @@ void clear_netint_cache()
 }
 
 // Takes lock
-etcpal_error_t get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints, bool specific_index, unsigned int index)
+etcpal_error_t get_interfaces(EtcPalNetintInfo*   netints,
+                              size_t*             num_netints,
+                              bool                specific_index,
+                              unsigned int        index,
+                              const EtcPalIpAddr* specific_ip)
 {
   if (!ETCPAL_ASSERT_VERIFY(num_netints) ||
       !ETCPAL_ASSERT_VERIFY((netints || (*num_netints == 0)) && (!netints || (*num_netints > 0))) ||
@@ -261,7 +291,8 @@ etcpal_error_t get_interfaces(EtcPalNetintInfo* netints, size_t* num_netints, bo
   size_t         netint_count = 0;
   for (size_t i = 0; i < netint_cache.num_netints; ++i)
   {
-    if (!specific_index || (index == netint_cache.netints[i].index))
+    if ((!specific_index || (index == netint_cache.netints[i].index)) &&
+        (!specific_ip || (etcpal_ip_cmp(specific_ip, &netint_cache.netints[i].addr) == 0)))
     {
       res = kEtcPalErrOk;
       if (netints && (netint_count < *num_netints))

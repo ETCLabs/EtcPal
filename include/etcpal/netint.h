@@ -107,6 +107,7 @@ etcpal_error_t etcpal_netint_get_interfaces(EtcPalNetintInfo* netints, size_t* n
 etcpal_error_t etcpal_netint_get_interfaces_for_index(unsigned int      netint_index,
                                                       EtcPalNetintInfo* netints,
                                                       size_t*           num_netints);
+etcpal_error_t etcpal_netint_get_interface_with_ip(const EtcPalIpAddr* ip, EtcPalNetintInfo* netint);
 
 etcpal_error_t etcpal_netint_get_default_interface(etcpal_iptype_t type, unsigned int* netint_index);
 etcpal_error_t etcpal_netint_get_interface_for_dest(const EtcPalIpAddr* dest, unsigned int* netint_index);

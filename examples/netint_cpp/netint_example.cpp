@@ -64,7 +64,7 @@ int main()
     return 1;
   }
 
-  auto netint_arr = etcpal::NetintGetInterfaces();
+  auto netint_arr = etcpal::netint::GetInterfaces();
   if (!netint_arr)
   {
     if (netint_arr == kEtcPalErrNotFound)
@@ -89,22 +89,22 @@ int main()
     std::cout << std::left << std::setw(netmask_col_header.length()) << netint.mask().ToString();
     std::cout << std::left << std::setw(mac_col_header.length()) << netint.mac().ToString();
     std::cout << std::right << std::setw(index_col_header.length() - 1u) << netint.index().value() << " ";
-    std::cout << std::left << std::setw(state_col_header.length())
-              << (etcpal::NetintIsUp(netint.index()) ? "Up" : "Down") << "\n";
+    std::cout << std::left << std::setw(state_col_header.length()) << (etcpal::netint::IsUp(netint) ? "Up" : "Down")
+              << "\n";
   }
 
-  auto default_v4 = etcpal::NetintGetDefaultInterface(etcpal::IpAddrType::kV4);
+  auto default_v4 = etcpal::netint::GetDefaultInterface(etcpal::IpAddrType::kV4);
   if (default_v4)
   {
-    auto arr = etcpal::NetintGetInterfacesForIndex(*default_v4);
+    auto arr = etcpal::netint::GetInterfacesForIndex(*default_v4);
     if (arr)
       std::cout << "Default IPv4 interface: " << (*arr)[0].friendly_name() << " (" << default_v4->value() << ")\n";
   }
 
-  auto default_v6 = etcpal::NetintGetDefaultInterface(etcpal::IpAddrType::kV6);
+  auto default_v6 = etcpal::netint::GetDefaultInterface(etcpal::IpAddrType::kV6);
   if (default_v6)
   {
-    auto arr = etcpal::NetintGetInterfacesForIndex(*default_v6);
+    auto arr = etcpal::netint::GetInterfacesForIndex(*default_v6);
     if (arr)
       std::cout << "Default IPv6 interface: " << (*arr)[0].friendly_name() << " (" << default_v6->value() << ")\n";
   }

@@ -243,6 +243,44 @@ bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr*
 }
 
 /**
+ * @brief Compare two EtcPalNetintInfos.
+ *
+ * @param[in] i1 First EtcPalNetintInfo to compare.
+ * @param[in] i2 Second EtcPalNetintInfo to compare.
+ * @return < 0: i1 < i2
+ * @return 0: i1 == i2
+ * @return > 0: i1 > i2
+ */
+int etcpal_netint_info_cmp(const EtcPalNetintInfo* i1, const EtcPalNetintInfo* i2)
+{
+  int res = (int)(i1->index > i2->index) - (int)(i1->index < i2->index);
+  if (res != 0)
+    return res;
+
+  res = etcpal_ip_cmp(&i1->addr, &i2->addr);
+  if (res != 0)
+    return res;
+
+  res = etcpal_ip_cmp(&i1->mask, &i2->mask);
+  if (res != 0)
+    return res;
+
+  res = ETCPAL_MAC_CMP(&i1->mac, &i2->mac);
+  if (res != 0)
+    return res;
+
+  res = memcmp(&i1->id, &i2->id, ETCPAL_NETINTINFO_ID_LEN);
+  if (res != 0)
+    return res;
+
+  res = memcmp(&i1->friendly_name, &i2->friendly_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
+  if (res != 0)
+    return res;
+
+  return (int)(i1->is_default && !i2->is_default) - (int)(!i1->is_default && i2->is_default);
+}
+
+/**
  * @brief Get the length in bits of a netmask.
  *
  * Counts the number of set ('1') bits in the netmask, starting from the MSB. Works for both IPv4
