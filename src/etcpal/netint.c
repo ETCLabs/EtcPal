@@ -153,7 +153,7 @@ etcpal_error_t etcpal_netint_get_interface_with_ip(const EtcPalIpAddr* ip, EtcPa
   size_t         num_netints = 1u;  // Only one interface should match the given IP
   etcpal_error_t res         = get_interfaces(netint, &num_netints, false, 0, ip);
   if (res == kEtcPalErrBufSize)
-    res = kEtcPalErrSys;  // Just use the first matching interface (shouldn't happen on a properly configured system)
+    res = kEtcPalErrSys;
 
   return res;
 }
