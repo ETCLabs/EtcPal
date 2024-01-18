@@ -403,6 +403,7 @@ void etcpal_ip_set_wildcard(etcpal_iptype_t type, EtcPalIpAddr* ip);
 
 int  etcpal_ip_cmp(const EtcPalIpAddr* ip1, const EtcPalIpAddr* ip2);
 bool etcpal_ip_and_port_equal(const EtcPalSockAddr* sock1, const EtcPalSockAddr* sock2);
+int  etcpal_netint_info_cmp(const EtcPalNetintInfo* i1, const EtcPalNetintInfo* i2);
 
 unsigned int etcpal_ip_mask_length(const EtcPalIpAddr* netmask);
 EtcPalIpAddr etcpal_ip_mask_from_length(etcpal_iptype_t type, unsigned int mask_length);
@@ -521,6 +522,38 @@ inline bool operator<=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
 }
 
 inline bool operator>=(const EtcPalMacAddr& a, const EtcPalMacAddr& b)
+{
+  return !(a < b);
+}
+
+/* Comparison operators for EtcPalNetintInfos */
+
+inline bool operator==(const EtcPalNetintInfo& a, const EtcPalNetintInfo& b)
+{
+  return (etcpal_netint_info_cmp(&a, &b) == 0);
+}
+
+inline bool operator!=(const EtcPalNetintInfo& a, const EtcPalNetintInfo& b)
+{
+  return !(a == b);
+}
+
+inline bool operator<(const EtcPalNetintInfo& a, const EtcPalNetintInfo& b)
+{
+  return (etcpal_netint_info_cmp(&a, &b) < 0);
+}
+
+inline bool operator>(const EtcPalNetintInfo& a, const EtcPalNetintInfo& b)
+{
+  return b < a;
+}
+
+inline bool operator<=(const EtcPalNetintInfo& a, const EtcPalNetintInfo& b)
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const EtcPalNetintInfo& a, const EtcPalNetintInfo& b)
 {
   return !(a < b);
 }

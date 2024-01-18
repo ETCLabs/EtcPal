@@ -25,6 +25,7 @@ DEFINE_FAKE_VALUE_FUNC(etcpal_error_t,
                        unsigned int,
                        EtcPalNetintInfo*,
                        size_t*);
+DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interface_with_ip, const EtcPalIpAddr*, EtcPalNetintInfo*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_default_interface, etcpal_iptype_t, unsigned int*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_get_interface_for_dest, const EtcPalIpAddr*, unsigned int*);
 DEFINE_FAKE_VALUE_FUNC(etcpal_error_t, etcpal_netint_refresh_interfaces);
@@ -34,6 +35,7 @@ void etcpal_netint_reset_all_fakes(void)
 {
   RESET_FAKE(etcpal_netint_get_interfaces);
   RESET_FAKE(etcpal_netint_get_interfaces_for_index);
+  RESET_FAKE(etcpal_netint_get_interface_with_ip);
   RESET_FAKE(etcpal_netint_get_default_interface);
   RESET_FAKE(etcpal_netint_get_interface_for_dest);
   RESET_FAKE(etcpal_netint_refresh_interfaces);

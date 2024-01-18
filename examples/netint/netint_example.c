@@ -89,18 +89,28 @@ int main(void)
     return 1;
   }
 
-  size_t num_interfaces = 0;
-  etcpal_netint_get_interfaces(NULL, &num_interfaces);
-
-  if (num_interfaces == 0)
+  size_t            num_interfaces = 4;  // Start with estimate which eventually has the actual number written to it
+  EtcPalNetintInfo* netint_arr     = calloc(num_interfaces, sizeof(EtcPalNetintInfo));
+  while (netint_arr && etcpal_netint_get_interfaces(netint_arr, &num_interfaces) == kEtcPalErrBufSize)
   {
-    printf("Error: No network interfaces found on system.\n");
+    EtcPalNetintInfo* new_netints = realloc(netint_arr, num_interfaces * sizeof(EtcPalNetintInfo));
+    if (new_netints)
+    {
+      netint_arr = new_netints;
+    }
+    else
+    {
+      free(netint_arr);
+      netint_arr = NULL;
+    }
+  }
+
+  if ((num_interfaces == 0) || !netint_arr)
+  {
+    printf((num_interfaces == 0) ? "Error: No network interfaces found on system.\n" : "Error: Out of memory.\n");
     etcpal_deinit(ETCPAL_FEATURE_NETINTS);
     return 1;
   }
-
-  EtcPalNetintInfo* netint_arr = calloc(num_interfaces, sizeof(EtcPalNetintInfo));
-  assert(netint_arr);
 
   create_format_strings(netint_arr, num_interfaces);
 

@@ -250,7 +250,9 @@ void copy_common_interface_info(const struct netif* lwip_netif, EtcPalNetintInfo
   if (NULL != netif_index_to_name((u8_t)netint->index, lwip_name))
   {
     strncpy(netint->id, lwip_name, ETCPAL_NETINTINFO_ID_LEN);
+    netint->id[ETCPAL_NETINTINFO_ID_LEN - 1] = '\0';
     strncpy(netint->friendly_name, lwip_name, ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN);
+    netint->friendly_name[ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN - 1] = '\0';
   }
 }
 

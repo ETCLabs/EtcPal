@@ -31,6 +31,7 @@
 #include "etcpal/inet.h"
 #include "etcpal/cpp/common.h"
 #include "etcpal/cpp/hash.h"
+#include "etcpal/cpp/opaque_id.h"
 
 namespace etcpal
 {
@@ -786,6 +787,139 @@ inline MacAddr MacAddr::FromString(const std::string& mac_str) noexcept
   return FromString(mac_str.c_str());
 }
 
+/// @cond Implementation detail class
+
+namespace detail
+{
+class NetintIndexType
+{
+};
+}  // namespace detail
+
+/// @endcond
+
+/// @ingroup etcpal_cpp_inet
+/// @brief A handle that represents a network interface index.
+///
+/// You can get the raw integer by calling value() on the handle, assuming it's valid.
+using NetintIndex = etcpal::OpaqueId<detail::NetintIndexType, unsigned int, 0>;
+
+/// @ingroup etcpal_cpp_inet
+/// @brief A wrapper class for the EtcPal netint info type.
+class NetintInfo
+{
+public:
+  NetintInfo() = default;
+  constexpr NetintInfo(const EtcPalNetintInfo& c_info) noexcept;
+  NetintInfo& operator=(const EtcPalNetintInfo& c_info) noexcept;
+
+  constexpr const EtcPalNetintInfo& get() const noexcept;
+
+  constexpr NetintIndex index() const noexcept;
+  constexpr IpAddr      addr() const noexcept;
+  constexpr IpAddr      mask() const noexcept;
+  constexpr MacAddr     mac() const noexcept;
+  std::string           id() const noexcept;
+  std::string           friendly_name() const noexcept;
+  constexpr bool        is_default() const noexcept;
+
+  constexpr bool IsValid() const noexcept;
+  constexpr      operator NetintIndex() const noexcept;
+
+private:
+  EtcPalNetintInfo info_{};
+};
+
+/// @brief Construct netint info copied from an instance of the C EtcPalNetintInfo type.
+constexpr NetintInfo::NetintInfo(const EtcPalNetintInfo& c_info) noexcept : info_(c_info)
+{
+}
+
+/// @brief Assign an instance of the C EtcPalNetintInfo type to an instance of this class.
+inline NetintInfo& NetintInfo::operator=(const EtcPalNetintInfo& c_info) noexcept
+{
+  info_ = c_info;
+  return *this;
+}
+
+/// @brief Get a const reference to the underlying C type.
+constexpr const EtcPalNetintInfo& NetintInfo::get() const noexcept
+{
+  return info_;
+}
+
+/// @brief Get the OS-specific network interface number.
+///
+/// Since interfaces can have multiple IPv4 and IPv6 addresses assigned simultaneously, there can be a one-to-many
+/// relationship between physical network interfaces and etcpal::NetintInfo descriptions on the same system, all of
+/// which will have the same value for this field. It is also used for IPv6, multicast and IP-version-neutral APIs. See
+/// @ref interface_indexes for more information.
+constexpr NetintIndex NetintInfo::index() const noexcept
+{
+  return NetintIndex(info_.index);
+}
+
+/// @brief Get the interface ip address.
+constexpr IpAddr NetintInfo::addr() const noexcept
+{
+  return info_.addr;
+}
+
+/// @brief Get the subnet mask for this interface.
+constexpr IpAddr NetintInfo::mask() const noexcept
+{
+  return info_.mask;
+}
+
+/// @brief Get the adapter MAC address.
+constexpr MacAddr NetintInfo::mac() const noexcept
+{
+  return info_.mac;
+}
+
+/// @brief Get the system name for the interface.
+///
+/// This name can be used as a primary key to identify a single network adapter. It will not change unless the adapter
+/// is removed or reconfigured. Since interfaces can have multiple IPv4 and IPv6 addresses assigned simultaneously,
+/// there can be a one-to-many relationship between physical network interfaces and EtcPalNetintInfo structures on the
+/// same system, all of which have the same value for this field.
+inline std::string NetintInfo::id() const noexcept
+{
+  return info_.id;
+}
+
+/// @brief Get a user-friendly name for the interface.
+///
+/// On some systems, this is the same as the id field. Others allow users to create and change a friendly name for
+/// network interfaces that's different than the system name. This field should be used when printing the adapter list
+/// in a UI.
+inline std::string NetintInfo::friendly_name() const noexcept
+{
+  return info_.friendly_name;
+}
+
+/// @brief Determine whether this is the default network interface.
+///
+/// The default network interface is defined as the network interface chosen for the default IP route on a system.
+///
+/// @return True if this is the default network interface, false otherwise.
+constexpr bool NetintInfo::is_default() const noexcept
+{
+  return info_.is_default;
+}
+
+/// @brief Determine whether this netint info is valid.
+constexpr bool NetintInfo::IsValid() const noexcept
+{
+  return index().IsValid();
+}
+
+/// @brief Enables implicit conversion to the interface index.
+constexpr NetintInfo::operator NetintIndex() const noexcept
+{
+  return index();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Operators
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -856,6 +990,26 @@ inline bool operator==(const MacAddr& mac, const EtcPalMacAddr& c_mac) noexcept
 inline bool operator!=(const MacAddr& mac, const EtcPalMacAddr& c_mac) noexcept
 {
   return !(mac == c_mac);
+}
+
+inline bool operator==(const EtcPalNetintInfo& c_info, const NetintInfo& info) noexcept
+{
+  return c_info == info.get();
+}
+
+inline bool operator!=(const EtcPalNetintInfo& c_info, const NetintInfo& info) noexcept
+{
+  return !(c_info == info);
+}
+
+inline bool operator==(const NetintInfo& info, const EtcPalNetintInfo& c_info) noexcept
+{
+  return info.get() == c_info;
+}
+
+inline bool operator!=(const NetintInfo& info, const EtcPalNetintInfo& c_info) noexcept
+{
+  return !(info == c_info);
 }
 
 // Standard operators
@@ -946,6 +1100,36 @@ inline bool operator<=(const MacAddr& a, const MacAddr& b) noexcept
 }
 
 inline bool operator>=(const MacAddr& a, const MacAddr& b) noexcept
+{
+  return !(a < b);
+}
+
+inline bool operator==(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return a.get() == b.get();
+}
+
+inline bool operator!=(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return !(a == b);
+}
+
+inline bool operator<(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return a.get() < b.get();
+}
+
+inline bool operator>(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return b < a;
+}
+
+inline bool operator<=(const NetintInfo& a, const NetintInfo& b) noexcept
+{
+  return !(b < a);
+}
+
+inline bool operator>=(const NetintInfo& a, const NetintInfo& b) noexcept
 {
   return !(a < b);
 }
