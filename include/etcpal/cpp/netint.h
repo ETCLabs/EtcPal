@@ -163,6 +163,8 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfacesForIndex(N
 /// @return #kEtcPalErrInvalid: Invalid argument provided.
 /// @return #kEtcPalErrNotInit: Module not initialized.
 /// @return #kEtcPalErrNotFound: No interfaces found for this IP address.
+/// @return #kEtcPalErrSys: Multiple interfaces were configured at the same IP address, which means the system is
+/// misconfigured.
 inline etcpal::Expected<etcpal::NetintInfo> GetInterfaceWithIp(const IpAddr& ip) noexcept
 {
   if (!ip.IsValid())

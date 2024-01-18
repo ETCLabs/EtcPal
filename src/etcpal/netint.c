@@ -140,6 +140,8 @@ etcpal_error_t etcpal_netint_get_interfaces_for_index(unsigned int      netint_i
  * @return #kEtcPalErrInvalid: Invalid argument provided.
  * @return #kEtcPalErrNotInit: Module not initialized.
  * @return #kEtcPalErrNotFound: No interfaces found for this IP address.
+ * @return #kEtcPalErrSys: Multiple interfaces were configured at the same IP address, which means the system is
+ * misconfigured.
  */
 etcpal_error_t etcpal_netint_get_interface_with_ip(const EtcPalIpAddr* ip, EtcPalNetintInfo* netint)
 {
@@ -151,7 +153,7 @@ etcpal_error_t etcpal_netint_get_interface_with_ip(const EtcPalIpAddr* ip, EtcPa
   size_t         num_netints = 1u;  // Only one interface should match the given IP
   etcpal_error_t res         = get_interfaces(netint, &num_netints, false, 0, ip);
   if (res == kEtcPalErrBufSize)
-    res = kEtcPalErrOk;  // Just use the first matching interface (shouldn't happen on a properly configured system)
+    res = kEtcPalErrSys;  // Just use the first matching interface (shouldn't happen on a properly configured system)
 
   return res;
 }
