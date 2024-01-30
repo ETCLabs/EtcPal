@@ -19,8 +19,23 @@ option(ETCPAL_EXPLICITLY_DISABLE_EXCEPTIONS "Disable throwing of exceptions thro
 include(${ETCPAL_CMAKE}/OSS.cmake)
 determine_compile_environment()
 
-# Set up quality gates (only if standalone and not open source)
-if((CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR) AND NOT COMPILING_AS_OSS)
+set(QUALITY_GATES_ENABLED OFF)
+
+if(NOT COMPILING_AS_OSS)
+  option(ETCPAL_FORCE_QUALITY_GATES "Force enable quality gate setup even if not building standalone" OFF)
+
+  get_directory_property(HAS_PARENT PARENT_DIRECTORY)
+
+  if(HAS_PARENT)
+    if(ETCPAL_FORCE_QUALITY_GATES)
+      set(QUALITY_GATES_ENABLED ON)
+    endif()
+  else()
+    set(QUALITY_GATES_ENABLED ON)
+  endif()
+endif()
+
+if(QUALITY_GATES_ENABLED)
   include(${ETCPAL_CMAKE}/AddCMakeTools.cmake)
   include(${CMAKE_TOOLS_MODULES}/QualityGateHelpers.cmake)
   setup_standalone_compile()
