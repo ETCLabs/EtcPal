@@ -20,7 +20,7 @@ include(${ETCPAL_CMAKE}/OSS.cmake)
 determine_compile_environment()
 
 # Set up quality gates (only if standalone and not open source)
-if((CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR) AND NOT COMPILING_AS_OSS)
+if((CMAKE_BINARY_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR) AND NOT COMPILING_AS_OSS)
   include(${ETCPAL_CMAKE}/AddCMakeTools.cmake)
   include(${CMAKE_TOOLS_MODULES}/QualityGateHelpers.cmake)
   setup_standalone_compile()
