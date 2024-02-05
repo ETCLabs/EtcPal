@@ -19,27 +19,48 @@
 
 #include "etcpal/mutex.h"
 
-
-bool etcpal_mutex_create(etcpal_mutex_t *id) {
-	return (k_mutex_init(id) == 0);
+bool etcpal_mutex_create(etcpal_mutex_t* id)
+{
+  if (id)
+  {
+    return (k_mutex_init(id) == 0);
+  }
+  return false;
 }
 
-bool etcpal_mutex_lock(etcpal_mutex_t *id) {
-  return (k_mutex_lock(id, K_FOREVER) == 0);
+bool etcpal_mutex_lock(etcpal_mutex_t* id)
+{
+  if (id)
+  {
+    return (k_mutex_lock(id, K_FOREVER) == 0);
+  }
+  return false;
 }
 
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id) {
-	return (k_mutex_lock(id, K_NO_WAIT) == 0);
+bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
+{
+  if (id)
+  {
+    return (k_mutex_lock(id, K_NO_WAIT) == 0);
+  }
+  return false;
 }
 
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms) {
-	return (k_mutex_lock(id, K_MSEC(timeout_ms)) == 0);
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
+{
+  if (id)
+  {
+    return (k_mutex_lock(id, K_MSEC(timeout_ms)) == 0);
+  }
+  return false;
 }
 
-void etcpal_mutex_unlock(etcpal_mutex_t *id) {
-	k_mutex_unlock(id);
+void etcpal_mutex_unlock(etcpal_mutex_t* id)
+{
+  k_mutex_unlock(id);
 }
 
-void etcpal_mutex_destroy(etcpal_mutex_t *id) {
+void etcpal_mutex_destroy(etcpal_mutex_t* id)
+{
   // Not implemented
 }
