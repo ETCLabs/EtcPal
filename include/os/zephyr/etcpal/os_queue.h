@@ -44,14 +44,14 @@ typedef struct
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
 void etcpal_queue_destroy(etcpal_queue_t* id);
 
-#define etcpal_queue_send(idptr, dataptr) ((bool)(!k_msgq_put((idptr)->queue, (dataptr), K_FOREVER)))
+#define etcpal_queue_send(idptr, dataptr) ((bool)(!k_msgq_put(&(idptr)->queue, (dataptr), K_FOREVER)))
 #define etcpal_queue_timed_send(idptr, dataptr, timeout_ms) \
-  ((bool)(!k_msgq_put((idptr)->queue, (dataptr), ms_to_zephyr_timeout((timeout_ms)))))
+  ((bool)(!k_msgq_put(&(idptr)->queue, (dataptr), ms_to_zephyr_timeout((timeout_ms)))))
 #define etcpal_queue_send_from_isr etcpal_queue_send
 
-#define etcpal_queue_receive(idptr, dataptr) ((bool)(!k_msgq_get((idptr)->queue, (dataptr), K_FOREVER)))
+#define etcpal_queue_receive(idptr, dataptr) ((bool)(!k_msgq_get(&(idptr)->queue, (dataptr), K_FOREVER)))
 #define etcpal_queue_timed_receive(idptr, dataptr, timeout_ms) \
-  ((bool)(!k_msq_get((idptr)->queue, (dataptr), ms_to_zephyr_timeout((timeout_ms)))))
+  ((bool)(!k_msq_get(&(idptr)->queue, (dataptr), ms_to_zephyr_timeout((timeout_ms)))))
 #define etcpal_queue_receive_from_isr etcpal_queue_receive
 
 bool etcpal_queue_reset(etcpal_queue_t* id);
