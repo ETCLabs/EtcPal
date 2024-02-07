@@ -25,18 +25,18 @@
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  struct timespec time
-  {
-    .tv_sec = MS_TO_S(timeout_ms), .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  struct timespec time = {
+      .tv_sec  = MS_TO_S(timeout_ms),
+      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
   };
   return !pthread_rwlock_timedrdlock(id, &time);
 }
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  struct timespec time
-  {
-    .tv_sec = MS_TO_S(timeout_ms), .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  struct timespec time = {
+      .tv_sec  = MS_TO_S(timeout_ms),
+      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
   };
   return !pthread_rwlock_timedwrlock(id, &time);
 }
