@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-typedef struct pthread_t etcpal_rwlock_t;
+typedef pthread_rwlock_t etcpal_rwlock_t;
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 
