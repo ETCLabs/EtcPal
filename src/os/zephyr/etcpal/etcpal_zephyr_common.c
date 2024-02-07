@@ -18,7 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/common.h"
-#include "etcpal_zephyr_common.h"
+#include "etcpal/etcpal_zephyr_common.h"
 
 k_timeout_t ms_to_zephyr_timeout(int timeout_ms)
 {

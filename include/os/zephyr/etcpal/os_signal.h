@@ -23,7 +23,7 @@
 #include <stdbool.h>
 #include <zephyr/kernel.h>
 #include "etcpal/common.h"
-#include "etcpal_zephyr_common.h"
+#include "etcpal/etcpal_zephyr_common.h"
 
 #ifdef __cplusplus
 extern "C" {

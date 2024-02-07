@@ -21,7 +21,7 @@
 #define ETCPAL_OS_QUEUE_H_
 
 #include "etcpal/common.h"
-#include "etcpal_zephyr_common.h"
+#include "etcpal/etcpal_zephyr_common.h"
 
 #include <zephyr/kernel.h>
 

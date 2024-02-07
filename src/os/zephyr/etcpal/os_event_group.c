@@ -19,7 +19,7 @@
 
 #include "etcpal/event_group.h"
 #include "etcpal/private/common.h"
-#include "etcpal_zephyr_common.h"
+#include "etcpal/etcpal_zephyr_common.h"
 
 /*********************** Private function prototypes *************************/
 
