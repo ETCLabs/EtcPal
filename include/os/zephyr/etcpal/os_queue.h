@@ -21,7 +21,7 @@
 #define ETCPAL_OS_QUEUE_H_
 
 #include "etcpal/common.h"
-#include "etcpal/os_common.h"
+#include "etcpal_zephyr_common.h"
 
 #include <zephyr/kernel.h>
 
@@ -32,40 +32,43 @@
 extern "C" {
 #endif
 
-typedef struct k_msgq etcpal_queue_t;
+typedef struct
+{
+  struct k_msgq queue;
+  uint8_t*      buffer;
+} etcpal_queue_t;
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS 1
-#define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS 1
+#define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   1
 
-bool etcpal_queue_create(etcpal_queue_t *id, size_t size, size_t item_size);
-bool etcpal_queue_create_static(etcpal_queue_t *id, size_t size,
-                                size_t item_size, uint8_t* buffer);
-void etcpal_queue_destroy(etcpal_queue_t *id);
+bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
+void etcpal_queue_destroy(etcpal_queue_t* id);
 
-bool etcpal_queue_send(etcpal_queue_t *id, const void *data);
-bool etcpal_queue_timed_send(etcpal_queue_t *id, const void *data,
-                             int timeout_ms);
-bool etcpal_queue_send_from_isr(etcpal_queue_t *id, const void *data);
+#define etcpal_queue_send(idptr, dataptr) ((bool)(!k_msgq_put((idptr)->queue, (dataptr), K_FOREVER)))
+#define etcpal_queue_timed_send(idptr, dataptr, timeout_ms) \
+  ((bool)(!k_msgq_put((idptr)->queue, (dataptr), ms_to_zephyr_timeout((timeout_ms)))))
+#define etcpal_queue_send_from_isr etcpal_queue_send
 
-bool etcpal_queue_receive(etcpal_queue_t *id, void *data);
-bool etcpal_queue_timed_receive(etcpal_queue_t *id, void *data, int timeout_ms);
-bool etcpal_queue_receive_from_isr(etcpal_queue_t *id, void *data);
+#define etcpal_queue_receive(idptr, dataptr) ((bool)(!k_msgq_get((idptr)->queue, (dataptr), K_FOREVER)))
+#define etcpal_queue_timed_receive(idptr, dataptr, timeout_ms) \
+  ((bool)(!k_msq_get((idptr)->queue, (dataptr), ms_to_zephyr_timeout((timeout_ms)))))
+#define etcpal_queue_receive_from_isr etcpal_queue_receive
 
-bool etcpal_queue_reset(etcpal_queue_t *id);
+bool etcpal_queue_reset(etcpal_queue_t* id);
 
-bool etcpal_queue_is_empty(const etcpal_queue_t *id);
-bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t *id);
+bool etcpal_queue_is_empty(const etcpal_queue_t* id);
+#define etcpal_queue_is_empty_from_isr etcpal_queue_is_empty
 
-bool etcpal_queue_is_full(const etcpal_queue_t *id);
-bool etcpal_queue_is_full_from_isr(const etcpal_queue_t *id);
+bool etcpal_queue_is_full(const etcpal_queue_t* id);
+#define etcpal_queue_is_full_from_isr etcpal_queue_is_full
 
-size_t etcpal_queue_slots_used(const etcpal_queue_t *id);
-size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t *id);
+size_t etcpal_queue_slots_used(const etcpal_queue_t* id);
+#define etcpal_queue_slots_used_from_isr etcpal_queue_slots_used
 
-size_t etcpal_queue_slots_available(const etcpal_queue_t *id);
+size_t etcpal_queue_slots_available(const etcpal_queue_t* id);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ETCPAL_OS_QUEUE_H_
+#endif  // ETCPAL_OS_QUEUE_H_

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,45 +19,55 @@
 
 #include "etcpal/mutex.h"
 
-bool etcpal_mutex_create(etcpal_mutex_t* id)
-{
-  if (id)
-  {
-    return (k_mutex_init(id) == 0);
-  }
-  return false;
-}
-
 bool etcpal_mutex_lock(etcpal_mutex_t* id)
 {
-  if (id)
+  int err = k_mutex_lock(id, K_FOREVER);
+  if (err)
   {
-    return (k_mutex_lock(id, K_FOREVER) == 0);
+    return false;
   }
-  return false;
+
+  if (id->lock_count > 1)
+  {
+    k_mutex_unlock(id);
+    return false;
+  }
+
+  return true;
 }
 
 bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
 {
-  if (id)
+  int err = k_mutex_lock(id, K_NO_WAIT);
+  if (err)
   {
-    return (k_mutex_lock(id, K_NO_WAIT) == 0);
+    return false;
   }
-  return false;
+
+  if (id->lock_count > 1)
+  {
+    k_mutex_unlock(id);
+    return false;
+  }
+
+  return true;
 }
 
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {
-  if (id)
+  int err = k_mutex_lock(id, ms_to_zephyr_timeout(timeout_ms));
+  if (err)
   {
-    return (k_mutex_lock(id, K_MSEC(timeout_ms)) == 0);
+    return false;
   }
-  return false;
-}
 
-void etcpal_mutex_unlock(etcpal_mutex_t* id)
-{
-  k_mutex_unlock(id);
+  if (id->lock_count > 1)
+  {
+    k_mutex_unlock(id);
+    return false;
+  }
+
+  return true;
 }
 
 void etcpal_mutex_destroy(etcpal_mutex_t* id)

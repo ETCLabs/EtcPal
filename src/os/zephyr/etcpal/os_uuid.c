@@ -17,37 +17,21 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_THREAD_H_
-#define ETCPAL_OS_THREAD_H_
+#include "etcpal/uuid.h"
 
-#include <stdbool.h>
-#include <zephyr/kernel.h>
-#include "etcpal/common.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define ETCPAL_THREAD_DEFAULT_PRIORITY TODO
-#define ETCPAL_THREAD_DEFAULT_STACK    TODO
-#define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
-#define ETCPAL_THREAD_NAME_MAX_LENGTH  TODO
-
-#define ETCPAL_THREAD_HAS_TIMED_JOIN TODO
-
-typedef k_tid_t etcpal_thread_os_handle_t;
-#define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
-
-typedef struct
+// This could possibly be implemented using net_if_get_link_addr, but this would require getting a pointer to the Zephyr
+// net_if struct and possibly DeviceTree integration. Leaving unimplemented for now.
+etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
 {
-  struct k_thread   thread;
-  k_thread_stack_t* stack;
-} etcpal_thread_t;
-
-#define etcpal_thread_get_current_os_handle k_current_get
-
-#ifdef __cplusplus
+  return kEtcPalErrNotImpl;
 }
-#endif
 
-#endif /* ETCPAL_OS_THREAD_H_ */
+etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
+{
+  return kEtcPalErrNotImpl;
+}
+
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
+{
+  return kEtcPalErrNotImpl;
+}

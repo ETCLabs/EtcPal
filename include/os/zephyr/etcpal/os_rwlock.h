@@ -17,37 +17,34 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_THREAD_H_
-#define ETCPAL_OS_THREAD_H_
+#ifndef ETCPAL_OS_RWLOCK_H_
+#define ETCPAL_OS_RWLOCK_H_
 
 #include <stdbool.h>
-#include <zephyr/kernel.h>
+#include <zephyr/posix/pthread.h>
 #include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define ETCPAL_THREAD_DEFAULT_PRIORITY TODO
-#define ETCPAL_THREAD_DEFAULT_STACK    TODO
-#define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
-#define ETCPAL_THREAD_NAME_MAX_LENGTH  TODO
+typedef struct pthread_t etcpal_rwlock_t;
 
-#define ETCPAL_THREAD_HAS_TIMED_JOIN TODO
+#define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 
-typedef k_tid_t etcpal_thread_os_handle_t;
-#define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
-
-typedef struct
-{
-  struct k_thread   thread;
-  k_thread_stack_t* stack;
-} etcpal_thread_t;
-
-#define etcpal_thread_get_current_os_handle k_current_get
+#define etcpal_rwlock_create(idptr)       ((bool)(!pthread_rwlock_init((idptr), NULL)))
+#define etcpal_rwlock_readlock(idptr)     ((bool)(!pthread_rwlock_rdlock(idptr)))
+#define etcpal_rwlock_try_readlock(idptr) ((bool)(!pthread_rwlock_tryrdlock(idptr)))
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
+#define etcpal_rwlock_readunlock(idptr)    ((void)pthread_rwlock_unlock(idptr))
+#define etcpal_rwlock_writelock(idptr)     ((bool)(!pthread_rwlock_wrlock(idptr)))
+#define etcpal_rwlock_try_writelock(idptr) ((bool)(!pthread_rwlock_trywrlock(idptr)))
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
+#define etcpal_rwlock_writeunlock(idptr) ((void)pthread_rwlock_unlock(idptr))
+#define etcpal_rwlock_destroy(idptr)     ((void)pthread_rwlock_destroy(idptr))
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_THREAD_H_ */
+#endif /* ETCPAL_OS_RWLOCK_H_ */

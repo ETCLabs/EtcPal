@@ -17,37 +17,26 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_THREAD_H_
-#define ETCPAL_OS_THREAD_H_
+#include "etcpal/rwlock.h"
 
-#include <stdbool.h>
-#include <zephyr/kernel.h>
-#include "etcpal/common.h"
+#define MS_IN_S      1000
+#define MS_TO_S(ms)  ((ms) / MS_IN_S)
+#define MS_TO_NS(ms) ((ms)*1000000)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define ETCPAL_THREAD_DEFAULT_PRIORITY TODO
-#define ETCPAL_THREAD_DEFAULT_STACK    TODO
-#define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
-#define ETCPAL_THREAD_NAME_MAX_LENGTH  TODO
-
-#define ETCPAL_THREAD_HAS_TIMED_JOIN TODO
-
-typedef k_tid_t etcpal_thread_os_handle_t;
-#define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
-
-typedef struct
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  struct k_thread   thread;
-  k_thread_stack_t* stack;
-} etcpal_thread_t;
-
-#define etcpal_thread_get_current_os_handle k_current_get
-
-#ifdef __cplusplus
+  struct timespec time
+  {
+    .tv_sec = MS_TO_S(timeout_ms), .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  };
+  return !pthread_rwlock_timedrdlock(id, &time);
 }
-#endif
 
-#endif /* ETCPAL_OS_THREAD_H_ */
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  struct timespec time
+  {
+    .tv_sec = MS_TO_S(timeout_ms), .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  };
+  return !pthread_rwlock_timedwrlock(id, &time);
+}

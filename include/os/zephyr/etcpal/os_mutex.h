@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,12 +32,9 @@ typedef struct k_mutex etcpal_mutex_t;
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 
-bool etcpal_mutex_create(etcpal_mutex_t *id);
-bool etcpal_mutex_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id);
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms);
-void etcpal_mutex_unlock(etcpal_mutex_t *id);
-void etcpal_mutex_destroy(etcpal_mutex_t *id);
+#define etcpal_mutex_create(idptr) ((bool)(!k_mutex_init((idptr))))
+#define etcpal_mutex_unlock(idptr) (k_mutex_unlock((idptr)))
+void etcpal_mutex_destroy(etcpal_mutex_t* id);
 
 #ifdef __cplusplus
 }

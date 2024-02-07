@@ -22,11 +22,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
+
 etcpal_error_t errno_os_to_etcpal(int os_errno)
 {
   switch (os_errno)
   {
+    case 0:
+      return kEtcPalErrOk;
     case EPERM:
     case EACCES:
       return kEtcPalErrPerm;

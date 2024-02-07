@@ -17,37 +17,18 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_THREAD_H_
-#define ETCPAL_OS_THREAD_H_
-
-#include <stdbool.h>
-#include <zephyr/kernel.h>
 #include "etcpal/common.h"
+#include "etcpal_zephyr_common.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define ETCPAL_THREAD_DEFAULT_PRIORITY TODO
-#define ETCPAL_THREAD_DEFAULT_STACK    TODO
-#define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
-#define ETCPAL_THREAD_NAME_MAX_LENGTH  TODO
-
-#define ETCPAL_THREAD_HAS_TIMED_JOIN TODO
-
-typedef k_tid_t etcpal_thread_os_handle_t;
-#define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
-
-typedef struct
+k_timeout_t ms_to_zephyr_timeout(int timeout_ms)
 {
-  struct k_thread   thread;
-  k_thread_stack_t* stack;
-} etcpal_thread_t;
-
-#define etcpal_thread_get_current_os_handle k_current_get
-
-#ifdef __cplusplus
+  switch (timeout_ms)
+  {
+    case ETCPAL_WAIT_FOREVER:
+      return K_FOREVER;
+    case ETCPAL_NO_WAIT:
+      return K_NO_WAIT;
+    default:
+      return K_MSEC(timeout_ms);
+  }
 }
-#endif
-
-#endif /* ETCPAL_OS_THREAD_H_ */
