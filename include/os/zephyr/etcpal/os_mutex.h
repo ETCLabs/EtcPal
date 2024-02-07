@@ -21,6 +21,7 @@
 #define ETCPAL_OS_MUTEX_H_
 
 #include "etcpal/common.h"
+#include "etcpal_zephyr_common.h"
 #include <zephyr/kernel.h>
 #include <stdbool.h>
 
