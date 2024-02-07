@@ -46,7 +46,7 @@ bool etcpal_queue_reset(etcpal_queue_t* id)
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
   struct k_msgq_attrs attrs;
-  k_msgq_get_attrs(&id->queue, &attrs);
+  k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
   return attrs.used_msgs == 0;
 }
@@ -54,7 +54,7 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
   struct k_msgq_attrs attrs;
-  k_msgq_get_attrs(&id->queue, &attrs);
+  k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
   return attrs.used_msgs == attrs.max_msgs;
 }
@@ -62,7 +62,7 @@ bool etcpal_queue_is_full(const etcpal_queue_t* id)
 size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
   struct k_msgq_attrs attrs;
-  k_msgq_get_attrs(&id->queue, &attrs);
+  k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
   return attrs.used_msgs;
 }
@@ -70,7 +70,7 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
   struct k_msgq_attrs attrs;
-  k_msgq_get_attrs(&id->queue, &attrs);
+  k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
   return attrs.max_msgs - attrs.used_msgs;
 }

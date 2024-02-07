@@ -19,6 +19,12 @@
 
 #include "etcpal/thread.h"
 #include "etcpal/os_error.h"
+#include "etcpal_zephyr_common.h"
+
+void zephyr_thread_entry(void* thread_fn, void* thread_arg, void* unused)
+{
+  ((void (*)(void*))thread_fn)(thread_arg);
+}
 
 etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
                                     const EtcPalThreadParams* params,
@@ -27,8 +33,8 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
 {
   id->stack = k_thread_stack_alloc(params->stack_size, IS_ENABLED(CONFIG_USERSPACE) ? K_USER : 0);
   k_tid_t thread_id =
-      k_thread_create(id->thread, id->stack, params->stack_size, thread_fn, thread_arg, NULL, NULL, params->priority,
-                      IS_ENABLED(CONFIG_USERSPACE) ? K_USER | K_INHERIT_PERMS : 0, K_NO_WAIT);
+      k_thread_create(&id->thread, id->stack, params->stack_size, zephyr_thread_entry, thread_fn, thread_arg, NULL,
+                      params->priority, IS_ENABLED(CONFIG_USERSPACE) ? K_USER | K_INHERIT_PERMS : 0, K_NO_WAIT);
   return !thread_id ? kEtcPalErrOk : kEtcPalErrInvalid;
 }
 
@@ -40,7 +46,7 @@ etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
   int err;
-  err = k_thread_join(id->thread, K_FOREVER);
+  err = k_thread_join(&id->thread, K_FOREVER);
   if (err)
   {
     return errno_os_to_etcpal(err);
@@ -58,7 +64,7 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 {
   int err;
-  err = k_thread_join(id->thread, ms_to_zephyr_timeout(timeout_ms));
+  err = k_thread_join(&id->thread, ms_to_zephyr_timeout(timeout_ms));
   if (err)
   {
     return errno_os_to_etcpal(err);
@@ -75,7 +81,7 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 {
-  k_thread_abort(id->thread);
+  k_thread_abort(&id->thread);
   int err = k_thread_stack_free(id->stack);
   return errno_os_to_etcpal(err);
 }
