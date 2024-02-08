@@ -29,6 +29,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstddef>
+#include <cassert>
 #include <limits>
 
 namespace etcpal
@@ -101,10 +102,10 @@ public:
   explicit Queue();
   ~Queue();
 
-  Queue(const Queue& other) = delete;
+  Queue(const Queue& other)            = delete;
   Queue& operator=(const Queue& other) = delete;
   Queue(Queue&& other)                 = delete;
-  Queue& operator=(Queue&& other) = delete;
+  Queue& operator=(Queue&& other)      = delete;
 
   bool Send(const T& data, int timeout_ms = ETCPAL_WAIT_FOREVER);
   bool SendFromIsr(const T& data);
