@@ -46,6 +46,7 @@ bool etcpal_event_group_create(etcpal_event_group_t* id)
 
 etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags)
 {
+  // TODO: Format ifs properly
   if (!id || !bits || !id->valid)
     return 0;
 
