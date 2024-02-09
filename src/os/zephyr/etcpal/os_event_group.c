@@ -60,7 +60,7 @@ etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_eve
       {
         if (0 != k_condvar_wait(&id->cond, &id->mutex, K_FOREVER))
         {
-          // On error, the mutex is not locked
+          k_mutex_unlock(&id->mutex);
           return false;
         }
         result = id->bits;
@@ -89,7 +89,7 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
       {
         if (0 != k_condvar_wait(&id->cond, &id->mutex, ms_to_zephyr_timeout(timeout_ms)))
         {
-          // On error, the mutex is not locked
+          k_mutex_unlock(&id->mutex);
           return false;
         }
         result = id->bits;
