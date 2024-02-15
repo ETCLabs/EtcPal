@@ -39,7 +39,12 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     return kEtcPalErrInvalid;
   }
 
-  k_thread_name_set(&id->thread, params->thread_name);
+  int err = k_thread_name_set(&id->thread, params->thread_name);
+  if (err == -EINVAL)
+  {
+    return kEtcPalErrInvalid;
+  }
+
   k_tid_t thread_id =
       k_thread_create(&id->thread, id->stack, params->stack_size, zephyr_thread_entry, thread_fn, thread_arg, NULL,
                       params->priority, IS_ENABLED(CONFIG_USERSPACE) ? K_USER | K_INHERIT_PERMS : 0, K_NO_WAIT);
