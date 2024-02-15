@@ -29,69 +29,68 @@ etcpal_error_t errno_os_to_etcpal(int os_errno)
   {
     case 0:
       return kEtcPalErrOk;
-    case EPERM:
-    case EACCES:
+    case -EPERM:
+    case -EACCES:
       return kEtcPalErrPerm;
-    case ENOENT:
-    case EBADF:
-    case ENOTSOCK:
+    case -ENOENT:
+    case -EBADF:
+    case -ENOTSOCK:
       return kEtcPalErrNotFound;
-    case EFAULT:
-    case EINVAL:
-    case EDESTADDRREQ:
-    case EPROTOTYPE:
-    case EOPNOTSUPP:
+    case -EFAULT:
+    case -EINVAL:
+    case -EDESTADDRREQ:
+    case -EPROTOTYPE:
+    case -EOPNOTSUPP:
       return kEtcPalErrInvalid;
-      // case EAGAIN: // EWOULDBLOCK defined to EAGAIN
-    case EWOULDBLOCK:
+    case -EWOULDBLOCK:
       return kEtcPalErrWouldBlock;
-    case EBUSY:
+    case -EBUSY:
       return kEtcPalErrBusy;
-    case ENOMEM:
-    case ENOBUFS:
+    case -ENOMEM:
+    case -ENOBUFS:
       return kEtcPalErrNoMem;
-    case EEXIST:
+    case -EEXIST:
       return kEtcPalErrExists;
-    case ENOSYS:
+    case -ENOSYS:
       return kEtcPalErrNotImpl;
-    case EPROTO:
+    case -EPROTO:
       return kEtcPalErrProtocol;
-    case EMSGSIZE:
+    case -EMSGSIZE:
       return kEtcPalErrMsgSize;
-    case EADDRINUSE:
+    case -EADDRINUSE:
       return kEtcPalErrAddrInUse;
-    case EADDRNOTAVAIL:
+    case -EADDRNOTAVAIL:
       return kEtcPalErrAddrNotAvail;
-    case ENETDOWN:
-    case ENETUNREACH:
-    case ENETRESET:
+    case -ENETDOWN:
+    case -ENETUNREACH:
+    case -ENETRESET:
       return kEtcPalErrNetwork;
-    case ECONNABORTED:
+    case -ECONNABORTED:
       return kEtcPalErrConnAborted;
-    case ECONNRESET:
+    case -ECONNRESET:
       return kEtcPalErrConnReset;
-    case EISCONN:
+    case -EISCONN:
       return kEtcPalErrIsConn;
-    case ENOTCONN:
+    case -ENOTCONN:
       return kEtcPalErrNotConn;
-    case ESHUTDOWN:
+    case -ESHUTDOWN:
       return kEtcPalErrShutdown;
-    case ETIMEDOUT:
+    case -ETIMEDOUT:
       return kEtcPalErrTimedOut;
-    case ECONNREFUSED:
+    case -ECONNREFUSED:
       return kEtcPalErrConnRefused;
-    case EALREADY:
+    case -EALREADY:
       return kEtcPalErrAlready;
-    case EINPROGRESS:
+    case -EINPROGRESS:
       return kEtcPalErrInProgress;
-    case EINTR:
-    case ENFILE:
-    case EMFILE:
-    case ENOSPC:
-    case EPFNOSUPPORT:
-    case EAFNOSUPPORT:
-    case EPROTONOSUPPORT:
-    case ESOCKTNOSUPPORT:
+    case -EINTR:
+    case -ENFILE:
+    case -EMFILE:
+    case -ENOSPC:
+    case -EPFNOSUPPORT:
+    case -EAFNOSUPPORT:
+    case -EPROTONOSUPPORT:
+    case -ESOCKTNOSUPPORT:
     default:
       return kEtcPalErrSys;
   }
