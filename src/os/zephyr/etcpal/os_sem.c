@@ -48,7 +48,7 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
-  if (id->count >= limit)
+  if (id->count >= id->limit)
   {
     return false;
   }
