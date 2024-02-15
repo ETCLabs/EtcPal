@@ -50,7 +50,7 @@ TEST_SETUP(netint_controlled)
 
   os_enumerate_interfaces_fake.custom_fake = test_enum_interfaces;
 
-  TEST_ASSERT_EQUAL(etcpal_netint_init(), kEtcPalErrOk);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_init());
 }
 
 TEST_TEAR_DOWN(netint_controlled)
@@ -62,11 +62,11 @@ TEST(netint_controlled, netint_is_up_works)
 {
   os_netint_is_up_fake.return_val = true;
   TEST_ASSERT_TRUE(etcpal_netint_is_up(1));
-  TEST_ASSERT_EQUAL_UINT(os_netint_is_up_fake.arg0_val, 1);
+  TEST_ASSERT_EQUAL_UINT(1, os_netint_is_up_fake.arg0_val);
 
   os_netint_is_up_fake.return_val = false;
   TEST_ASSERT_FALSE(etcpal_netint_is_up(2));
-  TEST_ASSERT_EQUAL_UINT(os_netint_is_up_fake.arg0_val, 2);
+  TEST_ASSERT_EQUAL_UINT(2, os_netint_is_up_fake.arg0_val);
 }
 
 TEST_GROUP_RUNNER(netint_controlled)

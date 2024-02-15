@@ -71,7 +71,7 @@ TEST(sem_integration, sem_thread_test_initial_zero)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %d", i);
-    TEST_ASSERT_EQUAL_MESSAGE(etcpal_thread_create(&threads[i], &params, sem_test_thread, NULL), kEtcPalErrOk,
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_thread_create(&threads[i], &params, sem_test_thread, NULL),
                               error_msg);
   }
 
@@ -86,7 +86,7 @@ TEST(sem_integration, sem_thread_test_initial_zero)
   }
 
   for (int i = 0; i < NUM_THREADS; ++i)
-    TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_join(&threads[i]));
 
   // The pass case here is that the test does not hang/timeout
   etcpal_sem_destroy(&sem);
@@ -106,12 +106,12 @@ TEST(sem_integration, sem_thread_test_initial_full)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %d", i);
-    TEST_ASSERT_EQUAL_MESSAGE(etcpal_thread_create(&threads[i], &params, sem_test_thread, NULL), kEtcPalErrOk,
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_thread_create(&threads[i], &params, sem_test_thread, NULL),
                               error_msg);
   }
 
   for (int i = 0; i < NUM_THREADS; ++i)
-    TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_join(&threads[i]));
 
 #if ETCPAL_SEM_MUST_BE_BALANCED
   for (int i = 0; i < (NUM_ITERATIONS * NUM_THREADS); ++i)

@@ -49,7 +49,7 @@ TEST(etcpal_result, constructors_function_correctly)
   etcpal::Error exp_ok(kEtcPalErrOk);
   TEST_ASSERT_TRUE(exp_ok);
   TEST_ASSERT_TRUE(exp_ok.IsOk());
-  TEST_ASSERT_EQUAL(exp_ok.code(), kEtcPalErrOk);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, exp_ok.code());
   TEST_ASSERT_NOT_NULL(exp_ok.ToCString());
   TEST_ASSERT_FALSE(exp_ok.ToString().empty());
 
@@ -57,7 +57,7 @@ TEST(etcpal_result, constructors_function_correctly)
   etcpal::Error exp_not_ok(kEtcPalErrSys);
   TEST_ASSERT_FALSE(exp_not_ok);
   TEST_ASSERT_FALSE(exp_not_ok.IsOk());
-  TEST_ASSERT_EQUAL(exp_not_ok.code(), kEtcPalErrSys);
+  TEST_ASSERT_EQUAL(kEtcPalErrSys, exp_not_ok.code());
   TEST_ASSERT_NOT_NULL(exp_not_ok.ToCString());
   TEST_ASSERT_FALSE(exp_not_ok.ToString().empty());
 }
@@ -66,7 +66,7 @@ TEST(etcpal_result, static_ok_works)
 {
   auto result = etcpal::Error::Ok();
   TEST_ASSERT_TRUE(result);
-  TEST_ASSERT_EQUAL(result.code(), kEtcPalErrOk);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, result.code());
 
   etcpal::Error result_2(kEtcPalErrOk);
   TEST_ASSERT(result_2 == result);
@@ -76,11 +76,11 @@ TEST(etcpal_result, assignment_operators)
 {
   etcpal::Error result = kEtcPalErrOk;
   TEST_ASSERT_TRUE(result);
-  TEST_ASSERT_EQUAL(result.code(), kEtcPalErrOk);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, result.code());
 
   result = kEtcPalErrSys;
   TEST_ASSERT_FALSE(result);
-  TEST_ASSERT_EQUAL(result.code(), kEtcPalErrSys);
+  TEST_ASSERT_EQUAL(kEtcPalErrSys, result.code());
 
   auto result_2 = result;
   TEST_ASSERT_FALSE(result_2);
@@ -205,7 +205,7 @@ private:
 TEST(etcpal_expected, default_constructor_default_init)
 {
   etcpal::Expected<int> v;
-  TEST_ASSERT_EQUAL_INT(v.value(), 0);
+  TEST_ASSERT_EQUAL_INT(0, v.value());
 
   etcpal::Expected<void*>      v2;
   etcpal::Expected<RuleOfZero> v3;
@@ -236,7 +236,7 @@ TEST(etcpal_expected, copy_constructor_works)
   etcpal::Expected<int> v1{20};
   etcpal::Expected<int> v2{v1};
   TEST_ASSERT_TRUE(v2.has_value());
-  TEST_ASSERT_EQUAL_INT(v2.value(), 20);
+  TEST_ASSERT_EQUAL_INT(20, v2.value());
 }
 
 TEST(etcpal_expected, move_constructor_works)
@@ -249,7 +249,7 @@ TEST(etcpal_expected, move_constructor_works)
   etcpal::Expected<std::unique_ptr<Foo>> v1 = std::unique_ptr<Foo>(new Foo);
   etcpal::Expected<std::unique_ptr<Foo>> v2{std::move(v1)};
   TEST_ASSERT_TRUE(v2.has_value());
-  TEST_ASSERT_EQUAL_INT(v2.value()->bar, 30);
+  TEST_ASSERT_EQUAL_INT(30, v2.value()->bar);
 }
 
 TEST(etcpal_expected, conversion_copy_constructor_works)
@@ -257,11 +257,11 @@ TEST(etcpal_expected, conversion_copy_constructor_works)
   // Implicit conversion
   etcpal::Expected<int> v = etcpal::Expected<unsigned int>(40u);
   TEST_ASSERT_TRUE(v.has_value());
-  TEST_ASSERT_EQUAL_INT(v.value(), 40);
+  TEST_ASSERT_EQUAL_INT(40, v.value());
 
   etcpal::Expected<int> v2 = etcpal::Expected<unsigned int>(kEtcPalErrAlready);
   TEST_ASSERT_FALSE(v2.has_value());
-  TEST_ASSERT_EQUAL(v2.error_code(), kEtcPalErrAlready);
+  TEST_ASSERT_EQUAL(kEtcPalErrAlready, v2.error_code());
 
   // Explicit conversion
   class ExplicitFromInt
@@ -276,18 +276,18 @@ TEST(etcpal_expected, conversion_copy_constructor_works)
 
   etcpal::Expected<ExplicitFromInt> v3{etcpal::Expected<int>(50)};
   TEST_ASSERT_TRUE(v3.has_value());
-  TEST_ASSERT_EQUAL_INT(v3.value().number(), 50);
+  TEST_ASSERT_EQUAL_INT(50, v3.value().number());
 }
 
 TEST(etcpal_expected, conversion_move_constructor_works)
 {
   etcpal::Expected<int> v = std::move(etcpal::Expected<unsigned int>(40u));
   TEST_ASSERT_TRUE(v.has_value());
-  TEST_ASSERT_EQUAL_INT(v.value(), 40);
+  TEST_ASSERT_EQUAL_INT(40, v.value());
 
   etcpal::Expected<int> v2 = std::move(etcpal::Expected<unsigned int>(kEtcPalErrAlready));
   TEST_ASSERT_FALSE(v2.has_value());
-  TEST_ASSERT_EQUAL(v2.error_code(), kEtcPalErrAlready);
+  TEST_ASSERT_EQUAL(kEtcPalErrAlready, v2.error_code());
 
   // Explicit conversion
   class ExplicitFromInt
@@ -302,7 +302,7 @@ TEST(etcpal_expected, conversion_move_constructor_works)
 
   etcpal::Expected<ExplicitFromInt> v3{std::move(etcpal::Expected<int>(50))};
   TEST_ASSERT_TRUE(v3.has_value());
-  TEST_ASSERT_EQUAL_INT(v3.value().number(), 50);
+  TEST_ASSERT_EQUAL_INT(50, v3.value().number());
 }
 
 TEST(etcpal_expected, has_value_is_correct)
@@ -319,24 +319,24 @@ TEST(etcpal_expected, has_value_is_correct)
 TEST(etcpal_expected, observers_are_correct)
 {
   etcpal::Expected<int> v = 20;
-  TEST_ASSERT_EQUAL_INT(v.value(), 20);
-  TEST_ASSERT_EQUAL_INT(*v, 20);
+  TEST_ASSERT_EQUAL_INT(20, v.value());
+  TEST_ASSERT_EQUAL_INT(20, *v);
 
   struct Foo
   {
     int val{20};
   };
   etcpal::Expected<Foo> v2;
-  TEST_ASSERT_EQUAL_INT(v2.value().val, 20);
-  TEST_ASSERT_EQUAL_INT((*v2).val, 20);
-  TEST_ASSERT_EQUAL_INT(v2->val, 20);
+  TEST_ASSERT_EQUAL_INT(20, v2.value().val);
+  TEST_ASSERT_EQUAL_INT(20, (*v2).val);
+  TEST_ASSERT_EQUAL_INT(20, v2->val);
 }
 
 TEST(etcpal_expected, error_is_correct)
 {
   etcpal::Expected<int> e = kEtcPalErrNoMem;
-  TEST_ASSERT_EQUAL(e.error_code(), kEtcPalErrNoMem);
-  TEST_ASSERT_EQUAL(e.error().code(), kEtcPalErrNoMem);
+  TEST_ASSERT_EQUAL(kEtcPalErrNoMem, e.error_code());
+  TEST_ASSERT_EQUAL(kEtcPalErrNoMem, e.error().code());
 }
 
 #if ETCPAL_BUILDING_WITH_EXCEPTIONS
@@ -350,7 +350,7 @@ TEST(etcpal_expected, value_throws_on_error)
   }
   catch (const etcpal::BadExpectedAccess& e)
   {
-    TEST_ASSERT_EQUAL_INT(e.error().code(), kEtcPalErrSys);
+    TEST_ASSERT_EQUAL_INT(kEtcPalErrSys, e.error().code());
   }
 }
 #endif
@@ -370,13 +370,13 @@ TEST(etcpal_expected, with_error_constructor_destructor_not_called)
 TEST(etcpal_expected, value_or_works)
 {
   etcpal::Expected<int> v{20};
-  TEST_ASSERT_EQUAL_INT(v.value_or(30), 20);
+  TEST_ASSERT_EQUAL_INT(20, v.value_or(30));
 
   etcpal::Expected<int> e{kEtcPalErrBusy};
-  TEST_ASSERT_EQUAL_INT(v.value_or(20), 20);
+  TEST_ASSERT_EQUAL_INT(20, v.value_or(20));
 
   etcpal::Expected<std::string> s{kEtcPalErrSys};
-  TEST_ASSERT_EQUAL_STRING(s.value_or("Default string").c_str(), "Default string");
+  TEST_ASSERT_EQUAL_STRING("Default string", s.value_or("Default string").c_str());
 }
 
 TEST(etcpal_expected, relational_operators_work)

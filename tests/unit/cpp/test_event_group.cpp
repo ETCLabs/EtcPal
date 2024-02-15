@@ -35,38 +35,38 @@ TEST_TEAR_DOWN(etcpal_cpp_event_group)
 TEST(etcpal_cpp_event_group, create_and_destroy_works)
 {
   etcpal::EventGroup eg;
-  TEST_ASSERT_EQUAL(eg.GetBits(), 0);
-  TEST_ASSERT_EQUAL(eg.TryWait(0xff), 0);
+  TEST_ASSERT_EQUAL(0, eg.GetBits());
+  TEST_ASSERT_EQUAL(0, eg.TryWait(0xff));
 }
 
 TEST(etcpal_cpp_event_group, wait_and_set_works)
 {
   etcpal::EventGroup eg;
   eg.SetBits(0x2);
-  TEST_ASSERT_EQUAL(eg.Wait(0x2), 0x2);
+  TEST_ASSERT_EQUAL(0x2, eg.Wait(0x2));
 }
 
 TEST(etcpal_cpp_event_group, auto_clear_works)
 {
   etcpal::EventGroup eg;
   eg.SetBits(0x2);
-  TEST_ASSERT_EQUAL(eg.Wait(0x2, ETCPAL_EVENT_GROUP_AUTO_CLEAR), 0x2);
-  TEST_ASSERT_EQUAL(eg.TryWait(0x2), 0);
+  TEST_ASSERT_EQUAL(0x2, eg.Wait(0x2, ETCPAL_EVENT_GROUP_AUTO_CLEAR));
+  TEST_ASSERT_EQUAL(0, eg.TryWait(0x2));
 }
 
 TEST(etcpal_cpp_event_group, non_auto_clear_works)
 {
   etcpal::EventGroup eg;
   eg.SetBits(0x2);
-  TEST_ASSERT_EQUAL(eg.Wait(0x2), 0x2);
-  TEST_ASSERT_EQUAL(eg.Wait(0x2), 0x2);
+  TEST_ASSERT_EQUAL(0x2, eg.Wait(0x2));
+  TEST_ASSERT_EQUAL(0x2, eg.Wait(0x2));
 }
 
 TEST(etcpal_cpp_event_group, get_bits_works)
 {
   etcpal::EventGroup eg;
   eg.SetBits(0x3);
-  TEST_ASSERT_EQUAL(eg.GetBits(), 0x3);
+  TEST_ASSERT_EQUAL(0x3, eg.GetBits());
 }
 
 TEST(etcpal_cpp_event_group, clear_bits_works)
@@ -74,7 +74,7 @@ TEST(etcpal_cpp_event_group, clear_bits_works)
   etcpal::EventGroup eg;
   eg.SetBits(0x3);
   eg.ClearBits(0x1);
-  TEST_ASSERT_EQUAL(eg.GetBits(), 0x2);
+  TEST_ASSERT_EQUAL(0x2, eg.GetBits());
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_event_group)

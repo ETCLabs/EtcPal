@@ -48,7 +48,7 @@ TEST(timer_controlled, timer_wraparound_works_as_expected)
   // We've wrapped around but have not exceeded the interval yet
   etcpal_getms_fake.return_val = 0x0f;
   TEST_ASSERT_FALSE(etcpal_timer_is_expired(&t1));
-  TEST_ASSERT_EQUAL_UINT32(etcpal_timer_elapsed(&t1), 0x1fu);
+  TEST_ASSERT_EQUAL_UINT32(0x1fu, etcpal_timer_elapsed(&t1));
 
   etcpal_getms_fake.return_val = 0x11;
   TEST_ASSERT_TRUE(etcpal_timer_is_expired(&t1));
@@ -58,7 +58,7 @@ TEST(timer_controlled, elapsed_since_wraparound_works_as_expected)
 {
   uint32_t start_time          = 0xfffffff0u;
   etcpal_getms_fake.return_val = 0x10;
-  TEST_ASSERT_EQUAL_UINT32(ETCPAL_TIME_ELAPSED_SINCE(start_time), 0x20u);
+  TEST_ASSERT_EQUAL_UINT32(0x20u, ETCPAL_TIME_ELAPSED_SINCE(start_time));
 }
 
 TEST(timer_controlled, remaining_works_as_expected)
@@ -67,30 +67,30 @@ TEST(timer_controlled, remaining_works_as_expected)
 
   etcpal_getms_fake.return_val = 20;
   etcpal_timer_start(&t1, 10);
-  TEST_ASSERT_EQUAL_UINT32(etcpal_timer_remaining(&t1), 10u);
+  TEST_ASSERT_EQUAL_UINT32(10u, etcpal_timer_remaining(&t1));
 
   // Almost expired
   etcpal_getms_fake.return_val = 29;
-  TEST_ASSERT_EQUAL_UINT32(etcpal_timer_remaining(&t1), 1u);
+  TEST_ASSERT_EQUAL_UINT32(1u, etcpal_timer_remaining(&t1));
 
   // 1 ms past expired
   etcpal_getms_fake.return_val = 31;
-  TEST_ASSERT_EQUAL_UINT32(etcpal_timer_remaining(&t1), 0u);
+  TEST_ASSERT_EQUAL_UINT32(0u, etcpal_timer_remaining(&t1));
 
   // Almost wrapped the original time point, remaining should still be 0.
   etcpal_getms_fake.return_val = 19;
-  TEST_ASSERT_EQUAL_UINT32(etcpal_timer_remaining(&t1), 0u);
+  TEST_ASSERT_EQUAL_UINT32(0u, etcpal_timer_remaining(&t1));
 }
 
 TEST(timer_controlled, time_point_now_works)
 {
   etcpal_getms_fake.return_val = 0;
   auto tp                      = etcpal::TimePoint::Now();
-  TEST_ASSERT_EQUAL_UINT32(tp.value(), 0u);
+  TEST_ASSERT_EQUAL_UINT32(0u, tp.value());
 
   etcpal_getms_fake.return_val = 0xffffffffu;
   tp                           = etcpal::TimePoint::Now();
-  TEST_ASSERT_EQUAL_UINT32(tp.value(), 0xffffffffu);
+  TEST_ASSERT_EQUAL_UINT32(0xffffffffu, tp.value());
 }
 
 TEST_GROUP_RUNNER(timer_controlled)

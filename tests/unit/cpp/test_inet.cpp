@@ -221,7 +221,7 @@ TEST(etcpal_cpp_inet, ip_v4_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip.IsV4());
   TEST_ASSERT_FALSE(ip.IsV6());
   TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::kV4);
-  TEST_ASSERT_EQUAL(ip.v4_data(), 0xdeadbeef);
+  TEST_ASSERT_EQUAL(0xdeadbeef, ip.v4_data());
 
   // Using the SetAddress() function
   etcpal::IpAddr ip2;
@@ -231,7 +231,7 @@ TEST(etcpal_cpp_inet, ip_v4_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip2.IsV4());
   TEST_ASSERT_FALSE(ip2.IsV6());
   TEST_ASSERT_TRUE(ip2.type() == etcpal::IpAddrType::kV4);
-  TEST_ASSERT_EQUAL(ip2.v4_data(), 0xdeadbeef);
+  TEST_ASSERT_EQUAL(0xdeadbeef, ip2.v4_data());
 }
 
 static const std::array<uint8_t, ETCPAL_IPV6_BYTES> kTestIpv6Data{0x20, 0x01, 0x0d, 0xb8, 0x00, 0x00, 0x00, 0x00,
@@ -248,7 +248,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip.type() == etcpal::IpAddrType::kV6);
   TEST_ASSERT_EQUAL(0, std::memcmp(kTestIpv6Data.data(), ip.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_TRUE(ip.ToV6Array() == kTestIpv6Data);
-  TEST_ASSERT_EQUAL(ip.scope_id(), 0);
+  TEST_ASSERT_EQUAL(0, ip.scope_id());
 
   // Using the IPv6 direct data constructor with a scope ID
   const etcpal::IpAddr ip2(kTestIpv6Data.data(), 12);
@@ -259,7 +259,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip2.type() == etcpal::IpAddrType::kV6);
   TEST_ASSERT_EQUAL(0, std::memcmp(kTestIpv6Data.data(), ip2.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_TRUE(ip2.ToV6Array() == kTestIpv6Data);
-  TEST_ASSERT_EQUAL(ip2.scope_id(), 12);
+  TEST_ASSERT_EQUAL(12, ip2.scope_id());
 
   // Using the SetAddress() function
   etcpal::IpAddr ip3;
@@ -271,7 +271,7 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip3.type() == etcpal::IpAddrType::kV6);
   TEST_ASSERT_EQUAL(0, std::memcmp(kTestIpv6Data.data(), ip3.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_TRUE(ip3.ToV6Array() == kTestIpv6Data);
-  TEST_ASSERT_EQUAL(ip3.scope_id(), 0);
+  TEST_ASSERT_EQUAL(0, ip3.scope_id());
 
   // Use the SetAddress() function with a scope ID
   etcpal::IpAddr ip4;
@@ -282,18 +282,18 @@ TEST(etcpal_cpp_inet, ip_v6_addresses_assigned_properly)
   TEST_ASSERT_TRUE(ip4.type() == etcpal::IpAddrType::kV6);
   TEST_ASSERT_EQUAL(0, std::memcmp(kTestIpv6Data.data(), ip4.v6_data(), ETCPAL_IPV6_BYTES));
   TEST_ASSERT_TRUE(ip4.ToV6Array() == kTestIpv6Data);
-  TEST_ASSERT_EQUAL(ip4.scope_id(), 12);
+  TEST_ASSERT_EQUAL(12, ip4.scope_id());
 }
 
 TEST(etcpal_cpp_inet, ip_to_string_works)
 {
   const etcpal::IpAddr ip(0xdeadbeef);
-  TEST_ASSERT_EQUAL_STRING(ip.ToString().c_str(), "222.173.190.239");
+  TEST_ASSERT_EQUAL_STRING("222.173.190.239", ip.ToString().c_str());
 
   const etcpal::IpAddr ip2(kTestIpv6Data.data());
   auto                 ip_str = ip2.ToString();
   ConvertStringToLowercase(ip_str);
-  TEST_ASSERT_EQUAL_STRING(ip_str.c_str(), "2001:db8::1234:5678");
+  TEST_ASSERT_EQUAL_STRING("2001:db8::1234:5678", ip_str.c_str());
 }
 
 // We do more rigorous testing of the string conversion functions in the core C unit tests, so we
@@ -304,13 +304,13 @@ TEST(etcpal_cpp_inet, ip_from_string_works)
   TEST_ASSERT_TRUE(v4_good.IsValid());
   TEST_ASSERT_TRUE(v4_good.IsV4());
   TEST_ASSERT_FALSE(v4_good.IsV6());
-  TEST_ASSERT_EQUAL(v4_good.v4_data(), 0x0a65141e);
+  TEST_ASSERT_EQUAL(0x0a65141e, v4_good.v4_data());
 
   v4_good = etcpal::IpAddr::FromString(std::string{"10.101.20.30"});
   TEST_ASSERT_TRUE(v4_good.IsValid());
   TEST_ASSERT_TRUE(v4_good.IsV4());
   TEST_ASSERT_FALSE(v4_good.IsV6());
-  TEST_ASSERT_EQUAL(v4_good.v4_data(), 0x0a65141e);
+  TEST_ASSERT_EQUAL(0x0a65141e, v4_good.v4_data());
 
   auto v6_good = etcpal::IpAddr::FromString("2001:db8::1234:5678");
   TEST_ASSERT_TRUE(v6_good.IsValid());
@@ -393,30 +393,30 @@ TEST(etcpal_cpp_inet, ip_is_wildcard_works)
 TEST(etcpal_cpp_inet, ip_mask_length_works)
 {
   auto ip = etcpal::IpAddr::FromString("255.254.0.0");
-  TEST_ASSERT_EQUAL_UINT(ip.MaskLength(), 15);
+  TEST_ASSERT_EQUAL_UINT(15, ip.MaskLength());
 
   ip = etcpal::IpAddr::FromString("ffff:ffff:ffff:fffe::");
-  TEST_ASSERT_EQUAL_UINT(ip.MaskLength(), 63);
+  TEST_ASSERT_EQUAL_UINT(63, ip.MaskLength());
 }
 
 // More rigorous testing is done in the C unit tests, we just do a few tests here
 TEST(etcpal_cpp_inet, ip_netmask_from_length_works)
 {
   auto ip = etcpal::IpAddr::NetmaskV4(20);
-  TEST_ASSERT_EQUAL(ip.MaskLength(), 20);
+  TEST_ASSERT_EQUAL(20, ip.MaskLength());
   ip = etcpal::IpAddr::NetmaskV6(127);
-  TEST_ASSERT_EQUAL(ip.MaskLength(), 127);
+  TEST_ASSERT_EQUAL(127, ip.MaskLength());
   ip = etcpal::IpAddr::Netmask(etcpal::IpAddrType::kV4, 32);
-  TEST_ASSERT_EQUAL(ip.MaskLength(), 32);
+  TEST_ASSERT_EQUAL(32, ip.MaskLength());
   ip = etcpal::IpAddr::Netmask(etcpal::IpAddrType::kV6, 128);
-  TEST_ASSERT_EQUAL(ip.MaskLength(), 128);
+  TEST_ASSERT_EQUAL(128, ip.MaskLength());
 }
 
 TEST(etcpal_cpp_inet, sockaddr_default_constructor_works)
 {
   etcpal::SockAddr sockaddr;
   TEST_ASSERT_FALSE(sockaddr.IsValid());
-  TEST_ASSERT_EQUAL_UINT16(sockaddr.port(), 0);
+  TEST_ASSERT_EQUAL_UINT16(0, sockaddr.port());
 }
 
 TEST(etcpal_cpp_inet, sockaddr_copy_constructors_work)
@@ -428,8 +428,8 @@ TEST(etcpal_cpp_inet, sockaddr_copy_constructors_work)
   const etcpal::SockAddr sockaddr1(c_sa);
   TEST_ASSERT_TRUE(sockaddr1.get() == c_sa);
   TEST_ASSERT_TRUE(sockaddr1.IsValid());
-  TEST_ASSERT_EQUAL_UINT32(sockaddr1.v4_data(), 0xdeadbeef);
-  TEST_ASSERT_EQUAL_UINT16(sockaddr1.port(), 0xfeed);
+  TEST_ASSERT_EQUAL_UINT32(0xdeadbeef, sockaddr1.v4_data());
+  TEST_ASSERT_EQUAL_UINT16(0xfeed, sockaddr1.port());
 
   // Use the default copy constructor
   const etcpal::SockAddr sockaddr2(sockaddr1);
@@ -462,42 +462,42 @@ TEST(etcpal_cpp_inet, sockaddr_custom_constructors_work)
   const etcpal::SockAddr sockaddr1(0xdeadbeef, 0xfeed);
   TEST_ASSERT_TRUE(sockaddr1.IsValid());
   TEST_ASSERT_TRUE(sockaddr1.IsV4());
-  TEST_ASSERT_EQUAL_UINT32(sockaddr1.v4_data(), 0xdeadbeef);
-  TEST_ASSERT_EQUAL_UINT16(sockaddr1.port(), 0xfeed);
+  TEST_ASSERT_EQUAL_UINT32(0xdeadbeef, sockaddr1.v4_data());
+  TEST_ASSERT_EQUAL_UINT16(0xfeed, sockaddr1.port());
 
   // Construct from raw IPv6 data and port number
   const etcpal::SockAddr sockaddr2(kTestIpv6Data.data(), 0xbeef);
   TEST_ASSERT_TRUE(sockaddr2.IsValid());
   TEST_ASSERT_TRUE(sockaddr2.IsV6());
-  TEST_ASSERT_EQUAL_UINT8_ARRAY(sockaddr2.v6_data(), kTestIpv6Data.data(), ETCPAL_IPV6_BYTES);
-  TEST_ASSERT_EQUAL_UINT16(sockaddr2.port(), 0xbeef);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(kTestIpv6Data.data(), sockaddr2.v6_data(), ETCPAL_IPV6_BYTES);
+  TEST_ASSERT_EQUAL_UINT16(0xbeef, sockaddr2.port());
 
   // Construct from raw IPv6 data, a scope ID and port number.
   const etcpal::SockAddr sockaddr3(kTestIpv6Data.data(), 12, 0xdead);
 
   TEST_ASSERT_TRUE(sockaddr3.IsValid());
   TEST_ASSERT_TRUE(sockaddr3.IsV6());
-  TEST_ASSERT_EQUAL_UINT8_ARRAY(sockaddr3.v6_data(), kTestIpv6Data.data(), ETCPAL_IPV6_BYTES);
-  TEST_ASSERT_EQUAL(sockaddr3.scope_id(), 12);
-  TEST_ASSERT_EQUAL_UINT16(sockaddr3.port(), 0xdead);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(kTestIpv6Data.data(), sockaddr3.v6_data(), ETCPAL_IPV6_BYTES);
+  TEST_ASSERT_EQUAL(12, sockaddr3.scope_id());
+  TEST_ASSERT_EQUAL_UINT16(0xdead, sockaddr3.port());
 
   // Construct from an IpAddr and port number
   const etcpal::SockAddr sockaddr4(etcpal::IpAddr(0xdeadbeef), 0xfeed);
   TEST_ASSERT_TRUE(sockaddr4.IsValid());
   TEST_ASSERT_TRUE(sockaddr4.IsV4());
-  TEST_ASSERT_EQUAL_UINT32(sockaddr4.v4_data(), 0xdeadbeef);
-  TEST_ASSERT_EQUAL_UINT16(sockaddr4.port(), 0xfeed);
+  TEST_ASSERT_EQUAL_UINT32(0xdeadbeef, sockaddr4.v4_data());
+  TEST_ASSERT_EQUAL_UINT16(0xfeed, sockaddr4.port());
 }
 
 TEST(etcpal_cpp_inet, sockaddr_to_string_works)
 {
   const etcpal::SockAddr sockaddr_v4(etcpal::IpAddr::FromString("10.101.2.3"), 5555);
-  TEST_ASSERT_EQUAL_STRING(sockaddr_v4.ToString().c_str(), "10.101.2.3:5555");
+  TEST_ASSERT_EQUAL_STRING("10.101.2.3:5555", sockaddr_v4.ToString().c_str());
 
   const etcpal::SockAddr sockaddr_v6(etcpal::IpAddr::FromString("2001:db8::2222:3333"), 6666);
   auto                   sockaddr_str = sockaddr_v6.ToString();
   ConvertStringToLowercase(sockaddr_str);
-  TEST_ASSERT_EQUAL_STRING(sockaddr_str.c_str(), "[2001:db8::2222:3333]:6666");
+  TEST_ASSERT_EQUAL_STRING("[2001:db8::2222:3333]:6666", sockaddr_str.c_str());
 
   const etcpal::SockAddr sockaddr_invalid;
   TEST_ASSERT_TRUE(sockaddr_invalid.ToString().empty());
@@ -551,7 +551,7 @@ TEST(etcpal_cpp_inet, sockaddr_to_ip_works)
   const auto sockaddr = etcpal::SockAddr(kIpv4AddrVal, 8888);
   const auto ip       = sockaddr.ip();
   TEST_ASSERT_TRUE(ip.IsV4());
-  TEST_ASSERT_EQUAL_UINT32(ip.v4_data(), kIpv4AddrVal);
+  TEST_ASSERT_EQUAL_UINT32(kIpv4AddrVal, ip.v4_data());
 }
 
 TEST(etcpal_cpp_inet, mac_default_constructor_works)
@@ -566,7 +566,7 @@ TEST(etcpal_cpp_inet, mac_copy_constructors_work)
   const etcpal::MacAddr mac(c_mac);
   TEST_ASSERT_FALSE(mac.IsNull());
   TEST_ASSERT_TRUE(mac.get() == c_mac);
-  TEST_ASSERT_EQUAL_UINT8_ARRAY(mac.data(), c_mac.data, ETCPAL_MAC_BYTES);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(c_mac.data, mac.data(), ETCPAL_MAC_BYTES);
 
   const etcpal::MacAddr mac2(mac);
   TEST_ASSERT_FALSE(mac2.IsNull());
@@ -584,7 +584,7 @@ TEST(etcpal_cpp_inet, mac_assignment_operators_work)
   mac = c_mac;
   TEST_ASSERT_FALSE(mac.IsNull());
   TEST_ASSERT_TRUE(mac.get() == c_mac);
-  TEST_ASSERT_EQUAL_UINT8_ARRAY(mac.data(), c_mac.data, ETCPAL_MAC_BYTES);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(c_mac.data, mac.data(), ETCPAL_MAC_BYTES);
 
   // Use the default assignment operator
   const etcpal::MacAddr null_mac;
@@ -599,16 +599,16 @@ TEST(etcpal_cpp_inet, mac_custom_constructors_work)
   const etcpal::MacAddr                       mac(mac_data.data());
 
   TEST_ASSERT_FALSE(mac.IsNull());
-  TEST_ASSERT_EQUAL_UINT8_ARRAY(mac.data(), mac_data.data(), ETCPAL_MAC_BYTES);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(mac_data.data(), mac.data(), ETCPAL_MAC_BYTES);
 }
 
 TEST(etcpal_cpp_inet, mac_to_string_works)
 {
   const etcpal::MacAddr mac({0x1d, 0xee, 0x03, 0xfa, 0x34, 0x60});
-  TEST_ASSERT_EQUAL_STRING(mac.ToString().c_str(), "1d:ee:03:fa:34:60");
+  TEST_ASSERT_EQUAL_STRING("1d:ee:03:fa:34:60", mac.ToString().c_str());
 
   const etcpal::MacAddr null_mac;
-  TEST_ASSERT_EQUAL_STRING(null_mac.ToString().c_str(), "00:00:00:00:00:00");
+  TEST_ASSERT_EQUAL_STRING("00:00:00:00:00:00", null_mac.ToString().c_str());
 }
 
 // We do more rigorous testing of the string conversion functions in the core C unit tests, so we
@@ -618,7 +618,7 @@ TEST(etcpal_cpp_inet, mac_from_string_works)
   const std::array<uint8_t, ETCPAL_MAC_BYTES> mac_data{0, 1, 2, 0xab, 0xcd, 0xef};
   const etcpal::MacAddr                       mac = etcpal::MacAddr::FromString("00:01:02:AB:cd:EF");
   TEST_ASSERT_FALSE(mac.IsNull());
-  TEST_ASSERT_EQUAL_UINT8_ARRAY(mac.data(), mac_data.data(), ETCPAL_MAC_BYTES);
+  TEST_ASSERT_EQUAL_UINT8_ARRAY(mac_data.data(), mac.data(), ETCPAL_MAC_BYTES);
 
   const etcpal::MacAddr bad_mac = etcpal::MacAddr::FromString("Bad string");
   TEST_ASSERT_TRUE(bad_mac.IsNull());

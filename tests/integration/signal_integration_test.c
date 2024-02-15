@@ -67,7 +67,7 @@ TEST(signal_integration, signal_thread_test)
   {
     char error_msg[50];
     sprintf(error_msg, "Failed on iteration %zu", i);
-    TEST_ASSERT_EQUAL_MESSAGE(etcpal_thread_create(&threads[i], &params, signal_test_thread, NULL), kEtcPalErrOk,
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_thread_create(&threads[i], &params, signal_test_thread, NULL),
                               error_msg);
   }
 
@@ -78,7 +78,7 @@ TEST(signal_integration, signal_thread_test)
   }
 
   for (size_t i = 0; i < 2; ++i)
-    TEST_ASSERT_EQUAL(etcpal_thread_join(&threads[i]), kEtcPalErrOk);
+    TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_join(&threads[i]));
 }
 
 TEST_GROUP_RUNNER(signal_integration)

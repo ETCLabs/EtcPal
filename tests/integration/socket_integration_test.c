@@ -315,11 +315,11 @@ void unicast_udp_sendto_recvfrom_test(etcpal_iptype_t ip_type)
       break;
     }
 
-    TEST_ASSERT_EQUAL(etcpal_ip_cmp(&send_addr.ip, &from_addr.ip), 0);
+    TEST_ASSERT_EQUAL(0, etcpal_ip_cmp(&send_addr.ip, &from_addr.ip));
     TEST_ASSERT_NOT_EQUAL(from_addr.port, UNICAST_UDP_PORT_BASE);
 
     buf[SOCKET_TEST_MESSAGE_LENGTH] = '\0';
-    TEST_ASSERT_EQUAL_STRING((char*)buf, kSocketTestMessage);
+    TEST_ASSERT_EQUAL_STRING(kSocketTestMessage, (char*)buf);
   }
 
   TEST_ASSERT_GREATER_THAN_UINT(0u, num_packets_received);
@@ -384,11 +384,11 @@ void unicast_udp_sendto_recvmsg_test(etcpal_iptype_t ip_type, uint8_t* control, 
     }
 
     from_addr = msg.name;
-    TEST_ASSERT_EQUAL(etcpal_ip_cmp(&send_addr.ip, &from_addr.ip), 0);
-    TEST_ASSERT_NOT_EQUAL(from_addr.port, UNICAST_UDP_PORT_BASE);
+    TEST_ASSERT_EQUAL(0, etcpal_ip_cmp(&send_addr.ip, &from_addr.ip));
+    TEST_ASSERT_NOT_EQUAL(UNICAST_UDP_PORT_BASE, from_addr.port);
 
     buf[SOCKET_TEST_MESSAGE_LENGTH] = '\0';
-    TEST_ASSERT_EQUAL_STRING((char*)buf, kSocketTestMessage);
+    TEST_ASSERT_EQUAL_STRING(kSocketTestMessage, (char*)buf);
 
     size_t        num_pktinfo_cmsgs_received = 0;
     EtcPalCMsgHdr cmsg;
@@ -402,7 +402,7 @@ void unicast_udp_sendto_recvmsg_test(etcpal_iptype_t ip_type, uint8_t* control, 
 
           EtcPalPktInfo pktinfo;
           TEST_ASSERT(etcpal_cmsg_to_pktinfo(&cmsg, &pktinfo));
-          TEST_ASSERT_EQUAL(etcpal_ip_cmp(&pktinfo.addr, &send_addr.ip), 0);
+          TEST_ASSERT_EQUAL(0, etcpal_ip_cmp(&pktinfo.addr, &send_addr.ip));
         }
       } while (etcpal_cmsg_nxthdr(&msg, &cmsg, &cmsg));
     }
@@ -635,7 +635,7 @@ void multicast_udp_sendto_recvfrom_test(void)
     TEST_ASSERT_NOT_EQUAL(from_addr.port, MULTICAST_UDP_PORT_BASE);
 
     buf[SOCKET_TEST_MESSAGE_LENGTH] = '\0';
-    TEST_ASSERT_EQUAL_STRING((char*)buf, kSocketTestMessage);
+    TEST_ASSERT_EQUAL_STRING(kSocketTestMessage, (char*)buf);
   }
   TEST_ASSERT_GREATER_THAN(0u, num_packets_received);
 
@@ -694,7 +694,7 @@ void multicast_udp_sendto_recvmsg_test(const EtcPalIpAddr* pktinfo_expected_addr
     TEST_ASSERT_NOT_EQUAL(from_addr.port, MULTICAST_UDP_PORT_BASE);
 
     buf[SOCKET_TEST_MESSAGE_LENGTH] = '\0';
-    TEST_ASSERT_EQUAL_STRING((char*)buf, kSocketTestMessage);
+    TEST_ASSERT_EQUAL_STRING(kSocketTestMessage, (char*)buf);
 
     size_t        num_pktinfo_cmsgs_received = 0;
     EtcPalCMsgHdr cmsg;
@@ -708,8 +708,8 @@ void multicast_udp_sendto_recvmsg_test(const EtcPalIpAddr* pktinfo_expected_addr
 
           EtcPalPktInfo pktinfo;
           TEST_ASSERT(etcpal_cmsg_to_pktinfo(&cmsg, &pktinfo));
-          TEST_ASSERT_EQUAL(etcpal_ip_cmp(&pktinfo.addr, pktinfo_expected_addr), 0);
-          TEST_ASSERT_EQUAL(pktinfo.ifindex, pktinfo_expected_ifindex);
+          TEST_ASSERT_EQUAL(0, etcpal_ip_cmp(&pktinfo.addr, pktinfo_expected_addr));
+          TEST_ASSERT_EQUAL(pktinfo_expected_ifindex, pktinfo.ifindex);
         }
       } while (etcpal_cmsg_nxthdr(&msg, &cmsg, &cmsg));
     }
@@ -834,9 +834,9 @@ TEST(socket_integration_udp, bulk_poll)
 
     EtcPalPollEvent event;
     TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, etcpal_poll_wait(&context, &event, 100), error_msg);
-    TEST_ASSERT_EQUAL_MESSAGE(event.socket, recv_socks[i], error_msg);
-    TEST_ASSERT_EQUAL_MESSAGE(event.events, ETCPAL_POLL_IN, error_msg);
-    TEST_ASSERT_EQUAL_MESSAGE(event.err, kEtcPalErrOk, error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(recv_socks[i], event.socket, error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(ETCPAL_POLL_IN, event.events, error_msg);
+    TEST_ASSERT_EQUAL_MESSAGE(kEtcPalErrOk, event.err, error_msg);
 
     uint8_t recv_buf[SOCKET_TEST_MESSAGE_LENGTH];
     TEST_ASSERT_GREATER_THAN(0, etcpal_recvfrom(recv_socks[i], recv_buf, SOCKET_TEST_MESSAGE_LENGTH, 0, NULL));
