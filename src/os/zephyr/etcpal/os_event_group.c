@@ -58,7 +58,7 @@ etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_eve
       result = id->bits;
       while (!check_and_clear_bits(&id->bits, bits, flags))
       {
-        if (0 != k_condvar_wait(&id->cond, &id->mutex, K_FOREVER))
+        if (k_condvar_wait(&id->cond, &id->mutex, K_FOREVER) != 0)
         {
           k_mutex_unlock(&id->mutex);
           return false;
@@ -87,12 +87,13 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
       result = id->bits;
       while (!check_and_clear_bits(&id->bits, bits, flags))
       {
-        if (0 != k_condvar_wait(&id->cond, &id->mutex, ms_to_zephyr_timeout(timeout_ms)))
+        int err = k_condvar_wait(&id->cond, &id->mutex, ms_to_zephyr_timeout(timeout_ms));
+        result  = id->bits;
+        if (err)
         {
           k_mutex_unlock(&id->mutex);
-          return false;
+          return result;
         }
-        result = id->bits;
       }
       k_mutex_unlock(&id->mutex);
     }
