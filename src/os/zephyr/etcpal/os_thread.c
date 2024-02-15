@@ -39,9 +39,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     return kEtcPalErrInvalid;
   }
 
-  // TODO: Looks like this doesn't do anything
-  // need to use k_thread_name_set
-  strncpy(id->thread.name, params->thread_name, ETCPAL_THREAD_NAME_MAX_LENGTH - 1);
+  k_thread_name_set(&id->thread, params->thread_name);
   k_tid_t thread_id =
       k_thread_create(&id->thread, id->stack, params->stack_size, zephyr_thread_entry, thread_fn, thread_arg, NULL,
                       params->priority, IS_ENABLED(CONFIG_USERSPACE) ? K_USER | K_INHERIT_PERMS : 0, K_NO_WAIT);
