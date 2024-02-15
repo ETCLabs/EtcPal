@@ -56,12 +56,17 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 {
   int err;
   err = k_thread_join(&id->thread, K_FOREVER);
-  if (err)
+  switch (err)
   {
-    return errno_os_to_etcpal(err);
+    case -EBUSY:
+    case -EAGAIN:
+      return kEtcPalErrTimedOut;
+    case -EDEADLK:
+      return kEtcPalErrInvalid;
   }
 
   err = k_thread_stack_free(id->stack);
+  ETCPAL_ASSERT(err == 0);
   if (err)
   {
     return errno_os_to_etcpal(err);
@@ -74,12 +79,17 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 {
   int err;
   err = k_thread_join(&id->thread, ms_to_zephyr_timeout(timeout_ms));
-  if (err)
+  switch (err)
   {
-    return errno_os_to_etcpal(err);
+    case -EBUSY:
+    case -EAGAIN:
+      return kEtcPalErrTimedOut;
+    case -EDEADLK:
+      return kEtcPalErrInvalid;
   }
 
   err = k_thread_stack_free(id->stack);
+  ETCPAL_ASSERT(err == 0);
   if (err)
   {
     return errno_os_to_etcpal(err);
@@ -92,6 +102,7 @@ etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 {
   k_thread_abort(&id->thread);
   int err = k_thread_stack_free(id->stack);
+  ETCPAL_ASSERT(err == 0);
   return errno_os_to_etcpal(err);
 }
 
