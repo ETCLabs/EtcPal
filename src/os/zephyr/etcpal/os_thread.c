@@ -17,6 +17,7 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include "etcpal/private/opts.h"
 #include "etcpal/thread.h"
 #include "etcpal/os_error.h"
 #include "etcpal/etcpal_zephyr_common.h"
