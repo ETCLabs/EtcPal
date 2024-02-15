@@ -40,7 +40,7 @@ typedef struct k_sem etcpal_sem_t;
   ((bool)(!k_sem_init((idptr), (initial_count), ((max_count)))))
 #define etcpal_sem_wait(idptr)                   ((bool)(!k_sem_take((idptr), K_FOREVER)))
 #define etcpal_sem_try_wait(idptr)               ((bool)(!k_sem_take((idptr), K_NO_WAIT)))
-#define etcpal_sem_timed_wait(idptr, timeout_ms) ((bool)(!k_sem_take((idptr), K_TIMEOUT_ABS_MS((timeout_ms)))))
+#define etcpal_sem_timed_wait(idptr, timeout_ms) ((bool)(!k_sem_take((idptr), K_MSEC((timeout_ms)))))
 bool etcpal_sem_post(etcpal_sem_t* id);
 bool etcpal_sem_post_from_isr(etcpal_sem_t* id);
 void etcpal_sem_destroy(etcpal_sem_t* id);

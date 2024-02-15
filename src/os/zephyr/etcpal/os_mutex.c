@@ -30,6 +30,7 @@ bool etcpal_mutex_lock(etcpal_mutex_t* id)
   if (id->lock_count > 1)
   {
     k_mutex_unlock(id);
+    k_sleep(K_FOREVER);
     return false;
   }
 
