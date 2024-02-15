@@ -3,7 +3,7 @@
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
-  int err = k_sem_init(id->sem, initial_count, max_count);
+  int err = k_sem_init(&id->sem, initial_count, max_count);
   if (err)
   {
     return false;
@@ -15,7 +15,7 @@ bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned in
 
 bool etcpal_sem_wait(etcpal_sem_t* id)
 {
-  int err = k_sem_take(id->sem, K_FOREVER);
+  int err = k_sem_take(&id->sem, K_FOREVER);
   if (err)
   {
     return false;
@@ -26,7 +26,7 @@ bool etcpal_sem_wait(etcpal_sem_t* id)
 
 bool etcpal_sem_try_wait(etcpal_sem_t* id)
 {
-  int err = k_sem_take(id->sem, K_NO_WAIT);
+  int err = k_sem_take(&id->sem, K_NO_WAIT);
   if (err)
   {
     return false;
@@ -37,7 +37,7 @@ bool etcpal_sem_try_wait(etcpal_sem_t* id)
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  int err = k_sem_take(id->sem, K_MSEC(timeout_ms));
+  int err = k_sem_take(&id->sem, K_MSEC(timeout_ms));
   if (err)
   {
     return false;
@@ -52,7 +52,7 @@ bool etcpal_sem_post(etcpal_sem_t* id)
   {
     return false;
   }
-  k_sem_give(id->sem);
+  k_sem_give(&id->sem);
   id->count++;
   return true;
 }
