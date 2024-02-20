@@ -32,6 +32,7 @@ EtcPal is currently ported for the following OS targets:
 + Microsoft Windows
 + Linux
 + MQX
++ Zephyr
 
 And the following network targets:
 
@@ -79,3 +80,7 @@ The platform ports of EtcPal have the following dependencies:
       or the equivalent method for your distribution)
 + lwIP
   - lwIP 2.1.0 or later
++ Zephyr
+  - Tested on v3.5.0
+  - Optional Features:
+    * etcpal/uuid: Creation of V1 and V4 UUIDs not implemented (not provided by Zephyr).

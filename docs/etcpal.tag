@@ -6909,6 +6909,11 @@
     <filename>targeting_freertos</filename>
   </compound>
   <compound kind="page">
+    <name>targeting_zephyr</name>
+    <title>Targeting Zephyr</title>
+    <filename>targeting_zephyr</filename>
+  </compound>
+  <compound kind="page">
     <name>targeting_lwip</name>
     <title>Targeting lwIP</title>
     <filename>targeting_lwip</filename>
