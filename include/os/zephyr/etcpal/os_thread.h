@@ -28,7 +28,6 @@
 extern "C" {
 #endif
 
-// TODO Check these defaults later
 #define ETCPAL_THREAD_DEFAULT_PRIORITY 14
 #define ETCPAL_THREAD_DEFAULT_STACK    4096
 #define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"

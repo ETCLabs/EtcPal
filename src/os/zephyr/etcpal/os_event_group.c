@@ -21,11 +21,7 @@
 #include "etcpal/private/common.h"
 #include "etcpal/etcpal_zephyr_common.h"
 
-/*********************** Private function prototypes *************************/
-
 static bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags);
-
-/*************************** Function definitions ****************************/
 
 bool etcpal_event_group_create(etcpal_event_group_t* id)
 {
@@ -46,9 +42,10 @@ bool etcpal_event_group_create(etcpal_event_group_t* id)
 
 etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags)
 {
-  // TODO: Format ifs properly
   if (!id || !bits || !id->valid)
+  {
     return 0;
+  }
 
   etcpal_event_bits_t result = 0;
   if (id && id->valid)
@@ -77,7 +74,9 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
                                                   int                   timeout_ms)
 {
   if (!id || !bits || !id->valid)
+  {
     return 0;
+  }
 
   etcpal_event_bits_t result = 0;
   if (id && id->valid)
@@ -104,7 +103,9 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
 void etcpal_event_group_set_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_set)
 {
   if (!id || !bits_to_set || !id->valid)
+  {
     return;
+  }
 
   if (0 == k_mutex_lock(&id->mutex, K_FOREVER))
   {
@@ -117,7 +118,9 @@ void etcpal_event_group_set_bits(etcpal_event_group_t* id, etcpal_event_bits_t b
 etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id)
 {
   if (!id || !id->valid)
+  {
     return 0;
+  }
 
   etcpal_event_bits_t result = 0;
   if (0 == k_mutex_lock(&id->mutex, K_FOREVER))
@@ -131,7 +134,9 @@ etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id)
 void etcpal_event_group_clear_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_clear)
 {
   if (!id || !bits_to_clear || !id->valid)
+  {
     return;
+  }
 
   if (0 == k_mutex_lock(&id->mutex, K_FOREVER))
   {
@@ -151,19 +156,25 @@ void etcpal_event_group_destroy(etcpal_event_group_t* id)
 bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags)
 {
   if (!ETCPAL_ASSERT_VERIFY(bits))
+  {
     return false;
+  }
 
   bool result = false;
 
   if (flags & ETCPAL_EVENT_GROUP_WAIT_FOR_ALL)
   {
     if ((*bits & bits_requested) == bits_requested)
+    {
       result = true;
+    }
   }
   else
   {
     if (*bits & bits_requested)
+    {
       result = true;
+    }
   }
 
   if (result && (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR))
