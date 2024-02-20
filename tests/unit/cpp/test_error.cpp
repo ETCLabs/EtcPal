@@ -102,7 +102,6 @@ TEST(etcpal_result, equality_operators)
   etcpal::Error result_3(kEtcPalErrSys);
   TEST_ASSERT_UNLESS(result_3 == result);
   TEST_ASSERT_UNLESS(result == result_3);
-  TEST_ASSERT_TRUE(false);
 }
 
 TEST(etcpal_result, strings_exist_for_all_codes)
