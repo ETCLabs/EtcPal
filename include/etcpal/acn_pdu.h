@@ -54,28 +54,28 @@
  * @param flags_byte The first byte of the PDU.
  * @return true (the L flag is set) or false (the L flags is not set).
  */
-#define ACN_PDU_L_FLAG_SET(flags_byte) ((bool)((flags_byte) & 0x80u))
+#define ACN_PDU_L_FLAG_SET(flags_byte) ((bool)((flags_byte)&0x80u))
 
 /**
  * @brief Determine whether the V flag is set in an ACN PDU flags field.
  * @param flags_byte The first byte of the PDU.
  * @return true (the V flag is set) or false (the V flag is not set).
  */
-#define ACN_PDU_V_FLAG_SET(flags_byte) ((bool)((flags_byte) & 0x40u))
+#define ACN_PDU_V_FLAG_SET(flags_byte) ((bool)((flags_byte)&0x40u))
 
 /**
  * @brief Determine whether the H flag is set in an ACN PDU flags field.
  * @param flags_byte The first byte of the PDU.
  * @return true (the H flag is set) or false (the H flag is not set).
  */
-#define ACN_PDU_H_FLAG_SET(flags_byte) ((bool)((flags_byte) & 0x20u))
+#define ACN_PDU_H_FLAG_SET(flags_byte) ((bool)((flags_byte)&0x20u))
 
 /**
  * @brief Determine whether the D flag is set in an ACN PDU flags field.
  * @param flags_byte The first byte of the PDU.
  * @return true (the D flag is set) or false (the D flag is not set).
  */
-#define ACN_PDU_D_FLAG_SET(flags_byte) ((bool)((flags_byte) & 0x10u))
+#define ACN_PDU_D_FLAG_SET(flags_byte) ((bool)((flags_byte)&0x10u))
 
 /**
  * @}
@@ -138,7 +138,7 @@
   do                                                                             \
   {                                                                              \
     (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] & 0xf0) | (((length) >> 8) & 0x0fu)); \
-    (pdu_buf)[1] = (uint8_t)(length) & 0xffu;                                    \
+    (pdu_buf)[1] = (uint8_t)(length)&0xffu;                                      \
   } while (0)
 
 /**
@@ -154,7 +154,7 @@
   {                                                                               \
     (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] & 0xf0) | (((length) >> 16) & 0x0fu)); \
     (pdu_buf)[1] = (uint8_t)(((length) >> 8) & 0xffu);                            \
-    (pdu_buf)[2] = (uint8_t)(length) & 0xffu;                                     \
+    (pdu_buf)[2] = (uint8_t)(length)&0xffu;                                       \
   } while (0)
 
 /** Holds state data used when parsing multiple PDUs in a PDU block. */

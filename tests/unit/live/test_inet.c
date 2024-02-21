@@ -418,7 +418,7 @@ static const char* const kTestIp62                       = "::1";
 static const uint8_t     kTestIp62Bin[ETCPAL_IPV6_BYTES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
 static const char* const kTestIp63                       = "ffff:FFFF:ffff:FFFF:ffff:FFFF:ffff:FFFF";
 static const uint8_t     kTestIp63Bin[ETCPAL_IPV6_BYTES] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-                                                            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+                                                        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 static const char* const kTestIp6Fail                    = "abcd::ef01::2345";
 
 TEST(etcpal_inet, ip_to_string_conversion_works)

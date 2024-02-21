@@ -21,7 +21,7 @@
 
 #define MS_IN_S      1000
 #define MS_TO_S(ms)  ((ms) / MS_IN_S)
-#define MS_TO_NS(ms) ((ms) * 1000000)
+#define MS_TO_NS(ms) ((ms)*1000000)
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {

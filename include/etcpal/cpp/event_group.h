@@ -90,10 +90,10 @@ public:
   EventGroup();
   ~EventGroup();
 
-  EventGroup(const EventGroup& other)            = delete;
+  EventGroup(const EventGroup& other) = delete;
   EventGroup& operator=(const EventGroup& other) = delete;
   EventGroup(EventGroup&& other)                 = delete;
-  EventGroup& operator=(EventGroup&& other)      = delete;
+  EventGroup& operator=(EventGroup&& other) = delete;
 
   EventBits Wait(EventBits bits, int flags = 0);
   EventBits TryWait(EventBits bits, int flags = 0, int timeout_ms = 0);
