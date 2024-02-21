@@ -10,7 +10,6 @@ set(ETCPAL_OS_ADDITIONAL_HEADERS
 	${ETCPAL_ROOT}/include/os/zephyr/etcpal/os_sem.h
 	${ETCPAL_ROOT}/include/os/zephyr/etcpal/os_signal.h
 	${ETCPAL_ROOT}/include/os/zephyr/etcpal/os_thread.h
-	${ETCPAL_ROOT}/include/os/zephyr/etcpal/os_timer.h
 	${ETCPAL_ROOT}/include/os/zephyr/etcpal/etcpal_zephyr_common.h
 )
 
