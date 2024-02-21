@@ -91,10 +91,10 @@ public:
   Signal();
   ~Signal();
 
-  Signal(const Signal& other) = delete;
+  Signal(const Signal& other)            = delete;
   Signal& operator=(const Signal& other) = delete;
   Signal(Signal&& other)                 = delete;
-  Signal& operator=(Signal&& other) = delete;
+  Signal& operator=(Signal&& other)      = delete;
 
   bool Wait();
   bool TryWait(int timeout_ms = 0);

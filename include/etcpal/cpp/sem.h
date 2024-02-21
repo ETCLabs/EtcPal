@@ -75,10 +75,10 @@ public:
   Semaphore(unsigned int initial_count = 0, unsigned int max_count = kDefaultMaxCount);
   ~Semaphore();
 
-  Semaphore(const Semaphore& other) = delete;
+  Semaphore(const Semaphore& other)            = delete;
   Semaphore& operator=(const Semaphore& other) = delete;
   Semaphore(Semaphore&& other)                 = delete;
-  Semaphore& operator=(Semaphore&& other) = delete;
+  Semaphore& operator=(Semaphore&& other)      = delete;
 
   bool Wait();
   bool TryWait(int timeout_ms = 0);

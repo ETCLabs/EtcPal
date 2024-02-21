@@ -66,10 +66,10 @@ public:
   RecursiveMutex();
   ~RecursiveMutex();
 
-  RecursiveMutex(const RecursiveMutex& other) = delete;
+  RecursiveMutex(const RecursiveMutex& other)            = delete;
   RecursiveMutex& operator=(const RecursiveMutex& other) = delete;
   RecursiveMutex(RecursiveMutex&& other)                 = delete;
-  RecursiveMutex& operator=(RecursiveMutex&& other) = delete;
+  RecursiveMutex& operator=(RecursiveMutex&& other)      = delete;
 
   bool Lock();
   bool TryLock(int timeout_ms = 0);
@@ -152,10 +152,10 @@ public:
   explicit RecursiveMutexGuard(etcpal_recursive_mutex_t& mutex);
   ~RecursiveMutexGuard();
 
-  RecursiveMutexGuard(const RecursiveMutexGuard& other) = delete;
+  RecursiveMutexGuard(const RecursiveMutexGuard& other)            = delete;
   RecursiveMutexGuard& operator=(const RecursiveMutexGuard& other) = delete;
   RecursiveMutexGuard(RecursiveMutexGuard&& other)                 = delete;
-  RecursiveMutexGuard& operator=(RecursiveMutexGuard&& other) = delete;
+  RecursiveMutexGuard& operator=(RecursiveMutexGuard&& other)      = delete;
 
 private:
   etcpal_recursive_mutex_t& mutex_;
