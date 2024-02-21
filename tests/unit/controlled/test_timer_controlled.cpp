@@ -19,10 +19,10 @@
 
 #include "etcpal/timer.h"
 #include "etcpal/cpp/timer.h"
+#include "unity_fixture.h"
 #include "etc_fff_wrapper.h"
 
 extern "C" {
-#include "unity_fixture.h"
 
 ETC_FAKE_VALUE_FUNC(uint32_t, etcpal_getms);
 

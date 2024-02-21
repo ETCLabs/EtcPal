@@ -18,12 +18,12 @@
  ******************************************************************************/
 
 #include "etcpal/cpp/hash.h"
+#include "unity_fixture.h"
 
 #include <functional>
 #include <string>
 
 extern "C" {
-#include "unity_fixture.h"
 
 TEST_GROUP(etcpal_cpp_hash);
 

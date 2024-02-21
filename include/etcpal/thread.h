@@ -23,6 +23,9 @@
 #include "etcpal/error.h"
 #include "etcpal/os_thread.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 /**
  * @defgroup etcpal_thread thread (Threading)
  * @ingroup etcpal_os
@@ -185,9 +188,6 @@ typedef struct EtcPalThreadParams
   {                                  \
     ETCPAL_THREAD_PARAMS_INIT_VALUES \
   }
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 etcpal_error_t            etcpal_thread_create(etcpal_thread_t*          id,
                                                const EtcPalThreadParams* params,
@@ -201,11 +201,13 @@ etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id);
 
 #if !defined(etcpal_thread_get_current_os_handle) || DOXYGEN
 etcpal_thread_os_handle_t etcpal_thread_get_current_os_handle(void);
+
+/**
+ * @}
+ */
+
 #endif
 #ifdef __cplusplus
 }
 #endif
-/**
- * @}
- */
 #endif /* ETCPAL_THREAD_H_ */
