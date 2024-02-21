@@ -23,10 +23,6 @@
 #include "etcpal/error.h"
 #include "etcpal/os_thread.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
  * @defgroup etcpal_thread thread (Threading)
  * @ingroup etcpal_os
@@ -212,9 +208,4 @@ etcpal_thread_os_handle_t etcpal_thread_get_current_os_handle(void);
 /**
  * @}
  */
-
-#ifdef __cplusplus
-}
-#endif
-
 #endif /* ETCPAL_THREAD_H_ */

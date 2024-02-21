@@ -54,7 +54,6 @@ typedef struct
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   ETCPAL_SEM_HAS_POST_FROM_ISR
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
-bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer);
 void etcpal_queue_destroy(etcpal_queue_t* id);
 
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
