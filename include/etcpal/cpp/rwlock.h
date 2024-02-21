@@ -114,10 +114,10 @@ public:
   RwLock();
   ~RwLock();
 
-  RwLock(const RwLock& other)            = delete;
+  RwLock(const RwLock& other) = delete;
   RwLock& operator=(const RwLock& other) = delete;
   RwLock(RwLock&& other)                 = delete;
-  RwLock& operator=(RwLock&& other)      = delete;
+  RwLock& operator=(RwLock&& other) = delete;
 
   bool ReadLock();
   bool TryReadLock(int timeout_ms = 0);
@@ -235,10 +235,10 @@ public:
   explicit ReadGuard(etcpal_rwlock_t& rwlock);
   ~ReadGuard();
 
-  ReadGuard(const ReadGuard& other)            = delete;
+  ReadGuard(const ReadGuard& other) = delete;
   ReadGuard& operator=(const ReadGuard& other) = delete;
   ReadGuard(ReadGuard&& other)                 = delete;
-  ReadGuard& operator=(ReadGuard&& other)      = delete;
+  ReadGuard& operator=(ReadGuard&& other) = delete;
 
 private:
   etcpal_rwlock_t& rwlock_;
@@ -294,10 +294,10 @@ public:
   explicit WriteGuard(etcpal_rwlock_t& rwlock);
   ~WriteGuard();
 
-  WriteGuard(const WriteGuard& other)            = delete;
+  WriteGuard(const WriteGuard& other) = delete;
   WriteGuard& operator=(const WriteGuard& other) = delete;
   WriteGuard(WriteGuard&& other)                 = delete;
-  WriteGuard& operator=(WriteGuard&& other)      = delete;
+  WriteGuard& operator=(WriteGuard&& other) = delete;
 
 private:
   etcpal_rwlock_t& rwlock_;

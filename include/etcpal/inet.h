@@ -108,10 +108,7 @@ typedef struct EtcPalIpAddr
  * To omit the enclosing brackets, use #ETCPAL_IP_INVALID_INIT.
  */
 #define ETCPAL_IP_INVALID_INIT_VALUES \
-  kEtcPalIpTypeInvalid,               \
-  {                                   \
-    0                                 \
-  }
+  kEtcPalIpTypeInvalid, { 0 }
 
 /**
  * @brief An initializer for an invalid EtcPalIpAddr.
@@ -139,10 +136,7 @@ typedef struct EtcPalIpAddr
  * To omit the enclosing brackets, use #ETCPAL_IPV4_INIT().
  */
 #define ETCPAL_IPV4_INIT_VALUES(v4_val) \
-  kEtcPalIpTypeV4,                      \
-  {                                     \
-    .v4 = v4_val                        \
-  }
+  kEtcPalIpTypeV4, { .v4 = v4_val }
 
 /**
  * @brief An initializer for an EtcPalIpAddr representing an IPv4 address.
