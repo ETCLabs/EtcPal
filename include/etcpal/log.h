@@ -378,7 +378,10 @@ typedef struct EtcPalSyslogParams
  */
 #define ETCPAL_SYSLOG_PARAMS_INIT \
   {                               \
-    0, {'\0'}, {'\0'}, { '\0' }   \
+    0, {'\0'}, {'\0'},            \
+    {                             \
+      '\0'                        \
+    }                             \
   }
 
 /** A set of parameters used for the etcpal_*log() functions. */
