@@ -104,8 +104,10 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
       break;
     }
 #else
+#ifndef LWIP_SINGLE_NETIF
     if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
       break;
+#endif
 #endif
     copy_interface_info_v4(lwip_netif, &static_netints[num_static_netints++]);
 #endif
