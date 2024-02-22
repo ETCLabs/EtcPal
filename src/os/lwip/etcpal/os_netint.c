@@ -56,7 +56,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 #if ETCPAL_EMBOS_USE_MALLOC
   size_t num_lwip_netints = 0;
-  NETIF_FOREACH(lwip_netif)
+  NETIF_FOREACH(lwip_netif)  // This may be defined to an if statement
   {
 #if LWIP_IPV4
     ++num_lwip_netints;
@@ -89,7 +89,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   etcpal_error_t res           = kEtcPalErrOk;
   bool           limit_reached = false;
-  NETIF_FOREACH(lwip_netif)
+  NETIF_FOREACH(lwip_netif)  // This may be defined to an if statement
   {
 #if LWIP_IPV4
     if (!limit_reached)
