@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/rwlock.h"
+#include "etcpal/private/common.h"
 
 #define MS_IN_S      1000
 #define MS_TO_S(ms)  ((ms) / MS_IN_S)

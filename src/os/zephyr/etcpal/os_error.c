@@ -19,6 +19,7 @@
 
 #include "etcpal/os_error.h"
 #include <errno.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/queue.h"
+#include "etcpal/private/common.h"
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {

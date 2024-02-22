@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/mutex.h"
+#include "etcpal/private/common.h"
 
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {

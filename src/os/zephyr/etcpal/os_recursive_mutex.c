@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/recursive_mutex.h"
+#include "etcpal/private/common.h"
 
 void etcpal_recursive_mutex_destroy(etcpal_recursive_mutex_t* id)
 {

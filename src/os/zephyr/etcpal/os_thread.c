@@ -17,10 +17,10 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/private/opts.h"
 #include "etcpal/thread.h"
 #include "etcpal/os_error.h"
 #include "etcpal/etcpal_zephyr_common.h"
+#include "etcpal/private/common.h"
 #include <string.h>
 
 void zephyr_thread_entry(void* thread_fn, void* thread_arg, void* unused)

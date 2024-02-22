@@ -18,6 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/signal.h"
+#include "etcpal/private/common.h"
 #include <zephyr/kernel.h>
 
 void etcpal_signal_destroy(etcpal_signal_t* id)

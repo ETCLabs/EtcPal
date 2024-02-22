@@ -19,6 +19,7 @@
 
 #include "etcpal/sem.h"
 #include "etcpal/etcpal_zephyr_common.h"
+#include "etcpal/private/common.h"
 #include <zephyr/kernel.h>
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
