@@ -22,5 +22,6 @@
 
 void etcpal_signal_destroy(etcpal_signal_t* id)
 {
+  ETCPAL_ASSERT_VERIFY(id);
   // Not implemented
 }

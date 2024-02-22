@@ -19,43 +19,13 @@
 
 #include "etcpal/mutex.h"
 
-bool etcpal_mutex_lock(etcpal_mutex_t* id)
-{
-  int err = k_mutex_lock(id, K_FOREVER);
-  if (err)
-  {
-    return false;
-  }
-
-  if (id->lock_count > 1)
-  {
-    k_mutex_unlock(id);
-    k_sleep(K_FOREVER);
-    return false;
-  }
-
-  return true;
-}
-
-bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
-{
-  int err = k_mutex_lock(id, K_NO_WAIT);
-  if (err)
-  {
-    return false;
-  }
-
-  if (id->lock_count > 1)
-  {
-    k_mutex_unlock(id);
-    return false;
-  }
-
-  return true;
-}
-
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
   int err = k_mutex_lock(id, ms_to_zephyr_timeout(timeout_ms));
   if (err)
   {
@@ -74,5 +44,6 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 
 void etcpal_mutex_destroy(etcpal_mutex_t* id)
 {
+  ETCPAL_UNUSED_ARG(id);
   // Not implemented
 }

@@ -18,10 +18,16 @@
  ******************************************************************************/
 
 #include "etcpal/sem.h"
+#include "etcpal/etcpal_zephyr_common.h"
 #include <zephyr/kernel.h>
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
   int err = k_sem_init(&id->sem, initial_count, max_count);
   if (err)
   {
@@ -32,31 +38,14 @@ bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned in
   return true;
 }
 
-bool etcpal_sem_wait(etcpal_sem_t* id)
-{
-  int err = k_sem_take(&id->sem, K_FOREVER);
-  if (err)
-  {
-    return false;
-  }
-  id->count--;
-  return true;
-}
-
-bool etcpal_sem_try_wait(etcpal_sem_t* id)
-{
-  int err = k_sem_take(&id->sem, K_NO_WAIT);
-  if (err)
-  {
-    return false;
-  }
-  id->count--;
-  return true;
-}
-
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  int err = k_sem_take(&id->sem, K_MSEC(timeout_ms));
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
+  int err = k_sem_take(&id->sem, ms_to_zephyr_timeout(timeout_ms));
   if (err)
   {
     return false;
@@ -67,6 +56,11 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
   if (id->count >= id->limit)
   {
     return false;
@@ -78,5 +72,6 @@ bool etcpal_sem_post(etcpal_sem_t* id)
 
 void etcpal_sem_destroy(etcpal_sem_t* id)
 {
+  ETCPAL_ASSERT_VERIFY(id);
   // Not implemented
 }

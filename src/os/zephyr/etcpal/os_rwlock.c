@@ -25,6 +25,11 @@
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
   struct timespec time = {
       .tv_sec  = MS_TO_S(timeout_ms),
       .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
@@ -34,6 +39,11 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
   struct timespec time = {
       .tv_sec  = MS_TO_S(timeout_ms),
       .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),

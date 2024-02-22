@@ -42,8 +42,8 @@ typedef struct
 #define ETCPAL_SEM_MUST_BE_BALANCED  0
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count);
-bool etcpal_sem_wait(etcpal_sem_t* id);
-bool etcpal_sem_try_wait(etcpal_sem_t* id);
+#define etcpal_sem_wait(idptr)     (etcpal_sem_timed_wait((idptr), ETCPAL_WAIT_FOREVER))
+#define etcpal_sem_try_wait(idptr) (etcpal_sem_timed_wait((idptr), ETCPAL_NO_WAIT))
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
 bool etcpal_sem_post(etcpal_sem_t* id);
 #define etcpal_sem_post_from_isr etcpal_sem_post;  // Regular post is ISR safe

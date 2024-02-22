@@ -23,15 +23,18 @@
 // net_if struct and possibly DeviceTree integration. Leaving unimplemented for now.
 etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
 {
+  ETCPAL_UNUSED_ARG(uuid);
   return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
 {
+  ETCPAL_UNUSED_ARG(uuid);
   return kEtcPalErrNotImpl;
 }
 
 etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
 {
+  ETCPAL_UNUSED_ARG(uuid);
   return kEtcPalErrNotImpl;
 }

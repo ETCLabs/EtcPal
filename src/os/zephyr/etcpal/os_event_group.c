@@ -25,7 +25,7 @@ static bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t 
 
 bool etcpal_event_group_create(etcpal_event_group_t* id)
 {
-  if (id)
+  if (ETCPAL_ASSERT_VERIFY(id))
   {
     if (0 == k_mutex_init(&id->mutex))
     {
@@ -40,69 +40,38 @@ bool etcpal_event_group_create(etcpal_event_group_t* id)
   return false;
 }
 
-etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags)
-{
-  if (!id || !bits || !id->valid)
-  {
-    return 0;
-  }
-
-  etcpal_event_bits_t result = 0;
-  if (id && id->valid)
-  {
-    if (0 == k_mutex_lock(&id->mutex, K_FOREVER))
-    {
-      result = id->bits;
-      while (!check_and_clear_bits(&id->bits, bits, flags))
-      {
-        if (k_condvar_wait(&id->cond, &id->mutex, K_FOREVER) != 0)
-        {
-          k_mutex_unlock(&id->mutex);
-          return false;
-        }
-        result = id->bits;
-      }
-      k_mutex_unlock(&id->mutex);
-    }
-  }
-  return result;
-}
-
 etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
                                                   etcpal_event_bits_t   bits,
                                                   int                   flags,
                                                   int                   timeout_ms)
 {
-  if (!id || !bits || !id->valid)
+  if (!ETCPAL_ASSERT_VERIFY(id) || !ETCPAL_ASSERT_VERIFY(bits) || !ETCPAL_ASSERT_VERIFY(id->valid))
   {
     return 0;
   }
 
   etcpal_event_bits_t result = 0;
-  if (id && id->valid)
+  if (0 == k_mutex_lock(&id->mutex, ms_to_zephyr_timeout(timeout_ms)))
   {
-    if (0 == k_mutex_lock(&id->mutex, ms_to_zephyr_timeout(timeout_ms)))
+    result = id->bits;
+    while (!check_and_clear_bits(&id->bits, bits, flags))
     {
-      result = id->bits;
-      while (!check_and_clear_bits(&id->bits, bits, flags))
+      int err = k_condvar_wait(&id->cond, &id->mutex, ms_to_zephyr_timeout(timeout_ms));
+      result  = id->bits;
+      if (err)
       {
-        int err = k_condvar_wait(&id->cond, &id->mutex, ms_to_zephyr_timeout(timeout_ms));
-        result  = id->bits;
-        if (err)
-        {
-          k_mutex_unlock(&id->mutex);
-          return result;
-        }
+        k_mutex_unlock(&id->mutex);
+        return result;
       }
-      k_mutex_unlock(&id->mutex);
     }
+    k_mutex_unlock(&id->mutex);
   }
   return result;
 }
 
 void etcpal_event_group_set_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_set)
 {
-  if (!id || !bits_to_set || !id->valid)
+  if (!ETCPAL_ASSERT_VERIFY(id) || !ETCPAL_ASSERT_VERIFY(bits_to_set) || !ETCPAL_ASSERT_VERIFY(id->valid))
   {
     return;
   }
@@ -117,7 +86,7 @@ void etcpal_event_group_set_bits(etcpal_event_group_t* id, etcpal_event_bits_t b
 
 etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id)
 {
-  if (!id || !id->valid)
+  if (!ETCPAL_ASSERT_VERIFY(id) || !ETCPAL_ASSERT_VERIFY(id->valid))
   {
     return 0;
   }
@@ -133,7 +102,7 @@ etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id)
 
 void etcpal_event_group_clear_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_clear)
 {
-  if (!id || !bits_to_clear || !id->valid)
+  if (!ETCPAL_ASSERT_VERIFY(id) || !ETCPAL_ASSERT_VERIFY(bits_to_clear) || !ETCPAL_ASSERT_VERIFY(id->valid))
   {
     return;
   }
@@ -147,7 +116,7 @@ void etcpal_event_group_clear_bits(etcpal_event_group_t* id, etcpal_event_bits_t
 
 void etcpal_event_group_destroy(etcpal_event_group_t* id)
 {
-  if (id && id->valid)
+  if (ETCPAL_ASSERT_VERIFY(id) && ETCPAL_ASSERT_VERIFY(id->valid))
   {
     id->valid = false;
   }
@@ -169,12 +138,9 @@ bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_re
       result = true;
     }
   }
-  else
+  else if (*bits & bits_requested)
   {
-    if (*bits & bits_requested)
-    {
-      result = true;
-    }
+    result = true;
   }
 
   if (result && (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR))

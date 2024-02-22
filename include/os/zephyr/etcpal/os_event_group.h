@@ -44,8 +44,9 @@ typedef struct
 #define ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS 1
 #define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS        32
 
-bool                etcpal_event_group_create(etcpal_event_group_t* id);
-etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_event_bits_t bits, int flags);
+bool etcpal_event_group_create(etcpal_event_group_t* id);
+#define etcpal_event_group_wait(idptr, bits, flags) \
+  (etcpal_event_group_timed_wait((idptr), (bits), (flags), ETCPAL_WAIT_FOREVER))
 etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
                                                   etcpal_event_bits_t   bits,
                                                   int                   flags,

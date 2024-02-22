@@ -21,6 +21,11 @@
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
   id->buffer = malloc(size * item_size);
   if (id->buffer == NULL)
   {
@@ -32,19 +37,32 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 
 void etcpal_queue_destroy(etcpal_queue_t* id)
 {
-  k_msgq_purge(&id->queue);
-  // k_msgq_cleanup frees the buffer allocated in the create call
-  k_msgq_cleanup(&id->queue);
+  if (ETCPAL_ASSERT_VERIFY(id))
+  {
+    k_msgq_purge(&id->queue);
+    // k_msgq_cleanup frees the buffer allocated in the create call
+    k_msgq_cleanup(&id->queue);
+  }
 }
 
 bool etcpal_queue_reset(etcpal_queue_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return false;
+  }
+
   k_msgq_purge(&id->queue);
   return true;
 }
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return true;
+  }
+
   struct k_msgq_attrs attrs;
   k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
@@ -53,6 +71,11 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return true;
+  }
+
   struct k_msgq_attrs attrs;
   k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
@@ -61,6 +84,11 @@ bool etcpal_queue_is_full(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return 0;
+  }
+
   struct k_msgq_attrs attrs;
   k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
@@ -69,6 +97,11 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
+  if (!ETCPAL_ASSERT_VERIFY(id))
+  {
+    return 0;
+  }
+
   struct k_msgq_attrs attrs;
   k_msgq_get_attrs((struct k_msgq*)(&id->queue), &attrs);
 
