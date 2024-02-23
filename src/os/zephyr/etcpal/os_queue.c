@@ -36,6 +36,28 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
   return true;
 }
 
+bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms)
+{
+  if (!id || !data)
+  {
+    return false;
+  }
+
+  int err = k_msgq_put(&id->queue, data, ms_to_zephyr_timeout(timeout_ms));
+  return err == 0;
+}
+
+bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
+{
+  if (!id || !data)
+  {
+    return false;
+  }
+
+  int err = k_msgq_get(&id->queue, data, ms_to_zephyr_timeout(timeout_ms));
+  return err == 0;
+}
+
 void etcpal_queue_destroy(etcpal_queue_t* id)
 {
   if (id)
