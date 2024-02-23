@@ -39,6 +39,8 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
    * recursive, we need to spoof this behavior by sleeping the thread for the given timeout. We assume this
    * implementation to be okay since it is not guaranteed by all platforms that a lock can be released by a thread other
    * than the one holding it leaving no way for the lock to be released while the thread sleeps.
+   *
+   * *NOTE* If we hit this case from a etcpal_mutex_lock the thread will sleep forever.
    * */
   if (id->lock_count > 1)
   {

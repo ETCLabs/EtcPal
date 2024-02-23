@@ -122,6 +122,7 @@ extern "C" {
  * macOS    | No               | Yes                | Yes                 | No                         |
  * MQX      | Yes              | Yes                | Yes                 | Yes, EtcPalThreadParamsMqx |
  * Windows  | Yes              | Yes                | Yes                 | No                         |
+ * Zephyr   | Yes              | Yes                | Yes                 | No                         |
  */
 typedef struct EtcPalThreadParams
 {
