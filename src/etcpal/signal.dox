@@ -73,6 +73,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | macOS    | No                            | No                               | [pthread_cond](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_cond_init.3.html)
  * | MQX      | Yes                           | No                               | Lightweight Events |
  * | Windows  | Yes                           | No                               | [Event objects](https://docs.microsoft.com/en-us/windows/desktop/sync/using-event-objects) |
+ * | Zephyr   | Yes                           | Yes                              | [Semaphores](https://docs.zephyrproject.org/latest/kernel/services/synchronization/semaphores.html) |
  *
  * @{
  */

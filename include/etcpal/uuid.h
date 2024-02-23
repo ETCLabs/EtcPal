@@ -68,6 +68,7 @@
  * macOS           | Yes | Yes | Yes | Yes | Yes          | Yes    |
  * MQX             | No  | Yes | No  | Yes | No           | Yes    |
  * Windows         | Yes | Yes | Yes | Yes | Yes          | Yes    |
+ * Zephyr          | No  | Yes | No  | Yes | No           | Yes    |
  *
  * You can also convert UUIDs to and from strings:
  * @code
