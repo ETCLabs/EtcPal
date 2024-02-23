@@ -44,6 +44,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     goto end;
   }
 
+  id->stack = NULL;
   id->stack = k_thread_stack_alloc(params->stack_size, IS_ENABLED(CONFIG_USERSPACE) ? K_USER : 0);
   if (id->stack == NULL)
   {
