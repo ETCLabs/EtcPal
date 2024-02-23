@@ -26,7 +26,7 @@
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }
@@ -40,7 +40,7 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }

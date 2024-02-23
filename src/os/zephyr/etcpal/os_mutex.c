@@ -22,7 +22,7 @@
 
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }

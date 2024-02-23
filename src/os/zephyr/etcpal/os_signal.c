@@ -23,6 +23,6 @@
 
 void etcpal_signal_destroy(etcpal_signal_t* id)
 {
-  ETCPAL_ASSERT_VERIFY(id);
+  ETCPAL_UNUSED_ARG(id);
   // Not needed
 }

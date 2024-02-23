@@ -22,6 +22,6 @@
 
 void etcpal_recursive_mutex_destroy(etcpal_recursive_mutex_t* id)
 {
-  ETCPAL_ASSERT_VERIFY(id);
+  ETCPAL_UNUSED_ARG(id);
   // Not needed
 }

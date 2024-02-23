@@ -24,7 +24,7 @@
 
 bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }

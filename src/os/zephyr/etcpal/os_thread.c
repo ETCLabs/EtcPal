@@ -36,7 +36,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
                                     void (*thread_fn)(void*),
                                     void* thread_arg)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id) || !ETCPAL_ASSERT_VERIFY(params) || !ETCPAL_ASSERT_VERIFY(thread_fn))
+  if (!id || !params || !thread_fn)
   {
     return kEtcPalErrInvalid;
   }
@@ -71,7 +71,7 @@ etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
 
 etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return kEtcPalErrInvalid;
   }
@@ -99,7 +99,7 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
 
 etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return kEtcPalErrInvalid;
   }
@@ -112,7 +112,7 @@ etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 
 etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return ETCPAL_THREAD_OS_HANDLE_INVALID;
   }

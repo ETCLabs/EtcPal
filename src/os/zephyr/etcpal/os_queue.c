@@ -22,7 +22,7 @@
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }
@@ -38,7 +38,7 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 
 void etcpal_queue_destroy(etcpal_queue_t* id)
 {
-  if (ETCPAL_ASSERT_VERIFY(id))
+  if (id)
   {
     k_msgq_purge(&id->queue);
     // k_msgq_cleanup frees the buffer allocated in the create call
@@ -48,7 +48,7 @@ void etcpal_queue_destroy(etcpal_queue_t* id)
 
 bool etcpal_queue_reset(etcpal_queue_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }
@@ -59,7 +59,7 @@ bool etcpal_queue_reset(etcpal_queue_t* id)
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return true;
   }
@@ -72,7 +72,7 @@ bool etcpal_queue_is_empty(const etcpal_queue_t* id)
 
 bool etcpal_queue_is_full(const etcpal_queue_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return true;
   }
@@ -85,7 +85,7 @@ bool etcpal_queue_is_full(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return 0;
   }
@@ -98,7 +98,7 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return 0;
   }
