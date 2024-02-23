@@ -47,27 +47,33 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
     return kEtcPalErrInvalid;
   }
 
-  int err = k_thread_name_set(&id->thread, params->thread_name);
-  if (err == -EINVAL)
+  etcpal_error_t err = kEtcPalErrOk;
+  switch (k_thread_name_set(&id->thread, params->thread_name))
   {
-    err = kEtcPalErrInvalid;
+    case 0:
+      break;
+    case -EINVAL:
+      err = kEtcPalErrInvalid;
+      break;
+    default:
+      err = kEtcPalErrSys;
+      break;
   }
 
-  if (!err)
+  if (err == kEtcPalErrOk)
   {
     k_tid_t thread_id =
         k_thread_create(&id->thread, id->stack, params->stack_size, zephyr_thread_entry, thread_fn, thread_arg, NULL,
                         params->priority, IS_ENABLED(CONFIG_USERSPACE) ? K_USER | K_INHERIT_PERMS : 0, K_NO_WAIT);
-    err = thread_id != NULL ? kEtcPalErrOk : kEtcPalErrInvalid;
+    if (thread_id == NULL)
+    {
+      err = kEtcPalErrInvalid;
+    }
   }
 
-  if (err)
+  if (err != kEtcPalErrOk)
   {
-    int free_err = k_thread_stack_free(id->stack);
-    if (!ETCPAL_ASSERT_VERIFY(free_err == 0))
-    {
-      return errno_os_to_etcpal(free_err);
-    }
+    ETCPAL_ASSERT_VERIFY(k_thread_stack_free(id->stack) == 0);
   }
   return err;
 }
