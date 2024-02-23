@@ -49,7 +49,7 @@ bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_m
 #define etcpal_queue_send_from_isr etcpal_queue_send
 
 #define etcpal_queue_receive(idptr, dataptr) (etcpal_queue_timed_receive((idptr), (dataptr), ETCPAL_WAIT_FOREVER))
-bool etcpal_queue_timed_receive(etcpal_queue_t* id, const void* data, int timeout_ms);
+bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
 #define etcpal_queue_receive_from_isr etcpal_queue_receive
 
 bool etcpal_queue_reset(etcpal_queue_t* id);
