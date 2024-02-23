@@ -33,6 +33,13 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
     return false;
   }
 
+  /*
+   * Zephyr does not support true mutexes, only recursive mutexes. In the case that a true mutex is locked twice from
+   * the same thread, EtcPal expects the lock to deadlock until the timeout is complete. Since Zephyr's mutexes are
+   * recursive, we need to spoof this behavior by sleeping the thread for the given timeout. We assume this
+   * implementation to be okay since it is not guaranteed by all platforms that a lock can be released by a thread other
+   * than the one holding it leaving no way for the lock to be released while the thread sleeps.
+   * */
   if (id->lock_count > 1)
   {
     k_mutex_unlock(id);
