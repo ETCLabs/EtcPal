@@ -46,5 +46,5 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 void etcpal_mutex_destroy(etcpal_mutex_t* id)
 {
   ETCPAL_UNUSED_ARG(id);
-  // Not implemented
+  // Not needed
 }

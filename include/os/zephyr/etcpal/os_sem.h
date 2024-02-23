@@ -29,12 +29,7 @@
 extern "C" {
 #endif
 
-typedef struct
-{
-  struct k_sem sem;
-  unsigned int count;
-  unsigned int limit;
-} etcpal_sem_t;
+typedef struct k_sem etcpal_sem_t;
 
 #define ETCPAL_SEM_HAS_TIMED_WAIT    1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 1

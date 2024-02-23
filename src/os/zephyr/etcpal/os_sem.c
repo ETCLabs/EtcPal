@@ -29,35 +29,24 @@ bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned in
     return false;
   }
 
-  int err = k_sem_init(&id->sem, initial_count, max_count);
-  if (err)
-  {
-    return false;
-  }
-  id->count = initial_count;
-  id->limit = max_count;
-  return true;
+  int err = k_sem_init(id, initial_count, max_count);
+  return err == 0;
 }
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }
 
-  int err = k_sem_take(&id->sem, ms_to_zephyr_timeout(timeout_ms));
-  if (err)
-  {
-    return false;
-  }
-  id->count--;
-  return true;
+  int err = k_sem_take(id, ms_to_zephyr_timeout(timeout_ms));
+  return err == 0;
 }
 
 bool etcpal_sem_post(etcpal_sem_t* id)
 {
-  if (!ETCPAL_ASSERT_VERIFY(id))
+  if (!id)
   {
     return false;
   }
@@ -66,13 +55,13 @@ bool etcpal_sem_post(etcpal_sem_t* id)
   {
     return false;
   }
-  k_sem_give(&id->sem);
-  id->count++;
+
+  k_sem_give(id);
   return true;
 }
 
 void etcpal_sem_destroy(etcpal_sem_t* id)
 {
-  ETCPAL_ASSERT_VERIFY(id);
-  // Not implemented
+  ETCPAL_UNUSED_ARG(id);
+  // Not needed
 }

@@ -18,7 +18,7 @@
  ******************************************************************************/
 
 #include "etcpal/uuid.h"
-#include "etcpal/private/opts.h"
+#include "etcpal/private/common.h"
 
 // This could possibly be implemented using net_if_get_link_addr, but this would require getting a pointer to the Zephyr
 // net_if struct and possibly DeviceTree integration. Leaving unimplemented for now.
