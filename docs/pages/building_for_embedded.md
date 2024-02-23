@@ -35,9 +35,9 @@ When using CMake to build EtcPal, some target platforms require special targets 
 allow EtcPal to find headers from external libraries. Special requirements for specific platforms
 are found on the pages below:
 * @subpage targeting_freertos
-* @subpage targeting_zephyr
 * @subpage targeting_lwip
 * @subpage targeting_mqx
+* @subpage targeting_zephyr
 
 The method for including EtcPal via CMake is different depending on if your project already uses
 CMake or not.
