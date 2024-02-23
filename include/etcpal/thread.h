@@ -80,6 +80,7 @@ extern "C" {
  * macOS    | No                            |
  * MQX      | No                            |
  * Windows  | Yes                           |
+ * Zephyr   | Yes                           |
  *
  * Manipulate the EtcPalThreadParams structure to change parameters about the thread to be created:
  *
