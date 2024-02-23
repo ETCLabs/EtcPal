@@ -3686,6 +3686,13 @@
       <anchor>ga1cfb33811295439bc08ce2e8b74c1d13</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_NO_WAIT</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga1cfb33811295439bc08ce2e8b74c1d13</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>uint32_t</type>
       <name>etcpal_features_t</name>
