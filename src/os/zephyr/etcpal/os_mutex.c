@@ -36,7 +36,7 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
   if (id->lock_count > 1)
   {
     k_mutex_unlock(id);
-    k_msleep(timeout_ms);
+    k_sleep(ms_to_zephyr_timeout(timeout_ms));
     return false;
   }
 

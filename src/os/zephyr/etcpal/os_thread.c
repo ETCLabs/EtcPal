@@ -74,7 +74,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
 
 etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
 {
-  return !k_msleep(sleep_ms) ? kEtcPalErrOk : kEtcPalErrSys;
+  return !k_sleep(ms_to_zephyr_timeout(sleep_ms)) ? kEtcPalErrOk : kEtcPalErrSys;
 }
 
 etcpal_error_t etcpal_thread_join(etcpal_thread_t* id)
