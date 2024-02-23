@@ -122,7 +122,7 @@ namespace etcpal
 /// MQX). The application writer is responsible for managing the interaction between starting the
 /// scheduler and starting EtcPal threads, just like when starting native RTOS tasks.
 ///
-/// **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see <a
+/// **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see: <a
 /// href="targeting_zephyr.html">Targeting Zephyr</a>
 
 /// @ingroup etcpal_cpp_thread
