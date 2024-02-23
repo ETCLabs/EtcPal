@@ -107,15 +107,8 @@ extern "C" {
  * The application writer is responsible for managing the interaction between starting the
  * scheduler and starting EtcPal threads, just like when starting native RTOS tasks.
  *
- * **IMPORTANT NOTES FOR ZEPHYR USERS:**
- * 1. EtcPal expects preemptive timeslicing meaning that threads of lower or equal
- *    priority should not be able to starve out higher or equal priority threads. However, by default, Zephyr does not
- *    implement timeslicing and only dedicates specific priorities to be preemptive. In order for threads to behave the
- *    way EtcPal expects, their priorities must be within this preemptive range and timeslicing must be enabled in
- *    KConfig.
- *    Read more about this here: https://docs.zephyrproject.org/latest/kernel/services/scheduling/index.html
- * 2. EtcPal threads are dynamically allocated. Zephyr by default only allows for static threads. To use EtcPal threads,
- *    dynamic threads and a heap implementation must both be enabled in KConfig.
+ * **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see <a
+ * href="targeting_zephyr.html">Targeting Zephyr</a>
  * @{
  */
 

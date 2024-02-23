@@ -72,8 +72,8 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | Windows  | Yes              | Yes                               | No                              |
  * | Zephyr   | Yes              | Yes                               | Yes                             |
  *
- * **IMPORTANT NOTE FOR ZEPHYR USERS:** EtcPal expects queues to be dynamically allocated. By default, Zephyr does not 
- * support dynamic allocation. In order to use EtcPal queues, a malloc implementation must be enabled in KConfig.
+ * **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see <a
+ * href="targeting_zephyr.html">Targeting Zephyr</a>
  * @{
  */
 
