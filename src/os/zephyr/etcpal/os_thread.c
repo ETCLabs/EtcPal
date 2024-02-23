@@ -36,27 +36,43 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
                                     void (*thread_fn)(void*),
                                     void* thread_arg)
 {
+  int err;
+
   if (!id || !params || !thread_fn)
   {
-    return kEtcPalErrInvalid;
+    err = kEtcPalErrInvalid;
+    goto end;
   }
 
   id->stack = k_thread_stack_alloc(params->stack_size, IS_ENABLED(CONFIG_USERSPACE) ? K_USER : 0);
   if (id->stack == NULL)
   {
-    return kEtcPalErrInvalid;
+    err = kEtcPalErrInvalid;
+    goto end;
   }
 
-  int err = k_thread_name_set(&id->thread, params->thread_name);
+  err = k_thread_name_set(&id->thread, params->thread_name);
   if (err == -EINVAL)
   {
-    return kEtcPalErrInvalid;
+    err = kEtcPalErrInvalid;
+    goto end;
   }
 
   k_tid_t thread_id =
       k_thread_create(&id->thread, id->stack, params->stack_size, zephyr_thread_entry, thread_fn, thread_arg, NULL,
                       params->priority, IS_ENABLED(CONFIG_USERSPACE) ? K_USER | K_INHERIT_PERMS : 0, K_NO_WAIT);
-  return thread_id != NULL ? kEtcPalErrOk : kEtcPalErrInvalid;
+  err = thread_id != NULL ? kEtcPalErrOk : kEtcPalErrInvalid;
+
+end:
+  if (id->stack && err != kEtcPalErrOk)
+  {
+    int free_err = k_thread_stack_free(id->stack);
+    if (!ETCPAL_ASSERT_VERIFY(free_err == 0))
+    {
+      return errno_os_to_etcpal(free_err);
+    }
+  }
+  return err;
 }
 
 etcpal_error_t etcpal_thread_sleep(unsigned int sleep_ms)
@@ -88,8 +104,7 @@ etcpal_error_t etcpal_thread_timed_join(etcpal_thread_t* id, int timeout_ms)
   }
 
   err = k_thread_stack_free(id->stack);
-  ETCPAL_ASSERT_VERIFY(err == 0);
-  if (err)
+  if (!ETCPAL_ASSERT_VERIFY(err == 0))
   {
     return errno_os_to_etcpal(err);
   }
