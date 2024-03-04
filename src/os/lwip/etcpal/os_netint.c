@@ -56,7 +56,7 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
 #if ETCPAL_EMBOS_USE_MALLOC
   size_t num_lwip_netints = 0;
-  NETIF_FOREACH(lwip_netif)
+  NETIF_FOREACH(lwip_netif)  // This may be defined to an if statement
   {
 #if LWIP_IPV4
     ++num_lwip_netints;
@@ -87,50 +87,59 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   num_static_netints = 0;
 
-  etcpal_error_t res = kEtcPalErrOk;
-  NETIF_FOREACH(lwip_netif)
+  etcpal_error_t res           = kEtcPalErrOk;
+  bool           limit_reached = false;
+  NETIF_FOREACH(lwip_netif)  // This may be defined to an if statement
   {
 #if LWIP_IPV4
-    if (lwip_netif == netif_default)
+    if (!limit_reached)
     {
-      cache->def.v4_valid = true;
-      cache->def.v4_index = netif_get_index(netif_default);
-    }
+      if (lwip_netif == netif_default)
+      {
+        cache->def.v4_valid = true;
+        cache->def.v4_index = netif_get_index(netif_default);
+      }
 
 #if ETCPAL_EMBOS_USE_MALLOC
-    if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
-    {
-      res = kEtcPalErrSys;
-      break;
-    }
+      if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
+      {
+        res           = kEtcPalErrSys;
+        limit_reached = true;
+      }
 #else
-    if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
-      break;
+      if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
+        limit_reached = true;
 #endif
-    copy_interface_info_v4(lwip_netif, &static_netints[num_static_netints++]);
+      if (!limit_reached)
+        copy_interface_info_v4(lwip_netif, &static_netints[num_static_netints++]);
+    }
 #endif
 #if LWIP_IPV6
-    if (lwip_netif == netif_default)
+    if (!limit_reached)
     {
-      cache->def.v6_valid = true;
-      cache->def.v6_index = netif_get_index(netif_default);
+      if (lwip_netif == netif_default)
+      {
+        cache->def.v6_valid = true;
+        cache->def.v6_index = netif_get_index(netif_default);
+      }
     }
 
-    for (size_t i = 0; i < LWIP_IPV6_NUM_ADDRESSES; ++i)
+    for (size_t i = 0; !limit_reached && (i < LWIP_IPV6_NUM_ADDRESSES); ++i)
     {
       if (ip6_addr_isvalid(lwip_netif->ip6_addr_state[i]))
       {
 #if ETCPAL_EMBOS_USE_MALLOC
         if (!ETCPAL_ASSERT_VERIFY(num_static_netints < num_lwip_netints))
         {
-          res = kEtcPalErrSys;
-          break;
+          res           = kEtcPalErrSys;
+          limit_reached = true;
         }
 #else
         if (num_static_netints >= ETCPAL_EMBOS_MAX_NETINTS)
-          break;
+          limit_reached = true;
 #endif
-        copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints++]);
+        if (!limit_reached)
+          copy_interface_info_v6(lwip_netif, i, &static_netints[num_static_netints++]);
       }
     }
 #endif
