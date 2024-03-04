@@ -44,7 +44,7 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
   id->stack = k_thread_stack_alloc(params->stack_size, IS_ENABLED(CONFIG_USERSPACE) ? K_USER : 0);
   if (!id->stack)
   {
-    return kEtcPalErrInvalid;
+    return kEtcPalErrNoMem;
   }
 
   etcpal_error_t err = kEtcPalErrOk;
@@ -73,6 +73,10 @@ etcpal_error_t etcpal_thread_create(etcpal_thread_t*          id,
 
   if (err != kEtcPalErrOk)
   {
+    if (thread_id != NULL)
+    {
+      k_thread_abort(thread_id);
+    }
     ETCPAL_ASSERT_VERIFY(k_thread_stack_free(id->stack) == 0);
   }
   return err;

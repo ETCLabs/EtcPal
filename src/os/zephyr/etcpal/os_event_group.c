@@ -124,7 +124,7 @@ void etcpal_event_group_destroy(etcpal_event_group_t* id)
 
 bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags)
 {
-  if (!bits)
+  if (!ETCPAL_ASSERT_VERIFY(bits))
   {
     return false;
   }
