@@ -128,7 +128,6 @@ etcpal_error_t etcpal_thread_terminate(etcpal_thread_t* id)
 
   k_thread_abort(&id->thread);
   int err = k_thread_stack_free(id->stack);
-  ETCPAL_ASSERT_VERIFY(err == 0);
   return errno_os_to_etcpal(err);
 }
 
