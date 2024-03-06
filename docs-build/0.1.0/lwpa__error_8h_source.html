@@ -1,0 +1,316 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: /tmp/tmpk_3pov88/etcpal/include/lwpa_error.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.1.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('lwpa__error_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">lwpa_error.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2018 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of lwpa. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/lwpa</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/* lwpa_error.h: Platform-neutral error codes. */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#ifndef _LWPA_ERROR_H_</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#define _LWPA_ERROR_H_</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">   36</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647">   39</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647">LWPA_OK</a> = 0,</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa2acbe19477fb07c07db1f9b3d9bb0637">   42</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa2acbe19477fb07c07db1f9b3d9bb0637">LWPA_NOTFOUND</a> = -1,</div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa1c83c6b26dacaebf3ff5ee52fb85e4c4">   45</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa1c83c6b26dacaebf3ff5ee52fb85e4c4">LWPA_NOMEM</a> = -2,</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfab105c4c9af4d26afbd6dcb664279770a">   47</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfab105c4c9af4d26afbd6dcb664279770a">LWPA_BUSY</a> = -3,</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa219cade9f19d3b17ff65b56d98f41eee">   49</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa219cade9f19d3b17ff65b56d98f41eee">LWPA_EXIST</a> = -4,</div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa9cf2f92a879c1eacc80a024bae41cd96">   51</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa9cf2f92a879c1eacc80a024bae41cd96">LWPA_INVALID</a> = -5,</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa75f1c87405d6317c354d5e8e87bba817">   53</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa75f1c87405d6317c354d5e8e87bba817">LWPA_WOULDBLOCK</a> = -6,</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa06ed657852ed6acda52f334c2bc87ad0">   56</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa06ed657852ed6acda52f334c2bc87ad0">LWPA_NODATA</a> = -7,</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa60397db549f16a805fb4553d0cc2d5d9">   58</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa60397db549f16a805fb4553d0cc2d5d9">LWPA_PROTERR</a> = -8,</div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa854b24c13e687336e7cb4ae0110866f3">   60</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa854b24c13e687336e7cb4ae0110866f3">LWPA_MSGSIZE</a> = -9,</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa254f03432a42298cb3caded4644763d1">   62</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa254f03432a42298cb3caded4644763d1">LWPA_ADDRINUSE</a> = -10,</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfacca2125a6d3fe7e2defd93e0364326a2">   64</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfacca2125a6d3fe7e2defd93e0364326a2">LWPA_ADDRNOTAVAIL</a> = -11,</div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaf65425d05b3d91f90adf5f0ee7dc8092">   66</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaf65425d05b3d91f90adf5f0ee7dc8092">LWPA_NETERR</a> = -12,</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaad3a7c2661b83f69312d25767d7455d6">   68</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaad3a7c2661b83f69312d25767d7455d6">LWPA_CONNRESET</a> = -13,</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaaa097ac19c3cf75639f475aca2c59971">   71</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaaa097ac19c3cf75639f475aca2c59971">LWPA_CONNCLOSED</a> = -14,</div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfad4194b82d4385ca8b95136fcf542e76c">   73</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfad4194b82d4385ca8b95136fcf542e76c">LWPA_ISCONN</a> = -15,</div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa92048423fc209e99bf80a9685e0824a4">   75</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa92048423fc209e99bf80a9685e0824a4">LWPA_NOTCONN</a> = -16,</div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa7ccf319f032b55fd13ddfb4c319d5028">   77</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa7ccf319f032b55fd13ddfb4c319d5028">LWPA_SHUTDOWN</a> = -17,</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa227b5a6ccb818da7bcc74cecbf193f7f">   79</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa227b5a6ccb818da7bcc74cecbf193f7f">LWPA_TIMEDOUT</a> = -18,</div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa5d5cc5181b64b6aed02cd510cf084d5a">   81</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa5d5cc5181b64b6aed02cd510cf084d5a">LWPA_CONNREFUSED</a> = -19,</div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa543a4059f06676e225762b0f21f945e8">   83</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa543a4059f06676e225762b0f21f945e8">LWPA_ALREADY</a> = -20,</div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa11a9a2879288ced39e9091d61c5eb723">   85</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa11a9a2879288ced39e9091d61c5eb723">LWPA_INPROGRESS</a> = -21,</div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa1600093d7a7190c396cae1b19a34ed74">   88</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa1600093d7a7190c396cae1b19a34ed74">LWPA_BUFSIZE</a> = -22,</div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa093ea9e89008867f7049d4203ffd31cc">   91</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa093ea9e89008867f7049d4203ffd31cc">LWPA_NOTINIT</a> = -23,</div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa5183c038cc84e7cbaab3399f7f76a1bf">   94</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa5183c038cc84e7cbaab3399f7f76a1bf">LWPA_NOIFACES</a> = -24,</div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa051f09b950e5709f3f2a1cc4e32a08a5">   96</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa051f09b950e5709f3f2a1cc4e32a08a5">LWPA_NOTIMPL</a> = -25,</div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4">   99</a></span>&#160;  <a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4">LWPA_SYSERR</a> = -26,</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;} <a class="code" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#define LWPA_NUM_ERROR_CODES 27</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *lwpa_error_strings[LWPA_NUM_ERROR_CODES];</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="group__lwpa__error.html#gadd5acb6baf8584951dd378c7e92ddf54">  115</a></span>&#160;<span class="preprocessor">#define lwpa_strerror(errcode) \</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">  (((int)errcode &lt;= 0 &amp;&amp; (int)errcode &gt; -LWPA_NUM_ERROR_CODES) ? lwpa_error_strings[-((int)errcode)] : NULL)</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* _LWPA_ERROR_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__lwpa__error_html_ga4de447127cf0baaa9afb0188e1e6afbf"><div class="ttname"><a href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a></div><div class="ttdeci">lwpa_error_t</div><div class="ttdoc">A set of error codes that can be returned by library functions.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:37</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa051f09b950e5709f3f2a1cc4e32a08a5"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa051f09b950e5709f3f2a1cc4e32a08a5">LWPA_NOTIMPL</a></div><div class="ttdeci">@ LWPA_NOTIMPL</div><div class="ttdoc">A function or specific use of a function is not implemented yet.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:96</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa06ed657852ed6acda52f334c2bc87ad0"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa06ed657852ed6acda52f334c2bc87ad0">LWPA_NODATA</a></div><div class="ttdeci">@ LWPA_NODATA</div><div class="ttdoc">Returned from a function that is meant to be called repeatedly to indicate that there is no more data...</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:56</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa093ea9e89008867f7049d4203ffd31cc"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa093ea9e89008867f7049d4203ffd31cc">LWPA_NOTINIT</a></div><div class="ttdeci">@ LWPA_NOTINIT</div><div class="ttdoc">An API function was called from a module that was not previously initialized.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:91</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa11a9a2879288ced39e9091d61c5eb723"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa11a9a2879288ced39e9091d61c5eb723">LWPA_INPROGRESS</a></div><div class="ttdeci">@ LWPA_INPROGRESS</div><div class="ttdoc">The operation requested is now in progress and will complete later.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:85</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa1600093d7a7190c396cae1b19a34ed74"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa1600093d7a7190c396cae1b19a34ed74">LWPA_BUFSIZE</a></div><div class="ttdeci">@ LWPA_BUFSIZE</div><div class="ttdoc">A buffer provided to a function was not big enough to hold the data that needed to be packed into it.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:88</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa1c83c6b26dacaebf3ff5ee52fb85e4c4"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa1c83c6b26dacaebf3ff5ee52fb85e4c4">LWPA_NOMEM</a></div><div class="ttdeci">@ LWPA_NOMEM</div><div class="ttdoc">A dynamic memory allocation failed, or there is no space left in a statically allocated array.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:45</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa219cade9f19d3b17ff65b56d98f41eee"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa219cade9f19d3b17ff65b56d98f41eee">LWPA_EXIST</a></div><div class="ttdeci">@ LWPA_EXIST</div><div class="ttdoc">The item being created already exists.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:49</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa227b5a6ccb818da7bcc74cecbf193f7f"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa227b5a6ccb818da7bcc74cecbf193f7f">LWPA_TIMEDOUT</a></div><div class="ttdeci">@ LWPA_TIMEDOUT</div><div class="ttdoc">A connection timed out.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:79</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa254f03432a42298cb3caded4644763d1"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa254f03432a42298cb3caded4644763d1">LWPA_ADDRINUSE</a></div><div class="ttdeci">@ LWPA_ADDRINUSE</div><div class="ttdoc">The requested address is already in use.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:62</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa2acbe19477fb07c07db1f9b3d9bb0637"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa2acbe19477fb07c07db1f9b3d9bb0637">LWPA_NOTFOUND</a></div><div class="ttdeci">@ LWPA_NOTFOUND</div><div class="ttdoc">An identifier or handle passed to a function was not valid or not previously initialized.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:42</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa5183c038cc84e7cbaab3399f7f76a1bf"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa5183c038cc84e7cbaab3399f7f76a1bf">LWPA_NOIFACES</a></div><div class="ttdeci">@ LWPA_NOIFACES</div><div class="ttdoc">No network interfaces were found on the system, or there are no network interfaces of a type that can...</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:94</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa543a4059f06676e225762b0f21f945e8"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa543a4059f06676e225762b0f21f945e8">LWPA_ALREADY</a></div><div class="ttdeci">@ LWPA_ALREADY</div><div class="ttdoc">The operation requested is already in progress.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:83</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa5d5cc5181b64b6aed02cd510cf084d5a"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa5d5cc5181b64b6aed02cd510cf084d5a">LWPA_CONNREFUSED</a></div><div class="ttdeci">@ LWPA_CONNREFUSED</div><div class="ttdoc">A connection was refused.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:81</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa60397db549f16a805fb4553d0cc2d5d9"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa60397db549f16a805fb4553d0cc2d5d9">LWPA_PROTERR</a></div><div class="ttdeci">@ LWPA_PROTERR</div><div class="ttdoc">A protocol parsing function encountered a malformed packet.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:58</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa75f1c87405d6317c354d5e8e87bba817"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa75f1c87405d6317c354d5e8e87bba817">LWPA_WOULDBLOCK</a></div><div class="ttdeci">@ LWPA_WOULDBLOCK</div><div class="ttdoc">The requested operation would block.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:53</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa7ccf319f032b55fd13ddfb4c319d5028"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa7ccf319f032b55fd13ddfb4c319d5028">LWPA_SHUTDOWN</a></div><div class="ttdeci">@ LWPA_SHUTDOWN</div><div class="ttdoc">Transport endpoint is shut down.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:77</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa854b24c13e687336e7cb4ae0110866f3"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa854b24c13e687336e7cb4ae0110866f3">LWPA_MSGSIZE</a></div><div class="ttdeci">@ LWPA_MSGSIZE</div><div class="ttdoc">Message too long.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:60</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647">LWPA_OK</a></div><div class="ttdeci">@ LWPA_OK</div><div class="ttdoc">The call was successful, no error occurred.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:39</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa92048423fc209e99bf80a9685e0824a4"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa92048423fc209e99bf80a9685e0824a4">LWPA_NOTCONN</a></div><div class="ttdeci">@ LWPA_NOTCONN</div><div class="ttdoc">Transport endpoint is not connected.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:75</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa9cf2f92a879c1eacc80a024bae41cd96"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa9cf2f92a879c1eacc80a024bae41cd96">LWPA_INVALID</a></div><div class="ttdeci">@ LWPA_INVALID</div><div class="ttdoc">An invalid argument was provided to an API function.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:51</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfaaa097ac19c3cf75639f475aca2c59971"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaaa097ac19c3cf75639f475aca2c59971">LWPA_CONNCLOSED</a></div><div class="ttdeci">@ LWPA_CONNCLOSED</div><div class="ttdoc">A connection was gracefully closed by the remote peer.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:71</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfaad3a7c2661b83f69312d25767d7455d6"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaad3a7c2661b83f69312d25767d7455d6">LWPA_CONNRESET</a></div><div class="ttdeci">@ LWPA_CONNRESET</div><div class="ttdoc">A connection was reset (hard/abortive close) by the remote peer.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:68</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfab105c4c9af4d26afbd6dcb664279770a"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfab105c4c9af4d26afbd6dcb664279770a">LWPA_BUSY</a></div><div class="ttdeci">@ LWPA_BUSY</div><div class="ttdoc">The resource being requested is temporarily unavailable.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:47</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4">LWPA_SYSERR</a></div><div class="ttdeci">@ LWPA_SYSERR</div><div class="ttdoc">A system call or C library call failed in a way not covered by other errors.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:99</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfacca2125a6d3fe7e2defd93e0364326a2"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfacca2125a6d3fe7e2defd93e0364326a2">LWPA_ADDRNOTAVAIL</a></div><div class="ttdeci">@ LWPA_ADDRNOTAVAIL</div><div class="ttdoc">Cannot assign the requested address.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:64</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfad4194b82d4385ca8b95136fcf542e76c"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfad4194b82d4385ca8b95136fcf542e76c">LWPA_ISCONN</a></div><div class="ttdeci">@ LWPA_ISCONN</div><div class="ttdoc">Transport endpoint is already connected.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:73</div></div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfaf65425d05b3d91f90adf5f0ee7dc8092"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfaf65425d05b3d91f90adf5f0ee7dc8092">LWPA_NETERR</a></div><div class="ttdeci">@ LWPA_NETERR</div><div class="ttdoc">The operation failed because a network was down or unreachable.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:66</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><b>lwpa_error.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

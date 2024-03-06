@@ -1,0 +1,272 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: Data Structures</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('annotated.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">Data Structures</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock">Here are the data structures with brief descriptions:</div><div class="directory">
+<div class="levels">[detail level <span onclick="javascript:toggleLevel(1);">1</span><span onclick="javascript:toggleLevel(2);">2</span>]</div><table class="directory">
+<tr id="row_0_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_0_" class="arrow" onclick="toggleFolder('0_')">&#9660;</span><span class="icona"><span class="icon">N</span></span><b>etcpal</b></td><td class="desc"></td></tr>
+<tr id="row_0_0_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_error.html" target="_self">Error</a></td><td class="desc">A wrapper class for the EtcPal error type </td></tr>
+<tr id="row_0_1_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_bad_expected_access.html" target="_self">BadExpectedAccess</a></td><td class="desc">Exception representing bad access to an <a class="el" href="classetcpal_1_1_expected.html" title="A type representing either a value or an etcpal_error_t code.">Expected</a> instance </td></tr>
+<tr id="row_0_2_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_expected.html" target="_self">Expected</a></td><td class="desc">A type representing either a value or an <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code </td></tr>
+<tr id="row_0_3_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_event_group.html" target="_self">EventGroup</a></td><td class="desc">A wrapper class for the EtcPal event group type </td></tr>
+<tr id="row_0_4_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_ip_addr.html" target="_self">IpAddr</a></td><td class="desc">A wrapper class for the EtcPal IP address type </td></tr>
+<tr id="row_0_5_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_sock_addr.html" target="_self">SockAddr</a></td><td class="desc">A wrapper for the EtcPal socket address type </td></tr>
+<tr id="row_0_6_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_mac_addr.html" target="_self">MacAddr</a></td><td class="desc">A wrapper for the EtcPal MAC address type </td></tr>
+<tr id="row_0_7_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_log_timestamp.html" target="_self">LogTimestamp</a></td><td class="desc">An object representing the current local time with millisecond resolution for logging purposes </td></tr>
+<tr id="row_0_8_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_log_message_handler.html" target="_self">LogMessageHandler</a></td><td class="desc">An interface which handles log messages </td></tr>
+<tr id="row_0_9_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_logger.html" target="_self">Logger</a></td><td class="desc">A class for dispatching log messages </td></tr>
+<tr id="row_0_10_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_mutex.html" target="_self">Mutex</a></td><td class="desc">A wrapper class for the EtcPal mutex type </td></tr>
+<tr id="row_0_11_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_mutex_guard.html" target="_self">MutexGuard</a></td><td class="desc">Lock guard around a mutex </td></tr>
+<tr id="row_0_12_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_opaque_id.html" target="_self">OpaqueId</a></td><td class="desc">A strongly-typed ID with arbitrary internal representation </td></tr>
+<tr id="row_0_13_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_queue.html" target="_self">Queue</a></td><td class="desc">An RTOS queue class </td></tr>
+<tr id="row_0_14_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_recursive_mutex.html" target="_self">RecursiveMutex</a></td><td class="desc">A wrapper class for the EtcPal recursive mutex type </td></tr>
+<tr id="row_0_15_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_recursive_mutex_guard.html" target="_self">RecursiveMutexGuard</a></td><td class="desc">Lock guard around a recursive mutex </td></tr>
+<tr id="row_0_16_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_rw_lock.html" target="_self">RwLock</a></td><td class="desc">A wrapper class for the EtcPal read-write lock type </td></tr>
+<tr id="row_0_17_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_read_guard.html" target="_self">ReadGuard</a></td><td class="desc">Read lock guard around a read-write lock </td></tr>
+<tr id="row_0_18_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_write_guard.html" target="_self">WriteGuard</a></td><td class="desc">Write lock guard around a read-write lock </td></tr>
+<tr id="row_0_19_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_semaphore.html" target="_self">Semaphore</a></td><td class="desc">A wrapper class for the EtcPal counting semaphore type </td></tr>
+<tr id="row_0_20_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_signal.html" target="_self">Signal</a></td><td class="desc">A wrapper class for the EtcPal signal type </td></tr>
+<tr id="row_0_21_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_thread.html" target="_self">Thread</a></td><td class="desc">A thread class, modeled after std::thread </td></tr>
+<tr id="row_0_22_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_time_point.html" target="_self">TimePoint</a></td><td class="desc">Represents a point in time </td></tr>
+<tr id="row_0_23_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_timer.html" target="_self">Timer</a></td><td class="desc">A wrapper class for the EtcPal timer type </td></tr>
+<tr id="row_0_24_"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classetcpal_1_1_uuid.html" target="_self">Uuid</a></td><td class="desc">A wrapper class for the EtcPal UUID type </td></tr>
+<tr id="row_1_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_acn_pdu.html" target="_self">AcnPdu</a></td><td class="desc">Holds state data used when parsing multiple PDUs in a PDU block </td></tr>
+<tr id="row_2_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_acn_pdu_constraints.html" target="_self">AcnPduConstraints</a></td><td class="desc">Contains specific PDU info used by the generic helper <a class="el" href="group__etcpal__acn__pdu.html#gab277ac11752967a19ded43f02e8bf0d4" title="Parse a generic ACN PDU.">acn_parse_pdu()</a> </td></tr>
+<tr id="row_3_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_acn_root_layer_pdu.html" target="_self">AcnRootLayerPdu</a></td><td class="desc">Holds the information contained in an ACN Root Layer PDU </td></tr>
+<tr id="row_4_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_acn_tcp_preamble.html" target="_self">AcnTcpPreamble</a></td><td class="desc">Holds the information contained in an ACN TCP Preamble </td></tr>
+<tr id="row_5_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_acn_udp_preamble.html" target="_self">AcnUdpPreamble</a></td><td class="desc">Holds the information contained in an ACN UDP Preamble </td></tr>
+<tr id="row_6_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_addrinfo.html" target="_self">EtcPalAddrinfo</a></td><td class="desc">A structure containing name and address information about an internet host </td></tr>
+<tr id="row_7_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_group_req.html" target="_self">EtcPalGroupReq</a></td><td class="desc">Option value for <a class="el" href="group__etcpal__socket.html#gacde51cd51d94c43625b96196d7b80f50" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_JOIN_GROUP</a> and <a class="el" href="group__etcpal__socket.html#ga747194309fa23fa0e092e8bd010f1a2c" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_LEAVE_GROUP</a> </td></tr>
+<tr id="row_8_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_ip_addr.html" target="_self">EtcPalIpAddr</a></td><td class="desc">An IP address </td></tr>
+<tr id="row_9_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_linger.html" target="_self">EtcPalLinger</a></td><td class="desc">Option value for <a class="el" href="group__etcpal__socket.html#gaf47bd53da2c92535aa6edcd8cc820259" title="Get/Set, value is EtcPalLinger.">ETCPAL_SO_LINGER</a> </td></tr>
+<tr id="row_10_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_log_params.html" target="_self">EtcPalLogParams</a></td><td class="desc">A set of parameters used for the etcpal_*log() functions </td></tr>
+<tr id="row_11_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_log_strings.html" target="_self">EtcPalLogStrings</a></td><td class="desc">The set of log strings passed with a call to an etcpal_log_callback function </td></tr>
+<tr id="row_12_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_log_timestamp.html" target="_self">EtcPalLogTimestamp</a></td><td class="desc">A set of parameters which represent the current local time with millisecond resolution </td></tr>
+<tr id="row_13_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_mac_addr.html" target="_self">EtcPalMacAddr</a></td><td class="desc">A MAC address </td></tr>
+<tr id="row_14_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_mcast_netint_id.html" target="_self">EtcPalMcastNetintId</a></td><td class="desc">A set of identifying information for a network interface, for multicast purposes </td></tr>
+<tr id="row_15_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_mreq.html" target="_self">EtcPalMreq</a></td><td class="desc">Option value for <a class="el" href="group__etcpal__socket.html#ga19b3047fe621a06b5cedc8043bb823cf" title="[Legacy IPv4-only option, use of ETCPAL_MCAST_JOIN_GROUP is preferred] Set only, value is EtcPalMreq.">ETCPAL_IP_ADD_MEMBERSHIP</a> and <a class="el" href="group__etcpal__socket.html#gacbe3547d777f101aaa432e602c4b8e69" title="[Legacy IPv4-only option, use of ETCPAL_MCAST_LEAVE_GROUP is preferred] Set only, value is EtcPalMreq...">ETCPAL_IP_DROP_MEMBERSHIP</a> </td></tr>
+<tr id="row_16_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_netint_info.html" target="_self">EtcPalNetintInfo</a></td><td class="desc">A description of a single address assigned to a network interface </td></tr>
+<tr id="row_17_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_poll_event.html" target="_self">EtcPalPollEvent</a></td><td class="desc">A description of an event that occurred on a socket, for usage with <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a> </td></tr>
+<tr id="row_18_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_rb_iter.html" target="_self">EtcPalRbIter</a></td><td class="desc">A red-black tree iterator </td></tr>
+<tr id="row_19_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_rb_node.html" target="_self">EtcPalRbNode</a></td><td class="desc">A red-black tree node </td></tr>
+<tr id="row_20_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_rb_tree.html" target="_self">EtcPalRbTree</a></td><td class="desc">A red-black tree </td></tr>
+<tr id="row_21_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_sock_addr.html" target="_self">EtcPalSockAddr</a></td><td class="desc">An IP address with associated interface and port </td></tr>
+<tr id="row_22_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_syslog_params.html" target="_self">EtcPalSyslogParams</a></td><td class="desc">A set of parameters for the syslog header </td></tr>
+<tr id="row_23_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_thread_params.html" target="_self">EtcPalThreadParams</a></td><td class="desc">A set of parameters for an etcpal_thread </td></tr>
+<tr id="row_24_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_timer.html" target="_self">EtcPalTimer</a></td><td class="desc">A millisecond-resolution timer </td></tr>
+<tr id="row_25_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_etc_pal_uuid.html" target="_self">EtcPalUuid</a></td><td class="desc">The UUID type </td></tr>
+<tr id="row_26_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="struct_int_handle_manager.html" target="_self">IntHandleManager</a></td><td class="desc">State for managing generic integer handle values </td></tr>
+</table>
+</div><!-- directory -->
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

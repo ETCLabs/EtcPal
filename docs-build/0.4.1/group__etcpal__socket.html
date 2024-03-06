@@ -1,0 +1,1889 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: socket (Network Socket Interface)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__socket.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">socket (Network Socket Interface)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__net.html">Network Abstraction Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Platform-neutral BSD-modeled network socket implementation. </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/socket.h&quot;</span></div>
+</div><!-- fragment --><p><b>WARNING:</b> This module must be explicitly initialized before use. Initialize the module by calling <a class="el" href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843" title="Initialize the EtcPal library.">etcpal_init()</a> with the relevant feature mask: </p><div class="fragment"><div class="line"><a class="code" href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843">etcpal_init</a>(<a class="code" href="group__etcpal.html#ga09f99422deaa7bb5d2625c317d1a66a6">ETCPAL_FEATURE_SOCKETS</a>);</div>
+<div class="ttc" id="agroup__etcpal_html_ga09f99422deaa7bb5d2625c317d1a66a6"><div class="ttname"><a href="group__etcpal.html#ga09f99422deaa7bb5d2625c317d1a66a6">ETCPAL_FEATURE_SOCKETS</a></div><div class="ttdeci">#define ETCPAL_FEATURE_SOCKETS</div><div class="ttdoc">Use the etcpal/socket module.</div><div class="ttdef"><b>Definition:</b> common.h:127</div></div>
+<div class="ttc" id="agroup__etcpal_html_ga163b95dfe5ef6c68f2fb4d5b58a63843"><div class="ttname"><a href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843">etcpal_init</a></div><div class="ttdeci">etcpal_error_t etcpal_init(etcpal_features_t features)</div><div class="ttdoc">Initialize the EtcPal library.</div><div class="ttdef"><b>Definition:</b> common.c:87</div></div>
+</div><!-- fragment --><p>This module attempts to abstract the network socket interface from various platforms into one platform-neutral interface. The functions and flags are modeled after the BSD sockets interface. This API is too large and complex to provide a concise how-to here; users of this module are assumed to already be familiar with some version of the BSD interface. If not, <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner, and Rudoff is highly recommended reading. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_linger.html">EtcPalLinger</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__etcpal__socket.html#gaf47bd53da2c92535aa6edcd8cc820259" title="Get/Set, value is EtcPalLinger.">ETCPAL_SO_LINGER</a>.  <a href="struct_etc_pal_linger.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_mreq.html">EtcPalMreq</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__etcpal__socket.html#ga19b3047fe621a06b5cedc8043bb823cf" title="[Legacy IPv4-only option, use of ETCPAL_MCAST_JOIN_GROUP is preferred] Set only, value is EtcPalMreq.">ETCPAL_IP_ADD_MEMBERSHIP</a> and <a class="el" href="group__etcpal__socket.html#gacbe3547d777f101aaa432e602c4b8e69" title="[Legacy IPv4-only option, use of ETCPAL_MCAST_LEAVE_GROUP is preferred] Set only, value is EtcPalMreq...">ETCPAL_IP_DROP_MEMBERSHIP</a>.  <a href="struct_etc_pal_mreq.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_group_req.html">EtcPalGroupReq</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__etcpal__socket.html#gacde51cd51d94c43625b96196d7b80f50" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_JOIN_GROUP</a> and <a class="el" href="group__etcpal__socket.html#ga747194309fa23fa0e092e8bd010f1a2c" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_LEAVE_GROUP</a>.  <a href="struct_etc_pal_group_req.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_poll_event.html">EtcPalPollEvent</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of an event that occurred on a socket, for usage with <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a>.  <a href="struct_etc_pal_poll_event.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure containing name and address information about an internet host.  <a href="struct_etc_pal_addrinfo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga05f5bfa7ea20aa326aa97b2424481d99"><td class="memItemLeft" align="right" valign="top"><a id="ga05f5bfa7ea20aa326aa97b2424481d99"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga05f5bfa7ea20aa326aa97b2424481d99">ETCPAL_POLL_VALID_INPUT_EVENT_MASK</a>&#160;&#160;&#160;0x0fu</td></tr>
+<tr class="memdesc:ga05f5bfa7ea20aa326aa97b2424481d99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mask of valid events for use with <a class="el" href="group__etcpal__socket.html#gab901f9cf32e98e0d99369366f2e1ffa4" title="Add a new socket to an EtcPalPollContext.">etcpal_poll_add_socket()</a>. <br /></td></tr>
+<tr class="separator:ga05f5bfa7ea20aa326aa97b2424481d99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga304e26b30c36b6c33319b9602c9fe276"><td class="memItemLeft" align="right" valign="top"><a id="ga304e26b30c36b6c33319b9602c9fe276"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga304e26b30c36b6c33319b9602c9fe276">ETCPAL_SOCKET_INVALID</a>&#160;&#160;&#160;[PLATFORM_DEFINED]</td></tr>
+<tr class="memdesc:ga304e26b30c36b6c33319b9602c9fe276"><td class="mdescLeft">&#160;</td><td class="mdescRight">An identifier for an invalid socket handle. <br /></td></tr>
+<tr class="separator:ga304e26b30c36b6c33319b9602c9fe276"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga06b68eaa9d0e50e624659ed1b9c7f05a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga06b68eaa9d0e50e624659ed1b9c7f05a">ETCPAL_SOCKET_MAX_POLL_SIZE</a>&#160;&#160;&#160;[PLATFORM_DEFINED]</td></tr>
+<tr class="memdesc:ga06b68eaa9d0e50e624659ed1b9c7f05a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of sockets that can be simultaneously monitored by <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a>.  <a href="group__etcpal__socket.html#ga06b68eaa9d0e50e624659ed1b9c7f05a">More...</a><br /></td></tr>
+<tr class="separator:ga06b68eaa9d0e50e624659ed1b9c7f05a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga625b9f37c09cda6d3f13330094fa97d9"><td class="memItemLeft" align="right" valign="top"><a id="ga625b9f37c09cda6d3f13330094fa97d9"></a>
+typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga625b9f37c09cda6d3f13330094fa97d9">etcpal_poll_events_t</a></td></tr>
+<tr class="memdesc:ga625b9f37c09cda6d3f13330094fa97d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event flags for the etcpal_poll_*() API functions. <br /></td></tr>
+<tr class="separator:ga625b9f37c09cda6d3f13330094fa97d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3827f2d5a5a36b95a52720b808436625"><td class="memItemLeft" align="right" valign="top"><a id="ga3827f2d5a5a36b95a52720b808436625"></a>
+typedef struct <a class="el" href="struct_etc_pal_linger.html">EtcPalLinger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga3827f2d5a5a36b95a52720b808436625">EtcPalLinger</a></td></tr>
+<tr class="memdesc:ga3827f2d5a5a36b95a52720b808436625"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__etcpal__socket.html#gaf47bd53da2c92535aa6edcd8cc820259" title="Get/Set, value is EtcPalLinger.">ETCPAL_SO_LINGER</a>. <br /></td></tr>
+<tr class="separator:ga3827f2d5a5a36b95a52720b808436625"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafe1368ffd8743ab6306e8d322275bf8a"><td class="memItemLeft" align="right" valign="top"><a id="gafe1368ffd8743ab6306e8d322275bf8a"></a>
+typedef struct <a class="el" href="struct_etc_pal_mreq.html">EtcPalMreq</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gafe1368ffd8743ab6306e8d322275bf8a">EtcPalMreq</a></td></tr>
+<tr class="memdesc:gafe1368ffd8743ab6306e8d322275bf8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__etcpal__socket.html#ga19b3047fe621a06b5cedc8043bb823cf" title="[Legacy IPv4-only option, use of ETCPAL_MCAST_JOIN_GROUP is preferred] Set only, value is EtcPalMreq.">ETCPAL_IP_ADD_MEMBERSHIP</a> and <a class="el" href="group__etcpal__socket.html#gacbe3547d777f101aaa432e602c4b8e69" title="[Legacy IPv4-only option, use of ETCPAL_MCAST_LEAVE_GROUP is preferred] Set only, value is EtcPalMreq...">ETCPAL_IP_DROP_MEMBERSHIP</a>. <br /></td></tr>
+<tr class="separator:gafe1368ffd8743ab6306e8d322275bf8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0786ad1e373f47ea4d5b457af141a9d9"><td class="memItemLeft" align="right" valign="top"><a id="ga0786ad1e373f47ea4d5b457af141a9d9"></a>
+typedef struct <a class="el" href="struct_etc_pal_group_req.html">EtcPalGroupReq</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga0786ad1e373f47ea4d5b457af141a9d9">EtcPalGroupReq</a></td></tr>
+<tr class="memdesc:ga0786ad1e373f47ea4d5b457af141a9d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__etcpal__socket.html#gacde51cd51d94c43625b96196d7b80f50" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_JOIN_GROUP</a> and <a class="el" href="group__etcpal__socket.html#ga747194309fa23fa0e092e8bd010f1a2c" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_LEAVE_GROUP</a>. <br /></td></tr>
+<tr class="separator:ga0786ad1e373f47ea4d5b457af141a9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac6851f10b8d27962e1a1fcba560cef4a"><td class="memItemLeft" align="right" valign="top"><a id="gac6851f10b8d27962e1a1fcba560cef4a"></a>
+typedef struct <a class="el" href="struct_etc_pal_poll_event.html">EtcPalPollEvent</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gac6851f10b8d27962e1a1fcba560cef4a">EtcPalPollEvent</a></td></tr>
+<tr class="memdesc:gac6851f10b8d27962e1a1fcba560cef4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of an event that occurred on a socket, for usage with <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a>. <br /></td></tr>
+<tr class="separator:gac6851f10b8d27962e1a1fcba560cef4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaef32d5d35ebff30e284cd1da6fbea4d1"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaef32d5d35ebff30e284cd1da6fbea4d1">EtcPalAddrinfo</a></td></tr>
+<tr class="memdesc:gaef32d5d35ebff30e284cd1da6fbea4d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure containing name and address information about an internet host.  <a href="group__etcpal__socket.html#gaef32d5d35ebff30e284cd1da6fbea4d1">More...</a><br /></td></tr>
+<tr class="separator:gaef32d5d35ebff30e284cd1da6fbea4d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf08a63353f05072ee3b28fd754985b66"><td class="memItemLeft" align="right" valign="top">typedef PLATFORM_DEFINED&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a></td></tr>
+<tr class="memdesc:gaf08a63353f05072ee3b28fd754985b66"><td class="mdescLeft">&#160;</td><td class="mdescRight">A socket handle.  <a href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">More...</a><br /></td></tr>
+<tr class="separator:gaf08a63353f05072ee3b28fd754985b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga89be7d2b1e4193d678e36dae7a49b4db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga89be7d2b1e4193d678e36dae7a49b4db">etcpal_accept</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *address, <a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> *conn_sock)</td></tr>
+<tr class="memdesc:ga89be7d2b1e4193d678e36dae7a49b4db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accept a connection on a socket.  <a href="group__etcpal__socket.html#ga89be7d2b1e4193d678e36dae7a49b4db">More...</a><br /></td></tr>
+<tr class="separator:ga89be7d2b1e4193d678e36dae7a49b4db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga86f8e53de9955be4f0ea33f632cc4b2a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga86f8e53de9955be4f0ea33f632cc4b2a">etcpal_bind</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *address)</td></tr>
+<tr class="memdesc:ga86f8e53de9955be4f0ea33f632cc4b2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a name to a socket.  <a href="group__etcpal__socket.html#ga86f8e53de9955be4f0ea33f632cc4b2a">More...</a><br /></td></tr>
+<tr class="separator:ga86f8e53de9955be4f0ea33f632cc4b2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaccdfd06b91ca1632a59c68e819270825"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaccdfd06b91ca1632a59c68e819270825">etcpal_close</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id)</td></tr>
+<tr class="memdesc:gaccdfd06b91ca1632a59c68e819270825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a socket.  <a href="group__etcpal__socket.html#gaccdfd06b91ca1632a59c68e819270825">More...</a><br /></td></tr>
+<tr class="separator:gaccdfd06b91ca1632a59c68e819270825"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac5de9387d7aab2a7aa0e6c4e1d4fee3b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gac5de9387d7aab2a7aa0e6c4e1d4fee3b">etcpal_connect</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *address)</td></tr>
+<tr class="memdesc:gac5de9387d7aab2a7aa0e6c4e1d4fee3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiate a connection on a socket.  <a href="group__etcpal__socket.html#gac5de9387d7aab2a7aa0e6c4e1d4fee3b">More...</a><br /></td></tr>
+<tr class="separator:gac5de9387d7aab2a7aa0e6c4e1d4fee3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaedab208ccf3be6da95380c5bf01fdf30"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaedab208ccf3be6da95380c5bf01fdf30">etcpal_getpeername</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *address)</td></tr>
+<tr class="memdesc:gaedab208ccf3be6da95380c5bf01fdf30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the name of the connected peer socket.  <a href="group__etcpal__socket.html#gaedab208ccf3be6da95380c5bf01fdf30">More...</a><br /></td></tr>
+<tr class="separator:gaedab208ccf3be6da95380c5bf01fdf30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3563bac602f434da73673accc8da01aa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga3563bac602f434da73673accc8da01aa">etcpal_getsockname</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *address)</td></tr>
+<tr class="memdesc:ga3563bac602f434da73673accc8da01aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get socket name.  <a href="group__etcpal__socket.html#ga3563bac602f434da73673accc8da01aa">More...</a><br /></td></tr>
+<tr class="separator:ga3563bac602f434da73673accc8da01aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga653ed9405ec4cb21d958faab8b1c783e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga653ed9405ec4cb21d958faab8b1c783e">etcpal_getsockopt</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, int level, int option_name, void *option_value, size_t *option_len)</td></tr>
+<tr class="memdesc:ga653ed9405ec4cb21d958faab8b1c783e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an option value for a socket.  <a href="group__etcpal__socket.html#ga653ed9405ec4cb21d958faab8b1c783e">More...</a><br /></td></tr>
+<tr class="separator:ga653ed9405ec4cb21d958faab8b1c783e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39e660822d93588ea8723414567a2415"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga39e660822d93588ea8723414567a2415">etcpal_listen</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, int backlog)</td></tr>
+<tr class="memdesc:ga39e660822d93588ea8723414567a2415"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listen for connections on a socket.  <a href="group__etcpal__socket.html#ga39e660822d93588ea8723414567a2415">More...</a><br /></td></tr>
+<tr class="separator:ga39e660822d93588ea8723414567a2415"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gace688545de41aecba767639fa0c8f7b6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gace688545de41aecba767639fa0c8f7b6">etcpal_recv</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, void *buffer, size_t length, int flags)</td></tr>
+<tr class="memdesc:gace688545de41aecba767639fa0c8f7b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive data on a connected socket.  <a href="group__etcpal__socket.html#gace688545de41aecba767639fa0c8f7b6">More...</a><br /></td></tr>
+<tr class="separator:gace688545de41aecba767639fa0c8f7b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga305e1fb78f8ad29e562fff5762d9c3c0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga305e1fb78f8ad29e562fff5762d9c3c0">etcpal_recvfrom</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, void *buffer, size_t length, int flags, <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *address)</td></tr>
+<tr class="memdesc:ga305e1fb78f8ad29e562fff5762d9c3c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive data on a socket.  <a href="group__etcpal__socket.html#ga305e1fb78f8ad29e562fff5762d9c3c0">More...</a><br /></td></tr>
+<tr class="separator:ga305e1fb78f8ad29e562fff5762d9c3c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga52ba67993412de6dc69a582ca07f50d5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga52ba67993412de6dc69a582ca07f50d5">etcpal_send</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, const void *message, size_t length, int flags)</td></tr>
+<tr class="memdesc:ga52ba67993412de6dc69a582ca07f50d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data on a connected socket.  <a href="group__etcpal__socket.html#ga52ba67993412de6dc69a582ca07f50d5">More...</a><br /></td></tr>
+<tr class="separator:ga52ba67993412de6dc69a582ca07f50d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf13f2f32e223ba9ef28e732cc8906508"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaf13f2f32e223ba9ef28e732cc8906508">etcpal_sendto</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, const void *message, size_t length, int flags, const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *dest_addr)</td></tr>
+<tr class="memdesc:gaf13f2f32e223ba9ef28e732cc8906508"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data on a socket.  <a href="group__etcpal__socket.html#gaf13f2f32e223ba9ef28e732cc8906508">More...</a><br /></td></tr>
+<tr class="separator:gaf13f2f32e223ba9ef28e732cc8906508"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0cc965b67084fb27214825cb893d2041"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga0cc965b67084fb27214825cb893d2041">etcpal_setsockopt</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, int level, int option_name, const void *option_value, size_t option_len)</td></tr>
+<tr class="memdesc:ga0cc965b67084fb27214825cb893d2041"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an option value on a socket.  <a href="group__etcpal__socket.html#ga0cc965b67084fb27214825cb893d2041">More...</a><br /></td></tr>
+<tr class="separator:ga0cc965b67084fb27214825cb893d2041"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c51a1d50368f372ecd2c44c93f85cac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga3c51a1d50368f372ecd2c44c93f85cac">etcpal_shutdown</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, int how)</td></tr>
+<tr class="memdesc:ga3c51a1d50368f372ecd2c44c93f85cac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shut down part of a full-duplex connection.  <a href="group__etcpal__socket.html#ga3c51a1d50368f372ecd2c44c93f85cac">More...</a><br /></td></tr>
+<tr class="separator:ga3c51a1d50368f372ecd2c44c93f85cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae0c8d9e036be592eba7db8736c7e1e0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gae0c8d9e036be592eba7db8736c7e1e0f">etcpal_socket</a> (unsigned int family, unsigned int type, <a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> *id)</td></tr>
+<tr class="memdesc:gae0c8d9e036be592eba7db8736c7e1e0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a socket.  <a href="group__etcpal__socket.html#gae0c8d9e036be592eba7db8736c7e1e0f">More...</a><br /></td></tr>
+<tr class="separator:gae0c8d9e036be592eba7db8736c7e1e0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga72f16eec0ea5416ac4a553e1e78d7c77"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga72f16eec0ea5416ac4a553e1e78d7c77">etcpal_setblocking</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, bool blocking)</td></tr>
+<tr class="memdesc:ga72f16eec0ea5416ac4a553e1e78d7c77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the blocking behavior of a socket.  <a href="group__etcpal__socket.html#ga72f16eec0ea5416ac4a553e1e78d7c77">More...</a><br /></td></tr>
+<tr class="separator:ga72f16eec0ea5416ac4a553e1e78d7c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7134eafebb4ee73d160cd38d96ddeb9e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga7134eafebb4ee73d160cd38d96ddeb9e">etcpal_getblocking</a> (<a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> id, bool *blocking)</td></tr>
+<tr class="memdesc:ga7134eafebb4ee73d160cd38d96ddeb9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current blocking behavior of a socket.  <a href="group__etcpal__socket.html#ga7134eafebb4ee73d160cd38d96ddeb9e">More...</a><br /></td></tr>
+<tr class="separator:ga7134eafebb4ee73d160cd38d96ddeb9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5e63f5fa7b1b4310a4bb317aa4873997"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997">etcpal_getaddrinfo</a> (const char *hostname, const char *service, const <a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *hints, <a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *result)</td></tr>
+<tr class="memdesc:ga5e63f5fa7b1b4310a4bb317aa4873997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get address information for a named internet host and/or service.  <a href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997">More...</a><br /></td></tr>
+<tr class="separator:ga5e63f5fa7b1b4310a4bb317aa4873997"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga669185d01901034d700f167fa23f3eb1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga669185d01901034d700f167fa23f3eb1">etcpal_nextaddr</a> (<a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *ai)</td></tr>
+<tr class="memdesc:ga669185d01901034d700f167fa23f3eb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the next address from the list returned by <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a>.  <a href="group__etcpal__socket.html#ga669185d01901034d700f167fa23f3eb1">More...</a><br /></td></tr>
+<tr class="separator:ga669185d01901034d700f167fa23f3eb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8cc1d9b7b5e8e2b88a337fc727b44535"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga8cc1d9b7b5e8e2b88a337fc727b44535">etcpal_freeaddrinfo</a> (<a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *ai)</td></tr>
+<tr class="memdesc:ga8cc1d9b7b5e8e2b88a337fc727b44535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an addrinfo list returned by <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a>.  <a href="group__etcpal__socket.html#ga8cc1d9b7b5e8e2b88a337fc727b44535">More...</a><br /></td></tr>
+<tr class="separator:ga8cc1d9b7b5e8e2b88a337fc727b44535"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">etcpal_poll API</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp633f15f56e06ac8b569decfe1d732c15"></a>The etcpal_poll functions enable monitoring several sockets at once. </p>
+</td></tr>
+<tr class="memitem:ga906fd2bcb17663f4de3fefd0b335656e"><td class="memItemLeft" align="right" valign="top">typedef PLATFORM_DEFINED&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a></td></tr>
+<tr class="memdesc:ga906fd2bcb17663f4de3fefd0b335656e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure that holds context information for poll operations on multiple sockets.  <a href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">More...</a><br /></td></tr>
+<tr class="separator:ga906fd2bcb17663f4de3fefd0b335656e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf566500c673f2e7941f9a399c61c1b68"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaf566500c673f2e7941f9a399c61c1b68">etcpal_poll_context_init</a> (<a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *context)</td></tr>
+<tr class="memdesc:gaf566500c673f2e7941f9a399c61c1b68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new context for waiting on events on multiple sockets.  <a href="group__etcpal__socket.html#gaf566500c673f2e7941f9a399c61c1b68">More...</a><br /></td></tr>
+<tr class="separator:gaf566500c673f2e7941f9a399c61c1b68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga08a886e98949a8c0ba7f162e54cd1a72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga08a886e98949a8c0ba7f162e54cd1a72">etcpal_poll_context_deinit</a> (<a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *context)</td></tr>
+<tr class="memdesc:ga08a886e98949a8c0ba7f162e54cd1a72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Invalidate a previously-initialized EtcPalPollContext structure.  <a href="group__etcpal__socket.html#ga08a886e98949a8c0ba7f162e54cd1a72">More...</a><br /></td></tr>
+<tr class="separator:ga08a886e98949a8c0ba7f162e54cd1a72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab901f9cf32e98e0d99369366f2e1ffa4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gab901f9cf32e98e0d99369366f2e1ffa4">etcpal_poll_add_socket</a> (<a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *context, <a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> socket, <a class="el" href="group__etcpal__socket.html#ga625b9f37c09cda6d3f13330094fa97d9">etcpal_poll_events_t</a> events, void *user_data)</td></tr>
+<tr class="memdesc:gab901f9cf32e98e0d99369366f2e1ffa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new socket to an EtcPalPollContext.  <a href="group__etcpal__socket.html#gab901f9cf32e98e0d99369366f2e1ffa4">More...</a><br /></td></tr>
+<tr class="separator:gab901f9cf32e98e0d99369366f2e1ffa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga396b218eda2c3e52b4b917b73e18dab7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga396b218eda2c3e52b4b917b73e18dab7">etcpal_poll_modify_socket</a> (<a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *context, <a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> socket, <a class="el" href="group__etcpal__socket.html#ga625b9f37c09cda6d3f13330094fa97d9">etcpal_poll_events_t</a> new_events, void *new_user_data)</td></tr>
+<tr class="memdesc:ga396b218eda2c3e52b4b917b73e18dab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the set of events or user data associated with a monitored socket.  <a href="group__etcpal__socket.html#ga396b218eda2c3e52b4b917b73e18dab7">More...</a><br /></td></tr>
+<tr class="separator:ga396b218eda2c3e52b4b917b73e18dab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8233886a08aff8ba010dfa7384c76408"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga8233886a08aff8ba010dfa7384c76408">etcpal_poll_remove_socket</a> (<a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *context, <a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> socket)</td></tr>
+<tr class="memdesc:ga8233886a08aff8ba010dfa7384c76408"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a monitored socket from an EtcPalPollContext.  <a href="group__etcpal__socket.html#ga8233886a08aff8ba010dfa7384c76408">More...</a><br /></td></tr>
+<tr class="separator:ga8233886a08aff8ba010dfa7384c76408"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae5017e2346be12e91c6450fe9860614b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b">etcpal_poll_wait</a> (<a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *context, <a class="el" href="struct_etc_pal_poll_event.html">EtcPalPollEvent</a> *event, int timeout_ms)</td></tr>
+<tr class="memdesc:gae5017e2346be12e91c6450fe9860614b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for an event on a set of sockets defined by an EtcPalPollContext.  <a href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b">More...</a><br /></td></tr>
+<tr class="separator:gae5017e2346be12e91c6450fe9860614b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Flags for etcpal_recvfrom()</h2></td></tr>
+<tr class="memitem:gac7ce230ebe4248728c597a66a2676fbf"><td class="memItemLeft" align="right" valign="top"><a id="gac7ce230ebe4248728c597a66a2676fbf"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_MSG_PEEK</b>&#160;&#160;&#160;0x1</td></tr>
+<tr class="separator:gac7ce230ebe4248728c597a66a2676fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Level values for etcpal_setsockopt() and etcpal_getsockopt()</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrpdb12fa06db9d246906a259b119add2bb"></a>Refer to the group of option names for each level. </p>
+</td></tr>
+<tr class="memitem:ga30a8a29b624b2bef32f68b1fe2aa9e83"><td class="memItemLeft" align="right" valign="top"><a id="ga30a8a29b624b2bef32f68b1fe2aa9e83"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga30a8a29b624b2bef32f68b1fe2aa9e83">ETCPAL_SOL_SOCKET</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga30a8a29b624b2bef32f68b1fe2aa9e83"><td class="mdescLeft">&#160;</td><td class="mdescRight">etcpal_socket API level. <br /></td></tr>
+<tr class="separator:ga30a8a29b624b2bef32f68b1fe2aa9e83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaba74f8fca47e034d676049bd8eb61488"><td class="memItemLeft" align="right" valign="top"><a id="gaba74f8fca47e034d676049bd8eb61488"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaba74f8fca47e034d676049bd8eb61488">ETCPAL_IPPROTO_IP</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gaba74f8fca47e034d676049bd8eb61488"><td class="mdescLeft">&#160;</td><td class="mdescRight">IPv4 protocol level. <br /></td></tr>
+<tr class="separator:gaba74f8fca47e034d676049bd8eb61488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga66aa3d038609a999ad33370a6c0c3284"><td class="memItemLeft" align="right" valign="top"><a id="ga66aa3d038609a999ad33370a6c0c3284"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga66aa3d038609a999ad33370a6c0c3284">ETCPAL_IPPROTO_ICMPV6</a>&#160;&#160;&#160;2</td></tr>
+<tr class="memdesc:ga66aa3d038609a999ad33370a6c0c3284"><td class="mdescLeft">&#160;</td><td class="mdescRight">ICMPv6 protocol level. <br /></td></tr>
+<tr class="separator:ga66aa3d038609a999ad33370a6c0c3284"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7db66bcfc3f239baf6a5fef9058192de"><td class="memItemLeft" align="right" valign="top"><a id="ga7db66bcfc3f239baf6a5fef9058192de"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga7db66bcfc3f239baf6a5fef9058192de">ETCPAL_IPPROTO_IPV6</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:ga7db66bcfc3f239baf6a5fef9058192de"><td class="mdescLeft">&#160;</td><td class="mdescRight">IPv6 protocol level. <br /></td></tr>
+<tr class="separator:ga7db66bcfc3f239baf6a5fef9058192de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa885355b90b8e92d7f9965b63790810f"><td class="memItemLeft" align="right" valign="top"><a id="gaa885355b90b8e92d7f9965b63790810f"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaa885355b90b8e92d7f9965b63790810f">ETCPAL_IPPROTO_TCP</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:gaa885355b90b8e92d7f9965b63790810f"><td class="mdescLeft">&#160;</td><td class="mdescRight">TCP protocol level. <br /></td></tr>
+<tr class="separator:gaa885355b90b8e92d7f9965b63790810f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga19bf0e5a8ce939ea6c4ea034f4839bcc"><td class="memItemLeft" align="right" valign="top"><a id="ga19bf0e5a8ce939ea6c4ea034f4839bcc"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga19bf0e5a8ce939ea6c4ea034f4839bcc">ETCPAL_IPPROTO_UDP</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:ga19bf0e5a8ce939ea6c4ea034f4839bcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">UDP protocol level. <br /></td></tr>
+<tr class="separator:ga19bf0e5a8ce939ea6c4ea034f4839bcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Options for level ETCPAL_SOL_SOCKET</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp88fc360e3e028c47ced3db137ca6ce89"></a>Used in the option parameter to <a class="el" href="group__etcpal__socket.html#ga0cc965b67084fb27214825cb893d2041" title="Set an option value on a socket.">etcpal_setsockopt()</a> and <a class="el" href="group__etcpal__socket.html#ga653ed9405ec4cb21d958faab8b1c783e" title="Get an option value for a socket.">etcpal_getsockopt()</a>.</p>
+<p>Refer to the similarly-named option on your favorite man page for more details. </p>
+</td></tr>
+<tr class="memitem:gab90f6d9eeabe39a57db6b808d24d9bd2"><td class="memItemLeft" align="right" valign="top"><a id="gab90f6d9eeabe39a57db6b808d24d9bd2"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gab90f6d9eeabe39a57db6b808d24d9bd2">ETCPAL_SO_BROADCAST</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:gab90f6d9eeabe39a57db6b808d24d9bd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:gab90f6d9eeabe39a57db6b808d24d9bd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga20fe86808f28b9a96ee808626e4e3293"><td class="memItemLeft" align="right" valign="top"><a id="ga20fe86808f28b9a96ee808626e4e3293"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga20fe86808f28b9a96ee808626e4e3293">ETCPAL_SO_ERROR</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:ga20fe86808f28b9a96ee808626e4e3293"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get only, value is int representing platform error value. <br /></td></tr>
+<tr class="separator:ga20fe86808f28b9a96ee808626e4e3293"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga085124fd101ed8c2feb6c224d54d0b39"><td class="memItemLeft" align="right" valign="top"><a id="ga085124fd101ed8c2feb6c224d54d0b39"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga085124fd101ed8c2feb6c224d54d0b39">ETCPAL_SO_KEEPALIVE</a>&#160;&#160;&#160;2</td></tr>
+<tr class="memdesc:ga085124fd101ed8c2feb6c224d54d0b39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:ga085124fd101ed8c2feb6c224d54d0b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf47bd53da2c92535aa6edcd8cc820259"><td class="memItemLeft" align="right" valign="top"><a id="gaf47bd53da2c92535aa6edcd8cc820259"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaf47bd53da2c92535aa6edcd8cc820259">ETCPAL_SO_LINGER</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:gaf47bd53da2c92535aa6edcd8cc820259"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is <a class="el" href="struct_etc_pal_linger.html" title="Option value for ETCPAL_SO_LINGER.">EtcPalLinger</a>. <br /></td></tr>
+<tr class="separator:gaf47bd53da2c92535aa6edcd8cc820259"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab07c26f5ae3d4786c824461a65ba0dcc"><td class="memItemLeft" align="right" valign="top"><a id="gab07c26f5ae3d4786c824461a65ba0dcc"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gab07c26f5ae3d4786c824461a65ba0dcc">ETCPAL_SO_RCVBUF</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:gab07c26f5ae3d4786c824461a65ba0dcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing byte size. <br /></td></tr>
+<tr class="separator:gab07c26f5ae3d4786c824461a65ba0dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7e246a346418dcd9b4318fd673d4b622"><td class="memItemLeft" align="right" valign="top"><a id="ga7e246a346418dcd9b4318fd673d4b622"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga7e246a346418dcd9b4318fd673d4b622">ETCPAL_SO_SNDBUF</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:ga7e246a346418dcd9b4318fd673d4b622"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing byte size. <br /></td></tr>
+<tr class="separator:ga7e246a346418dcd9b4318fd673d4b622"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga068a8f93c435a18f79b13e21ff30cfd0"><td class="memItemLeft" align="right" valign="top"><a id="ga068a8f93c435a18f79b13e21ff30cfd0"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga068a8f93c435a18f79b13e21ff30cfd0">ETCPAL_SO_RCVTIMEO</a>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:ga068a8f93c435a18f79b13e21ff30cfd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing ms. <br /></td></tr>
+<tr class="separator:ga068a8f93c435a18f79b13e21ff30cfd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf74d842c762e41c9a7e5a5a3404905ef"><td class="memItemLeft" align="right" valign="top"><a id="gaf74d842c762e41c9a7e5a5a3404905ef"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaf74d842c762e41c9a7e5a5a3404905ef">ETCPAL_SO_SNDTIMEO</a>&#160;&#160;&#160;7</td></tr>
+<tr class="memdesc:gaf74d842c762e41c9a7e5a5a3404905ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing ms. <br /></td></tr>
+<tr class="separator:gaf74d842c762e41c9a7e5a5a3404905ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac2fc9cd09dce99bb5681df96f65c31b8"><td class="memItemLeft" align="right" valign="top"><a id="gac2fc9cd09dce99bb5681df96f65c31b8"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gac2fc9cd09dce99bb5681df96f65c31b8">ETCPAL_SO_REUSEADDR</a>&#160;&#160;&#160;8</td></tr>
+<tr class="memdesc:gac2fc9cd09dce99bb5681df96f65c31b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:gac2fc9cd09dce99bb5681df96f65c31b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9fb28d8ce3fc93272b41ebe7b5d87989"><td class="memItemLeft" align="right" valign="top"><a id="ga9fb28d8ce3fc93272b41ebe7b5d87989"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga9fb28d8ce3fc93272b41ebe7b5d87989">ETCPAL_SO_REUSEPORT</a>&#160;&#160;&#160;9</td></tr>
+<tr class="memdesc:ga9fb28d8ce3fc93272b41ebe7b5d87989"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:ga9fb28d8ce3fc93272b41ebe7b5d87989"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad8abc2b8b8d29d17c94b3493bbf30816"><td class="memItemLeft" align="right" valign="top"><a id="gad8abc2b8b8d29d17c94b3493bbf30816"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gad8abc2b8b8d29d17c94b3493bbf30816">ETCPAL_SO_TYPE</a>&#160;&#160;&#160;10</td></tr>
+<tr class="memdesc:gad8abc2b8b8d29d17c94b3493bbf30816"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get only, value is int. <br /></td></tr>
+<tr class="separator:gad8abc2b8b8d29d17c94b3493bbf30816"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Options for level ETCPAL_IPPROTO_IP or ETCPAL_IPPROTO_IPV6</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp5af75a337908d80fc60d9355041bb7c9"></a>Used in the option parameter to <a class="el" href="group__etcpal__socket.html#ga0cc965b67084fb27214825cb893d2041" title="Set an option value on a socket.">etcpal_setsockopt()</a> and <a class="el" href="group__etcpal__socket.html#ga653ed9405ec4cb21d958faab8b1c783e" title="Get an option value for a socket.">etcpal_getsockopt()</a>.</p>
+<p>Refer to the similarly-named option on your favorite man page for more details. </p>
+</td></tr>
+<tr class="memitem:gaa8067f3bea534148c077f2dd720a6d51"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gaa8067f3bea534148c077f2dd720a6d51">ETCPAL_IP_TTL</a>&#160;&#160;&#160;11</td></tr>
+<tr class="memdesc:gaa8067f3bea534148c077f2dd720a6d51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int.  <a href="group__etcpal__socket.html#gaa8067f3bea534148c077f2dd720a6d51">More...</a><br /></td></tr>
+<tr class="separator:gaa8067f3bea534148c077f2dd720a6d51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga972636e83a7c9cbc9bb0e5a950c9c241"><td class="memItemLeft" align="right" valign="top"><a id="ga972636e83a7c9cbc9bb0e5a950c9c241"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga972636e83a7c9cbc9bb0e5a950c9c241">ETCPAL_IP_MULTICAST_IF</a>&#160;&#160;&#160;12</td></tr>
+<tr class="memdesc:ga972636e83a7c9cbc9bb0e5a950c9c241"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is unsigned int representing interface index (see <a class="el" href="interface_indexes.html">Network Interface Indexes</a>). <br /></td></tr>
+<tr class="separator:ga972636e83a7c9cbc9bb0e5a950c9c241"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga53c1ba7904c7917177dea985809b12c4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga53c1ba7904c7917177dea985809b12c4">ETCPAL_IP_MULTICAST_TTL</a>&#160;&#160;&#160;13</td></tr>
+<tr class="memdesc:ga53c1ba7904c7917177dea985809b12c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int.  <a href="group__etcpal__socket.html#ga53c1ba7904c7917177dea985809b12c4">More...</a><br /></td></tr>
+<tr class="separator:ga53c1ba7904c7917177dea985809b12c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0adba5365cbc8344c77ba5a47b43590e"><td class="memItemLeft" align="right" valign="top"><a id="ga0adba5365cbc8344c77ba5a47b43590e"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga0adba5365cbc8344c77ba5a47b43590e">ETCPAL_IP_MULTICAST_LOOP</a>&#160;&#160;&#160;14</td></tr>
+<tr class="memdesc:ga0adba5365cbc8344c77ba5a47b43590e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:ga0adba5365cbc8344c77ba5a47b43590e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga19b3047fe621a06b5cedc8043bb823cf"><td class="memItemLeft" align="right" valign="top"><a id="ga19b3047fe621a06b5cedc8043bb823cf"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga19b3047fe621a06b5cedc8043bb823cf">ETCPAL_IP_ADD_MEMBERSHIP</a>&#160;&#160;&#160;15</td></tr>
+<tr class="memdesc:ga19b3047fe621a06b5cedc8043bb823cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">[Legacy IPv4-only option, use of <a class="el" href="group__etcpal__socket.html#gacde51cd51d94c43625b96196d7b80f50" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_JOIN_GROUP</a> is preferred] Set only, value is <a class="el" href="struct_etc_pal_mreq.html" title="Option value for ETCPAL_IP_ADD_MEMBERSHIP and ETCPAL_IP_DROP_MEMBERSHIP.">EtcPalMreq</a>. <br /></td></tr>
+<tr class="separator:ga19b3047fe621a06b5cedc8043bb823cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacbe3547d777f101aaa432e602c4b8e69"><td class="memItemLeft" align="right" valign="top"><a id="gacbe3547d777f101aaa432e602c4b8e69"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gacbe3547d777f101aaa432e602c4b8e69">ETCPAL_IP_DROP_MEMBERSHIP</a>&#160;&#160;&#160;16</td></tr>
+<tr class="memdesc:gacbe3547d777f101aaa432e602c4b8e69"><td class="mdescLeft">&#160;</td><td class="mdescRight">[Legacy IPv4-only option, use of <a class="el" href="group__etcpal__socket.html#ga747194309fa23fa0e092e8bd010f1a2c" title="Set only, value is EtcPalGroupReq.">ETCPAL_MCAST_LEAVE_GROUP</a> is preferred] Set only, value is <a class="el" href="struct_etc_pal_mreq.html" title="Option value for ETCPAL_IP_ADD_MEMBERSHIP and ETCPAL_IP_DROP_MEMBERSHIP.">EtcPalMreq</a>. <br /></td></tr>
+<tr class="separator:gacbe3547d777f101aaa432e602c4b8e69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacde51cd51d94c43625b96196d7b80f50"><td class="memItemLeft" align="right" valign="top"><a id="gacde51cd51d94c43625b96196d7b80f50"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gacde51cd51d94c43625b96196d7b80f50">ETCPAL_MCAST_JOIN_GROUP</a>&#160;&#160;&#160;17</td></tr>
+<tr class="memdesc:gacde51cd51d94c43625b96196d7b80f50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set only, value is <a class="el" href="struct_etc_pal_group_req.html" title="Option value for ETCPAL_MCAST_JOIN_GROUP and ETCPAL_MCAST_LEAVE_GROUP.">EtcPalGroupReq</a>. <br /></td></tr>
+<tr class="separator:gacde51cd51d94c43625b96196d7b80f50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga747194309fa23fa0e092e8bd010f1a2c"><td class="memItemLeft" align="right" valign="top"><a id="ga747194309fa23fa0e092e8bd010f1a2c"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga747194309fa23fa0e092e8bd010f1a2c">ETCPAL_MCAST_LEAVE_GROUP</a>&#160;&#160;&#160;18</td></tr>
+<tr class="memdesc:ga747194309fa23fa0e092e8bd010f1a2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set only, value is <a class="el" href="struct_etc_pal_group_req.html" title="Option value for ETCPAL_MCAST_JOIN_GROUP and ETCPAL_MCAST_LEAVE_GROUP.">EtcPalGroupReq</a>. <br /></td></tr>
+<tr class="separator:ga747194309fa23fa0e092e8bd010f1a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a502de1f396117da63bde901d88e434"><td class="memItemLeft" align="right" valign="top"><a id="ga6a502de1f396117da63bde901d88e434"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga6a502de1f396117da63bde901d88e434">ETCPAL_IPV6_V6ONLY</a>&#160;&#160;&#160;19</td></tr>
+<tr class="memdesc:ga6a502de1f396117da63bde901d88e434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:ga6a502de1f396117da63bde901d88e434"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'how' values for etcpal_shutdown()</h2></td></tr>
+<tr class="memitem:ga47594988ecb0db51ba4f1dedaf48f812"><td class="memItemLeft" align="right" valign="top"><a id="ga47594988ecb0db51ba4f1dedaf48f812"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_SHUT_RD</b>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:ga47594988ecb0db51ba4f1dedaf48f812"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga79dda61d34829e85c1a7f758ca6611c3"><td class="memItemLeft" align="right" valign="top"><a id="ga79dda61d34829e85c1a7f758ca6611c3"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_SHUT_WR</b>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:ga79dda61d34829e85c1a7f758ca6611c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2b0cae490c46f625aba8724716967e15"><td class="memItemLeft" align="right" valign="top"><a id="ga2b0cae490c46f625aba8724716967e15"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_SHUT_RDWR</b>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:ga2b0cae490c46f625aba8724716967e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'family' values for etcpal_socket() and EtcPalAddrinfo</h2></td></tr>
+<tr class="memitem:ga6389108066d9d41ced39f310591f0e21"><td class="memItemLeft" align="right" valign="top"><a id="ga6389108066d9d41ced39f310591f0e21"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_AF_UNSPEC</b>&#160;&#160;&#160;0u</td></tr>
+<tr class="separator:ga6389108066d9d41ced39f310591f0e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7c1aadf46dc4c2efcd43e5780528184c"><td class="memItemLeft" align="right" valign="top"><a id="ga7c1aadf46dc4c2efcd43e5780528184c"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_AF_INET</b>&#160;&#160;&#160;1u</td></tr>
+<tr class="separator:ga7c1aadf46dc4c2efcd43e5780528184c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaafcf72db66a33f134a7840e016f84c0b"><td class="memItemLeft" align="right" valign="top"><a id="gaafcf72db66a33f134a7840e016f84c0b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_AF_INET6</b>&#160;&#160;&#160;2u</td></tr>
+<tr class="separator:gaafcf72db66a33f134a7840e016f84c0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'type' values for etcpal_socket() and etcpal_getsockopt()</h2></td></tr>
+<tr class="memitem:ga625f5415ede9f7aa6d6250e0afc15f78"><td class="memItemLeft" align="right" valign="top"><a id="ga625f5415ede9f7aa6d6250e0afc15f78"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_SOCK_STREAM</b>&#160;&#160;&#160;0u</td></tr>
+<tr class="separator:ga625f5415ede9f7aa6d6250e0afc15f78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad0c802539044d95ce2ab3ecfa63f5f12"><td class="memItemLeft" align="right" valign="top"><a id="gad0c802539044d95ce2ab3ecfa63f5f12"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_SOCK_DGRAM</b>&#160;&#160;&#160;1u</td></tr>
+<tr class="separator:gad0c802539044d95ce2ab3ecfa63f5f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Flag values to use with etcpal_poll_events_t.</h2></td></tr>
+<tr class="memitem:ga4e4bec5c7c2860538445ebdba2dd4283"><td class="memItemLeft" align="right" valign="top"><a id="ga4e4bec5c7c2860538445ebdba2dd4283"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga4e4bec5c7c2860538445ebdba2dd4283">ETCPAL_POLL_IN</a>&#160;&#160;&#160;0x1u</td></tr>
+<tr class="memdesc:ga4e4bec5c7c2860538445ebdba2dd4283"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify when data is available for reading on the socket. <br /></td></tr>
+<tr class="separator:ga4e4bec5c7c2860538445ebdba2dd4283"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga04ebfb989375a6cf612d69f229a74954"><td class="memItemLeft" align="right" valign="top"><a id="ga04ebfb989375a6cf612d69f229a74954"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga04ebfb989375a6cf612d69f229a74954">ETCPAL_POLL_OUT</a>&#160;&#160;&#160;0x2u</td></tr>
+<tr class="memdesc:ga04ebfb989375a6cf612d69f229a74954"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify when the socket has space available to write data. <br /></td></tr>
+<tr class="separator:ga04ebfb989375a6cf612d69f229a74954"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabbd670e11bf27a8a815b2d7985b9a364"><td class="memItemLeft" align="right" valign="top"><a id="gabbd670e11bf27a8a815b2d7985b9a364"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#gabbd670e11bf27a8a815b2d7985b9a364">ETCPAL_POLL_CONNECT</a>&#160;&#160;&#160;0x4u</td></tr>
+<tr class="memdesc:gabbd670e11bf27a8a815b2d7985b9a364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify when a non-blocking connect operation has completed. <br /></td></tr>
+<tr class="separator:gabbd670e11bf27a8a815b2d7985b9a364"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1da970a4c0bd353ec963e4bb70c0f8b8"><td class="memItemLeft" align="right" valign="top"><a id="ga1da970a4c0bd353ec963e4bb70c0f8b8"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga1da970a4c0bd353ec963e4bb70c0f8b8">ETCPAL_POLL_OOB</a>&#160;&#160;&#160;0x8u</td></tr>
+<tr class="memdesc:ga1da970a4c0bd353ec963e4bb70c0f8b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify when there is out-of-band data on a TCP socket. <br /></td></tr>
+<tr class="separator:ga1da970a4c0bd353ec963e4bb70c0f8b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga837082b33f4ca260e78373ee40bd25ec"><td class="memItemLeft" align="right" valign="top"><a id="ga837082b33f4ca260e78373ee40bd25ec"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__socket.html#ga837082b33f4ca260e78373ee40bd25ec">ETCPAL_POLL_ERR</a>&#160;&#160;&#160;0x10u</td></tr>
+<tr class="memdesc:ga837082b33f4ca260e78373ee40bd25ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">An error has occurred on the socket (output only). <br /></td></tr>
+<tr class="separator:ga837082b33f4ca260e78373ee40bd25ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'flags' values for EtcPalAddrinfo</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrpccdfa8351adbe08ff777d0252786b797"></a>Refer to the similarly-named flags in your favorite getaddrinfo() man page for more details. </p>
+</td></tr>
+<tr class="memitem:gae719e57a6949187c0dcecc6cedd36b88"><td class="memItemLeft" align="right" valign="top"><a id="gae719e57a6949187c0dcecc6cedd36b88"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_AI_PASSIVE</b>&#160;&#160;&#160;0x01</td></tr>
+<tr class="separator:gae719e57a6949187c0dcecc6cedd36b88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaef3bfc66eb7ab1b330c26fe4b1358d4b"><td class="memItemLeft" align="right" valign="top"><a id="gaef3bfc66eb7ab1b330c26fe4b1358d4b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_AI_CANONNAME</b>&#160;&#160;&#160;0x02</td></tr>
+<tr class="separator:gaef3bfc66eb7ab1b330c26fe4b1358d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaebc86dae796550d111061ba3de030942"><td class="memItemLeft" align="right" valign="top"><a id="gaebc86dae796550d111061ba3de030942"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>ETCPAL_AI_NUMERICHOST</b>&#160;&#160;&#160;0x04</td></tr>
+<tr class="separator:gaebc86dae796550d111061ba3de030942"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga53c1ba7904c7917177dea985809b12c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga53c1ba7904c7917177dea985809b12c4">&#9670;&nbsp;</a></span>ETCPAL_IP_MULTICAST_TTL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_MULTICAST_TTL&#160;&#160;&#160;13</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get/Set, value is int. </p>
+<p>Value indicates TTL for IPv4 or hop limit for IPv6. </p>
+
+</div>
+</div>
+<a id="gaa8067f3bea534148c077f2dd720a6d51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa8067f3bea534148c077f2dd720a6d51">&#9670;&nbsp;</a></span>ETCPAL_IP_TTL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_TTL&#160;&#160;&#160;11</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get/Set, value is int. </p>
+<p>Value indicates TTL for IPv4 or hop limit for IPv6. </p>
+
+</div>
+</div>
+<a id="ga06b68eaa9d0e50e624659ed1b9c7f05a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga06b68eaa9d0e50e624659ed1b9c7f05a">&#9670;&nbsp;</a></span>ETCPAL_SOCKET_MAX_POLL_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_SOCKET_MAX_POLL_SIZE&#160;&#160;&#160;[PLATFORM_DEFINED]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The maximum number of sockets that can be simultaneously monitored by <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a>. </p>
+<p>Some systems have no compile-time limit on this value - it could be a runtime system-defined limit (e.g. ulimit) or even limited only by the amount of available memory. In that case this constant will have the value -1. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="gaf08a63353f05072ee3b28fd754985b66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf08a63353f05072ee3b28fd754985b66">&#9670;&nbsp;</a></span>etcpal_socket_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef PLATFORM_DEFINED <a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A socket handle. </p>
+<p>Typedefed to the system's socket identifier. </p>
+
+</div>
+</div>
+<a id="gaef32d5d35ebff30e284cd1da6fbea4d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaef32d5d35ebff30e284cd1da6fbea4d1">&#9670;&nbsp;</a></span>EtcPalAddrinfo</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> <a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A structure containing name and address information about an internet host. </p>
+<p>Returned by <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a>. </p>
+
+</div>
+</div>
+<a id="ga906fd2bcb17663f4de3fefd0b335656e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga906fd2bcb17663f4de3fefd0b335656e">&#9670;&nbsp;</a></span>EtcPalPollContext</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef PLATFORM_DEFINED <a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A structure that holds context information for poll operations on multiple sockets. </p>
+<p>See the documentation for <a class="el" href="group__etcpal__socket.html#gaf566500c673f2e7941f9a399c61c1b68" title="Create a new context for waiting on events on multiple sockets.">etcpal_poll_context_init()</a> and <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a> for more information. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga89be7d2b1e4193d678e36dae7a49b4db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga89be7d2b1e4193d678e36dae7a49b4db">&#9670;&nbsp;</a></span>etcpal_accept()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_accept </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> *&#160;</td>
+          <td class="paramname"><em>conn_sock</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Accept a connection on a socket. </p>
+<p>Refer to your favorite accept() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> type. Connected socket is returned in an output parameter rather than the return value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Listening socket on which to accept a new connection. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">address</td><td>Remote address from which the connection was accepted. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">conn_sock</td><td>Filled in on success with handle to connected socket. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (failure). </dd></dl>
+
+</div>
+</div>
+<a id="ga86f8e53de9955be4f0ea33f632cc4b2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga86f8e53de9955be4f0ea33f632cc4b2a">&#9670;&nbsp;</a></span>etcpal_bind()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_bind </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bind a name to a socket. </p>
+<p>Refer to your favorite bind() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to which to bind an address (traditionally called a 'name'). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Address to assign to the socket. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gaccdfd06b91ca1632a59c68e819270825"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaccdfd06b91ca1632a59c68e819270825">&#9670;&nbsp;</a></span>etcpal_close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_close </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Close a socket. </p>
+<p>Refer to your favorite close() man page for more information.</p>
+<p>On UNIX-like systems, note that this may also successfully close descriptors that don't refer to sockets; however, for portability it should only be used on identifiers that were returned from an etcpal_* function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to close. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gac5de9387d7aab2a7aa0e6c4e1d4fee3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac5de9387d7aab2a7aa0e6c4e1d4fee3b">&#9670;&nbsp;</a></span>etcpal_connect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_connect </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initiate a connection on a socket. </p>
+<p>Refer to your favorite connect() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to connect. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Address to which to connect. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga8cc1d9b7b5e8e2b88a337fc727b44535"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8cc1d9b7b5e8e2b88a337fc727b44535">&#9670;&nbsp;</a></span>etcpal_freeaddrinfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_freeaddrinfo </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>ai</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Free an addrinfo list returned by <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a>. </p>
+<p>Most platforms allocate memory when getaddrinfo() is called. This must always be called after any call to <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a> to free that memory. It can be called with any of the <a class="el" href="struct_etc_pal_addrinfo.html" title="A structure containing name and address information about an internet host.">EtcPalAddrinfo</a> instances in the list, and the whole list will be freed. See the example usage in the description of <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ai</td><td>Pointer to <a class="el" href="struct_etc_pal_addrinfo.html" title="A structure containing name and address information about an internet host.">EtcPalAddrinfo</a> struct for which to free the platform memory. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga5e63f5fa7b1b4310a4bb317aa4873997"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5e63f5fa7b1b4310a4bb317aa4873997">&#9670;&nbsp;</a></span>etcpal_getaddrinfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_getaddrinfo </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>hostname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>service</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>hints</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>result</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get address information for a named internet host and/or service. </p>
+<p>Refer to your favorite getaddrinfo() man page for more information. One difference between this and the POSIX function is the way that multiple addresses are iterated. EtcPal uses the <a class="el" href="group__etcpal__socket.html#ga669185d01901034d700f167fa23f3eb1" title="Get the next address from the list returned by etcpal_getaddrinfo().">etcpal_nextaddr()</a> function instead of a next pointer to iterate over multiple addresses. For example:</p>
+<div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> info;</div>
+<div class="line"><span class="keywordflow">if</span> (0 == <a class="code" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997">etcpal_getaddrinfo</a>(<span class="stringliteral">&quot;www.google.com&quot;</span>, <span class="stringliteral">&quot;http&quot;</span>, NULL, &amp;info))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">do</span></div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordtype">char</span> inet_str[<a class="code" href="group__etcpal__inet.html#gacd7ec0d81e171166483c7629669bf05d">ETCPAL_IP_STRING_BYTES</a>];</div>
+<div class="line">    <span class="keywordflow">if</span> (<a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a> == <a class="code" href="group__etcpal__inet.html#gaf98da0ae21f7960b5e046c55b8d79c4a">etcpal_ip_to_string</a>(&amp;info.<a class="code" href="struct_etc_pal_addrinfo.html#a2000f4ebfae33b230309b0344354031d">ai_addr</a>.<a class="code" href="struct_etc_pal_sock_addr.html#a19cc8016f534a565f984438cfe911a9e">ip</a>, inet_str))</div>
+<div class="line">    {</div>
+<div class="line">      printf(<span class="stringliteral">&quot;Address: %s\n&quot;</span>, inet_str);</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">else</span></div>
+<div class="line">    {</div>
+<div class="line">      printf(<span class="stringliteral">&quot;Address conversion error!\n&quot;</span>);</div>
+<div class="line">    }</div>
+<div class="line">  } <span class="keywordflow">while</span> (<a class="code" href="group__etcpal__socket.html#ga669185d01901034d700f167fa23f3eb1">etcpal_nextaddr</a>(&amp;info));</div>
+<div class="line"> </div>
+<div class="line">  <a class="code" href="group__etcpal__socket.html#ga8cc1d9b7b5e8e2b88a337fc727b44535">etcpal_freeaddrinfo</a>(&amp;info);</div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a></div><div class="ttdeci">@ kEtcPalErrOk</div><div class="ttdoc">The call was successful, no error occurred.</div><div class="ttdef"><b>Definition:</b> error.h:51</div></div>
+<div class="ttc" id="agroup__etcpal__inet_html_gacd7ec0d81e171166483c7629669bf05d"><div class="ttname"><a href="group__etcpal__inet.html#gacd7ec0d81e171166483c7629669bf05d">ETCPAL_IP_STRING_BYTES</a></div><div class="ttdeci">#define ETCPAL_IP_STRING_BYTES</div><div class="ttdoc">Maximum length of the string representation of an IP address.</div><div class="ttdef"><b>Definition:</b> inet.h:394</div></div>
+<div class="ttc" id="agroup__etcpal__inet_html_gaf98da0ae21f7960b5e046c55b8d79c4a"><div class="ttname"><a href="group__etcpal__inet.html#gaf98da0ae21f7960b5e046c55b8d79c4a">etcpal_ip_to_string</a></div><div class="ttdeci">etcpal_error_t etcpal_ip_to_string(const EtcPalIpAddr *src, char *dest)</div><div class="ttdoc">Convert IPv4 and IPv6 addresses from binary to text form.</div></div>
+<div class="ttc" id="agroup__etcpal__socket_html_ga5e63f5fa7b1b4310a4bb317aa4873997"><div class="ttname"><a href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997">etcpal_getaddrinfo</a></div><div class="ttdeci">etcpal_error_t etcpal_getaddrinfo(const char *hostname, const char *service, const EtcPalAddrinfo *hints, EtcPalAddrinfo *result)</div><div class="ttdoc">Get address information for a named internet host and/or service.</div></div>
+<div class="ttc" id="agroup__etcpal__socket_html_ga669185d01901034d700f167fa23f3eb1"><div class="ttname"><a href="group__etcpal__socket.html#ga669185d01901034d700f167fa23f3eb1">etcpal_nextaddr</a></div><div class="ttdeci">bool etcpal_nextaddr(EtcPalAddrinfo *ai)</div><div class="ttdoc">Get the next address from the list returned by etcpal_getaddrinfo().</div></div>
+<div class="ttc" id="agroup__etcpal__socket_html_ga8cc1d9b7b5e8e2b88a337fc727b44535"><div class="ttname"><a href="group__etcpal__socket.html#ga8cc1d9b7b5e8e2b88a337fc727b44535">etcpal_freeaddrinfo</a></div><div class="ttdeci">void etcpal_freeaddrinfo(EtcPalAddrinfo *ai)</div><div class="ttdoc">Free an addrinfo list returned by etcpal_getaddrinfo().</div></div>
+<div class="ttc" id="astruct_etc_pal_addrinfo_html"><div class="ttname"><a href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a></div><div class="ttdoc">A structure containing name and address information about an internet host.</div><div class="ttdef"><b>Definition:</b> socket.h:295</div></div>
+<div class="ttc" id="astruct_etc_pal_addrinfo_html_a2000f4ebfae33b230309b0344354031d"><div class="ttname"><a href="struct_etc_pal_addrinfo.html#a2000f4ebfae33b230309b0344354031d">EtcPalAddrinfo::ai_addr</a></div><div class="ttdeci">EtcPalSockAddr ai_addr</div><div class="ttdoc">Address of host.</div><div class="ttdef"><b>Definition:</b> socket.h:301</div></div>
+<div class="ttc" id="astruct_etc_pal_sock_addr_html_a19cc8016f534a565f984438cfe911a9e"><div class="ttname"><a href="struct_etc_pal_sock_addr.html#a19cc8016f534a565f984438cfe911a9e">EtcPalSockAddr::ip</a></div><div class="ttdeci">EtcPalIpAddr ip</div><div class="ttdoc">IP address.</div><div class="ttdef"><b>Definition:</b> inet.h:313</div></div>
+</div><!-- fragment --><p>On an internet-connected machine with DNS resolution capability, the above code should print something like: </p><div class="fragment"><div class="line">Address: 172.217.4.196</div>
+<div class="line">Address: 172.217.4.196</div>
+<div class="line">Address: 2607:f8b0:4009:806::2004</div>
+<div class="line">Address: 2607:f8b0:4009:806::2004</div>
+</div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hostname</td><td>Either a string-represented numerical network address or a network hostname to resolve. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">service</td><td>Either a string-represented numerical port number or a service name. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hints</td><td>Structure containing hints restricting the address types that can be returned. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">result</td><td>On success, filled in with the first address result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga7134eafebb4ee73d160cd38d96ddeb9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7134eafebb4ee73d160cd38d96ddeb9e">&#9670;&nbsp;</a></span>etcpal_getblocking()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_getblocking </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool *&#160;</td>
+          <td class="paramname"><em>blocking</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current blocking behavior of a socket. </p>
+<p>This is similar to checking the state of the O_NONBLOCK flag through the fcntl() function on a BSD socket.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket for which to read the blocking behavior. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">blocking</td><td>Filled in with whether the socket is currently blocking or not. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gaedab208ccf3be6da95380c5bf01fdf30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaedab208ccf3be6da95380c5bf01fdf30">&#9670;&nbsp;</a></span>etcpal_getpeername()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_getpeername </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the name of the connected peer socket. </p>
+<p>Refer to your favorite getpeername() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Connected socket for which to get the peer address. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Filled in with peer address on success. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga3563bac602f434da73673accc8da01aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3563bac602f434da73673accc8da01aa">&#9670;&nbsp;</a></span>etcpal_getsockname()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_getsockname </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get socket name. </p>
+<p>Refer to your favorite getsockname() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Connected socket for which to get the bound address. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Filled in with bound address on success. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga653ed9405ec4cb21d958faab8b1c783e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga653ed9405ec4cb21d958faab8b1c783e">&#9670;&nbsp;</a></span>etcpal_getsockopt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_getsockopt </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>level</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>option_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>option_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname"><em>option_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get an option value for a socket. </p>
+<p>Refer to your favorite getsockopt() man page for more information.</p>
+<p>Differences from POSIX: Some overlapping option values are consolidated and some legacy option values are not included. Some value types are different; see the documentation of each possible option value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket for which to get the option value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>Protocol level of the option for which to get the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">option_name</td><td>Name of the option for which to get the value. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">option_value</td><td>Filled in with option value on success. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">option_len</td><td>Contains size of buffer pointed to by option_value, filled in with actual size of value returned. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga39e660822d93588ea8723414567a2415"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga39e660822d93588ea8723414567a2415">&#9670;&nbsp;</a></span>etcpal_listen()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_listen </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>backlog</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Listen for connections on a socket. </p>
+<p>Refer to your favorite listen() man page for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>ETCPAL_SOCK_STREAM socket on which to listen. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">backlog</td><td>Maximum length of pending connection queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga669185d01901034d700f167fa23f3eb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga669185d01901034d700f167fa23f3eb1">&#9670;&nbsp;</a></span>etcpal_nextaddr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_nextaddr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_addrinfo.html">EtcPalAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>ai</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the next address from the list returned by <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a>. </p>
+<p>Most platforms allocate and return a linked list of address info structs in their getaddrinfo() implementation. To avoid further memory allocation in the abstraction layer, this non-POSIX-like way to iterate through the <a class="el" href="struct_etc_pal_addrinfo.html" title="A structure containing name and address information about an internet host.">EtcPalAddrinfo</a> structs is provided. To get all of the addresses returned from a <a class="el" href="group__etcpal__socket.html#ga5e63f5fa7b1b4310a4bb317aa4873997" title="Get address information for a named internet host and/or service.">etcpal_getaddrinfo()</a> call, keep calling this on the result struct until it returns false.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ai</td><td>Pointer to last <a class="el" href="struct_etc_pal_addrinfo.html" title="A structure containing name and address information about an internet host.">EtcPalAddrinfo</a> struct, filled in with values of the next address. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (next address was filled in) or false (no more addresses or error). </dd></dl>
+
+</div>
+</div>
+<a id="gab901f9cf32e98e0d99369366f2e1ffa4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab901f9cf32e98e0d99369366f2e1ffa4">&#9670;&nbsp;</a></span>etcpal_poll_add_socket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_poll_add_socket </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *&#160;</td>
+          <td class="paramname"><em>context</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>socket</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga625b9f37c09cda6d3f13330094fa97d9">etcpal_poll_events_t</a>&#160;</td>
+          <td class="paramname"><em>events</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>user_data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a new socket to an EtcPalPollContext. </p>
+<p>This socket will be monitored on future calls to <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a> for the events specified in the 'events' parameter. See the definitions of the ETCPAL_POLL_* flag values for more information. The flag values can be 'or'ed together to monitor for multiple events. Only flag values that are not marked 'output only' are valid for use with this function. Errors on sockets will always be reported with the <a class="el" href="group__etcpal__socket.html#ga837082b33f4ca260e78373ee40bd25ec" title="An error has occurred on the socket (output only).">ETCPAL_POLL_ERR</a> flag.</p>
+<p>On some systems, the underlying polling method has a limit to how many sockets can be monitored in a single call. If there is a limit, it is defined as the positive value <a class="el" href="group__etcpal__socket.html#ga06b68eaa9d0e50e624659ed1b9c7f05a" title="The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().">ETCPAL_SOCKET_MAX_POLL_SIZE</a>. Otherwise, that constant is set to -1.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">context</td><td>Pointer to EtcPalPollContext to which to add new socket. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">socket</td><td>Socket to start monitoring. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">events</td><td>Events to monitor for on this socket. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">user_data</td><td>Opaque data pointer that is passed back with events on this socket. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Socket added successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d" title="The item being created already exists.">kEtcPalErrExists</a>: The socket has already been added to this context. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599" title="A dynamic memory allocation failed, or there is no space left in a statically allocated array.">kEtcPalErrNoMem</a>: <a class="el" href="group__etcpal__socket.html#ga06b68eaa9d0e50e624659ed1b9c7f05a" title="The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().">ETCPAL_SOCKET_MAX_POLL_SIZE</a> is exceeded in this context. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: System call failed. </dd></dl>
+
+</div>
+</div>
+<a id="ga08a886e98949a8c0ba7f162e54cd1a72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga08a886e98949a8c0ba7f162e54cd1a72">&#9670;&nbsp;</a></span>etcpal_poll_context_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_poll_context_deinit </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *&#160;</td>
+          <td class="paramname"><em>context</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Invalidate a previously-initialized EtcPalPollContext structure. </p>
+<p>This must be called at shutdown or when the EtcPalPollContext is no longer needed to free any resources being used to track polling context.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">context</td><td>Pointer to EtcPalPollContext to deinitialize. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaf566500c673f2e7941f9a399c61c1b68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf566500c673f2e7941f9a399c61c1b68">&#9670;&nbsp;</a></span>etcpal_poll_context_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_poll_context_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *&#160;</td>
+          <td class="paramname"><em>context</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new context for waiting on events on multiple sockets. </p>
+<p>EtcPalPollContext structures contain information about an application's interest in events on a set of sockets. The <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a> function can then be used to block the calling thread until one such event takes place.</p>
+<p>This function must be called on an EtcPalPollContext structure before using it with any other etcpal_poll_* function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">context</td><td>Pointer to EtcPalPollContext to initialize. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Init successful. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: System call failed. </dd></dl>
+
+</div>
+</div>
+<a id="ga396b218eda2c3e52b4b917b73e18dab7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga396b218eda2c3e52b4b917b73e18dab7">&#9670;&nbsp;</a></span>etcpal_poll_modify_socket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_poll_modify_socket </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *&#160;</td>
+          <td class="paramname"><em>context</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>socket</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga625b9f37c09cda6d3f13330094fa97d9">etcpal_poll_events_t</a>&#160;</td>
+          <td class="paramname"><em>new_events</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>new_user_data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Change the set of events or user data associated with a monitored socket. </p>
+<p>The new events and/or user data will be used on the next call to <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">context</td><td>Pointer to EtcPalPollContext on which to modify socket parameters. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">socket</td><td>Socket to modify. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">new_events</td><td>New set of events to monitor for on this socket. Passing the same events as before is also valid if only the user data is being changed. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">new_user_data</td><td>New opaque data pointer that is passed back with events on this socket. Passing the same pointer as before is also valid if only the events are being changed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Socket modified successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: Socket was not previously added to this context. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: System call failed. </dd></dl>
+
+</div>
+</div>
+<a id="ga8233886a08aff8ba010dfa7384c76408"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8233886a08aff8ba010dfa7384c76408">&#9670;&nbsp;</a></span>etcpal_poll_remove_socket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_poll_remove_socket </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *&#160;</td>
+          <td class="paramname"><em>context</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>socket</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove a monitored socket from an EtcPalPollContext. </p>
+<p>This socket will no longer be monitored on future calls to <a class="el" href="group__etcpal__socket.html#gae5017e2346be12e91c6450fe9860614b" title="Wait for an event on a set of sockets defined by an EtcPalPollContext.">etcpal_poll_wait()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">context</td><td>Pointer to EtcPalPollContext from which to remove socket. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">socket</td><td>Socket to remove. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gae5017e2346be12e91c6450fe9860614b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae5017e2346be12e91c6450fe9860614b">&#9670;&nbsp;</a></span>etcpal_poll_wait()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_poll_wait </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#ga906fd2bcb17663f4de3fefd0b335656e">EtcPalPollContext</a> *&#160;</td>
+          <td class="paramname"><em>context</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_poll_event.html">EtcPalPollEvent</a> *&#160;</td>
+          <td class="paramname"><em>event</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Wait for an event on a set of sockets defined by an EtcPalPollContext. </p>
+<p>Waits for events defined by previous calls to <a class="el" href="group__etcpal__socket.html#gab901f9cf32e98e0d99369366f2e1ffa4" title="Add a new socket to an EtcPalPollContext.">etcpal_poll_add_socket()</a> on this context structure. Reports one event at a time in the output 'event' parameter. Waits up to timeout_ms milliseconds; use <a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13" title="For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.">ETCPAL_WAIT_FOREVER</a> to wait indefinitely. If there are no sockets currently added to the context structure, returns the special error code <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b" title="No sockets have been added to the context.">kEtcPalErrNoSockets</a> immediately.</p>
+<p>This function should not be assumed to be thread-safe with respect to the other etcpal_poll API functions; for this reason, <a class="el" href="group__etcpal__socket.html#gab901f9cf32e98e0d99369366f2e1ffa4" title="Add a new socket to an EtcPalPollContext.">etcpal_poll_add_socket()</a>, <a class="el" href="group__etcpal__socket.html#ga396b218eda2c3e52b4b917b73e18dab7" title="Change the set of events or user data associated with a monitored socket.">etcpal_poll_modify_socket()</a>, and <a class="el" href="group__etcpal__socket.html#ga8233886a08aff8ba010dfa7384c76408" title="Remove a monitored socket from an EtcPalPollContext.">etcpal_poll_remove_socket()</a> should not be called while this function is blocking.</p>
+<p>Uses OS-specific APIs for monitoring multiple sockets under the hood. Details:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Platform:   </th><th class="markdownTableHeadNone">API used:   </th><th class="markdownTableHeadNone">Notes:    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">epoll()   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">lwIP   </td><td class="markdownTableBodyNone">select()   </td><td class="markdownTableBodyNone"><a class="el" href="group__etcpal__socket.html#ga06b68eaa9d0e50e624659ed1b9c7f05a" title="The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().">ETCPAL_SOCKET_MAX_POLL_SIZE</a> is controlled by FD_SETSIZE which is in turn controlled by MEMP_NUM_NETCONN in lwipopts.h.    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">macOS   </td><td class="markdownTableBodyNone">kqueue()   </td><td class="markdownTableBodyNone"></td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">MQX (RTCS)   </td><td class="markdownTableBodyNone">select()   </td><td class="markdownTableBodyNone"><a class="el" href="group__etcpal__socket.html#ga06b68eaa9d0e50e624659ed1b9c7f05a" title="The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().">ETCPAL_SOCKET_MAX_POLL_SIZE</a> is controlled by the RTCS config constant RTCSCFG_FD_SETSIZE.    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Microsoft Windows   </td><td class="markdownTableBodyNone">select()   </td><td class="markdownTableBodyNone"><a class="el" href="group__etcpal__socket.html#ga06b68eaa9d0e50e624659ed1b9c7f05a" title="The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().">ETCPAL_SOCKET_MAX_POLL_SIZE</a> defaults to 64, but can be increased by setting FD_SETSIZE=[new_value] as a compile-time definition.   </td></tr>
+</table>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">context</td><td>Pointer to EtcPalPollContext for which to wait for events. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">event</td><td>On success, contains information about the event that occurred. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">timeout_ms</td><td>How long to wait for an event, in milliseconds. Use <a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13" title="For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.">ETCPAL_WAIT_FOREVER</a> to wait indefinitely. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: An event occurred, and information is available in the event argument. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b" title="No sockets have been added to the context.">kEtcPalErrNoSockets</a>: The context has no sockets added to it. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956" title="A connection timed out.">kEtcPalErrTimedOut</a>: Timed out waiting for an event to occur. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: System or socket call failed. </dd>
+<dd>
+Other <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> values are possible from underlying socket calls. </dd></dl>
+
+</div>
+</div>
+<a id="gace688545de41aecba767639fa0c8f7b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gace688545de41aecba767639fa0c8f7b6">&#9670;&nbsp;</a></span>etcpal_recv()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int etcpal_recv </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Receive data on a connected socket. </p>
+<p>Refer to your favorite recv() man page for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to receive. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">buffer</td><td>Buffer in which to place received data. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of buffer. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Receive flags. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes received (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga305e1fb78f8ad29e562fff5762d9c3c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga305e1fb78f8ad29e562fff5762d9c3c0">&#9670;&nbsp;</a></span>etcpal_recvfrom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int etcpal_recvfrom </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Receive data on a socket. </p>
+<p>Refer to your favorite recvfrom() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one EtcPal sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to receive. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">buffer</td><td>Buffer in which to place received data. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of buffer. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Receive flags. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">address</td><td>If provided, filled in on success with peer address from which the data was received. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes received (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga52ba67993412de6dc69a582ca07f50d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga52ba67993412de6dc69a582ca07f50d5">&#9670;&nbsp;</a></span>etcpal_send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int etcpal_send </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send data on a connected socket. </p>
+<p>Refer to your favorite send() man page for more information.</p>
+<p>Differences from POSIX: Returns int rather than nonstandard ssize_t.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>Message to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Send flags. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes sent (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gaf13f2f32e223ba9ef28e732cc8906508"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf13f2f32e223ba9ef28e732cc8906508">&#9670;&nbsp;</a></span>etcpal_sendto()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int etcpal_sendto </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>dest_addr</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send data on a socket. </p>
+<p>Refer to your favorite sendto() man page for more information.</p>
+<p>Differences from POSIX: Returns int rather than nonstandard ssize_t. addrlen parameter is omitted because there is only one EtcPal sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>Message to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Send flags. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dest_addr</td><td>Address to which to send the message. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes sent (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga72f16eec0ea5416ac4a553e1e78d7c77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga72f16eec0ea5416ac4a553e1e78d7c77">&#9670;&nbsp;</a></span>etcpal_setblocking()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_setblocking </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>blocking</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Change the blocking behavior of a socket. </p>
+<p>This is similar to manipulating the O_NONBLOCK flag through the fcntl() function on a BSD socket.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket for which to change the blocking behavior. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">blocking</td><td>true (socket should block) or false (socket should not block). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga0cc965b67084fb27214825cb893d2041"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0cc965b67084fb27214825cb893d2041">&#9670;&nbsp;</a></span>etcpal_setsockopt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_setsockopt </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>level</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>option_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>option_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>option_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set an option value on a socket. </p>
+<p>Refer to your favorite setsockopt() man page for more information.</p>
+<p>Differences from POSIX: Some overlapping option values are consolidated and some legacy option values are not included. Some value types are different; see the documentation of each possible option value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket for which to set the option value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>Protocol level of the option for which to set the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">option_name</td><td>Name of the option for which to set the value. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">option_value</td><td>Value to set for the option. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">option_len</td><td>Size of value pointed to by option_value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga3c51a1d50368f372ecd2c44c93f85cac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3c51a1d50368f372ecd2c44c93f85cac">&#9670;&nbsp;</a></span>etcpal_shutdown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_shutdown </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>how</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shut down part of a full-duplex connection. </p>
+<p>Refer to your favorite shutdown() man page for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to be shut down. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">how</td><td>How to shut down the socket, one of the ETCPAL_SHUT_* values. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gae0c8d9e036be592eba7db8736c7e1e0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae0c8d9e036be592eba7db8736c7e1e0f">&#9670;&nbsp;</a></span>etcpal_socket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_socket </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>family</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__socket.html#gaf08a63353f05072ee3b28fd754985b66">etcpal_socket_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a socket. </p>
+<p>Refer to your favorite socket() man page for more information.</p>
+<p>Differences from POSIX: Returns an error code and fills in an output parameter for the socket handle instead of returning the socket handle. Rarely-used 'protocol' parameter is omitted.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">family</td><td>Protocol family that the socket should use. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Socket communication type. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">id</td><td>Filled in with socket handle on success. Filled in with <a class="el" href="group__etcpal__socket.html#ga304e26b30c36b6c33319b9602c9fe276" title="An identifier for an invalid socket handle.">ETCPAL_SOCKET_INVALID</a> on failure. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a> (success) or <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

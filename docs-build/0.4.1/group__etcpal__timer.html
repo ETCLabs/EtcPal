@@ -1,0 +1,510 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: timer (Timers)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__timer.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">timer (Timers)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__os.html">OS Abstraction Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Platform-neutral system timers. </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/timer.h&quot;</span></div>
+</div><!-- fragment --><p><b>WARNING:</b> This module must be explicitly initialized before use. Initialize the module by calling <a class="el" href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843" title="Initialize the EtcPal library.">etcpal_init()</a> with the relevant feature mask: </p><div class="fragment"><div class="line"><a class="code" href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843">etcpal_init</a>(<a class="code" href="group__etcpal.html#gaffb285a8108a672c01c33d921ee8be83">ETCPAL_FEATURE_TIMERS</a>);</div>
+<div class="ttc" id="agroup__etcpal_html_ga163b95dfe5ef6c68f2fb4d5b58a63843"><div class="ttname"><a href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843">etcpal_init</a></div><div class="ttdeci">etcpal_error_t etcpal_init(etcpal_features_t features)</div><div class="ttdoc">Initialize the EtcPal library.</div><div class="ttdef"><b>Definition:</b> common.c:87</div></div>
+<div class="ttc" id="agroup__etcpal_html_gaffb285a8108a672c01c33d921ee8be83"><div class="ttname"><a href="group__etcpal.html#gaffb285a8108a672c01c33d921ee8be83">ETCPAL_FEATURE_TIMERS</a></div><div class="ttdeci">#define ETCPAL_FEATURE_TIMERS</div><div class="ttdoc">Use the etcpal/timer module.</div><div class="ttdef"><b>Definition:</b> common.h:129</div></div>
+</div><!-- fragment --><p>Provides an implementation of a passive monotonic timer, as well as a way to get monotonic time points. Time points and intervals are represented in milliseconds by a 32-bit unsigned int. To get a time point, use <a class="el" href="group__etcpal__timer.html#gad9f192bf100bebdab2d0169c44af066a" title="Get a monotonically-increasing millisecond value.">etcpal_getms()</a>.</p>
+<div class="fragment"><div class="line">uint32_t time_point = <a class="code" href="group__etcpal__timer.html#gad9f192bf100bebdab2d0169c44af066a">etcpal_getms</a>();</div>
+<div class="ttc" id="agroup__etcpal__timer_html_gad9f192bf100bebdab2d0169c44af066a"><div class="ttname"><a href="group__etcpal__timer.html#gad9f192bf100bebdab2d0169c44af066a">etcpal_getms</a></div><div class="ttdeci">uint32_t etcpal_getms(void)</div><div class="ttdoc">Get a monotonically-increasing millisecond value.</div></div>
+</div><!-- fragment --><p>A time point represents the time elapsed in milliseconds since an arbitrary fixed point in the past, independent of any changes in system "wall clock" time. Time points provided by this module wrap every 4,294,967,295 milliseconds, or approximately 49.7 days. Because of this, it's recommended to only use this module to time events which occur on time scales which are shorter than that by at least an order of magnitude. This reduces the likelihood that wrapping will be an issue.</p>
+<p>Note that this problem only applies to wraparound past an original time point; absolute wraparound of the integer type is handled. For example, using an <a class="el" href="struct_etc_pal_timer.html" title="A millisecond-resolution timer.">EtcPalTimer</a> to time a 10-millisecond interval that begins at time point 4,294,967,290 and ends at time point 5 will work as expected.</p>
+<p>Use the <a class="el" href="group__etcpal__timer.html#ga90572188aaa8e169a70ad52ce251ba9c" title="Get the amount of time elapsed since the given time point in milliseconds.">ETCPAL_TIME_ELAPSED_SINCE()</a> macro to determine how much time has elapsed since a time point.</p>
+<div class="fragment"><div class="line">uint32_t ms_elapsed = <a class="code" href="group__etcpal__timer.html#ga90572188aaa8e169a70ad52ce251ba9c">ETCPAL_TIME_ELAPSED_SINCE</a>(time_point);</div>
+<div class="ttc" id="agroup__etcpal__timer_html_ga90572188aaa8e169a70ad52ce251ba9c"><div class="ttname"><a href="group__etcpal__timer.html#ga90572188aaa8e169a70ad52ce251ba9c">ETCPAL_TIME_ELAPSED_SINCE</a></div><div class="ttdeci">#define ETCPAL_TIME_ELAPSED_SINCE(start_time)</div><div class="ttdoc">Get the amount of time elapsed since the given time point in milliseconds.</div><div class="ttdef"><b>Definition:</b> timer.h:112</div></div>
+</div><!-- fragment --><p>To time an interval, use an <a class="el" href="struct_etc_pal_timer.html" title="A millisecond-resolution timer.">EtcPalTimer</a>.</p>
+<div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_timer.html">EtcPalTimer</a> timer;</div>
+<div class="line"><a class="code" href="group__etcpal__timer.html#ga6e34d82478d4ad222a22df781b5f2f44">etcpal_timer_start</a>(&amp;timer, 100); <span class="comment">// Start a 100-millisecond timer</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Some time later...</span></div>
+<div class="line"> </div>
+<div class="line">uint32_t elapsed = <a class="code" href="group__etcpal__timer.html#ga5d73c9f8144f65719e8b319cdfdc05bb">etcpal_timer_elapsed</a>(&amp;timer); <span class="comment">// How many milliseconds since the timer was started</span></div>
+<div class="line">uint32_t remaining = <a class="code" href="group__etcpal__timer.html#ga8f0822e6e65f8e63b3776533ce1ff531">etcpal_timer_remaining</a>(&amp;timer); <span class="comment">// How much time is remaining in the interval</span></div>
+<div class="line"><span class="keywordtype">bool</span> is_expired = <a class="code" href="group__etcpal__timer.html#gaccc47c2970648c782918f8ab21d10ae9">etcpal_timer_is_expired</a>(&amp;timer); <span class="comment">// Whether the interval has expired</span></div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="group__etcpal__timer.html#gae3f2a33d174900c2a2a67e2eef842069">etcpal_timer_reset</a>(&amp;timer); <span class="comment">// Reset the timer for another 100-millisecond interval</span></div>
+<div class="line"><span class="comment">// Or</span></div>
+<div class="line"><a class="code" href="group__etcpal__timer.html#ga6e34d82478d4ad222a22df781b5f2f44">etcpal_timer_start</a>(&amp;timer, 1000); <span class="comment">// Reuse the timer for a different interval, in this case 1 second.</span></div>
+<div class="ttc" id="agroup__etcpal__timer_html_ga5d73c9f8144f65719e8b319cdfdc05bb"><div class="ttname"><a href="group__etcpal__timer.html#ga5d73c9f8144f65719e8b319cdfdc05bb">etcpal_timer_elapsed</a></div><div class="ttdeci">uint32_t etcpal_timer_elapsed(const EtcPalTimer *timer)</div><div class="ttdoc">Get the time since a timer was reset.</div><div class="ttdef"><b>Definition:</b> timer.c:56</div></div>
+<div class="ttc" id="agroup__etcpal__timer_html_ga6e34d82478d4ad222a22df781b5f2f44"><div class="ttname"><a href="group__etcpal__timer.html#ga6e34d82478d4ad222a22df781b5f2f44">etcpal_timer_start</a></div><div class="ttdeci">void etcpal_timer_start(EtcPalTimer *timer, uint32_t interval)</div><div class="ttdoc">Start a timer.</div><div class="ttdef"><b>Definition:</b> timer.c:30</div></div>
+<div class="ttc" id="agroup__etcpal__timer_html_ga8f0822e6e65f8e63b3776533ce1ff531"><div class="ttname"><a href="group__etcpal__timer.html#ga8f0822e6e65f8e63b3776533ce1ff531">etcpal_timer_remaining</a></div><div class="ttdeci">uint32_t etcpal_timer_remaining(const EtcPalTimer *timer)</div><div class="ttdoc">Get the amount of time remaining in a timer.</div><div class="ttdef"><b>Definition:</b> timer.c:87</div></div>
+<div class="ttc" id="agroup__etcpal__timer_html_gaccc47c2970648c782918f8ab21d10ae9"><div class="ttname"><a href="group__etcpal__timer.html#gaccc47c2970648c782918f8ab21d10ae9">etcpal_timer_is_expired</a></div><div class="ttdeci">bool etcpal_timer_is_expired(const EtcPalTimer *timer)</div><div class="ttdoc">Check to see if a timer is expired.</div><div class="ttdef"><b>Definition:</b> timer.c:73</div></div>
+<div class="ttc" id="agroup__etcpal__timer_html_gae3f2a33d174900c2a2a67e2eef842069"><div class="ttname"><a href="group__etcpal__timer.html#gae3f2a33d174900c2a2a67e2eef842069">etcpal_timer_reset</a></div><div class="ttdeci">void etcpal_timer_reset(EtcPalTimer *timer)</div><div class="ttdoc">Reset a timer while keeping the same interval.</div><div class="ttdef"><b>Definition:</b> timer.c:43</div></div>
+<div class="ttc" id="astruct_etc_pal_timer_html"><div class="ttname"><a href="struct_etc_pal_timer.html">EtcPalTimer</a></div><div class="ttdoc">A millisecond-resolution timer.</div><div class="ttdef"><b>Definition:</b> timer.h:102</div></div>
+</div><!-- fragment --> <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A millisecond-resolution timer.  <a href="struct_etc_pal_timer.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga90572188aaa8e169a70ad52ce251ba9c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#ga90572188aaa8e169a70ad52ce251ba9c">ETCPAL_TIME_ELAPSED_SINCE</a>(start_time)&#160;&#160;&#160;(uint32_t)(<a class="el" href="group__etcpal__timer.html#gad9f192bf100bebdab2d0169c44af066a">etcpal_getms</a>() - (uint32_t)start_time)</td></tr>
+<tr class="memdesc:ga90572188aaa8e169a70ad52ce251ba9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of time elapsed since the given time point in milliseconds.  <a href="group__etcpal__timer.html#ga90572188aaa8e169a70ad52ce251ba9c">More...</a><br /></td></tr>
+<tr class="separator:ga90572188aaa8e169a70ad52ce251ba9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga99b5ddbf3356caf40ba54860fc57e612"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#ga99b5ddbf3356caf40ba54860fc57e612">EtcPalTimer</a></td></tr>
+<tr class="memdesc:ga99b5ddbf3356caf40ba54860fc57e612"><td class="mdescLeft">&#160;</td><td class="mdescRight">A millisecond-resolution timer.  <a href="group__etcpal__timer.html#ga99b5ddbf3356caf40ba54860fc57e612">More...</a><br /></td></tr>
+<tr class="separator:ga99b5ddbf3356caf40ba54860fc57e612"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gad9f192bf100bebdab2d0169c44af066a"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#gad9f192bf100bebdab2d0169c44af066a">etcpal_getms</a> (void)</td></tr>
+<tr class="memdesc:gad9f192bf100bebdab2d0169c44af066a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a monotonically-increasing millisecond value.  <a href="group__etcpal__timer.html#gad9f192bf100bebdab2d0169c44af066a">More...</a><br /></td></tr>
+<tr class="separator:gad9f192bf100bebdab2d0169c44af066a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6e34d82478d4ad222a22df781b5f2f44"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#ga6e34d82478d4ad222a22df781b5f2f44">etcpal_timer_start</a> (<a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *timer, uint32_t interval)</td></tr>
+<tr class="memdesc:ga6e34d82478d4ad222a22df781b5f2f44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start a timer.  <a href="group__etcpal__timer.html#ga6e34d82478d4ad222a22df781b5f2f44">More...</a><br /></td></tr>
+<tr class="separator:ga6e34d82478d4ad222a22df781b5f2f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae3f2a33d174900c2a2a67e2eef842069"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#gae3f2a33d174900c2a2a67e2eef842069">etcpal_timer_reset</a> (<a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *timer)</td></tr>
+<tr class="memdesc:gae3f2a33d174900c2a2a67e2eef842069"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset a timer while keeping the same interval.  <a href="group__etcpal__timer.html#gae3f2a33d174900c2a2a67e2eef842069">More...</a><br /></td></tr>
+<tr class="separator:gae3f2a33d174900c2a2a67e2eef842069"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5d73c9f8144f65719e8b319cdfdc05bb"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#ga5d73c9f8144f65719e8b319cdfdc05bb">etcpal_timer_elapsed</a> (const <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *timer)</td></tr>
+<tr class="memdesc:ga5d73c9f8144f65719e8b319cdfdc05bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the time since a timer was reset.  <a href="group__etcpal__timer.html#ga5d73c9f8144f65719e8b319cdfdc05bb">More...</a><br /></td></tr>
+<tr class="separator:ga5d73c9f8144f65719e8b319cdfdc05bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaccc47c2970648c782918f8ab21d10ae9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#gaccc47c2970648c782918f8ab21d10ae9">etcpal_timer_is_expired</a> (const <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *timer)</td></tr>
+<tr class="memdesc:gaccc47c2970648c782918f8ab21d10ae9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check to see if a timer is expired.  <a href="group__etcpal__timer.html#gaccc47c2970648c782918f8ab21d10ae9">More...</a><br /></td></tr>
+<tr class="separator:gaccc47c2970648c782918f8ab21d10ae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8f0822e6e65f8e63b3776533ce1ff531"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__timer.html#ga8f0822e6e65f8e63b3776533ce1ff531">etcpal_timer_remaining</a> (const <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *timer)</td></tr>
+<tr class="memdesc:ga8f0822e6e65f8e63b3776533ce1ff531"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the amount of time remaining in a timer.  <a href="group__etcpal__timer.html#ga8f0822e6e65f8e63b3776533ce1ff531">More...</a><br /></td></tr>
+<tr class="separator:ga8f0822e6e65f8e63b3776533ce1ff531"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga90572188aaa8e169a70ad52ce251ba9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga90572188aaa8e169a70ad52ce251ba9c">&#9670;&nbsp;</a></span>ETCPAL_TIME_ELAPSED_SINCE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_TIME_ELAPSED_SINCE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">start_time</td><td>)</td>
+          <td>&#160;&#160;&#160;(uint32_t)(<a class="el" href="group__etcpal__timer.html#gad9f192bf100bebdab2d0169c44af066a">etcpal_getms</a>() - (uint32_t)start_time)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the amount of time elapsed since the given time point in milliseconds. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">start_time</td><td>(uint32_t) The start time to measure against. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of milliseconds elapsed since the start time. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ga99b5ddbf3356caf40ba54860fc57e612"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga99b5ddbf3356caf40ba54860fc57e612">&#9670;&nbsp;</a></span>EtcPalTimer</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A millisecond-resolution timer. </p>
+<p>The times are represented in milliseconds by a 32-bit unsigned integer. Since the timer is monotonically-increasing, wraparound is handled by doing comparisons of the form </p><div class="fragment"><div class="line">timeA - timeB &gt; 0 </div>
+</div><!-- fragment --><p> rather than</p><div class="fragment"><div class="line">timeA &gt; timeB </div>
+</div><!-- fragment --><p>. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gad9f192bf100bebdab2d0169c44af066a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad9f192bf100bebdab2d0169c44af066a">&#9670;&nbsp;</a></span>etcpal_getms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t etcpal_getms </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a monotonically-increasing millisecond value. </p>
+<dl class="section return"><dt>Returns</dt><dd>The current timestamp in milliseconds. </dd></dl>
+
+</div>
+</div>
+<a id="ga5d73c9f8144f65719e8b319cdfdc05bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5d73c9f8144f65719e8b319cdfdc05bb">&#9670;&nbsp;</a></span>etcpal_timer_elapsed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t etcpal_timer_elapsed </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *&#160;</td>
+          <td class="paramname"><em>timer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the time since a timer was reset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timer</td><td>Pointer to the <a class="el" href="struct_etc_pal_timer.html" title="A millisecond-resolution timer.">EtcPalTimer</a> of which to get the elapsed time. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of milliseconds since the timer was reset. </dd></dl>
+
+</div>
+</div>
+<a id="gaccc47c2970648c782918f8ab21d10ae9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaccc47c2970648c782918f8ab21d10ae9">&#9670;&nbsp;</a></span>etcpal_timer_is_expired()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_timer_is_expired </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *&#160;</td>
+          <td class="paramname"><em>timer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check to see if a timer is expired. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timer</td><td>Pointer to the <a class="el" href="struct_etc_pal_timer.html" title="A millisecond-resolution timer.">EtcPalTimer</a> of which to check the expiration. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: More than <a class="el" href="struct_etc_pal_timer.html#acd9ed1ccc44de55e1d3eff5569663695">interval </a> milliseconds have passed since the timer was started/reset. </dd>
+<dd>
+false: Less than or equal to <a class="el" href="struct_etc_pal_timer.html#acd9ed1ccc44de55e1d3eff5569663695">interval </a> milliseconds have passed since the timer was started/reset) </dd></dl>
+
+</div>
+</div>
+<a id="ga8f0822e6e65f8e63b3776533ce1ff531"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8f0822e6e65f8e63b3776533ce1ff531">&#9670;&nbsp;</a></span>etcpal_timer_remaining()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t etcpal_timer_remaining </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *&#160;</td>
+          <td class="paramname"><em>timer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the amount of time remaining in a timer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timer</td><td>Pointer to the <a class="el" href="struct_etc_pal_timer.html" title="A millisecond-resolution timer.">EtcPalTimer</a> of which to get the remaining time. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Remaining time in milliseconds or 0 (timer is expired). </dd></dl>
+
+</div>
+</div>
+<a id="gae3f2a33d174900c2a2a67e2eef842069"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae3f2a33d174900c2a2a67e2eef842069">&#9670;&nbsp;</a></span>etcpal_timer_reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_timer_reset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *&#160;</td>
+          <td class="paramname"><em>timer</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset a timer while keeping the same interval. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timer</td><td>Pointer to the <a class="el" href="struct_etc_pal_timer.html" title="A millisecond-resolution timer.">EtcPalTimer</a> to reset. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga6e34d82478d4ad222a22df781b5f2f44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6e34d82478d4ad222a22df781b5f2f44">&#9670;&nbsp;</a></span>etcpal_timer_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_timer_start </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_timer.html">EtcPalTimer</a> *&#160;</td>
+          <td class="paramname"><em>timer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>interval</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start a timer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timer</td><td>Pointer to the <a class="el" href="struct_etc_pal_timer.html" title="A millisecond-resolution timer.">EtcPalTimer</a> to start. </td></tr>
+    <tr><td class="paramname">interval</td><td>Timer interval in milliseconds. An interval of 0 will result in a timer that is always expired. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

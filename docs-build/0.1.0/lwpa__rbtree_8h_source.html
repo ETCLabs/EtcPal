@@ -1,0 +1,373 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: /tmp/tmpk_3pov88/etcpal/include/lwpa_rbtree.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.1.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('lwpa__rbtree_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">lwpa_rbtree.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* lwpa_rbtree.h: C-language red-black tree implementation. This module is</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * based heavily on a public-domain red-black tree implementation. The license</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * of that implementation follows as it was when retrieved from Github on</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * 2018-02-28.</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> ******************************************************************************</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * Based on Julienne Walker&#39;s &lt;http://eternallyconfuzzled.com/&gt; rb_tree</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * implementation.</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Modified by Mirek Rusin &lt;http://github.com/mirek/rb_tree&gt;.</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * This is free and unencumbered software released into the public domain.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * Anyone is free to copy, modify, publish, use, compile, sell, or</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> * distribute this software, either in source code form or as a compiled</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * binary, for any purpose, commercial or non-commercial, and by any</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * means.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * In jurisdictions that recognize copyright laws, the author or authors</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * of this software dedicate any and all copyright interest in the</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * software to the public domain. We make this dedication for the benefit</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * of the public at large and to the detriment of our heirs and</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * successors. We intend this dedication to be an overt act of</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * relinquishment in perpetuity of all present and future rights to this</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * software under copyright law.</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * OTHER DEALINGS IN THE SOFTWARE.</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> * For more information, please refer to &lt;http://unlicense.org/&gt;</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#ifndef _LWPA_RBTREE_H_</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define _LWPA_RBTREE_H_</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;stddef.h&gt;</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#ifndef RB_ITER_MAX_HEIGHT</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="group__lwpa__rbtree.html#ga0d5d812c77767d9b18de1620e34167ac">   57</a></span>&#160;<span class="preprocessor">#define RB_ITER_MAX_HEIGHT 64</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a>;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a>;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">   79</a></span>&#160;<span class="keyword">typedef</span> int (*<a class="code" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">rb_tree_node_cmp_f</a>)(<span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node_a, <span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node_b);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">   91</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a>)(<span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">  101</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *(*rb_node_alloc_f)();</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">  111</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">rb_node_dealloc_f</a>)(<a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_node.html">  116</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;{</div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_node.html#a6761340706096510fd89edca40a63b9b">  118</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_rb_node.html#a6761340706096510fd89edca40a63b9b">red</a>;             </div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_node.html#a791da83334fff8f52b7f4f4fbe0f4020">  119</a></span>&#160;  <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *<a class="code" href="struct_lwpa_rb_node.html#a791da83334fff8f52b7f4f4fbe0f4020">link</a>[2]; </div>
+<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_node.html#a0f61d63b009d0880a89c843bd50d8d76">  120</a></span>&#160;  <span class="keywordtype">void</span> *<a class="code" href="struct_lwpa_rb_node.html#a0f61d63b009d0880a89c843bd50d8d76">value</a>;         </div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;};</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_tree.html">  128</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;{</div>
+<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_tree.html#a3c22ec40f8e99862b2a75a030e279648">  130</a></span>&#160;  <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *<a class="code" href="struct_lwpa_rb_tree.html#a3c22ec40f8e99862b2a75a030e279648">root</a>;       </div>
+<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_tree.html#a3b4d0c1a0e7f6eac13267a7ae55d4179">  131</a></span>&#160;  <a class="code" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">rb_tree_node_cmp_f</a> <a class="code" href="struct_lwpa_rb_tree.html#a3b4d0c1a0e7f6eac13267a7ae55d4179">cmp</a>; </div>
+<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_tree.html#a854352f53b148adc24983a58a1866d66">  132</a></span>&#160;  <span class="keywordtype">size_t</span> <a class="code" href="struct_lwpa_rb_tree.html#a854352f53b148adc24983a58a1866d66">size</a>;            </div>
+<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_tree.html#a93e173200002f4685f94f14d4eb674e7">  134</a></span>&#160;  <a class="code" href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">rb_node_alloc_f</a> <a class="code" href="struct_lwpa_rb_tree.html#a93e173200002f4685f94f14d4eb674e7">alloc_f</a>;</div>
+<div class="line"><a name="l00136"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_tree.html#ab3e9daf21d6483195063b31b3507f82e">  136</a></span>&#160;  <a class="code" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">rb_node_dealloc_f</a> <a class="code" href="struct_lwpa_rb_tree.html#ab3e9daf21d6483195063b31b3507f82e">dealloc_f</a>;</div>
+<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_tree.html#acb1df3a0f703b05bc4971f79cabe2597">  137</a></span>&#160;  <span class="keywordtype">void</span> *<a class="code" href="struct_lwpa_rb_tree.html#acb1df3a0f703b05bc4971f79cabe2597">info</a>; </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;};</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_iter.html">  145</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_lwpa_rb_iter.html">LwpaRbIter</a></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;{</div>
+<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_iter.html#ac7b99c0a7b935ddc4664f3301c3642d8">  147</a></span>&#160;  <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<a class="code" href="struct_lwpa_rb_iter.html#ac7b99c0a7b935ddc4664f3301c3642d8">tree</a>; </div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_iter.html#aa53715d827987acdffce1862294c8349">  148</a></span>&#160;  <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *<a class="code" href="struct_lwpa_rb_iter.html#aa53715d827987acdffce1862294c8349">node</a>; </div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_iter.html#a431a8b3f6f36f5c3e9f381a42bfabc5a">  150</a></span>&#160;  <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *<a class="code" href="struct_lwpa_rb_iter.html#a431a8b3f6f36f5c3e9f381a42bfabc5a">path</a>[<a class="code" href="group__lwpa__rbtree.html#ga0d5d812c77767d9b18de1620e34167ac">RB_ITER_MAX_HEIGHT</a>];</div>
+<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_iter.html#ab9332a87d0af5aa12cac847eff68b7af">  151</a></span>&#160;  <span class="keywordtype">size_t</span> <a class="code" href="struct_lwpa_rb_iter.html#ab9332a87d0af5aa12cac847eff68b7af">top</a>; </div>
+<div class="line"><a name="l00152"></a><span class="lineno"><a class="line" href="struct_lwpa_rb_iter.html#acb1df3a0f703b05bc4971f79cabe2597">  152</a></span>&#160;  <span class="keywordtype">void</span> *<a class="code" href="struct_lwpa_rb_iter.html#acb1df3a0f703b05bc4971f79cabe2597">info</a>; </div>
+<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="group__lwpa__rbtree.html#gaadc1dd0e9c4ca0183ec47958b977e376">  153</a></span>&#160;} <a class="code" href="group__lwpa__rbtree.html#gaadc1dd0e9c4ca0183ec47958b977e376">LwpaRbIter</a>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#ga81b54f02c74208cebaf5415a834ae570">rb_tree_node_cmp_ptr_cb</a>(<span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *a, <span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *b);</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__lwpa__rbtree.html#ga3d53f0f67ab15bd6786a403ee15c71a5">rb_tree_node_dealloc_cb</a>(<span class="keyword">const</span> <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160; </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *<a class="code" href="group__lwpa__rbtree.html#gada83215755aa518f6bf3d166a5ff7779">rb_node_init</a>(<a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *<span class="keyword">self</span>, <span class="keywordtype">void</span> *value);</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<a class="code" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02">rb_tree_init</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <a class="code" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">rb_tree_node_cmp_f</a> cmp, <a class="code" href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">rb_node_alloc_f</a> alloc_f,</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                         <a class="code" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">rb_node_dealloc_f</a> dealloc_f);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="keywordtype">void</span> *<a class="code" href="group__lwpa__rbtree.html#gae7649c69dac063892143049d14b78021">rb_tree_find</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <span class="keywordtype">void</span> *value);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#ga1d0ad25bb2702bd4d5bd568775474fea">rb_tree_insert</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <span class="keywordtype">void</span> *value);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#gad6533c429550b824318c8a654e8e992f">rb_tree_remove</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <span class="keywordtype">void</span> *value);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#ga3c386b632e95e457a4536385c93e72a0">rb_tree_clear</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="group__lwpa__rbtree.html#ga7329ab2313e8d6ac2cffdef6506192c4">rb_tree_size</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>);</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#ga448db091fd66028c31f2507f1dfee961">rb_tree_insert_node</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node);</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#ga332ebc443ba728868c326dd4616ad7e9">rb_tree_remove_with_cb</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <span class="keywordtype">void</span> *value, <a class="code" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a> node_cb);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#gae72ff458135e96562d19f412552b0023">rb_tree_clear_with_cb</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <a class="code" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a> node_cb);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__lwpa__rbtree.html#ga2648ae99f6997c45d42a1d4896c8f0cf">rb_tree_test</a>(<a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *<span class="keyword">self</span>, <a class="code" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *root);</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160; </div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<a class="code" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *<a class="code" href="group__lwpa__rbtree.html#ga26612f21d99cfdbc6719a96e82f369b8">rb_iter_init</a>(<a class="code" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *<span class="keyword">self</span>);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="keywordtype">void</span> *<a class="code" href="group__lwpa__rbtree.html#ga938ea056d3e6fb8b89515f78cf5afbce">rb_iter_first</a>(<a class="code" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *<span class="keyword">self</span>, <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *tree);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="keywordtype">void</span> *<a class="code" href="group__lwpa__rbtree.html#gad75cc5bf03d1455046c47b17acf27dbb">rb_iter_last</a>(<a class="code" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *<span class="keyword">self</span>, <a class="code" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *tree);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;<span class="keywordtype">void</span> *<a class="code" href="group__lwpa__rbtree.html#ga627846455078b0b6cdd99fdfe9b6c24d">rb_iter_next</a>(<a class="code" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *<span class="keyword">self</span>);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="keywordtype">void</span> *<a class="code" href="group__lwpa__rbtree.html#ga7cb1cd4f04ffc6d9d14b74bc81c476f0">rb_iter_prev</a>(<a class="code" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *<span class="keyword">self</span>);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;}</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* _LWPA_RBTREE_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga0d5d812c77767d9b18de1620e34167ac"><div class="ttname"><a href="group__lwpa__rbtree.html#ga0d5d812c77767d9b18de1620e34167ac">RB_ITER_MAX_HEIGHT</a></div><div class="ttdeci">#define RB_ITER_MAX_HEIGHT</div><div class="ttdoc">The tallest allowable tree that can be iterated over.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:57</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga1d0ad25bb2702bd4d5bd568775474fea"><div class="ttname"><a href="group__lwpa__rbtree.html#ga1d0ad25bb2702bd4d5bd568775474fea">rb_tree_insert</a></div><div class="ttdeci">int rb_tree_insert(LwpaRbTree *self, void *value)</div><div class="ttdoc">Insert a new value into a red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:210</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga2648ae99f6997c45d42a1d4896c8f0cf"><div class="ttname"><a href="group__lwpa__rbtree.html#ga2648ae99f6997c45d42a1d4896c8f0cf">rb_tree_test</a></div><div class="ttdeci">int rb_tree_test(LwpaRbTree *self, LwpaRbNode *root)</div><div class="ttdoc">Test the validity of a red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:523</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga26612f21d99cfdbc6719a96e82f369b8"><div class="ttname"><a href="group__lwpa__rbtree.html#ga26612f21d99cfdbc6719a96e82f369b8">rb_iter_init</a></div><div class="ttdeci">LwpaRbIter * rb_iter_init(LwpaRbIter *self)</div><div class="ttdoc">Initialize a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:576</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga332ebc443ba728868c326dd4616ad7e9"><div class="ttname"><a href="group__lwpa__rbtree.html#ga332ebc443ba728868c326dd4616ad7e9">rb_tree_remove_with_cb</a></div><div class="ttdeci">int rb_tree_remove_with_cb(LwpaRbTree *self, void *value, rb_tree_node_f node_cb)</div><div class="ttdoc">Remove a value from a red-black tree, calling back into the application with the node and value being...</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:341</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga3c386b632e95e457a4536385c93e72a0"><div class="ttname"><a href="group__lwpa__rbtree.html#ga3c386b632e95e457a4536385c93e72a0">rb_tree_clear</a></div><div class="ttdeci">int rb_tree_clear(LwpaRbTree *self)</div><div class="ttdoc">Clear all values from a red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:446</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga3d53f0f67ab15bd6786a403ee15c71a5"><div class="ttname"><a href="group__lwpa__rbtree.html#ga3d53f0f67ab15bd6786a403ee15c71a5">rb_tree_node_dealloc_cb</a></div><div class="ttdeci">void rb_tree_node_dealloc_cb(const LwpaRbTree *self, LwpaRbNode *node)</div><div class="ttdoc">The default node deallocation callback.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:131</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga448db091fd66028c31f2507f1dfee961"><div class="ttname"><a href="group__lwpa__rbtree.html#ga448db091fd66028c31f2507f1dfee961">rb_tree_insert_node</a></div><div class="ttdeci">int rb_tree_insert_node(LwpaRbTree *self, LwpaRbNode *node)</div><div class="ttdoc">Insert a node containing a new value into a red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:227</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga627846455078b0b6cdd99fdfe9b6c24d"><div class="ttname"><a href="group__lwpa__rbtree.html#ga627846455078b0b6cdd99fdfe9b6c24d">rb_iter_next</a></div><div class="ttdeci">void * rb_iter_next(LwpaRbIter *self)</div><div class="ttdoc">Advance a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:682</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga7329ab2313e8d6ac2cffdef6506192c4"><div class="ttname"><a href="group__lwpa__rbtree.html#ga7329ab2313e8d6ac2cffdef6506192c4">rb_tree_size</a></div><div class="ttdeci">size_t rb_tree_size(LwpaRbTree *self)</div><div class="ttdoc">Get the current number of values in a red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:505</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga78d8bafef37c68be88c8a382b5fb024d"><div class="ttname"><a href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">rb_node_alloc_f</a></div><div class="ttdeci">LwpaRbNode *(* rb_node_alloc_f)()</div><div class="ttdoc">A function type to allocate a new node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:101</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga7cb1cd4f04ffc6d9d14b74bc81c476f0"><div class="ttname"><a href="group__lwpa__rbtree.html#ga7cb1cd4f04ffc6d9d14b74bc81c476f0">rb_iter_prev</a></div><div class="ttdeci">void * rb_iter_prev(LwpaRbIter *self)</div><div class="ttdoc">Reverse-advance a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:696</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga81b54f02c74208cebaf5415a834ae570"><div class="ttname"><a href="group__lwpa__rbtree.html#ga81b54f02c74208cebaf5415a834ae570">rb_tree_node_cmp_ptr_cb</a></div><div class="ttdeci">int rb_tree_node_cmp_ptr_cb(const LwpaRbTree *self, const LwpaRbNode *a, const LwpaRbNode *b)</div><div class="ttdoc">The default node comparison callback.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:120</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_ga938ea056d3e6fb8b89515f78cf5afbce"><div class="ttname"><a href="group__lwpa__rbtree.html#ga938ea056d3e6fb8b89515f78cf5afbce">rb_iter_first</a></div><div class="ttdeci">void * rb_iter_first(LwpaRbIter *self, LwpaRbTree *tree)</div><div class="ttdoc">Point a red-black tree iterator at the first value in the tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:654</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gaadc1dd0e9c4ca0183ec47958b977e376"><div class="ttname"><a href="group__lwpa__rbtree.html#gaadc1dd0e9c4ca0183ec47958b977e376">LwpaRbIter</a></div><div class="ttdeci">struct LwpaRbIter LwpaRbIter</div><div class="ttdoc">A red-black tree iterator.</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gab5a8c9076e06fd05f042b25a6d385f02"><div class="ttname"><a href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02">rb_tree_init</a></div><div class="ttdeci">LwpaRbTree * rb_tree_init(LwpaRbTree *self, rb_tree_node_cmp_f cmp, rb_node_alloc_f alloc_f, rb_node_dealloc_f dealloc_f)</div><div class="ttdoc">Initialize a red-black tree node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:149</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gab784fd5c55bf752e7b940d155d434367"><div class="ttname"><a href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">rb_tree_node_cmp_f</a></div><div class="ttdeci">int(* rb_tree_node_cmp_f)(const LwpaRbTree *self, const LwpaRbNode *node_a, const LwpaRbNode *node_b)</div><div class="ttdoc">A function type that compares two nodes in a tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:79</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gacc50d641f7962fb9f40dc56ae5254e9a"><div class="ttname"><a href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a></div><div class="ttdeci">void(* rb_tree_node_f)(const LwpaRbTree *self, LwpaRbNode *node)</div><div class="ttdoc">A function type to be called for each node in a tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:91</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gad6533c429550b824318c8a654e8e992f"><div class="ttname"><a href="group__lwpa__rbtree.html#gad6533c429550b824318c8a654e8e992f">rb_tree_remove</a></div><div class="ttdeci">int rb_tree_remove(LwpaRbTree *self, void *value)</div><div class="ttdoc">Remove a value from a red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:318</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gad75cc5bf03d1455046c47b17acf27dbb"><div class="ttname"><a href="group__lwpa__rbtree.html#gad75cc5bf03d1455046c47b17acf27dbb">rb_iter_last</a></div><div class="ttdeci">void * rb_iter_last(LwpaRbIter *self, LwpaRbTree *tree)</div><div class="ttdoc">Point a red-black tree iterator at the last value in the tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:668</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gada83215755aa518f6bf3d166a5ff7779"><div class="ttname"><a href="group__lwpa__rbtree.html#gada83215755aa518f6bf3d166a5ff7779">rb_node_init</a></div><div class="ttdeci">LwpaRbNode * rb_node_init(LwpaRbNode *self, void *value)</div><div class="ttdoc">Initialize a red-black tree node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:58</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gae72ff458135e96562d19f412552b0023"><div class="ttname"><a href="group__lwpa__rbtree.html#gae72ff458135e96562d19f412552b0023">rb_tree_clear_with_cb</a></div><div class="ttdeci">int rb_tree_clear_with_cb(LwpaRbTree *self, rb_tree_node_f node_cb)</div><div class="ttdoc">Clear all values from a red-black tree, calling back into the application for each node and value bei...</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:466</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gae7649c69dac063892143049d14b78021"><div class="ttname"><a href="group__lwpa__rbtree.html#gae7649c69dac063892143049d14b78021">rb_tree_find</a></div><div class="ttdeci">void * rb_tree_find(LwpaRbTree *self, void *value)</div><div class="ttdoc">Find a value in a red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.c:172</div></div>
+<div class="ttc" id="agroup__lwpa__rbtree_html_gaf6fa55ab036a41506969c3b87f18e02e"><div class="ttname"><a href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">rb_node_dealloc_f</a></div><div class="ttdeci">void(* rb_node_dealloc_f)(LwpaRbNode *node)</div><div class="ttdoc">A function type to deallocate a node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:111</div></div>
+<div class="ttc" id="astruct_lwpa_rb_iter_html"><div class="ttname"><a href="struct_lwpa_rb_iter.html">LwpaRbIter</a></div><div class="ttdoc">A red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:146</div></div>
+<div class="ttc" id="astruct_lwpa_rb_iter_html_a431a8b3f6f36f5c3e9f381a42bfabc5a"><div class="ttname"><a href="struct_lwpa_rb_iter.html#a431a8b3f6f36f5c3e9f381a42bfabc5a">LwpaRbIter::path</a></div><div class="ttdeci">LwpaRbNode * path[RB_ITER_MAX_HEIGHT]</div><div class="ttdoc">The traversal path to the current node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:150</div></div>
+<div class="ttc" id="astruct_lwpa_rb_iter_html_aa53715d827987acdffce1862294c8349"><div class="ttname"><a href="struct_lwpa_rb_iter.html#aa53715d827987acdffce1862294c8349">LwpaRbIter::node</a></div><div class="ttdeci">LwpaRbNode * node</div><div class="ttdoc">The current node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:148</div></div>
+<div class="ttc" id="astruct_lwpa_rb_iter_html_ab9332a87d0af5aa12cac847eff68b7af"><div class="ttname"><a href="struct_lwpa_rb_iter.html#ab9332a87d0af5aa12cac847eff68b7af">LwpaRbIter::top</a></div><div class="ttdeci">size_t top</div><div class="ttdoc">Top of the traversal stack.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:151</div></div>
+<div class="ttc" id="astruct_lwpa_rb_iter_html_ac7b99c0a7b935ddc4664f3301c3642d8"><div class="ttname"><a href="struct_lwpa_rb_iter.html#ac7b99c0a7b935ddc4664f3301c3642d8">LwpaRbIter::tree</a></div><div class="ttdeci">LwpaRbTree * tree</div><div class="ttdoc">The tree being iterated over.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:147</div></div>
+<div class="ttc" id="astruct_lwpa_rb_iter_html_acb1df3a0f703b05bc4971f79cabe2597"><div class="ttname"><a href="struct_lwpa_rb_iter.html#acb1df3a0f703b05bc4971f79cabe2597">LwpaRbIter::info</a></div><div class="ttdeci">void * info</div><div class="ttdoc">User provided, not used by rb_iter.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:152</div></div>
+<div class="ttc" id="astruct_lwpa_rb_node_html"><div class="ttname"><a href="struct_lwpa_rb_node.html">LwpaRbNode</a></div><div class="ttdoc">A red-black tree node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:117</div></div>
+<div class="ttc" id="astruct_lwpa_rb_node_html_a0f61d63b009d0880a89c843bd50d8d76"><div class="ttname"><a href="struct_lwpa_rb_node.html#a0f61d63b009d0880a89c843bd50d8d76">LwpaRbNode::value</a></div><div class="ttdeci">void * value</div><div class="ttdoc">The value object represented by this node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:120</div></div>
+<div class="ttc" id="astruct_lwpa_rb_node_html_a6761340706096510fd89edca40a63b9b"><div class="ttname"><a href="struct_lwpa_rb_node.html#a6761340706096510fd89edca40a63b9b">LwpaRbNode::red</a></div><div class="ttdeci">int red</div><div class="ttdoc">The node color: red (1), black (0)</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:118</div></div>
+<div class="ttc" id="astruct_lwpa_rb_node_html_a791da83334fff8f52b7f4f4fbe0f4020"><div class="ttname"><a href="struct_lwpa_rb_node.html#a791da83334fff8f52b7f4f4fbe0f4020">LwpaRbNode::link</a></div><div class="ttdeci">LwpaRbNode * link[2]</div><div class="ttdoc">Child node links: left [0], right [1].</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:119</div></div>
+<div class="ttc" id="astruct_lwpa_rb_tree_html"><div class="ttname"><a href="struct_lwpa_rb_tree.html">LwpaRbTree</a></div><div class="ttdoc">A red-black tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:129</div></div>
+<div class="ttc" id="astruct_lwpa_rb_tree_html_a3b4d0c1a0e7f6eac13267a7ae55d4179"><div class="ttname"><a href="struct_lwpa_rb_tree.html#a3b4d0c1a0e7f6eac13267a7ae55d4179">LwpaRbTree::cmp</a></div><div class="ttdeci">rb_tree_node_cmp_f cmp</div><div class="ttdoc">A function to use for comparing two nodes.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:131</div></div>
+<div class="ttc" id="astruct_lwpa_rb_tree_html_a3c22ec40f8e99862b2a75a030e279648"><div class="ttname"><a href="struct_lwpa_rb_tree.html#a3c22ec40f8e99862b2a75a030e279648">LwpaRbTree::root</a></div><div class="ttdeci">LwpaRbNode * root</div><div class="ttdoc">The root node of the tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:130</div></div>
+<div class="ttc" id="astruct_lwpa_rb_tree_html_a854352f53b148adc24983a58a1866d66"><div class="ttname"><a href="struct_lwpa_rb_tree.html#a854352f53b148adc24983a58a1866d66">LwpaRbTree::size</a></div><div class="ttdeci">size_t size</div><div class="ttdoc">The current count of nodes in the tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:132</div></div>
+<div class="ttc" id="astruct_lwpa_rb_tree_html_a93e173200002f4685f94f14d4eb674e7"><div class="ttname"><a href="struct_lwpa_rb_tree.html#a93e173200002f4685f94f14d4eb674e7">LwpaRbTree::alloc_f</a></div><div class="ttdeci">rb_node_alloc_f alloc_f</div><div class="ttdoc">A function to use for allocating a new node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:134</div></div>
+<div class="ttc" id="astruct_lwpa_rb_tree_html_ab3e9daf21d6483195063b31b3507f82e"><div class="ttname"><a href="struct_lwpa_rb_tree.html#ab3e9daf21d6483195063b31b3507f82e">LwpaRbTree::dealloc_f</a></div><div class="ttdeci">rb_node_dealloc_f dealloc_f</div><div class="ttdoc">A function to use for deallocating a node.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:136</div></div>
+<div class="ttc" id="astruct_lwpa_rb_tree_html_acb1df3a0f703b05bc4971f79cabe2597"><div class="ttname"><a href="struct_lwpa_rb_tree.html#acb1df3a0f703b05bc4971f79cabe2597">LwpaRbTree::info</a></div><div class="ttdeci">void * info</div><div class="ttdoc">User provided, not used by rb_tree.</div><div class="ttdef"><b>Definition:</b> lwpa_rbtree.h:137</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><b>lwpa_rbtree.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

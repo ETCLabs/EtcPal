@@ -1,0 +1,736 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: Queue&lt; T &gt; Class Template Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classetcpal_1_1_queue.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">Queue&lt; T &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a> &raquo; <a class="el" href="group__etcpal__cpp__queue.html">queue (RTOS queues)</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<div class="textblock"><h3>template&lt;class T&gt;<br />
+class etcpal::Queue&lt; T &gt;</h3>
+
+<p>An RTOS queue class. </p>
+<p>See the module description for <a class="el" href="group__etcpal__cpp__queue.html">queue (RTOS queues)</a> for usage information. </p>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:ae729f6dede41f22b98b861eac4ac1895"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">Queue</a> (size_t size)</td></tr>
+<tr class="memdesc:ae729f6dede41f22b98b861eac4ac1895"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new queue.  <a href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">More...</a><br /></td></tr>
+<tr class="separator:ae729f6dede41f22b98b861eac4ac1895"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a240bdcfcc136e53aeaac3aa454cc26bf"><td class="memItemLeft" align="right" valign="top"><a id="a240bdcfcc136e53aeaac3aa454cc26bf"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#a240bdcfcc136e53aeaac3aa454cc26bf">~Queue</a> ()</td></tr>
+<tr class="memdesc:a240bdcfcc136e53aeaac3aa454cc26bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a queue. <br /></td></tr>
+<tr class="separator:a240bdcfcc136e53aeaac3aa454cc26bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6140f8c538f205808e6f3be62b5732e7"><td class="memItemLeft" align="right" valign="top"><a id="a6140f8c538f205808e6f3be62b5732e7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Queue</b> (const <a class="el" href="classetcpal_1_1_queue.html">Queue</a> &amp;other)=delete</td></tr>
+<tr class="separator:a6140f8c538f205808e6f3be62b5732e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5398366668ae9d23949fe2a0c3bc8029"><td class="memItemLeft" align="right" valign="top"><a id="a5398366668ae9d23949fe2a0c3bc8029"></a>
+<a class="el" href="classetcpal_1_1_queue.html">Queue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classetcpal_1_1_queue.html">Queue</a> &amp;other)=delete</td></tr>
+<tr class="separator:a5398366668ae9d23949fe2a0c3bc8029"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a811404251b50f04804670a888f997eef"><td class="memItemLeft" align="right" valign="top"><a id="a811404251b50f04804670a888f997eef"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Queue</b> (<a class="el" href="classetcpal_1_1_queue.html">Queue</a> &amp;&amp;other)=delete</td></tr>
+<tr class="separator:a811404251b50f04804670a888f997eef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a641e86dddac6ad0415b7540e61234dfd"><td class="memItemLeft" align="right" valign="top"><a id="a641e86dddac6ad0415b7540e61234dfd"></a>
+<a class="el" href="classetcpal_1_1_queue.html">Queue</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classetcpal_1_1_queue.html">Queue</a> &amp;&amp;other)=delete</td></tr>
+<tr class="separator:a641e86dddac6ad0415b7540e61234dfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad23735bc801c21635a277a31ac31b267"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#ad23735bc801c21635a277a31ac31b267">Send</a> (const T &amp;data, int timeout_ms=<a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a>)</td></tr>
+<tr class="memdesc:ad23735bc801c21635a277a31ac31b267"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add some data to the queue.  <a href="classetcpal_1_1_queue.html#ad23735bc801c21635a277a31ac31b267">More...</a><br /></td></tr>
+<tr class="separator:ad23735bc801c21635a277a31ac31b267"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a645b7a56c142bd9b04f703893a5879"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#a4a645b7a56c142bd9b04f703893a5879">SendFromIsr</a> (const T &amp;data)</td></tr>
+<tr class="memdesc:a4a645b7a56c142bd9b04f703893a5879"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add to a queue from an interrupt service routine.  <a href="classetcpal_1_1_queue.html#a4a645b7a56c142bd9b04f703893a5879">More...</a><br /></td></tr>
+<tr class="separator:a4a645b7a56c142bd9b04f703893a5879"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2bd22bccd067e5b8558810eb878f7bf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">Receive</a> (T &amp;data, int timeout_ms=<a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a>)</td></tr>
+<tr class="memdesc:ae2bd22bccd067e5b8558810eb878f7bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an item from the queue.  <a href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">More...</a><br /></td></tr>
+<tr class="separator:ae2bd22bccd067e5b8558810eb878f7bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e1a4a59421e30ad677c4aab766a6683"><td class="memTemplParams" colspan="2">template&lt;class Rep , class Period &gt; </td></tr>
+<tr class="memitem:a2e1a4a59421e30ad677c4aab766a6683"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#a2e1a4a59421e30ad677c4aab766a6683">Receive</a> (T &amp;data, const std::chrono::duration&lt; Rep, Period &gt; &amp;timeout)</td></tr>
+<tr class="memdesc:a2e1a4a59421e30ad677c4aab766a6683"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an item from the queue.  <a href="classetcpal_1_1_queue.html#a2e1a4a59421e30ad677c4aab766a6683">More...</a><br /></td></tr>
+<tr class="separator:a2e1a4a59421e30ad677c4aab766a6683"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d23c1b53807ebce980dce934789a4e4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#a6d23c1b53807ebce980dce934789a4e4">ReceiveFromIsr</a> (T &amp;data)</td></tr>
+<tr class="memdesc:a6d23c1b53807ebce980dce934789a4e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an item from the queue from an interrupt context.  <a href="classetcpal_1_1_queue.html#a6d23c1b53807ebce980dce934789a4e4">More...</a><br /></td></tr>
+<tr class="separator:a6d23c1b53807ebce980dce934789a4e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65e181fc77234e509cf5fa9aa9575839"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#a65e181fc77234e509cf5fa9aa9575839">Reset</a> ()</td></tr>
+<tr class="memdesc:a65e181fc77234e509cf5fa9aa9575839"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets queue to empty state.  <a href="classetcpal_1_1_queue.html#a65e181fc77234e509cf5fa9aa9575839">More...</a><br /></td></tr>
+<tr class="separator:a65e181fc77234e509cf5fa9aa9575839"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e12342fc420701fbffd97025421575a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#a8e12342fc420701fbffd97025421575a">IsEmpty</a> () const</td></tr>
+<tr class="memdesc:a8e12342fc420701fbffd97025421575a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a queue is empty.  <a href="classetcpal_1_1_queue.html#a8e12342fc420701fbffd97025421575a">More...</a><br /></td></tr>
+<tr class="separator:a8e12342fc420701fbffd97025421575a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cc49246382de0eeb66f493207fb4dbc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#a9cc49246382de0eeb66f493207fb4dbc">IsEmptyFromIsr</a> () const</td></tr>
+<tr class="memdesc:a9cc49246382de0eeb66f493207fb4dbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a queue is empty from an interrupt service routine.  <a href="classetcpal_1_1_queue.html#a9cc49246382de0eeb66f493207fb4dbc">More...</a><br /></td></tr>
+<tr class="separator:a9cc49246382de0eeb66f493207fb4dbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5d30d3dd704e8e683b98a6ed6c5d9ca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#af5d30d3dd704e8e683b98a6ed6c5d9ca">IsFull</a> () const</td></tr>
+<tr class="memdesc:af5d30d3dd704e8e683b98a6ed6c5d9ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a queue is full.  <a href="classetcpal_1_1_queue.html#af5d30d3dd704e8e683b98a6ed6c5d9ca">More...</a><br /></td></tr>
+<tr class="separator:af5d30d3dd704e8e683b98a6ed6c5d9ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf599d4a90f1b8f8c7892fe84789f6ac"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#acf599d4a90f1b8f8c7892fe84789f6ac">IsFullFromIsr</a> () const</td></tr>
+<tr class="memdesc:acf599d4a90f1b8f8c7892fe84789f6ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a queue is full from an interrupt service routine.  <a href="classetcpal_1_1_queue.html#acf599d4a90f1b8f8c7892fe84789f6ac">More...</a><br /></td></tr>
+<tr class="separator:acf599d4a90f1b8f8c7892fe84789f6ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae99315f221f70d76e0ee29ae08ee59b0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#ae99315f221f70d76e0ee29ae08ee59b0">SlotsUsed</a> () const</td></tr>
+<tr class="memdesc:ae99315f221f70d76e0ee29ae08ee59b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of slots being stored in the queue.  <a href="classetcpal_1_1_queue.html#ae99315f221f70d76e0ee29ae08ee59b0">More...</a><br /></td></tr>
+<tr class="separator:ae99315f221f70d76e0ee29ae08ee59b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae855857d6bf35a221bff10549405453b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#ae855857d6bf35a221bff10549405453b">SlotsUsedFromIsr</a> () const</td></tr>
+<tr class="memdesc:ae855857d6bf35a221bff10549405453b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of slots being stored in the queue from an interrupt service routine.  <a href="classetcpal_1_1_queue.html#ae855857d6bf35a221bff10549405453b">More...</a><br /></td></tr>
+<tr class="separator:ae855857d6bf35a221bff10549405453b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeecede9e1bc1a6e7394c5bf09b59b3f1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_queue.html#aeecede9e1bc1a6e7394c5bf09b59b3f1">SlotsAvailable</a> () const</td></tr>
+<tr class="memdesc:aeecede9e1bc1a6e7394c5bf09b59b3f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of remaining slots in the queue.  <a href="classetcpal_1_1_queue.html#aeecede9e1bc1a6e7394c5bf09b59b3f1">More...</a><br /></td></tr>
+<tr class="separator:aeecede9e1bc1a6e7394c5bf09b59b3f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ae729f6dede41f22b98b861eac4ac1895"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae729f6dede41f22b98b861eac4ac1895">&#9670;&nbsp;</a></span>Queue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_queue.html">Queue</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a new queue. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>The size of the queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a8e12342fc420701fbffd97025421575a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e12342fc420701fbffd97025421575a">&#9670;&nbsp;</a></span>IsEmpty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool IsEmpty</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if a queue is empty. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if queue is empty, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a9cc49246382de0eeb66f493207fb4dbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cc49246382de0eeb66f493207fb4dbc">&#9670;&nbsp;</a></span>IsEmptyFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool IsEmptyFromIsr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if a queue is empty from an interrupt service routine. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if queue is empty, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="af5d30d3dd704e8e683b98a6ed6c5d9ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5d30d3dd704e8e683b98a6ed6c5d9ca">&#9670;&nbsp;</a></span>IsFull()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool IsFull</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if a queue is full. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if queue is full, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="acf599d4a90f1b8f8c7892fe84789f6ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf599d4a90f1b8f8c7892fe84789f6ac">&#9670;&nbsp;</a></span>IsFullFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool IsFullFromIsr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if a queue is full from an interrupt service routine. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if queue is full, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a2e1a4a59421e30ad677c4aab766a6683"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e1a4a59421e30ad677c4aab766a6683">&#9670;&nbsp;</a></span>Receive() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Receive </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::chrono::duration&lt; Rep, Period &gt; &amp;&#160;</td>
+          <td class="paramname"><em>timeout</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get an item from the queue. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>A reference to the data that will receive the item from the queue. </td></tr>
+    <tr><td class="paramname">timeout</td><td>Amount of time to wait for data.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of the attempt to get an item from the queue. </dd></dl>
+
+</div>
+</div>
+<a id="ae2bd22bccd067e5b8558810eb878f7bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2bd22bccd067e5b8558810eb878f7bf">&#9670;&nbsp;</a></span>Receive() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Receive </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em> = <code><a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get an item from the queue. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>A reference to the data that will receive the item from the queue. </td></tr>
+    <tr><td class="paramname">timeout_ms</td><td>Amount of time to wait for data. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of the attempt to get an item from the queue. </dd></dl>
+
+</div>
+</div>
+<a id="a6d23c1b53807ebce980dce934789a4e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d23c1b53807ebce980dce934789a4e4">&#9670;&nbsp;</a></span>ReceiveFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ReceiveFromIsr </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get an item from the queue from an interrupt context. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>A reference to the data that will receive the item from the queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of the attempt to get an item from the queue. </dd></dl>
+
+</div>
+</div>
+<a id="a65e181fc77234e509cf5fa9aa9575839"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65e181fc77234e509cf5fa9aa9575839">&#9670;&nbsp;</a></span>Reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Reset</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Resets queue to empty state. </p>
+<dl class="section return"><dt>Returns</dt><dd>true on success, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="ad23735bc801c21635a277a31ac31b267"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad23735bc801c21635a277a31ac31b267">&#9670;&nbsp;</a></span>Send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Send </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em> = <code><a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add some data to the queue. </p>
+<p>Returns when either the timeout expires or the add was attempted. It is still possible for the attempt to be made and the add to not work. Check the return value for confirmation.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>A reference to the data. </td></tr>
+    <tr><td class="paramname">timeout_ms</td><td>How long to wait to add to the queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of the attempt to add to the queue. </dd></dl>
+
+</div>
+</div>
+<a id="a4a645b7a56c142bd9b04f703893a5879"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a645b7a56c142bd9b04f703893a5879">&#9670;&nbsp;</a></span>SendFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SendFromIsr </td>
+          <td>(</td>
+          <td class="paramtype">const T &amp;&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add to a queue from an interrupt service routine. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>A reference to the data to be added to the queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of the attempt to add to the queue. </dd></dl>
+
+</div>
+</div>
+<a id="aeecede9e1bc1a6e7394c5bf09b59b3f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeecede9e1bc1a6e7394c5bf09b59b3f1">&#9670;&nbsp;</a></span>SlotsAvailable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t SlotsAvailable</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get number of remaining slots in the queue. </p>
+<dl class="section return"><dt>Returns</dt><dd>number of remaining slots in queue. </dd></dl>
+
+</div>
+</div>
+<a id="ae99315f221f70d76e0ee29ae08ee59b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae99315f221f70d76e0ee29ae08ee59b0">&#9670;&nbsp;</a></span>SlotsUsed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t SlotsUsed</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get number of slots being stored in the queue. </p>
+<dl class="section return"><dt>Returns</dt><dd>number of slots in queue. </dd></dl>
+
+</div>
+</div>
+<a id="ae855857d6bf35a221bff10549405453b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae855857d6bf35a221bff10549405453b">&#9670;&nbsp;</a></span>SlotsUsedFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t SlotsUsedFromIsr</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get number of slots being stored in the queue from an interrupt service routine. </p>
+<dl class="section return"><dt>Returns</dt><dd>number of slots in queue. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>include/etcpal/cpp/<a class="el" href="cpp_2queue_8h_source.html">queue.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>etcpal</b></li><li class="navelem"><a class="el" href="classetcpal_1_1_queue.html">Queue</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: netint (Network Interfaces)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">HEAD (unstable)</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__cpp__netint.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">netint (Network Interfaces)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__net.html">Network Abstraction Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>C++ utilities for the <a class="el" href="group__etcpal__netint.html">netint (Network Interfaces)</a> module. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga91bd4e05629efb799872ab8792306527"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt; std::vector&lt; <a class="el" href="classetcpal_1_1_netint_info.html">etcpal::NetintInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__netint.html#ga91bd4e05629efb799872ab8792306527">GetInterfaces</a> () noexcept</td></tr>
+<tr class="memdesc:ga91bd4e05629efb799872ab8792306527"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a list of network interfaces on the system.  <a href="group__etcpal__cpp__netint.html#ga91bd4e05629efb799872ab8792306527">More...</a><br /></td></tr>
+<tr class="separator:ga91bd4e05629efb799872ab8792306527"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8a2c5d19b5a78642ce8f7d1fa2bebec4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt; std::vector&lt; <a class="el" href="classetcpal_1_1_netint_info.html">etcpal::NetintInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__netint.html#ga8a2c5d19b5a78642ce8f7d1fa2bebec4">GetInterfacesForIndex</a> (<a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a> index) noexcept</td></tr>
+<tr class="memdesc:ga8a2c5d19b5a78642ce8f7d1fa2bebec4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a list of network interfaces that have the index specified.  <a href="group__etcpal__cpp__netint.html#ga8a2c5d19b5a78642ce8f7d1fa2bebec4">More...</a><br /></td></tr>
+<tr class="separator:ga8a2c5d19b5a78642ce8f7d1fa2bebec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2a13903398cd8cb20129a32bce4a9a5e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt; <a class="el" href="classetcpal_1_1_netint_info.html">etcpal::NetintInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__netint.html#ga2a13903398cd8cb20129a32bce4a9a5e">GetInterfaceWithIp</a> (const <a class="el" href="classetcpal_1_1_ip_addr.html">IpAddr</a> &amp;ip) noexcept</td></tr>
+<tr class="memdesc:ga2a13903398cd8cb20129a32bce4a9a5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the network interface that has the specified IP address.  <a href="group__etcpal__cpp__netint.html#ga2a13903398cd8cb20129a32bce4a9a5e">More...</a><br /></td></tr>
+<tr class="separator:ga2a13903398cd8cb20129a32bce4a9a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa9c8a21f418c83d8998a95174f7cec5f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt; <a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__netint.html#gaa9c8a21f418c83d8998a95174f7cec5f">GetDefaultInterface</a> (<a class="el" href="group__etcpal__cpp__inet.html#gaf149bcc08653396944a3699b8c5a57c5">etcpal::IpAddrType</a> type) noexcept</td></tr>
+<tr class="memdesc:gaa9c8a21f418c83d8998a95174f7cec5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get information about the default network interface.  <a href="group__etcpal__cpp__netint.html#gaa9c8a21f418c83d8998a95174f7cec5f">More...</a><br /></td></tr>
+<tr class="separator:gaa9c8a21f418c83d8998a95174f7cec5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5e7e0d44bb6552aa1426fbbb0ecebf3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt; <a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__netint.html#ga5e7e0d44bb6552aa1426fbbb0ecebf3f">GetInterfaceForDest</a> (const <a class="el" href="classetcpal_1_1_ip_addr.html">etcpal::IpAddr</a> &amp;dest) noexcept</td></tr>
+<tr class="memdesc:ga5e7e0d44bb6552aa1426fbbb0ecebf3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the network interface that the system will choose when routing an IP packet to the specified destination.  <a href="group__etcpal__cpp__netint.html#ga5e7e0d44bb6552aa1426fbbb0ecebf3f">More...</a><br /></td></tr>
+<tr class="separator:ga5e7e0d44bb6552aa1426fbbb0ecebf3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8ed70cc693d0ad3c5b58aa49d4a6a282"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_error.html">etcpal::Error</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__netint.html#ga8ed70cc693d0ad3c5b58aa49d4a6a282">RefreshInterfaces</a> () noexcept</td></tr>
+<tr class="memdesc:ga8ed70cc693d0ad3c5b58aa49d4a6a282"><td class="mdescLeft">&#160;</td><td class="mdescRight">Refresh the list of network interfaces.  <a href="group__etcpal__cpp__netint.html#ga8ed70cc693d0ad3c5b58aa49d4a6a282">More...</a><br /></td></tr>
+<tr class="separator:ga8ed70cc693d0ad3c5b58aa49d4a6a282"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga62efa057a14df26d3830b16b52f713af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__netint.html#ga62efa057a14df26d3830b16b52f713af">IsUp</a> (<a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a> index) noexcept</td></tr>
+<tr class="memdesc:ga62efa057a14df26d3830b16b52f713af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a network interface is currently up and running.  <a href="group__etcpal__cpp__netint.html#ga62efa057a14df26d3830b16b52f713af">More...</a><br /></td></tr>
+<tr class="separator:ga62efa057a14df26d3830b16b52f713af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gaa9c8a21f418c83d8998a95174f7cec5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa9c8a21f418c83d8998a95174f7cec5f">&#9670;&nbsp;</a></span>GetDefaultInterface()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt;<a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a>&gt; etcpal::netint::GetDefaultInterface </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__cpp__inet.html#gaf149bcc08653396944a3699b8c5a57c5">etcpal::IpAddrType</a>&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get information about the default network interface. </p>
+<p>For our purposes, the 'default' network interface is defined as the interface that is chosen for the default IP route. The default interface is given as an OS network interface index - see <a class="el" href="interface_indexes.html">Network Interface Indexes</a> for more information. Note that since network interfaces can have multiple IP addresses assigned, this index may be shared by many entries returned by <a class="el" href="group__etcpal__netint.html#gaeb7d47f39f1e2b3679724d531b397d42" title="Get a list of network interfaces on the system (or just the number of interfaces).">etcpal_netint_get_interfaces()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>The IP protocol for which to get the default network interface, either <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635" title="This EtcPalIpAddr contains an IPv4 address.">kEtcPalIpTypeV4</a> or <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae" title="This EtcPalIpAddr contains an IPv6 address.">kEtcPalIpTypeV6</a>. A separate default interface is maintained for each. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The index of the default interface on success. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7" title="An API function was called from a module that was not previously initialized.">kEtcPalErrNotInit</a>: Module not initialized. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: No default interface found for this type. </dd></dl>
+
+</div>
+</div>
+<a id="ga5e7e0d44bb6552aa1426fbbb0ecebf3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5e7e0d44bb6552aa1426fbbb0ecebf3f">&#9670;&nbsp;</a></span>GetInterfaceForDest()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt;<a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a>&gt; etcpal::netint::GetInterfaceForDest </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classetcpal_1_1_ip_addr.html">etcpal::IpAddr</a> &amp;&#160;</td>
+          <td class="paramname"><em>dest</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the network interface that the system will choose when routing an IP packet to the specified destination. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dest</td><td>IP address of the destination. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">netint_index</td><td>Pointer to value to fill in with </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The index of the chosen interface on success. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7" title="An API function was called from a module that was not previously initialized.">kEtcPalErrNotInit</a>: Module not initialized. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b" title="No network interfaces were found on the system, or there are no network interfaces of a type that can...">kEtcPalErrNoNetints</a>: No network interfaces found on system. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: No route was able to be resolved to the destination. </dd></dl>
+
+</div>
+</div>
+<a id="ga91bd4e05629efb799872ab8792306527"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga91bd4e05629efb799872ab8792306527">&#9670;&nbsp;</a></span>GetInterfaces()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt;std::vector&lt;<a class="el" href="classetcpal_1_1_netint_info.html">etcpal::NetintInfo</a>&gt; &gt; etcpal::netint::GetInterfaces </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a list of network interfaces on the system. </p>
+<p>For NICs with multiple IP addresses assigned, this module separates each address into its own entry in the netint array. Because of this, multiple array entries could have the same value for the index, mac and id parameters.</p>
+<dl class="section return"><dt>Returns</dt><dd>The array of network interfaces on success. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7" title="An API function was called from a module that was not previously initialized.">kEtcPalErrNotInit</a>: Module not initialized. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: No system interfaces were found. </dd></dl>
+
+</div>
+</div>
+<a id="ga8a2c5d19b5a78642ce8f7d1fa2bebec4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8a2c5d19b5a78642ce8f7d1fa2bebec4">&#9670;&nbsp;</a></span>GetInterfacesForIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt;std::vector&lt;<a class="el" href="classetcpal_1_1_netint_info.html">etcpal::NetintInfo</a>&gt; &gt; etcpal::netint::GetInterfacesForIndex </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a>&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a list of network interfaces that have the index specified. </p>
+<p>See <a class="el" href="interface_indexes.html">Network Interface Indexes</a> for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>Index for which to get interfaces. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The array of matching network interfaces on success. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7" title="An API function was called from a module that was not previously initialized.">kEtcPalErrNotInit</a>: Module not initialized. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: No interfaces found for this index. </dd></dl>
+
+</div>
+</div>
+<a id="ga2a13903398cd8cb20129a32bce4a9a5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2a13903398cd8cb20129a32bce4a9a5e">&#9670;&nbsp;</a></span>GetInterfaceWithIp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_expected.html">etcpal::Expected</a>&lt;<a class="el" href="classetcpal_1_1_netint_info.html">etcpal::NetintInfo</a>&gt; etcpal::netint::GetInterfaceWithIp </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classetcpal_1_1_ip_addr.html">IpAddr</a> &amp;&#160;</td>
+          <td class="paramname"><em>ip</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the network interface that has the specified IP address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip</td><td>The IP address assigned to the desired interface. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Information for the matching interface if found. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7" title="An API function was called from a module that was not previously initialized.">kEtcPalErrNotInit</a>: Module not initialized. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: No interfaces found for this IP address. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: Multiple interfaces were configured at the same IP address, which means the system is misconfigured. </dd></dl>
+
+</div>
+</div>
+<a id="ga62efa057a14df26d3830b16b52f713af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga62efa057a14df26d3830b16b52f713af">&#9670;&nbsp;</a></span>IsUp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal::netint::IsUp </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a>&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determine whether a network interface is currently up and running. </p>
+<dl class="section note"><dt>Note</dt><dd>On Windows, cached network interface information is used to determine this, so the result for a given index will not change until <a class="el" href="group__etcpal__cpp__netint.html#ga8ed70cc693d0ad3c5b58aa49d4a6a282" title="Refresh the list of network interfaces.">etcpal::netint::RefreshInterfaces()</a> is called.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Index of the interface to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The interface indicated by index is up. </dd>
+<dd>
+false: The interface indicated by index is down, or index is invalid. </dd></dl>
+
+</div>
+</div>
+<a id="ga8ed70cc693d0ad3c5b58aa49d4a6a282"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8ed70cc693d0ad3c5b58aa49d4a6a282">&#9670;&nbsp;</a></span>RefreshInterfaces()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_error.html">etcpal::Error</a> etcpal::netint::RefreshInterfaces </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Refresh the list of network interfaces. </p>
+<p>Rebuilds the cached array of network interfaces that is returned via the <a class="el" href="group__etcpal__cpp__netint.html#ga91bd4e05629efb799872ab8792306527" title="Get a list of network interfaces on the system.">etcpal::netint::GetInterfaces()</a> function.</p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Interfaces refreshed. </dd>
+<dd>
+Other error codes from the underlying platform are possible here. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

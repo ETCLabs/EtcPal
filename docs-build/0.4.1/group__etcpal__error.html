@@ -1,0 +1,394 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: error (Error Handling)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__error.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">error (Error Handling)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__core.html">Core Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Platform-neutral error codes. </p>
+<div class="fragment"><div class="line">include <span class="stringliteral">&quot;etcpal/error.h&quot;</span></div>
+</div><!-- fragment --><p>Provides a set of error codes that can be returned by library functions. For platform abstraction modules, error codes are translated from their platform-specific counterparts. Use <a class="el" href="group__etcpal__error.html#ga4902a840d9801e02baebd4c70924c4b0" title="Get a string representation of an error code.">etcpal_strerror()</a> to get a string representation of any error code. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gae0de193fbaf16861756958bd3f21e07f"><td class="memItemLeft" align="right" valign="top"><a id="gae0de193fbaf16861756958bd3f21e07f"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__error.html#gae0de193fbaf16861756958bd3f21e07f">ETCPAL_NUM_ERROR_CODES</a>&#160;&#160;&#160;31</td></tr>
+<tr class="memdesc:gae0de193fbaf16861756958bd3f21e07f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The total number of error codes currently defined. <br /></td></tr>
+<tr class="separator:gae0de193fbaf16861756958bd3f21e07f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga743b0648f0ca798ef29c9f69c6e255af"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> { <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a> = 0
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f">kEtcPalErrNotFound</a> = -1
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599">kEtcPalErrNoMem</a> = -2
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa47b93a8acf0aad836afc5dda44551acc">kEtcPalErrBusy</a> = -3
+, <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d">kEtcPalErrExists</a> = -4
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2">kEtcPalErrInvalid</a> = -5
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa735dc55ef30ad08cca792cb41a1dfeb1">kEtcPalErrWouldBlock</a> = -6
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa77e50551fc1c569578f0f9dd4d4a5712">kEtcPalErrNoData</a> = -7
+, <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa8396c97054393b3faf3849541fc99c43">kEtcPalErrProtocol</a> = -8
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa980a5e26cf5086f916d12a485572f12">kEtcPalErrMsgSize</a> = -9
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae27e1c52937b3d1c1993f78160a0a778">kEtcPalErrAddrInUse</a> = -10
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa44ede5b2503ce2b1bb4ccd285d676b50">kEtcPalErrAddrNotAvail</a> = -11
+, <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4c458cd2885e27a726a1d9dedf4b4bec">kEtcPalErrNetwork</a> = -12
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa15cf4f4905d98d94910c6cc76ae1218f">kEtcPalErrConnReset</a> = -13
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afafb8046b7504e0e9908654f939e74ee60">kEtcPalErrConnClosed</a> = -14
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9603628c356775915b437e3c15bdef53">kEtcPalErrIsConn</a> = -15
+, <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa2eb8abeafb170747d185803ad0a2d527">kEtcPalErrNotConn</a> = -16
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa28e1dbbb288f3248d64378d83920259a">kEtcPalErrShutdown</a> = -17
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956">kEtcPalErrTimedOut</a> = -18
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9c5af0e9de48f403358d6b9e2ef819b7">kEtcPalErrHostUnreach</a> = -19
+, <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde">kEtcPalErrConnAborted</a> = -20
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4b119ec2231eb8bf73535b1375f5f232">kEtcPalErrConnRefused</a> = -21
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa9c6c39f7303953a99c50a981f36dff0">kEtcPalErrAlready</a> = -22
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa99aabe562db1ed9acab67c6a2bc777a1">kEtcPalErrInProgress</a> = -23
+, <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaefe61c95876a3a7faba0f5da4ec03f37">kEtcPalErrBufSize</a> = -24
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7">kEtcPalErrNotInit</a> = -25
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b">kEtcPalErrNoNetints</a> = -26
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b">kEtcPalErrNoSockets</a> = -27
+, <br />
+&#160;&#160;<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52">kEtcPalErrNotImpl</a> = -28
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9fb1e2b91f204d8a01377796bddd867d">kEtcPalErrPerm</a> = -29
+, <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8">kEtcPalErrSys</a> = -30
+<br />
+ }</td></tr>
+<tr class="memdesc:ga743b0648f0ca798ef29c9f69c6e255af"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of error codes that can be returned by library functions.  <a href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">More...</a><br /></td></tr>
+<tr class="separator:ga743b0648f0ca798ef29c9f69c6e255af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga4902a840d9801e02baebd4c70924c4b0"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__error.html#ga4902a840d9801e02baebd4c70924c4b0">etcpal_strerror</a> (<a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> code)</td></tr>
+<tr class="memdesc:ga4902a840d9801e02baebd4c70924c4b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a string representation of an error code.  <a href="group__etcpal__error.html#ga4902a840d9801e02baebd4c70924c4b0">More...</a><br /></td></tr>
+<tr class="separator:ga4902a840d9801e02baebd4c70924c4b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga743b0648f0ca798ef29c9f69c6e255af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga743b0648f0ca798ef29c9f69c6e255af">&#9670;&nbsp;</a></span>etcpal_error_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A set of error codes that can be returned by library functions. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d"></a>kEtcPalErrOk&#160;</td><td class="fielddoc"><p>The call was successful, no error occurred. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f"></a>kEtcPalErrNotFound&#160;</td><td class="fielddoc"><p>An identifier or handle passed to a function was not valid or not previously initialized. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599"></a>kEtcPalErrNoMem&#160;</td><td class="fielddoc"><p>A dynamic memory allocation failed, or there is no space left in a statically allocated array. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa47b93a8acf0aad836afc5dda44551acc"></a>kEtcPalErrBusy&#160;</td><td class="fielddoc"><p>The resource being requested is temporarily unavailable. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d"></a>kEtcPalErrExists&#160;</td><td class="fielddoc"><p>The item being created already exists. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2"></a>kEtcPalErrInvalid&#160;</td><td class="fielddoc"><p>An invalid argument was provided to an API function. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa735dc55ef30ad08cca792cb41a1dfeb1"></a>kEtcPalErrWouldBlock&#160;</td><td class="fielddoc"><p>The requested operation would block. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa77e50551fc1c569578f0f9dd4d4a5712"></a>kEtcPalErrNoData&#160;</td><td class="fielddoc"><p>Returned from a function that is meant to be called repeatedly to indicate that there is no more data available. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa8396c97054393b3faf3849541fc99c43"></a>kEtcPalErrProtocol&#160;</td><td class="fielddoc"><p>A protocol parsing function encountered a malformed packet. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afaa980a5e26cf5086f916d12a485572f12"></a>kEtcPalErrMsgSize&#160;</td><td class="fielddoc"><p>Message too long. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afae27e1c52937b3d1c1993f78160a0a778"></a>kEtcPalErrAddrInUse&#160;</td><td class="fielddoc"><p>The requested address is already in use. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa44ede5b2503ce2b1bb4ccd285d676b50"></a>kEtcPalErrAddrNotAvail&#160;</td><td class="fielddoc"><p>Cannot assign the requested address. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa4c458cd2885e27a726a1d9dedf4b4bec"></a>kEtcPalErrNetwork&#160;</td><td class="fielddoc"><p>The operation failed because a network was down or unreachable. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa15cf4f4905d98d94910c6cc76ae1218f"></a>kEtcPalErrConnReset&#160;</td><td class="fielddoc"><p>A connection was reset (hard/abortive close) by the remote peer. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afafb8046b7504e0e9908654f939e74ee60"></a>kEtcPalErrConnClosed&#160;</td><td class="fielddoc"><p>A connection was gracefully closed by the remote peer. </p>
+<p>This code is only used for protocols above the transport layer. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa9603628c356775915b437e3c15bdef53"></a>kEtcPalErrIsConn&#160;</td><td class="fielddoc"><p>Transport endpoint is already connected. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa2eb8abeafb170747d185803ad0a2d527"></a>kEtcPalErrNotConn&#160;</td><td class="fielddoc"><p>Transport endpoint is not connected. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa28e1dbbb288f3248d64378d83920259a"></a>kEtcPalErrShutdown&#160;</td><td class="fielddoc"><p>Transport endpoint is shut down. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956"></a>kEtcPalErrTimedOut&#160;</td><td class="fielddoc"><p>A connection timed out. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa9c5af0e9de48f403358d6b9e2ef819b7"></a>kEtcPalErrHostUnreach&#160;</td><td class="fielddoc"><p>Host is unreachable. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde"></a>kEtcPalErrConnAborted&#160;</td><td class="fielddoc"><p>A connection has been aborted. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa4b119ec2231eb8bf73535b1375f5f232"></a>kEtcPalErrConnRefused&#160;</td><td class="fielddoc"><p>A connection was refused. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afaa9c6c39f7303953a99c50a981f36dff0"></a>kEtcPalErrAlready&#160;</td><td class="fielddoc"><p>The operation requested is already in progress. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa99aabe562db1ed9acab67c6a2bc777a1"></a>kEtcPalErrInProgress&#160;</td><td class="fielddoc"><p>The operation requested is now in progress and will complete later. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afaefe61c95876a3a7faba0f5da4ec03f37"></a>kEtcPalErrBufSize&#160;</td><td class="fielddoc"><p>A buffer provided to a function was not big enough to hold the data that needed to be packed into it. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7"></a>kEtcPalErrNotInit&#160;</td><td class="fielddoc"><p>An API function was called from a module that was not previously initialized. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b"></a>kEtcPalErrNoNetints&#160;</td><td class="fielddoc"><p>No network interfaces were found on the system, or there are no network interfaces of a type that can satisfy the call being made. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b"></a>kEtcPalErrNoSockets&#160;</td><td class="fielddoc"><p>No sockets have been added to the context. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52"></a>kEtcPalErrNotImpl&#160;</td><td class="fielddoc"><p>A function or specific use of a function is not implemented yet. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa9fb1e2b91f204d8a01377796bddd867d"></a>kEtcPalErrPerm&#160;</td><td class="fielddoc"><p>The operation is not permitted. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8"></a>kEtcPalErrSys&#160;</td><td class="fielddoc"><p>A system call or C library call failed in a way not covered by other errors. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga4902a840d9801e02baebd4c70924c4b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4902a840d9801e02baebd4c70924c4b0">&#9670;&nbsp;</a></span>etcpal_strerror()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* etcpal_strerror </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td>
+          <td class="paramname"><em>code</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a string representation of an error code. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">code</td><td>EtcPal error code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Error string (char *) (valid error code) or NULL (invalid error code). </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

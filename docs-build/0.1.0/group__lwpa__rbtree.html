@@ -1,0 +1,1096 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: lwpa_rbtree</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.1.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__lwpa__rbtree.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">lwpa_rbtree<div class="ingroups"><a class="el" href="group__lwpa.html">lwpa</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>A red-black tree implementation. </p>
+<p>#include "lwpa_rbtree.h"</p>
+<p>A red-black tree is a popular design for a self-balancing binary search tree. Based on a public-domain red-black tree implementation; see the header file for details. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree node.  <a href="struct_lwpa_rb_node.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree.  <a href="struct_lwpa_rb_tree.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree iterator.  <a href="struct_lwpa_rb_iter.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga0d5d812c77767d9b18de1620e34167ac"><td class="memItemLeft" align="right" valign="top"><a id="ga0d5d812c77767d9b18de1620e34167ac"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga0d5d812c77767d9b18de1620e34167ac">RB_ITER_MAX_HEIGHT</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ga0d5d812c77767d9b18de1620e34167ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">The tallest allowable tree that can be iterated over. <br /></td></tr>
+<tr class="separator:ga0d5d812c77767d9b18de1620e34167ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:gaad7a191eccdcccb61d87c017fdebd093"><td class="memItemLeft" align="right" valign="top"><a id="gaad7a191eccdcccb61d87c017fdebd093"></a>
+typedef struct <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a>&#160;</td><td class="memItemRight" valign="bottom"><b>LwpaRbNode</b></td></tr>
+<tr class="separator:gaad7a191eccdcccb61d87c017fdebd093"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9f041717cd1305be3ad3f6997eb17915"><td class="memItemLeft" align="right" valign="top"><a id="ga9f041717cd1305be3ad3f6997eb17915"></a>
+typedef struct <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a>&#160;</td><td class="memItemRight" valign="bottom"><b>LwpaRbTree</b></td></tr>
+<tr class="separator:ga9f041717cd1305be3ad3f6997eb17915"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaadc1dd0e9c4ca0183ec47958b977e376"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gaadc1dd0e9c4ca0183ec47958b977e376">LwpaRbIter</a></td></tr>
+<tr class="memdesc:gaadc1dd0e9c4ca0183ec47958b977e376"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree iterator.  <a href="group__lwpa__rbtree.html#gaadc1dd0e9c4ca0183ec47958b977e376">More...</a><br /></td></tr>
+<tr class="separator:gaadc1dd0e9c4ca0183ec47958b977e376"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga81b54f02c74208cebaf5415a834ae570"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga81b54f02c74208cebaf5415a834ae570">rb_tree_node_cmp_ptr_cb</a> (const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *a, const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *b)</td></tr>
+<tr class="memdesc:ga81b54f02c74208cebaf5415a834ae570"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default node comparison callback.  <a href="group__lwpa__rbtree.html#ga81b54f02c74208cebaf5415a834ae570">More...</a><br /></td></tr>
+<tr class="separator:ga81b54f02c74208cebaf5415a834ae570"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3d53f0f67ab15bd6786a403ee15c71a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga3d53f0f67ab15bd6786a403ee15c71a5">rb_tree_node_dealloc_cb</a> (const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node)</td></tr>
+<tr class="memdesc:ga3d53f0f67ab15bd6786a403ee15c71a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default node deallocation callback.  <a href="group__lwpa__rbtree.html#ga3d53f0f67ab15bd6786a403ee15c71a5">More...</a><br /></td></tr>
+<tr class="separator:ga3d53f0f67ab15bd6786a403ee15c71a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gada83215755aa518f6bf3d166a5ff7779"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gada83215755aa518f6bf3d166a5ff7779">rb_node_init</a> (<a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *self, void *value)</td></tr>
+<tr class="memdesc:gada83215755aa518f6bf3d166a5ff7779"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a red-black tree node.  <a href="group__lwpa__rbtree.html#gada83215755aa518f6bf3d166a5ff7779">More...</a><br /></td></tr>
+<tr class="separator:gada83215755aa518f6bf3d166a5ff7779"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab5a8c9076e06fd05f042b25a6d385f02"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02">rb_tree_init</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">rb_tree_node_cmp_f</a> cmp, <a class="el" href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">rb_node_alloc_f</a> alloc_f, <a class="el" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">rb_node_dealloc_f</a> dealloc_f)</td></tr>
+<tr class="memdesc:gab5a8c9076e06fd05f042b25a6d385f02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a red-black tree node.  <a href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02">More...</a><br /></td></tr>
+<tr class="separator:gab5a8c9076e06fd05f042b25a6d385f02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae7649c69dac063892143049d14b78021"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gae7649c69dac063892143049d14b78021">rb_tree_find</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, void *value)</td></tr>
+<tr class="memdesc:gae7649c69dac063892143049d14b78021"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a value in a red-black tree.  <a href="group__lwpa__rbtree.html#gae7649c69dac063892143049d14b78021">More...</a><br /></td></tr>
+<tr class="separator:gae7649c69dac063892143049d14b78021"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1d0ad25bb2702bd4d5bd568775474fea"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga1d0ad25bb2702bd4d5bd568775474fea">rb_tree_insert</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, void *value)</td></tr>
+<tr class="memdesc:ga1d0ad25bb2702bd4d5bd568775474fea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new value into a red-black tree.  <a href="group__lwpa__rbtree.html#ga1d0ad25bb2702bd4d5bd568775474fea">More...</a><br /></td></tr>
+<tr class="separator:ga1d0ad25bb2702bd4d5bd568775474fea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad6533c429550b824318c8a654e8e992f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gad6533c429550b824318c8a654e8e992f">rb_tree_remove</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, void *value)</td></tr>
+<tr class="memdesc:gad6533c429550b824318c8a654e8e992f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a value from a red-black tree.  <a href="group__lwpa__rbtree.html#gad6533c429550b824318c8a654e8e992f">More...</a><br /></td></tr>
+<tr class="separator:gad6533c429550b824318c8a654e8e992f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c386b632e95e457a4536385c93e72a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga3c386b632e95e457a4536385c93e72a0">rb_tree_clear</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self)</td></tr>
+<tr class="memdesc:ga3c386b632e95e457a4536385c93e72a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear all values from a red-black tree.  <a href="group__lwpa__rbtree.html#ga3c386b632e95e457a4536385c93e72a0">More...</a><br /></td></tr>
+<tr class="separator:ga3c386b632e95e457a4536385c93e72a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7329ab2313e8d6ac2cffdef6506192c4"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga7329ab2313e8d6ac2cffdef6506192c4">rb_tree_size</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self)</td></tr>
+<tr class="memdesc:ga7329ab2313e8d6ac2cffdef6506192c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current number of values in a red-black tree.  <a href="group__lwpa__rbtree.html#ga7329ab2313e8d6ac2cffdef6506192c4">More...</a><br /></td></tr>
+<tr class="separator:ga7329ab2313e8d6ac2cffdef6506192c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga448db091fd66028c31f2507f1dfee961"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga448db091fd66028c31f2507f1dfee961">rb_tree_insert_node</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node)</td></tr>
+<tr class="memdesc:ga448db091fd66028c31f2507f1dfee961"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a node containing a new value into a red-black tree.  <a href="group__lwpa__rbtree.html#ga448db091fd66028c31f2507f1dfee961">More...</a><br /></td></tr>
+<tr class="separator:ga448db091fd66028c31f2507f1dfee961"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga332ebc443ba728868c326dd4616ad7e9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga332ebc443ba728868c326dd4616ad7e9">rb_tree_remove_with_cb</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, void *value, <a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a> node_cb)</td></tr>
+<tr class="memdesc:ga332ebc443ba728868c326dd4616ad7e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a value from a red-black tree, calling back into the application with the node and value being removed.  <a href="group__lwpa__rbtree.html#ga332ebc443ba728868c326dd4616ad7e9">More...</a><br /></td></tr>
+<tr class="separator:ga332ebc443ba728868c326dd4616ad7e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae72ff458135e96562d19f412552b0023"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gae72ff458135e96562d19f412552b0023">rb_tree_clear_with_cb</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, <a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a> node_cb)</td></tr>
+<tr class="memdesc:gae72ff458135e96562d19f412552b0023"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear all values from a red-black tree, calling back into the application for each node and value being removed.  <a href="group__lwpa__rbtree.html#gae72ff458135e96562d19f412552b0023">More...</a><br /></td></tr>
+<tr class="separator:gae72ff458135e96562d19f412552b0023"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2648ae99f6997c45d42a1d4896c8f0cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga2648ae99f6997c45d42a1d4896c8f0cf">rb_tree_test</a> (<a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *root)</td></tr>
+<tr class="memdesc:ga2648ae99f6997c45d42a1d4896c8f0cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the validity of a red-black tree.  <a href="group__lwpa__rbtree.html#ga2648ae99f6997c45d42a1d4896c8f0cf">More...</a><br /></td></tr>
+<tr class="separator:ga2648ae99f6997c45d42a1d4896c8f0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga26612f21d99cfdbc6719a96e82f369b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga26612f21d99cfdbc6719a96e82f369b8">rb_iter_init</a> (<a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *self)</td></tr>
+<tr class="memdesc:ga26612f21d99cfdbc6719a96e82f369b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a red-black tree iterator.  <a href="group__lwpa__rbtree.html#ga26612f21d99cfdbc6719a96e82f369b8">More...</a><br /></td></tr>
+<tr class="separator:ga26612f21d99cfdbc6719a96e82f369b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga938ea056d3e6fb8b89515f78cf5afbce"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga938ea056d3e6fb8b89515f78cf5afbce">rb_iter_first</a> (<a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *self, <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *tree)</td></tr>
+<tr class="memdesc:ga938ea056d3e6fb8b89515f78cf5afbce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Point a red-black tree iterator at the first value in the tree.  <a href="group__lwpa__rbtree.html#ga938ea056d3e6fb8b89515f78cf5afbce">More...</a><br /></td></tr>
+<tr class="separator:ga938ea056d3e6fb8b89515f78cf5afbce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad75cc5bf03d1455046c47b17acf27dbb"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gad75cc5bf03d1455046c47b17acf27dbb">rb_iter_last</a> (<a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *self, <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *tree)</td></tr>
+<tr class="memdesc:gad75cc5bf03d1455046c47b17acf27dbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Point a red-black tree iterator at the last value in the tree.  <a href="group__lwpa__rbtree.html#gad75cc5bf03d1455046c47b17acf27dbb">More...</a><br /></td></tr>
+<tr class="separator:gad75cc5bf03d1455046c47b17acf27dbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga627846455078b0b6cdd99fdfe9b6c24d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga627846455078b0b6cdd99fdfe9b6c24d">rb_iter_next</a> (<a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *self)</td></tr>
+<tr class="memdesc:ga627846455078b0b6cdd99fdfe9b6c24d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advance a red-black tree iterator.  <a href="group__lwpa__rbtree.html#ga627846455078b0b6cdd99fdfe9b6c24d">More...</a><br /></td></tr>
+<tr class="separator:ga627846455078b0b6cdd99fdfe9b6c24d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7cb1cd4f04ffc6d9d14b74bc81c476f0"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga7cb1cd4f04ffc6d9d14b74bc81c476f0">rb_iter_prev</a> (<a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *self)</td></tr>
+<tr class="memdesc:ga7cb1cd4f04ffc6d9d14b74bc81c476f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverse-advance a red-black tree iterator.  <a href="group__lwpa__rbtree.html#ga7cb1cd4f04ffc6d9d14b74bc81c476f0">More...</a><br /></td></tr>
+<tr class="separator:ga7cb1cd4f04ffc6d9d14b74bc81c476f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Callback Functions</h2></td></tr>
+<tr class="memitem:gab784fd5c55bf752e7b940d155d434367"><td class="memItemLeft" align="right" valign="top">typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">rb_tree_node_cmp_f</a>) (const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node_a, const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node_b)</td></tr>
+<tr class="memdesc:gab784fd5c55bf752e7b940d155d434367"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type that compares two nodes in a tree.  <a href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">More...</a><br /></td></tr>
+<tr class="separator:gab784fd5c55bf752e7b940d155d434367"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacc50d641f7962fb9f40dc56ae5254e9a"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a>) (const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node)</td></tr>
+<tr class="memdesc:gacc50d641f7962fb9f40dc56ae5254e9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type to be called for each node in a tree.  <a href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">More...</a><br /></td></tr>
+<tr class="separator:gacc50d641f7962fb9f40dc56ae5254e9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga78d8bafef37c68be88c8a382b5fb024d"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">rb_node_alloc_f</a>) ()</td></tr>
+<tr class="memdesc:ga78d8bafef37c68be88c8a382b5fb024d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type to allocate a new node.  <a href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">More...</a><br /></td></tr>
+<tr class="separator:ga78d8bafef37c68be88c8a382b5fb024d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf6fa55ab036a41506969c3b87f18e02e"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">rb_node_dealloc_f</a>) (<a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node)</td></tr>
+<tr class="memdesc:gaf6fa55ab036a41506969c3b87f18e02e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type to deallocate a node.  <a href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">More...</a><br /></td></tr>
+<tr class="separator:gaf6fa55ab036a41506969c3b87f18e02e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="gaadc1dd0e9c4ca0183ec47958b977e376"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaadc1dd0e9c4ca0183ec47958b977e376">&#9670;&nbsp;</a></span>LwpaRbIter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> <a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A red-black tree iterator. </p>
+<p>Initialize using <a class="el" href="group__lwpa__rbtree.html#ga26612f21d99cfdbc6719a96e82f369b8" title="Initialize a red-black tree iterator.">rb_iter_init()</a> before carrying out any other operation on the iterator. </p>
+
+</div>
+</div>
+<a id="ga78d8bafef37c68be88c8a382b5fb024d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga78d8bafef37c68be88c8a382b5fb024d">&#9670;&nbsp;</a></span>rb_node_alloc_f</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a>*(* rb_node_alloc_f) ()</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type to allocate a new node. </p>
+<p>The user provides the allocation method for new nodes, whether this be malloc() or some more static method. A function of this type is saved by the tree struct and called on a call to <a class="el" href="group__lwpa__rbtree.html#ga1d0ad25bb2702bd4d5bd568775474fea" title="Insert a new value into a red-black tree.">rb_tree_insert()</a>.</p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly allocated node. </dd></dl>
+
+</div>
+</div>
+<a id="gaf6fa55ab036a41506969c3b87f18e02e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf6fa55ab036a41506969c3b87f18e02e">&#9670;&nbsp;</a></span>rb_node_dealloc_f</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* rb_node_dealloc_f) (<a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type to deallocate a node. </p>
+<p>The user provides the deallocation method for nodes, whether this be free() or some more static method. A function of this type is saved by the tree struct and called on calls to <a class="el" href="group__lwpa__rbtree.html#gad6533c429550b824318c8a654e8e992f" title="Remove a value from a red-black tree.">rb_tree_remove()</a> and <a class="el" href="group__lwpa__rbtree.html#ga3c386b632e95e457a4536385c93e72a0" title="Clear all values from a red-black tree.">rb_tree_clear()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">node</td><td>Pointer to node to deallocate. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gab784fd5c55bf752e7b940d155d434367"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab784fd5c55bf752e7b940d155d434367">&#9670;&nbsp;</a></span>rb_tree_node_cmp_f</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int(* rb_tree_node_cmp_f) (const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node_a, const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node_b)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type that compares two nodes in a tree. </p>
+<p>A default, <a class="el" href="group__lwpa__rbtree.html#ga81b54f02c74208cebaf5415a834ae570" title="The default node comparison callback.">rb_tree_node_cmp_ptr_cb()</a>, is provided which simply compares the pointer (address) of the value member of each node.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree in which two nodes are being compared. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_a</td><td>The first node being compared. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_b</td><td>The second node being compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>&lt; 0 (node_a's value is less than node_b's value)<br  />
+ 0 (node_a's value is equal to node_b's value)<br  />
+ &gt; 0 (node_a's value is greater than node_b's value) </dd></dl>
+
+</div>
+</div>
+<a id="gacc50d641f7962fb9f40dc56ae5254e9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacc50d641f7962fb9f40dc56ae5254e9a">&#9670;&nbsp;</a></span>rb_tree_node_f</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* rb_tree_node_f) (const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *self, <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *node)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type to be called for each node in a tree. </p>
+<p>Usually provided on a tree-wide clear or destroy operation; in this case, it should provide any deallocation necessary for the node structure and its value. A default, <a class="el" href="group__lwpa__rbtree.html#ga3d53f0f67ab15bd6786a403ee15c71a5" title="The default node deallocation callback.">rb_tree_node_dealloc_cb()</a>, is provided which simply calls the tree's <a class="el" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e" title="A function type to deallocate a node.">rb_node_dealloc_f</a> on the node.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree in which the node resides. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node</td><td>The node for which an action should be performed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga938ea056d3e6fb8b89515f78cf5afbce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga938ea056d3e6fb8b89515f78cf5afbce">&#9670;&nbsp;</a></span>rb_iter_first()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* rb_iter_first </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>tree</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Point a red-black tree iterator at the first value in the tree. </p>
+<p>The first value is the lowest, as determined by the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a>. Use <a class="el" href="group__lwpa__rbtree.html#ga627846455078b0b6cdd99fdfe9b6c24d" title="Advance a red-black tree iterator.">rb_iter_next()</a> to get the next higher value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to point at the first value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td>Tree of which to get the first value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the first value or NULL (the tree was empty or invalid). </dd></dl>
+
+</div>
+</div>
+<a id="ga26612f21d99cfdbc6719a96e82f369b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga26612f21d99cfdbc6719a96e82f369b8">&#9670;&nbsp;</a></span>rb_iter_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a>* rb_iter_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a red-black tree iterator. </p>
+<p>This function must be called on a new iterator before using any of the other rb_iter_* functions on it.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The iterator to be initialized. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the iterator that was initialized. </dd></dl>
+
+</div>
+</div>
+<a id="gad75cc5bf03d1455046c47b17acf27dbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad75cc5bf03d1455046c47b17acf27dbb">&#9670;&nbsp;</a></span>rb_iter_last()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* rb_iter_last </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>tree</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Point a red-black tree iterator at the last value in the tree. </p>
+<p>The last value is the highest, as determined by the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a>. Use <a class="el" href="group__lwpa__rbtree.html#ga7cb1cd4f04ffc6d9d14b74bc81c476f0" title="Reverse-advance a red-black tree iterator.">rb_iter_prev()</a> to get the next lower value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to point at the last value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td>Tree of which to get the last value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the last value or NULL (the tree was empty or invalid). </dd></dl>
+
+</div>
+</div>
+<a id="ga627846455078b0b6cdd99fdfe9b6c24d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga627846455078b0b6cdd99fdfe9b6c24d">&#9670;&nbsp;</a></span>rb_iter_next()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* rb_iter_next </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Advance a red-black tree iterator. </p>
+<p>Gets the next higher value in the tree as determined by the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to advance. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to next higher value, or NULL (the end of the tree has been reached). </dd></dl>
+
+</div>
+</div>
+<a id="ga7cb1cd4f04ffc6d9d14b74bc81c476f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7cb1cd4f04ffc6d9d14b74bc81c476f0">&#9670;&nbsp;</a></span>rb_iter_prev()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* rb_iter_prev </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_iter.html">LwpaRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reverse-advance a red-black tree iterator. </p>
+<p>Gets the next lower value in the tree as determined by the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to reverse-advance. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to next lower value, or NULL (the beginning of the tree has been reached). </dd></dl>
+
+</div>
+</div>
+<a id="gada83215755aa518f6bf3d166a5ff7779"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gada83215755aa518f6bf3d166a5ff7779">&#9670;&nbsp;</a></span>rb_node_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a>* rb_node_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a red-black tree node. </p>
+<p>This function must be called on a new node before inserting it manually using <a class="el" href="group__lwpa__rbtree.html#ga448db091fd66028c31f2507f1dfee961" title="Insert a node containing a new value into a red-black tree.">rb_tree_insert_node()</a>. When using <a class="el" href="group__lwpa__rbtree.html#ga1d0ad25bb2702bd4d5bd568775474fea" title="Insert a new value into a red-black tree.">rb_tree_insert()</a>, this function is called on the new node automatically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The node to be initialized. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Pointer to the value to assign to the node. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the node that was initialized. </dd></dl>
+
+</div>
+</div>
+<a id="ga3c386b632e95e457a4536385c93e72a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3c386b632e95e457a4536385c93e72a0">&#9670;&nbsp;</a></span>rb_tree_clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_clear </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clear all values from a red-black tree. </p>
+<p>The node memory is deallocated using the <a class="el" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e" title="A function type to deallocate a node.">rb_node_dealloc_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a>; the user is responsible for deallocating the value memory.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree to clear. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 (the tree was cleared) or 0 (an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gae72ff458135e96562d19f412552b0023"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae72ff458135e96562d19f412552b0023">&#9670;&nbsp;</a></span>rb_tree_clear_with_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_clear_with_cb </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a>&#160;</td>
+          <td class="paramname"><em>node_cb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clear all values from a red-black tree, calling back into the application for each node and value being removed. </p>
+<p>The user provides a <a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a" title="A function type to be called for each node in a tree.">rb_tree_node_f</a> callback function which is called for each node in the tree. The user is responsible for deallocating both the node and value memory.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree to clear. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_cb</td><td>Callback function to call with each node and value being removed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 (the tree was cleared) or 0 (an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gae7649c69dac063892143049d14b78021"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae7649c69dac063892143049d14b78021">&#9670;&nbsp;</a></span>rb_tree_find()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* rb_tree_find </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Find a value in a red-black tree. </p>
+<p>Uses the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a> to compare values. Lookup guaranteed in log(n) time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree in which to find the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to find. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the value (value found) or NULL (value not found). </dd></dl>
+
+</div>
+</div>
+<a id="gab5a8c9076e06fd05f042b25a6d385f02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab5a8c9076e06fd05f042b25a6d385f02">&#9670;&nbsp;</a></span>rb_tree_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a>* rb_tree_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367">rb_tree_node_cmp_f</a>&#160;</td>
+          <td class="paramname"><em>node_cmp_cb</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d">rb_node_alloc_f</a>&#160;</td>
+          <td class="paramname"><em>alloc_f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e">rb_node_dealloc_f</a>&#160;</td>
+          <td class="paramname"><em>dealloc_f</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a red-black tree node. </p>
+<p>This function must be called on a new red-black tree before performing any other operations on it.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree to be initialized. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_cmp_cb</td><td>A function to use for comparing values in the tree. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alloc_f</td><td>A function to use for allocating new node structures. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dealloc_f</td><td>A function to use for deallocating node structures. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the tree that was initialized. </dd></dl>
+
+</div>
+</div>
+<a id="ga1d0ad25bb2702bd4d5bd568775474fea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1d0ad25bb2702bd4d5bd568775474fea">&#9670;&nbsp;</a></span>rb_tree_insert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_insert </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert a new value into a red-black tree. </p>
+<p>If the value did not already exist in the tree, a new node is allocated using the <a class="el" href="group__lwpa__rbtree.html#ga78d8bafef37c68be88c8a382b5fb024d" title="A function type to allocate a new node.">rb_node_alloc_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a>. Uses the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a> to compare values. Insertion guaranteed in log(n) time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree in which to insert the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to insert. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 (the value was inserted or the value already existed in the tree) or 0 (an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga448db091fd66028c31f2507f1dfee961"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga448db091fd66028c31f2507f1dfee961">&#9670;&nbsp;</a></span>rb_tree_insert_node()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_insert_node </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *&#160;</td>
+          <td class="paramname"><em>node</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert a node containing a new value into a red-black tree. </p>
+<p>The node is supplied by the caller and its memory must remain valid as long as it remains in the tree. Uses the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a> to compare values. Insertion guaranteed in log(n) time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree in which to insert the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node</td><td>Node containing value to insert. Must have been previously initialized using <a class="el" href="group__lwpa__rbtree.html#gada83215755aa518f6bf3d166a5ff7779" title="Initialize a red-black tree node.">rb_node_init()</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 (the value was inserted or the value already existed in the tree) or 0 (an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga81b54f02c74208cebaf5415a834ae570"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga81b54f02c74208cebaf5415a834ae570">&#9670;&nbsp;</a></span>rb_tree_node_cmp_ptr_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_node_cmp_ptr_cb </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The default node comparison callback. </p>
+<p>This function can be supplied as an argument to any function that takes a <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a>. Simply compares the pointer addresses of the two node values. </p>
+
+</div>
+</div>
+<a id="ga3d53f0f67ab15bd6786a403ee15c71a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3d53f0f67ab15bd6786a403ee15c71a5">&#9670;&nbsp;</a></span>rb_tree_node_dealloc_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void rb_tree_node_dealloc_cb </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *&#160;</td>
+          <td class="paramname"><em>node</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The default node deallocation callback. </p>
+<p>This function can be supplied as an argument to any function that takes a <a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a" title="A function type to be called for each node in a tree.">rb_tree_node_f</a>. Simply deallocates the node using the tree's dealloc_f. </p>
+
+</div>
+</div>
+<a id="gad6533c429550b824318c8a654e8e992f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad6533c429550b824318c8a654e8e992f">&#9670;&nbsp;</a></span>rb_tree_remove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_remove </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove a value from a red-black tree. </p>
+<p>The node memory is deallocated using the <a class="el" href="group__lwpa__rbtree.html#gaf6fa55ab036a41506969c3b87f18e02e" title="A function type to deallocate a node.">rb_node_dealloc_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a>; the user is responsible for deallocating the value memory. Uses the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a> to compare values. Removal guaranteed in log(n) time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree from which to remove the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to remove. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 (the value was removed) or 0 (the value did not exist in the tree or an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga332ebc443ba728868c326dd4616ad7e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga332ebc443ba728868c326dd4616ad7e9">&#9670;&nbsp;</a></span>rb_tree_remove_with_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_remove_with_cb </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a">rb_tree_node_f</a>&#160;</td>
+          <td class="paramname"><em>node_cb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove a value from a red-black tree, calling back into the application with the node and value being removed. </p>
+<p>The user provides a <a class="el" href="group__lwpa__rbtree.html#gacc50d641f7962fb9f40dc56ae5254e9a" title="A function type to be called for each node in a tree.">rb_tree_node_f</a> callback function and is responsible for deallocating both the node and value memory. Uses the <a class="el" href="group__lwpa__rbtree.html#gab784fd5c55bf752e7b940d155d434367" title="A function type that compares two nodes in a tree.">rb_tree_node_cmp_f</a> provided in <a class="el" href="group__lwpa__rbtree.html#gab5a8c9076e06fd05f042b25a6d385f02" title="Initialize a red-black tree node.">rb_tree_init()</a> to compare values. Removal guaranteed in log(n) time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree from which to remove the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to remove. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_cb</td><td>Callback function to call with the node and value being removed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 (the value was removed) or 0 (the value did not exist in the tree or an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga7329ab2313e8d6ac2cffdef6506192c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7329ab2313e8d6ac2cffdef6506192c4">&#9670;&nbsp;</a></span>rb_tree_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t rb_tree_size </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current number of values in a red-black tree. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree of which to get the size. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of values currently in the tree. </dd></dl>
+
+</div>
+</div>
+<a id="ga2648ae99f6997c45d42a1d4896c8f0cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2648ae99f6997c45d42a1d4896c8f0cf">&#9670;&nbsp;</a></span>rb_tree_test()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rb_tree_test </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_tree.html">LwpaRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_rb_node.html">LwpaRbNode</a> *&#160;</td>
+          <td class="paramname"><em>root</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test the validity of a red-black tree. </p>
+<p>A debugging function; tests that both basic binary tree rules and specific red-black rules are not violated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree to test. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>Node at which to start the test. All nodes beneath this node will be tested. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 (no violations were found) or 0 (a violation was found). </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

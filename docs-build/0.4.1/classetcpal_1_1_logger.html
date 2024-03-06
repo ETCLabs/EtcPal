@@ -1,0 +1,758 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: Logger Class Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classetcpal_1_1_logger.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#pub-methods">Public Member Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">Logger Class Reference<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a> &raquo; <a class="el" href="group__etcpal__cpp__log.html">log (Logging)</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<div class="textblock"><p>A class for dispatching log messages. </p>
+<p>See the long description for the <a class="el" href="group__etcpal__cpp__log.html">log (Logging)</a> module for more detailed usage information. </p>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a84e487b1e20733405bd8b870e59f670c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a84e487b1e20733405bd8b870e59f670c">Startup</a> (<a class="el" href="classetcpal_1_1_log_message_handler.html">LogMessageHandler</a> &amp;message_handler)</td></tr>
+<tr class="memdesc:a84e487b1e20733405bd8b870e59f670c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start logging.  <a href="classetcpal_1_1_logger.html#a84e487b1e20733405bd8b870e59f670c">More...</a><br /></td></tr>
+<tr class="separator:a84e487b1e20733405bd8b870e59f670c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5f038c2b480cf9ef5e19e3eba8dbaf9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#ac5f038c2b480cf9ef5e19e3eba8dbaf9">Shutdown</a> ()</td></tr>
+<tr class="memdesc:ac5f038c2b480cf9ef5e19e3eba8dbaf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop logging.  <a href="classetcpal_1_1_logger.html#ac5f038c2b480cf9ef5e19e3eba8dbaf9">More...</a><br /></td></tr>
+<tr class="separator:ac5f038c2b480cf9ef5e19e3eba8dbaf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a446621c38cfc4ef6c119c8a26551ccc6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a446621c38cfc4ef6c119c8a26551ccc6">CanLog</a> (int pri) const noexcept</td></tr>
+<tr class="memdesc:a446621c38cfc4ef6c119c8a26551ccc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a priority level can be logged using the mask given via <a class="el" href="classetcpal_1_1_logger.html#adf3a549fed7e9cf73833af591af43071" title="Set a new log mask.">SetLogMask()</a>.  <a href="classetcpal_1_1_logger.html#a446621c38cfc4ef6c119c8a26551ccc6">More...</a><br /></td></tr>
+<tr class="separator:a446621c38cfc4ef6c119c8a26551ccc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa613ebedf6ebc98cccf35990217e2eab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#aa613ebedf6ebc98cccf35990217e2eab">Log</a> (int pri, const char *format,...)</td></tr>
+<tr class="memdesc:aa613ebedf6ebc98cccf35990217e2eab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message.  <a href="classetcpal_1_1_logger.html#aa613ebedf6ebc98cccf35990217e2eab">More...</a><br /></td></tr>
+<tr class="separator:aa613ebedf6ebc98cccf35990217e2eab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Logging Shortcuts</div></td></tr>
+<tr class="memitem:ae78231bc988b651151e0f7099a873daa"><td class="memItemLeft" align="right" valign="top"><a id="ae78231bc988b651151e0f7099a873daa"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#ae78231bc988b651151e0f7099a873daa">Debug</a> (const char *format,...)</td></tr>
+<tr class="memdesc:ae78231bc988b651151e0f7099a873daa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at debug priority. <br /></td></tr>
+<tr class="separator:ae78231bc988b651151e0f7099a873daa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a221110f73de7530eee4f76769cabaf2b"><td class="memItemLeft" align="right" valign="top"><a id="a221110f73de7530eee4f76769cabaf2b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a221110f73de7530eee4f76769cabaf2b">Info</a> (const char *format,...)</td></tr>
+<tr class="memdesc:a221110f73de7530eee4f76769cabaf2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at informational priority. <br /></td></tr>
+<tr class="separator:a221110f73de7530eee4f76769cabaf2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0b5bc31187a46a0e5913c493677ba5d"><td class="memItemLeft" align="right" valign="top"><a id="af0b5bc31187a46a0e5913c493677ba5d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#af0b5bc31187a46a0e5913c493677ba5d">Notice</a> (const char *format,...)</td></tr>
+<tr class="memdesc:af0b5bc31187a46a0e5913c493677ba5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at notice priority. <br /></td></tr>
+<tr class="separator:af0b5bc31187a46a0e5913c493677ba5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97d41b6faaf421937e6b82bd1c3067db"><td class="memItemLeft" align="right" valign="top"><a id="a97d41b6faaf421937e6b82bd1c3067db"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a97d41b6faaf421937e6b82bd1c3067db">Warning</a> (const char *format,...)</td></tr>
+<tr class="memdesc:a97d41b6faaf421937e6b82bd1c3067db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at warning priority. <br /></td></tr>
+<tr class="separator:a97d41b6faaf421937e6b82bd1c3067db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f9ab08aae7973ca510b477041857595"><td class="memItemLeft" align="right" valign="top"><a id="a4f9ab08aae7973ca510b477041857595"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a4f9ab08aae7973ca510b477041857595">Error</a> (const char *format,...)</td></tr>
+<tr class="memdesc:a4f9ab08aae7973ca510b477041857595"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at error priority. <br /></td></tr>
+<tr class="separator:a4f9ab08aae7973ca510b477041857595"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8920f98f8e58c892f8db1b07309c34"><td class="memItemLeft" align="right" valign="top"><a id="a1c8920f98f8e58c892f8db1b07309c34"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a1c8920f98f8e58c892f8db1b07309c34">Critical</a> (const char *format,...)</td></tr>
+<tr class="memdesc:a1c8920f98f8e58c892f8db1b07309c34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at critical priority. <br /></td></tr>
+<tr class="separator:a1c8920f98f8e58c892f8db1b07309c34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a830c42c8d3d96a385510ae78142831e8"><td class="memItemLeft" align="right" valign="top"><a id="a830c42c8d3d96a385510ae78142831e8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a830c42c8d3d96a385510ae78142831e8">Alert</a> (const char *format,...)</td></tr>
+<tr class="memdesc:a830c42c8d3d96a385510ae78142831e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at alert priority. <br /></td></tr>
+<tr class="separator:a830c42c8d3d96a385510ae78142831e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a0fec997bc336f87f4897c5a09b5ab1"><td class="memItemLeft" align="right" valign="top"><a id="a5a0fec997bc336f87f4897c5a09b5ab1"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a5a0fec997bc336f87f4897c5a09b5ab1">Emergency</a> (const char *format,...)</td></tr>
+<tr class="memdesc:a5a0fec997bc336f87f4897c5a09b5ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at emergency priority. <br /></td></tr>
+<tr class="separator:a5a0fec997bc336f87f4897c5a09b5ab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Getters</div></td></tr>
+<tr class="memitem:a49d1636c7a4675c4bfc73cf52edacbc2"><td class="memItemLeft" align="right" valign="top"><a id="a49d1636c7a4675c4bfc73cf52edacbc2"></a>
+<a class="el" href="group__etcpal__cpp__log.html#ga886bd6be55942894f6ddb878d1cfc662">LogDispatchPolicy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a49d1636c7a4675c4bfc73cf52edacbc2">dispatch_policy</a> () const noexcept</td></tr>
+<tr class="memdesc:a49d1636c7a4675c4bfc73cf52edacbc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current log dispatch policy. <br /></td></tr>
+<tr class="separator:a49d1636c7a4675c4bfc73cf52edacbc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0d3bf4ed833ebbaa8529a171d788f20"><td class="memItemLeft" align="right" valign="top"><a id="ad0d3bf4ed833ebbaa8529a171d788f20"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#ad0d3bf4ed833ebbaa8529a171d788f20">log_mask</a> () const noexcept</td></tr>
+<tr class="memdesc:ad0d3bf4ed833ebbaa8529a171d788f20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current log mask. <br /></td></tr>
+<tr class="separator:ad0d3bf4ed833ebbaa8529a171d788f20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5763d3286470e0ddf797daac285d7e40"><td class="memItemLeft" align="right" valign="top"><a id="a5763d3286470e0ddf797daac285d7e40"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a5763d3286470e0ddf797daac285d7e40">log_action</a> () const noexcept</td></tr>
+<tr class="memdesc:a5763d3286470e0ddf797daac285d7e40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current log action. <br /></td></tr>
+<tr class="separator:a5763d3286470e0ddf797daac285d7e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86ddfb490c635f56281f619b19123eea"><td class="memItemLeft" align="right" valign="top"><a id="a86ddfb490c635f56281f619b19123eea"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a86ddfb490c635f56281f619b19123eea">syslog_facility</a> () const noexcept</td></tr>
+<tr class="memdesc:a86ddfb490c635f56281f619b19123eea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current Syslog facility value. <br /></td></tr>
+<tr class="separator:a86ddfb490c635f56281f619b19123eea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d690218c280782b01aff765846c818"><td class="memItemLeft" align="right" valign="top"><a id="aa4d690218c280782b01aff765846c818"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#aa4d690218c280782b01aff765846c818">syslog_hostname</a> () const noexcept</td></tr>
+<tr class="memdesc:aa4d690218c280782b01aff765846c818"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current Syslog HOSTNAME. <br /></td></tr>
+<tr class="separator:aa4d690218c280782b01aff765846c818"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb8556114216b68d3e01d9475f5a589b"><td class="memItemLeft" align="right" valign="top"><a id="acb8556114216b68d3e01d9475f5a589b"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#acb8556114216b68d3e01d9475f5a589b">syslog_app_name</a> () const noexcept</td></tr>
+<tr class="memdesc:acb8556114216b68d3e01d9475f5a589b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current Syslog APP-NAME. <br /></td></tr>
+<tr class="separator:acb8556114216b68d3e01d9475f5a589b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab671d23235980e85a8c2b952f49aec24"><td class="memItemLeft" align="right" valign="top"><a id="ab671d23235980e85a8c2b952f49aec24"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#ab671d23235980e85a8c2b952f49aec24">syslog_procid</a> () const noexcept</td></tr>
+<tr class="memdesc:ab671d23235980e85a8c2b952f49aec24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current Syslog PROCID. <br /></td></tr>
+<tr class="separator:ab671d23235980e85a8c2b952f49aec24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a986c589bfc9aa466a31a84a9b8575546"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_etc_pal_log_params.html">EtcPalLogParams</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a986c589bfc9aa466a31a84a9b8575546">log_params</a> () const noexcept</td></tr>
+<tr class="memdesc:a986c589bfc9aa466a31a84a9b8575546"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the log params used by this logger.  <a href="classetcpal_1_1_logger.html#a986c589bfc9aa466a31a84a9b8575546">More...</a><br /></td></tr>
+<tr class="separator:a986c589bfc9aa466a31a84a9b8575546"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Setters</div></td></tr>
+<tr class="memitem:aeec917862cd49bfea9ea69f0839e78d3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#aeec917862cd49bfea9ea69f0839e78d3">SetDispatchPolicy</a> (<a class="el" href="group__etcpal__cpp__log.html#ga886bd6be55942894f6ddb878d1cfc662">LogDispatchPolicy</a> new_policy) noexcept</td></tr>
+<tr class="memdesc:aeec917862cd49bfea9ea69f0839e78d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the dispatch policy of this logger.  <a href="classetcpal_1_1_logger.html#aeec917862cd49bfea9ea69f0839e78d3">More...</a><br /></td></tr>
+<tr class="separator:aeec917862cd49bfea9ea69f0839e78d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf3a549fed7e9cf73833af591af43071"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#adf3a549fed7e9cf73833af591af43071">SetLogMask</a> (int <a class="el" href="classetcpal_1_1_logger.html#ad0d3bf4ed833ebbaa8529a171d788f20">log_mask</a>) noexcept</td></tr>
+<tr class="memdesc:adf3a549fed7e9cf73833af591af43071"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a new log mask.  <a href="classetcpal_1_1_logger.html#adf3a549fed7e9cf73833af591af43071">More...</a><br /></td></tr>
+<tr class="separator:adf3a549fed7e9cf73833af591af43071"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ef737dccf9de6bcbeaa668726a4f146"><td class="memItemLeft" align="right" valign="top"><a id="a4ef737dccf9de6bcbeaa668726a4f146"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a4ef737dccf9de6bcbeaa668726a4f146">SetLogAction</a> (int <a class="el" href="classetcpal_1_1_logger.html#a5763d3286470e0ddf797daac285d7e40">log_action</a>) noexcept</td></tr>
+<tr class="memdesc:a4ef737dccf9de6bcbeaa668726a4f146"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the types of log messages to create and dispatch to the <a class="el" href="classetcpal_1_1_log_message_handler.html" title="An interface which handles log messages.">LogMessageHandler</a>. <br /></td></tr>
+<tr class="separator:a4ef737dccf9de6bcbeaa668726a4f146"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17b3a97c6ab3a6682d84b873edc89b66"><td class="memItemLeft" align="right" valign="top"><a id="a17b3a97c6ab3a6682d84b873edc89b66"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a17b3a97c6ab3a6682d84b873edc89b66">SetSyslogFacility</a> (int facility) noexcept</td></tr>
+<tr class="memdesc:a17b3a97c6ab3a6682d84b873edc89b66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog facility value; see RFC 5424 &sect; 6.2.1. <br /></td></tr>
+<tr class="separator:a17b3a97c6ab3a6682d84b873edc89b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96af94f561c632cd17da53244ddd5d8e"><td class="memItemLeft" align="right" valign="top"><a id="a96af94f561c632cd17da53244ddd5d8e"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a96af94f561c632cd17da53244ddd5d8e">SetSyslogHostname</a> (const char *hostname) noexcept</td></tr>
+<tr class="memdesc:a96af94f561c632cd17da53244ddd5d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4. <br /></td></tr>
+<tr class="separator:a96af94f561c632cd17da53244ddd5d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59327a03202053f8dd158fb6c2559c26"><td class="memItemLeft" align="right" valign="top"><a id="a59327a03202053f8dd158fb6c2559c26"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a59327a03202053f8dd158fb6c2559c26">SetSyslogHostname</a> (const std::string &amp;hostname) noexcept</td></tr>
+<tr class="memdesc:a59327a03202053f8dd158fb6c2559c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog HOSTNAME; see RFC 5424 &sect; 6.2.4. <br /></td></tr>
+<tr class="separator:a59327a03202053f8dd158fb6c2559c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97e218391233bbc428c3e5c2ab5a90bd"><td class="memItemLeft" align="right" valign="top"><a id="a97e218391233bbc428c3e5c2ab5a90bd"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a97e218391233bbc428c3e5c2ab5a90bd">SetSyslogAppName</a> (const char *app_name) noexcept</td></tr>
+<tr class="memdesc:a97e218391233bbc428c3e5c2ab5a90bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog APP-NAME; see RFC 5424 &sect; 6.2.5. <br /></td></tr>
+<tr class="separator:a97e218391233bbc428c3e5c2ab5a90bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a76c7662c48f17ae4bab5cdee6c867a"><td class="memItemLeft" align="right" valign="top"><a id="a6a76c7662c48f17ae4bab5cdee6c867a"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a6a76c7662c48f17ae4bab5cdee6c867a">SetSyslogAppName</a> (const std::string &amp;app_name) noexcept</td></tr>
+<tr class="memdesc:a6a76c7662c48f17ae4bab5cdee6c867a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog APP-NAME; see RFC 5424 &sect; 6.2.5. <br /></td></tr>
+<tr class="separator:a6a76c7662c48f17ae4bab5cdee6c867a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf81d73315c517070a3421a23cbf4c42"><td class="memItemLeft" align="right" valign="top"><a id="adf81d73315c517070a3421a23cbf4c42"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#adf81d73315c517070a3421a23cbf4c42">SetSyslogProcId</a> (const char *proc_id) noexcept</td></tr>
+<tr class="memdesc:adf81d73315c517070a3421a23cbf4c42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6. <br /></td></tr>
+<tr class="separator:adf81d73315c517070a3421a23cbf4c42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac450da9c26fe790b5e0464b93a2812a8"><td class="memItemLeft" align="right" valign="top"><a id="ac450da9c26fe790b5e0464b93a2812a8"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#ac450da9c26fe790b5e0464b93a2812a8">SetSyslogProcId</a> (const std::string &amp;proc_id) noexcept</td></tr>
+<tr class="memdesc:ac450da9c26fe790b5e0464b93a2812a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6. <br /></td></tr>
+<tr class="separator:ac450da9c26fe790b5e0464b93a2812a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8cef80d64e0ac5719b61e726a63a977"><td class="memItemLeft" align="right" valign="top"><a id="af8cef80d64e0ac5719b61e726a63a977"></a>
+<a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#af8cef80d64e0ac5719b61e726a63a977">SetSyslogProcId</a> (int proc_id) noexcept</td></tr>
+<tr class="memdesc:af8cef80d64e0ac5719b61e726a63a977"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the Syslog PROCID; see RFC 5424 &sect; 6.2.6. <br /></td></tr>
+<tr class="separator:af8cef80d64e0ac5719b61e726a63a977"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae936a50f17600340c0efd8beef66251f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#ae936a50f17600340c0efd8beef66251f">SetThreadPriority</a> (unsigned int priority) noexcept</td></tr>
+<tr class="memdesc:ae936a50f17600340c0efd8beef66251f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the priority of the log dispatch thread.  <a href="classetcpal_1_1_logger.html#ae936a50f17600340c0efd8beef66251f">More...</a><br /></td></tr>
+<tr class="separator:ae936a50f17600340c0efd8beef66251f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7010595bae65cc5b26071de17a56aed8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a7010595bae65cc5b26071de17a56aed8">SetThreadStackSize</a> (unsigned int stack_size) noexcept</td></tr>
+<tr class="memdesc:a7010595bae65cc5b26071de17a56aed8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the stack size of the log dispatch thread.  <a href="classetcpal_1_1_logger.html#a7010595bae65cc5b26071de17a56aed8">More...</a><br /></td></tr>
+<tr class="separator:a7010595bae65cc5b26071de17a56aed8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4605ce30d3578e827dffb480baca9d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#ad4605ce30d3578e827dffb480baca9d6">SetThreadName</a> (const char *name) noexcept</td></tr>
+<tr class="memdesc:ad4605ce30d3578e827dffb480baca9d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the name of the log dispatch thread.  <a href="classetcpal_1_1_logger.html#ad4605ce30d3578e827dffb480baca9d6">More...</a><br /></td></tr>
+<tr class="separator:ad4605ce30d3578e827dffb480baca9d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2166a13956c20a979854e5c2efd22eda"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a2166a13956c20a979854e5c2efd22eda">SetThreadName</a> (const std::string &amp;name) noexcept</td></tr>
+<tr class="memdesc:a2166a13956c20a979854e5c2efd22eda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the name of the log dispatch thread.  <a href="classetcpal_1_1_logger.html#a2166a13956c20a979854e5c2efd22eda">More...</a><br /></td></tr>
+<tr class="separator:a2166a13956c20a979854e5c2efd22eda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a9d7717f69bb88bddf6e48fc3e570f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html#a3a9d7717f69bb88bddf6e48fc3e570f8">SetThreadPlatformData</a> (void *platform_data) noexcept</td></tr>
+<tr class="memdesc:a3a9d7717f69bb88bddf6e48fc3e570f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the platform-specific parameter data of the log dispatch thread.  <a href="classetcpal_1_1_logger.html#a3a9d7717f69bb88bddf6e48fc3e570f8">More...</a><br /></td></tr>
+<tr class="separator:a3a9d7717f69bb88bddf6e48fc3e570f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a446621c38cfc4ef6c119c8a26551ccc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a446621c38cfc4ef6c119c8a26551ccc6">&#9670;&nbsp;</a></span>CanLog()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool CanLog </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pri</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determine whether a priority level can be logged using the mask given via <a class="el" href="classetcpal_1_1_logger.html#adf3a549fed7e9cf73833af591af43071" title="Set a new log mask.">SetLogMask()</a>. </p>
+<p>See <a class="el" href="group__etcpal__log.html#gac44c39be61d1bf95239f9bd6fb1f11ad" title="Determine whether a priority level can be logged given the mask present in the log params.">etcpal_can_log()</a> for more information. </p>
+
+</div>
+</div>
+<a id="aa613ebedf6ebc98cccf35990217e2eab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa613ebedf6ebc98cccf35990217e2eab">&#9670;&nbsp;</a></span>Log()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Log </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Log a message. </p>
+<p>Only dispatches the log message if pri is part of the mask previously passed to <a class="el" href="classetcpal_1_1_logger.html#adf3a549fed7e9cf73833af591af43071" title="Set a new log mask.">SetLogMask()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pri</td><td>The priority of this log message. </td></tr>
+    <tr><td class="paramname">format</td><td>Log message with printf-style format specifiers. Provide additional arguments as appropriate. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a986c589bfc9aa466a31a84a9b8575546"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a986c589bfc9aa466a31a84a9b8575546">&#9670;&nbsp;</a></span>log_params()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="struct_etc_pal_log_params.html">EtcPalLogParams</a> &amp; log_params </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the log params used by this logger. </p>
+<p>This is convenient when interacting with C APIs which take an <a class="el" href="struct_etc_pal_log_params.html" title="A set of parameters used for the etcpal_*log() functions.">EtcPalLogParams</a> instance to log their own messages. Passing these params to those APIs will gather those log messages into this logger instance. </p>
+
+</div>
+</div>
+<a id="aeec917862cd49bfea9ea69f0839e78d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeec917862cd49bfea9ea69f0839e78d3">&#9670;&nbsp;</a></span>SetDispatchPolicy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp; SetDispatchPolicy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__cpp__log.html#ga886bd6be55942894f6ddb878d1cfc662">LogDispatchPolicy</a>&#160;</td>
+          <td class="paramname"><em>new_policy</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Change the dispatch policy of this logger. </p>
+<p>Only has any effect if the logger has not been started yet.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">new_policy</td><td>The new dispatch policy. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="adf3a549fed7e9cf73833af591af43071"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf3a549fed7e9cf73833af591af43071">&#9670;&nbsp;</a></span>SetLogMask()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp; SetLogMask </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>log_mask</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set a new log mask. </p>
+<p>Use the <a class="el" href="group__etcpal__log.html#gaecd624f2fc15671bb3e4c01ede198a08" title="Create a priority mask for all priorities through pri.">ETCPAL_LOG_UPTO()</a> macro to create a mask up to and including a priority level. For example, <a class="el" href="group__etcpal__log.html#gaecd624f2fc15671bb3e4c01ede198a08" title="Create a priority mask for all priorities through pri.">ETCPAL_LOG_UPTO(ETCPAL_LOG_WARNING)</a> will allow all messages with priorites from emergency through warning, inclusive.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">log_mask</td><td>The new log mask. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad4605ce30d3578e827dffb480baca9d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4605ce30d3578e827dffb480baca9d6">&#9670;&nbsp;</a></span>SetThreadName() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp; SetThreadName </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the name of the log dispatch thread. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classetcpal_1_1_thread.html#ae6cedd23a7b2b24f90059df894846864" title="Set the name of this thread.">etcpal::Thread::SetName()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the dispatch policy is <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662aa9a2bb1cd77c7a81a96b73f10722040e" title="Log messages propagate directly from Log() calls to output streams (normally only used for testing)">LogDispatchPolicy::kDirect</a>, this has no effect. </dd></dl>
+
+</div>
+</div>
+<a id="a2166a13956c20a979854e5c2efd22eda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2166a13956c20a979854e5c2efd22eda">&#9670;&nbsp;</a></span>SetThreadName() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp; SetThreadName </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the name of the log dispatch thread. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classetcpal_1_1_thread.html#ae6cedd23a7b2b24f90059df894846864" title="Set the name of this thread.">etcpal::Thread::SetName()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the dispatch policy is <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662aa9a2bb1cd77c7a81a96b73f10722040e" title="Log messages propagate directly from Log() calls to output streams (normally only used for testing)">LogDispatchPolicy::kDirect</a>, this has no effect. </dd></dl>
+
+</div>
+</div>
+<a id="a3a9d7717f69bb88bddf6e48fc3e570f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a9d7717f69bb88bddf6e48fc3e570f8">&#9670;&nbsp;</a></span>SetThreadPlatformData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp; SetThreadPlatformData </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>platform_data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the platform-specific parameter data of the log dispatch thread. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classetcpal_1_1_thread.html#a23a3a84c2368bdf07cf64e1b49df5364" title="Set the platform-specific parameter data.">etcpal::Thread::SetPlatformData()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the dispatch policy is <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662aa9a2bb1cd77c7a81a96b73f10722040e" title="Log messages propagate directly from Log() calls to output streams (normally only used for testing)">LogDispatchPolicy::kDirect</a>, this has no effect. </dd></dl>
+
+</div>
+</div>
+<a id="ae936a50f17600340c0efd8beef66251f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae936a50f17600340c0efd8beef66251f">&#9670;&nbsp;</a></span>SetThreadPriority()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp; SetThreadPriority </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>priority</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the priority of the log dispatch thread. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classetcpal_1_1_thread.html#ac83a10f16662668e1d8a494ddb6e1234" title="Set the priority of this thread.">etcpal::Thread::SetPriority()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the dispatch policy is <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662aa9a2bb1cd77c7a81a96b73f10722040e" title="Log messages propagate directly from Log() calls to output streams (normally only used for testing)">LogDispatchPolicy::kDirect</a>, this has no effect. </dd></dl>
+
+</div>
+</div>
+<a id="a7010595bae65cc5b26071de17a56aed8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7010595bae65cc5b26071de17a56aed8">&#9670;&nbsp;</a></span>SetThreadStackSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_logger.html">Logger</a> &amp; SetThreadStackSize </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>stack_size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the stack size of the log dispatch thread. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classetcpal_1_1_thread.html#a3cb4d6197b72897c0ceba341f7beff4b" title="Set the stack size of this thread in bytes.">etcpal::Thread::SetStackSize()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the dispatch policy is <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662aa9a2bb1cd77c7a81a96b73f10722040e" title="Log messages propagate directly from Log() calls to output streams (normally only used for testing)">LogDispatchPolicy::kDirect</a>, this has no effect. </dd></dl>
+
+</div>
+</div>
+<a id="ac5f038c2b480cf9ef5e19e3eba8dbaf9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5f038c2b480cf9ef5e19e3eba8dbaf9">&#9670;&nbsp;</a></span>Shutdown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Shutdown </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Stop logging. </p>
+<p>If the dispatch policy is <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662a023506f9e1203a14ea275f5e6acb2e1a" title="Log messages are queued and dispatched from another thread (recommended)">LogDispatchPolicy::kQueued</a> (the default) this will dispatch the rest of the log messages and wait for the dispatch thread to join. </p>
+
+</div>
+</div>
+<a id="a84e487b1e20733405bd8b870e59f670c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84e487b1e20733405bd8b870e59f670c">&#9670;&nbsp;</a></span>Startup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Startup </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classetcpal_1_1_log_message_handler.html">LogMessageHandler</a> &amp;&#160;</td>
+          <td class="paramname"><em>message_handler</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Start logging. </p>
+<p>Spawns a thread to dispatch log messages unless SetDispatchPolicy(LogDispatchPolicy::kDirect) has been called. Do not call more than once between calls to <a class="el" href="classetcpal_1_1_logger.html#ac5f038c2b480cf9ef5e19e3eba8dbaf9" title="Stop logging.">Shutdown()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message_handler</td><td>The class instance that will handle log messages from this logger. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>include/etcpal/cpp/<a class="el" href="cpp_2log_8h_source.html">log.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>etcpal</b></li><li class="navelem"><a class="el" href="classetcpal_1_1_logger.html">Logger</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

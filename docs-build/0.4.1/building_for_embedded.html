@@ -1,0 +1,326 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: Building EtcPal for an embedded target</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('building_for_embedded.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="PageDoc"><div class="header">
+  <div class="headertitle">
+<div class="title">Building EtcPal for an embedded target </div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a class="anchor" id="md_docs_pages_building_for_embedded"></a> EtcPal is often included as a dependency by ETC libraries which are portable to embedded targets. In this case, there are a couple of options for integrating EtcPal (and its dependent libraries) into your project.</p>
+<h1>Note on Target Platforms</h1>
+<p>EtcPal has the notion of an OS target, which is used by <a class="el" href="group__etcpal__os.html">OS Abstraction Modules</a>, and a network target, which is used by <a class="el" href="group__etcpal__net.html">Network Abstraction Modules</a>. Either of these can be disabled if your target does not have the applicable functionality. Bare-metal embedded apps can still take advantage of EtcPal's <a class="el" href="group__etcpal__core.html">Core Modules</a> (and, if you want, their associated <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a>).</p>
+<p>To disable the OS or network modules, simply set the relevant CMake target variable to "none" or the empty string when configuring EtcPal using CMake (see below), or exclude the relevant source files from your build if including EtcPal manually. In the latter case, you must also define <code>ETCPAL_NO_OS_SUPPORT</code> and/or <code>ETCPAL_NO_NETWORKING_SUPPORT</code> in your compile options as applicable.</p>
+<h1>Methods for Including EtcPal in Your Project</h1>
+<h2>Cross-compile using CMake (recommended)</h2>
+<p>CMake can be configured to invoke your embedded cross-compilation toolchain directly to build EtcPal and other CMake libraries. This is done by providing a <a href="https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html">CMake toolchain file</a> when configuring the library with CMake.</p>
+<p>The CMake toolchain file sets up CMake to find the tools you use to build your project and uses those tools to build the CMake libraries as well. There are some example toolchain files for various toolchains in the <code>cmake/cross-toolchains</code> directory. If your build tools use an Eclipse-based IDE with an arm-gcc toolchain (a common setup), the file <code>mcuxpresso-k65-freertos-lwip.cmake</code> serves as a good example.</p>
+<p>When using CMake to build EtcPal, some target platforms require special targets or configuration to allow EtcPal to find headers from external libraries. Special requirements for specific platforms are found on the pages below:</p><ul>
+<li><a class="el" href="targeting_freertos.html">Targeting FreeRTOS</a></li>
+<li><a class="el" href="targeting_lwip.html">Targeting lwIP</a></li>
+<li><a class="el" href="targeting_mqx.html">Targeting MQX</a></li>
+</ul>
+<p>The method for including EtcPal via CMake is different depending on if your project already uses CMake or not.</p>
+<h3>If your project is a CMake project</h3>
+<p>EtcPal can be added to the build using the <code>add_subdirectory()</code> command. Before adding EtcPal as a subdirectory, use the variables <code>ETCPAL_OS_TARGET</code> and <code>ETCPAL_NET_TARGET</code> to set the platforms targeted by EtcPal. Some EtcPal target platforms require special targets to be created before calling <code>add_subdirectory()</code>; examples are shown below.</p>
+<div class="fragment"><div class="line">set(ETCPAL_OS_TARGET freertos CACHE STRING &quot;The OS target for EtcPal&quot;)</div>
+<div class="line">set(ETCPAL_NET_TARGET lwip CACHE STRING &quot;The network target for EtcPal&quot;)</div>
+<div class="line"> </div>
+<div class="line"># The &quot;freertos&quot; target platform requires a target called FreeRTOS, which EtcPal uses to find the</div>
+<div class="line"># FreeRTOS headers.</div>
+<div class="line">add_library(FreeRTOS [FreeRTOS sources...])</div>
+<div class="line">target_include_directories(FreeRTOS PUBLIC [freertos/include/paths...])</div>
+<div class="line"> </div>
+<div class="line"># The &quot;lwip&quot; target platform requires a target called lwIP, which EtcPal uses to find the lwIP</div>
+<div class="line"># headers.</div>
+<div class="line">add_library(lwIP [lwip sources...])</div>
+<div class="line">target_include_directories(lwIP PUBLIC [lwip/include/paths...])</div>
+<div class="line"> </div>
+<div class="line">add_subdirectory([path/to/EtcPal/root] EtcPal)</div>
+</div><!-- fragment --><h3>If your project is not a CMake project</h3>
+<p>If your project does not use CMake, you can still consume EtcPal and dependent libraries using CMake. Typically this is done by adding a root CMakeLists.txt one level up from the CMake libraries you are building. A few common configurations with example directory structures are listed below.</p>
+<p><b>1. You are including EtcPal on its own.</b></p>
+<div class="fragment"><div class="line">|- my_project/</div>
+<div class="line">|--- external/</div>
+<div class="line">|----- EtcPal/</div>
+<div class="line">|----- CMakeLists.txt</div>
+<div class="line">|----- toolchain.cmake</div>
+</div><!-- fragment --><p><b>2. You are including a library that depends on EtcPal from GitHub.</b></p>
+<p>In this case, the other library's CMake configuration will have brought EtcPal in as a Git submodule and added it to the build using <code>add_subdirectory()</code>:</p>
+<div class="fragment"><div class="line">|- my_project/</div>
+<div class="line">|--- external/</div>
+<div class="line">|----- OtherEtcLib/</div>
+<div class="line">|------- external/</div>
+<div class="line">|--------- EtcPal/</div>
+<div class="line">|----- CMakeLists.txt</div>
+<div class="line">|----- toolchain.cmake</div>
+</div><!-- fragment --><p><b>3. You are including a library that depends on EtcPal which has been mirrored or copied into another source control provider.</b></p>
+<p>In this case, Git submodules are not available and you must copy the library and EtcPal at the same level in the directory structure. The dependent library's CMake configuration will find EtcPal in this location.</p>
+<div class="fragment"><div class="line">|- my_project/</div>
+<div class="line">|--- external/</div>
+<div class="line">|----- OtherEtcLib/</div>
+<div class="line">|----- EtcPal/</div>
+<div class="line">|----- CMakeLists.txt</div>
+<div class="line">|----- toolchain.cmake</div>
+</div><!-- fragment --><p>The above configuration is also useful when you are using multiple libraries which all depend on EtcPal.</p>
+<p>The CMakeLists.txt contains enough information to build and install the libraries for use by your main project toolchain. In this example, we are targeting FreeRTOS and lwIP. The CMakeLists.txt would contain the following:</p>
+<div class="fragment"><div class="line">cmake_minimum_required(VERSION 3.3)</div>
+<div class="line"> </div>
+<div class="line">set(ETCPAL_OS_TARGET freertos CACHE STRING &quot;The OS target for EtcPal&quot;)</div>
+<div class="line">set(ETCPAL_NET_TARGET lwip CACHE STRING &quot;The network target for EtcPal&quot;)</div>
+<div class="line"> </div>
+<div class="line"># The &quot;freertos&quot; target platform requires a target called FreeRTOS, which EtcPal uses to find the</div>
+<div class="line"># FreeRTOS headers. Replace &quot;[freertos/include/paths/...]&quot; with the actual paths (relative or</div>
+<div class="line"># absolute) to your FreeRTOS headers.</div>
+<div class="line">add_library(FreeRTOS INTERFACE)</div>
+<div class="line">target_include_directories(FreeRTOS INTERFACE [freertos/include/paths...])</div>
+<div class="line"> </div>
+<div class="line"># The &quot;lwip&quot; target platform requires a target called lwIP, which EtcPal uses to find the lwIP</div>
+<div class="line"># headers. Replace &quot;[lwip/include/paths/...]&quot; with the actual paths (relative or absolute) to your</div>
+<div class="line"># lwIP headers.</div>
+<div class="line">add_library(lwIP INTERFACE)</div>
+<div class="line">target_include_directories(lwIP INTERFACE [lwip/include/paths...])</div>
+<div class="line"> </div>
+<div class="line">add_subdirectory(EtcPal) # If using scenario 2 above, this line is omitted.</div>
+<div class="line">add_subdirectory(OtherEtcLib) # If using scenario 1 above, this line is omitted.</div>
+</div><!-- fragment --><p>toolchain.cmake would contain information on your build toolchain as described above.</p>
+<p>To integrate building these libraries into your project, it's convenient to configure and build the libraries as a pre-build step in your existing toolchain. This example uses NXP's MCUXpresso IDE, an Eclipse-based IDE similar to many other embedded toolchains. Conveniently, this IDE has a GNU Make toolchain available on the PATH while executing pre- and post-build steps, so we can use the Unix Makefiles CMake generator.</p>
+<p><img src="mcuxpresso_pre_build.png" alt="" class="inline" title="MCUXpresso Pre-Build Step Example"/></p>
+<p>The pre-build step is:</p>
+<div class="fragment"><div class="line">mkdir -p external</div>
+<div class="line">cd external</div>
+<div class="line">cmake -G &quot;Unix Makefiles&quot; -DCMAKE_TOOLCHAIN_FILE=../../external/toolchain_file.cmake -DCMAKE_BUILD_TYPE=${ConfigName} -DCMAKE_INSTALL_PREFIX=. ../../external</div>
+<div class="line">make</div>
+<div class="line">make install</div>
+</div><!-- fragment --><p>and does the following:</p><ul>
+<li>Creates a new directory called "external" in the current build directory</li>
+<li>Configures EtcPal and its dependent libraries using your toolchain file and generates build files in the new directory</li>
+<li>Builds EtcPal and its dependent libraries</li>
+<li>Installs the built headers and artifacts in the new directory</li>
+</ul>
+<p>At the end of the pre-build step, you will have artifacts available at a predictable path:</p>
+<div class="fragment"><div class="line">|- [build_directory]/</div>
+<div class="line">|--- external/</div>
+<div class="line">|----- include/</div>
+<div class="line">|------- [header files for all libraries]</div>
+<div class="line">|----- lib/</div>
+<div class="line">|------- [static libs for all libraries]</div>
+</div><!-- fragment --><p>The final step is just to add those paths to your project's include/library paths:</p>
+<p><img src="mcuxpresso_includes.png" alt="" class="inline" title="MCUXpresso Include Paths Example"/></p>
+<p><img src="mcuxpresso_libs.png" alt="" class="inline" title="MCUXpresso Lib Paths Example"/></p>
+<p>With this configuration, each time you build your project, EtcPal and its dependent libraries will be built if out-of-date and installed to be linked by your project.</p>
+<h2>Include the sources in your project manually</h2>
+<p>It's recommended to use CMake to build EtcPal if possible. CMake is EtcPal's native build system; this means that if you consume EtcPal via CMake, and you update to a later version where the list of sources and/or include paths has changed, those changes will be integrated seamlessly into your project without needing to change any settings.</p>
+<p>However, if you do not want to use CMake to build EtcPal, you can include the EtcPal sources directly into your project's build system.</p>
+<p>There are two sets of sources to include: the platform-neutral sources and the platform-specific sources.</p>
+<p>The platform-neutral sources are located at <code>[etcpal_root]/src/etcpal/*.c</code>. The platform-specific sources are located at <code>[etcpal_root]/src/os/[target_platform]/etcpal/*.c</code>. If you have multiple target platforms (for example FreeRTOS and lwIP), you will need to include the sources under both platform folders.</p>
+<p>You will also need to update your include paths to include EtcPal's headers. For the public headers, add <code>[etcpal_root]/include/</code> and <code>[etcpal_root]/include/os/[target_platform]</code>. You will also need to add <code>[etcpal_root]/src/</code> to your include paths so that EtcPal can find its private headers while it is building. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="building_etcpal.html">Building EtcPal</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

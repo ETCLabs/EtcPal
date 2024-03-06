@@ -1,0 +1,324 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: include/etcpal/error.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('error_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">error.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2022 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of EtcPal. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/EtcPal</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/* etcpal/error.h: Platform-neutral error codes. */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#ifndef ETCPAL_ERROR_H_</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#define ETCPAL_ERROR_H_</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">   48</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">   51</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a> = 0,</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f">   53</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f">kEtcPalErrNotFound</a> = -1,</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599">   56</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599">kEtcPalErrNoMem</a> = -2,</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa47b93a8acf0aad836afc5dda44551acc">   58</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa47b93a8acf0aad836afc5dda44551acc">kEtcPalErrBusy</a> = -3,</div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d">   60</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d">kEtcPalErrExists</a> = -4,</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2">   62</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2">kEtcPalErrInvalid</a> = -5,</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa735dc55ef30ad08cca792cb41a1dfeb1">   64</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa735dc55ef30ad08cca792cb41a1dfeb1">kEtcPalErrWouldBlock</a> = -6,</div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa77e50551fc1c569578f0f9dd4d4a5712">   67</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa77e50551fc1c569578f0f9dd4d4a5712">kEtcPalErrNoData</a> = -7,</div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa8396c97054393b3faf3849541fc99c43">   69</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa8396c97054393b3faf3849541fc99c43">kEtcPalErrProtocol</a> = -8,</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa980a5e26cf5086f916d12a485572f12">   71</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa980a5e26cf5086f916d12a485572f12">kEtcPalErrMsgSize</a> = -9,</div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae27e1c52937b3d1c1993f78160a0a778">   73</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae27e1c52937b3d1c1993f78160a0a778">kEtcPalErrAddrInUse</a> = -10,</div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa44ede5b2503ce2b1bb4ccd285d676b50">   75</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa44ede5b2503ce2b1bb4ccd285d676b50">kEtcPalErrAddrNotAvail</a> = -11,</div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4c458cd2885e27a726a1d9dedf4b4bec">   77</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4c458cd2885e27a726a1d9dedf4b4bec">kEtcPalErrNetwork</a> = -12,</div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa15cf4f4905d98d94910c6cc76ae1218f">   79</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa15cf4f4905d98d94910c6cc76ae1218f">kEtcPalErrConnReset</a> = -13,</div>
+<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afafb8046b7504e0e9908654f939e74ee60">   82</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afafb8046b7504e0e9908654f939e74ee60">kEtcPalErrConnClosed</a> = -14,</div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9603628c356775915b437e3c15bdef53">   84</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9603628c356775915b437e3c15bdef53">kEtcPalErrIsConn</a> = -15,</div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa2eb8abeafb170747d185803ad0a2d527">   86</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa2eb8abeafb170747d185803ad0a2d527">kEtcPalErrNotConn</a> = -16,</div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa28e1dbbb288f3248d64378d83920259a">   88</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa28e1dbbb288f3248d64378d83920259a">kEtcPalErrShutdown</a> = -17,</div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956">   90</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956">kEtcPalErrTimedOut</a> = -18,</div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9c5af0e9de48f403358d6b9e2ef819b7">   92</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9c5af0e9de48f403358d6b9e2ef819b7">kEtcPalErrHostUnreach</a> = -19,</div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde">   94</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde">kEtcPalErrConnAborted</a> = -20,</div>
+<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4b119ec2231eb8bf73535b1375f5f232">   96</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4b119ec2231eb8bf73535b1375f5f232">kEtcPalErrConnRefused</a> = -21,</div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa9c6c39f7303953a99c50a981f36dff0">   98</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa9c6c39f7303953a99c50a981f36dff0">kEtcPalErrAlready</a> = -22,</div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa99aabe562db1ed9acab67c6a2bc777a1">  100</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa99aabe562db1ed9acab67c6a2bc777a1">kEtcPalErrInProgress</a> = -23,</div>
+<div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaefe61c95876a3a7faba0f5da4ec03f37">  103</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaefe61c95876a3a7faba0f5da4ec03f37">kEtcPalErrBufSize</a> = -24,</div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7">  105</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7">kEtcPalErrNotInit</a> = -25,</div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b">  108</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b">kEtcPalErrNoNetints</a> = -26,</div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b">  110</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b">kEtcPalErrNoSockets</a> = -27,</div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52">  112</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52">kEtcPalErrNotImpl</a> = -28,</div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9fb1e2b91f204d8a01377796bddd867d">  114</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9fb1e2b91f204d8a01377796bddd867d">kEtcPalErrPerm</a> = -29,</div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8">  116</a></span>&#160;  <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8">kEtcPalErrSys</a> = -30,</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;} <a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="group__etcpal__error.html#gae0de193fbaf16861756958bd3f21e07f">  120</a></span>&#160;<span class="preprocessor">#define ETCPAL_NUM_ERROR_CODES 31</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="group__etcpal__error.html#ga4902a840d9801e02baebd4c70924c4b0">etcpal_strerror</a>(<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> code);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ETCPAL_ERROR_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__etcpal__error_html_ga4902a840d9801e02baebd4c70924c4b0"><div class="ttname"><a href="group__etcpal__error.html#ga4902a840d9801e02baebd4c70924c4b0">etcpal_strerror</a></div><div class="ttdeci">const char * etcpal_strerror(etcpal_error_t code)</div><div class="ttdoc">Get a string representation of an error code.</div><div class="ttdef"><b>Definition:</b> error.c:69</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_ga743b0648f0ca798ef29c9f69c6e255af"><div class="ttname"><a href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a></div><div class="ttdeci">etcpal_error_t</div><div class="ttdoc">A set of error codes that can be returned by library functions.</div><div class="ttdef"><b>Definition:</b> error.h:49</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa15cf4f4905d98d94910c6cc76ae1218f"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa15cf4f4905d98d94910c6cc76ae1218f">kEtcPalErrConnReset</a></div><div class="ttdeci">@ kEtcPalErrConnReset</div><div class="ttdoc">A connection was reset (hard/abortive close) by the remote peer.</div><div class="ttdef"><b>Definition:</b> error.h:79</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa28e1dbbb288f3248d64378d83920259a"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa28e1dbbb288f3248d64378d83920259a">kEtcPalErrShutdown</a></div><div class="ttdeci">@ kEtcPalErrShutdown</div><div class="ttdoc">Transport endpoint is shut down.</div><div class="ttdef"><b>Definition:</b> error.h:88</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa2eb8abeafb170747d185803ad0a2d527"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa2eb8abeafb170747d185803ad0a2d527">kEtcPalErrNotConn</a></div><div class="ttdeci">@ kEtcPalErrNotConn</div><div class="ttdoc">Transport endpoint is not connected.</div><div class="ttdef"><b>Definition:</b> error.h:86</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8">kEtcPalErrSys</a></div><div class="ttdeci">@ kEtcPalErrSys</div><div class="ttdoc">A system call or C library call failed in a way not covered by other errors.</div><div class="ttdef"><b>Definition:</b> error.h:116</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa39f50bbaad22488dba1944f129d1ecde">kEtcPalErrConnAborted</a></div><div class="ttdeci">@ kEtcPalErrConnAborted</div><div class="ttdoc">A connection has been aborted.</div><div class="ttdef"><b>Definition:</b> error.h:94</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa44ede5b2503ce2b1bb4ccd285d676b50"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa44ede5b2503ce2b1bb4ccd285d676b50">kEtcPalErrAddrNotAvail</a></div><div class="ttdeci">@ kEtcPalErrAddrNotAvail</div><div class="ttdoc">Cannot assign the requested address.</div><div class="ttdef"><b>Definition:</b> error.h:75</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa47b93a8acf0aad836afc5dda44551acc"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa47b93a8acf0aad836afc5dda44551acc">kEtcPalErrBusy</a></div><div class="ttdeci">@ kEtcPalErrBusy</div><div class="ttdoc">The resource being requested is temporarily unavailable.</div><div class="ttdef"><b>Definition:</b> error.h:58</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa4b119ec2231eb8bf73535b1375f5f232"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4b119ec2231eb8bf73535b1375f5f232">kEtcPalErrConnRefused</a></div><div class="ttdeci">@ kEtcPalErrConnRefused</div><div class="ttdoc">A connection was refused.</div><div class="ttdef"><b>Definition:</b> error.h:96</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa4c458cd2885e27a726a1d9dedf4b4bec"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa4c458cd2885e27a726a1d9dedf4b4bec">kEtcPalErrNetwork</a></div><div class="ttdeci">@ kEtcPalErrNetwork</div><div class="ttdoc">The operation failed because a network was down or unreachable.</div><div class="ttdef"><b>Definition:</b> error.h:77</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f">kEtcPalErrNotFound</a></div><div class="ttdeci">@ kEtcPalErrNotFound</div><div class="ttdoc">An identifier or handle passed to a function was not valid or not previously initialized.</div><div class="ttdef"><b>Definition:</b> error.h:53</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa730afdd022ada726bdf8d940eda9759b">kEtcPalErrNoNetints</a></div><div class="ttdeci">@ kEtcPalErrNoNetints</div><div class="ttdoc">No network interfaces were found on the system, or there are no network interfaces of a type that can...</div><div class="ttdef"><b>Definition:</b> error.h:108</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa735dc55ef30ad08cca792cb41a1dfeb1"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa735dc55ef30ad08cca792cb41a1dfeb1">kEtcPalErrWouldBlock</a></div><div class="ttdeci">@ kEtcPalErrWouldBlock</div><div class="ttdoc">The requested operation would block.</div><div class="ttdef"><b>Definition:</b> error.h:64</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa77e50551fc1c569578f0f9dd4d4a5712"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa77e50551fc1c569578f0f9dd4d4a5712">kEtcPalErrNoData</a></div><div class="ttdeci">@ kEtcPalErrNoData</div><div class="ttdoc">Returned from a function that is meant to be called repeatedly to indicate that there is no more data...</div><div class="ttdef"><b>Definition:</b> error.h:67</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa8396c97054393b3faf3849541fc99c43"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa8396c97054393b3faf3849541fc99c43">kEtcPalErrProtocol</a></div><div class="ttdeci">@ kEtcPalErrProtocol</div><div class="ttdoc">A protocol parsing function encountered a malformed packet.</div><div class="ttdef"><b>Definition:</b> error.h:69</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa9603628c356775915b437e3c15bdef53"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9603628c356775915b437e3c15bdef53">kEtcPalErrIsConn</a></div><div class="ttdeci">@ kEtcPalErrIsConn</div><div class="ttdoc">Transport endpoint is already connected.</div><div class="ttdef"><b>Definition:</b> error.h:84</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa99aabe562db1ed9acab67c6a2bc777a1"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa99aabe562db1ed9acab67c6a2bc777a1">kEtcPalErrInProgress</a></div><div class="ttdeci">@ kEtcPalErrInProgress</div><div class="ttdoc">The operation requested is now in progress and will complete later.</div><div class="ttdef"><b>Definition:</b> error.h:100</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa9c5af0e9de48f403358d6b9e2ef819b7"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9c5af0e9de48f403358d6b9e2ef819b7">kEtcPalErrHostUnreach</a></div><div class="ttdeci">@ kEtcPalErrHostUnreach</div><div class="ttdoc">Host is unreachable.</div><div class="ttdef"><b>Definition:</b> error.h:92</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afa9fb1e2b91f204d8a01377796bddd867d"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa9fb1e2b91f204d8a01377796bddd867d">kEtcPalErrPerm</a></div><div class="ttdeci">@ kEtcPalErrPerm</div><div class="ttdoc">The operation is not permitted.</div><div class="ttdef"><b>Definition:</b> error.h:114</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa45464bce734de8eca7f5a768386423b">kEtcPalErrNoSockets</a></div><div class="ttdeci">@ kEtcPalErrNoSockets</div><div class="ttdoc">No sockets have been added to the context.</div><div class="ttdef"><b>Definition:</b> error.h:110</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afaa980a5e26cf5086f916d12a485572f12"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa980a5e26cf5086f916d12a485572f12">kEtcPalErrMsgSize</a></div><div class="ttdeci">@ kEtcPalErrMsgSize</div><div class="ttdoc">Message too long.</div><div class="ttdef"><b>Definition:</b> error.h:71</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afaa9c6c39f7303953a99c50a981f36dff0"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaa9c6c39f7303953a99c50a981f36dff0">kEtcPalErrAlready</a></div><div class="ttdeci">@ kEtcPalErrAlready</div><div class="ttdoc">The operation requested is already in progress.</div><div class="ttdef"><b>Definition:</b> error.h:98</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956">kEtcPalErrTimedOut</a></div><div class="ttdeci">@ kEtcPalErrTimedOut</div><div class="ttdoc">A connection timed out.</div><div class="ttdef"><b>Definition:</b> error.h:90</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52">kEtcPalErrNotImpl</a></div><div class="ttdeci">@ kEtcPalErrNotImpl</div><div class="ttdoc">A function or specific use of a function is not implemented yet.</div><div class="ttdef"><b>Definition:</b> error.h:112</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599">kEtcPalErrNoMem</a></div><div class="ttdeci">@ kEtcPalErrNoMem</div><div class="ttdoc">A dynamic memory allocation failed, or there is no space left in a statically allocated array.</div><div class="ttdef"><b>Definition:</b> error.h:56</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2">kEtcPalErrInvalid</a></div><div class="ttdeci">@ kEtcPalErrInvalid</div><div class="ttdoc">An invalid argument was provided to an API function.</div><div class="ttdef"><b>Definition:</b> error.h:62</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadfb4ade13d03ed30f6309d2f130f05f7">kEtcPalErrNotInit</a></div><div class="ttdeci">@ kEtcPalErrNotInit</div><div class="ttdoc">An API function was called from a module that was not previously initialized.</div><div class="ttdef"><b>Definition:</b> error.h:105</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afae27e1c52937b3d1c1993f78160a0a778"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae27e1c52937b3d1c1993f78160a0a778">kEtcPalErrAddrInUse</a></div><div class="ttdeci">@ kEtcPalErrAddrInUse</div><div class="ttdoc">The requested address is already in use.</div><div class="ttdef"><b>Definition:</b> error.h:73</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a></div><div class="ttdeci">@ kEtcPalErrOk</div><div class="ttdoc">The call was successful, no error occurred.</div><div class="ttdef"><b>Definition:</b> error.h:51</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d">kEtcPalErrExists</a></div><div class="ttdeci">@ kEtcPalErrExists</div><div class="ttdoc">The item being created already exists.</div><div class="ttdef"><b>Definition:</b> error.h:60</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afaefe61c95876a3a7faba0f5da4ec03f37"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaefe61c95876a3a7faba0f5da4ec03f37">kEtcPalErrBufSize</a></div><div class="ttdeci">@ kEtcPalErrBufSize</div><div class="ttdoc">A buffer provided to a function was not big enough to hold the data that needed to be packed into it.</div><div class="ttdef"><b>Definition:</b> error.h:103</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afafb8046b7504e0e9908654f939e74ee60"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afafb8046b7504e0e9908654f939e74ee60">kEtcPalErrConnClosed</a></div><div class="ttdeci">@ kEtcPalErrConnClosed</div><div class="ttdoc">A connection was gracefully closed by the remote peer.</div><div class="ttdef"><b>Definition:</b> error.h:82</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_81a3fb26cc06c42d281987e41831a70b.html">etcpal</a></li><li class="navelem"><b>error.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

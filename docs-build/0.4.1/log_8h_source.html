@@ -1,0 +1,548 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: include/etcpal/log.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('log_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">log.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2022 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of EtcPal. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/EtcPal</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/* etcpal/log.h: Common logging functions. */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#ifndef ETCPAL_LOG_H_</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#define ETCPAL_LOG_H_</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;limits.h&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;stdarg.h&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;stddef.h&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &quot;etcpal/common.h&quot;</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">/* clang-format off */</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga6ae744f52d1ee08daa8fd36bf58597b3">  140</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_KERN (0 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00141"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga6fc21fb437c4fa1d90dd8698cfa256f0">  141</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_USER (1 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga42fd837e598b56123c5d38fff2f5fbeb">  142</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_MAIL (2 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga525978d1bfe16fcd0a4450a7c5dc53ec">  143</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_DAEMON (3 &lt;&lt; 3)    </span></div>
+<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gabc74c1a4cef75ebe20e917b68fa23d52">  144</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_AUTH (4 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga46bba655f9c87face73f5e2e680f0e6c">  145</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_SYSLOG (5 &lt;&lt; 3)    </span></div>
+<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga185481461d7f07edfd95fa80405b37c1">  146</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LPR (6 &lt;&lt; 3)       </span></div>
+<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga83c2035b9784a9cb0625bc4f33fbdc76">  147</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_NEWS (7 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaaa5608f22b53b0de9b6c4b1811d632ba">  148</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_UUCP (8 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga076221d5039086994c7b2a87963be388">  149</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_CRON (9 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga0c3bcdd91c9d747dea59430a849556b2">  150</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_AUTHPRIV (10 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00151"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaa3ad1dbc725353f2cd49cc55b32f3153">  151</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_FTP (11 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga64040cea6d8c1457ef47e65279f8bca2">  153</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL0 (16 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga2f6c98d265250c28e6102c97a10dee17">  154</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL1 (17 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga752539f8bfef40f0c19dc4ef67a59473">  155</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL2 (18 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00156"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga92640deb4a6a2625e4fc36038cd8d45d">  156</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL3 (19 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga25a6a69270ce194f38d3d24e17c1d830">  157</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL4 (20 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00158"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gad7d901793d960e58420eb4025cfa51d1">  158</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL5 (21 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00159"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gabcdbdf6cbaeec1b06545372144162a79">  159</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL6 (22 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga3b702549e92e23e2918d2fae9af6a84c">  160</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_LOCAL7 (23 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga9c650b00d427b03b6169b18514627eb7">  165</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_NFACILITIES 24 </span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="preprocessor">#define ETCPAL_LOG_FACMASK 0x03f8 </span><span class="comment">/* Mask off the facility part of a prival */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00169"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gab60e596c37c275724a2d27c0ef608197">  169</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_FAC(p) (((p) &amp; ETCPAL_LOG_FACMASK) &gt;&gt; 3) </span></div>
+<div class="line"><a name="l00175"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaaba03ada613553b9276df87d7387ae6f">  175</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_EMERG 0   </span></div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaefbc8eee2db20c20586eaae217faa385">  176</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_ALERT 1   </span></div>
+<div class="line"><a name="l00177"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga1f5ee8379832669d8cb7d5abc2e93b1f">  177</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_CRIT 2    </span></div>
+<div class="line"><a name="l00178"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga0f39e099c1569ddf03e826eb4e831cf1">  178</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_ERR 3     </span></div>
+<div class="line"><a name="l00179"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gac79a4a2a830ae8db541f33093b2d50df">  179</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_WARNING 4 </span></div>
+<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga2d71e55473353be02c7fd2a785b12b23">  180</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_NOTICE 5  </span></div>
+<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga9f05a0ad034946dfd20477e11d2923a7">  181</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_INFO 6    </span></div>
+<div class="line"><a name="l00182"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga4e46d489885b63c38263e35ad5aca8b6">  182</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_DEBUG 7   </span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="preprocessor">#define ETCPAL_LOG_PRIMASK 0x07 </span><span class="comment">/* mask off the priority part of a prival */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00190"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga62757cfe0dd5a61600cbeed6777480d1">  190</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_PRI(p) ((p) &amp; ETCPAL_LOG_PRIMASK) </span></div>
+<div class="line"><a name="l00191"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga443fcc43be128430ebb6d1c82fe6b894">  191</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_MAKEPRI(fac, pri) (((fac) &lt;&lt; 3) | (pri)) </span></div>
+<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga153d45bd7f441311296802b70f704700">  193</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_MASK(pri) (1 &lt;&lt; (pri)) </span></div>
+<div class="line"><a name="l00194"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaecd624f2fc15671bb3e4c01ede198a08">  194</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_UPTO(pri) ((1 &lt;&lt; ((pri) + 1)) - 1) </span></div>
+<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gafc4fcfbaaffb603d10e2b27f54e122d2">  196</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_HOSTNAME_MAX_LEN 256u </span></div>
+<div class="line"><a name="l00197"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga2b336b7e2828f1f9c576fb4a6e357b1a">  197</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_APP_NAME_MAX_LEN 49u  </span></div>
+<div class="line"><a name="l00198"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga1786d1616917fb0bf1315504e14060c4">  198</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_PROCID_MAX_LEN 129u   </span></div>
+<div class="line"><a name="l00201"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga23f61f04ce3dd5ee8ceaf88f99121999">  201</a></span>&#160;<span class="preprocessor">#define ETCPAL_RAW_LOG_MSG_MAX_LEN 480u</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;<span class="comment">/* clang-format on */</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment"> * Timestamp length:</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment"> * Date:       10 (1970-01-01)</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;<span class="comment"> * &quot;T&quot; or &quot; &quot;:  1</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="comment"> * Time:       12 (00:00:00.001)</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="comment"> * UTC Offset:  6 (-05:00)</span></div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;<span class="comment"> * Nullterm:    1</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment"> * --------------</span></div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;<span class="comment"> * Total:      30</span></div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00216"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga589d05713f16b04a0337399d5064e7c3">  216</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_TIMESTAMP_LEN 30u</span></div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="comment"> * Syslog header length (from RFC 5424):</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="comment"> * PRIVAL:                     5</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="comment"> * VERSION:                    3</span></div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="comment"> * SP:                         1</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="comment"> * TIMESTAMP:       [Referenced]</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="comment"> * SP:                         1</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment"> * HOSTNAME:        [Referenced]</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment"> * SP:                         1</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="comment"> * APP-NAME:        [Referenced]</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment"> * SP:                         1</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment"> * PROCID:          [Referenced]</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="comment"> * SP:                         1</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment"> * MSGID (not used):           1</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="comment"> * SP:                         1</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment"> * STRUCTURED-DATA (not used): 1</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="comment"> * SP:                         1</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment"> * -----------------------------</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment"> * Total non-referenced:      17</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga6463250841fd9f0b87d84574d5ed561f">  239</a></span>&#160;<span class="preprocessor">#define ETCPAL_SYSLOG_HEADER_MAX_LEN                                                                                 \</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="preprocessor">  (17u + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) + (ETCPAL_LOG_HOSTNAME_MAX_LEN - 1u) + (ETCPAL_LOG_APP_NAME_MAX_LEN - 1u) + \</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="preprocessor">   (ETCPAL_LOG_PROCID_MAX_LEN - 1u))</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga2b86d5334ad5c012a7b81ce1e9c90e33">  244</a></span>&#160;<span class="preprocessor">#define ETCPAL_SYSLOG_STR_MIN_LEN ETCPAL_SYSLOG_HEADER_MAX_LEN</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga5f7e222e2b3359ca02363b27f38e97b2">  246</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_STR_MIN_LEN (ETCPAL_LOG_TIMESTAMP_LEN + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> + 6u </span><span class="comment">/*pri*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor">)</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gae8f0782821bb95f1c2a0122b9819acac">  249</a></span>&#160;<span class="preprocessor">#define ETCPAL_SYSLOG_STR_MAX_LEN (ETCPAL_SYSLOG_HEADER_MAX_LEN + ETCPAL_RAW_LOG_MSG_MAX_LEN)</span></div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160; </div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="comment"> * Human-reaadable log string max length:</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment"> * Timestamp:      [Referenced]</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="comment"> * Space:                     1</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment"> * Priority:                  6 ([CRIT])</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment"> * Space:                     1</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment"> * Message length: [Referenced]</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment"> * ----------------------------</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment"> * Total non-referenced:      8</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaec05f1fdff3420181c0fe5ae92648e68">  265</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_STR_MAX_LEN (8u + (ETCPAL_LOG_TIMESTAMP_LEN - 1u) + ETCPAL_RAW_LOG_MSG_MAX_LEN)</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
+<div class="line"><a name="l00271"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html">  271</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;{</div>
+<div class="line"><a name="l00273"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#a9c83bbc97dcf2390b043382b4dfe3c98">  273</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_timestamp.html#a9c83bbc97dcf2390b043382b4dfe3c98">year</a>;       </div>
+<div class="line"><a name="l00274"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#a8c07e017c7b80f536d05c6134cae89ef">  274</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_timestamp.html#a8c07e017c7b80f536d05c6134cae89ef">month</a>;      </div>
+<div class="line"><a name="l00275"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#a2398ea43f7d25f677616371d3b545f59">  275</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_timestamp.html#a2398ea43f7d25f677616371d3b545f59">day</a>;        </div>
+<div class="line"><a name="l00276"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#aa64c18c25aeef9a0d7c92d89fa24a636">  276</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_timestamp.html#aa64c18c25aeef9a0d7c92d89fa24a636">hour</a>;       </div>
+<div class="line"><a name="l00277"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#a7ff63df03ff6549639b712d24a94adef">  277</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_timestamp.html#a7ff63df03ff6549639b712d24a94adef">minute</a>;     </div>
+<div class="line"><a name="l00278"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#a7ab95bf164c7490d2855a7efcea6784a">  278</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_timestamp.html#a7ab95bf164c7490d2855a7efcea6784a">second</a>;     </div>
+<div class="line"><a name="l00279"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#ab7174bcdc6006eb03894beaa8664521c">  279</a></span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_timestamp.html#ab7174bcdc6006eb03894beaa8664521c">msec</a>;       </div>
+<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_timestamp.html#a0d5ceb6295477b5931bf54c002e36fe9">  280</a></span>&#160;  <span class="keywordtype">int</span>          <a class="code" href="struct_etc_pal_log_timestamp.html#a0d5ceb6295477b5931bf54c002e36fe9">utc_offset</a>; </div>
+<div class="line"><a name="l00281"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga8e4610f86f8ce68f198d55c3623c2b0a">  281</a></span>&#160;} <a class="code" href="group__etcpal__log.html#ga8e4610f86f8ce68f198d55c3623c2b0a">EtcPalLogTimestamp</a>;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_strings.html">  287</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_log_strings.html">EtcPalLogStrings</a></div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;{</div>
+<div class="line"><a name="l00290"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_strings.html#a5911dbe6a47cb2b9cfbab87a8881b5b6">  290</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="struct_etc_pal_log_strings.html#a5911dbe6a47cb2b9cfbab87a8881b5b6">syslog</a>;</div>
+<div class="line"><a name="l00292"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_strings.html#a7c969c4f61944571b31c58080a53f968">  292</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="struct_etc_pal_log_strings.html#a7c969c4f61944571b31c58080a53f968">legacy_syslog</a>;</div>
+<div class="line"><a name="l00294"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_strings.html#a4ac8b9667178849660fd3b1f99e93366">  294</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="struct_etc_pal_log_strings.html#a4ac8b9667178849660fd3b1f99e93366">human_readable</a>;</div>
+<div class="line"><a name="l00299"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_strings.html#a8129637af8920bc9328bbce2a00bfeb4">  299</a></span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="struct_etc_pal_log_strings.html#a8129637af8920bc9328bbce2a00bfeb4">raw</a>;</div>
+<div class="line"><a name="l00304"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_strings.html#acec9ce2df15222151ad66fcb1d74eb9f">  304</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_strings.html#acec9ce2df15222151ad66fcb1d74eb9f">priority</a>;</div>
+<div class="line"><a name="l00305"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga29bce4aa0e88d72c15517204300e891d">  305</a></span>&#160;} <a class="code" href="group__etcpal__log.html#ga29bce4aa0e88d72c15517204300e891d">EtcPalLogStrings</a>;</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160; </div>
+<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaf8d8eef393a51fca0f1ddbfd7cad9c82">  326</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__etcpal__log.html#gaf8d8eef393a51fca0f1ddbfd7cad9c82">EtcPalLogCallback</a>)(<span class="keywordtype">void</span>* context, <span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_strings.html">EtcPalLogStrings</a>* strings);</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
+<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gae62cd1cd05e3e42c5df41cab8df8e9e3">  337</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__etcpal__log.html#gae62cd1cd05e3e42c5df41cab8df8e9e3">EtcPalLogTimeFn</a>)(<span class="keywordtype">void</span>* context, <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp);</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
+<div class="line"><a name="l00340"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga45d65c059c3b46a251f8ca4141ca1810">  340</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_CREATE_HUMAN_READABLE 0x01</span></div>
+<div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaf080f0551c3c97b9297429f5d5cbfadc">  342</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_CREATE_SYSLOG 0x02</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga00ab18ae19f165c3d2b5c54b6c47f936">  344</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_CREATE_LEGACY_SYSLOG 0x04</span></div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
+<div class="line"><a name="l00347"></a><span class="lineno"><a class="line" href="struct_etc_pal_syslog_params.html">  347</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;{</div>
+<div class="line"><a name="l00350"></a><span class="lineno"><a class="line" href="struct_etc_pal_syslog_params.html#a213afa2e73e0c2102f43d4067e41b90f">  350</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_syslog_params.html#a213afa2e73e0c2102f43d4067e41b90f">facility</a>;</div>
+<div class="line"><a name="l00352"></a><span class="lineno"><a class="line" href="struct_etc_pal_syslog_params.html#acf45ed2a37e15e83167bd1edcd9fbbbe">  352</a></span>&#160;  <span class="keywordtype">char</span> <a class="code" href="struct_etc_pal_syslog_params.html#acf45ed2a37e15e83167bd1edcd9fbbbe">hostname</a>[<a class="code" href="group__etcpal__log.html#gafc4fcfbaaffb603d10e2b27f54e122d2">ETCPAL_LOG_HOSTNAME_MAX_LEN</a>];  <span class="comment">// NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno"><a class="line" href="struct_etc_pal_syslog_params.html#a6d20b2dcf8c2bc4f864b3d719ad00ad0">  354</a></span>&#160;<span class="comment"></span>  <span class="keywordtype">char</span> <a class="code" href="struct_etc_pal_syslog_params.html#a6d20b2dcf8c2bc4f864b3d719ad00ad0">app_name</a>[<a class="code" href="group__etcpal__log.html#ga2b336b7e2828f1f9c576fb4a6e357b1a">ETCPAL_LOG_APP_NAME_MAX_LEN</a>];  <span class="comment">// NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno"><a class="line" href="struct_etc_pal_syslog_params.html#aa3d06040894562832d2218511875b444">  356</a></span>&#160;<span class="comment"></span>  <span class="keywordtype">char</span> <a class="code" href="struct_etc_pal_syslog_params.html#aa3d06040894562832d2218511875b444">procid</a>[<a class="code" href="group__etcpal__log.html#ga1786d1616917fb0bf1315504e14060c4">ETCPAL_LOG_PROCID_MAX_LEN</a>];  <span class="comment">// NOLINT(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga63d8dfda4efb8cc33f805e1681cfde0f">  357</a></span>&#160;} <a class="code" href="group__etcpal__log.html#ga63d8dfda4efb8cc33f805e1681cfde0f">EtcPalSyslogParams</a>;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160; </div>
+<div class="line"><a name="l00368"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#gaa0719223c22e26ee648c97be97ce2aad">  368</a></span>&#160;<span class="preprocessor">#define ETCPAL_SYSLOG_PARAMS_INIT \</span></div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<span class="preprocessor">  {                               \</span></div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="preprocessor">    0, {&#39;\0&#39;}, {&#39;\0&#39;}, { &#39;\0&#39; }   \</span></div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="preprocessor">  }</span></div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
+<div class="line"><a name="l00374"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_params.html">  374</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_log_params.html">EtcPalLogParams</a></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;{</div>
+<div class="line"><a name="l00377"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_params.html#a9ba0f2f280a2a2e49c17508af48aad91">  377</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_params.html#a9ba0f2f280a2a2e49c17508af48aad91">action</a>;</div>
+<div class="line"><a name="l00379"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_params.html#a9a6659e83ffc5e4e7ab3c5ba5009f4e7">  379</a></span>&#160;  <a class="code" href="group__etcpal__log.html#gaf8d8eef393a51fca0f1ddbfd7cad9c82">EtcPalLogCallback</a> <a class="code" href="struct_etc_pal_log_params.html#a9a6659e83ffc5e4e7ab3c5ba5009f4e7">log_fn</a>;</div>
+<div class="line"><a name="l00381"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_params.html#a6b5edefad9cb5463180d2f3cc9537c44">  381</a></span>&#160;  <a class="code" href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a> <a class="code" href="struct_etc_pal_log_params.html#a6b5edefad9cb5463180d2f3cc9537c44">syslog_params</a>;</div>
+<div class="line"><a name="l00383"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_params.html#ac695d621aaa836a9d13d65a912be9518">  383</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_etc_pal_log_params.html#ac695d621aaa836a9d13d65a912be9518">log_mask</a>;</div>
+<div class="line"><a name="l00388"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_params.html#aceff50b76400c01d88b158c0a68f32d8">  388</a></span>&#160;  <a class="code" href="group__etcpal__log.html#gae62cd1cd05e3e42c5df41cab8df8e9e3">EtcPalLogTimeFn</a> <a class="code" href="struct_etc_pal_log_params.html#aceff50b76400c01d88b158c0a68f32d8">time_fn</a>;</div>
+<div class="line"><a name="l00390"></a><span class="lineno"><a class="line" href="struct_etc_pal_log_params.html#ae376f130b17d169ee51be68077a89ed0">  390</a></span>&#160;  <span class="keywordtype">void</span>* <a class="code" href="struct_etc_pal_log_params.html#ae376f130b17d169ee51be68077a89ed0">context</a>;</div>
+<div class="line"><a name="l00391"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga470c9486df2f7e95a4d081a93b913c59">  391</a></span>&#160;} <a class="code" href="group__etcpal__log.html#ga470c9486df2f7e95a4d081a93b913c59">EtcPalLogParams</a>;</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
+<div class="line"><a name="l00402"></a><span class="lineno"><a class="line" href="group__etcpal__log.html#ga24911b91f9e4d5043348096a3065cd41">  402</a></span>&#160;<span class="preprocessor">#define ETCPAL_LOG_PARAMS_INIT                        \</span></div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="preprocessor">  {                                                   \</span></div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="preprocessor">    0, NULL, ETCPAL_SYSLOG_PARAMS_INIT, 0, NULL, NULL \</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="preprocessor">  }</span></div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160; </div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160; </div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment"> * The various compiler ifdefs are to use each compiler&#39;s method of checking printf-style</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;<span class="comment"> * arguments.</span></div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160; </div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="preprocessor">#ifdef __ICCARM__</span></div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="preprocessor">#pragma __printf_args</span></div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#gacf54b7ce272d89f2a35a83c4cd3bda4f">etcpal_create_log_str</a>(<span class="keywordtype">char</span>*                     buf,</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                           <span class="keywordtype">size_t</span>                    buflen,</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                           <span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp,</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;                           <span class="keywordtype">int</span>                       pri,</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                           <span class="keyword">const</span> <span class="keywordtype">char</span>*               format,</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;                           ...)</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    __attribute__((__format__(__printf__, 5, 6)))</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    ;</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160; </div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#gadec7b676650d22a5315d97f3aeee1dd0">etcpal_vcreate_log_str</a>(<span class="keywordtype">char</span>*                     buf,</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;                            <span class="keywordtype">size_t</span>                    buflen,</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;                            <span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp,</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;                            <span class="keywordtype">int</span>                       pri,</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;                            <span class="keyword">const</span> <span class="keywordtype">char</span>*               format,</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                            va_list                   args);</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160; </div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;<span class="preprocessor">#ifdef __ICCARM__</span></div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;<span class="preprocessor">#pragma __printf_args</span></div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#gaac4f27cd13defcb0fbd39516b5d5844d">etcpal_create_syslog_str</a>(<span class="keywordtype">char</span>*                     buf,</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;                              <span class="keywordtype">size_t</span>                    buflen,</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;                              <span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp,</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;                              <span class="keyword">const</span> <a class="code" href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a>* syslog_params,</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;                              <span class="keywordtype">int</span>                       pri,</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;                              <span class="keyword">const</span> <span class="keywordtype">char</span>*               format,</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;                              ...)</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    __attribute__((__format__(__printf__, 6, 7)))</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    ;</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160; </div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#ga943bb13f1d71efce45b30b466e757138">etcpal_vcreate_syslog_str</a>(<span class="keywordtype">char</span>*                     buf,</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;                               <span class="keywordtype">size_t</span>                    buflen,</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;                               <span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp,</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;                               <span class="keyword">const</span> <a class="code" href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a>* syslog_params,</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;                               <span class="keywordtype">int</span>                       pri,</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;                               <span class="keyword">const</span> <span class="keywordtype">char</span>*               format,</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;                               va_list                   args);</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160; </div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="preprocessor">#ifdef __ICCARM__</span></div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;<span class="preprocessor">#pragma __printf_args</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#ga614043c892a15eb55d8695da85db36ca">etcpal_create_legacy_syslog_str</a>(<span class="keywordtype">char</span>*                     buf,</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;                                     <span class="keywordtype">size_t</span>                    buflen,</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;                                     <span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp,</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;                                     <span class="keyword">const</span> <a class="code" href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a>* syslog_params,</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;                                     <span class="keywordtype">int</span>                       pri,</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;                                     <span class="keyword">const</span> <span class="keywordtype">char</span>*               format,</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;                                     ...)</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    __attribute__((__format__(__printf__, 6, 7)))</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    ;</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160; </div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#ga412dd0f9c14ece292b9bfacdacf90e28">etcpal_vcreate_legacy_syslog_str</a>(<span class="keywordtype">char</span>*                     buf,</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;                                      <span class="keywordtype">size_t</span>                    buflen,</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;                                      <span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp,</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;                                      <span class="keyword">const</span> <a class="code" href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a>* syslog_params,</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;                                      <span class="keywordtype">int</span>                       pri,</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;                                      <span class="keyword">const</span> <span class="keywordtype">char</span>*               format,</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;                                      va_list                   args);</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160; </div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__etcpal__log.html#ga895ff8dd5230b10b4ab6d955e556d318">etcpal_sanitize_syslog_params</a>(<a class="code" href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a>* params);</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#ga949455773a4ecdd6a499940a19ec6080">etcpal_validate_log_params</a>(<a class="code" href="struct_etc_pal_log_params.html">EtcPalLogParams</a>* params);</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#ga8bdf4e7812a1fe1d3b2c5da3ffc4f028">etcpal_validate_log_timestamp</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a>* timestamp);</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160; </div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__log.html#gac44c39be61d1bf95239f9bd6fb1f11ad">etcpal_can_log</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_params.html">EtcPalLogParams</a>* params, <span class="keywordtype">int</span> pri);</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160; </div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;<span class="preprocessor">#ifdef __ICCARM__</span></div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;<span class="preprocessor">#pragma __printf_args</span></div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__etcpal__log.html#gab05a59d52b560561ce33a937f73aae5e">etcpal_log</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_params.html">EtcPalLogParams</a>* params, <span class="keywordtype">int</span> pri, <span class="keyword">const</span> <span class="keywordtype">char</span>* format, ...)</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    __attribute__((__format__(__printf__, 3, 4)))</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    ;</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160; </div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__etcpal__log.html#ga2f8f5602ed9ad8a869d40c4af8ba8d41">etcpal_vlog</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_params.html">EtcPalLogParams</a>* params, <span class="keywordtype">int</span> pri, <span class="keyword">const</span> <span class="keywordtype">char</span>* format, va_list args);</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160; </div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;}</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160; </div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ETCPAL_LOG_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga1786d1616917fb0bf1315504e14060c4"><div class="ttname"><a href="group__etcpal__log.html#ga1786d1616917fb0bf1315504e14060c4">ETCPAL_LOG_PROCID_MAX_LEN</a></div><div class="ttdeci">#define ETCPAL_LOG_PROCID_MAX_LEN</div><div class="ttdoc">Max length of the procid param.</div><div class="ttdef"><b>Definition:</b> log.h:198</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga29bce4aa0e88d72c15517204300e891d"><div class="ttname"><a href="group__etcpal__log.html#ga29bce4aa0e88d72c15517204300e891d">EtcPalLogStrings</a></div><div class="ttdeci">struct EtcPalLogStrings EtcPalLogStrings</div><div class="ttdoc">The set of log strings passed with a call to an etcpal_log_callback function.</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga2b336b7e2828f1f9c576fb4a6e357b1a"><div class="ttname"><a href="group__etcpal__log.html#ga2b336b7e2828f1f9c576fb4a6e357b1a">ETCPAL_LOG_APP_NAME_MAX_LEN</a></div><div class="ttdeci">#define ETCPAL_LOG_APP_NAME_MAX_LEN</div><div class="ttdoc">Max length of the app_name param.</div><div class="ttdef"><b>Definition:</b> log.h:197</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga2f8f5602ed9ad8a869d40c4af8ba8d41"><div class="ttname"><a href="group__etcpal__log.html#ga2f8f5602ed9ad8a869d40c4af8ba8d41">etcpal_vlog</a></div><div class="ttdeci">void etcpal_vlog(const EtcPalLogParams *params, int pri, const char *format, va_list args)</div><div class="ttdoc">Log a message with the list of format arguments already generated.</div><div class="ttdef"><b>Definition:</b> log.c:424</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga412dd0f9c14ece292b9bfacdacf90e28"><div class="ttname"><a href="group__etcpal__log.html#ga412dd0f9c14ece292b9bfacdacf90e28">etcpal_vcreate_legacy_syslog_str</a></div><div class="ttdeci">bool etcpal_vcreate_legacy_syslog_str(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format, va_list args)</div><div class="ttdoc">Create a log a message with RFC 3164 syslog header in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:307</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga470c9486df2f7e95a4d081a93b913c59"><div class="ttname"><a href="group__etcpal__log.html#ga470c9486df2f7e95a4d081a93b913c59">EtcPalLogParams</a></div><div class="ttdeci">struct EtcPalLogParams EtcPalLogParams</div><div class="ttdoc">A set of parameters used for the etcpal_*log() functions.</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga614043c892a15eb55d8695da85db36ca"><div class="ttname"><a href="group__etcpal__log.html#ga614043c892a15eb55d8695da85db36ca">etcpal_create_legacy_syslog_str</a></div><div class="ttdeci">bool etcpal_create_legacy_syslog_str(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</div><div class="ttdoc">Create a log message with RFC 3164 syslog header in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:275</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga63d8dfda4efb8cc33f805e1681cfde0f"><div class="ttname"><a href="group__etcpal__log.html#ga63d8dfda4efb8cc33f805e1681cfde0f">EtcPalSyslogParams</a></div><div class="ttdeci">struct EtcPalSyslogParams EtcPalSyslogParams</div><div class="ttdoc">A set of parameters for the syslog header.</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga895ff8dd5230b10b4ab6d955e556d318"><div class="ttname"><a href="group__etcpal__log.html#ga895ff8dd5230b10b4ab6d955e556d318">etcpal_sanitize_syslog_params</a></div><div class="ttdeci">void etcpal_sanitize_syslog_params(EtcPalSyslogParams *params)</div><div class="ttdoc">Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them if necessar...</div><div class="ttdef"><b>Definition:</b> log.c:328</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga8bdf4e7812a1fe1d3b2c5da3ffc4f028"><div class="ttname"><a href="group__etcpal__log.html#ga8bdf4e7812a1fe1d3b2c5da3ffc4f028">etcpal_validate_log_timestamp</a></div><div class="ttdeci">bool etcpal_validate_log_timestamp(const EtcPalLogTimestamp *timestamp)</div><div class="ttdoc">Determine whether the given EtcPalLogTimestamp is valid.</div><div class="ttdef"><b>Definition:</b> log.c:369</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga8e4610f86f8ce68f198d55c3623c2b0a"><div class="ttname"><a href="group__etcpal__log.html#ga8e4610f86f8ce68f198d55c3623c2b0a">EtcPalLogTimestamp</a></div><div class="ttdeci">struct EtcPalLogTimestamp EtcPalLogTimestamp</div><div class="ttdoc">A set of parameters which represent the current local time with millisecond resolution.</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga943bb13f1d71efce45b30b466e757138"><div class="ttname"><a href="group__etcpal__log.html#ga943bb13f1d71efce45b30b466e757138">etcpal_vcreate_syslog_str</a></div><div class="ttdeci">bool etcpal_vcreate_syslog_str(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format, va_list args)</div><div class="ttdoc">Create a log a message with RFC 5424 syslog header in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:250</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga949455773a4ecdd6a499940a19ec6080"><div class="ttname"><a href="group__etcpal__log.html#ga949455773a4ecdd6a499940a19ec6080">etcpal_validate_log_params</a></div><div class="ttdeci">bool etcpal_validate_log_params(EtcPalLogParams *params)</div><div class="ttdoc">Ensure that the given EtcPalLogParams are valid.</div><div class="ttdef"><b>Definition:</b> log.c:347</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gaac4f27cd13defcb0fbd39516b5d5844d"><div class="ttname"><a href="group__etcpal__log.html#gaac4f27cd13defcb0fbd39516b5d5844d">etcpal_create_syslog_str</a></div><div class="ttdeci">bool etcpal_create_syslog_str(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, const EtcPalSyslogParams *syslog_params, int pri, const char *format,...)</div><div class="ttdoc">Create a log message with RFC 5424 syslog header in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:218</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gab05a59d52b560561ce33a937f73aae5e"><div class="ttname"><a href="group__etcpal__log.html#gab05a59d52b560561ce33a937f73aae5e">etcpal_log</a></div><div class="ttdeci">void etcpal_log(const EtcPalLogParams *params, int pri, const char *format,...)</div><div class="ttdoc">Log a message.</div><div class="ttdef"><b>Definition:</b> log.c:405</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gac44c39be61d1bf95239f9bd6fb1f11ad"><div class="ttname"><a href="group__etcpal__log.html#gac44c39be61d1bf95239f9bd6fb1f11ad">etcpal_can_log</a></div><div class="ttdeci">bool etcpal_can_log(const EtcPalLogParams *params, int pri)</div><div class="ttdoc">Determine whether a priority level can be logged given the mask present in the log params.</div><div class="ttdef"><b>Definition:</b> log.c:388</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gacf54b7ce272d89f2a35a83c4cd3bda4f"><div class="ttname"><a href="group__etcpal__log.html#gacf54b7ce272d89f2a35a83c4cd3bda4f">etcpal_create_log_str</a></div><div class="ttdeci">bool etcpal_create_log_str(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, int pri, const char *format,...)</div><div class="ttdoc">Create a log message with a human-readable prefix in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:164</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gadec7b676650d22a5315d97f3aeee1dd0"><div class="ttname"><a href="group__etcpal__log.html#gadec7b676650d22a5315d97f3aeee1dd0">etcpal_vcreate_log_str</a></div><div class="ttdeci">bool etcpal_vcreate_log_str(char *buf, size_t buflen, const EtcPalLogTimestamp *timestamp, int pri, const char *format, va_list args)</div><div class="ttdoc">Create a log a message with a human-readable prefix in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:194</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gae62cd1cd05e3e42c5df41cab8df8e9e3"><div class="ttname"><a href="group__etcpal__log.html#gae62cd1cd05e3e42c5df41cab8df8e9e3">EtcPalLogTimeFn</a></div><div class="ttdeci">void(* EtcPalLogTimeFn)(void *context, EtcPalLogTimestamp *timestamp)</div><div class="ttdoc">Time callback function.</div><div class="ttdef"><b>Definition:</b> log.h:337</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gaf8d8eef393a51fca0f1ddbfd7cad9c82"><div class="ttname"><a href="group__etcpal__log.html#gaf8d8eef393a51fca0f1ddbfd7cad9c82">EtcPalLogCallback</a></div><div class="ttdeci">void(* EtcPalLogCallback)(void *context, const EtcPalLogStrings *strings)</div><div class="ttdoc">Log callback function.</div><div class="ttdef"><b>Definition:</b> log.h:326</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gafc4fcfbaaffb603d10e2b27f54e122d2"><div class="ttname"><a href="group__etcpal__log.html#gafc4fcfbaaffb603d10e2b27f54e122d2">ETCPAL_LOG_HOSTNAME_MAX_LEN</a></div><div class="ttdeci">#define ETCPAL_LOG_HOSTNAME_MAX_LEN</div><div class="ttdoc">Max length of the hostname param.</div><div class="ttdef"><b>Definition:</b> log.h:196</div></div>
+<div class="ttc" id="astruct_etc_pal_log_params_html"><div class="ttname"><a href="struct_etc_pal_log_params.html">EtcPalLogParams</a></div><div class="ttdoc">A set of parameters used for the etcpal_*log() functions.</div><div class="ttdef"><b>Definition:</b> log.h:375</div></div>
+<div class="ttc" id="astruct_etc_pal_log_params_html_a6b5edefad9cb5463180d2f3cc9537c44"><div class="ttname"><a href="struct_etc_pal_log_params.html#a6b5edefad9cb5463180d2f3cc9537c44">EtcPalLogParams::syslog_params</a></div><div class="ttdeci">EtcPalSyslogParams syslog_params</div><div class="ttdoc">The syslog header parameters.</div><div class="ttdef"><b>Definition:</b> log.h:381</div></div>
+<div class="ttc" id="astruct_etc_pal_log_params_html_a9a6659e83ffc5e4e7ab3c5ba5009f4e7"><div class="ttname"><a href="struct_etc_pal_log_params.html#a9a6659e83ffc5e4e7ab3c5ba5009f4e7">EtcPalLogParams::log_fn</a></div><div class="ttdeci">EtcPalLogCallback log_fn</div><div class="ttdoc">A callback function for the finished log string(s).</div><div class="ttdef"><b>Definition:</b> log.h:379</div></div>
+<div class="ttc" id="astruct_etc_pal_log_params_html_a9ba0f2f280a2a2e49c17508af48aad91"><div class="ttname"><a href="struct_etc_pal_log_params.html#a9ba0f2f280a2a2e49c17508af48aad91">EtcPalLogParams::action</a></div><div class="ttdeci">int action</div><div class="ttdoc">What should be done when etcpal_log() or etcpal_vlog() is called.</div><div class="ttdef"><b>Definition:</b> log.h:377</div></div>
+<div class="ttc" id="astruct_etc_pal_log_params_html_ac695d621aaa836a9d13d65a912be9518"><div class="ttname"><a href="struct_etc_pal_log_params.html#ac695d621aaa836a9d13d65a912be9518">EtcPalLogParams::log_mask</a></div><div class="ttdeci">int log_mask</div><div class="ttdoc">A mask value that determines which priority messages can be logged.</div><div class="ttdef"><b>Definition:</b> log.h:383</div></div>
+<div class="ttc" id="astruct_etc_pal_log_params_html_aceff50b76400c01d88b158c0a68f32d8"><div class="ttname"><a href="struct_etc_pal_log_params.html#aceff50b76400c01d88b158c0a68f32d8">EtcPalLogParams::time_fn</a></div><div class="ttdeci">EtcPalLogTimeFn time_fn</div><div class="ttdoc">A callback function for the etcpal_log() and etcpal_vlog() functions to obtain the time from the appl...</div><div class="ttdef"><b>Definition:</b> log.h:388</div></div>
+<div class="ttc" id="astruct_etc_pal_log_params_html_ae376f130b17d169ee51be68077a89ed0"><div class="ttname"><a href="struct_etc_pal_log_params.html#ae376f130b17d169ee51be68077a89ed0">EtcPalLogParams::context</a></div><div class="ttdeci">void * context</div><div class="ttdoc">Application context that will be passed back with the log callback function.</div><div class="ttdef"><b>Definition:</b> log.h:390</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html"><div class="ttname"><a href="struct_etc_pal_log_strings.html">EtcPalLogStrings</a></div><div class="ttdoc">The set of log strings passed with a call to an etcpal_log_callback function.</div><div class="ttdef"><b>Definition:</b> log.h:288</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html_a4ac8b9667178849660fd3b1f99e93366"><div class="ttname"><a href="struct_etc_pal_log_strings.html#a4ac8b9667178849660fd3b1f99e93366">EtcPalLogStrings::human_readable</a></div><div class="ttdeci">const char * human_readable</div><div class="ttdoc">Log string formatted for readability per ETC convention.</div><div class="ttdef"><b>Definition:</b> log.h:294</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html_a5911dbe6a47cb2b9cfbab87a8881b5b6"><div class="ttname"><a href="struct_etc_pal_log_strings.html#a5911dbe6a47cb2b9cfbab87a8881b5b6">EtcPalLogStrings::syslog</a></div><div class="ttdeci">const char * syslog</div><div class="ttdoc">Log string formatted compliant to RFC 5424.</div><div class="ttdef"><b>Definition:</b> log.h:290</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html_a7c969c4f61944571b31c58080a53f968"><div class="ttname"><a href="struct_etc_pal_log_strings.html#a7c969c4f61944571b31c58080a53f968">EtcPalLogStrings::legacy_syslog</a></div><div class="ttdeci">const char * legacy_syslog</div><div class="ttdoc">Log string formatted compliant to RFC 3164.</div><div class="ttdef"><b>Definition:</b> log.h:292</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html_a8129637af8920bc9328bbce2a00bfeb4"><div class="ttname"><a href="struct_etc_pal_log_strings.html#a8129637af8920bc9328bbce2a00bfeb4">EtcPalLogStrings::raw</a></div><div class="ttdeci">const char * raw</div><div class="ttdoc">The original log string that was passed to etcpal_log() or etcpal_vlog().</div><div class="ttdef"><b>Definition:</b> log.h:299</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html_acec9ce2df15222151ad66fcb1d74eb9f"><div class="ttname"><a href="struct_etc_pal_log_strings.html#acec9ce2df15222151ad66fcb1d74eb9f">EtcPalLogStrings::priority</a></div><div class="ttdeci">int priority</div><div class="ttdoc">The original log priority that was passed to etcpal_log() or etcpal_vlog().</div><div class="ttdef"><b>Definition:</b> log.h:304</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html">EtcPalLogTimestamp</a></div><div class="ttdoc">A set of parameters which represent the current local time with millisecond resolution.</div><div class="ttdef"><b>Definition:</b> log.h:272</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_a0d5ceb6295477b5931bf54c002e36fe9"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#a0d5ceb6295477b5931bf54c002e36fe9">EtcPalLogTimestamp::utc_offset</a></div><div class="ttdeci">int utc_offset</div><div class="ttdoc">The local offset from UTC in minutes.</div><div class="ttdef"><b>Definition:</b> log.h:280</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_a2398ea43f7d25f677616371d3b545f59"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#a2398ea43f7d25f677616371d3b545f59">EtcPalLogTimestamp::day</a></div><div class="ttdeci">unsigned int day</div><div class="ttdoc">Day of the month.</div><div class="ttdef"><b>Definition:</b> log.h:275</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_a7ab95bf164c7490d2855a7efcea6784a"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#a7ab95bf164c7490d2855a7efcea6784a">EtcPalLogTimestamp::second</a></div><div class="ttdeci">unsigned int second</div><div class="ttdoc">Seconds past the current minute.</div><div class="ttdef"><b>Definition:</b> log.h:278</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_a7ff63df03ff6549639b712d24a94adef"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#a7ff63df03ff6549639b712d24a94adef">EtcPalLogTimestamp::minute</a></div><div class="ttdeci">unsigned int minute</div><div class="ttdoc">Minutes past the current hour.</div><div class="ttdef"><b>Definition:</b> log.h:277</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_a8c07e017c7b80f536d05c6134cae89ef"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#a8c07e017c7b80f536d05c6134cae89ef">EtcPalLogTimestamp::month</a></div><div class="ttdeci">unsigned int month</div><div class="ttdoc">Month of the year.</div><div class="ttdef"><b>Definition:</b> log.h:274</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_a9c83bbc97dcf2390b043382b4dfe3c98"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#a9c83bbc97dcf2390b043382b4dfe3c98">EtcPalLogTimestamp::year</a></div><div class="ttdeci">unsigned int year</div><div class="ttdoc">Absolute year.</div><div class="ttdef"><b>Definition:</b> log.h:273</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_aa64c18c25aeef9a0d7c92d89fa24a636"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#aa64c18c25aeef9a0d7c92d89fa24a636">EtcPalLogTimestamp::hour</a></div><div class="ttdeci">unsigned int hour</div><div class="ttdoc">Hours since midnight.</div><div class="ttdef"><b>Definition:</b> log.h:276</div></div>
+<div class="ttc" id="astruct_etc_pal_log_timestamp_html_ab7174bcdc6006eb03894beaa8664521c"><div class="ttname"><a href="struct_etc_pal_log_timestamp.html#ab7174bcdc6006eb03894beaa8664521c">EtcPalLogTimestamp::msec</a></div><div class="ttdeci">unsigned int msec</div><div class="ttdoc">Milliseconds past the current second.</div><div class="ttdef"><b>Definition:</b> log.h:279</div></div>
+<div class="ttc" id="astruct_etc_pal_syslog_params_html"><div class="ttname"><a href="struct_etc_pal_syslog_params.html">EtcPalSyslogParams</a></div><div class="ttdoc">A set of parameters for the syslog header.</div><div class="ttdef"><b>Definition:</b> log.h:348</div></div>
+<div class="ttc" id="astruct_etc_pal_syslog_params_html_a213afa2e73e0c2102f43d4067e41b90f"><div class="ttname"><a href="struct_etc_pal_syslog_params.html#a213afa2e73e0c2102f43d4067e41b90f">EtcPalSyslogParams::facility</a></div><div class="ttdeci">int facility</div><div class="ttdoc">Syslog Facility; see RFC 5424 § 6.2.1.</div><div class="ttdef"><b>Definition:</b> log.h:350</div></div>
+<div class="ttc" id="astruct_etc_pal_syslog_params_html_a6d20b2dcf8c2bc4f864b3d719ad00ad0"><div class="ttname"><a href="struct_etc_pal_syslog_params.html#a6d20b2dcf8c2bc4f864b3d719ad00ad0">EtcPalSyslogParams::app_name</a></div><div class="ttdeci">char app_name[ETCPAL_LOG_APP_NAME_MAX_LEN]</div><div class="ttdoc">Syslog APP-NAME; see RFC 5424 § 6.2.5.</div><div class="ttdef"><b>Definition:</b> log.h:354</div></div>
+<div class="ttc" id="astruct_etc_pal_syslog_params_html_aa3d06040894562832d2218511875b444"><div class="ttname"><a href="struct_etc_pal_syslog_params.html#aa3d06040894562832d2218511875b444">EtcPalSyslogParams::procid</a></div><div class="ttdeci">char procid[ETCPAL_LOG_PROCID_MAX_LEN]</div><div class="ttdoc">Syslog PROCID; see RFC 5424 § 6.2.6.</div><div class="ttdef"><b>Definition:</b> log.h:356</div></div>
+<div class="ttc" id="astruct_etc_pal_syslog_params_html_acf45ed2a37e15e83167bd1edcd9fbbbe"><div class="ttname"><a href="struct_etc_pal_syslog_params.html#acf45ed2a37e15e83167bd1edcd9fbbbe">EtcPalSyslogParams::hostname</a></div><div class="ttdeci">char hostname[ETCPAL_LOG_HOSTNAME_MAX_LEN]</div><div class="ttdoc">Syslog HOSTNAME; see RFC 5424 § 6.2.4.</div><div class="ttdef"><b>Definition:</b> log.h:352</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_81a3fb26cc06c42d281987e41831a70b.html">etcpal</a></li><li class="navelem"><b>log.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

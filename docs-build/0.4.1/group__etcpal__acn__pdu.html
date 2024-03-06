@@ -1,0 +1,742 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: acn_pdu (ACN Protocol Family PDUs)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__acn__pdu.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">acn_pdu (ACN Protocol Family PDUs)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__core.html">Core Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN). </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/acn_pdu.h&quot;</span></div>
+</div><!-- fragment --><p>This module handles building and parsing the ACN PDU format as defined in ANSI E1.17, ACN Architecture document, &sect; 2. EtcPal supports a few different ACN protocol family libraries, including sACN and RDMnet, so it's convenient to have this logic here. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_acn_pdu.html">AcnPdu</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds state data used when parsing multiple PDUs in a PDU block.  <a href="struct_acn_pdu.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_acn_pdu_constraints.html">AcnPduConstraints</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains specific PDU info used by the generic helper <a class="el" href="group__etcpal__acn__pdu.html#gab277ac11752967a19ded43f02e8bf0d4" title="Parse a generic ACN PDU.">acn_parse_pdu()</a>.  <a href="struct_acn_pdu_constraints.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gae56bb8381a08d26f7a124eb82a65ce70"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gae56bb8381a08d26f7a124eb82a65ce70">ACN_PDU_LENGTH</a>(pdu_buf)</td></tr>
+<tr class="memdesc:gae56bb8381a08d26f7a124eb82a65ce70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the length from the Length field of an ACN PDU.  <a href="group__etcpal__acn__pdu.html#gae56bb8381a08d26f7a124eb82a65ce70">More...</a><br /></td></tr>
+<tr class="separator:gae56bb8381a08d26f7a124eb82a65ce70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0c52657116f8cbc6376e4185aa10ed4e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#ga0c52657116f8cbc6376e4185aa10ed4e">ACN_PDU_PACK_NORMAL_LEN</a>(pdu_buf,  length)</td></tr>
+<tr class="memdesc:ga0c52657116f8cbc6376e4185aa10ed4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill in the Length field of an ACN PDU which has a length less than 4096.  <a href="group__etcpal__acn__pdu.html#ga0c52657116f8cbc6376e4185aa10ed4e">More...</a><br /></td></tr>
+<tr class="separator:ga0c52657116f8cbc6376e4185aa10ed4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf63c612f16b76b5d1f56d569aa06de39"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gaf63c612f16b76b5d1f56d569aa06de39">ACN_PDU_PACK_EXT_LEN</a>(pdu_buf,  length)</td></tr>
+<tr class="memdesc:gaf63c612f16b76b5d1f56d569aa06de39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill in the Length field of an ACN PDU which has a length 4096 or greater.  <a href="group__etcpal__acn__pdu.html#gaf63c612f16b76b5d1f56d569aa06de39">More...</a><br /></td></tr>
+<tr class="separator:gaf63c612f16b76b5d1f56d569aa06de39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga408e2eafbb588ee9138013a62c412e4c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#ga408e2eafbb588ee9138013a62c412e4c">ACN_PDU_INIT</a></td></tr>
+<tr class="memdesc:ga408e2eafbb588ee9138013a62c412e4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> initializer values; must be used to intialize an <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> when parsing the first PDU in a block.  <a href="group__etcpal__acn__pdu.html#ga408e2eafbb588ee9138013a62c412e4c">More...</a><br /></td></tr>
+<tr class="separator:ga408e2eafbb588ee9138013a62c412e4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9c8ce768d1162956568cf55f2c42d6bb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#ga9c8ce768d1162956568cf55f2c42d6bb">ACN_INIT_PDU</a>(pduptr)</td></tr>
+<tr class="memdesc:ga9c8ce768d1162956568cf55f2c42d6bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">An alternative to <a class="el" href="group__etcpal__acn__pdu.html#ga408e2eafbb588ee9138013a62c412e4c" title="Default AcnPdu initializer values; must be used to intialize an AcnPdu when parsing the first PDU in ...">ACN_PDU_INIT</a> which can be used on an existing <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> to re-initialize its values.  <a href="group__etcpal__acn__pdu.html#ga9c8ce768d1162956568cf55f2c42d6bb">More...</a><br /></td></tr>
+<tr class="separator:ga9c8ce768d1162956568cf55f2c42d6bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga491e20ce3faf2cfee7121b6eb66bc781"><td class="memItemLeft" align="right" valign="top"><a id="ga491e20ce3faf2cfee7121b6eb66bc781"></a>
+typedef struct <a class="el" href="struct_acn_pdu.html">AcnPdu</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#ga491e20ce3faf2cfee7121b6eb66bc781">AcnPdu</a></td></tr>
+<tr class="memdesc:ga491e20ce3faf2cfee7121b6eb66bc781"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds state data used when parsing multiple PDUs in a PDU block. <br /></td></tr>
+<tr class="separator:ga491e20ce3faf2cfee7121b6eb66bc781"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaac46d586dbf523c33a7c2abcc855d134"><td class="memItemLeft" align="right" valign="top"><a id="gaac46d586dbf523c33a7c2abcc855d134"></a>
+typedef struct <a class="el" href="struct_acn_pdu_constraints.html">AcnPduConstraints</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gaac46d586dbf523c33a7c2abcc855d134">AcnPduConstraints</a></td></tr>
+<tr class="memdesc:gaac46d586dbf523c33a7c2abcc855d134"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains specific PDU info used by the generic helper <a class="el" href="group__etcpal__acn__pdu.html#gab277ac11752967a19ded43f02e8bf0d4" title="Parse a generic ACN PDU.">acn_parse_pdu()</a>. <br /></td></tr>
+<tr class="separator:gaac46d586dbf523c33a7c2abcc855d134"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gab277ac11752967a19ded43f02e8bf0d4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gab277ac11752967a19ded43f02e8bf0d4">acn_parse_pdu</a> (const uint8_t *buf, size_t buflen, const <a class="el" href="struct_acn_pdu_constraints.html">AcnPduConstraints</a> *constraints, <a class="el" href="struct_acn_pdu.html">AcnPdu</a> *pdu)</td></tr>
+<tr class="memdesc:gab277ac11752967a19ded43f02e8bf0d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a generic ACN PDU.  <a href="group__etcpal__acn__pdu.html#gab277ac11752967a19ded43f02e8bf0d4">More...</a><br /></td></tr>
+<tr class="separator:gab277ac11752967a19ded43f02e8bf0d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Get the inheritance and length bits in an ACN PDU Flags &amp; Length segment.</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrpea09f6604450dc0ccfccb3e4948bedc5"></a>The first byte of each PDU contains a flags field which indicates the inheritance properties of that PDU.</p>
+<p>For more information, see ANSI E1.17, ACN Architecture, &sect; 2.4. </p>
+</td></tr>
+<tr class="memitem:gaff1b6f9a3c23b53b3dc32b8fba814e84"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gaff1b6f9a3c23b53b3dc32b8fba814e84">ACN_PDU_L_FLAG_SET</a>(flags_byte)&#160;&#160;&#160;((bool)((flags_byte)&amp;0x80u))</td></tr>
+<tr class="memdesc:gaff1b6f9a3c23b53b3dc32b8fba814e84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether the L flag is set in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#gaff1b6f9a3c23b53b3dc32b8fba814e84">More...</a><br /></td></tr>
+<tr class="separator:gaff1b6f9a3c23b53b3dc32b8fba814e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabee5ccd32aebcd51a251a606c1059e6a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gabee5ccd32aebcd51a251a606c1059e6a">ACN_PDU_V_FLAG_SET</a>(flags_byte)&#160;&#160;&#160;((bool)((flags_byte)&amp;0x40u))</td></tr>
+<tr class="memdesc:gabee5ccd32aebcd51a251a606c1059e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether the V flag is set in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#gabee5ccd32aebcd51a251a606c1059e6a">More...</a><br /></td></tr>
+<tr class="separator:gabee5ccd32aebcd51a251a606c1059e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4e16a5ba393080866e3bf05184bdd8cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#ga4e16a5ba393080866e3bf05184bdd8cc">ACN_PDU_H_FLAG_SET</a>(flags_byte)&#160;&#160;&#160;((bool)((flags_byte)&amp;0x20u))</td></tr>
+<tr class="memdesc:ga4e16a5ba393080866e3bf05184bdd8cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether the H flag is set in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#ga4e16a5ba393080866e3bf05184bdd8cc">More...</a><br /></td></tr>
+<tr class="separator:ga4e16a5ba393080866e3bf05184bdd8cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabfbc18cb41624f62faf120c756e15a93"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gabfbc18cb41624f62faf120c756e15a93">ACN_PDU_D_FLAG_SET</a>(flags_byte)&#160;&#160;&#160;((bool)((flags_byte)&amp;0x10u))</td></tr>
+<tr class="memdesc:gabfbc18cb41624f62faf120c756e15a93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether the D flag is set in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#gabfbc18cb41624f62faf120c756e15a93">More...</a><br /></td></tr>
+<tr class="separator:gabfbc18cb41624f62faf120c756e15a93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Set the inheritance and length bits in a PDU Flags &amp; Length segment.</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp4accfa41e968240c2274beaf5c6b2d1a"></a>The first byte of each PDU contains a flags field which indicates the inheritance properties of that PDU.</p>
+<p>For more information, see ANSI E1.17, ACN Architecture, &sect; 2.4. </p>
+</td></tr>
+<tr class="memitem:gadb9812c9527ce0e9990ef2f4a7ba7384"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gadb9812c9527ce0e9990ef2f4a7ba7384">ACN_PDU_SET_L_FLAG</a>(flags_byte)&#160;&#160;&#160;(flags_byte |= 0x80u)</td></tr>
+<tr class="memdesc:gadb9812c9527ce0e9990ef2f4a7ba7384"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the L flag in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#gadb9812c9527ce0e9990ef2f4a7ba7384">More...</a><br /></td></tr>
+<tr class="separator:gadb9812c9527ce0e9990ef2f4a7ba7384"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf4b41a1aef5cd04be19b8dcb747445f5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#gaf4b41a1aef5cd04be19b8dcb747445f5">ACN_PDU_SET_V_FLAG</a>(flags_byte)&#160;&#160;&#160;(flags_byte |= 0x40u)</td></tr>
+<tr class="memdesc:gaf4b41a1aef5cd04be19b8dcb747445f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the V flag in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#gaf4b41a1aef5cd04be19b8dcb747445f5">More...</a><br /></td></tr>
+<tr class="separator:gaf4b41a1aef5cd04be19b8dcb747445f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga242de4c8a855bf849a2571f4f959f39c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#ga242de4c8a855bf849a2571f4f959f39c">ACN_PDU_SET_H_FLAG</a>(flags_byte)&#160;&#160;&#160;(flags_byte |= 0x20u)</td></tr>
+<tr class="memdesc:ga242de4c8a855bf849a2571f4f959f39c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the H flag in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#ga242de4c8a855bf849a2571f4f959f39c">More...</a><br /></td></tr>
+<tr class="separator:ga242de4c8a855bf849a2571f4f959f39c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga81c687ecab08faeb07309f0a105427fd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__acn__pdu.html#ga81c687ecab08faeb07309f0a105427fd">ACN_PDU_SET_D_FLAG</a>(flags_byte)&#160;&#160;&#160;(flags_byte |= 0x10u)</td></tr>
+<tr class="memdesc:ga81c687ecab08faeb07309f0a105427fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the D flag in an ACN PDU flags field.  <a href="group__etcpal__acn__pdu.html#ga81c687ecab08faeb07309f0a105427fd">More...</a><br /></td></tr>
+<tr class="separator:ga81c687ecab08faeb07309f0a105427fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga9c8ce768d1162956568cf55f2c42d6bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9c8ce768d1162956568cf55f2c42d6bb">&#9670;&nbsp;</a></span>ACN_INIT_PDU</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_INIT_PDU</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">pduptr</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                           \</div>
+<div class="line">  {                            \</div>
+<div class="line">    (pduptr)-&gt;pvector  = NULL; \</div>
+<div class="line">    (pduptr)-&gt;pheader  = NULL; \</div>
+<div class="line">    (pduptr)-&gt;pdata    = NULL; \</div>
+<div class="line">    (pduptr)-&gt;data_len = 0;    \</div>
+<div class="line">    (pduptr)-&gt;pnextpdu = NULL; \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+</div><!-- fragment -->
+<p>An alternative to <a class="el" href="group__etcpal__acn__pdu.html#ga408e2eafbb588ee9138013a62c412e4c" title="Default AcnPdu initializer values; must be used to intialize an AcnPdu when parsing the first PDU in ...">ACN_PDU_INIT</a> which can be used on an existing <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> to re-initialize its values. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pduptr</td><td>Pointer to <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> to initialize. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gabfbc18cb41624f62faf120c756e15a93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabfbc18cb41624f62faf120c756e15a93">&#9670;&nbsp;</a></span>ACN_PDU_D_FLAG_SET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_D_FLAG_SET</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;((bool)((flags_byte)&amp;0x10u))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether the D flag is set in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (the D flag is set) or false (the D flag is not set). </dd></dl>
+
+</div>
+</div>
+<a id="ga4e16a5ba393080866e3bf05184bdd8cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4e16a5ba393080866e3bf05184bdd8cc">&#9670;&nbsp;</a></span>ACN_PDU_H_FLAG_SET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_H_FLAG_SET</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;((bool)((flags_byte)&amp;0x20u))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether the H flag is set in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (the H flag is set) or false (the H flag is not set). </dd></dl>
+
+</div>
+</div>
+<a id="ga408e2eafbb588ee9138013a62c412e4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga408e2eafbb588ee9138013a62c412e4c">&#9670;&nbsp;</a></span>ACN_PDU_INIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_INIT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  {                           \</div>
+<div class="line">    NULL, NULL, NULL, 0, NULL \</div>
+<div class="line">  }</div>
+</div><!-- fragment -->
+<p>Default <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> initializer values; must be used to intialize an <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> when parsing the first PDU in a block. </p>
+
+</div>
+</div>
+<a id="gaff1b6f9a3c23b53b3dc32b8fba814e84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaff1b6f9a3c23b53b3dc32b8fba814e84">&#9670;&nbsp;</a></span>ACN_PDU_L_FLAG_SET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_L_FLAG_SET</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;((bool)((flags_byte)&amp;0x80u))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether the L flag is set in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (the L flag is set) or false (the L flags is not set). </dd></dl>
+
+</div>
+</div>
+<a id="gae56bb8381a08d26f7a124eb82a65ce70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae56bb8381a08d26f7a124eb82a65ce70">&#9670;&nbsp;</a></span>ACN_PDU_LENGTH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_LENGTH</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">pdu_buf</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  ((uint32_t)(<a class="code" href="group__etcpal__acn__pdu.html#gaff1b6f9a3c23b53b3dc32b8fba814e84">ACN_PDU_L_FLAG_SET</a>(pdu_buf[0])                                                                      \</div>
+<div class="line">                  ? ((uint32_t)((pdu_buf[0] &amp; 0x0fu) &lt;&lt; 16) | (uint32_t)(pdu_buf[1] &lt;&lt; 8) | (uint32_t)pdu_buf[2]) \</div>
+<div class="line">                  : ((uint32_t)((pdu_buf[0] &amp; 0x0fu) &lt;&lt; 8) | (uint32_t)pdu_buf[1])))</div>
+<div class="ttc" id="agroup__etcpal__acn__pdu_html_gaff1b6f9a3c23b53b3dc32b8fba814e84"><div class="ttname"><a href="group__etcpal__acn__pdu.html#gaff1b6f9a3c23b53b3dc32b8fba814e84">ACN_PDU_L_FLAG_SET</a></div><div class="ttdeci">#define ACN_PDU_L_FLAG_SET(flags_byte)</div><div class="ttdoc">Determine whether the L flag is set in an ACN PDU flags field.</div><div class="ttdef"><b>Definition:</b> acn_pdu.h:57</div></div>
+</div><!-- fragment -->
+<p>Get the length from the Length field of an ACN PDU. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pdu_buf</td><td>Pointer to the start of the PDU buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The length of the PDU. </dd></dl>
+
+</div>
+</div>
+<a id="gaf63c612f16b76b5d1f56d569aa06de39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf63c612f16b76b5d1f56d569aa06de39">&#9670;&nbsp;</a></span>ACN_PDU_PACK_EXT_LEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_PACK_EXT_LEN</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">pdu_buf, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">length&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                                                                              \</div>
+<div class="line">  {                                                                               \</div>
+<div class="line">    (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] &amp; 0xf0) | (((length) &gt;&gt; 16) &amp; 0x0fu)); \</div>
+<div class="line">    (pdu_buf)[1] = (uint8_t)(((length) &gt;&gt; 8) &amp; 0xffu);                            \</div>
+<div class="line">    (pdu_buf)[2] = (uint8_t)(length)&amp;0xffu;                                       \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+</div><!-- fragment -->
+<p>Fill in the Length field of an ACN PDU which has a length 4096 or greater. </p>
+<p>The L flag of this PDU must be set to 1.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pdu_buf</td><td>Pointer to the start of the PDU buffer. </td></tr>
+    <tr><td class="paramname">length</td><td>Length of this PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga0c52657116f8cbc6376e4185aa10ed4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0c52657116f8cbc6376e4185aa10ed4e">&#9670;&nbsp;</a></span>ACN_PDU_PACK_NORMAL_LEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_PACK_NORMAL_LEN</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">pdu_buf, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">length&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                                                                             \</div>
+<div class="line">  {                                                                              \</div>
+<div class="line">    (pdu_buf)[0] = (uint8_t)(((pdu_buf)[0] &amp; 0xf0) | (((length) &gt;&gt; 8) &amp; 0x0fu)); \</div>
+<div class="line">    (pdu_buf)[1] = (uint8_t)(length)&amp;0xffu;                                      \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+</div><!-- fragment -->
+<p>Fill in the Length field of an ACN PDU which has a length less than 4096. </p>
+<p>The L flag of this PDU must be set to 0.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pdu_buf</td><td>Pointer to the start of the PDU buffer. </td></tr>
+    <tr><td class="paramname">length</td><td>Length of this PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga81c687ecab08faeb07309f0a105427fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga81c687ecab08faeb07309f0a105427fd">&#9670;&nbsp;</a></span>ACN_PDU_SET_D_FLAG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_SET_D_FLAG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;(flags_byte |= 0x10u)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the D flag in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga242de4c8a855bf849a2571f4f959f39c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga242de4c8a855bf849a2571f4f959f39c">&#9670;&nbsp;</a></span>ACN_PDU_SET_H_FLAG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_SET_H_FLAG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;(flags_byte |= 0x20u)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the H flag in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gadb9812c9527ce0e9990ef2f4a7ba7384"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadb9812c9527ce0e9990ef2f4a7ba7384">&#9670;&nbsp;</a></span>ACN_PDU_SET_L_FLAG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_SET_L_FLAG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;(flags_byte |= 0x80u)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the L flag in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaf4b41a1aef5cd04be19b8dcb747445f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf4b41a1aef5cd04be19b8dcb747445f5">&#9670;&nbsp;</a></span>ACN_PDU_SET_V_FLAG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_SET_V_FLAG</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;(flags_byte |= 0x40u)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the V flag in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gabee5ccd32aebcd51a251a606c1059e6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabee5ccd32aebcd51a251a606c1059e6a">&#9670;&nbsp;</a></span>ACN_PDU_V_FLAG_SET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ACN_PDU_V_FLAG_SET</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">flags_byte</td><td>)</td>
+          <td>&#160;&#160;&#160;((bool)((flags_byte)&amp;0x40u))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether the V flag is set in an ACN PDU flags field. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">flags_byte</td><td>The first byte of the PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (the V flag is set) or false (the V flag is not set). </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gab277ac11752967a19ded43f02e8bf0d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab277ac11752967a19ded43f02e8bf0d4">&#9670;&nbsp;</a></span>acn_parse_pdu()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool acn_parse_pdu </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>buflen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_acn_pdu_constraints.html">AcnPduConstraints</a> *&#160;</td>
+          <td class="paramname"><em>constraints</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_acn_pdu.html">AcnPdu</a> *&#160;</td>
+          <td class="paramname"><em>pdu</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Parse a generic ACN PDU. </p>
+<p>A function to parse a generic ACN PDU. The specific PDU info needed for parsing is contained in a struct <a class="el" href="struct_acn_pdu_constraints.html" title="Contains specific PDU info used by the generic helper acn_parse_pdu().">AcnPduConstraints</a>. Uses <a class="el" href="struct_acn_pdu.html" title="Holds state data used when parsing multiple PDUs in a PDU block.">AcnPdu</a> to maintain state across multiple PDUs in a block.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">buf</td><td>Byte buffer containing a PDU. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">buflen</td><td>Size in bytes of buf. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constraints</td><td>Specific information about the PDU being parsed </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">pdu</td><td>PDU data from the last PDU in the block. The data is used and then replaced with data from this PDU. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (PDU was parsed successfully) or false (parse error or no more PDUs in the block). </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

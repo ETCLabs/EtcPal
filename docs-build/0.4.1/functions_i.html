@@ -1,0 +1,305 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: Data Fields</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('functions_i.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="contents">
+<div class="textblock">Here is a list of all documented struct and union fields with links to the struct/union documentation for each field:</div>
+
+<h3><a id="index_i"></a>- i -</h3><ul>
+<li>id
+: <a class="el" href="struct_etc_pal_netint_info.html#a3548252138686cd633b4730070e2311f">EtcPalNetintInfo</a>
+</li>
+<li>ifindex
+: <a class="el" href="struct_etc_pal_group_req.html#a452f46bf9904a02408a12d9e406b4de7">EtcPalGroupReq</a>
+</li>
+<li>index
+: <a class="el" href="struct_etc_pal_mcast_netint_id.html#a589d64202487f78e3cc30dd2e04c5201">EtcPalMcastNetintId</a>
+, <a class="el" href="struct_etc_pal_netint_info.html#a589d64202487f78e3cc30dd2e04c5201">EtcPalNetintInfo</a>
+</li>
+<li>Info()
+: <a class="el" href="classetcpal_1_1_logger.html#a221110f73de7530eee4f76769cabaf2b">Logger</a>
+</li>
+<li>info
+: <a class="el" href="struct_etc_pal_rb_iter.html#acb1df3a0f703b05bc4971f79cabe2597">EtcPalRbIter</a>
+, <a class="el" href="struct_etc_pal_rb_tree.html#acb1df3a0f703b05bc4971f79cabe2597">EtcPalRbTree</a>
+</li>
+<li>interval
+: <a class="el" href="struct_etc_pal_timer.html#acd9ed1ccc44de55e1d3eff5569663695">EtcPalTimer</a>
+</li>
+<li>Invalid()
+: <a class="el" href="classetcpal_1_1_log_timestamp.html#ad9fe329da06c0386ffc6fd84b840dcc9">LogTimestamp</a>
+, <a class="el" href="classetcpal_1_1_opaque_id.html#a67fba554b339bd96ec627d8ddebb2794">OpaqueId&lt; IdType, ValueType, InvalidValue &gt;</a>
+</li>
+<li>ip()
+: <a class="el" href="classetcpal_1_1_sock_addr.html#a3ab600814133b2eb30bfc9d2816d6acd">SockAddr</a>
+, <a class="el" href="struct_etc_pal_sock_addr.html#a19cc8016f534a565f984438cfe911a9e">EtcPalSockAddr</a>
+</li>
+<li>ip_type
+: <a class="el" href="struct_etc_pal_mcast_netint_id.html#a69e98f42b011c7c001d2857cb68bb304">EtcPalMcastNetintId</a>
+</li>
+<li>IpAddr()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#a523a252e7d40b2a5b8583f5f221adb1d">IpAddr</a>
+</li>
+<li>is_default
+: <a class="el" href="struct_etc_pal_netint_info.html#a0c9f19a7b68ad0dad836ee153d3a230a">EtcPalNetintInfo</a>
+</li>
+<li>IsEmpty()
+: <a class="el" href="classetcpal_1_1_queue.html#a8e12342fc420701fbffd97025421575a">Queue&lt; T &gt;</a>
+</li>
+<li>IsEmptyFromIsr()
+: <a class="el" href="classetcpal_1_1_queue.html#a9cc49246382de0eeb66f493207fb4dbc">Queue&lt; T &gt;</a>
+</li>
+<li>IsExpired()
+: <a class="el" href="classetcpal_1_1_timer.html#a3a79feefa8df553fd15b9997d0c3a719">Timer</a>
+</li>
+<li>IsFull()
+: <a class="el" href="classetcpal_1_1_queue.html#af5d30d3dd704e8e683b98a6ed6c5d9ca">Queue&lt; T &gt;</a>
+</li>
+<li>IsFullFromIsr()
+: <a class="el" href="classetcpal_1_1_queue.html#acf599d4a90f1b8f8c7892fe84789f6ac">Queue&lt; T &gt;</a>
+</li>
+<li>IsLinkLocal()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#a211a72caa8aba79efd967fa3114e8c95">IpAddr</a>
+, <a class="el" href="classetcpal_1_1_sock_addr.html#a211a72caa8aba79efd967fa3114e8c95">SockAddr</a>
+</li>
+<li>IsLoopback()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#a4833f2d2e3f0434978f59f5020a7f84b">IpAddr</a>
+, <a class="el" href="classetcpal_1_1_sock_addr.html#a4833f2d2e3f0434978f59f5020a7f84b">SockAddr</a>
+</li>
+<li>IsMulticast()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#a2f371a6bc900dd3ddcf0f7f16c5db00a">IpAddr</a>
+, <a class="el" href="classetcpal_1_1_sock_addr.html#a2f371a6bc900dd3ddcf0f7f16c5db00a">SockAddr</a>
+</li>
+<li>IsNull()
+: <a class="el" href="classetcpal_1_1_mac_addr.html#a27909eb1d61b8b261d259be7c70c58dd">MacAddr</a>
+, <a class="el" href="classetcpal_1_1_uuid.html#a27909eb1d61b8b261d259be7c70c58dd">Uuid</a>
+</li>
+<li>IsOk()
+: <a class="el" href="classetcpal_1_1_error.html#a030d244ccd9a40a9f9ac813ea912a639">Error</a>
+</li>
+<li>IsV4()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#a3c808bdaebc8f534c871ac28bf379a7a">IpAddr</a>
+, <a class="el" href="classetcpal_1_1_sock_addr.html#a3c808bdaebc8f534c871ac28bf379a7a">SockAddr</a>
+</li>
+<li>IsV6()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#a08a35ea1e7f3f0a6047fbf28810d53e9">IpAddr</a>
+, <a class="el" href="classetcpal_1_1_sock_addr.html#a08a35ea1e7f3f0a6047fbf28810d53e9">SockAddr</a>
+</li>
+<li>IsValid()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#a6d02bb05c3ab899ab6752bbab4e3dbcf">IpAddr</a>
+, <a class="el" href="classetcpal_1_1_log_timestamp.html#a472f705194218179e9cf26ffb288da6c">LogTimestamp</a>
+, <a class="el" href="classetcpal_1_1_opaque_id.html#ab0b02c2ae96656027facd95c8015b7db">OpaqueId&lt; IdType, ValueType, InvalidValue &gt;</a>
+, <a class="el" href="classetcpal_1_1_sock_addr.html#a6d02bb05c3ab899ab6752bbab4e3dbcf">SockAddr</a>
+</li>
+<li>IsWildcard()
+: <a class="el" href="classetcpal_1_1_ip_addr.html#ac384adc1cbf470fe6672659bdef8358c">IpAddr</a>
+, <a class="el" href="classetcpal_1_1_sock_addr.html#ac384adc1cbf470fe6672659bdef8358c">SockAddr</a>
+</li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

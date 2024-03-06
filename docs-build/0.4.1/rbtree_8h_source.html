@@ -1,0 +1,382 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: include/etcpal/rbtree.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('rbtree_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">rbtree.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/* etcpal/rbtree.h: C-language red-black tree implementation. .his module is</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * based heavily on a public-domain red-black tree implementation. The license</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * of that implementation follows as it was when retrieved from Github on</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * 2018-02-28.</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> ******************************************************************************</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * Based on Julienne Walker&#39;s &lt;http://eternallyconfuzzled.com/&gt; rb_tree</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> * implementation.</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Modified by Mirek Rusin &lt;http://github.com/mirek/rb_tree&gt;.</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * This is free and unencumbered software released into the public domain.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * Anyone is free to copy, modify, publish, use, compile, sell, or</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> * distribute this software, either in source code form or as a compiled</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * binary, for any purpose, commercial or non-commercial, and by any</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * means.</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment"> * In jurisdictions that recognize copyright laws, the author or authors</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment"> * of this software dedicate any and all copyright interest in the</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment"> * software to the public domain. We make this dedication for the benefit</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment"> * of the public at large and to the detriment of our heirs and</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment"> * successors. We intend this dedication to be an overt act of</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment"> * relinquishment in perpetuity of all present and future rights to this</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"> * software under copyright law.</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment"> * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"> * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"> * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"> * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"> * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"> * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"> * OTHER DEALINGS IN THE SOFTWARE.</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment"> * For more information, please refer to &lt;http://unlicense.org/&gt;</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"> */</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#ifndef ETCPAL_RBTREE_H_</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#define ETCPAL_RBTREE_H_</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#include &lt;stddef.h&gt;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &quot;etcpal/error.h&quot;</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="preprocessor">#ifndef ETCPAL_RB_ITER_MAX_HEIGHT</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="group__etcpal__rbtree.html#ga347976360fdafc669aab59abc1ff7d73">  127</a></span>&#160;<span class="preprocessor">#define ETCPAL_RB_ITER_MAX_HEIGHT 64</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">  153</a></span>&#160;<span class="keyword">typedef</span> int (*<a class="code" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">EtcPalRbTreeNodeCmpFunc</a>)(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <span class="keyword">const</span> <span class="keywordtype">void</span>* value_a, <span class="keyword">const</span> <span class="keywordtype">void</span>* value_b);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">  166</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a>)(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* node);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
+<div class="line"><a name="l00177"></a><span class="lineno"><a class="line" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">  177</a></span>&#160;<span class="keyword">typedef</span> <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* (*EtcPalRbNodeAllocFunc)(void);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno"><a class="line" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">  188</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">EtcPalRbNodeDeallocFunc</a>)(<a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* node);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_node.html">  195</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;{</div>
+<div class="line"><a name="l00197"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_node.html#a6761340706096510fd89edca40a63b9b">  197</a></span>&#160;  <span class="keywordtype">int</span>           <a class="code" href="struct_etc_pal_rb_node.html#a6761340706096510fd89edca40a63b9b">red</a>;     </div>
+<div class="line"><a name="l00198"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_node.html#a629e7a1728cfe5d93fe2381d793ef93f">  198</a></span>&#160;  <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* <a class="code" href="struct_etc_pal_rb_node.html#a629e7a1728cfe5d93fe2381d793ef93f">link</a>[2]; </div>
+<div class="line"><a name="l00199"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_node.html#a0f61d63b009d0880a89c843bd50d8d76">  199</a></span>&#160;  <span class="keywordtype">void</span>*         <a class="code" href="struct_etc_pal_rb_node.html#a0f61d63b009d0880a89c843bd50d8d76">value</a>;   </div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;};</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
+<div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_tree.html">  207</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;{</div>
+<div class="line"><a name="l00209"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_tree.html#ae96f5aa846cba3ae538255b01f066bea">  209</a></span>&#160;  <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>*           <a class="code" href="struct_etc_pal_rb_tree.html#ae96f5aa846cba3ae538255b01f066bea">root</a>;      </div>
+<div class="line"><a name="l00210"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_tree.html#a7b29df8f3907a7cb322be7a1cb130670">  210</a></span>&#160;  <a class="code" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">EtcPalRbTreeNodeCmpFunc</a> <a class="code" href="struct_etc_pal_rb_tree.html#a7b29df8f3907a7cb322be7a1cb130670">cmp</a>;       </div>
+<div class="line"><a name="l00211"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_tree.html#a854352f53b148adc24983a58a1866d66">  211</a></span>&#160;  <span class="keywordtype">size_t</span>                  <a class="code" href="struct_etc_pal_rb_tree.html#a854352f53b148adc24983a58a1866d66">size</a>;      </div>
+<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_tree.html#a2969aaea1ac7bf7f69dba4965e8b8d5b">  212</a></span>&#160;  <a class="code" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">EtcPalRbNodeAllocFunc</a>   <a class="code" href="struct_etc_pal_rb_tree.html#a2969aaea1ac7bf7f69dba4965e8b8d5b">alloc_f</a>;   </div>
+<div class="line"><a name="l00213"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_tree.html#a29c69388460d3c40b35a388dcbea6b58">  213</a></span>&#160;  <a class="code" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">EtcPalRbNodeDeallocFunc</a> <a class="code" href="struct_etc_pal_rb_tree.html#a29c69388460d3c40b35a388dcbea6b58">dealloc_f</a>; </div>
+<div class="line"><a name="l00214"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_tree.html#acb1df3a0f703b05bc4971f79cabe2597">  214</a></span>&#160;  <span class="keywordtype">void</span>*                   <a class="code" href="struct_etc_pal_rb_tree.html#acb1df3a0f703b05bc4971f79cabe2597">info</a>;      </div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;};</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_iter.html">  222</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;{</div>
+<div class="line"><a name="l00224"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_iter.html#a3dc7beb088200d742f70c0c895b376c4">  224</a></span>&#160;  <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <a class="code" href="struct_etc_pal_rb_iter.html#a3dc7beb088200d742f70c0c895b376c4">tree</a>;                            </div>
+<div class="line"><a name="l00225"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_iter.html#a46745baa1082347489f1dd6dd68c7afa">  225</a></span>&#160;  <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* <a class="code" href="struct_etc_pal_rb_iter.html#a46745baa1082347489f1dd6dd68c7afa">node</a>;                            </div>
+<div class="line"><a name="l00226"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_iter.html#a6d248403d379988dac19bf98cfeb84b9">  226</a></span>&#160;  <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* <a class="code" href="struct_etc_pal_rb_iter.html#a6d248403d379988dac19bf98cfeb84b9">path</a>[<a class="code" href="group__etcpal__rbtree.html#ga347976360fdafc669aab59abc1ff7d73">ETCPAL_RB_ITER_MAX_HEIGHT</a>]; </div>
+<div class="line"><a name="l00227"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_iter.html#ab9332a87d0af5aa12cac847eff68b7af">  227</a></span>&#160;  <span class="keywordtype">size_t</span>        <a class="code" href="struct_etc_pal_rb_iter.html#ab9332a87d0af5aa12cac847eff68b7af">top</a>;                             </div>
+<div class="line"><a name="l00228"></a><span class="lineno"><a class="line" href="struct_etc_pal_rb_iter.html#acb1df3a0f703b05bc4971f79cabe2597">  228</a></span>&#160;  <span class="keywordtype">void</span>*         <a class="code" href="struct_etc_pal_rb_iter.html#acb1df3a0f703b05bc4971f79cabe2597">info</a>;                            </div>
+<div class="line"><a name="l00229"></a><span class="lineno"><a class="line" href="group__etcpal__rbtree.html#ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa">  229</a></span>&#160;} <a class="code" href="group__etcpal__rbtree.html#ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa">EtcPalRbIter</a>;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="keywordtype">int</span>  <a class="code" href="group__etcpal__rbtree.html#gabda4a5620ad7cddcc09ef71d4d8222c7">etcpal_rbtree_node_cmp_ptr_cb</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <span class="keyword">const</span> <span class="keywordtype">void</span>* a, <span class="keyword">const</span> <span class="keywordtype">void</span>* b);</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__etcpal__rbtree.html#ga2041c16a4a4e745ccadd180cbb8bc93f">etcpal_rbtree_node_dealloc_cb</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* node);</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; </div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* <a class="code" href="group__etcpal__rbtree.html#gaf901899ba23ab79070d5ed1440440eb2">etcpal_rbnode_init</a>(<a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* <span class="keyword">self</span>, <span class="keywordtype">void</span>* value);</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160; </div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>*  <a class="code" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587">etcpal_rbtree_init</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>*           <span class="keyword">self</span>,</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;                                  <a class="code" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">EtcPalRbTreeNodeCmpFunc</a> node_cmp_cb,</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;                                  <a class="code" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">EtcPalRbNodeAllocFunc</a>   alloc_f,</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                                  <a class="code" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">EtcPalRbNodeDeallocFunc</a> dealloc_f);</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="keywordtype">void</span>*          <a class="code" href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <span class="keyword">const</span> <span class="keywordtype">void</span>* value);</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">etcpal_rbtree_insert</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <span class="keywordtype">void</span>* value);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__rbtree.html#ga46d80469b4a700447b2721589cbec3d9">etcpal_rbtree_remove</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <span class="keyword">const</span> <span class="keywordtype">void</span>* value);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__rbtree.html#ga1347a53b2f8505e22707702f490949e8">etcpal_rbtree_clear</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="keywordtype">size_t</span>         <a class="code" href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">etcpal_rbtree_size</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__rbtree.html#ga036f8c0aea4ac2050bd2deb904affed6">etcpal_rbtree_insert_node</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* node);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__rbtree.html#gae9045e863548f8051541f3f054bbf4be">etcpal_rbtree_remove_with_cb</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <span class="keyword">const</span> <span class="keywordtype">void</span>* value, <a class="code" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a> node_cb);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__rbtree.html#ga2dfae49efd1e9a9dbd02635bdea8e73d">etcpal_rbtree_clear_with_cb</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <a class="code" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a> node_cb);</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160; </div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="keywordtype">int</span> <a class="code" href="group__etcpal__rbtree.html#ga3b194e280069ff3fbd105d9799dbea05">etcpal_rbtree_test</a>(<a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* root);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <a class="code" href="group__etcpal__rbtree.html#gae7d2f565a40d1ab86873e7bc9c5c5c02">etcpal_rbiter_init</a>(<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <span class="keyword">self</span>);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="keywordtype">void</span>*         <a class="code" href="group__etcpal__rbtree.html#ga1cd77fc10e7c983be2c12c5f14bc3721">etcpal_rbiter_first</a>(<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* tree);</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="keywordtype">void</span>*         <a class="code" href="group__etcpal__rbtree.html#ga6f1279b41c60d92a808cc9b364f9eac9">etcpal_rbiter_last</a>(<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* tree);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="keywordtype">void</span>*         <a class="code" href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e">etcpal_rbiter_next</a>(<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <span class="keyword">self</span>);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="keywordtype">void</span>*         <a class="code" href="group__etcpal__rbtree.html#gad093318703094fd4bdb9ecb09443241d">etcpal_rbiter_prev</a>(<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <span class="keyword">self</span>);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="keywordtype">void</span>*         <a class="code" href="group__etcpal__rbtree.html#ga44f891bf17cabdfba6bf7748c02fe52b">etcpal_rbiter_lower_bound</a>(<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* tree, <span class="keyword">const</span> <span class="keywordtype">void</span>* value);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="keywordtype">void</span>*         <a class="code" href="group__etcpal__rbtree.html#ga260091c3e633a8b5e3db3625e615032d">etcpal_rbiter_upper_bound</a>(<a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* <span class="keyword">self</span>, <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* tree, <span class="keyword">const</span> <span class="keywordtype">void</span>* value);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;}</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ETCPAL_RBTREE_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__etcpal__error_html_ga743b0648f0ca798ef29c9f69c6e255af"><div class="ttname"><a href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a></div><div class="ttdeci">etcpal_error_t</div><div class="ttdoc">A set of error codes that can be returned by library functions.</div><div class="ttdef"><b>Definition:</b> error.h:49</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga036f8c0aea4ac2050bd2deb904affed6"><div class="ttname"><a href="group__etcpal__rbtree.html#ga036f8c0aea4ac2050bd2deb904affed6">etcpal_rbtree_insert_node</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_insert_node(EtcPalRbTree *self, EtcPalRbNode *node)</div><div class="ttdoc">Insert a node containing a new value into a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:283</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga0f5fd5d6b8505a1e408a8f22fb3ede2b"><div class="ttname"><a href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">EtcPalRbTreeNodeCmpFunc</a></div><div class="ttdeci">int(* EtcPalRbTreeNodeCmpFunc)(const EtcPalRbTree *self, const void *value_a, const void *value_b)</div><div class="ttdoc">A function type that compares two value instances contained in a tree.</div><div class="ttdef"><b>Definition:</b> rbtree.h:153</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga1347a53b2f8505e22707702f490949e8"><div class="ttname"><a href="group__etcpal__rbtree.html#ga1347a53b2f8505e22707702f490949e8">etcpal_rbtree_clear</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree *self)</div><div class="ttdoc">Clear all values from a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:518</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga1cd77fc10e7c983be2c12c5f14bc3721"><div class="ttname"><a href="group__etcpal__rbtree.html#ga1cd77fc10e7c983be2c12c5f14bc3721">etcpal_rbiter_first</a></div><div class="ttdeci">void * etcpal_rbiter_first(EtcPalRbIter *self, EtcPalRbTree *tree)</div><div class="ttdoc">Point a red-black tree iterator at the first value in the tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:731</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga2041c16a4a4e745ccadd180cbb8bc93f"><div class="ttname"><a href="group__etcpal__rbtree.html#ga2041c16a4a4e745ccadd180cbb8bc93f">etcpal_rbtree_node_dealloc_cb</a></div><div class="ttdeci">void etcpal_rbtree_node_dealloc_cb(const EtcPalRbTree *self, EtcPalRbNode *node)</div><div class="ttdoc">The default node deallocation callback.</div><div class="ttdef"><b>Definition:</b> rbtree.c:137</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga260091c3e633a8b5e3db3625e615032d"><div class="ttname"><a href="group__etcpal__rbtree.html#ga260091c3e633a8b5e3db3625e615032d">etcpal_rbiter_upper_bound</a></div><div class="ttdeci">void * etcpal_rbiter_upper_bound(EtcPalRbIter *self, EtcPalRbTree *tree, const void *value)</div><div class="ttdoc">Point a red-black tree iterator to the upper-bound of a value.</div><div class="ttdef"><b>Definition:</b> rbtree.c:826</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga2dfae49efd1e9a9dbd02635bdea8e73d"><div class="ttname"><a href="group__etcpal__rbtree.html#ga2dfae49efd1e9a9dbd02635bdea8e73d">etcpal_rbtree_clear_with_cb</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_clear_with_cb(EtcPalRbTree *self, EtcPalRbTreeNodeFunc node_cb)</div><div class="ttdoc">Clear all values from a red-black tree, calling back into the application for each node and value bei...</div><div class="ttdef"><b>Definition:</b> rbtree.c:541</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga347976360fdafc669aab59abc1ff7d73"><div class="ttname"><a href="group__etcpal__rbtree.html#ga347976360fdafc669aab59abc1ff7d73">ETCPAL_RB_ITER_MAX_HEIGHT</a></div><div class="ttdeci">#define ETCPAL_RB_ITER_MAX_HEIGHT</div><div class="ttdoc">The tallest allowable tree that can be iterated over.</div><div class="ttdef"><b>Definition:</b> rbtree.h:127</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga3b194e280069ff3fbd105d9799dbea05"><div class="ttname"><a href="group__etcpal__rbtree.html#ga3b194e280069ff3fbd105d9799dbea05">etcpal_rbtree_test</a></div><div class="ttdeci">int etcpal_rbtree_test(EtcPalRbTree *self, EtcPalRbNode *root)</div><div class="ttdoc">Test the validity of a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:601</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga44f891bf17cabdfba6bf7748c02fe52b"><div class="ttname"><a href="group__etcpal__rbtree.html#ga44f891bf17cabdfba6bf7748c02fe52b">etcpal_rbiter_lower_bound</a></div><div class="ttdeci">void * etcpal_rbiter_lower_bound(EtcPalRbIter *self, EtcPalRbTree *tree, const void *value)</div><div class="ttdoc">Point a red-black tree iterator to the lower-bound of a value.</div><div class="ttdef"><b>Definition:</b> rbtree.c:789</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga46d80469b4a700447b2721589cbec3d9"><div class="ttname"><a href="group__etcpal__rbtree.html#ga46d80469b4a700447b2721589cbec3d9">etcpal_rbtree_remove</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree *self, const void *value)</div><div class="ttdoc">Remove a value from a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:381</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga4d3d93cb20130fc9d34fc13d1ea92316"><div class="ttname"><a href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a></div><div class="ttdeci">void * etcpal_rbtree_find(EtcPalRbTree *self, const void *value)</div><div class="ttdoc">Find a value in a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:209</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga6687d480b9c3f3583303d537190a47de"><div class="ttname"><a href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a></div><div class="ttdeci">void(* EtcPalRbTreeNodeFunc)(const EtcPalRbTree *self, EtcPalRbNode *node)</div><div class="ttdoc">A function type to be called for each node in a tree.</div><div class="ttdef"><b>Definition:</b> rbtree.h:166</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga6f1279b41c60d92a808cc9b364f9eac9"><div class="ttname"><a href="group__etcpal__rbtree.html#ga6f1279b41c60d92a808cc9b364f9eac9">etcpal_rbiter_last</a></div><div class="ttdeci">void * etcpal_rbiter_last(EtcPalRbIter *self, EtcPalRbTree *tree)</div><div class="ttdoc">Point a red-black tree iterator at the last value in the tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:746</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga7e715765639ff5a6b66065858541b083"><div class="ttname"><a href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">EtcPalRbNodeAllocFunc</a></div><div class="ttdeci">EtcPalRbNode *(* EtcPalRbNodeAllocFunc)(void)</div><div class="ttdoc">A function type to allocate a new node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:177</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa"><div class="ttname"><a href="group__etcpal__rbtree.html#ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa">EtcPalRbIter</a></div><div class="ttdeci">struct EtcPalRbIter EtcPalRbIter</div><div class="ttdoc">A red-black tree iterator.</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gaa3804b7146d1e8a72e4139a0f4d6507e"><div class="ttname"><a href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e">etcpal_rbiter_next</a></div><div class="ttdeci">void * etcpal_rbiter_next(EtcPalRbIter *self)</div><div class="ttdoc">Advance a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> rbtree.c:760</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gab04d15dd62a53956d6ea4b1e5dcbe930"><div class="ttname"><a href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">EtcPalRbNodeDeallocFunc</a></div><div class="ttdeci">void(* EtcPalRbNodeDeallocFunc)(EtcPalRbNode *node)</div><div class="ttdoc">A function type to deallocate a node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:188</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gab0a4770c9d96c8eddd30684490b2d587"><div class="ttname"><a href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587">etcpal_rbtree_init</a></div><div class="ttdeci">EtcPalRbTree * etcpal_rbtree_init(EtcPalRbTree *self, EtcPalRbTreeNodeCmpFunc node_cmp_cb, EtcPalRbNodeAllocFunc alloc_f, EtcPalRbNodeDeallocFunc dealloc_f)</div><div class="ttdoc">Initialize a red-black tree node.</div><div class="ttdef"><b>Definition:</b> rbtree.c:156</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gabda4a5620ad7cddcc09ef71d4d8222c7"><div class="ttname"><a href="group__etcpal__rbtree.html#gabda4a5620ad7cddcc09ef71d4d8222c7">etcpal_rbtree_node_cmp_ptr_cb</a></div><div class="ttdeci">int etcpal_rbtree_node_cmp_ptr_cb(const EtcPalRbTree *self, const void *a, const void *b)</div><div class="ttdoc">The default node comparison callback.</div><div class="ttdef"><b>Definition:</b> rbtree.c:125</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gad093318703094fd4bdb9ecb09443241d"><div class="ttname"><a href="group__etcpal__rbtree.html#gad093318703094fd4bdb9ecb09443241d">etcpal_rbiter_prev</a></div><div class="ttdeci">void * etcpal_rbiter_prev(EtcPalRbIter *self)</div><div class="ttdoc">Reverse-advance a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> rbtree.c:774</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gae0aa64287211d3858cef5d0a7cffb033"><div class="ttname"><a href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">etcpal_rbtree_size</a></div><div class="ttdeci">size_t etcpal_rbtree_size(EtcPalRbTree *self)</div><div class="ttdoc">Get the current number of values in a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:580</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gae7d2f565a40d1ab86873e7bc9c5c5c02"><div class="ttname"><a href="group__etcpal__rbtree.html#gae7d2f565a40d1ab86873e7bc9c5c5c02">etcpal_rbiter_init</a></div><div class="ttdeci">EtcPalRbIter * etcpal_rbiter_init(EtcPalRbIter *self)</div><div class="ttdoc">Initialize a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> rbtree.c:652</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gae87df653a152c3942b54a8f8e7c235c6"><div class="ttname"><a href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">etcpal_rbtree_insert</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree *self, void *value)</div><div class="ttdoc">Insert a new value into a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:247</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gae9045e863548f8051541f3f054bbf4be"><div class="ttname"><a href="group__etcpal__rbtree.html#gae9045e863548f8051541f3f054bbf4be">etcpal_rbtree_remove_with_cb</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree *self, const void *value, EtcPalRbTreeNodeFunc node_cb)</div><div class="ttdoc">Remove a value from a red-black tree, calling back into the application with the node and value being...</div><div class="ttdef"><b>Definition:</b> rbtree.c:407</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gaf901899ba23ab79070d5ed1440440eb2"><div class="ttname"><a href="group__etcpal__rbtree.html#gaf901899ba23ab79070d5ed1440440eb2">etcpal_rbnode_init</a></div><div class="ttdeci">EtcPalRbNode * etcpal_rbnode_init(EtcPalRbNode *self, void *value)</div><div class="ttdoc">Initialize a red-black tree node.</div><div class="ttdef"><b>Definition:</b> rbtree.c:63</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_iter_html"><div class="ttname"><a href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a></div><div class="ttdoc">A red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> rbtree.h:223</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_iter_html_a3dc7beb088200d742f70c0c895b376c4"><div class="ttname"><a href="struct_etc_pal_rb_iter.html#a3dc7beb088200d742f70c0c895b376c4">EtcPalRbIter::tree</a></div><div class="ttdeci">EtcPalRbTree * tree</div><div class="ttdoc">The tree being iterated over.</div><div class="ttdef"><b>Definition:</b> rbtree.h:224</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_iter_html_a46745baa1082347489f1dd6dd68c7afa"><div class="ttname"><a href="struct_etc_pal_rb_iter.html#a46745baa1082347489f1dd6dd68c7afa">EtcPalRbIter::node</a></div><div class="ttdeci">EtcPalRbNode * node</div><div class="ttdoc">The current node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:225</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_iter_html_a6d248403d379988dac19bf98cfeb84b9"><div class="ttname"><a href="struct_etc_pal_rb_iter.html#a6d248403d379988dac19bf98cfeb84b9">EtcPalRbIter::path</a></div><div class="ttdeci">EtcPalRbNode * path[ETCPAL_RB_ITER_MAX_HEIGHT]</div><div class="ttdoc">The traversal path to the current node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:226</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_iter_html_ab9332a87d0af5aa12cac847eff68b7af"><div class="ttname"><a href="struct_etc_pal_rb_iter.html#ab9332a87d0af5aa12cac847eff68b7af">EtcPalRbIter::top</a></div><div class="ttdeci">size_t top</div><div class="ttdoc">Top of the traversal stack.</div><div class="ttdef"><b>Definition:</b> rbtree.h:227</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_iter_html_acb1df3a0f703b05bc4971f79cabe2597"><div class="ttname"><a href="struct_etc_pal_rb_iter.html#acb1df3a0f703b05bc4971f79cabe2597">EtcPalRbIter::info</a></div><div class="ttdeci">void * info</div><div class="ttdoc">User provided, not used by etcpal_rbiter.</div><div class="ttdef"><b>Definition:</b> rbtree.h:228</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_node_html"><div class="ttname"><a href="struct_etc_pal_rb_node.html">EtcPalRbNode</a></div><div class="ttdoc">A red-black tree node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:196</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_node_html_a0f61d63b009d0880a89c843bd50d8d76"><div class="ttname"><a href="struct_etc_pal_rb_node.html#a0f61d63b009d0880a89c843bd50d8d76">EtcPalRbNode::value</a></div><div class="ttdeci">void * value</div><div class="ttdoc">The value object represented by this node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:199</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_node_html_a629e7a1728cfe5d93fe2381d793ef93f"><div class="ttname"><a href="struct_etc_pal_rb_node.html#a629e7a1728cfe5d93fe2381d793ef93f">EtcPalRbNode::link</a></div><div class="ttdeci">EtcPalRbNode * link[2]</div><div class="ttdoc">Child node links: left [0], right [1].</div><div class="ttdef"><b>Definition:</b> rbtree.h:198</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_node_html_a6761340706096510fd89edca40a63b9b"><div class="ttname"><a href="struct_etc_pal_rb_node.html#a6761340706096510fd89edca40a63b9b">EtcPalRbNode::red</a></div><div class="ttdeci">int red</div><div class="ttdoc">The node color: red (1), black (0)</div><div class="ttdef"><b>Definition:</b> rbtree.h:197</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html"><div class="ttname"><a href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a></div><div class="ttdoc">A red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.h:208</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html_a2969aaea1ac7bf7f69dba4965e8b8d5b"><div class="ttname"><a href="struct_etc_pal_rb_tree.html#a2969aaea1ac7bf7f69dba4965e8b8d5b">EtcPalRbTree::alloc_f</a></div><div class="ttdeci">EtcPalRbNodeAllocFunc alloc_f</div><div class="ttdoc">A function to use for allocating a new node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:212</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html_a29c69388460d3c40b35a388dcbea6b58"><div class="ttname"><a href="struct_etc_pal_rb_tree.html#a29c69388460d3c40b35a388dcbea6b58">EtcPalRbTree::dealloc_f</a></div><div class="ttdeci">EtcPalRbNodeDeallocFunc dealloc_f</div><div class="ttdoc">A function to use for deallocating a node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:213</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html_a7b29df8f3907a7cb322be7a1cb130670"><div class="ttname"><a href="struct_etc_pal_rb_tree.html#a7b29df8f3907a7cb322be7a1cb130670">EtcPalRbTree::cmp</a></div><div class="ttdeci">EtcPalRbTreeNodeCmpFunc cmp</div><div class="ttdoc">A function to use for comparing two nodes.</div><div class="ttdef"><b>Definition:</b> rbtree.h:210</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html_a854352f53b148adc24983a58a1866d66"><div class="ttname"><a href="struct_etc_pal_rb_tree.html#a854352f53b148adc24983a58a1866d66">EtcPalRbTree::size</a></div><div class="ttdeci">size_t size</div><div class="ttdoc">The current count of nodes in the tree.</div><div class="ttdef"><b>Definition:</b> rbtree.h:211</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html_acb1df3a0f703b05bc4971f79cabe2597"><div class="ttname"><a href="struct_etc_pal_rb_tree.html#acb1df3a0f703b05bc4971f79cabe2597">EtcPalRbTree::info</a></div><div class="ttdeci">void * info</div><div class="ttdoc">User provided, not used by etcpal_rbtree.</div><div class="ttdef"><b>Definition:</b> rbtree.h:214</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html_ae96f5aa846cba3ae538255b01f066bea"><div class="ttname"><a href="struct_etc_pal_rb_tree.html#ae96f5aa846cba3ae538255b01f066bea">EtcPalRbTree::root</a></div><div class="ttdeci">EtcPalRbNode * root</div><div class="ttdoc">The root node of the tree.</div><div class="ttdef"><b>Definition:</b> rbtree.h:209</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_81a3fb26cc06c42d281987e41831a70b.html">etcpal</a></li><li class="navelem"><b>rbtree.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

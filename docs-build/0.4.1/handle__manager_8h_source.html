@@ -1,0 +1,280 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: include/etcpal/handle_manager.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('handle__manager_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">handle_manager.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2022 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of EtcPal. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/EtcPal</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/* etcpal/handle_manager.h: A utility to manage handing out integer handles to resources. */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#ifndef ETCPAL_HANDLE_MANAGER_H_</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#define ETCPAL_HANDLE_MANAGER_H_</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="group__etcpal__handle__manager.html#ga73979c8d153b67aa866db1280228bff3">   50</a></span>&#160;<span class="keyword">typedef</span> bool (*<a class="code" href="group__etcpal__handle__manager.html#ga73979c8d153b67aa866db1280228bff3">HandleValueInUseFunction</a>)(<span class="keywordtype">int</span> handle_val, <span class="keywordtype">void</span>* context);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="struct_int_handle_manager.html">   53</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_int_handle_manager.html">IntHandleManager</a></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;{</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="struct_int_handle_manager.html#a9337859a5f288fcb3d0e347f17fa40f1">   56</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_int_handle_manager.html#a9337859a5f288fcb3d0e347f17fa40f1">last_handle</a>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="struct_int_handle_manager.html#aff3c96df7d67617d6ee82fa1f257ff84">   59</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_int_handle_manager.html#aff3c96df7d67617d6ee82fa1f257ff84">max_value</a>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="struct_int_handle_manager.html#a9470aa8a510599ff6589491f9de01513">   63</a></span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="struct_int_handle_manager.html#a9470aa8a510599ff6589491f9de01513">check_value_in_use</a>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="struct_int_handle_manager.html#abd2192f66657434c5c7f410dce1d5609">   66</a></span>&#160;  <a class="code" href="group__etcpal__handle__manager.html#ga73979c8d153b67aa866db1280228bff3">HandleValueInUseFunction</a> <a class="code" href="struct_int_handle_manager.html#abd2192f66657434c5c7f410dce1d5609">value_in_use</a>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="struct_int_handle_manager.html#ae376f130b17d169ee51be68077a89ed0">   68</a></span>&#160;  <span class="keywordtype">void</span>* <a class="code" href="struct_int_handle_manager.html#ae376f130b17d169ee51be68077a89ed0">context</a>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="group__etcpal__handle__manager.html#gad8312cee69355acbb88c52543da8989f">   69</a></span>&#160;} <a class="code" href="group__etcpal__handle__manager.html#gad8312cee69355acbb88c52543da8989f">IntHandleManager</a>;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__etcpal__handle__manager.html#ga39b0483a9f5bb16cf49ab8ef27e07893">init_int_handle_manager</a>(<a class="code" href="struct_int_handle_manager.html">IntHandleManager</a>*        manager,</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                             <span class="keywordtype">int</span>                      max_value,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                             <a class="code" href="group__etcpal__handle__manager.html#ga73979c8d153b67aa866db1280228bff3">HandleValueInUseFunction</a> value_in_use_func,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                             <span class="keywordtype">void</span>*                    context);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keywordtype">int</span>  <a class="code" href="group__etcpal__handle__manager.html#ga521bcf0eabc66fa156cb3bee35551a2b">get_next_int_handle</a>(<a class="code" href="struct_int_handle_manager.html">IntHandleManager</a>* manager);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ETCPAL_HANDLE_MANAGER_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__etcpal__handle__manager_html_ga39b0483a9f5bb16cf49ab8ef27e07893"><div class="ttname"><a href="group__etcpal__handle__manager.html#ga39b0483a9f5bb16cf49ab8ef27e07893">init_int_handle_manager</a></div><div class="ttdeci">void init_int_handle_manager(IntHandleManager *manager, int max_value, HandleValueInUseFunction value_in_use_func, void *context)</div><div class="ttdoc">Initialize an IntHandleManager instance.</div><div class="ttdef"><b>Definition:</b> handle_manager.c:33</div></div>
+<div class="ttc" id="agroup__etcpal__handle__manager_html_ga521bcf0eabc66fa156cb3bee35551a2b"><div class="ttname"><a href="group__etcpal__handle__manager.html#ga521bcf0eabc66fa156cb3bee35551a2b">get_next_int_handle</a></div><div class="ttdeci">int get_next_int_handle(IntHandleManager *manager)</div><div class="ttdoc">Once the int handle manager is initialized, this is used to get the next handle value.</div><div class="ttdef"><b>Definition:</b> handle_manager.c:53</div></div>
+<div class="ttc" id="agroup__etcpal__handle__manager_html_ga73979c8d153b67aa866db1280228bff3"><div class="ttname"><a href="group__etcpal__handle__manager.html#ga73979c8d153b67aa866db1280228bff3">HandleValueInUseFunction</a></div><div class="ttdeci">bool(* HandleValueInUseFunction)(int handle_val, void *context)</div><div class="ttdoc">A pointer to a function that tests if a given handle value is currently assigned to a resource.</div><div class="ttdef"><b>Definition:</b> handle_manager.h:50</div></div>
+<div class="ttc" id="agroup__etcpal__handle__manager_html_gad8312cee69355acbb88c52543da8989f"><div class="ttname"><a href="group__etcpal__handle__manager.html#gad8312cee69355acbb88c52543da8989f">IntHandleManager</a></div><div class="ttdeci">struct IntHandleManager IntHandleManager</div><div class="ttdoc">State for managing generic integer handle values.</div></div>
+<div class="ttc" id="astruct_int_handle_manager_html"><div class="ttname"><a href="struct_int_handle_manager.html">IntHandleManager</a></div><div class="ttdoc">State for managing generic integer handle values.</div><div class="ttdef"><b>Definition:</b> handle_manager.h:54</div></div>
+<div class="ttc" id="astruct_int_handle_manager_html_a9337859a5f288fcb3d0e347f17fa40f1"><div class="ttname"><a href="struct_int_handle_manager.html#a9337859a5f288fcb3d0e347f17fa40f1">IntHandleManager::last_handle</a></div><div class="ttdeci">int last_handle</div><div class="ttdoc">The last handle that was handed out, or -1 if none have been handed out yet.</div><div class="ttdef"><b>Definition:</b> handle_manager.h:56</div></div>
+<div class="ttc" id="astruct_int_handle_manager_html_a9470aa8a510599ff6589491f9de01513"><div class="ttname"><a href="struct_int_handle_manager.html#a9470aa8a510599ff6589491f9de01513">IntHandleManager::check_value_in_use</a></div><div class="ttdeci">bool check_value_in_use</div><div class="ttdoc">Optimize the handle generation algorithm by tracking whether the handle value has wrapped around.</div><div class="ttdef"><b>Definition:</b> handle_manager.h:63</div></div>
+<div class="ttc" id="astruct_int_handle_manager_html_abd2192f66657434c5c7f410dce1d5609"><div class="ttname"><a href="struct_int_handle_manager.html#abd2192f66657434c5c7f410dce1d5609">IntHandleManager::value_in_use</a></div><div class="ttdeci">HandleValueInUseFunction value_in_use</div><div class="ttdoc">Function pointer to determine if a handle value is currently in use.</div><div class="ttdef"><b>Definition:</b> handle_manager.h:66</div></div>
+<div class="ttc" id="astruct_int_handle_manager_html_ae376f130b17d169ee51be68077a89ed0"><div class="ttname"><a href="struct_int_handle_manager.html#ae376f130b17d169ee51be68077a89ed0">IntHandleManager::context</a></div><div class="ttdeci">void * context</div><div class="ttdoc">A context passed to the value in use function.</div><div class="ttdef"><b>Definition:</b> handle_manager.h:68</div></div>
+<div class="ttc" id="astruct_int_handle_manager_html_aff3c96df7d67617d6ee82fa1f257ff84"><div class="ttname"><a href="struct_int_handle_manager.html#aff3c96df7d67617d6ee82fa1f257ff84">IntHandleManager::max_value</a></div><div class="ttdeci">int max_value</div><div class="ttdoc">Determines a custom wrap-around point.</div><div class="ttdef"><b>Definition:</b> handle_manager.h:59</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_81a3fb26cc06c42d281987e41831a70b.html">etcpal</a></li><li class="navelem"><b>handle_manager.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

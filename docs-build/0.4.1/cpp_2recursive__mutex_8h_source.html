@@ -1,0 +1,357 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: include/etcpal/cpp/recursive_mutex.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('cpp_2recursive__mutex_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">recursive_mutex.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="cpp_2recursive__mutex_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2022 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of EtcPal. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/EtcPal</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#ifndef ETCPAL_CPP_RECURSIVE_MUTEX_H_</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#define ETCPAL_CPP_RECURSIVE_MUTEX_H_</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cpp_2common_8h.html">etcpal/cpp/common.h</a>&quot;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &quot;etcpal/recursive_mutex.h&quot;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">namespace </span>etcpal</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex.html">   63</a></span>&#160;<span class="keyword">class </span><a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;{</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex.html#a8629c480ab7a14342fd8428e12758ab8">RecursiveMutex</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex.html#ae6174c936b2476911d57c33a194c1b29">~RecursiveMutex</a>();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex.html#a8629c480ab7a14342fd8428e12758ab8">RecursiveMutex</a>(<span class="keyword">const</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex.html#a8629c480ab7a14342fd8428e12758ab8">RecursiveMutex</a>(<a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp;&amp; other)                 = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp; operator=(<a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp;&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#a747fd95916e116a6ed37cc641e394c69">Lock</a>();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#a8ad93c25cdc665654314bba0797d37ef">TryLock</a>(<span class="keywordtype">int</span> timeout_ms = 0);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keywordtype">void</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#a91b88a5d5517cb042431c4ea24d8ecb7">Unlock</a>();</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <a class="code" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a>&amp; <a class="code" href="classetcpal_1_1_recursive_mutex.html#abcaf9c69e4582c82b7adfe1548f71a7c">get</a>();</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <a class="code" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> mutex_{};</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;};</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex.html#a8629c480ab7a14342fd8428e12758ab8">   85</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#a8629c480ab7a14342fd8428e12758ab8">RecursiveMutex::RecursiveMutex</a>()</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;{</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  (void)<a class="code" href="group__etcpal__recursive__mutex.html#ga694158054907acac552eccb8e88d020a">etcpal_recursive_mutex_create</a>(&amp;mutex_);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex.html#ae6174c936b2476911d57c33a194c1b29">   91</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#ae6174c936b2476911d57c33a194c1b29">RecursiveMutex::~RecursiveMutex</a>()</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;{</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <a class="code" href="group__etcpal__recursive__mutex.html#ga1a42ba95ca28f89502795b71f59cb060">etcpal_recursive_mutex_destroy</a>(&amp;mutex_);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;}</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00098"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex.html#a747fd95916e116a6ed37cc641e394c69">   98</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#a747fd95916e116a6ed37cc641e394c69">RecursiveMutex::Lock</a>()</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;{</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53">etcpal_recursive_mutex_lock</a>(&amp;mutex_);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex.html#a8ad93c25cdc665654314bba0797d37ef">  114</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#a8ad93c25cdc665654314bba0797d37ef">RecursiveMutex::TryLock</a>(<span class="keywordtype">int</span> timeout_ms)</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;{</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__recursive__mutex.html#gafb88fc7f6b18d47218220198d588f322">etcpal_recursive_mutex_timed_lock</a>(&amp;mutex_, timeout_ms);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex.html#a91b88a5d5517cb042431c4ea24d8ecb7">  122</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classetcpal_1_1_recursive_mutex.html#a91b88a5d5517cb042431c4ea24d8ecb7">RecursiveMutex::Unlock</a>()</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;{</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  <a class="code" href="group__etcpal__recursive__mutex.html#ga6adbf97bdbbd324ee5d2cba2f1d07a2d">etcpal_recursive_mutex_unlock</a>(&amp;mutex_);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex.html#abcaf9c69e4582c82b7adfe1548f71a7c">  128</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a>&amp; <a class="code" href="classetcpal_1_1_recursive_mutex.html#abcaf9c69e4582c82b7adfe1548f71a7c">RecursiveMutex::get</a>()</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;{</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordflow">return</span> mutex_;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;}</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex_guard.html">  148</a></span>&#160;<span class="keyword">class </span><a class="code" href="classetcpal_1_1_recursive_mutex_guard.html">RecursiveMutexGuard</a></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;{</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keyword">explicit</span> <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">RecursiveMutexGuard</a>(<a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp; mutex);</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  <span class="keyword">explicit</span> <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">RecursiveMutexGuard</a>(<a class="code" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a>&amp; mutex);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a67de9be30a261b55b01363094e9dda08">~RecursiveMutexGuard</a>();</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">RecursiveMutexGuard</a>(<span class="keyword">const</span> <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html">RecursiveMutexGuard</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html">RecursiveMutexGuard</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html">RecursiveMutexGuard</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">RecursiveMutexGuard</a>(<a class="code" href="classetcpal_1_1_recursive_mutex_guard.html">RecursiveMutexGuard</a>&amp;&amp; other)                 = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html">RecursiveMutexGuard</a>&amp; operator=(<a class="code" href="classetcpal_1_1_recursive_mutex_guard.html">RecursiveMutexGuard</a>&amp;&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  <a class="code" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a>&amp; mutex_;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  <span class="keywordtype">void</span> GetLock();</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;};</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
+<div class="line"><a name="l00168"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">  168</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">RecursiveMutexGuard::RecursiveMutexGuard</a>(<a class="code" href="classetcpal_1_1_recursive_mutex.html">RecursiveMutex</a>&amp; mutex) : mutex_(mutex.get())</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;{</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  GetLock();</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;}</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00175"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex_guard.html#a5eef5a4428ec8e93b1b066d440117742">  175</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">RecursiveMutexGuard::RecursiveMutexGuard</a>(<a class="code" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a>&amp; mutex) : mutex_(mutex)</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;{</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;  GetLock();</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;}</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="classetcpal_1_1_recursive_mutex_guard.html#a67de9be30a261b55b01363094e9dda08">  181</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classetcpal_1_1_recursive_mutex_guard.html#a67de9be30a261b55b01363094e9dda08">RecursiveMutexGuard::~RecursiveMutexGuard</a>()</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;{</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <a class="code" href="group__etcpal__recursive__mutex.html#ga6adbf97bdbbd324ee5d2cba2f1d07a2d">etcpal_recursive_mutex_unlock</a>(&amp;mutex_);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;}</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> RecursiveMutexGuard::GetLock()</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;{</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;  <span class="keywordflow">if</span> (!<a class="code" href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53">etcpal_recursive_mutex_lock</a>(&amp;mutex_))</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    ETCPAL_THROW(std::runtime_error(<span class="stringliteral">&quot;etcpal_recursive_mutex_lock failed.&quot;</span>));</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;}</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;};  <span class="comment">// namespace etcpal</span></div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ETCPAL_CPP_RECURSIVE_MUTEX_H_</span></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_guard_html"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex_guard.html">etcpal::RecursiveMutexGuard</a></div><div class="ttdoc">Lock guard around a recursive mutex.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:149</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_guard_html_a67de9be30a261b55b01363094e9dda08"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex_guard.html#a67de9be30a261b55b01363094e9dda08">etcpal::RecursiveMutexGuard::~RecursiveMutexGuard</a></div><div class="ttdeci">~RecursiveMutexGuard()</div><div class="ttdoc">Release the lock upon going out-of-scope.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:181</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_guard_html_a75626f673c69debf3f5926caf1458841"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex_guard.html#a75626f673c69debf3f5926caf1458841">etcpal::RecursiveMutexGuard::RecursiveMutexGuard</a></div><div class="ttdeci">RecursiveMutexGuard(RecursiveMutex &amp;mutex)</div><div class="ttdoc">Lock an etcpal::RecursiveMutex.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:168</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_html"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex.html">etcpal::RecursiveMutex</a></div><div class="ttdoc">A wrapper class for the EtcPal recursive mutex type.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:64</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_html_a747fd95916e116a6ed37cc641e394c69"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex.html#a747fd95916e116a6ed37cc641e394c69">etcpal::RecursiveMutex::Lock</a></div><div class="ttdeci">bool Lock()</div><div class="ttdoc">Lock the mutex.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:98</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_html_a8629c480ab7a14342fd8428e12758ab8"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex.html#a8629c480ab7a14342fd8428e12758ab8">etcpal::RecursiveMutex::RecursiveMutex</a></div><div class="ttdeci">RecursiveMutex()</div><div class="ttdoc">Create a new recursive mutex.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:85</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_html_a8ad93c25cdc665654314bba0797d37ef"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex.html#a8ad93c25cdc665654314bba0797d37ef">etcpal::RecursiveMutex::TryLock</a></div><div class="ttdeci">bool TryLock(int timeout_ms=0)</div><div class="ttdoc">Attempt to lock the recursive mutex.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:114</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_html_a91b88a5d5517cb042431c4ea24d8ecb7"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex.html#a91b88a5d5517cb042431c4ea24d8ecb7">etcpal::RecursiveMutex::Unlock</a></div><div class="ttdeci">void Unlock()</div><div class="ttdoc">Unlock the recursive mutex.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:122</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_html_abcaf9c69e4582c82b7adfe1548f71a7c"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex.html#abcaf9c69e4582c82b7adfe1548f71a7c">etcpal::RecursiveMutex::get</a></div><div class="ttdeci">etcpal_recursive_mutex_t &amp; get()</div><div class="ttdoc">Get a reference to the underlying etcpal_recursive_mutex_t type.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:128</div></div>
+<div class="ttc" id="aclassetcpal_1_1_recursive_mutex_html_ae6174c936b2476911d57c33a194c1b29"><div class="ttname"><a href="classetcpal_1_1_recursive_mutex.html#ae6174c936b2476911d57c33a194c1b29">etcpal::RecursiveMutex::~RecursiveMutex</a></div><div class="ttdeci">~RecursiveMutex()</div><div class="ttdoc">Destroy the recursive mutex.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.h:91</div></div>
+<div class="ttc" id="acpp_2common_8h_html"><div class="ttname"><a href="cpp_2common_8h.html">common.h</a></div><div class="ttdoc">Common definitions used by EtcPal C++ wrappers.</div></div>
+<div class="ttc" id="agroup__etcpal__recursive__mutex_html_ga1a42ba95ca28f89502795b71f59cb060"><div class="ttname"><a href="group__etcpal__recursive__mutex.html#ga1a42ba95ca28f89502795b71f59cb060">etcpal_recursive_mutex_destroy</a></div><div class="ttdeci">void etcpal_recursive_mutex_destroy(etcpal_recursive_mutex_t *id)</div><div class="ttdoc">Destroy a mutex object.</div></div>
+<div class="ttc" id="agroup__etcpal__recursive__mutex_html_ga3b0a40808f7c27f4a5f90754ef9fcf53"><div class="ttname"><a href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53">etcpal_recursive_mutex_lock</a></div><div class="ttdeci">bool etcpal_recursive_mutex_lock(etcpal_recursive_mutex_t *id)</div><div class="ttdoc">Lock a mutex.</div></div>
+<div class="ttc" id="agroup__etcpal__recursive__mutex_html_ga694158054907acac552eccb8e88d020a"><div class="ttname"><a href="group__etcpal__recursive__mutex.html#ga694158054907acac552eccb8e88d020a">etcpal_recursive_mutex_create</a></div><div class="ttdeci">bool etcpal_recursive_mutex_create(etcpal_recursive_mutex_t *id)</div><div class="ttdoc">Create a new mutex.</div></div>
+<div class="ttc" id="agroup__etcpal__recursive__mutex_html_ga6adbf97bdbbd324ee5d2cba2f1d07a2d"><div class="ttname"><a href="group__etcpal__recursive__mutex.html#ga6adbf97bdbbd324ee5d2cba2f1d07a2d">etcpal_recursive_mutex_unlock</a></div><div class="ttdeci">void etcpal_recursive_mutex_unlock(etcpal_recursive_mutex_t *id)</div><div class="ttdoc">Unlock a mutex.</div></div>
+<div class="ttc" id="agroup__etcpal__recursive__mutex_html_gab023065e9028d318e1c559e6c7493e6b"><div class="ttname"><a href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a></div><div class="ttdeci">PLATFORM_DEFINED etcpal_recursive_mutex_t</div><div class="ttdoc">The mutex identifier.</div><div class="ttdef"><b>Definition:</b> recursive_mutex.dox:50</div></div>
+<div class="ttc" id="agroup__etcpal__recursive__mutex_html_gafb88fc7f6b18d47218220198d588f322"><div class="ttname"><a href="group__etcpal__recursive__mutex.html#gafb88fc7f6b18d47218220198d588f322">etcpal_recursive_mutex_timed_lock</a></div><div class="ttdeci">bool etcpal_recursive_mutex_timed_lock(etcpal_recursive_mutex_t *id, int timeout_ms)</div><div class="ttdoc">Try to lock a mutex, giving up after a timeout.</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_81a3fb26cc06c42d281987e41831a70b.html">etcpal</a></li><li class="navelem"><a class="el" href="dir_fa86f7c0f1af55176d8f05dc5aff685f.html">cpp</a></li><li class="navelem"><a class="el" href="cpp_2recursive__mutex_8h.html">recursive_mutex.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,968 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: queue (RTOS queues)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__queue.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">queue (RTOS queues)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__os.html">OS Abstraction Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Platform-neutral blocking RTOS queues. </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/queue.h&quot;</span></div>
+</div><!-- fragment --><p>Provides a platform-neutral API to RTOS queue functionality.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/queue.h&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span>Foo</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordtype">int</span> value;</div>
+<div class="line">} Foo;</div>
+<div class="line"><a class="code" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> queue;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> main_task(<span class="keywordtype">void</span>* arg)</div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> res = <a class="code" href="group__etcpal__queue.html#gaefbd1625abdb0e502024b9c9749c2b17">etcpal_queue_create</a>(&amp;queue, 10, <span class="keyword">sizeof</span>(Foo));</div>
+<div class="line">  <span class="keywordflow">if</span> (res != <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a>)</div>
+<div class="line">  {</div>
+<div class="line">    printf(<span class="stringliteral">&quot;Queue creation failed: &#39;%s&#39;\n&quot;</span>, <a class="code" href="group__etcpal__error.html#ga4902a840d9801e02baebd4c70924c4b0">etcpal_strerror</a>(res));</div>
+<div class="line">    <span class="keywordflow">return</span>;</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">while</span> (<span class="keyword">true</span>)</div>
+<div class="line">  {</div>
+<div class="line">    Foo foo;</div>
+<div class="line">    <span class="comment">// Blocks until a new Foo is retrieved from the queue</span></div>
+<div class="line">    <span class="keywordflow">if</span> (<a class="code" href="group__etcpal__queue.html#ga6606a64800aeb535bc2fea3317e6fd44">etcpal_queue_receive</a>(&amp;queue, &amp;foo))</div>
+<div class="line">    {</div>
+<div class="line">      printf(<span class="stringliteral">&quot;Got new Foo with value %d\n&quot;</span>, foo.value);</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">else</span></div>
+<div class="line">    {</div>
+<div class="line">      printf(<span class="stringliteral">&quot;Error receiving from queue.\n&quot;</span>);</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <a class="code" href="group__etcpal__queue.html#ga89749b4899a165bb461570e8a91d470c">etcpal_queue_destroy</a>(&amp;queue);</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Send a new Foo to the queue when an interrupt comes in.</span></div>
+<div class="line"><span class="keywordtype">void</span> interrupt_handler(<span class="keywordtype">void</span>)</div>
+<div class="line">{</div>
+<div class="line">  Foo foo;</div>
+<div class="line">  foo.value = REG_READ();</div>
+<div class="line">  <a class="code" href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2">etcpal_queue_send_from_isr</a>(&amp;queue, &amp;foo);</div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__etcpal__error_html_ga4902a840d9801e02baebd4c70924c4b0"><div class="ttname"><a href="group__etcpal__error.html#ga4902a840d9801e02baebd4c70924c4b0">etcpal_strerror</a></div><div class="ttdeci">const char * etcpal_strerror(etcpal_error_t code)</div><div class="ttdoc">Get a string representation of an error code.</div><div class="ttdef"><b>Definition:</b> error.c:69</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_ga743b0648f0ca798ef29c9f69c6e255af"><div class="ttname"><a href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a></div><div class="ttdeci">etcpal_error_t</div><div class="ttdoc">A set of error codes that can be returned by library functions.</div><div class="ttdef"><b>Definition:</b> error.h:49</div></div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a></div><div class="ttdeci">@ kEtcPalErrOk</div><div class="ttdoc">The call was successful, no error occurred.</div><div class="ttdef"><b>Definition:</b> error.h:51</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga19c542b25dd6f5884c4d69ec8c891bb2"><div class="ttname"><a href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2">etcpal_queue_send_from_isr</a></div><div class="ttdeci">bool etcpal_queue_send_from_isr(etcpal_queue_t *id, const void *data)</div><div class="ttdoc">Add an item to a queue from an interrupt context.</div><div class="ttdef"><b>Definition:</b> queue.c:256</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga4f8a861cb4940f182992e38401855a2b"><div class="ttname"><a href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a></div><div class="ttdeci">PLATFORM_DEFINED etcpal_queue_t</div><div class="ttdoc">The queue identifier.</div><div class="ttdef"><b>Definition:</b> queue.dox:82</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga6606a64800aeb535bc2fea3317e6fd44"><div class="ttname"><a href="group__etcpal__queue.html#ga6606a64800aeb535bc2fea3317e6fd44">etcpal_queue_receive</a></div><div class="ttdeci">bool etcpal_queue_receive(etcpal_queue_t *id, void *data)</div><div class="ttdoc">Retrieve the first item from a queue.</div><div class="ttdef"><b>Definition:</b> queue.c:238</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga89749b4899a165bb461570e8a91d470c"><div class="ttname"><a href="group__etcpal__queue.html#ga89749b4899a165bb461570e8a91d470c">etcpal_queue_destroy</a></div><div class="ttdeci">void etcpal_queue_destroy(etcpal_queue_t *id)</div><div class="ttdoc">Destroy a queue.</div><div class="ttdef"><b>Definition:</b> queue.c:191</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_gaefbd1625abdb0e502024b9c9749c2b17"><div class="ttname"><a href="group__etcpal__queue.html#gaefbd1625abdb0e502024b9c9749c2b17">etcpal_queue_create</a></div><div class="ttdeci">bool etcpal_queue_create(etcpal_queue_t *id, size_t size, size_t item_size)</div><div class="ttdoc">Create a new queue.</div><div class="ttdef"><b>Definition:</b> queue.c:142</div></div>
+</div><!-- fragment --><p>There are also functions for sending and receiving with a timeout, and for checking to see if the queue is empty.</p>
+<p>Queues are implemented using native constructs on RTOS platforms, and using other EtcPal constructs such as semaphores on full OS platforms. The current availability is as follows:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Platform   </th><th class="markdownTableHeadNone">Queues Available   </th><th class="markdownTableHeadNone"><a class="el" href="group__etcpal__queue.html#gaa25ffa8296a48784e8c6476677635d3f" title="Whether etcpal_queue_timed_send() and etcpal_queue_timed_receive() are meaningful on this platform.">ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS</a>   </th><th class="markdownTableHeadNone"><a class="el" href="group__etcpal__queue.html#ga3271674e79d57d41434b803d2180de56" title="Whether etcpal_queue_send_from_isr() and etcpal_queue_receive_from_isr() are meaningful on this platf...">ETCPAL_QUEUE_HAS_ISR_FUNCTIONS</a>    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">FreeRTOS   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">No    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">macOS   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">N/A   </td><td class="markdownTableBodyNone">N/A    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">MQX   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">N/A   </td><td class="markdownTableBodyNone">N/A    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Windows   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td></tr>
+</table>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gaa25ffa8296a48784e8c6476677635d3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#gaa25ffa8296a48784e8c6476677635d3f">ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS</a>&#160;&#160;&#160;/* platform-defined */</td></tr>
+<tr class="memdesc:gaa25ffa8296a48784e8c6476677635d3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <a class="el" href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7" title="Add an item to a queue, giving up after a timeout.">etcpal_queue_timed_send()</a> and <a class="el" href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261" title="Retrieve the first item from a queue, giving up after a timeout.">etcpal_queue_timed_receive()</a> are meaningful on this platform.  <a href="group__etcpal__queue.html#gaa25ffa8296a48784e8c6476677635d3f">More...</a><br /></td></tr>
+<tr class="separator:gaa25ffa8296a48784e8c6476677635d3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3271674e79d57d41434b803d2180de56"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga3271674e79d57d41434b803d2180de56">ETCPAL_QUEUE_HAS_ISR_FUNCTIONS</a>&#160;&#160;&#160;/* platform-defined */</td></tr>
+<tr class="memdesc:ga3271674e79d57d41434b803d2180de56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <a class="el" href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2" title="Add an item to a queue from an interrupt context.">etcpal_queue_send_from_isr()</a> and <a class="el" href="group__etcpal__queue.html#ga7e17d87946f3241b16c03d86a0b426c3" title="Retrieve the first item from a queue from an interrupt context.">etcpal_queue_receive_from_isr()</a> are meaningful on this platform.  <a href="group__etcpal__queue.html#ga3271674e79d57d41434b803d2180de56">More...</a><br /></td></tr>
+<tr class="separator:ga3271674e79d57d41434b803d2180de56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga4f8a861cb4940f182992e38401855a2b"><td class="memItemLeft" align="right" valign="top">typedef PLATFORM_DEFINED&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a></td></tr>
+<tr class="memdesc:ga4f8a861cb4940f182992e38401855a2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The queue identifier.  <a href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">More...</a><br /></td></tr>
+<tr class="separator:ga4f8a861cb4940f182992e38401855a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gaefbd1625abdb0e502024b9c9749c2b17"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#gaefbd1625abdb0e502024b9c9749c2b17">etcpal_queue_create</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id, size_t size, size_t item_size)</td></tr>
+<tr class="memdesc:gaefbd1625abdb0e502024b9c9749c2b17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new queue.  <a href="group__etcpal__queue.html#gaefbd1625abdb0e502024b9c9749c2b17">More...</a><br /></td></tr>
+<tr class="separator:gaefbd1625abdb0e502024b9c9749c2b17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga89749b4899a165bb461570e8a91d470c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga89749b4899a165bb461570e8a91d470c">etcpal_queue_destroy</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:ga89749b4899a165bb461570e8a91d470c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a queue.  <a href="group__etcpal__queue.html#ga89749b4899a165bb461570e8a91d470c">More...</a><br /></td></tr>
+<tr class="separator:ga89749b4899a165bb461570e8a91d470c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad11692ddc849a8c049c1f15da818957d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#gad11692ddc849a8c049c1f15da818957d">etcpal_queue_send</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id, const void *data)</td></tr>
+<tr class="memdesc:gad11692ddc849a8c049c1f15da818957d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an item to a queue.  <a href="group__etcpal__queue.html#gad11692ddc849a8c049c1f15da818957d">More...</a><br /></td></tr>
+<tr class="separator:gad11692ddc849a8c049c1f15da818957d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae0c1e587408884bfdf7e9502cac7ffa7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7">etcpal_queue_timed_send</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id, const void *data, int timeout_ms)</td></tr>
+<tr class="memdesc:gae0c1e587408884bfdf7e9502cac7ffa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an item to a queue, giving up after a timeout.  <a href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7">More...</a><br /></td></tr>
+<tr class="separator:gae0c1e587408884bfdf7e9502cac7ffa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga19c542b25dd6f5884c4d69ec8c891bb2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2">etcpal_queue_send_from_isr</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id, const void *data)</td></tr>
+<tr class="memdesc:ga19c542b25dd6f5884c4d69ec8c891bb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an item to a queue from an interrupt context.  <a href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2">More...</a><br /></td></tr>
+<tr class="separator:ga19c542b25dd6f5884c4d69ec8c891bb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6606a64800aeb535bc2fea3317e6fd44"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga6606a64800aeb535bc2fea3317e6fd44">etcpal_queue_receive</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id, void *data)</td></tr>
+<tr class="memdesc:ga6606a64800aeb535bc2fea3317e6fd44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the first item from a queue.  <a href="group__etcpal__queue.html#ga6606a64800aeb535bc2fea3317e6fd44">More...</a><br /></td></tr>
+<tr class="separator:ga6606a64800aeb535bc2fea3317e6fd44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga13c3c4ca6b7b2ace00da407f52bba261"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261">etcpal_queue_timed_receive</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id, void *data, int timeout_ms)</td></tr>
+<tr class="memdesc:ga13c3c4ca6b7b2ace00da407f52bba261"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the first item from a queue, giving up after a timeout.  <a href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261">More...</a><br /></td></tr>
+<tr class="separator:ga13c3c4ca6b7b2ace00da407f52bba261"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7e17d87946f3241b16c03d86a0b426c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga7e17d87946f3241b16c03d86a0b426c3">etcpal_queue_receive_from_isr</a> (<a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id, void *data)</td></tr>
+<tr class="memdesc:ga7e17d87946f3241b16c03d86a0b426c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the first item from a queue from an interrupt context.  <a href="group__etcpal__queue.html#ga7e17d87946f3241b16c03d86a0b426c3">More...</a><br /></td></tr>
+<tr class="separator:ga7e17d87946f3241b16c03d86a0b426c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6d3ade96e77aca287711d3ddb0e87239"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga6d3ade96e77aca287711d3ddb0e87239">etcpal_queue_reset</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:ga6d3ade96e77aca287711d3ddb0e87239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets queue to empty state.  <a href="group__etcpal__queue.html#ga6d3ade96e77aca287711d3ddb0e87239">More...</a><br /></td></tr>
+<tr class="separator:ga6d3ade96e77aca287711d3ddb0e87239"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c0f4a48f832d88fead582a330255aec"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga3c0f4a48f832d88fead582a330255aec">etcpal_queue_is_empty</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:ga3c0f4a48f832d88fead582a330255aec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a queue is currently empty.  <a href="group__etcpal__queue.html#ga3c0f4a48f832d88fead582a330255aec">More...</a><br /></td></tr>
+<tr class="separator:ga3c0f4a48f832d88fead582a330255aec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0a72aed21853d03ac10a09bafd148d0d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga0a72aed21853d03ac10a09bafd148d0d">etcpal_queue_is_empty_from_isr</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:ga0a72aed21853d03ac10a09bafd148d0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a queue is currently empty from an interrupt context.  <a href="group__etcpal__queue.html#ga0a72aed21853d03ac10a09bafd148d0d">More...</a><br /></td></tr>
+<tr class="separator:ga0a72aed21853d03ac10a09bafd148d0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6485e0e24d8240926a2291c0896bbcc6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga6485e0e24d8240926a2291c0896bbcc6">etcpal_queue_is_full</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:ga6485e0e24d8240926a2291c0896bbcc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a queue is currently full.  <a href="group__etcpal__queue.html#ga6485e0e24d8240926a2291c0896bbcc6">More...</a><br /></td></tr>
+<tr class="separator:ga6485e0e24d8240926a2291c0896bbcc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1fce7092855b5a04cab8e4b61e7a2641"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga1fce7092855b5a04cab8e4b61e7a2641">etcpal_queue_is_full_from_isr</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:ga1fce7092855b5a04cab8e4b61e7a2641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a queue is currently full from an interrupt context.  <a href="group__etcpal__queue.html#ga1fce7092855b5a04cab8e4b61e7a2641">More...</a><br /></td></tr>
+<tr class="separator:ga1fce7092855b5a04cab8e4b61e7a2641"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabfc3dcdf8460f0d0c0f58725f8a24c01"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#gabfc3dcdf8460f0d0c0f58725f8a24c01">etcpal_queue_slots_used</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:gabfc3dcdf8460f0d0c0f58725f8a24c01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of slots being stored in the queue.  <a href="group__etcpal__queue.html#gabfc3dcdf8460f0d0c0f58725f8a24c01">More...</a><br /></td></tr>
+<tr class="separator:gabfc3dcdf8460f0d0c0f58725f8a24c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadf793a0f6871dabea6fed364623225f2"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#gadf793a0f6871dabea6fed364623225f2">etcpal_queue_slots_used_from_isr</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:gadf793a0f6871dabea6fed364623225f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of slots being stored in the queue from an interrupt context.  <a href="group__etcpal__queue.html#gadf793a0f6871dabea6fed364623225f2">More...</a><br /></td></tr>
+<tr class="separator:gadf793a0f6871dabea6fed364623225f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga13b02eb8709c25b8fd3bac45db5d8d8d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__queue.html#ga13b02eb8709c25b8fd3bac45db5d8d8d">etcpal_queue_slots_available</a> (const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *id)</td></tr>
+<tr class="memdesc:ga13b02eb8709c25b8fd3bac45db5d8d8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of remaining slots in the queue.  <a href="group__etcpal__queue.html#ga13b02eb8709c25b8fd3bac45db5d8d8d">More...</a><br /></td></tr>
+<tr class="separator:ga13b02eb8709c25b8fd3bac45db5d8d8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga3271674e79d57d41434b803d2180de56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3271674e79d57d41434b803d2180de56">&#9670;&nbsp;</a></span>ETCPAL_QUEUE_HAS_ISR_FUNCTIONS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS&#160;&#160;&#160;/* platform-defined */</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether <a class="el" href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2" title="Add an item to a queue from an interrupt context.">etcpal_queue_send_from_isr()</a> and <a class="el" href="group__etcpal__queue.html#ga7e17d87946f3241b16c03d86a0b426c3" title="Retrieve the first item from a queue from an interrupt context.">etcpal_queue_receive_from_isr()</a> are meaningful on this platform. </p>
+<p>Some platforms have a different method for interacting with a queue from an interrupt context. If defined to 0, <a class="el" href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2" title="Add an item to a queue from an interrupt context.">etcpal_queue_send_from_isr()</a> and <a class="el" href="group__etcpal__queue.html#ga7e17d87946f3241b16c03d86a0b426c3" title="Retrieve the first item from a queue from an interrupt context.">etcpal_queue_receive_from_isr()</a> execute the equivalent of <a class="el" href="group__etcpal__queue.html#gad11692ddc849a8c049c1f15da818957d" title="Add an item to a queue.">etcpal_queue_send()</a> and <a class="el" href="group__etcpal__queue.html#ga6606a64800aeb535bc2fea3317e6fd44" title="Retrieve the first item from a queue.">etcpal_queue_receive()</a>, respectively. </p>
+
+</div>
+</div>
+<a id="gaa25ffa8296a48784e8c6476677635d3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa25ffa8296a48784e8c6476677635d3f">&#9670;&nbsp;</a></span>ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS&#160;&#160;&#160;/* platform-defined */</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether <a class="el" href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7" title="Add an item to a queue, giving up after a timeout.">etcpal_queue_timed_send()</a> and <a class="el" href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261" title="Retrieve the first item from a queue, giving up after a timeout.">etcpal_queue_timed_receive()</a> are meaningful on this platform. </p>
+<p>If defined to 0, <a class="el" href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7" title="Add an item to a queue, giving up after a timeout.">etcpal_queue_timed_send()</a> and <a class="el" href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261" title="Retrieve the first item from a queue, giving up after a timeout.">etcpal_queue_timed_receive()</a> execute the equivalent of <a class="el" href="group__etcpal__queue.html#gad11692ddc849a8c049c1f15da818957d" title="Add an item to a queue.">etcpal_queue_send()</a> and <a class="el" href="group__etcpal__queue.html#ga6606a64800aeb535bc2fea3317e6fd44" title="Retrieve the first item from a queue.">etcpal_queue_receive()</a>, respectively, if given nonzero timeouts. With a timeout of 0, they check the queue's availability to send or receive an item and return success or failure immediately. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ga4f8a861cb4940f182992e38401855a2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4f8a861cb4940f182992e38401855a2b">&#9670;&nbsp;</a></span>etcpal_queue_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef PLATFORM_DEFINED <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The queue identifier. </p>
+<p>Depending on the platform, this could be a scalar type or a struct. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gaefbd1625abdb0e502024b9c9749c2b17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaefbd1625abdb0e502024b9c9749c2b17">&#9670;&nbsp;</a></span>etcpal_queue_create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_create </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>item_size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new queue. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">id</td><td>Queue identifier on which to create a queue. If this function returns true, id becomes valid for calls to other etcpal_queue API functions. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>The maximum number of items that can be held in the queue. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">item_size</td><td>The size in bytes of the item type to be held in the queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The queue was created. </dd>
+<dd>
+false: The queue was not created. </dd></dl>
+
+</div>
+</div>
+<a id="ga89749b4899a165bb461570e8a91d470c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga89749b4899a165bb461570e8a91d470c">&#9670;&nbsp;</a></span>etcpal_queue_destroy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_queue_destroy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroy a queue. </p>
+<p>Frees the queue's resources back to the operating system. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to destroy. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga3c0f4a48f832d88fead582a330255aec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3c0f4a48f832d88fead582a330255aec">&#9670;&nbsp;</a></span>etcpal_queue_is_empty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_is_empty </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a queue is currently empty. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The queue is empty. </dd>
+<dd>
+false: The queue is not empty. </dd></dl>
+
+</div>
+</div>
+<a id="ga0a72aed21853d03ac10a09bafd148d0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0a72aed21853d03ac10a09bafd148d0d">&#9670;&nbsp;</a></span>etcpal_queue_is_empty_from_isr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_is_empty_from_isr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a queue is currently empty from an interrupt context. </p>
+<p>This function is meaningful on platforms which have a different method for interacting with queues from an interrupt context.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The queue is empty. </dd>
+<dd>
+false: The queue is not empty. </dd></dl>
+
+</div>
+</div>
+<a id="ga6485e0e24d8240926a2291c0896bbcc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6485e0e24d8240926a2291c0896bbcc6">&#9670;&nbsp;</a></span>etcpal_queue_is_full()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_is_full </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a queue is currently full. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The queue is full. </dd>
+<dd>
+false: The queue is not full. </dd></dl>
+
+</div>
+</div>
+<a id="ga1fce7092855b5a04cab8e4b61e7a2641"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1fce7092855b5a04cab8e4b61e7a2641">&#9670;&nbsp;</a></span>etcpal_queue_is_full_from_isr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_is_full_from_isr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a queue is currently full from an interrupt context. </p>
+<p>This function is meaningful on platforms which have a different method for interacting with queues from an interrupt context.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The queue is full. </dd>
+<dd>
+false: The queue is not full. </dd></dl>
+
+</div>
+</div>
+<a id="ga6606a64800aeb535bc2fea3317e6fd44"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6606a64800aeb535bc2fea3317e6fd44">&#9670;&nbsp;</a></span>etcpal_queue_receive()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_receive </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the first item from a queue. </p>
+<p>Blocks until there is an item available to retrieve from the queue. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue from which to retrieve an item. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">data</td><td>Pointer to a location to write the object's data. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: Item retrieved successfully. </dd>
+<dd>
+false: Error occurred while trying to retrieve an item from the queue. </dd></dl>
+
+</div>
+</div>
+<a id="ga7e17d87946f3241b16c03d86a0b426c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7e17d87946f3241b16c03d86a0b426c3">&#9670;&nbsp;</a></span>etcpal_queue_receive_from_isr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_receive_from_isr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the first item from a queue from an interrupt context. </p>
+<p>This function is meaningful on platforms which have a different method for interacting with queues from an interrupt context. This function never blocks, i.e. the behavior is similar to calling <a class="el" href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261" title="Retrieve the first item from a queue, giving up after a timeout.">etcpal_queue_timed_receive()</a> with a value of 0 for the timeout_ms parameter.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue from which to retrieve an item. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">data</td><td>Pointer to a location to write the object's data. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: Item retrieved successfully. </dd>
+<dd>
+false: Error occurred while trying to retrieve an item from the queue. </dd></dl>
+
+</div>
+</div>
+<a id="ga6d3ade96e77aca287711d3ddb0e87239"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6d3ade96e77aca287711d3ddb0e87239">&#9670;&nbsp;</a></span>etcpal_queue_reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_reset </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resets queue to empty state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: On reset success. </dd>
+<dd>
+false: On reset failure. </dd></dl>
+
+</div>
+</div>
+<a id="gad11692ddc849a8c049c1f15da818957d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad11692ddc849a8c049c1f15da818957d">&#9670;&nbsp;</a></span>etcpal_queue_send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_send </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an item to a queue. </p>
+<p>Blocks until there is room in the queue to add a new item. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to which to add an item. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Pointer to item to add to the queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: Item added successfully. </dd>
+<dd>
+false: An error occurred while trying to add an item to the queue. </dd></dl>
+
+</div>
+</div>
+<a id="ga19c542b25dd6f5884c4d69ec8c891bb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga19c542b25dd6f5884c4d69ec8c891bb2">&#9670;&nbsp;</a></span>etcpal_queue_send_from_isr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_send_from_isr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an item to a queue from an interrupt context. </p>
+<p>This function is meaningful on platforms which have a different method for interacting with queues from an interrupt context. This function never blocks, i.e. the behavior is similar to calling <a class="el" href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7" title="Add an item to a queue, giving up after a timeout.">etcpal_queue_timed_send()</a> with a value of 0 for the timeout_ms parameter.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to which to add an item. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Pointer to item to add to the queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: Item added successfully. </dd>
+<dd>
+false: Timeout or error occurred while trying to add an item to the queue. </dd></dl>
+
+</div>
+</div>
+<a id="ga13b02eb8709c25b8fd3bac45db5d8d8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga13b02eb8709c25b8fd3bac45db5d8d8d">&#9670;&nbsp;</a></span>etcpal_queue_slots_available()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t etcpal_queue_slots_available </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of remaining slots in the queue. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of remaining slots in queue. </dd></dl>
+
+</div>
+</div>
+<a id="gabfc3dcdf8460f0d0c0f58725f8a24c01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabfc3dcdf8460f0d0c0f58725f8a24c01">&#9670;&nbsp;</a></span>etcpal_queue_slots_used()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t etcpal_queue_slots_used </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of slots being stored in the queue. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of slots in queue. </dd></dl>
+
+</div>
+</div>
+<a id="gadf793a0f6871dabea6fed364623225f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadf793a0f6871dabea6fed364623225f2">&#9670;&nbsp;</a></span>etcpal_queue_slots_used_from_isr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t etcpal_queue_slots_used_from_isr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of slots being stored in the queue from an interrupt context. </p>
+<p>This function is meaningful on platforms which have a different method for interacting with queues from an interrupt context.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to check the status of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of slots in queue. </dd></dl>
+
+</div>
+</div>
+<a id="ga13c3c4ca6b7b2ace00da407f52bba261"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga13c3c4ca6b7b2ace00da407f52bba261">&#9670;&nbsp;</a></span>etcpal_queue_timed_receive()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_timed_receive </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the first item from a queue, giving up after a timeout. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue from which to retrieve an item. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">data</td><td>Pointer to a location to write the object's data. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">timeout_ms</td><td>Maximum amount of time to wait for an item to be available, in milliseconds. If <a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13" title="For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.">ETCPAL_WAIT_FOREVER</a> is given, the result is the same as if <a class="el" href="group__etcpal__queue.html#ga6606a64800aeb535bc2fea3317e6fd44" title="Retrieve the first item from a queue.">etcpal_queue_receive()</a> was called. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: Item retrieved successfully. </dd>
+<dd>
+false: Timeout or error occurred while trying to retrieve an item from the queue. </dd></dl>
+
+</div>
+</div>
+<a id="gae0c1e587408884bfdf7e9502cac7ffa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae0c1e587408884bfdf7e9502cac7ffa7">&#9670;&nbsp;</a></span>etcpal_queue_timed_send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_queue_timed_send </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add an item to a queue, giving up after a timeout. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the queue to which to add an item. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Pointer to item to add to the queue. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">timeout_ms</td><td>Maximum amount of time to wait for space to be available, in milliseconds. If <a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13" title="For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.">ETCPAL_WAIT_FOREVER</a> is given, the result is the same as if <a class="el" href="group__etcpal__queue.html#gad11692ddc849a8c049c1f15da818957d" title="Add an item to a queue.">etcpal_queue_send()</a> was called. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: Item added successfully. </dd>
+<dd>
+false: Timeout or error occurred while trying to add an item to the queue. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

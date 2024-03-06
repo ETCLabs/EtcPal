@@ -1,0 +1,434 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: include/lwpa/log.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.2.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('log_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">log.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2019 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of lwpa. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/lwpa</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/* lwpa/log.h: Common logging functions. */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#ifndef _LWPA_LOG_H_</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#define _LWPA_LOG_H_</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;stdarg.h&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;stddef.h&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &quot;lwpa/bool.h&quot;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">/* clang-format off */</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaf25b2f84f136f35d7daf3bca75c09b39">   53</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_KERN (0 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga08e3706b92e3aeec1c44769c42fc18b5">   54</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_USER (1 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga04d4892d83f2084956ebe6ca8c479500">   55</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_MAIL (2 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaca7e4a2edd294cea9c23ebf18c881f41">   56</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_DAEMON (3 &lt;&lt; 3)    </span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga0e5d159ba215deea5f706fa33d71738e">   57</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_AUTH (4 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga2441590d39aaca7c88136145b0eb880b">   58</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_SYSLOG (5 &lt;&lt; 3)    </span></div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gacbf6ea806a67f53e17d265d9f7d8c0e5">   59</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LPR (6 &lt;&lt; 3)       </span></div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga20f59aff1e3c478dc610c6bb3f1cf30c">   60</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_NEWS (7 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga3374f025fafa38717f707a047359fd30">   61</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_UUCP (8 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga1cce65659ecc6a47c1d5aa7071ae69f4">   62</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_CRON (9 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00063"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaa50dfd3d27e5f3774232b0271bb58e90">   63</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_AUTHPRIV (10 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gadcfd4e54bed9d3ee05b5376822f409a2">   64</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_FTP (11 &lt;&lt; 3)      </span></div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gae3d1d7327370707be0202b28c26ce4a3">   66</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL0 (16 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaa99273c70b0d7f39eeb53b1bc6d4280b">   67</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL1 (17 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gac67f31952e97f767d74ec9d2f644759a">   68</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL2 (18 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gadea7fe8c18631a76bc0badd13c9b8d80">   69</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL3 (19 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga8062bd367e9dcfc7e0479bbf07a6f759">   70</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL4 (20 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga68947f6ab3d2c55c0ecb8bf37d88d9d5">   71</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL5 (21 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gacf65fe6eff3a5b59a345066345572fb2">   72</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL6 (22 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga0c3309dc6bfbe192e61b55ee23e903bf">   73</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_LOCAL7 (23 &lt;&lt; 3) </span></div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga9ddc5e6a9583f9d8d12e9fddd5973461">   76</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_NFACILITIES 24 </span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">#define LWPA_LOG_FACMASK 0x03f8 </span><span class="comment">/* Mask to extract facility part of a prival. */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#define LWPA_LOG_FAC(p) (((p)&amp;LWPA_LOG_FACMASK) &gt;&gt; 3)</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaa211f156cab5f49438cdfa9e44b63e31">   83</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_EMERG 0   </span></div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga4e4bdf39335b35ef2f878abaea51dfcc">   84</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_ALERT 1   </span></div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga8ff207c1ddab5e2df910cc4fe464c662">   85</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_CRIT 2    </span></div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga3d042c56486e03eb5b187a335ff5101a">   86</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_ERR 3     </span></div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga68217ab863c4cd43c7ff03ca2219c47b">   87</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_WARNING 4 </span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaf6777f9e9a8f38724b151304d1404319">   88</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_NOTICE 5  </span></div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaddc8c1082db67e72912a74b669d29c23">   89</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_INFO 6    </span></div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga4a8948b531b0cf1c68a1bdc5c84d4ceb">   90</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_DEBUG 7   </span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="preprocessor">#define LWPA_LOG_PRIMASK 0x07 </span><span class="comment">/* mask to extract priority part (internal) */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#define LWPA_LOG_PRI(p) ((p)&amp;LWPA_LOG_PRIMASK) </span><span class="comment">/* extract priority */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#define LWPA_LOG_MAKEPRI(fac, pri) (((fac) &lt;&lt; 3) | (pri))</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#define LWPA_LOG_MASK(pri) (1 &lt;&lt; (pri)) </span><span class="comment">/* mask for one priority */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#define LWPA_LOG_UPTO(pri) ((1 &lt;&lt; ((pri) + 1)) - 1) </span><span class="comment">/* all priorities through pri */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gac283f15a55e1f885b4a284cdf749a318">  100</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_HOSTNAME_MAX_LEN 256u </span></div>
+<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaea6845af17f90339030b7f1aed4248b6">  101</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_APP_NAME_MAX_LEN 49u  </span></div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaf444c37d4b37d0d12a01cdd900c54343">  102</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_PROCID_MAX_LEN 129u   </span></div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga3c6145528eb237caccd1e364ed0574c9">  105</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_MSG_MAX_LEN 480u</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">/* clang-format on */</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gae9a41c527892d020281abfb31f4f01e0">  110</a></span>&#160;<span class="preprocessor">#define LWPA_LOG_TIMESTAMP_LEN (10u </span><span class="comment">/*Date*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*T*/</span><span class="preprocessor"> + 12u </span><span class="comment">/*Time*/</span><span class="preprocessor"> + 6u </span><span class="comment">/*Offset*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*Nullterm*/</span><span class="preprocessor">)</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gaef6b15895880ea225057a79bbb120945">  113</a></span>&#160;<span class="preprocessor">#define LWPA_SYSLOG_HEADER_MAX_LEN                                                                   \</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">  (5u </span><span class="comment">/*PRIVAL*/</span><span class="preprocessor"> + 3u </span><span class="comment">/*Version*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> + (LWPA_LOG_TIMESTAMP_LEN - 1u) </span><span class="comment">/*Timestamp*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> + \</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="preprocessor">   (LWPA_LOG_HOSTNAME_MAX_LEN - 1u) + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> + (LWPA_LOG_APP_NAME_MAX_LEN - 1u) + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> +         \</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">   (LWPA_LOG_PROCID_MAX_LEN - 1u) + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*MSGID*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*STRUCTURED-DATA*/</span><span class="preprocessor"> + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor">)</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga98a9352b7969f965cf4c77af3c462f21">  119</a></span>&#160;<span class="preprocessor">#define LWPA_SYSLOG_STR_MIN_LEN LWPA_SYSLOG_HEADER_MAX_LEN</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga794bc9c3568fda36ad6e26a790ae6195">  121</a></span>&#160;<span class="preprocessor">#define LWPA_HUMAN_LOG_STR_MIN_LEN LWPA_LOG_TIMESTAMP_LEN</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga8cd1e1b2619e012f10e62b91f3574e27">  124</a></span>&#160;<span class="preprocessor">#define LWPA_SYSLOG_STR_MAX_LEN (LWPA_SYSLOG_HEADER_MAX_LEN + LWPA_LOG_MSG_MAX_LEN)</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga0495001df9d738759753ecb7c9f4772a">  128</a></span>&#160;<span class="preprocessor">#define LWPA_HUMAN_LOG_STR_MAX_LEN ((LWPA_LOG_TIMESTAMP_LEN - 1u) + 1u </span><span class="comment">/*SP*/</span><span class="preprocessor"> + LWPA_LOG_MSG_MAX_LEN)</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html">  131</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;{</div>
+<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#abeac221e38b7b9ce7df8722c842bf671">  134</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#abeac221e38b7b9ce7df8722c842bf671">year</a>;</div>
+<div class="line"><a name="l00136"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#aedb06abe5aff12fa3e7e0e71a374edfb">  136</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#aedb06abe5aff12fa3e7e0e71a374edfb">month</a>;</div>
+<div class="line"><a name="l00138"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#a4c11afc03fc3ee49bab660def6558f2a">  138</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#a4c11afc03fc3ee49bab660def6558f2a">day</a>;</div>
+<div class="line"><a name="l00140"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#a15df9ba285cfd842f284025f904edc9c">  140</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#a15df9ba285cfd842f284025f904edc9c">hour</a>;</div>
+<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#a5edffad982a0566ad01d95005474eae3">  142</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#a5edffad982a0566ad01d95005474eae3">minute</a>;</div>
+<div class="line"><a name="l00144"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#a6cf35be1947a62f134392fcb1b3c54d2">  144</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#a6cf35be1947a62f134392fcb1b3c54d2">second</a>;</div>
+<div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#ad957f34cd6e8272740bc231865080b22">  146</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#ad957f34cd6e8272740bc231865080b22">msec</a>;</div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="struct_lwpa_log_time_params.html#a0d5ceb6295477b5931bf54c002e36fe9">  148</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_time_params.html#a0d5ceb6295477b5931bf54c002e36fe9">utc_offset</a>;</div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga606f589b43fe2179920d524dd7fae794">  149</a></span>&#160;} <a class="code" href="group__lwpa__log.html#ga606f589b43fe2179920d524dd7fae794">LwpaLogTimeParams</a>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gacd26df727c6a5f6d0d6fcfa4c2ac3755">  163</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__lwpa__log.html#gacd26df727c6a5f6d0d6fcfa4c2ac3755">lwpa_log_callback</a>)(<span class="keywordtype">void</span> *context, <span class="keyword">const</span> <span class="keywordtype">char</span> *syslog_str, <span class="keyword">const</span> <span class="keywordtype">char</span> *human_str, <span class="keyword">const</span> <span class="keywordtype">char</span> *raw_str);</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00173"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga663d6e629850d5957be6634468f04755">  173</a></span>&#160;<span class="keyword">typedef</span> void (*<a class="code" href="group__lwpa__log.html#ga663d6e629850d5957be6634468f04755">lwpa_log_time_fn</a>)(<span class="keywordtype">void</span> *context, <a class="code" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *time_params);</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga87102d7ecdab1a3ba919bd750fae0507">  176</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;{</div>
+<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a408d0b541c1860eb8264be42f2d0d774">  180</a></span>&#160;  <a class="code" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a408d0b541c1860eb8264be42f2d0d774">kLwpaLogCreateSyslog</a>,</div>
+<div class="line"><a name="l00183"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a21fba732cbc622fce83415718e1fb8f9">  183</a></span>&#160;  <a class="code" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a21fba732cbc622fce83415718e1fb8f9">kLwpaLogCreateHumanReadableLog</a>,</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <a class="code" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a1c00ba8139d620d17be3b61a498232c5">kLwpaLogCreateBoth</a></div>
+<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a1c00ba8139d620d17be3b61a498232c5">  187</a></span>&#160;} <a class="code" href="group__lwpa__log.html#ga87102d7ecdab1a3ba919bd750fae0507">lwpa_log_action_t</a>;</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
+<div class="line"><a name="l00190"></a><span class="lineno"><a class="line" href="struct_lwpa_syslog_params.html">  190</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;{</div>
+<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="struct_lwpa_syslog_params.html#a213afa2e73e0c2102f43d4067e41b90f">  193</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_syslog_params.html#a213afa2e73e0c2102f43d4067e41b90f">facility</a>;</div>
+<div class="line"><a name="l00195"></a><span class="lineno"><a class="line" href="struct_lwpa_syslog_params.html#a101da4fbfd94ee9467e2931768d64488">  195</a></span>&#160;  <span class="keywordtype">char</span> <a class="code" href="struct_lwpa_syslog_params.html#a101da4fbfd94ee9467e2931768d64488">hostname</a>[<a class="code" href="group__lwpa__log.html#gac283f15a55e1f885b4a284cdf749a318">LWPA_LOG_HOSTNAME_MAX_LEN</a>];</div>
+<div class="line"><a name="l00197"></a><span class="lineno"><a class="line" href="struct_lwpa_syslog_params.html#ac56492caa804aa3574dec4e755384200">  197</a></span>&#160;  <span class="keywordtype">char</span> <a class="code" href="struct_lwpa_syslog_params.html#ac56492caa804aa3574dec4e755384200">app_name</a>[<a class="code" href="group__lwpa__log.html#gaea6845af17f90339030b7f1aed4248b6">LWPA_LOG_APP_NAME_MAX_LEN</a>];</div>
+<div class="line"><a name="l00199"></a><span class="lineno"><a class="line" href="struct_lwpa_syslog_params.html#a08aa82e27aff5eddbfc578f623f54f4a">  199</a></span>&#160;  <span class="keywordtype">char</span> <a class="code" href="struct_lwpa_syslog_params.html#a08aa82e27aff5eddbfc578f623f54f4a">procid</a>[<a class="code" href="group__lwpa__log.html#gaf444c37d4b37d0d12a01cdd900c54343">LWPA_LOG_PROCID_MAX_LEN</a>];</div>
+<div class="line"><a name="l00200"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#gabdd66ba1cf4cf44332a3e6bf42605a00">  200</a></span>&#160;} <a class="code" href="group__lwpa__log.html#gabdd66ba1cf4cf44332a3e6bf42605a00">LwpaSyslogParams</a>;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
+<div class="line"><a name="l00203"></a><span class="lineno"><a class="line" href="struct_lwpa_log_params.html">  203</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_lwpa_log_params.html">LwpaLogParams</a></div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;{</div>
+<div class="line"><a name="l00206"></a><span class="lineno"><a class="line" href="struct_lwpa_log_params.html#a599599d80aee1a85e37ad61810456cc5">  206</a></span>&#160;  <a class="code" href="group__lwpa__log.html#ga87102d7ecdab1a3ba919bd750fae0507">lwpa_log_action_t</a> <a class="code" href="struct_lwpa_log_params.html#a599599d80aee1a85e37ad61810456cc5">action</a>;</div>
+<div class="line"><a name="l00208"></a><span class="lineno"><a class="line" href="struct_lwpa_log_params.html#a3e770b757979bd97f137d0801d3df5e4">  208</a></span>&#160;  <a class="code" href="group__lwpa__log.html#gacd26df727c6a5f6d0d6fcfa4c2ac3755">lwpa_log_callback</a> <a class="code" href="struct_lwpa_log_params.html#a3e770b757979bd97f137d0801d3df5e4">log_fn</a>;</div>
+<div class="line"><a name="l00210"></a><span class="lineno"><a class="line" href="struct_lwpa_log_params.html#ac3c58308b1be0a1a313137e208c15560">  210</a></span>&#160;  <a class="code" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a> <a class="code" href="struct_lwpa_log_params.html#ac3c58308b1be0a1a313137e208c15560">syslog_params</a>;</div>
+<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="struct_lwpa_log_params.html#ac695d621aaa836a9d13d65a912be9518">  212</a></span>&#160;  <span class="keywordtype">int</span> <a class="code" href="struct_lwpa_log_params.html#ac695d621aaa836a9d13d65a912be9518">log_mask</a>;</div>
+<div class="line"><a name="l00215"></a><span class="lineno"><a class="line" href="struct_lwpa_log_params.html#aeb908ea1d2aeaea8c56ef914948986cc">  215</a></span>&#160;  <a class="code" href="group__lwpa__log.html#ga663d6e629850d5957be6634468f04755">lwpa_log_time_fn</a> <a class="code" href="struct_lwpa_log_params.html#aeb908ea1d2aeaea8c56ef914948986cc">time_fn</a>;</div>
+<div class="line"><a name="l00217"></a><span class="lineno"><a class="line" href="struct_lwpa_log_params.html#ae376f130b17d169ee51be68077a89ed0">  217</a></span>&#160;  <span class="keywordtype">void</span> *<a class="code" href="struct_lwpa_log_params.html#ae376f130b17d169ee51be68077a89ed0">context</a>;</div>
+<div class="line"><a name="l00218"></a><span class="lineno"><a class="line" href="group__lwpa__log.html#ga39f06f5905acfcf5c957112603eeb96c">  218</a></span>&#160;} <a class="code" href="group__lwpa__log.html#ga39f06f5905acfcf5c957112603eeb96c">LwpaLogParams</a>;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="preprocessor">#define lwpa_setlogmask(logparamsptr, newlogmask) ((logparamsptr)-&gt;log_mask = newlogmask)</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="preprocessor">#define lwpa_canlog(logparamsptr, pri) ((LWPA_LOG_MASK(pri) &amp; (logparamsptr)-&gt;log_mask) != 0)</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">/* The various compiler ifdefs are to use each compiler&#39;s method of checking printf-style</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment"> * arguments. */</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="preprocessor">#ifdef __ICCARM__</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="preprocessor">#pragma __printf_args</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__lwpa__log.html#ga2efb597d28fdda5796e410b43f5a631d">lwpa_create_syslog_str</a>(<span class="keywordtype">char</span> *buf, <span class="keywordtype">size_t</span> buflen, <span class="keyword">const</span> <a class="code" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *time,</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                            <span class="keyword">const</span> <a class="code" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a> *syslog_params, <span class="keywordtype">int</span> pri, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    __attribute__((__format__(__printf__, 6, 7)))</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    ;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160; </div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="preprocessor">#ifdef __ICCARM__</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="preprocessor">#pragma __printf_args</span></div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__lwpa__log.html#ga92091520538853c272084261bbb8bf21">lwpa_create_human_log_str</a>(<span class="keywordtype">char</span> *buf, <span class="keywordtype">size_t</span> buflen, <span class="keyword">const</span> <a class="code" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *time, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    __attribute__((__format__(__printf__, 4, 5)))</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    ;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__lwpa__log.html#ga2e1cd052c474bfbb33614a7d10b33bbb">lwpa_sanitize_syslog_params</a>(<a class="code" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a> *params);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__lwpa__log.html#ga745327935a6efcc73f2f5048757c6de1">lwpa_validate_log_params</a>(<a class="code" href="struct_lwpa_log_params.html">LwpaLogParams</a> *params);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160; </div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="preprocessor">#ifdef __ICCARM__</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="preprocessor">#pragma __printf_args</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef">lwpa_log</a>(<span class="keyword">const</span> <a class="code" href="struct_lwpa_log_params.html">LwpaLogParams</a> *params, <span class="keywordtype">int</span> pri, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="preprocessor">#ifdef __GNUC__</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    __attribute__((__format__(__printf__, 3, 4)))</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    ;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="keywordtype">void</span> <a class="code" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da">lwpa_vlog</a>(<span class="keyword">const</span> <a class="code" href="struct_lwpa_log_params.html">LwpaLogParams</a> *params, <span class="keywordtype">int</span> pri, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, va_list args);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;}</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* _LWPA_LOG_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga2e1cd052c474bfbb33614a7d10b33bbb"><div class="ttname"><a href="group__lwpa__log.html#ga2e1cd052c474bfbb33614a7d10b33bbb">lwpa_sanitize_syslog_params</a></div><div class="ttdeci">void lwpa_sanitize_syslog_params(LwpaSyslogParams *params)</div><div class="ttdoc">Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them if necessar...</div><div class="ttdef"><b>Definition:</b> log.c:66</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga2efb597d28fdda5796e410b43f5a631d"><div class="ttname"><a href="group__lwpa__log.html#ga2efb597d28fdda5796e410b43f5a631d">lwpa_create_syslog_str</a></div><div class="ttdeci">bool lwpa_create_syslog_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const LwpaSyslogParams *syslog_params, int pri, const char *format,...)</div><div class="ttdoc">Create a log message with syslog header in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:207</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga39f06f5905acfcf5c957112603eeb96c"><div class="ttname"><a href="group__lwpa__log.html#ga39f06f5905acfcf5c957112603eeb96c">LwpaLogParams</a></div><div class="ttdeci">struct LwpaLogParams LwpaLogParams</div><div class="ttdoc">A set of parameters used for the lwpa_*log() functions.</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga4d3b4176e7d17c30aaa9dd82b6c5c3da"><div class="ttname"><a href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da">lwpa_vlog</a></div><div class="ttdeci">void lwpa_vlog(const LwpaLogParams *params, int pri, const char *format, va_list args)</div><div class="ttdoc">Log a message from a library module with the list of format arguments already generated.</div><div class="ttdef"><b>Definition:</b> log.c:299</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga606f589b43fe2179920d524dd7fae794"><div class="ttname"><a href="group__lwpa__log.html#ga606f589b43fe2179920d524dd7fae794">LwpaLogTimeParams</a></div><div class="ttdeci">struct LwpaLogTimeParams LwpaLogTimeParams</div><div class="ttdoc">A set of parameters which represent the current local time with millisecond resolution.</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga6584e9d020e7cf99caaca6bf9acf81ef"><div class="ttname"><a href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef">lwpa_log</a></div><div class="ttdeci">void lwpa_log(const LwpaLogParams *params, int pri, const char *format,...)</div><div class="ttdoc">Log a message from a library module.</div><div class="ttdef"><b>Definition:</b> log.c:281</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga663d6e629850d5957be6634468f04755"><div class="ttname"><a href="group__lwpa__log.html#ga663d6e629850d5957be6634468f04755">lwpa_log_time_fn</a></div><div class="ttdeci">void(* lwpa_log_time_fn)(void *context, LwpaLogTimeParams *time_params)</div><div class="ttdoc">Time callback function.</div><div class="ttdef"><b>Definition:</b> log.h:173</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga745327935a6efcc73f2f5048757c6de1"><div class="ttname"><a href="group__lwpa__log.html#ga745327935a6efcc73f2f5048757c6de1">lwpa_validate_log_params</a></div><div class="ttdeci">bool lwpa_validate_log_params(LwpaLogParams *params)</div><div class="ttdoc">Ensure that the given lwpa_log_params are valid.</div><div class="ttdef"><b>Definition:</b> log.c:84</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga87102d7ecdab1a3ba919bd750fae0507"><div class="ttname"><a href="group__lwpa__log.html#ga87102d7ecdab1a3ba919bd750fae0507">lwpa_log_action_t</a></div><div class="ttdeci">lwpa_log_action_t</div><div class="ttdoc">Which types of log message(s) the lwpa_log() and lwpa_vlog() functions create.</div><div class="ttdef"><b>Definition:</b> log.h:177</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_ga92091520538853c272084261bbb8bf21"><div class="ttname"><a href="group__lwpa__log.html#ga92091520538853c272084261bbb8bf21">lwpa_create_human_log_str</a></div><div class="ttdeci">bool lwpa_create_human_log_str(char *buf, size_t buflen, const LwpaLogTimeParams *time, const char *format,...)</div><div class="ttdoc">Create a log message with a human-readable header in the given buffer.</div><div class="ttdef"><b>Definition:</b> log.c:262</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gabdd66ba1cf4cf44332a3e6bf42605a00"><div class="ttname"><a href="group__lwpa__log.html#gabdd66ba1cf4cf44332a3e6bf42605a00">LwpaSyslogParams</a></div><div class="ttdeci">struct LwpaSyslogParams LwpaSyslogParams</div><div class="ttdoc">A set of parameters for the syslog header.</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gac283f15a55e1f885b4a284cdf749a318"><div class="ttname"><a href="group__lwpa__log.html#gac283f15a55e1f885b4a284cdf749a318">LWPA_LOG_HOSTNAME_MAX_LEN</a></div><div class="ttdeci">#define LWPA_LOG_HOSTNAME_MAX_LEN</div><div class="ttdoc">Max length of the hostname param.</div><div class="ttdef"><b>Definition:</b> log.h:100</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gacd26df727c6a5f6d0d6fcfa4c2ac3755"><div class="ttname"><a href="group__lwpa__log.html#gacd26df727c6a5f6d0d6fcfa4c2ac3755">lwpa_log_callback</a></div><div class="ttdeci">void(* lwpa_log_callback)(void *context, const char *syslog_str, const char *human_str, const char *raw_str)</div><div class="ttdoc">Log callback function.</div><div class="ttdef"><b>Definition:</b> log.h:163</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gaea6845af17f90339030b7f1aed4248b6"><div class="ttname"><a href="group__lwpa__log.html#gaea6845af17f90339030b7f1aed4248b6">LWPA_LOG_APP_NAME_MAX_LEN</a></div><div class="ttdeci">#define LWPA_LOG_APP_NAME_MAX_LEN</div><div class="ttdoc">Max length of the app_name param.</div><div class="ttdef"><b>Definition:</b> log.h:101</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gaf444c37d4b37d0d12a01cdd900c54343"><div class="ttname"><a href="group__lwpa__log.html#gaf444c37d4b37d0d12a01cdd900c54343">LWPA_LOG_PROCID_MAX_LEN</a></div><div class="ttdeci">#define LWPA_LOG_PROCID_MAX_LEN</div><div class="ttdoc">Max length of the procid param.</div><div class="ttdef"><b>Definition:</b> log.h:102</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gga87102d7ecdab1a3ba919bd750fae0507a1c00ba8139d620d17be3b61a498232c5"><div class="ttname"><a href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a1c00ba8139d620d17be3b61a498232c5">kLwpaLogCreateBoth</a></div><div class="ttdeci">@ kLwpaLogCreateBoth</div><div class="ttdoc">lwpa_log() and lwpa_vlog() create both a syslog message and a human-readable log message and pass the...</div><div class="ttdef"><b>Definition:</b> log.h:186</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gga87102d7ecdab1a3ba919bd750fae0507a21fba732cbc622fce83415718e1fb8f9"><div class="ttname"><a href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a21fba732cbc622fce83415718e1fb8f9">kLwpaLogCreateHumanReadableLog</a></div><div class="ttdeci">@ kLwpaLogCreateHumanReadableLog</div><div class="ttdoc">lwpa_log() and lwpa_vlog() create a human-readable log message and pass it back in the human_str para...</div><div class="ttdef"><b>Definition:</b> log.h:183</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gga87102d7ecdab1a3ba919bd750fae0507a408d0b541c1860eb8264be42f2d0d774"><div class="ttname"><a href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a408d0b541c1860eb8264be42f2d0d774">kLwpaLogCreateSyslog</a></div><div class="ttdeci">@ kLwpaLogCreateSyslog</div><div class="ttdoc">lwpa_log() and lwpa_vlog() create a syslog message and pass it back in the syslog_str parameter of th...</div><div class="ttdef"><b>Definition:</b> log.h:180</div></div>
+<div class="ttc" id="astruct_lwpa_log_params_html"><div class="ttname"><a href="struct_lwpa_log_params.html">LwpaLogParams</a></div><div class="ttdoc">A set of parameters used for the lwpa_*log() functions.</div><div class="ttdef"><b>Definition:</b> log.h:204</div></div>
+<div class="ttc" id="astruct_lwpa_log_params_html_a3e770b757979bd97f137d0801d3df5e4"><div class="ttname"><a href="struct_lwpa_log_params.html#a3e770b757979bd97f137d0801d3df5e4">LwpaLogParams::log_fn</a></div><div class="ttdeci">lwpa_log_callback log_fn</div><div class="ttdoc">A callback function for the finished log string(s).</div><div class="ttdef"><b>Definition:</b> log.h:208</div></div>
+<div class="ttc" id="astruct_lwpa_log_params_html_a599599d80aee1a85e37ad61810456cc5"><div class="ttname"><a href="struct_lwpa_log_params.html#a599599d80aee1a85e37ad61810456cc5">LwpaLogParams::action</a></div><div class="ttdeci">lwpa_log_action_t action</div><div class="ttdoc">What should be done when lwpa_*log() is called.</div><div class="ttdef"><b>Definition:</b> log.h:206</div></div>
+<div class="ttc" id="astruct_lwpa_log_params_html_ac3c58308b1be0a1a313137e208c15560"><div class="ttname"><a href="struct_lwpa_log_params.html#ac3c58308b1be0a1a313137e208c15560">LwpaLogParams::syslog_params</a></div><div class="ttdeci">LwpaSyslogParams syslog_params</div><div class="ttdoc">The syslog header parameters.</div><div class="ttdef"><b>Definition:</b> log.h:210</div></div>
+<div class="ttc" id="astruct_lwpa_log_params_html_ac695d621aaa836a9d13d65a912be9518"><div class="ttname"><a href="struct_lwpa_log_params.html#ac695d621aaa836a9d13d65a912be9518">LwpaLogParams::log_mask</a></div><div class="ttdeci">int log_mask</div><div class="ttdoc">A mask value that determines which priority messages can be logged.</div><div class="ttdef"><b>Definition:</b> log.h:212</div></div>
+<div class="ttc" id="astruct_lwpa_log_params_html_ae376f130b17d169ee51be68077a89ed0"><div class="ttname"><a href="struct_lwpa_log_params.html#ae376f130b17d169ee51be68077a89ed0">LwpaLogParams::context</a></div><div class="ttdeci">void * context</div><div class="ttdoc">Application context that will be passed back with the log callback function.</div><div class="ttdef"><b>Definition:</b> log.h:217</div></div>
+<div class="ttc" id="astruct_lwpa_log_params_html_aeb908ea1d2aeaea8c56ef914948986cc"><div class="ttname"><a href="struct_lwpa_log_params.html#aeb908ea1d2aeaea8c56ef914948986cc">LwpaLogParams::time_fn</a></div><div class="ttdeci">lwpa_log_time_fn time_fn</div><div class="ttdoc">A callback function for lwpa_*log() functions to obtain the time from the application.</div><div class="ttdef"><b>Definition:</b> log.h:215</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html"><div class="ttname"><a href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a></div><div class="ttdoc">A set of parameters which represent the current local time with millisecond resolution.</div><div class="ttdef"><b>Definition:</b> log.h:132</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_a0d5ceb6295477b5931bf54c002e36fe9"><div class="ttname"><a href="struct_lwpa_log_time_params.html#a0d5ceb6295477b5931bf54c002e36fe9">LwpaLogTimeParams::utc_offset</a></div><div class="ttdeci">int utc_offset</div><div class="ttdoc">The local offset from UTC in minutes.</div><div class="ttdef"><b>Definition:</b> log.h:148</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_a15df9ba285cfd842f284025f904edc9c"><div class="ttname"><a href="struct_lwpa_log_time_params.html#a15df9ba285cfd842f284025f904edc9c">LwpaLogTimeParams::hour</a></div><div class="ttdeci">int hour</div><div class="ttdoc">Hours since midnight.</div><div class="ttdef"><b>Definition:</b> log.h:140</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_a4c11afc03fc3ee49bab660def6558f2a"><div class="ttname"><a href="struct_lwpa_log_time_params.html#a4c11afc03fc3ee49bab660def6558f2a">LwpaLogTimeParams::day</a></div><div class="ttdeci">int day</div><div class="ttdoc">Day of the month.</div><div class="ttdef"><b>Definition:</b> log.h:138</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_a5edffad982a0566ad01d95005474eae3"><div class="ttname"><a href="struct_lwpa_log_time_params.html#a5edffad982a0566ad01d95005474eae3">LwpaLogTimeParams::minute</a></div><div class="ttdeci">int minute</div><div class="ttdoc">Minutes past the current hour.</div><div class="ttdef"><b>Definition:</b> log.h:142</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_a6cf35be1947a62f134392fcb1b3c54d2"><div class="ttname"><a href="struct_lwpa_log_time_params.html#a6cf35be1947a62f134392fcb1b3c54d2">LwpaLogTimeParams::second</a></div><div class="ttdeci">int second</div><div class="ttdoc">Seconds past the current minute.</div><div class="ttdef"><b>Definition:</b> log.h:144</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_abeac221e38b7b9ce7df8722c842bf671"><div class="ttname"><a href="struct_lwpa_log_time_params.html#abeac221e38b7b9ce7df8722c842bf671">LwpaLogTimeParams::year</a></div><div class="ttdeci">int year</div><div class="ttdoc">Absolute year.</div><div class="ttdef"><b>Definition:</b> log.h:134</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_ad957f34cd6e8272740bc231865080b22"><div class="ttname"><a href="struct_lwpa_log_time_params.html#ad957f34cd6e8272740bc231865080b22">LwpaLogTimeParams::msec</a></div><div class="ttdeci">int msec</div><div class="ttdoc">Milliseconds past the current second.</div><div class="ttdef"><b>Definition:</b> log.h:146</div></div>
+<div class="ttc" id="astruct_lwpa_log_time_params_html_aedb06abe5aff12fa3e7e0e71a374edfb"><div class="ttname"><a href="struct_lwpa_log_time_params.html#aedb06abe5aff12fa3e7e0e71a374edfb">LwpaLogTimeParams::month</a></div><div class="ttdeci">int month</div><div class="ttdoc">Month of the year.</div><div class="ttdef"><b>Definition:</b> log.h:136</div></div>
+<div class="ttc" id="astruct_lwpa_syslog_params_html"><div class="ttname"><a href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a></div><div class="ttdoc">A set of parameters for the syslog header.</div><div class="ttdef"><b>Definition:</b> log.h:191</div></div>
+<div class="ttc" id="astruct_lwpa_syslog_params_html_a08aa82e27aff5eddbfc578f623f54f4a"><div class="ttname"><a href="struct_lwpa_syslog_params.html#a08aa82e27aff5eddbfc578f623f54f4a">LwpaSyslogParams::procid</a></div><div class="ttdeci">char procid[LWPA_LOG_PROCID_MAX_LEN]</div><div class="ttdoc">Syslog PROCID; see RFC 5424 § 6.2.6.</div><div class="ttdef"><b>Definition:</b> log.h:199</div></div>
+<div class="ttc" id="astruct_lwpa_syslog_params_html_a101da4fbfd94ee9467e2931768d64488"><div class="ttname"><a href="struct_lwpa_syslog_params.html#a101da4fbfd94ee9467e2931768d64488">LwpaSyslogParams::hostname</a></div><div class="ttdeci">char hostname[LWPA_LOG_HOSTNAME_MAX_LEN]</div><div class="ttdoc">Syslog HOSTNAME; see RFC 5424 § 6.2.4.</div><div class="ttdef"><b>Definition:</b> log.h:195</div></div>
+<div class="ttc" id="astruct_lwpa_syslog_params_html_a213afa2e73e0c2102f43d4067e41b90f"><div class="ttname"><a href="struct_lwpa_syslog_params.html#a213afa2e73e0c2102f43d4067e41b90f">LwpaSyslogParams::facility</a></div><div class="ttdeci">int facility</div><div class="ttdoc">Syslog Facility; see RFC 5424 § 6.2.1.</div><div class="ttdef"><b>Definition:</b> log.h:193</div></div>
+<div class="ttc" id="astruct_lwpa_syslog_params_html_ac56492caa804aa3574dec4e755384200"><div class="ttname"><a href="struct_lwpa_syslog_params.html#ac56492caa804aa3574dec4e755384200">LwpaSyslogParams::app_name</a></div><div class="ttdeci">char app_name[LWPA_LOG_APP_NAME_MAX_LEN]</div><div class="ttdoc">Syslog APP-NAME; see RFC 5424 § 6.2.5.</div><div class="ttdef"><b>Definition:</b> log.h:197</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_ecfa76c5569ddc5008dc28ca5daa4ace.html">lwpa</a></li><li class="navelem"><b>log.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

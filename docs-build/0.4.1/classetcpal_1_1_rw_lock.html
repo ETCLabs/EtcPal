@@ -1,0 +1,516 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: RwLock Class Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classetcpal_1_1_rw_lock.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">RwLock Class Reference<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a> &raquo; <a class="el" href="group__etcpal__cpp__rwlock.html">rwlock (Read-Write Locks)</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<div class="textblock"><p>A wrapper class for the EtcPal read-write lock type. </p>
+<p>Note: The <a class="el" href="classetcpal_1_1_rw_lock.html" title="A wrapper class for the EtcPal read-write lock type.">etcpal::RwLock</a> functions are not normally used directly - prefer usage of the RAII types <a class="el" href="classetcpal_1_1_read_guard.html" title="Read lock guard around a read-write lock.">etcpal::ReadGuard</a> and <a class="el" href="classetcpal_1_1_write_guard.html" title="Write lock guard around a read-write lock.">etcpal::WriteGuard</a> to manage locking and unlocking of an <a class="el" href="classetcpal_1_1_rw_lock.html" title="A wrapper class for the EtcPal read-write lock type.">etcpal::RwLock</a>.</p>
+<p>Example usage: </p><div class="fragment"><div class="line"><span class="keyword">class </span>ThreadSafeCounter</div>
+<div class="line">{</div>
+<div class="line"><span class="keyword">public</span>:</div>
+<div class="line">  ThreadSafeCounter() = <span class="keywordflow">default</span>;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Multiple threads/readers can read the counter&#39;s value at the same time.</span></div>
+<div class="line">  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classetcpal_1_1_rw_lock.html#a16634332a0b44a7bedfcc491383c4fe5">get</a>()<span class="keyword"> const</span></div>
+<div class="line"><span class="keyword">  </span>{</div>
+<div class="line">    <a class="code" href="classetcpal_1_1_read_guard.html">etcpal::ReadGuard</a> read_lock(lock_);</div>
+<div class="line">    <span class="keywordflow">return</span> value_;</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Only one thread/writer can increment/write the counter&#39;s value.</span></div>
+<div class="line">  <span class="keywordtype">void</span> increment()</div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="classetcpal_1_1_write_guard.html">etcpal::WriteGuard</a> write_lock(lock_);</div>
+<div class="line">    ++value_;</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Only one thread/writer can reset/write the counter&#39;s value.</span></div>
+<div class="line">  <span class="keywordtype">void</span> reset()</div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="classetcpal_1_1_write_guard.html">etcpal::WriteGuard</a> write_lock(lock_);</div>
+<div class="line">    value_ = 0;</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line"> <span class="keyword">private</span>:</div>
+<div class="line">  <span class="keyword">mutable</span> <a class="code" href="classetcpal_1_1_rw_lock.html">etcpal::RwLock</a> lock_;</div>
+<div class="line">  <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> value_ = 0;</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main()</div>
+<div class="line">{</div>
+<div class="line">  ThreadSafeCounter counter;</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">auto</span> increment_and_print = [&amp;counter]()</div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 3; i++)</div>
+<div class="line">    {</div>
+<div class="line">      counter.increment();</div>
+<div class="line">      std::cout &lt;&lt; counter.get() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>;</div>
+<div class="line">    }</div>
+<div class="line">  };</div>
+<div class="line"> </div>
+<div class="line">  <a class="code" href="classetcpal_1_1_thread.html">etcpal::Thread</a> thread1(increment_and_print);</div>
+<div class="line">  <a class="code" href="classetcpal_1_1_thread.html">etcpal::Thread</a> thread2(increment_and_print);</div>
+<div class="line"> </div>
+<div class="line">  thread1.Join();</div>
+<div class="line">  thread2.Join();</div>
+<div class="line"> </div>
+<div class="line">  std::cout &lt;&lt; counter.get() &lt;&lt; <span class="charliteral">&#39;\n&#39;</span>; <span class="comment">// Outputs &#39;6&#39;</span></div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassetcpal_1_1_read_guard_html"><div class="ttname"><a href="classetcpal_1_1_read_guard.html">etcpal::ReadGuard</a></div><div class="ttdoc">Read lock guard around a read-write lock.</div><div class="ttdef"><b>Definition:</b> rwlock.h:232</div></div>
+<div class="ttc" id="aclassetcpal_1_1_rw_lock_html"><div class="ttname"><a href="classetcpal_1_1_rw_lock.html">etcpal::RwLock</a></div><div class="ttdoc">A wrapper class for the EtcPal read-write lock type.</div><div class="ttdef"><b>Definition:</b> rwlock.h:112</div></div>
+<div class="ttc" id="aclassetcpal_1_1_rw_lock_html_a16634332a0b44a7bedfcc491383c4fe5"><div class="ttname"><a href="classetcpal_1_1_rw_lock.html#a16634332a0b44a7bedfcc491383c4fe5">etcpal::RwLock::get</a></div><div class="ttdeci">etcpal_rwlock_t &amp; get()</div><div class="ttdoc">Get a reference to the underlying etcpal_rwlock_t type.</div><div class="ttdef"><b>Definition:</b> rwlock.h:211</div></div>
+<div class="ttc" id="aclassetcpal_1_1_thread_html"><div class="ttname"><a href="classetcpal_1_1_thread.html">etcpal::Thread</a></div><div class="ttdoc">A thread class, modeled after std::thread.</div><div class="ttdef"><b>Definition:</b> thread.h:143</div></div>
+<div class="ttc" id="aclassetcpal_1_1_write_guard_html"><div class="ttname"><a href="classetcpal_1_1_write_guard.html">etcpal::WriteGuard</a></div><div class="ttdoc">Write lock guard around a read-write lock.</div><div class="ttdef"><b>Definition:</b> rwlock.h:291</div></div>
+</div><!-- fragment --><p>See <a class="el" href="group__etcpal__rwlock.html">rwlock (Read-Write Locks)</a> for more information. </p>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:ad5ce7091375083d76ae798cabac53a21"><td class="memItemLeft" align="right" valign="top"><a id="ad5ce7091375083d76ae798cabac53a21"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#ad5ce7091375083d76ae798cabac53a21">RwLock</a> ()</td></tr>
+<tr class="memdesc:ad5ce7091375083d76ae798cabac53a21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new read-write lock. <br /></td></tr>
+<tr class="separator:ad5ce7091375083d76ae798cabac53a21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31fcfa6d9b8bcf5a64823de7c0b1313a"><td class="memItemLeft" align="right" valign="top"><a id="a31fcfa6d9b8bcf5a64823de7c0b1313a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#a31fcfa6d9b8bcf5a64823de7c0b1313a">~RwLock</a> ()</td></tr>
+<tr class="memdesc:a31fcfa6d9b8bcf5a64823de7c0b1313a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the read-write lock. <br /></td></tr>
+<tr class="separator:a31fcfa6d9b8bcf5a64823de7c0b1313a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f3a88d9a760d206fe793b6b35770064"><td class="memItemLeft" align="right" valign="top"><a id="a5f3a88d9a760d206fe793b6b35770064"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>RwLock</b> (const <a class="el" href="classetcpal_1_1_rw_lock.html">RwLock</a> &amp;other)=delete</td></tr>
+<tr class="separator:a5f3a88d9a760d206fe793b6b35770064"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35dd2a3e974f5fa008c8b9c8ab5b92a6"><td class="memItemLeft" align="right" valign="top"><a id="a35dd2a3e974f5fa008c8b9c8ab5b92a6"></a>
+<a class="el" href="classetcpal_1_1_rw_lock.html">RwLock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classetcpal_1_1_rw_lock.html">RwLock</a> &amp;other)=delete</td></tr>
+<tr class="separator:a35dd2a3e974f5fa008c8b9c8ab5b92a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83379066a586c105e6545afd49bb5dd9"><td class="memItemLeft" align="right" valign="top"><a id="a83379066a586c105e6545afd49bb5dd9"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>RwLock</b> (<a class="el" href="classetcpal_1_1_rw_lock.html">RwLock</a> &amp;&amp;other)=delete</td></tr>
+<tr class="separator:a83379066a586c105e6545afd49bb5dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4faecf150601dc5e57a3ddac2d83cb67"><td class="memItemLeft" align="right" valign="top"><a id="a4faecf150601dc5e57a3ddac2d83cb67"></a>
+<a class="el" href="classetcpal_1_1_rw_lock.html">RwLock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classetcpal_1_1_rw_lock.html">RwLock</a> &amp;&amp;other)=delete</td></tr>
+<tr class="separator:a4faecf150601dc5e57a3ddac2d83cb67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af760aebc292f4430c5d554b1fb239284"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#af760aebc292f4430c5d554b1fb239284">ReadLock</a> ()</td></tr>
+<tr class="memdesc:af760aebc292f4430c5d554b1fb239284"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the read-write lock for reading.  <a href="classetcpal_1_1_rw_lock.html#af760aebc292f4430c5d554b1fb239284">More...</a><br /></td></tr>
+<tr class="separator:af760aebc292f4430c5d554b1fb239284"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac46abb95ae4ab3f37da632ea31f01535"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#ac46abb95ae4ab3f37da632ea31f01535">TryReadLock</a> (int timeout_ms=0)</td></tr>
+<tr class="memdesc:ac46abb95ae4ab3f37da632ea31f01535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to access the read-write lock for reading.  <a href="classetcpal_1_1_rw_lock.html#ac46abb95ae4ab3f37da632ea31f01535">More...</a><br /></td></tr>
+<tr class="separator:ac46abb95ae4ab3f37da632ea31f01535"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1860d89c46fea6b62da4c7c39756fc4e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#a1860d89c46fea6b62da4c7c39756fc4e">ReadUnlock</a> ()</td></tr>
+<tr class="memdesc:a1860d89c46fea6b62da4c7c39756fc4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release a read lock on the read-write lock.  <a href="classetcpal_1_1_rw_lock.html#a1860d89c46fea6b62da4c7c39756fc4e">More...</a><br /></td></tr>
+<tr class="separator:a1860d89c46fea6b62da4c7c39756fc4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a062052c7ab44662cc7d5a2bf81f4a87c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#a062052c7ab44662cc7d5a2bf81f4a87c">WriteLock</a> ()</td></tr>
+<tr class="memdesc:a062052c7ab44662cc7d5a2bf81f4a87c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the read-write lock for writing.  <a href="classetcpal_1_1_rw_lock.html#a062052c7ab44662cc7d5a2bf81f4a87c">More...</a><br /></td></tr>
+<tr class="separator:a062052c7ab44662cc7d5a2bf81f4a87c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfd977b8c35b753a7341a6e64864fa6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#adfd977b8c35b753a7341a6e64864fa6f">TryWriteLock</a> (int timeout_ms=0)</td></tr>
+<tr class="memdesc:adfd977b8c35b753a7341a6e64864fa6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to access the read-write lock for writing.  <a href="classetcpal_1_1_rw_lock.html#adfd977b8c35b753a7341a6e64864fa6f">More...</a><br /></td></tr>
+<tr class="separator:adfd977b8c35b753a7341a6e64864fa6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfc3bd44b6252464c577c5ed8389dbd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#abfc3bd44b6252464c577c5ed8389dbd4">WriteUnlock</a> ()</td></tr>
+<tr class="memdesc:abfc3bd44b6252464c577c5ed8389dbd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release a write lock on the read-write lock.  <a href="classetcpal_1_1_rw_lock.html#abfc3bd44b6252464c577c5ed8389dbd4">More...</a><br /></td></tr>
+<tr class="separator:abfc3bd44b6252464c577c5ed8389dbd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16634332a0b44a7bedfcc491383c4fe5"><td class="memItemLeft" align="right" valign="top"><a id="a16634332a0b44a7bedfcc491383c4fe5"></a>
+<a class="el" href="group__etcpal__rwlock.html#ga5949678b1acff7d9829e257a9bee8d8e">etcpal_rwlock_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_rw_lock.html#a16634332a0b44a7bedfcc491383c4fe5">get</a> ()</td></tr>
+<tr class="memdesc:a16634332a0b44a7bedfcc491383c4fe5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference to the underlying etcpal_rwlock_t type. <br /></td></tr>
+<tr class="separator:a16634332a0b44a7bedfcc491383c4fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="af760aebc292f4430c5d554b1fb239284"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af760aebc292f4430c5d554b1fb239284">&#9670;&nbsp;</a></span>ReadLock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ReadLock </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Access the read-write lock for reading. </p>
+<dl class="section return"><dt>Returns</dt><dd>The result of <a class="el" href="group__etcpal__rwlock.html#ga846b8783133884b5fbce918811568825" title="Access a read-write lock for reading.">etcpal_rwlock_readlock()</a> on the underlying read-write lock. </dd></dl>
+
+</div>
+</div>
+<a id="a1860d89c46fea6b62da4c7c39756fc4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1860d89c46fea6b62da4c7c39756fc4e">&#9670;&nbsp;</a></span>ReadUnlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ReadUnlock </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Release a read lock on the read-write lock. </p>
+<p>See <a class="el" href="group__etcpal__rwlock.html#ga3ab0cac4b091255a2694a4a472151160" title="Release a read lock on a read-write lock object.">etcpal_rwlock_readunlock()</a>. </p>
+
+</div>
+</div>
+<a id="ac46abb95ae4ab3f37da632ea31f01535"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac46abb95ae4ab3f37da632ea31f01535">&#9670;&nbsp;</a></span>TryReadLock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TryReadLock </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Try to access the read-write lock for reading. </p>
+<p>Returns when either the read lock is acquired or the timeout expires. <b>NOTE</b>: Timeout values other than 0 or ETCPAL_WAIT_FOREVER are typically only honored on real-time platforms. See the table in <a class="el" href="group__etcpal__rwlock.html">rwlock (Read-Write Locks)</a> for more information. On platforms where timeouts are not honored, passing 0 for timeout_ms executes a poll for the lock returning immediately, while any other value executes the equivalent of <a class="el" href="classetcpal_1_1_rw_lock.html#af760aebc292f4430c5d554b1fb239284" title="Access the read-write lock for reading.">ReadLock()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timeout_ms</td><td>How long to wait to acquire the read lock, in milliseconds. Default is to poll and return immediately. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of <a class="el" href="group__etcpal__rwlock.html#gafa8f15715dac3b6f54bd7dcafe62da10" title="Try to access a read-write lock for reading, giving up after a timeout.">etcpal_rwlock_timed_readlock()</a> on the underlying read-write lock. </dd></dl>
+
+</div>
+</div>
+<a id="adfd977b8c35b753a7341a6e64864fa6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfd977b8c35b753a7341a6e64864fa6f">&#9670;&nbsp;</a></span>TryWriteLock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TryWriteLock </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Try to access the read-write lock for writing. </p>
+<p>Returns when either the read lock is acquired or the timeout expires. <b>NOTE</b>: Timeout values other than 0 or ETCPAL_WAIT_FOREVER are typically only honored on real-time platforms. See the table in <a class="el" href="group__etcpal__rwlock.html">rwlock (Read-Write Locks)</a> for more information. On platforms where timeouts are not honored, passing 0 for timeout_ms executes a poll for the lock returning immediately, while any other value executes the equivalent of <a class="el" href="classetcpal_1_1_rw_lock.html#a062052c7ab44662cc7d5a2bf81f4a87c" title="Access the read-write lock for writing.">WriteLock()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timeout_ms</td><td>How long to wait to acquire the write lock, in milliseconds. Default is to poll and return immediately. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of <a class="el" href="group__etcpal__rwlock.html#ga0f848288a067dbfd5348c089c1dbb76b" title="Try to access a read-write lock for writing, giving up after a timeout.">etcpal_rwlock_timed_writelock()</a> on the underlying read-write lock. </dd></dl>
+
+</div>
+</div>
+<a id="a062052c7ab44662cc7d5a2bf81f4a87c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a062052c7ab44662cc7d5a2bf81f4a87c">&#9670;&nbsp;</a></span>WriteLock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool WriteLock </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Access the read-write lock for writing. </p>
+<dl class="section return"><dt>Returns</dt><dd>The result of <a class="el" href="group__etcpal__rwlock.html#gac6989af16cb55025d06ee35373739380" title="Access a read-write lock for writing.">etcpal_rwlock_writelock()</a> on the underlying read-write lock. </dd></dl>
+
+</div>
+</div>
+<a id="abfc3bd44b6252464c577c5ed8389dbd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfc3bd44b6252464c577c5ed8389dbd4">&#9670;&nbsp;</a></span>WriteUnlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void WriteUnlock </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Release a write lock on the read-write lock. </p>
+<p>See <a class="el" href="group__etcpal__rwlock.html#ga83fbb82557a70ad86c8a65fd53b0cb8b" title="Release a write lock on a read-write lock object.">etcpal_rwlock_writeunlock()</a>. </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>include/etcpal/cpp/<a class="el" href="cpp_2rwlock_8h_source.html">rwlock.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>etcpal</b></li><li class="navelem"><a class="el" href="classetcpal_1_1_rw_lock.html">RwLock</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

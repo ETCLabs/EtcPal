@@ -1,0 +1,752 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: uuid (UUIDs)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__uuid.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
+  <div class="headertitle">
+<div class="title">uuid (UUIDs)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__core.html">Core Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Type and helper functions for a Universally Unique Identifier (UUID). </p>
+<p>UUIDs (per RFC 4122) are used in several libraries supported by EtcPal. This module contains a type for a UUID and functions to generate, inspect and manipulate them.</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/uuid.h&quot;</span></div>
+</div><!-- fragment --><p>The basic UUID type is quite simple - an array of 16 data bytes. Functions are provided to generate every current UUID type except Version 2, which is very rarely used. Additionally, <a class="el" href="group__etcpal__uuid.html#gabb977b5a218b4b62224c016bf3932f10" title="Generate the preferred UUID version of the underlying OS.">etcpal_generate_os_preferred_uuid()</a> generates the UUID type preferred by the underlying OS, and <a class="el" href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda" title="Generate a UUID from a combination of a custom string and MAC address.">etcpal_generate_device_uuid()</a> generates a special type of V5 UUID which can be used to identify embedded devices.</p>
+<p>Generation of V1 and V4 UUIDs require EtcPal to be compiled with OS abstraction support (the default in most situations).</p>
+<p>The basic form of UUID generation is: </p><div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a> uuid;</div>
+<div class="line"><span class="keywordflow">if</span> (<a class="code" href="group__etcpal__uuid.html#ga7a2029b259cc4270fb721b976f21972a">etcpal_generate_v1_uuid</a>(&amp;uuid) == <a class="code" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a>)</div>
+<div class="line">{</div>
+<div class="line">  <span class="comment">// uuid now contains a valid Version 1 UUID.</span></div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__etcpal__error_html_gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d"><div class="ttname"><a href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d">kEtcPalErrOk</a></div><div class="ttdeci">@ kEtcPalErrOk</div><div class="ttdoc">The call was successful, no error occurred.</div><div class="ttdef"><b>Definition:</b> error.h:51</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga7a2029b259cc4270fb721b976f21972a"><div class="ttname"><a href="group__etcpal__uuid.html#ga7a2029b259cc4270fb721b976f21972a">etcpal_generate_v1_uuid</a></div><div class="ttdeci">etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid *uuid)</div><div class="ttdoc">Generate a Version 1 UUID.</div><div class="ttdef"><b>Definition:</b> uuid.c:152</div></div>
+<div class="ttc" id="astruct_etc_pal_uuid_html"><div class="ttname"><a href="struct_etc_pal_uuid.html">EtcPalUuid</a></div><div class="ttdoc">The UUID type.</div><div class="ttdef"><b>Definition:</b> uuid.h:93</div></div>
+</div><!-- fragment --><p><b>Note:</b> Not all UUID types are available on all systems. V3, V5 and Device UUIDs are guaranteed to be available in all ports of EtcPal, but V1, V4 and os_preferred UUIDs are generally not available on embedded systems:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">EtcPal Platform   </th><th class="markdownTableHeadNone">V1   </th><th class="markdownTableHeadNone">V3   </th><th class="markdownTableHeadNone">V4   </th><th class="markdownTableHeadNone">V5   </th><th class="markdownTableHeadNone">os_preferred   </th><th class="markdownTableHeadNone">device    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">FreeRTOS   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">Yes    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">macOS   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">MQX   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">Yes    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Windows   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td></tr>
+</table>
+<p>You can also convert UUIDs to and from strings: </p><div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a> uuid;</div>
+<div class="line"><a class="code" href="group__etcpal__uuid.html#ga8da6cbed139b61853a98f41120e73b29">etcpal_string_to_uuid</a>(<span class="stringliteral">&quot;39713ce1-2320-46aa-b602-4977be36e155&quot;</span>, &amp;uuid);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">char</span> str_buf[<a class="code" href="group__etcpal__uuid.html#gabab14207e273082491f7be2a21275092">ETCPAL_UUID_STRING_BYTES</a>];</div>
+<div class="line"><a class="code" href="group__etcpal__uuid.html#ga479b00b02ab33cf757e9476ad3286336">etcpal_uuid_to_string</a>(&amp;uuid, str_buf);</div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga479b00b02ab33cf757e9476ad3286336"><div class="ttname"><a href="group__etcpal__uuid.html#ga479b00b02ab33cf757e9476ad3286336">etcpal_uuid_to_string</a></div><div class="ttdeci">bool etcpal_uuid_to_string(const EtcPalUuid *uuid, char *buf)</div><div class="ttdoc">Create a string representation of a UUID.</div><div class="ttdef"><b>Definition:</b> uuid.c:61</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga8da6cbed139b61853a98f41120e73b29"><div class="ttname"><a href="group__etcpal__uuid.html#ga8da6cbed139b61853a98f41120e73b29">etcpal_string_to_uuid</a></div><div class="ttdeci">bool etcpal_string_to_uuid(const char *str, EtcPalUuid *uuid)</div><div class="ttdoc">Create a UUID from a string representation.</div><div class="ttdef"><b>Definition:</b> uuid.c:85</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_gabab14207e273082491f7be2a21275092"><div class="ttname"><a href="group__etcpal__uuid.html#gabab14207e273082491f7be2a21275092">ETCPAL_UUID_STRING_BYTES</a></div><div class="ttdeci">#define ETCPAL_UUID_STRING_BYTES</div><div class="ttdoc">The maximum number of bytes required to hold an ASCII string representation of a UUID.</div><div class="ttdef"><b>Definition:</b> uuid.h:121</div></div>
+</div><!-- fragment --> <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UUID type.  <a href="struct_etc_pal_uuid.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gadfd6e6a51b681c03b6422d1454ddc954"><td class="memItemLeft" align="right" valign="top"><a id="gadfd6e6a51b681c03b6422d1454ddc954"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">ETCPAL_UUID_BYTES</a>&#160;&#160;&#160;16u</td></tr>
+<tr class="memdesc:gadfd6e6a51b681c03b6422d1454ddc954"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of bytes that make up a UUID. <br /></td></tr>
+<tr class="separator:gadfd6e6a51b681c03b6422d1454ddc954"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6f2cff87ab29b0b26d0f641b065c998d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga6f2cff87ab29b0b26d0f641b065c998d">ETCPAL_UUID_CMP</a>(uuid1ptr,  uuid2ptr)&#160;&#160;&#160;memcmp((uuid1ptr)-&gt;data, (uuid2ptr)-&gt;data, <a class="el" href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">ETCPAL_UUID_BYTES</a>)</td></tr>
+<tr class="memdesc:ga6f2cff87ab29b0b26d0f641b065c998d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two UUIDs.  <a href="group__etcpal__uuid.html#ga6f2cff87ab29b0b26d0f641b065c998d">More...</a><br /></td></tr>
+<tr class="separator:ga6f2cff87ab29b0b26d0f641b065c998d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3f7c7f1f596e00536adbefb78899ebd1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga3f7c7f1f596e00536adbefb78899ebd1">ETCPAL_UUID_IS_NULL</a>(uuidptr)&#160;&#160;&#160;(memcmp((uuidptr)-&gt;data, kEtcPalNullUuid.data, <a class="el" href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">ETCPAL_UUID_BYTES</a>) == 0)</td></tr>
+<tr class="memdesc:ga3f7c7f1f596e00536adbefb78899ebd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine if a UUID is null.  <a href="group__etcpal__uuid.html#ga3f7c7f1f596e00536adbefb78899ebd1">More...</a><br /></td></tr>
+<tr class="separator:ga3f7c7f1f596e00536adbefb78899ebd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabab14207e273082491f7be2a21275092"><td class="memItemLeft" align="right" valign="top"><a id="gabab14207e273082491f7be2a21275092"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#gabab14207e273082491f7be2a21275092">ETCPAL_UUID_STRING_BYTES</a>&#160;&#160;&#160;37</td></tr>
+<tr class="memdesc:gabab14207e273082491f7be2a21275092"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of bytes required to hold an ASCII string representation of a UUID. <br /></td></tr>
+<tr class="separator:gabab14207e273082491f7be2a21275092"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga191ac9542f1d4eaa95488b3740bb57bf"><td class="memItemLeft" align="right" valign="top"><a id="ga191ac9542f1d4eaa95488b3740bb57bf"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga191ac9542f1d4eaa95488b3740bb57bf">ETCPAL_UUID_DEV_STR_MAX_LEN</a>&#160;&#160;&#160;32</td></tr>
+<tr class="memdesc:ga191ac9542f1d4eaa95488b3740bb57bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of a device string used as an input to <a class="el" href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda" title="Generate a UUID from a combination of a custom string and MAC address.">etcpal_generate_device_uuid()</a>. <br /></td></tr>
+<tr class="separator:ga191ac9542f1d4eaa95488b3740bb57bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga3b447ed65229da6eb270791c6afd2e64"><td class="memItemLeft" align="right" valign="top"><a id="ga3b447ed65229da6eb270791c6afd2e64"></a>
+typedef struct <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga3b447ed65229da6eb270791c6afd2e64">EtcPalUuid</a></td></tr>
+<tr class="memdesc:ga3b447ed65229da6eb270791c6afd2e64"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UUID type. <br /></td></tr>
+<tr class="separator:ga3b447ed65229da6eb270791c6afd2e64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga479b00b02ab33cf757e9476ad3286336"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga479b00b02ab33cf757e9476ad3286336">etcpal_uuid_to_string</a> (const <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid, char *buf)</td></tr>
+<tr class="memdesc:ga479b00b02ab33cf757e9476ad3286336"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a string representation of a UUID.  <a href="group__etcpal__uuid.html#ga479b00b02ab33cf757e9476ad3286336">More...</a><br /></td></tr>
+<tr class="separator:ga479b00b02ab33cf757e9476ad3286336"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8da6cbed139b61853a98f41120e73b29"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga8da6cbed139b61853a98f41120e73b29">etcpal_string_to_uuid</a> (const char *str, <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid)</td></tr>
+<tr class="memdesc:ga8da6cbed139b61853a98f41120e73b29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a UUID from a string representation.  <a href="group__etcpal__uuid.html#ga8da6cbed139b61853a98f41120e73b29">More...</a><br /></td></tr>
+<tr class="separator:ga8da6cbed139b61853a98f41120e73b29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7a2029b259cc4270fb721b976f21972a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga7a2029b259cc4270fb721b976f21972a">etcpal_generate_v1_uuid</a> (<a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid)</td></tr>
+<tr class="memdesc:ga7a2029b259cc4270fb721b976f21972a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a Version 1 UUID.  <a href="group__etcpal__uuid.html#ga7a2029b259cc4270fb721b976f21972a">More...</a><br /></td></tr>
+<tr class="separator:ga7a2029b259cc4270fb721b976f21972a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacede094cfd672660efa757fa2625e083"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#gacede094cfd672660efa757fa2625e083">etcpal_generate_v3_uuid</a> (const <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *ns, const void *name, size_t name_len, <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid)</td></tr>
+<tr class="memdesc:gacede094cfd672660efa757fa2625e083"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a Version 3 UUID.  <a href="group__etcpal__uuid.html#gacede094cfd672660efa757fa2625e083">More...</a><br /></td></tr>
+<tr class="separator:gacede094cfd672660efa757fa2625e083"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1cabb8b6f72752b1a2ae72f776301242"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga1cabb8b6f72752b1a2ae72f776301242">etcpal_generate_v4_uuid</a> (<a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid)</td></tr>
+<tr class="memdesc:ga1cabb8b6f72752b1a2ae72f776301242"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a Version 4 UUID.  <a href="group__etcpal__uuid.html#ga1cabb8b6f72752b1a2ae72f776301242">More...</a><br /></td></tr>
+<tr class="separator:ga1cabb8b6f72752b1a2ae72f776301242"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac74a0ebbade4f8c2b90a778529176c9b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#gac74a0ebbade4f8c2b90a778529176c9b">etcpal_generate_v5_uuid</a> (const <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *ns, const void *name, size_t name_len, <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid)</td></tr>
+<tr class="memdesc:gac74a0ebbade4f8c2b90a778529176c9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a Version 5 UUID.  <a href="group__etcpal__uuid.html#gac74a0ebbade4f8c2b90a778529176c9b">More...</a><br /></td></tr>
+<tr class="separator:gac74a0ebbade4f8c2b90a778529176c9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabb977b5a218b4b62224c016bf3932f10"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#gabb977b5a218b4b62224c016bf3932f10">etcpal_generate_os_preferred_uuid</a> (<a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid)</td></tr>
+<tr class="memdesc:gabb977b5a218b4b62224c016bf3932f10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the preferred UUID version of the underlying OS.  <a href="group__etcpal__uuid.html#gabb977b5a218b4b62224c016bf3932f10">More...</a><br /></td></tr>
+<tr class="separator:gabb977b5a218b4b62224c016bf3932f10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1a5104de6a3c54113edf234e0840dcda"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda">etcpal_generate_device_uuid</a> (const char *dev_str, const uint8_t *mac_addr, uint32_t uuid_num, <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *uuid)</td></tr>
+<tr class="memdesc:ga1a5104de6a3c54113edf234e0840dcda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a UUID from a combination of a custom string and MAC address.  <a href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda">More...</a><br /></td></tr>
+<tr class="separator:ga1a5104de6a3c54113edf234e0840dcda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:gae518c32bbc7d2266568ee9a703bb4f5e"><td class="memItemLeft" align="right" valign="top"><a id="gae518c32bbc7d2266568ee9a703bb4f5e"></a>
+const <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__uuid.html#gae518c32bbc7d2266568ee9a703bb4f5e">kEtcPalNullUuid</a></td></tr>
+<tr class="memdesc:gae518c32bbc7d2266568ee9a703bb4f5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A null (all 0's) UUID, used by <a class="el" href="group__etcpal__uuid.html#ga3f7c7f1f596e00536adbefb78899ebd1" title="Determine if a UUID is null.">ETCPAL_UUID_IS_NULL()</a> for comparison. <br /></td></tr>
+<tr class="separator:gae518c32bbc7d2266568ee9a703bb4f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga6f2cff87ab29b0b26d0f641b065c998d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f2cff87ab29b0b26d0f641b065c998d">&#9670;&nbsp;</a></span>ETCPAL_UUID_CMP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_UUID_CMP</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">uuid1ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">uuid2ptr&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;memcmp((uuid1ptr)-&gt;data, (uuid2ptr)-&gt;data, <a class="el" href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">ETCPAL_UUID_BYTES</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compare two UUIDs. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">uuid1ptr</td><td>Pointer to first <a class="el" href="struct_etc_pal_uuid.html" title="The UUID type.">EtcPalUuid</a> to compare. </td></tr>
+    <tr><td class="paramname">uuid2ptr</td><td>Pointer to second <a class="el" href="struct_etc_pal_uuid.html" title="The UUID type.">EtcPalUuid</a> to compare. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>&lt; 0: uuid1ptr is less than uuid2ptr </dd>
+<dd>
+0: uuid1ptr is equal to uuid2ptr </dd>
+<dd>
+&gt; 0: uuid1ptr is greater than uuid2ptr </dd></dl>
+
+</div>
+</div>
+<a id="ga3f7c7f1f596e00536adbefb78899ebd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3f7c7f1f596e00536adbefb78899ebd1">&#9670;&nbsp;</a></span>ETCPAL_UUID_IS_NULL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_UUID_IS_NULL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">uuidptr</td><td>)</td>
+          <td>&#160;&#160;&#160;(memcmp((uuidptr)-&gt;data, kEtcPalNullUuid.data, <a class="el" href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">ETCPAL_UUID_BYTES</a>) == 0)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine if a UUID is null. </p>
+<p>A UUID is said to be 'null' when it is made up of all 0's.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">uuidptr</td><td>Pointer to UUID to null-check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (UUID is null) or false (UUID is not null). </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga1a5104de6a3c54113edf234e0840dcda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1a5104de6a3c54113edf234e0840dcda">&#9670;&nbsp;</a></span>etcpal_generate_device_uuid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_generate_device_uuid </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>dev_str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>mac_addr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>uuid_num</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate a UUID from a combination of a custom string and MAC address. </p>
+<p>This function is for use by embedded devices that want to create UUIDs representing themselves, and create the same UUIDs each time. It creates a Version 5 UUID (defined in RFC 4122) within a constant, hardcoded namespace. The UUID output is deterministic for each combination of dev_str, mac_addr and uuid_num inputs.</p>
+<p>The namespace UUID used is: 57323103-db01-44b3-bafa-abdee3f37c1a</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dev_str</td><td>The device-specific string, such as the model name. This should never change on the device. It also allows different programs running on the device to generate different UUID sets. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mac_addr</td><td>The device's MAC address; must be an array of 6 bytes. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">uuid_num</td><td>Component number. By changing this number, multiple unique UUIDs can be generated for the same device string-MAC address combination. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">uuid</td><td>UUID to fill in with the generation result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: UUID generated successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd></dl>
+
+</div>
+</div>
+<a id="gabb977b5a218b4b62224c016bf3932f10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabb977b5a218b4b62224c016bf3932f10">&#9670;&nbsp;</a></span>etcpal_generate_os_preferred_uuid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_generate_os_preferred_uuid </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate the preferred UUID version of the underlying OS. </p>
+<p>This function uses the underlying OS API to create a UUID of the recommended type per the underlying OS API. In practice, this is often a V4 UUID, although this is not guaranteed.</p>
+<p>This function may return <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52" title="A function or specific use of a function is not implemented yet.">kEtcPalErrNotImpl</a> on platforms that do not have this functionality available (this is mostly a concern for RTOS-level embedded platforms).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">uuid</td><td>UUID to fill in with the generation result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: UUID generated successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52" title="A function or specific use of a function is not implemented yet.">kEtcPalErrNotImpl</a>: This UUID generation method is not available on this platform. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: An internal library of system call error occurred. </dd></dl>
+
+</div>
+</div>
+<a id="ga7a2029b259cc4270fb721b976f21972a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7a2029b259cc4270fb721b976f21972a">&#9670;&nbsp;</a></span>etcpal_generate_v1_uuid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_generate_v1_uuid </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate a Version 1 UUID. </p>
+<p>This function uses the underlying OS API to create a UUID that is based on a combination of a local MAC address and the current system time. This method guarantees UUID uniqueness across space and time. Some OSes have deprecated this method because it creates a UUID that is traceable to the MAC address of the machine on which it was generated. If this type of security is a concern, <a class="el" href="group__etcpal__uuid.html#ga1cabb8b6f72752b1a2ae72f776301242" title="Generate a Version 4 UUID.">etcpal_generate_v4_uuid()</a> should be preferred. If you want to generate UUIDs that are deterministic for a combination of inputs you provide, see <a class="el" href="group__etcpal__uuid.html#gacede094cfd672660efa757fa2625e083" title="Generate a Version 3 UUID.">etcpal_generate_v3_uuid()</a>, <a class="el" href="group__etcpal__uuid.html#gac74a0ebbade4f8c2b90a778529176c9b" title="Generate a Version 5 UUID.">etcpal_generate_v5_uuid()</a> or <a class="el" href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda" title="Generate a UUID from a combination of a custom string and MAC address.">etcpal_generate_device_uuid()</a>.</p>
+<p>This function may return <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52" title="A function or specific use of a function is not implemented yet.">kEtcPalErrNotImpl</a> on platforms that do not have this functionality available (this is mostly a concern for RTOS-level embedded platforms).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">uuid</td><td>UUID to fill in with the generation result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: UUID generated successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52" title="A function or specific use of a function is not implemented yet.">kEtcPalErrNotImpl</a>: This UUID generation method is not available on this platform. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: An internal library of system call error occurred. </dd></dl>
+
+</div>
+</div>
+<a id="gacede094cfd672660efa757fa2625e083"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacede094cfd672660efa757fa2625e083">&#9670;&nbsp;</a></span>etcpal_generate_v3_uuid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_generate_v3_uuid </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>ns</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>name_len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate a Version 3 UUID. </p>
+<p>Version 3 UUIDs are "name-based"; they deterministically convert a combination of a "namespace" and "name" to a UUID. A namespace is another UUID of any type which represents a space within which UUIDs generated from different names are unique. A name is opaque data of any length. The same combination of namespace and name will always produce the same Version 3 UUID.</p>
+<p>Version 3 UUIDs use the MD5 hashing algorithm to convert their inputs into a UUID. Prefer using <a class="el" href="group__etcpal__uuid.html#gac74a0ebbade4f8c2b90a778529176c9b" title="Generate a Version 5 UUID.">etcpal_generate_v5_uuid()</a>, which uses the SHA-1 algorithm instead, if backward compatibility is not an issue.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ns</td><td>UUID to use as a namespace. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">name</td><td>The name to convert into a UUID - opaque data. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">name_len</td><td>The length in bytes of name. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">uuid</td><td>UUID to fill in with the generation result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: UUID generated successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd></dl>
+
+</div>
+</div>
+<a id="ga1cabb8b6f72752b1a2ae72f776301242"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1cabb8b6f72752b1a2ae72f776301242">&#9670;&nbsp;</a></span>etcpal_generate_v4_uuid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_generate_v4_uuid </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate a Version 4 UUID. </p>
+<p>This function uses the underlying OS API to create a UUID that is based on random data. The quality of the random data used may differ across platforms. If you want to generate UUIDs that are deterministic for a combination of inputs you provide, see <a class="el" href="group__etcpal__uuid.html#gacede094cfd672660efa757fa2625e083" title="Generate a Version 3 UUID.">etcpal_generate_v3_uuid()</a>.</p>
+<p>This function may return <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52" title="A function or specific use of a function is not implemented yet.">kEtcPalErrNotImpl</a> on platforms that do not have this functionality available (this is mostly a concern for RTOS-level embedded platforms).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">uuid</td><td>UUID to fill in with the generation result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: UUID generated successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad0b98165ec7fb9169790675a67850d52" title="A function or specific use of a function is not implemented yet.">kEtcPalErrNotImpl</a>: This UUID generation method is not available on this platform. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: An internal library of system call error occurred. </dd></dl>
+
+</div>
+</div>
+<a id="gac74a0ebbade4f8c2b90a778529176c9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac74a0ebbade4f8c2b90a778529176c9b">&#9670;&nbsp;</a></span>etcpal_generate_v5_uuid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_generate_v5_uuid </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>ns</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>name_len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Generate a Version 5 UUID. </p>
+<p>Version 5 UUIDs are "name-based"; they deterministically convert a combination of a "namespace" and "name" to a UUID. A namespace is another UUID of any type which represents a space within which UUIDs generated from different names are unique. A name is opaque data of any length. The same combination of namespace and name will always produce the same Version 5 UUID.</p>
+<p>Version 5 UUIDs use the SHA-1 hashing algorithm to convert their inputs into a UUID.</p>
+<p><a class="el" href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda" title="Generate a UUID from a combination of a custom string and MAC address.">etcpal_generate_device_uuid()</a> provides a specialized form of this function which embedded devices can use to create UUIDs representing themselves.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ns</td><td>UUID to use as a namespace. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">name</td><td>The name to convert into a UUID - opaque data. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">name_len</td><td>The length in bytes of name. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">uuid</td><td>UUID to fill in with the generation result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: UUID generated successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd></dl>
+
+</div>
+</div>
+<a id="ga8da6cbed139b61853a98f41120e73b29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8da6cbed139b61853a98f41120e73b29">&#9670;&nbsp;</a></span>etcpal_string_to_uuid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_string_to_uuid </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a UUID from a string representation. </p>
+<p>Parses a string-represented UUID and fills in a <a class="el" href="struct_etc_pal_uuid.html" title="The UUID type.">EtcPalUuid</a> structure with the result. The input should be of the form: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (hexadecimal letters can be upper- or lowercase).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">str</td><td>The null-terminated string to convert. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">uuid</td><td>UUID to fill in with the parse result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (parse successful) or false (parse failure). </dd></dl>
+
+</div>
+</div>
+<a id="ga479b00b02ab33cf757e9476ad3286336"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga479b00b02ab33cf757e9476ad3286336">&#9670;&nbsp;</a></span>etcpal_uuid_to_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_uuid_to_string </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_uuid.html">EtcPalUuid</a> *&#160;</td>
+          <td class="paramname"><em>uuid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>buf</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a string representation of a UUID. </p>
+<p>The resulting string will be of the form: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (lowercase is used for hexadecimal letters per RFC 4122 and common convention).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">uuid</td><td>UUID to convert to a string. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">buf</td><td>Character buffer to which to write the resulting string. To avoid undefined behavior, this buffer must be at least of size <a class="el" href="group__etcpal__uuid.html#gabab14207e273082491f7be2a21275092" title="The maximum number of bytes required to hold an ASCII string representation of a UUID.">ETCPAL_UUID_STRING_BYTES</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (conversion successful) or false (invalid argument). </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

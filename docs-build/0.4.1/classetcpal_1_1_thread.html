@@ -1,0 +1,922 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: Thread Class Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classetcpal_1_1_thread.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">Thread Class Reference<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a> &raquo; <a class="el" href="group__etcpal__cpp__thread.html">thread (Threading)</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<div class="textblock"><p>A thread class, modeled after std::thread. </p>
+<p>This class is similar to std::thread, with the key advantage that it will work on any threaded platform that EtcPal is ported for, including the embedded RTOS platforms. If your application or library does not need to run on these platforms, consider using std::thread instead.</p>
+<p>There are a few differences from std::thread:</p><ul>
+<li>The thread is automatically joined on destruction (this matches the behavior of C++20's std::jthread)</li>
+<li>The thread is not <em>detachable</em>; that is, once created, it <em>must</em> be joined before it is destroyed in all cases.</li>
+<li>The thread has a <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> function - a previously default-constructed thread can be assigned some operation parameters, then started, without being reassigned to another instance.</li>
+</ul>
+<p>This is one of the few EtcPal wrappers that does heap allocation, as the thread function and arguments need to be stored. </p>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:acf0ebde1823ff6854a4add729b40a0c4"><td class="memItemLeft" align="right" valign="top"><a id="acf0ebde1823ff6854a4add729b40a0c4"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#acf0ebde1823ff6854a4add729b40a0c4">Thread</a> ()=default</td></tr>
+<tr class="memdesc:acf0ebde1823ff6854a4add729b40a0c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new thread object which does not yet represent a thread. <br /></td></tr>
+<tr class="separator:acf0ebde1823ff6854a4add729b40a0c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a067ac5cb170257e16b8f2ba7d1f8780d"><td class="memTemplParams" colspan="2">template&lt;class Function , class... Args, typename std::enable_if&lt;!std::is_arithmetic&lt; Function &gt;::value, bool &gt;::type  = true&gt; </td></tr>
+<tr class="memitem:a067ac5cb170257e16b8f2ba7d1f8780d"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a067ac5cb170257e16b8f2ba7d1f8780d">Thread</a> (Function &amp;&amp;func, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a067ac5cb170257e16b8f2ba7d1f8780d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new thread object and associate it with a new thread of execution.  <a href="classetcpal_1_1_thread.html#a067ac5cb170257e16b8f2ba7d1f8780d">More...</a><br /></td></tr>
+<tr class="separator:a067ac5cb170257e16b8f2ba7d1f8780d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55bcb69466ec151c0a097e5a012999ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a55bcb69466ec151c0a097e5a012999ba">Thread</a> (unsigned int <a class="el" href="classetcpal_1_1_thread.html#a22b3fcc6a92ed687e662730c073d9f7d">priority</a>, unsigned int <a class="el" href="classetcpal_1_1_thread.html#a1e4efbd2bc46e7d5a1b2077ff2038ad8">stack_size</a>, const char *<a class="el" href="classetcpal_1_1_thread.html#a33256784969e3347f423f72af1727cbd">name</a>, void *<a class="el" href="classetcpal_1_1_thread.html#ac0e98e4ce31becd580ed2ea39cd926b3">platform_data</a>=nullptr)</td></tr>
+<tr class="memdesc:a55bcb69466ec151c0a097e5a012999ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new thread object which does not yet represent a thread, passing explicit parameters.  <a href="classetcpal_1_1_thread.html#a55bcb69466ec151c0a097e5a012999ba">More...</a><br /></td></tr>
+<tr class="separator:a55bcb69466ec151c0a097e5a012999ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87a9c69a69ee4b13cb1ec5772f6d32ad"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a87a9c69a69ee4b13cb1ec5772f6d32ad">~Thread</a> ()</td></tr>
+<tr class="memdesc:a87a9c69a69ee4b13cb1ec5772f6d32ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the thread object.  <a href="classetcpal_1_1_thread.html#a87a9c69a69ee4b13cb1ec5772f6d32ad">More...</a><br /></td></tr>
+<tr class="separator:a87a9c69a69ee4b13cb1ec5772f6d32ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fb67adc8253034f42e5a43df0df0662"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a6fb67adc8253034f42e5a43df0df0662">Thread</a> (<a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&amp;other) noexcept</td></tr>
+<tr class="memdesc:a6fb67adc8253034f42e5a43df0df0662"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move another thread into this thread.  <a href="classetcpal_1_1_thread.html#a6fb67adc8253034f42e5a43df0df0662">More...</a><br /></td></tr>
+<tr class="separator:a6fb67adc8253034f42e5a43df0df0662"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74ee56b6a23061aaff2a2e34b6035f32"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a74ee56b6a23061aaff2a2e34b6035f32">operator=</a> (<a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&amp;other) noexcept</td></tr>
+<tr class="memdesc:a74ee56b6a23061aaff2a2e34b6035f32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move another thread into this thread.  <a href="classetcpal_1_1_thread.html#a74ee56b6a23061aaff2a2e34b6035f32">More...</a><br /></td></tr>
+<tr class="separator:a74ee56b6a23061aaff2a2e34b6035f32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a856d2ee521709c03d8499d926783117b"><td class="memItemLeft" align="right" valign="top"><a id="a856d2ee521709c03d8499d926783117b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a856d2ee521709c03d8499d926783117b">Thread</a> (const <a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:a856d2ee521709c03d8499d926783117b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy constructor - threads are not copyable. <br /></td></tr>
+<tr class="separator:a856d2ee521709c03d8499d926783117b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd79ef28387daa09c6c37909bdff5c69"><td class="memItemLeft" align="right" valign="top"><a id="abd79ef28387daa09c6c37909bdff5c69"></a>
+<a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#abd79ef28387daa09c6c37909bdff5c69">operator=</a> (const <a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;other)=delete</td></tr>
+<tr class="memdesc:abd79ef28387daa09c6c37909bdff5c69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy assignment operator - threads are not copyable. <br /></td></tr>
+<tr class="separator:abd79ef28387daa09c6c37909bdff5c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2761ee590c5de6d2d9d0045c5d6d9cb7"><td class="memItemLeft" align="right" valign="top"><a id="a2761ee590c5de6d2d9d0045c5d6d9cb7"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7">joinable</a> () const noexcept</td></tr>
+<tr class="memdesc:a2761ee590c5de6d2d9d0045c5d6d9cb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the thread object identifies an active thread of execution. <br /></td></tr>
+<tr class="separator:a2761ee590c5de6d2d9d0045c5d6d9cb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63e85f031a9b180d9e932df21f7a2e64"><td class="memTemplParams" colspan="2">template&lt;class Function , class... Args&gt; </td></tr>
+<tr class="memitem:a63e85f031a9b180d9e932df21f7a2e64"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_error.html">Error</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64">Start</a> (Function &amp;&amp;func, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a63e85f031a9b180d9e932df21f7a2e64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate this thread object with a new thread of execution.  <a href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64">More...</a><br /></td></tr>
+<tr class="separator:a63e85f031a9b180d9e932df21f7a2e64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea418c2372922b6b295e06814c4fe988"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_error.html">Error</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#aea418c2372922b6b295e06814c4fe988">Join</a> (int timeout_ms=<a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a>) noexcept</td></tr>
+<tr class="memdesc:aea418c2372922b6b295e06814c4fe988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for the thread to finish execution.  <a href="classetcpal_1_1_thread.html#aea418c2372922b6b295e06814c4fe988">More...</a><br /></td></tr>
+<tr class="separator:aea418c2372922b6b295e06814c4fe988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07e5d2b8f7fce024200c4ec8a41c6570"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_error.html">Error</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a07e5d2b8f7fce024200c4ec8a41c6570">Terminate</a> () noexcept</td></tr>
+<tr class="memdesc:a07e5d2b8f7fce024200c4ec8a41c6570"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forcefully kill the thread.  <a href="classetcpal_1_1_thread.html#a07e5d2b8f7fce024200c4ec8a41c6570">More...</a><br /></td></tr>
+<tr class="separator:a07e5d2b8f7fce024200c4ec8a41c6570"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Getters</div></td></tr>
+<tr class="memitem:a22b3fcc6a92ed687e662730c073d9f7d"><td class="memItemLeft" align="right" valign="top"><a id="a22b3fcc6a92ed687e662730c073d9f7d"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a22b3fcc6a92ed687e662730c073d9f7d">priority</a> () const noexcept</td></tr>
+<tr class="memdesc:a22b3fcc6a92ed687e662730c073d9f7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the priority of this thread (not valid on all platforms). <br /></td></tr>
+<tr class="separator:a22b3fcc6a92ed687e662730c073d9f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e4efbd2bc46e7d5a1b2077ff2038ad8"><td class="memItemLeft" align="right" valign="top"><a id="a1e4efbd2bc46e7d5a1b2077ff2038ad8"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a1e4efbd2bc46e7d5a1b2077ff2038ad8">stack_size</a> () const noexcept</td></tr>
+<tr class="memdesc:a1e4efbd2bc46e7d5a1b2077ff2038ad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stack size of this thread in bytes (not valid on all platforms). <br /></td></tr>
+<tr class="separator:a1e4efbd2bc46e7d5a1b2077ff2038ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33256784969e3347f423f72af1727cbd"><td class="memItemLeft" align="right" valign="top"><a id="a33256784969e3347f423f72af1727cbd"></a>
+const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a33256784969e3347f423f72af1727cbd">name</a> () const noexcept</td></tr>
+<tr class="memdesc:a33256784969e3347f423f72af1727cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the name of this thread. <br /></td></tr>
+<tr class="separator:a33256784969e3347f423f72af1727cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0e98e4ce31becd580ed2ea39cd926b3"><td class="memItemLeft" align="right" valign="top"><a id="ac0e98e4ce31becd580ed2ea39cd926b3"></a>
+void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#ac0e98e4ce31becd580ed2ea39cd926b3">platform_data</a> () const noexcept</td></tr>
+<tr class="memdesc:ac0e98e4ce31becd580ed2ea39cd926b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the platform-specific data of this thread. <br /></td></tr>
+<tr class="separator:ac0e98e4ce31becd580ed2ea39cd926b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa66aa5c50746cd41312f22bebbf0d4e0"><td class="memItemLeft" align="right" valign="top"><a id="aa66aa5c50746cd41312f22bebbf0d4e0"></a>
+const <a class="el" href="struct_etc_pal_thread_params.html">EtcPalThreadParams</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#aa66aa5c50746cd41312f22bebbf0d4e0">params</a> () const noexcept</td></tr>
+<tr class="memdesc:aa66aa5c50746cd41312f22bebbf0d4e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference the parameters of this thread. <br /></td></tr>
+<tr class="separator:aa66aa5c50746cd41312f22bebbf0d4e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f9139cb02adad1237dcc17c5cbb7fec"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__thread.html#gad25eb672dee4e360d79cf5988d0b6071">etcpal_thread_os_handle_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a1f9139cb02adad1237dcc17c5cbb7fec">os_handle</a> () const noexcept</td></tr>
+<tr class="memdesc:a1f9139cb02adad1237dcc17c5cbb7fec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the native OS handle of this thread.  <a href="classetcpal_1_1_thread.html#a1f9139cb02adad1237dcc17c5cbb7fec">More...</a><br /></td></tr>
+<tr class="separator:a1f9139cb02adad1237dcc17c5cbb7fec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Setters</div></td></tr>
+<tr class="memitem:ac83a10f16662668e1d8a494ddb6e1234"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#ac83a10f16662668e1d8a494ddb6e1234">SetPriority</a> (unsigned int <a class="el" href="classetcpal_1_1_thread.html#a22b3fcc6a92ed687e662730c073d9f7d">priority</a>) noexcept</td></tr>
+<tr class="memdesc:ac83a10f16662668e1d8a494ddb6e1234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the priority of this thread.  <a href="classetcpal_1_1_thread.html#ac83a10f16662668e1d8a494ddb6e1234">More...</a><br /></td></tr>
+<tr class="separator:ac83a10f16662668e1d8a494ddb6e1234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cb4d6197b72897c0ceba341f7beff4b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a3cb4d6197b72897c0ceba341f7beff4b">SetStackSize</a> (unsigned int <a class="el" href="classetcpal_1_1_thread.html#a1e4efbd2bc46e7d5a1b2077ff2038ad8">stack_size</a>) noexcept</td></tr>
+<tr class="memdesc:a3cb4d6197b72897c0ceba341f7beff4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the stack size of this thread in bytes.  <a href="classetcpal_1_1_thread.html#a3cb4d6197b72897c0ceba341f7beff4b">More...</a><br /></td></tr>
+<tr class="separator:a3cb4d6197b72897c0ceba341f7beff4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6cedd23a7b2b24f90059df894846864"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#ae6cedd23a7b2b24f90059df894846864">SetName</a> (const char *<a class="el" href="classetcpal_1_1_thread.html#a33256784969e3347f423f72af1727cbd">name</a>) noexcept</td></tr>
+<tr class="memdesc:ae6cedd23a7b2b24f90059df894846864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the name of this thread.  <a href="classetcpal_1_1_thread.html#ae6cedd23a7b2b24f90059df894846864">More...</a><br /></td></tr>
+<tr class="separator:ae6cedd23a7b2b24f90059df894846864"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe34480dc3ef0d8b9f74e389ec1ca647"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#afe34480dc3ef0d8b9f74e389ec1ca647">SetName</a> (const std::string &amp;<a class="el" href="classetcpal_1_1_thread.html#a33256784969e3347f423f72af1727cbd">name</a>) noexcept</td></tr>
+<tr class="memdesc:afe34480dc3ef0d8b9f74e389ec1ca647"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the name of this thread.  <a href="classetcpal_1_1_thread.html#afe34480dc3ef0d8b9f74e389ec1ca647">More...</a><br /></td></tr>
+<tr class="separator:afe34480dc3ef0d8b9f74e389ec1ca647"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23a3a84c2368bdf07cf64e1b49df5364"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a23a3a84c2368bdf07cf64e1b49df5364">SetPlatformData</a> (void *<a class="el" href="classetcpal_1_1_thread.html#ac0e98e4ce31becd580ed2ea39cd926b3">platform_data</a>) noexcept</td></tr>
+<tr class="memdesc:a23a3a84c2368bdf07cf64e1b49df5364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the platform-specific parameter data.  <a href="classetcpal_1_1_thread.html#a23a3a84c2368bdf07cf64e1b49df5364">More...</a><br /></td></tr>
+<tr class="separator:a23a3a84c2368bdf07cf64e1b49df5364"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d4db99a6df429bcc275d02dbcffa57d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a9d4db99a6df429bcc275d02dbcffa57d">SetParams</a> (const <a class="el" href="struct_etc_pal_thread_params.html">EtcPalThreadParams</a> &amp;<a class="el" href="classetcpal_1_1_thread.html#aa66aa5c50746cd41312f22bebbf0d4e0">params</a>) noexcept</td></tr>
+<tr class="memdesc:a9d4db99a6df429bcc275d02dbcffa57d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set this thread's parameters from an existing <a class="el" href="struct_etc_pal_thread_params.html" title="A set of parameters for an etcpal_thread.">EtcPalThreadParams</a> struct.  <a href="classetcpal_1_1_thread.html#a9d4db99a6df429bcc275d02dbcffa57d">More...</a><br /></td></tr>
+<tr class="separator:a9d4db99a6df429bcc275d02dbcffa57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:abc8bb8ec9948b769e1189506ed635c9d"><td class="memItemLeft" align="right" valign="top"><a id="abc8bb8ec9948b769e1189506ed635c9d"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#abc8bb8ec9948b769e1189506ed635c9d">Sleep</a> (unsigned int ms) noexcept</td></tr>
+<tr class="memdesc:abc8bb8ec9948b769e1189506ed635c9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks the current thread for the specified number of milliseconds. <br /></td></tr>
+<tr class="separator:abc8bb8ec9948b769e1189506ed635c9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e7e603ebed62b739065a10cd090213b"><td class="memTemplParams" colspan="2">template&lt;typename Rep , typename Period &gt; </td></tr>
+<tr class="memitem:a0e7e603ebed62b739065a10cd090213b"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_thread.html#a0e7e603ebed62b739065a10cd090213b">Sleep</a> (const std::chrono::duration&lt; Rep, Period &gt; &amp;sleep_duration) noexcept</td></tr>
+<tr class="memdesc:a0e7e603ebed62b739065a10cd090213b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blocks the current thread for the specified duration.  <a href="classetcpal_1_1_thread.html#a0e7e603ebed62b739065a10cd090213b">More...</a><br /></td></tr>
+<tr class="separator:a0e7e603ebed62b739065a10cd090213b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a067ac5cb170257e16b8f2ba7d1f8780d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a067ac5cb170257e16b8f2ba7d1f8780d">&#9670;&nbsp;</a></span>Thread() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> </td>
+          <td>(</td>
+          <td class="paramtype">Function &amp;&amp;&#160;</td>
+          <td class="paramname"><em>func</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Args &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new thread object and associate it with a new thread of execution. </p>
+<p>Default thread parameters will be used. See the <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> function for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">func</td><td>Callable object to execute in the new thread. </td></tr>
+    <tr><td class="paramname">args</td><td>Arguments to pass to func. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>if <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> returns an error code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section post"><dt>Postcondition</dt><dd><code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == true</code> </dd></dl>
+
+</div>
+</div>
+<a id="a55bcb69466ec151c0a097e5a012999ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55bcb69466ec151c0a097e5a012999ba">&#9670;&nbsp;</a></span>Thread() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>priority</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>stack_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>platform_data</em> = <code>nullptr</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create a new thread object which does not yet represent a thread, passing explicit parameters. </p>
+<p>The thread is not running until <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">priority</td><td>Priority of the thread. </td></tr>
+    <tr><td class="paramname">stack_size</td><td>Stack size of the thread in bytes. </td></tr>
+    <tr><td class="paramname">name</td><td>A name for the thread, maximum length <a class="el" href="group__etcpal__thread.html#ga5a0a37d186ac57231b94c287a58b54a0" title="The maximum length of an etcpal_thread name C-string.">ETCPAL_THREAD_NAME_MAX_LENGTH</a>. </td></tr>
+    <tr><td class="paramname">platform_data</td><td>Pointer to a platform-specific parameter structure. See <a class="el" href="struct_etc_pal_thread_params.html" title="A set of parameters for an etcpal_thread.">EtcPalThreadParams</a> for more information. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a87a9c69a69ee4b13cb1ec5772f6d32ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87a9c69a69ee4b13cb1ec5772f6d32ad">&#9670;&nbsp;</a></span>~Thread()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">~<a class="el" href="classetcpal_1_1_thread.html">Thread</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Destroy the thread object. </p>
+<p>If *this has a valid associated thread (<code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == true</code>), the thread is joined before the destructor finishes. </p>
+
+</div>
+</div>
+<a id="a6fb67adc8253034f42e5a43df0df0662"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fb67adc8253034f42e5a43df0df0662">&#9670;&nbsp;</a></span>Thread() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move another thread into this thread. </p>
+<p>If *this has a valid associated thread (<code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == true</code>), the behavior is undefined. After this call, *this has the parameters of other, and other is set to a default-constructed state. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="aea418c2372922b6b295e06814c4fe988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea418c2372922b6b295e06814c4fe988">&#9670;&nbsp;</a></span>Join()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_error.html">Error</a> Join </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em> = <code><a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a></code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait for the thread to finish execution. </p>
+<p>If timeout_ms is not given, or if <a class="el" href="group__etcpal__thread.html#gaf382d29335eeeb4ed5c8d295bb8a380b" title="Whether etcpal_thread_timed_join() is meaningful on this platform.">ETCPAL_THREAD_HAS_TIMED_JOIN</a> is false on this platform, blocks until the thread has exited. Otherwise, blocks up to timeout_ms waiting for the thread to exit.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timeout_ms</td><td>How long to wait for the thread to exit (default forever). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The thread was stopped; <a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> is now false. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afac1a55c311993d815ab367c339f550956" title="A connection timed out.">kEtcPalErrTimedOut</a>: The thread did not join within the specified timeout. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: The thread was not running (<code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == false</code>). </dd>
+<dd>
+Other codes translated from system error codes are possible. </dd></dl>
+
+</div>
+</div>
+<a id="a74ee56b6a23061aaff2a2e34b6035f32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74ee56b6a23061aaff2a2e34b6035f32">&#9670;&nbsp;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp; operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp;&amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move another thread into this thread. </p>
+<p>If *this has a valid associated thread (<code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == true</code>), the behavior is undefined. After this call, *this has the parameters of other, and other is set to a default-constructed state. </p>
+
+</div>
+</div>
+<a id="a1f9139cb02adad1237dcc17c5cbb7fec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f9139cb02adad1237dcc17c5cbb7fec">&#9670;&nbsp;</a></span>os_handle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__thread.html#gad25eb672dee4e360d79cf5988d0b6071">etcpal_thread_os_handle_t</a> os_handle </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the native OS handle of this thread. </p>
+<dl class="section return"><dt>Returns</dt><dd>The thread's OS handle, or ETCPAL_THREAD_OS_HANDLE_INVALID if the thread is not running (<code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == false</code>). </dd></dl>
+
+</div>
+</div>
+<a id="ae6cedd23a7b2b24f90059df894846864"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6cedd23a7b2b24f90059df894846864">&#9670;&nbsp;</a></span>SetName() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp; SetName </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the name of this thread. </p>
+<p>This function does not have any effect on the associated thread unless it is called on a default-constructed thread before <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called. The pointer passed to this function must remain valid until after <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this thread, for method chaining. </dd></dl>
+
+</div>
+</div>
+<a id="afe34480dc3ef0d8b9f74e389ec1ca647"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe34480dc3ef0d8b9f74e389ec1ca647">&#9670;&nbsp;</a></span>SetName() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp; SetName </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the name of this thread. </p>
+<p>This function does not have any effect on the associated thread unless it is called on a default-constructed thread before <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called. The string reference passed to this function must remain valid until after <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Name to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this thread, for method chaining. </dd></dl>
+
+</div>
+</div>
+<a id="a9d4db99a6df429bcc275d02dbcffa57d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d4db99a6df429bcc275d02dbcffa57d">&#9670;&nbsp;</a></span>SetParams()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp; SetParams </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_thread_params.html">EtcPalThreadParams</a> &amp;&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set this thread's parameters from an existing <a class="el" href="struct_etc_pal_thread_params.html" title="A set of parameters for an etcpal_thread.">EtcPalThreadParams</a> struct. </p>
+<p>This function does not have any effect on the associated thread unless it is called on a default-constructed thread before <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">params</td><td><a class="el" href="struct_etc_pal_thread_params.html" title="A set of parameters for an etcpal_thread.">EtcPalThreadParams</a> to use when starting the thread. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this thread, for method chaining. </dd></dl>
+
+</div>
+</div>
+<a id="a23a3a84c2368bdf07cf64e1b49df5364"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23a3a84c2368bdf07cf64e1b49df5364">&#9670;&nbsp;</a></span>SetPlatformData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp; SetPlatformData </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>platform_data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the platform-specific parameter data. </p>
+<p>This function does not have any effect on the associated thread unless it is called on a default-constructed thread before <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called. The pointer passed to this function must remain valid until after <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">platform_data</td><td>Pointer to platform-specific data structure. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this thread, for method chaining. </dd></dl>
+
+</div>
+</div>
+<a id="ac83a10f16662668e1d8a494ddb6e1234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac83a10f16662668e1d8a494ddb6e1234">&#9670;&nbsp;</a></span>SetPriority()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp; SetPriority </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>priority</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the priority of this thread. </p>
+<p>Priority is not valid on all platforms. This function does not have any effect on the associated thread unless it is called on a default-constructed thread before <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">priority</td><td>Priority to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this thread, for method chaining. </dd></dl>
+
+</div>
+</div>
+<a id="a3cb4d6197b72897c0ceba341f7beff4b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cb4d6197b72897c0ceba341f7beff4b">&#9670;&nbsp;</a></span>SetStackSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_thread.html">Thread</a> &amp; SetStackSize </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>stack_size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the stack size of this thread in bytes. </p>
+<p>Stack size is not valid on all platforms. This function does not have any effect on the associated thread unless it is called on a default-constructed thread before <a class="el" href="classetcpal_1_1_thread.html#a63e85f031a9b180d9e932df21f7a2e64" title="Associate this thread object with a new thread of execution.">Start()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stack_size</td><td>Stack size to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this thread, for method chaining. </dd></dl>
+
+</div>
+</div>
+<a id="a0e7e603ebed62b739065a10cd090213b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e7e603ebed62b739065a10cd090213b">&#9670;&nbsp;</a></span>Sleep()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Sleep </td>
+          <td>(</td>
+          <td class="paramtype">const std::chrono::duration&lt; Rep, Period &gt; &amp;&#160;</td>
+          <td class="paramname"><em>sleep_duration</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Blocks the current thread for the specified duration. </p>
+<p>Note: Duration will be clamped to [0, UINT_MAX] milliseconds. </p>
+
+</div>
+</div>
+<a id="a63e85f031a9b180d9e932df21f7a2e64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63e85f031a9b180d9e932df21f7a2e64">&#9670;&nbsp;</a></span>Start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_error.html">Error</a> Start </td>
+          <td>(</td>
+          <td class="paramtype">Function &amp;&amp;&#160;</td>
+          <td class="paramname"><em>func</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Args &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Associate this thread object with a new thread of execution. </p>
+<p>The new thread of execution starts executing </p><div class="fragment"><div class="line">std::invoke(decay_copy(std::forward&lt;Function&gt;(f)),</div>
+<div class="line">            decay_copy(std::forward&lt;Args&gt;(args))...);</div>
+</div><!-- fragment --><p> where decay_copy is defined as </p><div class="fragment"><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line">std::decay&lt;T&gt;::type decay_copy(T&amp;&amp; v) { <span class="keywordflow">return</span> std::forward&lt;T&gt;(v); }</div>
+</div><!-- fragment --><p> Except that the calls to decay_copy are evaluated in the context of the caller, so that any exceptions thrown during evaluation and copying/moving of the arguments are thrown in the current thread, without starting the new thread.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">func</td><td>Callable object to execute in the new thread. </td></tr>
+    <tr><td class="paramname">args</td><td>Arguments to pass to func. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The thread started successfully, <code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a></code> is now true. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599" title="A dynamic memory allocation failed, or there is no space left in a statically allocated array.">kEtcPalErrNoMem</a>: Allocation failed while starting thread. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: The thread was already running (<code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == true</code>). </dd>
+<dd>
+Other codes translated from system error codes are possible. </dd></dl>
+
+</div>
+</div>
+<a id="a07e5d2b8f7fce024200c4ec8a41c6570"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07e5d2b8f7fce024200c4ec8a41c6570">&#9670;&nbsp;</a></span>Terminate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classetcpal_1_1_error.html">Error</a> Terminate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Forcefully kill the thread. </p>
+<p><b>Be careful when using this function.</b> Depending on the state of a thread when it is terminated, shared resources or memory could not be freed, resulting in memory leaks or deadlocks.</p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The thread was terminated; <a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> is now false. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: The thread was not running (<code><a class="el" href="classetcpal_1_1_thread.html#a2761ee590c5de6d2d9d0045c5d6d9cb7" title="Whether the thread object identifies an active thread of execution.">joinable()</a> == false</code>). </dd>
+<dd>
+Other codes translated from system error codes are possible. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>include/etcpal/cpp/<a class="el" href="cpp_2thread_8h_source.html">thread.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>etcpal</b></li><li class="navelem"><a class="el" href="classetcpal_1_1_thread.html">Thread</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

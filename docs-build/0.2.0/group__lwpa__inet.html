@@ -1,0 +1,840 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: lwpa_inet</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.2.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__lwpa__inet.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a>  </div>
+  <div class="headertitle">
+<div class="title">lwpa_inet<div class="ingroups"><a class="el" href="group__lwpa.html">lwpa</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>POSIX-like identifiers for IP addresses and network interfaces. </p>
+<p>#include "lwpa/inet.h" </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address.  <a href="struct_lwpa_ip_addr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address with associated interface and port.  <a href="struct_lwpa_sockaddr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_netint_info.html">LwpaNetintInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of a network interface.  <a href="struct_lwpa_netint_info.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gadf510df24e827cbeeeca96a00d6cdd75"><td class="memItemLeft" align="right" valign="top"><a id="gadf510df24e827cbeeeca96a00d6cdd75"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#gadf510df24e827cbeeeca96a00d6cdd75">LWPA_IPV6_BYTES</a>&#160;&#160;&#160;16</td></tr>
+<tr class="memdesc:gadf510df24e827cbeeeca96a00d6cdd75"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of bytes in an IPv6 address. <br /></td></tr>
+<tr class="separator:gadf510df24e827cbeeeca96a00d6cdd75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacdc07c9ddec218067a54d87f017b256c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#gacdc07c9ddec218067a54d87f017b256c">lwpasock_ip_port_equal</a>(sockptr1,  sockptr2)&#160;&#160;&#160;  (<a class="el" href="group__lwpa__inet.html#ga1961dd86bd985153be3afa3bf3bebefa">lwpaip_equal</a>(&amp;(sockptr1)-&gt;ip, &amp;(sockptr2)-&gt;ip) &amp;&amp; ((sockptr1)-&gt;port == (sockptr2)-&gt;port))</td></tr>
+<tr class="memdesc:gacdc07c9ddec218067a54d87f017b256c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether two instances of <a class="el" href="struct_lwpa_sockaddr.html" title="An IP address with associated interface and port.">LwpaSockaddr</a> contain identical IP addresses and ports.  <a href="group__lwpa__inet.html#gacdc07c9ddec218067a54d87f017b256c">More...</a><br /></td></tr>
+<tr class="separator:gacdc07c9ddec218067a54d87f017b256c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a052b51d2c1b3ad25e669cbb97e6e33"><td class="memItemLeft" align="right" valign="top"><a id="ga6a052b51d2c1b3ad25e669cbb97e6e33"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_NETINTINFO_MAC_LEN</b>&#160;&#160;&#160;6</td></tr>
+<tr class="separator:ga6a052b51d2c1b3ad25e669cbb97e6e33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf8b5a10417b670c4f3dc161a99ec6424"><td class="memItemLeft" align="right" valign="top"><a id="gaf8b5a10417b670c4f3dc161a99ec6424"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_NETINTINFO_NAME_LEN</b>&#160;&#160;&#160;64</td></tr>
+<tr class="separator:gaf8b5a10417b670c4f3dc161a99ec6424"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:gaab91649a1b40a20f67fe86472e6f42f6"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#gaab91649a1b40a20f67fe86472e6f42f6">LwpaIpAddr</a></td></tr>
+<tr class="memdesc:gaab91649a1b40a20f67fe86472e6f42f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address.  <a href="group__lwpa__inet.html#gaab91649a1b40a20f67fe86472e6f42f6">More...</a><br /></td></tr>
+<tr class="separator:gaab91649a1b40a20f67fe86472e6f42f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac30c14a5e951cfcb8e66086a7779e7d8"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#gac30c14a5e951cfcb8e66086a7779e7d8">LwpaSockaddr</a></td></tr>
+<tr class="memdesc:gac30c14a5e951cfcb8e66086a7779e7d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address with associated interface and port.  <a href="group__lwpa__inet.html#gac30c14a5e951cfcb8e66086a7779e7d8">More...</a><br /></td></tr>
+<tr class="separator:gac30c14a5e951cfcb8e66086a7779e7d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga24575fba7debad61e88da1061ae77837"><td class="memItemLeft" align="right" valign="top"><a id="ga24575fba7debad61e88da1061ae77837"></a>
+typedef struct <a class="el" href="struct_lwpa_netint_info.html">LwpaNetintInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga24575fba7debad61e88da1061ae77837">LwpaNetintInfo</a></td></tr>
+<tr class="memdesc:ga24575fba7debad61e88da1061ae77837"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of a network interface. <br /></td></tr>
+<tr class="separator:ga24575fba7debad61e88da1061ae77837"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga75918e41a21a5b4511b2b3c797e6f048"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga75918e41a21a5b4511b2b3c797e6f048">lwpa_iptype_t</a> { <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e">kLwpaIpTypeInvalid</a>
+, <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a>
+, <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da">kLwpaIpTypeV6</a>
+ }</td></tr>
+<tr class="memdesc:ga75918e41a21a5b4511b2b3c797e6f048"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to identify the type of IP address contained in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>.  <a href="group__lwpa__inet.html#ga75918e41a21a5b4511b2b3c797e6f048">More...</a><br /></td></tr>
+<tr class="separator:ga75918e41a21a5b4511b2b3c797e6f048"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">LwpaIpAddr macros</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp6329ee7fb4f8b92c71412d3ac71e711f"></a>A set of macros for interacting with a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>.</p>
+<p>It is recommended to use these macros where possible rather than accessing the structure members directly; otherwise, it's easy to forget to fill in a field. </p>
+</td></tr>
+<tr class="memitem:ga99ca443ff7adfc20ef3dfff1f668a563"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga99ca443ff7adfc20ef3dfff1f668a563">lwpaip_is_v4</a>(lwpa_ip_ptr)&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type == <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a>)</td></tr>
+<tr class="memdesc:ga99ca443ff7adfc20ef3dfff1f668a563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv4 address.  <a href="group__lwpa__inet.html#ga99ca443ff7adfc20ef3dfff1f668a563">More...</a><br /></td></tr>
+<tr class="separator:ga99ca443ff7adfc20ef3dfff1f668a563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga60fa1dee3547985e5419d7f3d4f8b233"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga60fa1dee3547985e5419d7f3d4f8b233">lwpaip_is_v6</a>(lwpa_ip_ptr)&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type == <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da">kLwpaIpTypeV6</a>)</td></tr>
+<tr class="memdesc:ga60fa1dee3547985e5419d7f3d4f8b233"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv6 address.  <a href="group__lwpa__inet.html#ga60fa1dee3547985e5419d7f3d4f8b233">More...</a><br /></td></tr>
+<tr class="separator:ga60fa1dee3547985e5419d7f3d4f8b233"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga512afd056b57c62b511e44a93972f4d5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga512afd056b57c62b511e44a93972f4d5">lwpaip_is_invalid</a>(lwpa_ip_ptr)&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type == <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e">kLwpaIpTypeInvalid</a>)</td></tr>
+<tr class="memdesc:ga512afd056b57c62b511e44a93972f4d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an invalid address.  <a href="group__lwpa__inet.html#ga512afd056b57c62b511e44a93972f4d5">More...</a><br /></td></tr>
+<tr class="separator:ga512afd056b57c62b511e44a93972f4d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga731ba4e4b7760993fe3f4658066b9fcd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga731ba4e4b7760993fe3f4658066b9fcd">lwpaip_v4_address</a>(lwpa_ip_ptr)&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;addr.v4)</td></tr>
+<tr class="memdesc:ga731ba4e4b7760993fe3f4658066b9fcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the IPv4 address from a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>.  <a href="group__lwpa__inet.html#ga731ba4e4b7760993fe3f4658066b9fcd">More...</a><br /></td></tr>
+<tr class="separator:ga731ba4e4b7760993fe3f4658066b9fcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6f3e7c1f5539712019154ffeed900d07"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga6f3e7c1f5539712019154ffeed900d07">lwpaip_v6_address</a>(lwpa_ip_ptr)&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;addr.v6)</td></tr>
+<tr class="memdesc:ga6f3e7c1f5539712019154ffeed900d07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the IPv6 address from a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>.  <a href="group__lwpa__inet.html#ga6f3e7c1f5539712019154ffeed900d07">More...</a><br /></td></tr>
+<tr class="separator:ga6f3e7c1f5539712019154ffeed900d07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8cefecedef40877115c050848fd9a1d5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga8cefecedef40877115c050848fd9a1d5">lwpaip_set_v4_address</a>(lwpa_ip_ptr,  val)</td></tr>
+<tr class="memdesc:ga8cefecedef40877115c050848fd9a1d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the IPv4 address in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>.  <a href="group__lwpa__inet.html#ga8cefecedef40877115c050848fd9a1d5">More...</a><br /></td></tr>
+<tr class="separator:ga8cefecedef40877115c050848fd9a1d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga82919752f2428a78edfb26f745481e5d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga82919752f2428a78edfb26f745481e5d">lwpaip_set_v6_address</a>(lwpa_ip_ptr,  val)</td></tr>
+<tr class="memdesc:ga82919752f2428a78edfb26f745481e5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the IPv6 address in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>.  <a href="group__lwpa__inet.html#ga82919752f2428a78edfb26f745481e5d">More...</a><br /></td></tr>
+<tr class="separator:ga82919752f2428a78edfb26f745481e5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga85259d4019be76ee5067cb744cb4cb76"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga85259d4019be76ee5067cb744cb4cb76">lwpaip_set_invalid</a>(lwpa_ip_ptr)&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type = <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e">kLwpaIpTypeInvalid</a>)</td></tr>
+<tr class="memdesc:ga85259d4019be76ee5067cb744cb4cb76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the type field in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to indicate that it does not contain a valid address.  <a href="group__lwpa__inet.html#ga85259d4019be76ee5067cb744cb4cb76">More...</a><br /></td></tr>
+<tr class="separator:ga85259d4019be76ee5067cb744cb4cb76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2a3be69f1ef99486ad72ab4b8eae966d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga2a3be69f1ef99486ad72ab4b8eae966d">lwpaip_is_multicast</a>(lwpa_ip_ptr)</td></tr>
+<tr class="memdesc:ga2a3be69f1ef99486ad72ab4b8eae966d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains a multicast address.  <a href="group__lwpa__inet.html#ga2a3be69f1ef99486ad72ab4b8eae966d">More...</a><br /></td></tr>
+<tr class="separator:ga2a3be69f1ef99486ad72ab4b8eae966d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1961dd86bd985153be3afa3bf3bebefa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga1961dd86bd985153be3afa3bf3bebefa">lwpaip_equal</a>(ipptr1,  ipptr2)</td></tr>
+<tr class="memdesc:ga1961dd86bd985153be3afa3bf3bebefa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether two instances of <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contain identical addresses.  <a href="group__lwpa__inet.html#ga1961dd86bd985153be3afa3bf3bebefa">More...</a><br /></td></tr>
+<tr class="separator:ga1961dd86bd985153be3afa3bf3bebefa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7bcd89c614dbfb588d5c6bb54ce67872"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#ga7bcd89c614dbfb588d5c6bb54ce67872">lwpaip_cmp</a>(ipptr1,  ipptr2)</td></tr>
+<tr class="memdesc:ga7bcd89c614dbfb588d5c6bb54ce67872"><td class="mdescLeft">&#160;</td><td class="mdescRight">A comparison algorithm for lwpa_ip addresses.  <a href="group__lwpa__inet.html#ga7bcd89c614dbfb588d5c6bb54ce67872">More...</a><br /></td></tr>
+<tr class="separator:ga7bcd89c614dbfb588d5c6bb54ce67872"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae0175ce1ec89d0340a5b461a6bedb006"><td class="memItemLeft" align="right" valign="top"><a id="gae0175ce1ec89d0340a5b461a6bedb006"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_INADDR_ANY</b>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:gae0175ce1ec89d0340a5b461a6bedb006"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafff526c280a904c4f27372a000e37859"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#gafff526c280a904c4f27372a000e37859">lwpaip_make_any_v4</a>(lwpa_ip_ptr)&#160;&#160;&#160;<a class="el" href="group__lwpa__inet.html#ga8cefecedef40877115c050848fd9a1d5">lwpaip_set_v4_address</a>(lwpa_ip_ptr, LWPA_INADDR_ANY)</td></tr>
+<tr class="memdesc:gafff526c280a904c4f27372a000e37859"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to the IPv4 wildcard address.  <a href="group__lwpa__inet.html#gafff526c280a904c4f27372a000e37859">More...</a><br /></td></tr>
+<tr class="separator:gafff526c280a904c4f27372a000e37859"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf0433f37c8aedbd049388bb7c08f5172"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__inet.html#gaf0433f37c8aedbd049388bb7c08f5172">lwpaip_make_any_v6</a>(lwpa_ip_ptr)</td></tr>
+<tr class="memdesc:gaf0433f37c8aedbd049388bb7c08f5172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to the IPv6 wildcard address.  <a href="group__lwpa__inet.html#gaf0433f37c8aedbd049388bb7c08f5172">More...</a><br /></td></tr>
+<tr class="separator:gaf0433f37c8aedbd049388bb7c08f5172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga7bcd89c614dbfb588d5c6bb54ce67872"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7bcd89c614dbfb588d5c6bb54ce67872">&#9670;&nbsp;</a></span>lwpaip_cmp</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_cmp</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ipptr1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ipptr2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  (((ipptr1)-&gt;type != (ipptr2)-&gt;type)                                                           \</div>
+<div class="line">       ? ((ipptr1)-&gt;type - (ipptr2)-&gt;type)                                                      \</div>
+<div class="line">       : (((ipptr1)-&gt;type == <a class="code" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a>) ? ((int)(ipptr1)-&gt;addr.v4 - (int)(ipptr2)-&gt;addr.v4) \</div>
+<div class="line">                                            : memcmp((ipptr1)-&gt;addr.v6, (ipptr2)-&gt;addr.v6, <a class="code" href="group__lwpa__inet.html#gadf510df24e827cbeeeca96a00d6cdd75">LWPA_IPV6_BYTES</a>)))</div>
+<div class="ttc" id="agroup__lwpa__inet_html_gadf510df24e827cbeeeca96a00d6cdd75"><div class="ttname"><a href="group__lwpa__inet.html#gadf510df24e827cbeeeca96a00d6cdd75">LWPA_IPV6_BYTES</a></div><div class="ttdeci">#define LWPA_IPV6_BYTES</div><div class="ttdoc">The number of bytes in an IPv6 address.</div><div class="ttdef"><b>Definition:</b> inet.h:49</div></div>
+<div class="ttc" id="agroup__lwpa__inet_html_gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd"><div class="ttname"><a href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a></div><div class="ttdeci">@ kLwpaIpTypeV4</div><div class="ttdoc">This LwpaIpAddr contains an IPv4 address.</div><div class="ttdef"><b>Definition:</b> inet.h:43</div></div>
+</div><!-- fragment -->
+<p>A comparison algorithm for lwpa_ip addresses. </p>
+<p>All IPv4 addresses are considered to be &lt; all IPv6 addresses. For matching types, the numerical address value is compared. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ipptr1</td><td>Pointer to the first <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to compare. </td></tr>
+    <tr><td class="paramname">ipptr2</td><td>Pointer to the second <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to compare. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>&lt; 0 (ipptr1 &lt; ipptr2), 0 (ipptr1 == ipptr2), &gt; 0 (ipptr1 &gt; ipptr2) </dd></dl>
+
+</div>
+</div>
+<a id="ga1961dd86bd985153be3afa3bf3bebefa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1961dd86bd985153be3afa3bf3bebefa">&#9670;&nbsp;</a></span>lwpaip_equal</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_equal</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ipptr1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">ipptr2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  (((ipptr1)-&gt;type == (ipptr2)-&gt;type)                                                                               \</div>
+<div class="line">       ? (((ipptr1)-&gt;type == <a class="code" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a>) ? ((ipptr1)-&gt;addr.v4 == (ipptr2)-&gt;addr.v4)                              \</div>
+<div class="line">                                            : (0 == memcmp((ipptr1)-&gt;addr.v6, (ipptr2)-&gt;addr.v6, <a class="code" href="group__lwpa__inet.html#gadf510df24e827cbeeeca96a00d6cdd75">LWPA_IPV6_BYTES</a>))) \</div>
+<div class="line">       : <span class="keyword">false</span>)</div>
+</div><!-- fragment -->
+<p>Determine whether two instances of <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contain identical addresses. </p>
+<p>The type (IPv4 or IPv6) must be the same, as well as the value of the relevant address. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ipptr1</td><td>Pointer to the first <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to compare. </td></tr>
+    <tr><td class="paramname">ipptr2</td><td>Pointer to the second <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to compare. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (IPs are identical) or false (IPs are not identical). </dd></dl>
+
+</div>
+</div>
+<a id="ga512afd056b57c62b511e44a93972f4d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga512afd056b57c62b511e44a93972f4d5">&#9670;&nbsp;</a></span>lwpaip_is_invalid</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_is_invalid</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type == <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e">kLwpaIpTypeInvalid</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an invalid address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (is invalid) or false (is not invalid). </dd></dl>
+
+</div>
+</div>
+<a id="ga2a3be69f1ef99486ad72ab4b8eae966d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2a3be69f1ef99486ad72ab4b8eae966d">&#9670;&nbsp;</a></span>lwpaip_is_multicast</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_is_multicast</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  (((lwpa_ip_ptr)-&gt;type == <a class="code" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a>)                                                 \</div>
+<div class="line">       ? (((lwpa_ip_ptr)-&gt;addr.v4 &gt; 0xe0000000) &amp;&amp; ((lwpa_ip_ptr)-&gt;addr.v4 &lt; 0xefffffff)) \</div>
+<div class="line">       : ((lwpa_ip_ptr)-&gt;addr.v6[0] == 0xff))</div>
+</div><!-- fragment -->
+<p>Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains a multicast address. </p>
+<p>Works for either an IPv4 or an IPv6 address. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (contains a multicast address) or false (does not contain a multicast address). </dd></dl>
+
+</div>
+</div>
+<a id="ga99ca443ff7adfc20ef3dfff1f668a563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga99ca443ff7adfc20ef3dfff1f668a563">&#9670;&nbsp;</a></span>lwpaip_is_v4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_is_v4</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type == <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv4 address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (contains an IPv4 address) or false (does not contain an IPv4 address). </dd></dl>
+
+</div>
+</div>
+<a id="ga60fa1dee3547985e5419d7f3d4f8b233"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga60fa1dee3547985e5419d7f3d4f8b233">&#9670;&nbsp;</a></span>lwpaip_is_v6</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_is_v6</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type == <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da">kLwpaIpTypeV6</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv6 address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (contains an IPv6 address) or false (does not contain an IPv6 address). </dd></dl>
+
+</div>
+</div>
+<a id="gafff526c280a904c4f27372a000e37859"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafff526c280a904c4f27372a000e37859">&#9670;&nbsp;</a></span>lwpaip_make_any_v4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_make_any_v4</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;<a class="el" href="group__lwpa__inet.html#ga8cefecedef40877115c050848fd9a1d5">lwpaip_set_v4_address</a>(lwpa_ip_ptr, LWPA_INADDR_ANY)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to the IPv4 wildcard address. </p>
+<p>Use this macro; do not use LWPA_INADDR_ANY directly. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaf0433f37c8aedbd049388bb7c08f5172"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf0433f37c8aedbd049388bb7c08f5172">&#9670;&nbsp;</a></span>lwpaip_make_any_v6</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_make_any_v6</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                                                            \</div>
+<div class="line">  {                                                             \</div>
+<div class="line">    (lwpa_ip_ptr)-&gt;type = <a class="code" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da">kLwpaIpTypeV6</a>;                        \</div>
+<div class="line">    memset(<a class="code" href="group__lwpa__inet.html#ga6f3e7c1f5539712019154ffeed900d07">lwpaip_v6_address</a>(lwpa_ip_ptr), 0, <a class="code" href="group__lwpa__inet.html#gadf510df24e827cbeeeca96a00d6cdd75">LWPA_IPV6_BYTES</a>); \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="agroup__lwpa__inet_html_ga6f3e7c1f5539712019154ffeed900d07"><div class="ttname"><a href="group__lwpa__inet.html#ga6f3e7c1f5539712019154ffeed900d07">lwpaip_v6_address</a></div><div class="ttdeci">#define lwpaip_v6_address(lwpa_ip_ptr)</div><div class="ttdoc">Get the IPv6 address from a LwpaIpAddr.</div><div class="ttdef"><b>Definition:</b> inet.h:97</div></div>
+<div class="ttc" id="agroup__lwpa__inet_html_gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da"><div class="ttname"><a href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da">kLwpaIpTypeV6</a></div><div class="ttdeci">@ kLwpaIpTypeV6</div><div class="ttdoc">This LwpaIpAddr contains an IPv6 address.</div><div class="ttdef"><b>Definition:</b> inet.h:45</div></div>
+</div><!-- fragment -->
+<p>Set a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to the IPv6 wildcard address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga85259d4019be76ee5067cb744cb4cb76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga85259d4019be76ee5067cb744cb4cb76">&#9670;&nbsp;</a></span>lwpaip_set_invalid</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_set_invalid</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;type = <a class="el" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e">kLwpaIpTypeInvalid</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the type field in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> to indicate that it does not contain a valid address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga8cefecedef40877115c050848fd9a1d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8cefecedef40877115c050848fd9a1d5">&#9670;&nbsp;</a></span>lwpaip_set_v4_address</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_set_v4_address</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">val&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                                            \</div>
+<div class="line">  {                                             \</div>
+<div class="line">    (lwpa_ip_ptr)-&gt;type = <a class="code" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd">kLwpaIpTypeV4</a>;        \</div>
+<div class="line">    (lwpa_ip_ptr)-&gt;addr.v4 = val;               \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+</div><!-- fragment -->
+<p>Set the IPv4 address in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </p>
+<p>Also sets the type field to indicate that this <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv4 address. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+    <tr><td class="paramname">val</td><td>IPv4 address to set (uint32_t). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga82919752f2428a78edfb26f745481e5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga82919752f2428a78edfb26f745481e5d">&#9670;&nbsp;</a></span>lwpaip_set_v6_address</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_set_v6_address</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">val&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                                                      \</div>
+<div class="line">  {                                                       \</div>
+<div class="line">    (lwpa_ip_ptr)-&gt;type = <a class="code" href="group__lwpa__inet.html#gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da">kLwpaIpTypeV6</a>;                  \</div>
+<div class="line">    memcpy((lwpa_ip_ptr)-&gt;addr.v6, val, <a class="code" href="group__lwpa__inet.html#gadf510df24e827cbeeeca96a00d6cdd75">LWPA_IPV6_BYTES</a>); \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+</div><!-- fragment -->
+<p>Set the IPv6 address in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </p>
+<p>Also sets the type field to indicate that this <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv6 address. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+    <tr><td class="paramname">val</td><td>IPv6 address to set (uint8_t[]). Must be at least of length LWPA_IPV6_BYTES. Gets copied into the struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga731ba4e4b7760993fe3f4658066b9fcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga731ba4e4b7760993fe3f4658066b9fcd">&#9670;&nbsp;</a></span>lwpaip_v4_address</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_v4_address</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;addr.v4)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the IPv4 address from a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </p>
+<p>It is recommended to first use <a class="el" href="group__lwpa__inet.html#ga99ca443ff7adfc20ef3dfff1f668a563" title="Determine whether a LwpaIpAddr contains an IPv4 address.">lwpaip_is_v4()</a> to make sure this <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains a valid IPv4 address. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The IPv4 address (uint32_t). </dd></dl>
+
+</div>
+</div>
+<a id="ga6f3e7c1f5539712019154ffeed900d07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f3e7c1f5539712019154ffeed900d07">&#9670;&nbsp;</a></span>lwpaip_v6_address</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpaip_v6_address</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">lwpa_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((lwpa_ip_ptr)-&gt;addr.v6)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the IPv6 address from a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </p>
+<p>It is recommended to first use <a class="el" href="group__lwpa__inet.html#ga60fa1dee3547985e5419d7f3d4f8b233" title="Determine whether a LwpaIpAddr contains an IPv6 address.">lwpaip_is_v6()</a> to make sure this <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains a valid IPv6 address. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">lwpa_ip_ptr</td><td>Pointer to a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The IPv6 address (uint8_t[]). </dd></dl>
+
+</div>
+</div>
+<a id="gacdc07c9ddec218067a54d87f017b256c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacdc07c9ddec218067a54d87f017b256c">&#9670;&nbsp;</a></span>lwpasock_ip_port_equal</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define lwpasock_ip_port_equal</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">sockptr1, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">sockptr2&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;  (<a class="el" href="group__lwpa__inet.html#ga1961dd86bd985153be3afa3bf3bebefa">lwpaip_equal</a>(&amp;(sockptr1)-&gt;ip, &amp;(sockptr2)-&gt;ip) &amp;&amp; ((sockptr1)-&gt;port == (sockptr2)-&gt;port))</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether two instances of <a class="el" href="struct_lwpa_sockaddr.html" title="An IP address with associated interface and port.">LwpaSockaddr</a> contain identical IP addresses and ports. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sockptr1</td><td>Pointer to first <a class="el" href="struct_lwpa_sockaddr.html" title="An IP address with associated interface and port.">LwpaSockaddr</a> to compare. </td></tr>
+    <tr><td class="paramname">sockptr2</td><td>Pointer to second <a class="el" href="struct_lwpa_sockaddr.html" title="An IP address with associated interface and port.">LwpaSockaddr</a> to compare. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (the IP address and port are identical) or false (the IP address and port are not identical). </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="gaab91649a1b40a20f67fe86472e6f42f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaab91649a1b40a20f67fe86472e6f42f6">&#9670;&nbsp;</a></span>LwpaIpAddr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a> <a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>An IP address. </p>
+<p>Can hold either an IPv4 or IPv6 address. IPv4 addresses are in host byte order. </p>
+
+</div>
+</div>
+<a id="gac30c14a5e951cfcb8e66086a7779e7d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac30c14a5e951cfcb8e66086a7779e7d8">&#9670;&nbsp;</a></span>LwpaSockaddr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>An IP address with associated interface and port. </p>
+<p>Ports are in host byte order. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga75918e41a21a5b4511b2b3c797e6f048"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga75918e41a21a5b4511b2b3c797e6f048">&#9670;&nbsp;</a></span>lwpa_iptype_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__lwpa__inet.html#ga75918e41a21a5b4511b2b3c797e6f048">lwpa_iptype_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Used to identify the type of IP address contained in a <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga75918e41a21a5b4511b2b3c797e6f048aa8b31e7862dcc08b71037384bb33945e"></a>kLwpaIpTypeInvalid&#160;</td><td class="fielddoc"><p>This <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> is not valid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga75918e41a21a5b4511b2b3c797e6f048a73563b977f0118c6094e193f57cfc2cd"></a>kLwpaIpTypeV4&#160;</td><td class="fielddoc"><p>This <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv4 address. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga75918e41a21a5b4511b2b3c797e6f048a60f28e3cdc84c51debfd05e05b4578da"></a>kLwpaIpTypeV6&#160;</td><td class="fielddoc"><p>This <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a> contains an IPv6 address. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

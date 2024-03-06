@@ -1,0 +1,261 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: Modules</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('modules.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">Modules</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock">Here is a list of all modules:</div><div class="directory">
+<div class="levels">[detail level <span onclick="javascript:toggleLevel(1);">1</span><span onclick="javascript:toggleLevel(2);">2</span><span onclick="javascript:toggleLevel(3);">3</span>]</div><table class="directory">
+<tr id="row_0_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_0_" class="arrow" onclick="toggleFolder('0_')">&#9660;</span><a class="el" href="group__etcpal.html" target="_self">EtcPal</a></td><td class="desc">ETC Platform Abstraction Layer (EtcPal): A set of platform abstraction and utility modules used by ETC software libraries </td></tr>
+<tr id="row_0_0_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_0_0_" class="arrow" onclick="toggleFolder('0_0_')">&#9660;</span><a class="el" href="group__etcpal__core.html" target="_self">Core Modules</a></td><td class="desc">EtcPal modules that exist independently of OS or network targets </td></tr>
+<tr id="row_0_0_0_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__acn__pdu.html" target="_self">acn_pdu (ACN Protocol Family PDUs)</a></td><td class="desc">Parse or pack a PDU or PDU block as defined in ANSI E1.17 (ACN) </td></tr>
+<tr id="row_0_0_1_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__acn__rlp.html" target="_self">acn_rlp (ACN Root Layer Protocol)</a></td><td class="desc">Parse or pack an ACN Root Layer PDU block </td></tr>
+<tr id="row_0_0_2_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__error.html" target="_self">error (Error Handling)</a></td><td class="desc">Platform-neutral error codes </td></tr>
+<tr id="row_0_0_3_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__handle__manager.html" target="_self">handle_manager</a></td><td class="desc">A utility to manage handing out integer handles to resources </td></tr>
+<tr id="row_0_0_4_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__log.html" target="_self">log (Logging)</a></td><td class="desc">A platform-neutral module enabling applications and libraries to log messages in either or both of syslog-compliant and human-readable format </td></tr>
+<tr id="row_0_0_5_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__mempool.html" target="_self">mempool (Memory Pools)</a></td><td class="desc">Memory pools with fixed-size elements </td></tr>
+<tr id="row_0_0_6_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__pack.html" target="_self">pack (Buffer Packing and Unpacking)</a></td><td class="desc">Platform- and endianness-independent buffer packing and unpacking </td></tr>
+<tr id="row_0_0_7_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__rbtree.html" target="_self">rbtree (Red-Black Trees)</a></td><td class="desc">A red-black tree implementation </td></tr>
+<tr id="row_0_0_8_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__uuid.html" target="_self">uuid (UUIDs)</a></td><td class="desc">Type and helper functions for a Universally Unique Identifier (UUID) </td></tr>
+<tr id="row_0_1_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_0_1_" class="arrow" onclick="toggleFolder('0_1_')">&#9660;</span><a class="el" href="group__etcpal__os.html" target="_self">OS Abstraction Modules</a></td><td class="desc">Modules that abstract OS functionality, excluding networking </td></tr>
+<tr id="row_0_1_0_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__thread.html" target="_self">thread (Threading)</a></td><td class="desc">Platform-neutral threads </td></tr>
+<tr id="row_0_1_1_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__timer.html" target="_self">timer (Timers)</a></td><td class="desc">Platform-neutral system timers </td></tr>
+<tr id="row_0_1_2_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__event__group.html" target="_self">event_group (Event Groups)</a></td><td class="desc">Event group objects </td></tr>
+<tr id="row_0_1_3_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__mutex.html" target="_self">mutex (Mutexes)</a></td><td class="desc">Mutual-exclusion (mutex) objects </td></tr>
+<tr id="row_0_1_4_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__queue.html" target="_self">queue (RTOS queues)</a></td><td class="desc">Platform-neutral blocking RTOS queues </td></tr>
+<tr id="row_0_1_5_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__recursive__mutex.html" target="_self">recursive_mutex (Recursive Mutexes)</a></td><td class="desc">Mutual-exclusion (mutex) objects with recursion support </td></tr>
+<tr id="row_0_1_6_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__rwlock.html" target="_self">rwlock (Read-Write Locks)</a></td><td class="desc">Reader-writer lock objects </td></tr>
+<tr id="row_0_1_7_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__sem.html" target="_self">sem (Counting Semaphores)</a></td><td class="desc">Counting semaphore objects </td></tr>
+<tr id="row_0_1_8_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__signal.html" target="_self">signal (Signals)</a></td><td class="desc">Signal objects </td></tr>
+<tr id="row_0_2_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_0_2_" class="arrow" onclick="toggleFolder('0_2_')">&#9660;</span><a class="el" href="group__etcpal__net.html" target="_self">Network Abstraction Modules</a></td><td class="desc">Modules that abstract networking functionality </td></tr>
+<tr id="row_0_2_0_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__inet.html" target="_self">inet (Internet Addressing)</a></td><td class="desc">Identifiers for IP addresses and network interfaces </td></tr>
+<tr id="row_0_2_1_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__netint.html" target="_self">netint (Network Interfaces)</a></td><td class="desc">A platform-neutral method for enumerating network interfaces </td></tr>
+<tr id="row_0_2_2_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__socket.html" target="_self">socket (Network Socket Interface)</a></td><td class="desc">Platform-neutral BSD-modeled network socket implementation </td></tr>
+<tr id="row_0_3_"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_0_3_" class="arrow" onclick="toggleFolder('0_3_')">&#9660;</span><a class="el" href="group__etcpal__cpp.html" target="_self">C++ Wrappers</a></td><td class="desc">C++ Wrappers for EtcPal modules </td></tr>
+<tr id="row_0_3_0_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__error.html" target="_self">error (Error Handling)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__error.html">error (Error Handling)</a> module </td></tr>
+<tr id="row_0_3_1_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__event__group.html" target="_self">event_group (Event Groups)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__event__group.html">event_group (Event Groups)</a> module </td></tr>
+<tr id="row_0_3_2_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__inet.html" target="_self">inet (Internet Addressing)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__inet.html">inet (Internet Addressing)</a> module </td></tr>
+<tr id="row_0_3_3_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__log.html" target="_self">log (Logging)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__log.html">log (Logging)</a> module </td></tr>
+<tr id="row_0_3_4_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__mutex.html" target="_self">mutex (Mutexes)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__mutex.html">mutex (Mutexes)</a> module </td></tr>
+<tr id="row_0_3_5_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__opaque__id.html" target="_self">opaque_id (Strongly typed handles)</a></td><td class="desc">Provides the <a class="el" href="classetcpal_1_1_opaque_id.html" title="A strongly-typed ID with arbitrary internal representation.">OpaqueId</a> type, a type-safe identifier or handle value </td></tr>
+<tr id="row_0_3_6_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__queue.html" target="_self">queue (RTOS queues)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__queue.html">queue (RTOS queues)</a> module </td></tr>
+<tr id="row_0_3_7_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__recursive__mutex.html" target="_self">recursive_mutex (Recursive Mutexes)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__recursive__mutex.html">recursive_mutex (Recursive Mutexes)</a> module </td></tr>
+<tr id="row_0_3_8_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__rwlock.html" target="_self">rwlock (Read-Write Locks)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__rwlock.html">rwlock (Read-Write Locks)</a> module </td></tr>
+<tr id="row_0_3_9_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__sem.html" target="_self">sem (Counting Semaphores)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__sem.html">sem (Counting Semaphores)</a> module </td></tr>
+<tr id="row_0_3_10_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__signal.html" target="_self">signal (Signal Objects)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__signal.html">signal (Signals)</a> module </td></tr>
+<tr id="row_0_3_11_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__thread.html" target="_self">thread (Threading)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__thread.html">thread (Threading)</a> module </td></tr>
+<tr id="row_0_3_12_" class="even"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__timer.html" target="_self">timer (Timers)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__timer.html">timer (Timers)</a> module </td></tr>
+<tr id="row_0_3_13_"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__cpp__uuid.html" target="_self">uuid (UUIDs)</a></td><td class="desc">C++ utilities for the <a class="el" href="group__etcpal__uuid.html">uuid (UUIDs)</a> module </td></tr>
+<tr id="row_0_4_" class="even"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><a class="el" href="group__etcpal__opts.html" target="_self">EtcPal config options</a></td><td class="desc">Compile-time configuration options for EtcPal </td></tr>
+</table>
+</div><!-- directory -->
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

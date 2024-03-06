@@ -1,0 +1,386 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: NetintInfo Class Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">HEAD (unstable)</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classetcpal_1_1_netint_info.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">NetintInfo Class Reference<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a> &raquo; <a class="el" href="group__etcpal__cpp__inet.html">inet (Internet Addressing)</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<div class="textblock"><p>A wrapper class for the EtcPal netint info type. </p>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:afb73d33ad056cc53ae1b01032ebc05c3"><td class="memItemLeft" align="right" valign="top"><a id="afb73d33ad056cc53ae1b01032ebc05c3"></a>
+constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#afb73d33ad056cc53ae1b01032ebc05c3">NetintInfo</a> (const <a class="el" href="struct_etc_pal_netint_info.html">EtcPalNetintInfo</a> &amp;c_info) noexcept</td></tr>
+<tr class="memdesc:afb73d33ad056cc53ae1b01032ebc05c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct netint info copied from an instance of the C <a class="el" href="struct_etc_pal_netint_info.html" title="A description of a single address assigned to a network interface.">EtcPalNetintInfo</a> type. <br /></td></tr>
+<tr class="separator:afb73d33ad056cc53ae1b01032ebc05c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af403ef5eed177f90f89baf5c733262d2"><td class="memItemLeft" align="right" valign="top"><a id="af403ef5eed177f90f89baf5c733262d2"></a>
+<a class="el" href="classetcpal_1_1_netint_info.html">NetintInfo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#af403ef5eed177f90f89baf5c733262d2">operator=</a> (const <a class="el" href="struct_etc_pal_netint_info.html">EtcPalNetintInfo</a> &amp;c_info) noexcept</td></tr>
+<tr class="memdesc:af403ef5eed177f90f89baf5c733262d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assign an instance of the C <a class="el" href="struct_etc_pal_netint_info.html" title="A description of a single address assigned to a network interface.">EtcPalNetintInfo</a> type to an instance of this class. <br /></td></tr>
+<tr class="separator:af403ef5eed177f90f89baf5c733262d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f6e5072c151df6444be6c4dee3a07f0"><td class="memItemLeft" align="right" valign="top"><a id="a4f6e5072c151df6444be6c4dee3a07f0"></a>
+constexpr const <a class="el" href="struct_etc_pal_netint_info.html">EtcPalNetintInfo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#a4f6e5072c151df6444be6c4dee3a07f0">get</a> () const noexcept</td></tr>
+<tr class="memdesc:a4f6e5072c151df6444be6c4dee3a07f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a const reference to the underlying C type. <br /></td></tr>
+<tr class="separator:a4f6e5072c151df6444be6c4dee3a07f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa15b243cca57463f0313aa6d59d381eb"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#aa15b243cca57463f0313aa6d59d381eb">index</a> () const noexcept</td></tr>
+<tr class="memdesc:aa15b243cca57463f0313aa6d59d381eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the OS-specific network interface number.  <a href="classetcpal_1_1_netint_info.html#aa15b243cca57463f0313aa6d59d381eb">More...</a><br /></td></tr>
+<tr class="separator:aa15b243cca57463f0313aa6d59d381eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7db2b2173555565b272e2dca0b0ceca2"><td class="memItemLeft" align="right" valign="top"><a id="a7db2b2173555565b272e2dca0b0ceca2"></a>
+constexpr <a class="el" href="classetcpal_1_1_ip_addr.html">IpAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#a7db2b2173555565b272e2dca0b0ceca2">addr</a> () const noexcept</td></tr>
+<tr class="memdesc:a7db2b2173555565b272e2dca0b0ceca2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the interface ip address. <br /></td></tr>
+<tr class="separator:a7db2b2173555565b272e2dca0b0ceca2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2458b3a12f9946f8bc5972000885eb4a"><td class="memItemLeft" align="right" valign="top"><a id="a2458b3a12f9946f8bc5972000885eb4a"></a>
+constexpr <a class="el" href="classetcpal_1_1_ip_addr.html">IpAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#a2458b3a12f9946f8bc5972000885eb4a">mask</a> () const noexcept</td></tr>
+<tr class="memdesc:a2458b3a12f9946f8bc5972000885eb4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the subnet mask for this interface. <br /></td></tr>
+<tr class="separator:a2458b3a12f9946f8bc5972000885eb4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afea15f38ce025b78eea4bdf08dd351d9"><td class="memItemLeft" align="right" valign="top"><a id="afea15f38ce025b78eea4bdf08dd351d9"></a>
+constexpr <a class="el" href="classetcpal_1_1_mac_addr.html">MacAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#afea15f38ce025b78eea4bdf08dd351d9">mac</a> () const noexcept</td></tr>
+<tr class="memdesc:afea15f38ce025b78eea4bdf08dd351d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the adapter MAC address. <br /></td></tr>
+<tr class="separator:afea15f38ce025b78eea4bdf08dd351d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae58de6b09f99e4435b7a0b389cc7db6e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#ae58de6b09f99e4435b7a0b389cc7db6e">id</a> () const noexcept</td></tr>
+<tr class="memdesc:ae58de6b09f99e4435b7a0b389cc7db6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the system name for the interface.  <a href="classetcpal_1_1_netint_info.html#ae58de6b09f99e4435b7a0b389cc7db6e">More...</a><br /></td></tr>
+<tr class="separator:ae58de6b09f99e4435b7a0b389cc7db6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa281fe09d5cbce4d97904d48fe54d1fd"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#aa281fe09d5cbce4d97904d48fe54d1fd">friendly_name</a> () const noexcept</td></tr>
+<tr class="memdesc:aa281fe09d5cbce4d97904d48fe54d1fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a user-friendly name for the interface.  <a href="classetcpal_1_1_netint_info.html#aa281fe09d5cbce4d97904d48fe54d1fd">More...</a><br /></td></tr>
+<tr class="separator:aa281fe09d5cbce4d97904d48fe54d1fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f6f7eba791dfd65ffd00a6797225078"><td class="memItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#a2f6f7eba791dfd65ffd00a6797225078">is_default</a> () const noexcept</td></tr>
+<tr class="memdesc:a2f6f7eba791dfd65ffd00a6797225078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether this is the default network interface.  <a href="classetcpal_1_1_netint_info.html#a2f6f7eba791dfd65ffd00a6797225078">More...</a><br /></td></tr>
+<tr class="separator:a2f6f7eba791dfd65ffd00a6797225078"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d02bb05c3ab899ab6752bbab4e3dbcf"><td class="memItemLeft" align="right" valign="top"><a id="a6d02bb05c3ab899ab6752bbab4e3dbcf"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#a6d02bb05c3ab899ab6752bbab4e3dbcf">IsValid</a> () const noexcept</td></tr>
+<tr class="memdesc:a6d02bb05c3ab899ab6752bbab4e3dbcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether this netint info is valid. <br /></td></tr>
+<tr class="separator:a6d02bb05c3ab899ab6752bbab4e3dbcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e2a12515d997e85cacf3d8ce171f070"><td class="memItemLeft" align="right" valign="top"><a id="a8e2a12515d997e85cacf3d8ce171f070"></a>
+constexpr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_netint_info.html#a8e2a12515d997e85cacf3d8ce171f070">operator NetintIndex</a> () const noexcept</td></tr>
+<tr class="memdesc:a8e2a12515d997e85cacf3d8ce171f070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables implicit conversion to the interface index. <br /></td></tr>
+<tr class="separator:a8e2a12515d997e85cacf3d8ce171f070"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa281fe09d5cbce4d97904d48fe54d1fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa281fe09d5cbce4d97904d48fe54d1fd">&#9670;&nbsp;</a></span>friendly_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string friendly_name </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get a user-friendly name for the interface. </p>
+<p>On some systems, this is the same as the id field. Others allow users to create and change a friendly name for network interfaces that's different than the system name. This field should be used when printing the adapter list in a UI. </p>
+
+</div>
+</div>
+<a id="ae58de6b09f99e4435b7a0b389cc7db6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae58de6b09f99e4435b7a0b389cc7db6e">&#9670;&nbsp;</a></span>id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string id </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the system name for the interface. </p>
+<p>This name can be used as a primary key to identify a single network adapter. It will not change unless the adapter is removed or reconfigured. Since interfaces can have multiple IPv4 and IPv6 addresses assigned simultaneously, there can be a one-to-many relationship between physical network interfaces and <a class="el" href="struct_etc_pal_netint_info.html" title="A description of a single address assigned to a network interface.">EtcPalNetintInfo</a> structures on the same system, all of which have the same value for this field. </p>
+
+</div>
+</div>
+<a id="aa15b243cca57463f0313aa6d59d381eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa15b243cca57463f0313aa6d59d381eb">&#9670;&nbsp;</a></span>index()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="group__etcpal__cpp__inet.html#gac116682d7a5133e27ea84255f000fc54">NetintIndex</a> index </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the OS-specific network interface number. </p>
+<p>Since interfaces can have multiple IPv4 and IPv6 addresses assigned simultaneously, there can be a one-to-many relationship between physical network interfaces and <a class="el" href="classetcpal_1_1_netint_info.html" title="A wrapper class for the EtcPal netint info type.">etcpal::NetintInfo</a> descriptions on the same system, all of which will have the same value for this field. It is also used for IPv6, multicast and IP-version-neutral APIs. See <a class="el" href="interface_indexes.html">Network Interface Indexes</a> for more information. </p>
+
+</div>
+</div>
+<a id="a2f6f7eba791dfd65ffd00a6797225078"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f6f7eba791dfd65ffd00a6797225078">&#9670;&nbsp;</a></span>is_default()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool is_default </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Determine whether this is the default network interface. </p>
+<p>The default network interface is defined as the network interface chosen for the default IP route on a system.</p>
+<dl class="section return"><dt>Returns</dt><dd>True if this is the default network interface, false otherwise. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>include/etcpal/cpp/<a class="el" href="cpp_2inet_8h_source.html">inet.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>etcpal</b></li><li class="navelem"><a class="el" href="classetcpal_1_1_netint_info.html">NetintInfo</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

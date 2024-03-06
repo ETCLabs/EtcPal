@@ -1,0 +1,1289 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: rbtree (Red-Black Trees)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__rbtree.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">rbtree (Red-Black Trees)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__core.html">Core Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>A red-black tree implementation. </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/rbtree.h&quot;</span></div>
+</div><!-- fragment --><p>A red-black tree is a popular design for a self-balancing binary search tree. Based on a public-domain red-black tree implementation; see the header file for details.</p>
+<p><em>If you have access to C++, just use std::map or std::set. They're much nicer than this module.</em></p>
+<p>Red-black tree nodes store arbitrary data as a <code>void*</code> pointer, which are compared with a user-provided <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a>. The module user must also manage memory allocation for each node of the red-black tree by providing an <a class="el" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083" title="A function type to allocate a new node.">EtcPalRbNodeAllocFunc</a> and <a class="el" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930" title="A function type to deallocate a node.">EtcPalRbNodeDeallocFunc</a>, which must allocate and deallocate <a class="el" href="struct_etc_pal_rb_node.html" title="A red-black tree node.">EtcPalRbNode</a> instances. Note: if you don't have access to a malloc() implementation, <a class="el" href="group__etcpal__mempool.html">mempool (Memory Pools)</a> is a convenient way to allocate nodes.</p>
+<div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct </span>MyStruct</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordtype">int</span> key;</div>
+<div class="line">} MyStruct;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> compare_func(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* <span class="keyword">self</span>, <span class="keyword">const</span> <span class="keywordtype">void</span>* value_a, <span class="keyword">const</span> <span class="keywordtype">void</span>* value_b)</div>
+<div class="line">{</div>
+<div class="line">  <span class="keyword">const</span> MyStruct* a = (<span class="keyword">const</span> MyStruct*)value_a;</div>
+<div class="line">  <span class="keyword">const</span> MyStruct* b = (<span class="keyword">const</span> MyStruct*)value_b;</div>
+<div class="line">  <span class="keywordflow">return</span> (a-&gt;key &gt; b-&gt;key) - (a-&gt;key &lt; b-&gt;key);</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* node_alloc_func()</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">return</span> (<a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>*)malloc(<span class="keyword">sizeof</span>(<a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>)); <span class="comment">// Or some other method you define</span></div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> node_dealloc_func(<a class="code" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* node)</div>
+<div class="line">{</div>
+<div class="line">  free(node); <span class="comment">// Or some other method you define</span></div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> tree;</div>
+<div class="line"><a class="code" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587">etcpal_rbtree_init</a>(&amp;tree, compare_func, node_alloc_func, node_dealloc_func);</div>
+<div class="line"> </div>
+<div class="line">MyStruct struct_1;</div>
+<div class="line">struct_1.key = 20;</div>
+<div class="line"><a class="code" href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">etcpal_rbtree_insert</a>(&amp;tree, &amp;struct_1);</div>
+<div class="line"> </div>
+<div class="line">MyStruct struct_2;</div>
+<div class="line">struct_2.key = 30;</div>
+<div class="line"><a class="code" href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">etcpal_rbtree_insert</a>(&amp;tree, &amp;struct_2);</div>
+<div class="line"> </div>
+<div class="line">EXPECT_EQ(<a class="code" href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">etcpal_rbtree_size</a>(&amp;tree), 2);</div>
+<div class="line"> </div>
+<div class="line">MyStruct* found = <a class="code" href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a>(&amp;struct_1); <span class="comment">// found == &amp;struct_1</span></div>
+<div class="line">found = <a class="code" href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a>(&amp;struct_2); <span class="comment">// found == &amp;struct_2</span></div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> insert_res = <a class="code" href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">etcpal_rbtree_insert</a>(&amp;tree, &amp;struct_1); <span class="comment">// insert_res == kEtcPalErrExists</span></div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> tree_iter;</div>
+<div class="line"><a class="code" href="group__etcpal__rbtree.html#gae7d2f565a40d1ab86873e7bc9c5c5c02">etcpal_rbiter_init</a>(&amp;tree_iter);</div>
+<div class="line">MyStruct* iter_val = <a class="code" href="group__etcpal__rbtree.html#ga1cd77fc10e7c983be2c12c5f14bc3721">etcpal_rbiter_first</a>(&amp;iter, &amp;tree); <span class="comment">// iter_val == &amp;struct_1</span></div>
+<div class="line">iter_val = <a class="code" href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e">etcpal_rbiter_next</a>(&amp;tree_iter); <span class="comment">// iter_val == &amp;struct_2</span></div>
+<div class="line">iter_val = <a class="code" href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e">etcpal_rbiter_next</a>(&amp;tree_iter); <span class="comment">// iter_val == NULL</span></div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="group__etcpal__rbtree.html#ga46d80469b4a700447b2721589cbec3d9">etcpal_rbtree_remove</a>(&amp;tree, &amp;struct_1);</div>
+<div class="line">found = <a class="code" href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a>(&amp;tree, &amp;struct_1); <span class="comment">// found == NULL</span></div>
+<div class="line">EXPECT_EQ(<a class="code" href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">etcpal_rbtree_size</a>(&amp;tree), 1);</div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="group__etcpal__rbtree.html#ga1347a53b2f8505e22707702f490949e8">etcpal_rbtree_clear</a>(&amp;tree);</div>
+<div class="line">found = <a class="code" href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a>(&amp;tree, &amp;struct_2); <span class="comment">// found == NULL</span></div>
+<div class="line">EXPECT_EQ(<a class="code" href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">etcpal_rbtree_size</a>(&amp;tree), 0);</div>
+<div class="ttc" id="agroup__etcpal__error_html_ga743b0648f0ca798ef29c9f69c6e255af"><div class="ttname"><a href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a></div><div class="ttdeci">etcpal_error_t</div><div class="ttdoc">A set of error codes that can be returned by library functions.</div><div class="ttdef"><b>Definition:</b> error.h:49</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga1347a53b2f8505e22707702f490949e8"><div class="ttname"><a href="group__etcpal__rbtree.html#ga1347a53b2f8505e22707702f490949e8">etcpal_rbtree_clear</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_clear(EtcPalRbTree *self)</div><div class="ttdoc">Clear all values from a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:518</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga1cd77fc10e7c983be2c12c5f14bc3721"><div class="ttname"><a href="group__etcpal__rbtree.html#ga1cd77fc10e7c983be2c12c5f14bc3721">etcpal_rbiter_first</a></div><div class="ttdeci">void * etcpal_rbiter_first(EtcPalRbIter *self, EtcPalRbTree *tree)</div><div class="ttdoc">Point a red-black tree iterator at the first value in the tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:731</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga46d80469b4a700447b2721589cbec3d9"><div class="ttname"><a href="group__etcpal__rbtree.html#ga46d80469b4a700447b2721589cbec3d9">etcpal_rbtree_remove</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_remove(EtcPalRbTree *self, const void *value)</div><div class="ttdoc">Remove a value from a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:381</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_ga4d3d93cb20130fc9d34fc13d1ea92316"><div class="ttname"><a href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a></div><div class="ttdeci">void * etcpal_rbtree_find(EtcPalRbTree *self, const void *value)</div><div class="ttdoc">Find a value in a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:209</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gaa3804b7146d1e8a72e4139a0f4d6507e"><div class="ttname"><a href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e">etcpal_rbiter_next</a></div><div class="ttdeci">void * etcpal_rbiter_next(EtcPalRbIter *self)</div><div class="ttdoc">Advance a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> rbtree.c:760</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gab0a4770c9d96c8eddd30684490b2d587"><div class="ttname"><a href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587">etcpal_rbtree_init</a></div><div class="ttdeci">EtcPalRbTree * etcpal_rbtree_init(EtcPalRbTree *self, EtcPalRbTreeNodeCmpFunc node_cmp_cb, EtcPalRbNodeAllocFunc alloc_f, EtcPalRbNodeDeallocFunc dealloc_f)</div><div class="ttdoc">Initialize a red-black tree node.</div><div class="ttdef"><b>Definition:</b> rbtree.c:156</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gae0aa64287211d3858cef5d0a7cffb033"><div class="ttname"><a href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">etcpal_rbtree_size</a></div><div class="ttdeci">size_t etcpal_rbtree_size(EtcPalRbTree *self)</div><div class="ttdoc">Get the current number of values in a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:580</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gae7d2f565a40d1ab86873e7bc9c5c5c02"><div class="ttname"><a href="group__etcpal__rbtree.html#gae7d2f565a40d1ab86873e7bc9c5c5c02">etcpal_rbiter_init</a></div><div class="ttdeci">EtcPalRbIter * etcpal_rbiter_init(EtcPalRbIter *self)</div><div class="ttdoc">Initialize a red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> rbtree.c:652</div></div>
+<div class="ttc" id="agroup__etcpal__rbtree_html_gae87df653a152c3942b54a8f8e7c235c6"><div class="ttname"><a href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">etcpal_rbtree_insert</a></div><div class="ttdeci">etcpal_error_t etcpal_rbtree_insert(EtcPalRbTree *self, void *value)</div><div class="ttdoc">Insert a new value into a red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.c:247</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_iter_html"><div class="ttname"><a href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a></div><div class="ttdoc">A red-black tree iterator.</div><div class="ttdef"><b>Definition:</b> rbtree.h:223</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_node_html"><div class="ttname"><a href="struct_etc_pal_rb_node.html">EtcPalRbNode</a></div><div class="ttdoc">A red-black tree node.</div><div class="ttdef"><b>Definition:</b> rbtree.h:196</div></div>
+<div class="ttc" id="astruct_etc_pal_rb_tree_html"><div class="ttname"><a href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a></div><div class="ttdoc">A red-black tree.</div><div class="ttdef"><b>Definition:</b> rbtree.h:208</div></div>
+</div><!-- fragment --> <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree node.  <a href="struct_etc_pal_rb_node.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree.  <a href="struct_etc_pal_rb_tree.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree iterator.  <a href="struct_etc_pal_rb_iter.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga347976360fdafc669aab59abc1ff7d73"><td class="memItemLeft" align="right" valign="top"><a id="ga347976360fdafc669aab59abc1ff7d73"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga347976360fdafc669aab59abc1ff7d73">ETCPAL_RB_ITER_MAX_HEIGHT</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ga347976360fdafc669aab59abc1ff7d73"><td class="mdescLeft">&#160;</td><td class="mdescRight">The tallest allowable tree that can be iterated over. <br /></td></tr>
+<tr class="separator:ga347976360fdafc669aab59abc1ff7d73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa">EtcPalRbIter</a></td></tr>
+<tr class="memdesc:ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">A red-black tree iterator.  <a href="group__etcpal__rbtree.html#ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa">More...</a><br /></td></tr>
+<tr class="separator:ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gabda4a5620ad7cddcc09ef71d4d8222c7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gabda4a5620ad7cddcc09ef71d4d8222c7">etcpal_rbtree_node_cmp_ptr_cb</a> (const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, const void *a, const void *b)</td></tr>
+<tr class="memdesc:gabda4a5620ad7cddcc09ef71d4d8222c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default node comparison callback.  <a href="group__etcpal__rbtree.html#gabda4a5620ad7cddcc09ef71d4d8222c7">More...</a><br /></td></tr>
+<tr class="separator:gabda4a5620ad7cddcc09ef71d4d8222c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2041c16a4a4e745ccadd180cbb8bc93f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga2041c16a4a4e745ccadd180cbb8bc93f">etcpal_rbtree_node_dealloc_cb</a> (const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, <a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *node)</td></tr>
+<tr class="memdesc:ga2041c16a4a4e745ccadd180cbb8bc93f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default node deallocation callback.  <a href="group__etcpal__rbtree.html#ga2041c16a4a4e745ccadd180cbb8bc93f">More...</a><br /></td></tr>
+<tr class="separator:ga2041c16a4a4e745ccadd180cbb8bc93f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf901899ba23ab79070d5ed1440440eb2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gaf901899ba23ab79070d5ed1440440eb2">etcpal_rbnode_init</a> (<a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *self, void *value)</td></tr>
+<tr class="memdesc:gaf901899ba23ab79070d5ed1440440eb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a red-black tree node.  <a href="group__etcpal__rbtree.html#gaf901899ba23ab79070d5ed1440440eb2">More...</a><br /></td></tr>
+<tr class="separator:gaf901899ba23ab79070d5ed1440440eb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab0a4770c9d96c8eddd30684490b2d587"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587">etcpal_rbtree_init</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">EtcPalRbTreeNodeCmpFunc</a> node_cmp_cb, <a class="el" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">EtcPalRbNodeAllocFunc</a> alloc_f, <a class="el" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">EtcPalRbNodeDeallocFunc</a> dealloc_f)</td></tr>
+<tr class="memdesc:gab0a4770c9d96c8eddd30684490b2d587"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a red-black tree node.  <a href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587">More...</a><br /></td></tr>
+<tr class="separator:gab0a4770c9d96c8eddd30684490b2d587"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4d3d93cb20130fc9d34fc13d1ea92316"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">etcpal_rbtree_find</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, const void *value)</td></tr>
+<tr class="memdesc:ga4d3d93cb20130fc9d34fc13d1ea92316"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a value in a red-black tree.  <a href="group__etcpal__rbtree.html#ga4d3d93cb20130fc9d34fc13d1ea92316">More...</a><br /></td></tr>
+<tr class="separator:ga4d3d93cb20130fc9d34fc13d1ea92316"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae87df653a152c3942b54a8f8e7c235c6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">etcpal_rbtree_insert</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, void *value)</td></tr>
+<tr class="memdesc:gae87df653a152c3942b54a8f8e7c235c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new value into a red-black tree.  <a href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6">More...</a><br /></td></tr>
+<tr class="separator:gae87df653a152c3942b54a8f8e7c235c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga46d80469b4a700447b2721589cbec3d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga46d80469b4a700447b2721589cbec3d9">etcpal_rbtree_remove</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, const void *value)</td></tr>
+<tr class="memdesc:ga46d80469b4a700447b2721589cbec3d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a value from a red-black tree.  <a href="group__etcpal__rbtree.html#ga46d80469b4a700447b2721589cbec3d9">More...</a><br /></td></tr>
+<tr class="separator:ga46d80469b4a700447b2721589cbec3d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1347a53b2f8505e22707702f490949e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga1347a53b2f8505e22707702f490949e8">etcpal_rbtree_clear</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self)</td></tr>
+<tr class="memdesc:ga1347a53b2f8505e22707702f490949e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear all values from a red-black tree.  <a href="group__etcpal__rbtree.html#ga1347a53b2f8505e22707702f490949e8">More...</a><br /></td></tr>
+<tr class="separator:ga1347a53b2f8505e22707702f490949e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae0aa64287211d3858cef5d0a7cffb033"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">etcpal_rbtree_size</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self)</td></tr>
+<tr class="memdesc:gae0aa64287211d3858cef5d0a7cffb033"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current number of values in a red-black tree.  <a href="group__etcpal__rbtree.html#gae0aa64287211d3858cef5d0a7cffb033">More...</a><br /></td></tr>
+<tr class="separator:gae0aa64287211d3858cef5d0a7cffb033"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga036f8c0aea4ac2050bd2deb904affed6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga036f8c0aea4ac2050bd2deb904affed6">etcpal_rbtree_insert_node</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, <a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *node)</td></tr>
+<tr class="memdesc:ga036f8c0aea4ac2050bd2deb904affed6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a node containing a new value into a red-black tree.  <a href="group__etcpal__rbtree.html#ga036f8c0aea4ac2050bd2deb904affed6">More...</a><br /></td></tr>
+<tr class="separator:ga036f8c0aea4ac2050bd2deb904affed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae9045e863548f8051541f3f054bbf4be"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gae9045e863548f8051541f3f054bbf4be">etcpal_rbtree_remove_with_cb</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, const void *value, <a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a> node_cb)</td></tr>
+<tr class="memdesc:gae9045e863548f8051541f3f054bbf4be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a value from a red-black tree, calling back into the application with the node and value being removed.  <a href="group__etcpal__rbtree.html#gae9045e863548f8051541f3f054bbf4be">More...</a><br /></td></tr>
+<tr class="separator:gae9045e863548f8051541f3f054bbf4be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2dfae49efd1e9a9dbd02635bdea8e73d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga2dfae49efd1e9a9dbd02635bdea8e73d">etcpal_rbtree_clear_with_cb</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, <a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a> node_cb)</td></tr>
+<tr class="memdesc:ga2dfae49efd1e9a9dbd02635bdea8e73d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear all values from a red-black tree, calling back into the application for each node and value being removed.  <a href="group__etcpal__rbtree.html#ga2dfae49efd1e9a9dbd02635bdea8e73d">More...</a><br /></td></tr>
+<tr class="separator:ga2dfae49efd1e9a9dbd02635bdea8e73d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3b194e280069ff3fbd105d9799dbea05"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga3b194e280069ff3fbd105d9799dbea05">etcpal_rbtree_test</a> (<a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, <a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *root)</td></tr>
+<tr class="memdesc:ga3b194e280069ff3fbd105d9799dbea05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the validity of a red-black tree.  <a href="group__etcpal__rbtree.html#ga3b194e280069ff3fbd105d9799dbea05">More...</a><br /></td></tr>
+<tr class="separator:ga3b194e280069ff3fbd105d9799dbea05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae7d2f565a40d1ab86873e7bc9c5c5c02"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gae7d2f565a40d1ab86873e7bc9c5c5c02">etcpal_rbiter_init</a> (<a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *self)</td></tr>
+<tr class="memdesc:gae7d2f565a40d1ab86873e7bc9c5c5c02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a red-black tree iterator.  <a href="group__etcpal__rbtree.html#gae7d2f565a40d1ab86873e7bc9c5c5c02">More...</a><br /></td></tr>
+<tr class="separator:gae7d2f565a40d1ab86873e7bc9c5c5c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1cd77fc10e7c983be2c12c5f14bc3721"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga1cd77fc10e7c983be2c12c5f14bc3721">etcpal_rbiter_first</a> (<a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *self, <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *tree)</td></tr>
+<tr class="memdesc:ga1cd77fc10e7c983be2c12c5f14bc3721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Point a red-black tree iterator at the first value in the tree.  <a href="group__etcpal__rbtree.html#ga1cd77fc10e7c983be2c12c5f14bc3721">More...</a><br /></td></tr>
+<tr class="separator:ga1cd77fc10e7c983be2c12c5f14bc3721"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6f1279b41c60d92a808cc9b364f9eac9"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga6f1279b41c60d92a808cc9b364f9eac9">etcpal_rbiter_last</a> (<a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *self, <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *tree)</td></tr>
+<tr class="memdesc:ga6f1279b41c60d92a808cc9b364f9eac9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Point a red-black tree iterator at the last value in the tree.  <a href="group__etcpal__rbtree.html#ga6f1279b41c60d92a808cc9b364f9eac9">More...</a><br /></td></tr>
+<tr class="separator:ga6f1279b41c60d92a808cc9b364f9eac9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa3804b7146d1e8a72e4139a0f4d6507e"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e">etcpal_rbiter_next</a> (<a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *self)</td></tr>
+<tr class="memdesc:gaa3804b7146d1e8a72e4139a0f4d6507e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Advance a red-black tree iterator.  <a href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e">More...</a><br /></td></tr>
+<tr class="separator:gaa3804b7146d1e8a72e4139a0f4d6507e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad093318703094fd4bdb9ecb09443241d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gad093318703094fd4bdb9ecb09443241d">etcpal_rbiter_prev</a> (<a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *self)</td></tr>
+<tr class="memdesc:gad093318703094fd4bdb9ecb09443241d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reverse-advance a red-black tree iterator.  <a href="group__etcpal__rbtree.html#gad093318703094fd4bdb9ecb09443241d">More...</a><br /></td></tr>
+<tr class="separator:gad093318703094fd4bdb9ecb09443241d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga44f891bf17cabdfba6bf7748c02fe52b"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga44f891bf17cabdfba6bf7748c02fe52b">etcpal_rbiter_lower_bound</a> (<a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *self, <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *tree, const void *value)</td></tr>
+<tr class="memdesc:ga44f891bf17cabdfba6bf7748c02fe52b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Point a red-black tree iterator to the lower-bound of a value.  <a href="group__etcpal__rbtree.html#ga44f891bf17cabdfba6bf7748c02fe52b">More...</a><br /></td></tr>
+<tr class="separator:ga44f891bf17cabdfba6bf7748c02fe52b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga260091c3e633a8b5e3db3625e615032d"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga260091c3e633a8b5e3db3625e615032d">etcpal_rbiter_upper_bound</a> (<a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *self, <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *tree, const void *value)</td></tr>
+<tr class="memdesc:ga260091c3e633a8b5e3db3625e615032d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Point a red-black tree iterator to the upper-bound of a value.  <a href="group__etcpal__rbtree.html#ga260091c3e633a8b5e3db3625e615032d">More...</a><br /></td></tr>
+<tr class="separator:ga260091c3e633a8b5e3db3625e615032d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Callback Functions</h2></td></tr>
+<tr class="memitem:ga0f5fd5d6b8505a1e408a8f22fb3ede2b"><td class="memItemLeft" align="right" valign="top">typedef int(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">EtcPalRbTreeNodeCmpFunc</a>) (const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, const void *value_a, const void *value_b)</td></tr>
+<tr class="memdesc:ga0f5fd5d6b8505a1e408a8f22fb3ede2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type that compares two value instances contained in a tree.  <a href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">More...</a><br /></td></tr>
+<tr class="separator:ga0f5fd5d6b8505a1e408a8f22fb3ede2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6687d480b9c3f3583303d537190a47de"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a>) (const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, <a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *node)</td></tr>
+<tr class="memdesc:ga6687d480b9c3f3583303d537190a47de"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type to be called for each node in a tree.  <a href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">More...</a><br /></td></tr>
+<tr class="separator:ga6687d480b9c3f3583303d537190a47de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7e715765639ff5a6b66065858541b083"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">EtcPalRbNodeAllocFunc</a>) (void)</td></tr>
+<tr class="memdesc:ga7e715765639ff5a6b66065858541b083"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type to allocate a new node.  <a href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">More...</a><br /></td></tr>
+<tr class="separator:ga7e715765639ff5a6b66065858541b083"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab04d15dd62a53956d6ea4b1e5dcbe930"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">EtcPalRbNodeDeallocFunc</a>) (<a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *node)</td></tr>
+<tr class="memdesc:gab04d15dd62a53956d6ea4b1e5dcbe930"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function type to deallocate a node.  <a href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">More...</a><br /></td></tr>
+<tr class="separator:gab04d15dd62a53956d6ea4b1e5dcbe930"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8ad45ac8f03087fbcb6f3ce3a7e4d6fa">&#9670;&nbsp;</a></span>EtcPalRbIter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> <a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A red-black tree iterator. </p>
+<p>Initialize using <a class="el" href="group__etcpal__rbtree.html#gae7d2f565a40d1ab86873e7bc9c5c5c02" title="Initialize a red-black tree iterator.">etcpal_rbiter_init()</a> before carrying out any other operation on the iterator. </p>
+
+</div>
+</div>
+<a id="ga7e715765639ff5a6b66065858541b083"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7e715765639ff5a6b66065858541b083">&#9670;&nbsp;</a></span>EtcPalRbNodeAllocFunc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>*(* EtcPalRbNodeAllocFunc) (void)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type to allocate a new node. </p>
+<p>The user provides the allocation method for new nodes, whether this be malloc() or some more static method. A function of this type is saved by the tree struct and called on a call to <a class="el" href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6" title="Insert a new value into a red-black tree.">etcpal_rbtree_insert()</a>.</p>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly allocated node. </dd></dl>
+
+</div>
+</div>
+<a id="gab04d15dd62a53956d6ea4b1e5dcbe930"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab04d15dd62a53956d6ea4b1e5dcbe930">&#9670;&nbsp;</a></span>EtcPalRbNodeDeallocFunc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* EtcPalRbNodeDeallocFunc) (<a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *node)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type to deallocate a node. </p>
+<p>The user provides the deallocation method for nodes, whether this be free() or some more static method. A function of this type is saved by the tree struct and called on calls to <a class="el" href="group__etcpal__rbtree.html#ga46d80469b4a700447b2721589cbec3d9" title="Remove a value from a red-black tree.">etcpal_rbtree_remove()</a> and <a class="el" href="group__etcpal__rbtree.html#ga1347a53b2f8505e22707702f490949e8" title="Clear all values from a red-black tree.">etcpal_rbtree_clear()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">node</td><td>Pointer to node to deallocate. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga0f5fd5d6b8505a1e408a8f22fb3ede2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">&#9670;&nbsp;</a></span>EtcPalRbTreeNodeCmpFunc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef int(* EtcPalRbTreeNodeCmpFunc) (const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, const void *value_a, const void *value_b)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type that compares two value instances contained in a tree. </p>
+<p>A default, <a class="el" href="group__etcpal__rbtree.html#gabda4a5620ad7cddcc09ef71d4d8222c7" title="The default node comparison callback.">etcpal_rbtree_node_cmp_ptr_cb()</a>, is provided which simply compares the pointer (address) of each value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree in which two values are being compared. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value_a</td><td>The first node being compared. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value_b</td><td>The second node being compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>&lt; 0: value_a is less than value_b </dd>
+<dd>
+0: value_a is equal to value_b </dd>
+<dd>
+&gt; 0: value_a is greater than value_b </dd></dl>
+
+</div>
+</div>
+<a id="ga6687d480b9c3f3583303d537190a47de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6687d480b9c3f3583303d537190a47de">&#9670;&nbsp;</a></span>EtcPalRbTreeNodeFunc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* EtcPalRbTreeNodeFunc) (const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *self, <a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *node)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function type to be called for each node in a tree. </p>
+<p>Usually provided on a tree-wide clear or destroy operation; in this case, it should provide any deallocation necessary for the node structure and its value. A default, <a class="el" href="group__etcpal__rbtree.html#ga2041c16a4a4e745ccadd180cbb8bc93f" title="The default node deallocation callback.">etcpal_rbtree_node_dealloc_cb()</a>, is provided which simply calls the tree's <a class="el" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930" title="A function type to deallocate a node.">EtcPalRbNodeDeallocFunc</a> on the node.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree in which the node resides. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node</td><td>The node for which an action should be performed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga1cd77fc10e7c983be2c12c5f14bc3721"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1cd77fc10e7c983be2c12c5f14bc3721">&#9670;&nbsp;</a></span>etcpal_rbiter_first()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* etcpal_rbiter_first </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>tree</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Point a red-black tree iterator at the first value in the tree. </p>
+<p>The first value is the lowest, as determined by the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a>. Use <a class="el" href="group__etcpal__rbtree.html#gaa3804b7146d1e8a72e4139a0f4d6507e" title="Advance a red-black tree iterator.">etcpal_rbiter_next()</a> to get the next higher value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to point at the first value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td>Tree of which to get the first value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the first value or NULL (the tree was empty or invalid). </dd></dl>
+
+</div>
+</div>
+<a id="gae7d2f565a40d1ab86873e7bc9c5c5c02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae7d2f565a40d1ab86873e7bc9c5c5c02">&#9670;&nbsp;</a></span>etcpal_rbiter_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a>* etcpal_rbiter_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a red-black tree iterator. </p>
+<p>This function must be called on a new iterator before using any of the other etcpal_rbiter_* functions on it.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The iterator to be initialized. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the iterator that was initialized. </dd></dl>
+
+</div>
+</div>
+<a id="ga6f1279b41c60d92a808cc9b364f9eac9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f1279b41c60d92a808cc9b364f9eac9">&#9670;&nbsp;</a></span>etcpal_rbiter_last()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* etcpal_rbiter_last </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>tree</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Point a red-black tree iterator at the last value in the tree. </p>
+<p>The last value is the highest, as determined by the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a>. Use <a class="el" href="group__etcpal__rbtree.html#gad093318703094fd4bdb9ecb09443241d" title="Reverse-advance a red-black tree iterator.">etcpal_rbiter_prev()</a> to get the next lower value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to point at the last value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td>Tree of which to get the last value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the last value or NULL (the tree was empty or invalid). </dd></dl>
+
+</div>
+</div>
+<a id="ga44f891bf17cabdfba6bf7748c02fe52b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga44f891bf17cabdfba6bf7748c02fe52b">&#9670;&nbsp;</a></span>etcpal_rbiter_lower_bound()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* etcpal_rbiter_lower_bound </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>tree</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Point a red-black tree iterator to the lower-bound of a value. </p>
+<p>Gets the first value in the tree that is not considered to go before the given value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to modify. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td>Tree of which to get the lower bound. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>The value to compare against to determine the lower bound. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the lower bound value, or NULL (the end of the tree has been reached). </dd></dl>
+
+</div>
+</div>
+<a id="gaa3804b7146d1e8a72e4139a0f4d6507e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa3804b7146d1e8a72e4139a0f4d6507e">&#9670;&nbsp;</a></span>etcpal_rbiter_next()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* etcpal_rbiter_next </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Advance a red-black tree iterator. </p>
+<p>Gets the next higher value in the tree as determined by the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to advance. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to next higher value, or NULL (the end of the tree has been reached). </dd></dl>
+
+</div>
+</div>
+<a id="gad093318703094fd4bdb9ecb09443241d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad093318703094fd4bdb9ecb09443241d">&#9670;&nbsp;</a></span>etcpal_rbiter_prev()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* etcpal_rbiter_prev </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reverse-advance a red-black tree iterator. </p>
+<p>Gets the next lower value in the tree as determined by the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to reverse-advance. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to next lower value, or NULL (the beginning of the tree has been reached). </dd></dl>
+
+</div>
+</div>
+<a id="ga260091c3e633a8b5e3db3625e615032d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga260091c3e633a8b5e3db3625e615032d">&#9670;&nbsp;</a></span>etcpal_rbiter_upper_bound()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* etcpal_rbiter_upper_bound </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_iter.html">EtcPalRbIter</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>tree</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Point a red-black tree iterator to the upper-bound of a value. </p>
+<p>Gets the first value in the tree that is considered to go after the given value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Iterator to modify. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tree</td><td>Tree of which to get the upper bound. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>The value to compare against to determine the upper bound. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the upper bound value, or NULL (the end of the tree has been reached). </dd></dl>
+
+</div>
+</div>
+<a id="gaf901899ba23ab79070d5ed1440440eb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf901899ba23ab79070d5ed1440440eb2">&#9670;&nbsp;</a></span>etcpal_rbnode_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a>* etcpal_rbnode_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a red-black tree node. </p>
+<p>This function must be called on a new node before inserting it manually using <a class="el" href="group__etcpal__rbtree.html#ga036f8c0aea4ac2050bd2deb904affed6" title="Insert a node containing a new value into a red-black tree.">etcpal_rbtree_insert_node()</a>. When using <a class="el" href="group__etcpal__rbtree.html#gae87df653a152c3942b54a8f8e7c235c6" title="Insert a new value into a red-black tree.">etcpal_rbtree_insert()</a>, this function is called on the new node automatically.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The node to be initialized. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Pointer to the value to assign to the node. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the node that was initialized. </dd></dl>
+
+</div>
+</div>
+<a id="ga1347a53b2f8505e22707702f490949e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1347a53b2f8505e22707702f490949e8">&#9670;&nbsp;</a></span>etcpal_rbtree_clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_rbtree_clear </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clear all values from a red-black tree. </p>
+<p>The node memory is deallocated using the <a class="el" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930" title="A function type to deallocate a node.">EtcPalRbNodeDeallocFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a>; the user is responsible for deallocating the value memory.</p>
+<p>If this function returns <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>, all iterators created using the etcpal_rbiter_*() functions are invalidated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree to clear. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The tree was cleared. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd></dl>
+
+</div>
+</div>
+<a id="ga2dfae49efd1e9a9dbd02635bdea8e73d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2dfae49efd1e9a9dbd02635bdea8e73d">&#9670;&nbsp;</a></span>etcpal_rbtree_clear_with_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_rbtree_clear_with_cb </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a>&#160;</td>
+          <td class="paramname"><em>node_cb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clear all values from a red-black tree, calling back into the application for each node and value being removed. </p>
+<p>The user provides a <a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de" title="A function type to be called for each node in a tree.">EtcPalRbTreeNodeFunc</a> callback function which is called for each node in the tree. The user is responsible for deallocating both the node and value memory.</p>
+<p>If this function returns <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>, all iterators created using the etcpal_rbiter_*() functions are invalidated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree to clear. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_cb</td><td>Callback function to call with each node and value being removed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The tree was cleared. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd></dl>
+
+</div>
+</div>
+<a id="ga4d3d93cb20130fc9d34fc13d1ea92316"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4d3d93cb20130fc9d34fc13d1ea92316">&#9670;&nbsp;</a></span>etcpal_rbtree_find()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* etcpal_rbtree_find </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Find a value in a red-black tree. </p>
+<p>Uses the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a> to compare values. Lookup guaranteed in log(n) time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree in which to find the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to find. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the value (value found) or NULL (value not found). </dd></dl>
+
+</div>
+</div>
+<a id="gab0a4770c9d96c8eddd30684490b2d587"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab0a4770c9d96c8eddd30684490b2d587">&#9670;&nbsp;</a></span>etcpal_rbtree_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a>* etcpal_rbtree_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b">EtcPalRbTreeNodeCmpFunc</a>&#160;</td>
+          <td class="paramname"><em>node_cmp_cb</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083">EtcPalRbNodeAllocFunc</a>&#160;</td>
+          <td class="paramname"><em>alloc_f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930">EtcPalRbNodeDeallocFunc</a>&#160;</td>
+          <td class="paramname"><em>dealloc_f</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a red-black tree node. </p>
+<p>This function must be called on a new red-black tree before performing any other operations on it.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree to be initialized. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_cmp_cb</td><td>A function to use for comparing values in the tree. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alloc_f</td><td>A function to use for allocating new node structures. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dealloc_f</td><td>A function to use for deallocating node structures. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the tree that was initialized. </dd></dl>
+
+</div>
+</div>
+<a id="gae87df653a152c3942b54a8f8e7c235c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae87df653a152c3942b54a8f8e7c235c6">&#9670;&nbsp;</a></span>etcpal_rbtree_insert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_rbtree_insert </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert a new value into a red-black tree. </p>
+<p>If the value did not already exist in the tree, a new node is allocated using the <a class="el" href="group__etcpal__rbtree.html#ga7e715765639ff5a6b66065858541b083" title="A function type to allocate a new node.">EtcPalRbNodeAllocFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a>. Uses the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a> to compare values. Insertion guaranteed in log(n) time.</p>
+<p>If this function returns <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>, all iterators created using the etcpal_rbiter_*() functions are invalidated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree in which to insert the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to insert. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: the value was inserted. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d" title="The item being created already exists.">kEtcPalErrExists</a>: the value already existed in the tree. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afad16b0fe51e8664f8b30b740ea1e51599" title="A dynamic memory allocation failed, or there is no space left in a statically allocated array.">kEtcPalErrNoMem</a>: Couldn't allocate new node. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd></dl>
+
+</div>
+</div>
+<a id="ga036f8c0aea4ac2050bd2deb904affed6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga036f8c0aea4ac2050bd2deb904affed6">&#9670;&nbsp;</a></span>etcpal_rbtree_insert_node()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_rbtree_insert_node </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *&#160;</td>
+          <td class="paramname"><em>node</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Insert a node containing a new value into a red-black tree. </p>
+<p>The node is supplied by the caller and its memory must remain valid as long as it remains in the tree. Uses the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a> to compare values. Insertion guaranteed in log(n) time.</p>
+<p>If this function returns <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>, all iterators created using the etcpal_rbiter_*() functions are invalidated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree in which to insert the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node</td><td>Node containing value to insert. Must have been previously initialized using <a class="el" href="group__etcpal__rbtree.html#gaf901899ba23ab79070d5ed1440440eb2" title="Initialize a red-black tree node.">etcpal_rbnode_init()</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The value was inserted. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afaeab0ae4d277d52dc56a1d78f81868c2d" title="The item being created already exists.">kEtcPalErrExists</a>: The value already existed in the tree. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd></dl>
+
+</div>
+</div>
+<a id="gabda4a5620ad7cddcc09ef71d4d8222c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabda4a5620ad7cddcc09ef71d4d8222c7">&#9670;&nbsp;</a></span>etcpal_rbtree_node_cmp_ptr_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int etcpal_rbtree_node_cmp_ptr_cb </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The default node comparison callback. </p>
+<p>This function can be supplied as an argument to any function that takes a <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a>. Simply compares the pointer addresses of the two node values. </p>
+
+</div>
+</div>
+<a id="ga2041c16a4a4e745ccadd180cbb8bc93f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2041c16a4a4e745ccadd180cbb8bc93f">&#9670;&nbsp;</a></span>etcpal_rbtree_node_dealloc_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_rbtree_node_dealloc_cb </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *&#160;</td>
+          <td class="paramname"><em>node</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The default node deallocation callback. </p>
+<p>This function can be supplied as an argument to any function that takes a <a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de" title="A function type to be called for each node in a tree.">EtcPalRbTreeNodeFunc</a>. Simply deallocates the node using the tree's dealloc_f. </p>
+
+</div>
+</div>
+<a id="ga46d80469b4a700447b2721589cbec3d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga46d80469b4a700447b2721589cbec3d9">&#9670;&nbsp;</a></span>etcpal_rbtree_remove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_rbtree_remove </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove a value from a red-black tree. </p>
+<p>The node memory is deallocated using the <a class="el" href="group__etcpal__rbtree.html#gab04d15dd62a53956d6ea4b1e5dcbe930" title="A function type to deallocate a node.">EtcPalRbNodeDeallocFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a>; the user is responsible for deallocating the value memory. Uses the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a> to compare values. Removal guaranteed in log(n) time.</p>
+<p>If this function returns <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>, all iterators created using the etcpal_rbiter_*() functions are invalidated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree from which to remove the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to remove. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The value was removed. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: The value did not exist in the tree. </dd></dl>
+
+</div>
+</div>
+<a id="gae9045e863548f8051541f3f054bbf4be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae9045e863548f8051541f3f054bbf4be">&#9670;&nbsp;</a></span>etcpal_rbtree_remove_with_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_rbtree_remove_with_cb </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de">EtcPalRbTreeNodeFunc</a>&#160;</td>
+          <td class="paramname"><em>node_cb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Remove a value from a red-black tree, calling back into the application with the node and value being removed. </p>
+<p>The user provides a <a class="el" href="group__etcpal__rbtree.html#ga6687d480b9c3f3583303d537190a47de" title="A function type to be called for each node in a tree.">EtcPalRbTreeNodeFunc</a> callback function and is responsible for deallocating both the node and value memory. Uses the <a class="el" href="group__etcpal__rbtree.html#ga0f5fd5d6b8505a1e408a8f22fb3ede2b" title="A function type that compares two value instances contained in a tree.">EtcPalRbTreeNodeCmpFunc</a> provided in <a class="el" href="group__etcpal__rbtree.html#gab0a4770c9d96c8eddd30684490b2d587" title="Initialize a red-black tree node.">etcpal_rbtree_init()</a> to compare values. Removal guaranteed in log(n) time.</p>
+<p>If this function returns <a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>, all iterators created using the etcpal_rbiter_*() functions are invalidated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree from which to remove the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to remove. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">node_cb</td><td>Callback function to call with the node and value being removed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The value was removed. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument provided. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa62c704cfc2d72f1fa91c04efe508c60f" title="An identifier or handle passed to a function was not valid or not previously initialized.">kEtcPalErrNotFound</a>: The value did not exist in the tree. </dd></dl>
+
+</div>
+</div>
+<a id="gae0aa64287211d3858cef5d0a7cffb033"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae0aa64287211d3858cef5d0a7cffb033">&#9670;&nbsp;</a></span>etcpal_rbtree_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t etcpal_rbtree_size </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current number of values in a red-black tree. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>The tree of which to get the size. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of values currently in the tree. </dd></dl>
+
+</div>
+</div>
+<a id="ga3b194e280069ff3fbd105d9799dbea05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3b194e280069ff3fbd105d9799dbea05">&#9670;&nbsp;</a></span>etcpal_rbtree_test()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int etcpal_rbtree_test </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_tree.html">EtcPalRbTree</a> *&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_rb_node.html">EtcPalRbNode</a> *&#160;</td>
+          <td class="paramname"><em>root</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test the validity of a red-black tree. </p>
+<p>A debugging function; tests that both basic binary tree rules and specific red-black rules are not violated.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">self</td><td>Tree to test. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>Node at which to start the test. All nodes beneath this node will be tested. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The "black height" of the tree; the number of black nodes present in the traversal from the root to each leaf. A valid red-black tree requires this number to be the same for every possible traversal. </dd>
+<dd>
+0: Invalid tree. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

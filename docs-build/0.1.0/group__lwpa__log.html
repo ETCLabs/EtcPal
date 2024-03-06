@@ -1,0 +1,917 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: lwpa_log</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.1.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__lwpa__log.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">lwpa_log<div class="ingroups"><a class="el" href="group__lwpa.html">lwpa</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>A platform-neutral module enabling applications and libraries to log messages in either or both of syslog-compliant and human-readable format. </p>
+<p>#include "lwpa_log.h"</p>
+<p>This module can be used in two ways. Applications can use the lightweight <a class="el" href="group__lwpa__log.html#ga2efb597d28fdda5796e410b43f5a631d" title="Create a log message with syslog header in the given buffer.">lwpa_create_syslog_str()</a> and <a class="el" href="group__lwpa__log.html#ga92091520538853c272084261bbb8bf21" title="Create a log message with a human-readable header in the given buffer.">lwpa_create_human_log_str()</a> to create log messages with a header defined by the Syslog protocol or with a human-readable header defined by ETC.</p>
+<p>This module can also be used to enable other libraries to log messages via a callback function. Library functions can take a set of parameters (lwpa_log_params) on initialization. They use these parameters and the <a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> or <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a> functions to call back to the application to log messages. The application can then decide what to do with these log messages (print to console, syslog, etc.) </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters which represent the current local time with millisecond resolution.  <a href="struct_lwpa_log_time_params.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters for the syslog header.  <a href="struct_lwpa_syslog_params.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters used for the lwpa_*log() functions.  <a href="struct_lwpa_log_params.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga9ddc5e6a9583f9d8d12e9fddd5973461"><td class="memItemLeft" align="right" valign="top"><a id="ga9ddc5e6a9583f9d8d12e9fddd5973461"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga9ddc5e6a9583f9d8d12e9fddd5973461">LWPA_LOG_NFACILITIES</a>&#160;&#160;&#160;24</td></tr>
+<tr class="memdesc:ga9ddc5e6a9583f9d8d12e9fddd5973461"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of facilities. <br /></td></tr>
+<tr class="separator:ga9ddc5e6a9583f9d8d12e9fddd5973461"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a91428444c93775473c21ecdefac13b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_LOG_FACMASK</b></td></tr>
+<tr class="separator:ga6a91428444c93775473c21ecdefac13b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf9f1cb4a7433caa0553fe6470cd16fb2"><td class="memItemLeft" align="right" valign="top"><a id="gaf9f1cb4a7433caa0553fe6470cd16fb2"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_LOG_FAC</b>(p)&#160;&#160;&#160;(((p)&amp;LWPA_LOG_FACMASK) &gt;&gt; 3)</td></tr>
+<tr class="separator:gaf9f1cb4a7433caa0553fe6470cd16fb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6ea5eb6f13638339145836beb5ff7aab"><td class="memItemLeft" align="right" valign="top"><a id="ga6ea5eb6f13638339145836beb5ff7aab"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_LOG_PRIMASK</b>&#160;&#160;&#160;0x07 /* mask to extract priority part (internal) */</td></tr>
+<tr class="separator:ga6ea5eb6f13638339145836beb5ff7aab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaaac3641e58595835dedb9b49b8de78fd"><td class="memItemLeft" align="right" valign="top"><a id="gaaac3641e58595835dedb9b49b8de78fd"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_LOG_PRI</b>(p)&#160;&#160;&#160;((p)&amp;LWPA_LOG_PRIMASK) /* extract priority */</td></tr>
+<tr class="separator:gaaac3641e58595835dedb9b49b8de78fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3be96f69cff9df4f31512eb1efb0b59b"><td class="memItemLeft" align="right" valign="top"><a id="ga3be96f69cff9df4f31512eb1efb0b59b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_LOG_MAKEPRI</b>(fac,  pri)&#160;&#160;&#160;(((fac) &lt;&lt; 3) | (pri))</td></tr>
+<tr class="separator:ga3be96f69cff9df4f31512eb1efb0b59b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaff0e324795472338c1c7a85a92efe494"><td class="memItemLeft" align="right" valign="top"><a id="gaff0e324795472338c1c7a85a92efe494"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_LOG_MASK</b>(pri)&#160;&#160;&#160;(1 &lt;&lt; (pri)) /* mask for one priority */</td></tr>
+<tr class="separator:gaff0e324795472338c1c7a85a92efe494"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga234dbf0ed299bc68375d2c0f79eb9a4e"><td class="memItemLeft" align="right" valign="top"><a id="ga234dbf0ed299bc68375d2c0f79eb9a4e"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_LOG_UPTO</b>(pri)&#160;&#160;&#160;  ((1 &lt;&lt; ((pri) + 1)) - 1) /* all priorities through pri */</td></tr>
+<tr class="separator:ga234dbf0ed299bc68375d2c0f79eb9a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac283f15a55e1f885b4a284cdf749a318"><td class="memItemLeft" align="right" valign="top"><a id="gac283f15a55e1f885b4a284cdf749a318"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gac283f15a55e1f885b4a284cdf749a318">LWPA_LOG_HOSTNAME_MAX_LEN</a>&#160;&#160;&#160;256</td></tr>
+<tr class="memdesc:gac283f15a55e1f885b4a284cdf749a318"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max length of the hostname param. <br /></td></tr>
+<tr class="separator:gac283f15a55e1f885b4a284cdf749a318"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaea6845af17f90339030b7f1aed4248b6"><td class="memItemLeft" align="right" valign="top"><a id="gaea6845af17f90339030b7f1aed4248b6"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaea6845af17f90339030b7f1aed4248b6">LWPA_LOG_APP_NAME_MAX_LEN</a>&#160;&#160;&#160;49</td></tr>
+<tr class="memdesc:gaea6845af17f90339030b7f1aed4248b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max length of the app_name param. <br /></td></tr>
+<tr class="separator:gaea6845af17f90339030b7f1aed4248b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf444c37d4b37d0d12a01cdd900c54343"><td class="memItemLeft" align="right" valign="top"><a id="gaf444c37d4b37d0d12a01cdd900c54343"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaf444c37d4b37d0d12a01cdd900c54343">LWPA_LOG_PROCID_MAX_LEN</a>&#160;&#160;&#160;129</td></tr>
+<tr class="memdesc:gaf444c37d4b37d0d12a01cdd900c54343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max length of the procid param. <br /></td></tr>
+<tr class="separator:gaf444c37d4b37d0d12a01cdd900c54343"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3c6145528eb237caccd1e364ed0574c9"><td class="memItemLeft" align="right" valign="top"><a id="ga3c6145528eb237caccd1e364ed0574c9"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga3c6145528eb237caccd1e364ed0574c9">LWPA_LOG_MSG_MAX_LEN</a>&#160;&#160;&#160;480</td></tr>
+<tr class="memdesc:ga3c6145528eb237caccd1e364ed0574c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max length of a log message string passed to <a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> or <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a>. <br /></td></tr>
+<tr class="separator:ga3c6145528eb237caccd1e364ed0574c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae9a41c527892d020281abfb31f4f01e0"><td class="memItemLeft" align="right" valign="top"><a id="gae9a41c527892d020281abfb31f4f01e0"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gae9a41c527892d020281abfb31f4f01e0">LWPA_LOG_TIMESTAMP_LEN</a>&#160;&#160;&#160;(10 /*Date*/ + 1 /*T*/ + 12 /*Time*/ + 6 /*Offset*/ + 1 /*Nullterm*/)</td></tr>
+<tr class="memdesc:gae9a41c527892d020281abfb31f4f01e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of the timestamp used in syslog and human-readable logging. <br /></td></tr>
+<tr class="separator:gae9a41c527892d020281abfb31f4f01e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaef6b15895880ea225057a79bbb120945"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaef6b15895880ea225057a79bbb120945">LWPA_SYSLOG_HEADER_MAX_LEN</a></td></tr>
+<tr class="memdesc:gaef6b15895880ea225057a79bbb120945"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of the syslog header.  <a href="group__lwpa__log.html#gaef6b15895880ea225057a79bbb120945">More...</a><br /></td></tr>
+<tr class="separator:gaef6b15895880ea225057a79bbb120945"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga98a9352b7969f965cf4c77af3c462f21"><td class="memItemLeft" align="right" valign="top"><a id="ga98a9352b7969f965cf4c77af3c462f21"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga98a9352b7969f965cf4c77af3c462f21">LWPA_SYSLOG_STR_MIN_LEN</a>&#160;&#160;&#160;<a class="el" href="group__lwpa__log.html#gaef6b15895880ea225057a79bbb120945">LWPA_SYSLOG_HEADER_MAX_LEN</a></td></tr>
+<tr class="memdesc:ga98a9352b7969f965cf4c77af3c462f21"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minimum length of a buffer passed to <a class="el" href="group__lwpa__log.html#ga2efb597d28fdda5796e410b43f5a631d" title="Create a log message with syslog header in the given buffer.">lwpa_create_syslog_str()</a>. <br /></td></tr>
+<tr class="separator:ga98a9352b7969f965cf4c77af3c462f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga794bc9c3568fda36ad6e26a790ae6195"><td class="memItemLeft" align="right" valign="top"><a id="ga794bc9c3568fda36ad6e26a790ae6195"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga794bc9c3568fda36ad6e26a790ae6195">LWPA_HUMAN_LOG_STR_MIN_LEN</a>&#160;&#160;&#160;<a class="el" href="group__lwpa__log.html#gae9a41c527892d020281abfb31f4f01e0">LWPA_LOG_TIMESTAMP_LEN</a></td></tr>
+<tr class="memdesc:ga794bc9c3568fda36ad6e26a790ae6195"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minimum length of a buffer passed to <a class="el" href="group__lwpa__log.html#ga92091520538853c272084261bbb8bf21" title="Create a log message with a human-readable header in the given buffer.">lwpa_create_human_log_str()</a>. <br /></td></tr>
+<tr class="separator:ga794bc9c3568fda36ad6e26a790ae6195"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8cd1e1b2619e012f10e62b91f3574e27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga8cd1e1b2619e012f10e62b91f3574e27">LWPA_SYSLOG_STR_MAX_LEN</a>&#160;&#160;&#160;(<a class="el" href="group__lwpa__log.html#gaef6b15895880ea225057a79bbb120945">LWPA_SYSLOG_HEADER_MAX_LEN</a> + <a class="el" href="group__lwpa__log.html#ga3c6145528eb237caccd1e364ed0574c9">LWPA_LOG_MSG_MAX_LEN</a>)</td></tr>
+<tr class="memdesc:ga8cd1e1b2619e012f10e62b91f3574e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of a syslog string that will be passed to an lwpa_log_callback function.  <a href="group__lwpa__log.html#ga8cd1e1b2619e012f10e62b91f3574e27">More...</a><br /></td></tr>
+<tr class="separator:ga8cd1e1b2619e012f10e62b91f3574e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0495001df9d738759753ecb7c9f4772a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga0495001df9d738759753ecb7c9f4772a">LWPA_HUMAN_LOG_STR_MAX_LEN</a>&#160;&#160;&#160;((<a class="el" href="group__lwpa__log.html#gae9a41c527892d020281abfb31f4f01e0">LWPA_LOG_TIMESTAMP_LEN</a> - 1) + 1 /*SP*/ + <a class="el" href="group__lwpa__log.html#ga3c6145528eb237caccd1e364ed0574c9">LWPA_LOG_MSG_MAX_LEN</a>)</td></tr>
+<tr class="memdesc:ga0495001df9d738759753ecb7c9f4772a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of a human-readable string that will be passed to an lwpa_log_callback function.  <a href="group__lwpa__log.html#ga0495001df9d738759753ecb7c9f4772a">More...</a><br /></td></tr>
+<tr class="separator:ga0495001df9d738759753ecb7c9f4772a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga95ca154d4628f93f75c65906cef7f1d6"><td class="memItemLeft" align="right" valign="top"><a id="ga95ca154d4628f93f75c65906cef7f1d6"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>lwpa_setlogmask</b>(logparamsptr,  newlogmask)&#160;&#160;&#160;((logparamsptr)-&gt;log_mask = newlogmask)</td></tr>
+<tr class="separator:ga95ca154d4628f93f75c65906cef7f1d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga69d9b8beecd18e0b90bf99d07cfa4ce9"><td class="memItemLeft" align="right" valign="top"><a id="ga69d9b8beecd18e0b90bf99d07cfa4ce9"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>lwpa_canlog</b>(logparamsptr,  pri)&#160;&#160;&#160;((LWPA_LOG_MASK(pri) &amp; (logparamsptr)-&gt;log_mask) != 0)</td></tr>
+<tr class="separator:ga69d9b8beecd18e0b90bf99d07cfa4ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga606f589b43fe2179920d524dd7fae794"><td class="memItemLeft" align="right" valign="top"><a id="ga606f589b43fe2179920d524dd7fae794"></a>
+typedef struct <a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga606f589b43fe2179920d524dd7fae794">LwpaLogTimeParams</a></td></tr>
+<tr class="memdesc:ga606f589b43fe2179920d524dd7fae794"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters which represent the current local time with millisecond resolution. <br /></td></tr>
+<tr class="separator:ga606f589b43fe2179920d524dd7fae794"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacd26df727c6a5f6d0d6fcfa4c2ac3755"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gacd26df727c6a5f6d0d6fcfa4c2ac3755">lwpa_log_callback</a>) (void *context, const char *syslog_str, const char *human_str, const char *raw_str)</td></tr>
+<tr class="memdesc:gacd26df727c6a5f6d0d6fcfa4c2ac3755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log callback function.  <a href="group__lwpa__log.html#gacd26df727c6a5f6d0d6fcfa4c2ac3755">More...</a><br /></td></tr>
+<tr class="separator:gacd26df727c6a5f6d0d6fcfa4c2ac3755"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga663d6e629850d5957be6634468f04755"><td class="memItemLeft" align="right" valign="top">typedef void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga663d6e629850d5957be6634468f04755">lwpa_log_time_fn</a>) (void *context, <a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *time_params)</td></tr>
+<tr class="memdesc:ga663d6e629850d5957be6634468f04755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time callback function.  <a href="group__lwpa__log.html#ga663d6e629850d5957be6634468f04755">More...</a><br /></td></tr>
+<tr class="separator:ga663d6e629850d5957be6634468f04755"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabdd66ba1cf4cf44332a3e6bf42605a00"><td class="memItemLeft" align="right" valign="top"><a id="gabdd66ba1cf4cf44332a3e6bf42605a00"></a>
+typedef struct <a class="el" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gabdd66ba1cf4cf44332a3e6bf42605a00">LwpaSyslogParams</a></td></tr>
+<tr class="memdesc:gabdd66ba1cf4cf44332a3e6bf42605a00"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters for the syslog header. <br /></td></tr>
+<tr class="separator:gabdd66ba1cf4cf44332a3e6bf42605a00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39f06f5905acfcf5c957112603eeb96c"><td class="memItemLeft" align="right" valign="top"><a id="ga39f06f5905acfcf5c957112603eeb96c"></a>
+typedef struct <a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga39f06f5905acfcf5c957112603eeb96c">LwpaLogParams</a></td></tr>
+<tr class="memdesc:ga39f06f5905acfcf5c957112603eeb96c"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters used for the lwpa_*log() functions. <br /></td></tr>
+<tr class="separator:ga39f06f5905acfcf5c957112603eeb96c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga87102d7ecdab1a3ba919bd750fae0507"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga87102d7ecdab1a3ba919bd750fae0507">lwpa_log_action_t</a> { <a class="el" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a408d0b541c1860eb8264be42f2d0d774">kLwpaLogCreateSyslog</a>
+, <a class="el" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a21fba732cbc622fce83415718e1fb8f9">kLwpaLogCreateHumanReadableLog</a>
+, <a class="el" href="group__lwpa__log.html#gga87102d7ecdab1a3ba919bd750fae0507a1c00ba8139d620d17be3b61a498232c5">kLwpaLogCreateBoth</a>
+ }</td></tr>
+<tr class="memdesc:ga87102d7ecdab1a3ba919bd750fae0507"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which types of log message(s) the <a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> and <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a> functions create.  <a href="group__lwpa__log.html#ga87102d7ecdab1a3ba919bd750fae0507">More...</a><br /></td></tr>
+<tr class="separator:ga87102d7ecdab1a3ba919bd750fae0507"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga2efb597d28fdda5796e410b43f5a631d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga2efb597d28fdda5796e410b43f5a631d">lwpa_create_syslog_str</a> (char *buf, size_t buflen, const <a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *time, const <a class="el" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a> *syslog_params, int pri, const char *format,...)</td></tr>
+<tr class="memdesc:ga2efb597d28fdda5796e410b43f5a631d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a log message with syslog header in the given buffer.  <a href="group__lwpa__log.html#ga2efb597d28fdda5796e410b43f5a631d">More...</a><br /></td></tr>
+<tr class="separator:ga2efb597d28fdda5796e410b43f5a631d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga92091520538853c272084261bbb8bf21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga92091520538853c272084261bbb8bf21">lwpa_create_human_log_str</a> (char *buf, size_t buflen, const <a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *time, const char *format,...)</td></tr>
+<tr class="memdesc:ga92091520538853c272084261bbb8bf21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a log message with a human-readable header in the given buffer.  <a href="group__lwpa__log.html#ga92091520538853c272084261bbb8bf21">More...</a><br /></td></tr>
+<tr class="separator:ga92091520538853c272084261bbb8bf21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2e1cd052c474bfbb33614a7d10b33bbb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga2e1cd052c474bfbb33614a7d10b33bbb">lwpa_sanitize_syslog_params</a> (<a class="el" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a> *params)</td></tr>
+<tr class="memdesc:ga2e1cd052c474bfbb33614a7d10b33bbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them if necessary).  <a href="group__lwpa__log.html#ga2e1cd052c474bfbb33614a7d10b33bbb">More...</a><br /></td></tr>
+<tr class="separator:ga2e1cd052c474bfbb33614a7d10b33bbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga745327935a6efcc73f2f5048757c6de1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga745327935a6efcc73f2f5048757c6de1">lwpa_validate_log_params</a> (<a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a> *params)</td></tr>
+<tr class="memdesc:ga745327935a6efcc73f2f5048757c6de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure that the given lwpa_log_params are valid.  <a href="group__lwpa__log.html#ga745327935a6efcc73f2f5048757c6de1">More...</a><br /></td></tr>
+<tr class="separator:ga745327935a6efcc73f2f5048757c6de1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6584e9d020e7cf99caaca6bf9acf81ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef">lwpa_log</a> (const <a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a> *params, int pri, const char *format,...)</td></tr>
+<tr class="memdesc:ga6584e9d020e7cf99caaca6bf9acf81ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message from a library module.  <a href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef">More...</a><br /></td></tr>
+<tr class="separator:ga6584e9d020e7cf99caaca6bf9acf81ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4d3b4176e7d17c30aaa9dd82b6c5c3da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da">lwpa_vlog</a> (const <a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a> *params, int pri, const char *format, va_list args)</td></tr>
+<tr class="memdesc:ga4d3b4176e7d17c30aaa9dd82b6c5c3da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message from a library module with the list of format arguments already generated.  <a href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da">More...</a><br /></td></tr>
+<tr class="separator:ga4d3b4176e7d17c30aaa9dd82b6c5c3da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Log Facility</h2></td></tr>
+<tr class="memitem:gaf25b2f84f136f35d7daf3bca75c09b39"><td class="memItemLeft" align="right" valign="top"><a id="gaf25b2f84f136f35d7daf3bca75c09b39"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaf25b2f84f136f35d7daf3bca75c09b39">LWPA_LOG_KERN</a>&#160;&#160;&#160;(0 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gaf25b2f84f136f35d7daf3bca75c09b39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kernel messages. <br /></td></tr>
+<tr class="separator:gaf25b2f84f136f35d7daf3bca75c09b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga08e3706b92e3aeec1c44769c42fc18b5"><td class="memItemLeft" align="right" valign="top"><a id="ga08e3706b92e3aeec1c44769c42fc18b5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga08e3706b92e3aeec1c44769c42fc18b5">LWPA_LOG_USER</a>&#160;&#160;&#160;(1 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga08e3706b92e3aeec1c44769c42fc18b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random user-level messages. <br /></td></tr>
+<tr class="separator:ga08e3706b92e3aeec1c44769c42fc18b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga04d4892d83f2084956ebe6ca8c479500"><td class="memItemLeft" align="right" valign="top"><a id="ga04d4892d83f2084956ebe6ca8c479500"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga04d4892d83f2084956ebe6ca8c479500">LWPA_LOG_MAIL</a>&#160;&#160;&#160;(2 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga04d4892d83f2084956ebe6ca8c479500"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mail system. <br /></td></tr>
+<tr class="separator:ga04d4892d83f2084956ebe6ca8c479500"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaca7e4a2edd294cea9c23ebf18c881f41"><td class="memItemLeft" align="right" valign="top"><a id="gaca7e4a2edd294cea9c23ebf18c881f41"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaca7e4a2edd294cea9c23ebf18c881f41">LWPA_LOG_DAEMON</a>&#160;&#160;&#160;(3 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gaca7e4a2edd294cea9c23ebf18c881f41"><td class="mdescLeft">&#160;</td><td class="mdescRight">System daemons. <br /></td></tr>
+<tr class="separator:gaca7e4a2edd294cea9c23ebf18c881f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0e5d159ba215deea5f706fa33d71738e"><td class="memItemLeft" align="right" valign="top"><a id="ga0e5d159ba215deea5f706fa33d71738e"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga0e5d159ba215deea5f706fa33d71738e">LWPA_LOG_AUTH</a>&#160;&#160;&#160;(4 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga0e5d159ba215deea5f706fa33d71738e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Security/authorization messages. <br /></td></tr>
+<tr class="separator:ga0e5d159ba215deea5f706fa33d71738e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2441590d39aaca7c88136145b0eb880b"><td class="memItemLeft" align="right" valign="top"><a id="ga2441590d39aaca7c88136145b0eb880b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga2441590d39aaca7c88136145b0eb880b">LWPA_LOG_SYSLOG</a>&#160;&#160;&#160;(5 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga2441590d39aaca7c88136145b0eb880b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Messages generated internally by syslogd. <br /></td></tr>
+<tr class="separator:ga2441590d39aaca7c88136145b0eb880b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacbf6ea806a67f53e17d265d9f7d8c0e5"><td class="memItemLeft" align="right" valign="top"><a id="gacbf6ea806a67f53e17d265d9f7d8c0e5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gacbf6ea806a67f53e17d265d9f7d8c0e5">LWPA_LOG_LPR</a>&#160;&#160;&#160;(6 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gacbf6ea806a67f53e17d265d9f7d8c0e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Line printer subsystem. <br /></td></tr>
+<tr class="separator:gacbf6ea806a67f53e17d265d9f7d8c0e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga20f59aff1e3c478dc610c6bb3f1cf30c"><td class="memItemLeft" align="right" valign="top"><a id="ga20f59aff1e3c478dc610c6bb3f1cf30c"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga20f59aff1e3c478dc610c6bb3f1cf30c">LWPA_LOG_NEWS</a>&#160;&#160;&#160;(7 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga20f59aff1e3c478dc610c6bb3f1cf30c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Network news subsystem. <br /></td></tr>
+<tr class="separator:ga20f59aff1e3c478dc610c6bb3f1cf30c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3374f025fafa38717f707a047359fd30"><td class="memItemLeft" align="right" valign="top"><a id="ga3374f025fafa38717f707a047359fd30"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga3374f025fafa38717f707a047359fd30">LWPA_LOG_UUCP</a>&#160;&#160;&#160;(8 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga3374f025fafa38717f707a047359fd30"><td class="mdescLeft">&#160;</td><td class="mdescRight">UUCP subsystem. <br /></td></tr>
+<tr class="separator:ga3374f025fafa38717f707a047359fd30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1cce65659ecc6a47c1d5aa7071ae69f4"><td class="memItemLeft" align="right" valign="top"><a id="ga1cce65659ecc6a47c1d5aa7071ae69f4"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga1cce65659ecc6a47c1d5aa7071ae69f4">LWPA_LOG_CRON</a>&#160;&#160;&#160;(9 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga1cce65659ecc6a47c1d5aa7071ae69f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clock daemon. <br /></td></tr>
+<tr class="separator:ga1cce65659ecc6a47c1d5aa7071ae69f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa50dfd3d27e5f3774232b0271bb58e90"><td class="memItemLeft" align="right" valign="top"><a id="gaa50dfd3d27e5f3774232b0271bb58e90"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaa50dfd3d27e5f3774232b0271bb58e90">LWPA_LOG_AUTHPRIV</a>&#160;&#160;&#160;(10 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gaa50dfd3d27e5f3774232b0271bb58e90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Security/authorization messages. <br /></td></tr>
+<tr class="separator:gaa50dfd3d27e5f3774232b0271bb58e90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadcfd4e54bed9d3ee05b5376822f409a2"><td class="memItemLeft" align="right" valign="top"><a id="gadcfd4e54bed9d3ee05b5376822f409a2"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gadcfd4e54bed9d3ee05b5376822f409a2">LWPA_LOG_FTP</a>&#160;&#160;&#160;(11 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gadcfd4e54bed9d3ee05b5376822f409a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">FTP daemon. <br /></td></tr>
+<tr class="separator:gadcfd4e54bed9d3ee05b5376822f409a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae3d1d7327370707be0202b28c26ce4a3"><td class="memItemLeft" align="right" valign="top"><a id="gae3d1d7327370707be0202b28c26ce4a3"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gae3d1d7327370707be0202b28c26ce4a3">LWPA_LOG_LOCAL0</a>&#160;&#160;&#160;(16 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gae3d1d7327370707be0202b28c26ce4a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:gae3d1d7327370707be0202b28c26ce4a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa99273c70b0d7f39eeb53b1bc6d4280b"><td class="memItemLeft" align="right" valign="top"><a id="gaa99273c70b0d7f39eeb53b1bc6d4280b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaa99273c70b0d7f39eeb53b1bc6d4280b">LWPA_LOG_LOCAL1</a>&#160;&#160;&#160;(17 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gaa99273c70b0d7f39eeb53b1bc6d4280b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:gaa99273c70b0d7f39eeb53b1bc6d4280b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac67f31952e97f767d74ec9d2f644759a"><td class="memItemLeft" align="right" valign="top"><a id="gac67f31952e97f767d74ec9d2f644759a"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gac67f31952e97f767d74ec9d2f644759a">LWPA_LOG_LOCAL2</a>&#160;&#160;&#160;(18 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gac67f31952e97f767d74ec9d2f644759a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:gac67f31952e97f767d74ec9d2f644759a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadea7fe8c18631a76bc0badd13c9b8d80"><td class="memItemLeft" align="right" valign="top"><a id="gadea7fe8c18631a76bc0badd13c9b8d80"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gadea7fe8c18631a76bc0badd13c9b8d80">LWPA_LOG_LOCAL3</a>&#160;&#160;&#160;(19 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gadea7fe8c18631a76bc0badd13c9b8d80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:gadea7fe8c18631a76bc0badd13c9b8d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8062bd367e9dcfc7e0479bbf07a6f759"><td class="memItemLeft" align="right" valign="top"><a id="ga8062bd367e9dcfc7e0479bbf07a6f759"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga8062bd367e9dcfc7e0479bbf07a6f759">LWPA_LOG_LOCAL4</a>&#160;&#160;&#160;(20 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga8062bd367e9dcfc7e0479bbf07a6f759"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:ga8062bd367e9dcfc7e0479bbf07a6f759"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga68947f6ab3d2c55c0ecb8bf37d88d9d5"><td class="memItemLeft" align="right" valign="top"><a id="ga68947f6ab3d2c55c0ecb8bf37d88d9d5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga68947f6ab3d2c55c0ecb8bf37d88d9d5">LWPA_LOG_LOCAL5</a>&#160;&#160;&#160;(21 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga68947f6ab3d2c55c0ecb8bf37d88d9d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:ga68947f6ab3d2c55c0ecb8bf37d88d9d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacf65fe6eff3a5b59a345066345572fb2"><td class="memItemLeft" align="right" valign="top"><a id="gacf65fe6eff3a5b59a345066345572fb2"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gacf65fe6eff3a5b59a345066345572fb2">LWPA_LOG_LOCAL6</a>&#160;&#160;&#160;(22 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:gacf65fe6eff3a5b59a345066345572fb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:gacf65fe6eff3a5b59a345066345572fb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0c3309dc6bfbe192e61b55ee23e903bf"><td class="memItemLeft" align="right" valign="top"><a id="ga0c3309dc6bfbe192e61b55ee23e903bf"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga0c3309dc6bfbe192e61b55ee23e903bf">LWPA_LOG_LOCAL7</a>&#160;&#160;&#160;(23 &lt;&lt; 3)</td></tr>
+<tr class="memdesc:ga0c3309dc6bfbe192e61b55ee23e903bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for local use. <br /></td></tr>
+<tr class="separator:ga0c3309dc6bfbe192e61b55ee23e903bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Log Priority</h2></td></tr>
+<tr class="memitem:gaa211f156cab5f49438cdfa9e44b63e31"><td class="memItemLeft" align="right" valign="top"><a id="gaa211f156cab5f49438cdfa9e44b63e31"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaa211f156cab5f49438cdfa9e44b63e31">LWPA_LOG_EMERG</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:gaa211f156cab5f49438cdfa9e44b63e31"><td class="mdescLeft">&#160;</td><td class="mdescRight">System is unusable. <br /></td></tr>
+<tr class="separator:gaa211f156cab5f49438cdfa9e44b63e31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4e4bdf39335b35ef2f878abaea51dfcc"><td class="memItemLeft" align="right" valign="top"><a id="ga4e4bdf39335b35ef2f878abaea51dfcc"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga4e4bdf39335b35ef2f878abaea51dfcc">LWPA_LOG_ALERT</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:ga4e4bdf39335b35ef2f878abaea51dfcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Action must be taken immediately. <br /></td></tr>
+<tr class="separator:ga4e4bdf39335b35ef2f878abaea51dfcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8ff207c1ddab5e2df910cc4fe464c662"><td class="memItemLeft" align="right" valign="top"><a id="ga8ff207c1ddab5e2df910cc4fe464c662"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga8ff207c1ddab5e2df910cc4fe464c662">LWPA_LOG_CRIT</a>&#160;&#160;&#160;2</td></tr>
+<tr class="memdesc:ga8ff207c1ddab5e2df910cc4fe464c662"><td class="mdescLeft">&#160;</td><td class="mdescRight">Critical conditions. <br /></td></tr>
+<tr class="separator:ga8ff207c1ddab5e2df910cc4fe464c662"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3d042c56486e03eb5b187a335ff5101a"><td class="memItemLeft" align="right" valign="top"><a id="ga3d042c56486e03eb5b187a335ff5101a"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga3d042c56486e03eb5b187a335ff5101a">LWPA_LOG_ERR</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:ga3d042c56486e03eb5b187a335ff5101a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error conditions. <br /></td></tr>
+<tr class="separator:ga3d042c56486e03eb5b187a335ff5101a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga68217ab863c4cd43c7ff03ca2219c47b"><td class="memItemLeft" align="right" valign="top"><a id="ga68217ab863c4cd43c7ff03ca2219c47b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga68217ab863c4cd43c7ff03ca2219c47b">LWPA_LOG_WARNING</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ga68217ab863c4cd43c7ff03ca2219c47b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Warning conditions. <br /></td></tr>
+<tr class="separator:ga68217ab863c4cd43c7ff03ca2219c47b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf6777f9e9a8f38724b151304d1404319"><td class="memItemLeft" align="right" valign="top"><a id="gaf6777f9e9a8f38724b151304d1404319"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaf6777f9e9a8f38724b151304d1404319">LWPA_LOG_NOTICE</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:gaf6777f9e9a8f38724b151304d1404319"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normal but significant condition. <br /></td></tr>
+<tr class="separator:gaf6777f9e9a8f38724b151304d1404319"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaddc8c1082db67e72912a74b669d29c23"><td class="memItemLeft" align="right" valign="top"><a id="gaddc8c1082db67e72912a74b669d29c23"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#gaddc8c1082db67e72912a74b669d29c23">LWPA_LOG_INFO</a>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:gaddc8c1082db67e72912a74b669d29c23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Informational. <br /></td></tr>
+<tr class="separator:gaddc8c1082db67e72912a74b669d29c23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4a8948b531b0cf1c68a1bdc5c84d4ceb"><td class="memItemLeft" align="right" valign="top"><a id="ga4a8948b531b0cf1c68a1bdc5c84d4ceb"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__log.html#ga4a8948b531b0cf1c68a1bdc5c84d4ceb">LWPA_LOG_DEBUG</a>&#160;&#160;&#160;7</td></tr>
+<tr class="memdesc:ga4a8948b531b0cf1c68a1bdc5c84d4ceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Debug-level messages. <br /></td></tr>
+<tr class="separator:ga4a8948b531b0cf1c68a1bdc5c84d4ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga0495001df9d738759753ecb7c9f4772a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0495001df9d738759753ecb7c9f4772a">&#9670;&nbsp;</a></span>LWPA_HUMAN_LOG_STR_MAX_LEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LWPA_HUMAN_LOG_STR_MAX_LEN&#160;&#160;&#160;((<a class="el" href="group__lwpa__log.html#gae9a41c527892d020281abfb31f4f01e0">LWPA_LOG_TIMESTAMP_LEN</a> - 1) + 1 /*SP*/ + <a class="el" href="group__lwpa__log.html#ga3c6145528eb237caccd1e364ed0574c9">LWPA_LOG_MSG_MAX_LEN</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The maximum length of a human-readable string that will be passed to an lwpa_log_callback function. </p>
+<p><br  />
+ </p>
+
+</div>
+</div>
+<a id="ga6a91428444c93775473c21ecdefac13b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6a91428444c93775473c21ecdefac13b">&#9670;&nbsp;</a></span>LWPA_LOG_FACMASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LWPA_LOG_FACMASK</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">                                   0x03f8 <span class="comment">/* Mask to extract facility part of a</span></div>
+<div class="line"><span class="comment">                                   prival. */</span></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a id="gaef6b15895880ea225057a79bbb120945"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaef6b15895880ea225057a79bbb120945">&#9670;&nbsp;</a></span>LWPA_SYSLOG_HEADER_MAX_LEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LWPA_SYSLOG_HEADER_MAX_LEN</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  (5 <span class="comment">/*PRIVAL*/</span> + 3 <span class="comment">/*Version*/</span> + 1 <span class="comment">/*SP*/</span> + (<a class="code" href="group__lwpa__log.html#gae9a41c527892d020281abfb31f4f01e0">LWPA_LOG_TIMESTAMP_LEN</a> - 1) <span class="comment">/*Timestamp*/</span> + 1 <span class="comment">/*SP*/</span> + \</div>
+<div class="line">   (<a class="code" href="group__lwpa__log.html#gac283f15a55e1f885b4a284cdf749a318">LWPA_LOG_HOSTNAME_MAX_LEN</a> - 1) + 1 <span class="comment">/*SP*/</span> + (<a class="code" href="group__lwpa__log.html#gaea6845af17f90339030b7f1aed4248b6">LWPA_LOG_APP_NAME_MAX_LEN</a> - 1) + 1 <span class="comment">/*SP*/</span> +         \</div>
+<div class="line">   (<a class="code" href="group__lwpa__log.html#gaf444c37d4b37d0d12a01cdd900c54343">LWPA_LOG_PROCID_MAX_LEN</a> - 1) + 1 <span class="comment">/*SP*/</span> + 1 <span class="comment">/*MSGID*/</span> + 1 <span class="comment">/*SP*/</span> + 1 <span class="comment">/*STRUCTURED-DATA*/</span> + 1 <span class="comment">/*SP*/</span>)</div>
+<div class="ttc" id="agroup__lwpa__log_html_gac283f15a55e1f885b4a284cdf749a318"><div class="ttname"><a href="group__lwpa__log.html#gac283f15a55e1f885b4a284cdf749a318">LWPA_LOG_HOSTNAME_MAX_LEN</a></div><div class="ttdeci">#define LWPA_LOG_HOSTNAME_MAX_LEN</div><div class="ttdoc">Max length of the hostname param.</div><div class="ttdef"><b>Definition:</b> lwpa_log.h:105</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gae9a41c527892d020281abfb31f4f01e0"><div class="ttname"><a href="group__lwpa__log.html#gae9a41c527892d020281abfb31f4f01e0">LWPA_LOG_TIMESTAMP_LEN</a></div><div class="ttdeci">#define LWPA_LOG_TIMESTAMP_LEN</div><div class="ttdoc">The maximum length of the timestamp used in syslog and human-readable logging.</div><div class="ttdef"><b>Definition:</b> lwpa_log.h:116</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gaea6845af17f90339030b7f1aed4248b6"><div class="ttname"><a href="group__lwpa__log.html#gaea6845af17f90339030b7f1aed4248b6">LWPA_LOG_APP_NAME_MAX_LEN</a></div><div class="ttdeci">#define LWPA_LOG_APP_NAME_MAX_LEN</div><div class="ttdoc">Max length of the app_name param.</div><div class="ttdef"><b>Definition:</b> lwpa_log.h:106</div></div>
+<div class="ttc" id="agroup__lwpa__log_html_gaf444c37d4b37d0d12a01cdd900c54343"><div class="ttname"><a href="group__lwpa__log.html#gaf444c37d4b37d0d12a01cdd900c54343">LWPA_LOG_PROCID_MAX_LEN</a></div><div class="ttdeci">#define LWPA_LOG_PROCID_MAX_LEN</div><div class="ttdoc">Max length of the procid param.</div><div class="ttdef"><b>Definition:</b> lwpa_log.h:107</div></div>
+</div><!-- fragment -->
+<p>The maximum length of the syslog header. </p>
+
+</div>
+</div>
+<a id="ga8cd1e1b2619e012f10e62b91f3574e27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8cd1e1b2619e012f10e62b91f3574e27">&#9670;&nbsp;</a></span>LWPA_SYSLOG_STR_MAX_LEN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LWPA_SYSLOG_STR_MAX_LEN&#160;&#160;&#160;(<a class="el" href="group__lwpa__log.html#gaef6b15895880ea225057a79bbb120945">LWPA_SYSLOG_HEADER_MAX_LEN</a> + <a class="el" href="group__lwpa__log.html#ga3c6145528eb237caccd1e364ed0574c9">LWPA_LOG_MSG_MAX_LEN</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The maximum length of a syslog string that will be passed to an lwpa_log_callback function. </p>
+<p><br  />
+ </p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="gacd26df727c6a5f6d0d6fcfa4c2ac3755"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacd26df727c6a5f6d0d6fcfa4c2ac3755">&#9670;&nbsp;</a></span>lwpa_log_callback</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* lwpa_log_callback) (void *context, const char *syslog_str, const char *human_str, const char *raw_str)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Log callback function. </p>
+<p>The function that library modules use to log messages. The application developer defines the function and determines where the messages go.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">context</td><td>Optional application-provided value that was previously passed to the library module. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">syslog_str</td><td>Log string, formatted compliant to RFC 5424. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">human_str</td><td>Log string, formatted for readability per ETC convention. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">raw_str</td><td>The original log string that was passed to <a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> or <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a>. Will overlap with one of syslog_str or human_str. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga663d6e629850d5957be6634468f04755"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga663d6e629850d5957be6634468f04755">&#9670;&nbsp;</a></span>lwpa_log_time_fn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(* lwpa_log_time_fn) (void *context, <a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *time_params)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Time callback function. </p>
+<p>A function by which the logging module can get the current local time.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">context</td><td>Optional application-provided value that was previously passed to the library module. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">time_params</td><td>Fill this in with the current local time. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga87102d7ecdab1a3ba919bd750fae0507"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga87102d7ecdab1a3ba919bd750fae0507">&#9670;&nbsp;</a></span>lwpa_log_action_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__lwpa__log.html#ga87102d7ecdab1a3ba919bd750fae0507">lwpa_log_action_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Which types of log message(s) the <a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> and <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a> functions create. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga87102d7ecdab1a3ba919bd750fae0507a408d0b541c1860eb8264be42f2d0d774"></a>kLwpaLogCreateSyslog&#160;</td><td class="fielddoc"><p><a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> and <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a> create a syslog message and pass it back in the syslog_str parameter of the log callback. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga87102d7ecdab1a3ba919bd750fae0507a21fba732cbc622fce83415718e1fb8f9"></a>kLwpaLogCreateHumanReadableLog&#160;</td><td class="fielddoc"><p><a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> and <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a> create a human-readable log message and pass it back in the human_str parameter of the log callback. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga87102d7ecdab1a3ba919bd750fae0507a1c00ba8139d620d17be3b61a498232c5"></a>kLwpaLogCreateBoth&#160;</td><td class="fielddoc"><p><a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> and <a class="el" href="group__lwpa__log.html#ga4d3b4176e7d17c30aaa9dd82b6c5c3da" title="Log a message from a library module with the list of format arguments already generated.">lwpa_vlog()</a> create both a syslog message and a human-readable log message and pass them back in the syslog_str and human_str parameters of the log callback. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga92091520538853c272084261bbb8bf21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga92091520538853c272084261bbb8bf21">&#9670;&nbsp;</a></span>lwpa_create_human_log_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a> lwpa_create_human_log_str </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>buflen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a log message with a human-readable header in the given buffer. </p>
+<p>Buffer must be at least <a class="el" href="group__lwpa__log.html#ga794bc9c3568fda36ad6e26a790ae6195" title="The minimum length of a buffer passed to lwpa_create_human_log_str().">LWPA_HUMAN_LOG_STR_MIN_LEN</a> in length.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">buf</td><td>Buffer in which to build the log message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">buflen</td><td>Length in bytes of buf. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>A set of time parameters representing the current time. If NULL, no timestamp will be added to the log message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Log message with printf-style format specifiers. Provide additional arguments as appropriate for format specifiers. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga2efb597d28fdda5796e410b43f5a631d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2efb597d28fdda5796e410b43f5a631d">&#9670;&nbsp;</a></span>lwpa_create_syslog_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a> lwpa_create_syslog_str </td>
+          <td>(</td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>buflen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_log_time_params.html">LwpaLogTimeParams</a> *&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a> *&#160;</td>
+          <td class="paramname"><em>syslog_params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a log message with syslog header in the given buffer. </p>
+<p>Buffer must be at least <a class="el" href="group__lwpa__log.html#ga98a9352b7969f965cf4c77af3c462f21" title="The minimum length of a buffer passed to lwpa_create_syslog_str().">LWPA_SYSLOG_STR_MIN_LEN</a> in length.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">buf</td><td>Buffer in which to build the syslog message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">buflen</td><td>Length in bytes of buf. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">time</td><td>A set of time parameters representing the current time. If NULL, no timestamp will be added to the log message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">syslog_params</td><td>A set of parameters for the syslog header. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pri</td><td>Priority of this log message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Log message with printf-style format specifiers. Provide additional arguments as appropriate for format specifiers. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga6584e9d020e7cf99caaca6bf9acf81ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6584e9d020e7cf99caaca6bf9acf81ef">&#9670;&nbsp;</a></span>lwpa_log()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lwpa_log </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a> *&#160;</td>
+          <td class="paramname"><em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Log a message from a library module. </p>
+<p>Takes a printf-style format string which is formatted and passed to the application callback.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">params</td><td>The log parameters to be used for this message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pri</td><td>Priority of this log message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Log message with printf-style format specifiers. Provide additional arguments as appropriate for format specifiers. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga2e1cd052c474bfbb33614a7d10b33bbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2e1cd052c474bfbb33614a7d10b33bbb">&#9670;&nbsp;</a></span>lwpa_sanitize_syslog_params()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lwpa_sanitize_syslog_params </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_syslog_params.html">LwpaSyslogParams</a> *&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them if necessary). </p>
+<p>Sanitizes the three string fields (hostname, app_name and procid) by replacing characters that are not allowed by RFC 5424 with filler characters. Also ensures that the facility value is within the correct range (<a class="el" href="group__lwpa__log.html#ga9ddc5e6a9583f9d8d12e9fddd5973461" title="Current number of facilities.">LWPA_LOG_NFACILITIES</a>).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">params</td><td>Syslog params to sanitize. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga745327935a6efcc73f2f5048757c6de1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga745327935a6efcc73f2f5048757c6de1">&#9670;&nbsp;</a></span>lwpa_validate_log_params()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a> lwpa_validate_log_params </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a> *&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ensure that the given lwpa_log_params are valid. </p>
+<p>This also sanitizes the syslog params using <a class="el" href="group__lwpa__log.html#ga2e1cd052c474bfbb33614a7d10b33bbb" title="Ensure that the given syslog parameters are compliant with the syslog RFC (modifying them if necessar...">lwpa_sanitize_syslog_params()</a> if action is set to kLwpaLogCreateSyslog or kLwpaLogCreateBoth.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">params</td><td>lwpa_log_params to validate. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (params are valid) or false (params are invalid). </dd></dl>
+
+</div>
+</div>
+<a id="ga4d3b4176e7d17c30aaa9dd82b6c5c3da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4d3b4176e7d17c30aaa9dd82b6c5c3da">&#9670;&nbsp;</a></span>lwpa_vlog()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lwpa_vlog </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_log_params.html">LwpaLogParams</a> *&#160;</td>
+          <td class="paramname"><em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>pri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">va_list&#160;</td>
+          <td class="paramname"><em>args</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Log a message from a library module with the list of format arguments already generated. </p>
+<p>For normal usage, just use <a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a>. However, this function is useful if you want to create a wrapper function around <a class="el" href="group__lwpa__log.html#ga6584e9d020e7cf99caaca6bf9acf81ef" title="Log a message from a library module.">lwpa_log()</a> which also takes variable format arguments.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">params</td><td>The log parameters to be used for this message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pri</td><td>Priority of this log message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">format</td><td>Log message with printf-style format specifiers. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">args</td><td>Argument list for the format specifiers in format. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

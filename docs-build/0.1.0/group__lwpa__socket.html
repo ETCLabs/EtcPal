@@ -1,0 +1,1635 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: lwpa_socket</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.1.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__lwpa__socket.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">lwpa_socket<div class="ingroups"><a class="el" href="group__lwpa.html">lwpa</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Platform-neutral BSD-modeled network socket implementation. </p>
+<p>#include "lwpa_socket.h"</p>
+<p>This module attempts to abstract the network socket interface from various platforms into one platform-neutral interface. The functions and flags are modeled after the BSD sockets interface. <em>UNIX Network Programming: The Sockets Networking API</em> by Stevens, Fenner, and Rudoff is highly recommended reading for those unfamiliar with this interface. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_linger.html">LwpaLinger</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__lwpa__socket.html#ga55a81e9ec4a9aba857524b726ec75256" title="Get/Set, value is LwpaLinger.">LWPA_SO_LINGER</a>.  <a href="struct_lwpa_linger.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_mreq.html">LwpaMreq</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__lwpa__socket.html#gab43a3e2b335d9bd16dd775829d259283" title="Set only, value is LwpaMreq.">LWPA_MCAST_JOIN_GROUP</a> and <a class="el" href="group__lwpa__socket.html#ga30d044b29e2f4a000f282ab64a0d74fb" title="Set only, value is LwpaMreq.">LWPA_MCAST_LEAVE_GROUP</a>.  <a href="struct_lwpa_mreq.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_pollfd.html">LwpaPollfd</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description for a socket to poll with <a class="el" href="group__lwpa__socket.html#gaf1cb343c83189a6d72f1c5cf9d2a2d3d" title="Wait for some event on a set of sockets.">lwpa_poll()</a>.  <a href="struct_lwpa_pollfd.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure containing name and address information about an internet host.  <a href="struct_lwpa_addrinfo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gabee47ca508b8e9b7b15ae6e7729cc087"><td class="memItemLeft" align="right" valign="top"><a id="gabee47ca508b8e9b7b15ae6e7729cc087"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gabee47ca508b8e9b7b15ae6e7729cc087">LWPA_SOCKET_INVALID</a></td></tr>
+<tr class="memdesc:gabee47ca508b8e9b7b15ae6e7729cc087"><td class="mdescLeft">&#160;</td><td class="mdescRight">An identifier for an invalid socket handle. <br /></td></tr>
+<tr class="separator:gabee47ca508b8e9b7b15ae6e7729cc087"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac9a7a8dbe7def9af922af1a99b4c6569"><td class="memItemLeft" align="right" valign="top"><a id="gac9a7a8dbe7def9af922af1a99b4c6569"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gac9a7a8dbe7def9af922af1a99b4c6569">LWPA_INET_ADDRSTRLEN</a>&#160;&#160;&#160;16</td></tr>
+<tr class="memdesc:gac9a7a8dbe7def9af922af1a99b4c6569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum length of the string representation of an IPv4 address. <br /></td></tr>
+<tr class="separator:gac9a7a8dbe7def9af922af1a99b4c6569"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga078d3101f67934bce6f13f193a4832ea"><td class="memItemLeft" align="right" valign="top"><a id="ga078d3101f67934bce6f13f193a4832ea"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga078d3101f67934bce6f13f193a4832ea">LWPA_INET6_ADDRSTRLEN</a>&#160;&#160;&#160;46</td></tr>
+<tr class="memdesc:ga078d3101f67934bce6f13f193a4832ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum length of the string representation of an IPv6 address. <br /></td></tr>
+<tr class="separator:ga078d3101f67934bce6f13f193a4832ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga8fbf24dfb5d096d9f1f2a09e0753a2a6"><td class="memItemLeft" align="right" valign="top">typedef UNDEFINED&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a></td></tr>
+<tr class="memdesc:ga8fbf24dfb5d096d9f1f2a09e0753a2a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">A socket handle.  <a href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">More...</a><br /></td></tr>
+<tr class="separator:ga8fbf24dfb5d096d9f1f2a09e0753a2a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf190b253ad46048e80a22b6f081d9270"><td class="memItemLeft" align="right" valign="top"><a id="gaf190b253ad46048e80a22b6f081d9270"></a>
+typedef struct <a class="el" href="struct_lwpa_linger.html">LwpaLinger</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gaf190b253ad46048e80a22b6f081d9270">LwpaLinger</a></td></tr>
+<tr class="memdesc:gaf190b253ad46048e80a22b6f081d9270"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__lwpa__socket.html#ga55a81e9ec4a9aba857524b726ec75256" title="Get/Set, value is LwpaLinger.">LWPA_SO_LINGER</a>. <br /></td></tr>
+<tr class="separator:gaf190b253ad46048e80a22b6f081d9270"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa0cd6bdf1e52526e1462a2e54d2f17ab"><td class="memItemLeft" align="right" valign="top"><a id="gaa0cd6bdf1e52526e1462a2e54d2f17ab"></a>
+typedef struct <a class="el" href="struct_lwpa_mreq.html">LwpaMreq</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gaa0cd6bdf1e52526e1462a2e54d2f17ab">LwpaMreq</a></td></tr>
+<tr class="memdesc:gaa0cd6bdf1e52526e1462a2e54d2f17ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Option value for <a class="el" href="group__lwpa__socket.html#gab43a3e2b335d9bd16dd775829d259283" title="Set only, value is LwpaMreq.">LWPA_MCAST_JOIN_GROUP</a> and <a class="el" href="group__lwpa__socket.html#ga30d044b29e2f4a000f282ab64a0d74fb" title="Set only, value is LwpaMreq.">LWPA_MCAST_LEAVE_GROUP</a>. <br /></td></tr>
+<tr class="separator:gaa0cd6bdf1e52526e1462a2e54d2f17ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga15e820924d167885000b2e8ac733a3a1"><td class="memItemLeft" align="right" valign="top"><a id="ga15e820924d167885000b2e8ac733a3a1"></a>
+typedef struct <a class="el" href="struct_lwpa_pollfd.html">LwpaPollfd</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga15e820924d167885000b2e8ac733a3a1">LwpaPollfd</a></td></tr>
+<tr class="memdesc:ga15e820924d167885000b2e8ac733a3a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description for a socket to poll with <a class="el" href="group__lwpa__socket.html#gaf1cb343c83189a6d72f1c5cf9d2a2d3d" title="Wait for some event on a set of sockets.">lwpa_poll()</a>. <br /></td></tr>
+<tr class="separator:ga15e820924d167885000b2e8ac733a3a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga26e3a47bd5083fd59eea2099bad33789"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga26e3a47bd5083fd59eea2099bad33789">LwpaAddrinfo</a></td></tr>
+<tr class="memdesc:ga26e3a47bd5083fd59eea2099bad33789"><td class="mdescLeft">&#160;</td><td class="mdescRight">A structure containing name and address information about an internet host.  <a href="group__lwpa__socket.html#ga26e3a47bd5083fd59eea2099bad33789">More...</a><br /></td></tr>
+<tr class="separator:ga26e3a47bd5083fd59eea2099bad33789"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga7158c969eed13894a54ebb8784381e1f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga7158c969eed13894a54ebb8784381e1f">lwpa_socket_init</a> (void *platform_data)</td></tr>
+<tr class="memdesc:ga7158c969eed13894a54ebb8784381e1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the lwpa_socket module.  <a href="group__lwpa__socket.html#ga7158c969eed13894a54ebb8784381e1f">More...</a><br /></td></tr>
+<tr class="separator:ga7158c969eed13894a54ebb8784381e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a9fbbc255caa2094bded46554aeb8c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga6a9fbbc255caa2094bded46554aeb8c0">lwpa_socket_deinit</a> ()</td></tr>
+<tr class="memdesc:ga6a9fbbc255caa2094bded46554aeb8c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deinitialize the lwpa_socket module.  <a href="group__lwpa__socket.html#ga6a9fbbc255caa2094bded46554aeb8c0">More...</a><br /></td></tr>
+<tr class="separator:ga6a9fbbc255caa2094bded46554aeb8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac258071ec7b4f5203764ffba0c0d92a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gac258071ec7b4f5203764ffba0c0d92a7">lwpa_accept</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *address, <a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> *conn_sock)</td></tr>
+<tr class="memdesc:gac258071ec7b4f5203764ffba0c0d92a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accept a connection on a socket.  <a href="group__lwpa__socket.html#gac258071ec7b4f5203764ffba0c0d92a7">More...</a><br /></td></tr>
+<tr class="separator:gac258071ec7b4f5203764ffba0c0d92a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga826977bc6733ed0c4f34a5746fa05543"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga826977bc6733ed0c4f34a5746fa05543">lwpa_bind</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, const <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *address)</td></tr>
+<tr class="memdesc:ga826977bc6733ed0c4f34a5746fa05543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind a name to a socket.  <a href="group__lwpa__socket.html#ga826977bc6733ed0c4f34a5746fa05543">More...</a><br /></td></tr>
+<tr class="separator:ga826977bc6733ed0c4f34a5746fa05543"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab2a3f2980a490bb439f200921074d01f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gab2a3f2980a490bb439f200921074d01f">lwpa_close</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id)</td></tr>
+<tr class="memdesc:gab2a3f2980a490bb439f200921074d01f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close a socket.  <a href="group__lwpa__socket.html#gab2a3f2980a490bb439f200921074d01f">More...</a><br /></td></tr>
+<tr class="separator:gab2a3f2980a490bb439f200921074d01f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7ce51adfd80ae9625f3c6c32a6dc66f4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga7ce51adfd80ae9625f3c6c32a6dc66f4">lwpa_connect</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, const <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *address)</td></tr>
+<tr class="memdesc:ga7ce51adfd80ae9625f3c6c32a6dc66f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initiate a connection on a socket.  <a href="group__lwpa__socket.html#ga7ce51adfd80ae9625f3c6c32a6dc66f4">More...</a><br /></td></tr>
+<tr class="separator:ga7ce51adfd80ae9625f3c6c32a6dc66f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga601cc36855c662b79f662ae5c42595f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga601cc36855c662b79f662ae5c42595f1">lwpa_getpeername</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *address)</td></tr>
+<tr class="memdesc:ga601cc36855c662b79f662ae5c42595f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the name of the connected peer socket.  <a href="group__lwpa__socket.html#ga601cc36855c662b79f662ae5c42595f1">More...</a><br /></td></tr>
+<tr class="separator:ga601cc36855c662b79f662ae5c42595f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1268a36d23336543beba21b086af9f4e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga1268a36d23336543beba21b086af9f4e">lwpa_getsockname</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *address)</td></tr>
+<tr class="memdesc:ga1268a36d23336543beba21b086af9f4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get socket name.  <a href="group__lwpa__socket.html#ga1268a36d23336543beba21b086af9f4e">More...</a><br /></td></tr>
+<tr class="separator:ga1268a36d23336543beba21b086af9f4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga76b8fb450bb999d48e6a21f132d75e03"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga76b8fb450bb999d48e6a21f132d75e03">lwpa_getsockopt</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, int level, int option_name, void *option_value, size_t *option_len)</td></tr>
+<tr class="memdesc:ga76b8fb450bb999d48e6a21f132d75e03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an option value for a socket.  <a href="group__lwpa__socket.html#ga76b8fb450bb999d48e6a21f132d75e03">More...</a><br /></td></tr>
+<tr class="separator:ga76b8fb450bb999d48e6a21f132d75e03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab5c6cf7dbbff0ebd338e9ef6de183890"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gab5c6cf7dbbff0ebd338e9ef6de183890">lwpa_listen</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, int backlog)</td></tr>
+<tr class="memdesc:gab5c6cf7dbbff0ebd338e9ef6de183890"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listen for connections on a socket.  <a href="group__lwpa__socket.html#gab5c6cf7dbbff0ebd338e9ef6de183890">More...</a><br /></td></tr>
+<tr class="separator:gab5c6cf7dbbff0ebd338e9ef6de183890"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8a597ac866a5b3951f3b7543e0f96da5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga8a597ac866a5b3951f3b7543e0f96da5">lwpa_recv</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, void *buffer, size_t length, int flags)</td></tr>
+<tr class="memdesc:ga8a597ac866a5b3951f3b7543e0f96da5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive data on a connected socket.  <a href="group__lwpa__socket.html#ga8a597ac866a5b3951f3b7543e0f96da5">More...</a><br /></td></tr>
+<tr class="separator:ga8a597ac866a5b3951f3b7543e0f96da5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab170a859b1992216dac42722d5773518"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gab170a859b1992216dac42722d5773518">lwpa_recvfrom</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, void *buffer, size_t length, int flags, <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *address)</td></tr>
+<tr class="memdesc:gab170a859b1992216dac42722d5773518"><td class="mdescLeft">&#160;</td><td class="mdescRight">Receive data on a socket.  <a href="group__lwpa__socket.html#gab170a859b1992216dac42722d5773518">More...</a><br /></td></tr>
+<tr class="separator:gab170a859b1992216dac42722d5773518"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae22d1b7fe2534cb4a57991a62397faf6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gae22d1b7fe2534cb4a57991a62397faf6">lwpa_send</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, const void *message, size_t length, int flags)</td></tr>
+<tr class="memdesc:gae22d1b7fe2534cb4a57991a62397faf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data on a connected socket.  <a href="group__lwpa__socket.html#gae22d1b7fe2534cb4a57991a62397faf6">More...</a><br /></td></tr>
+<tr class="separator:gae22d1b7fe2534cb4a57991a62397faf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacab7bbbb36484aa2b574ee23652ddc8b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gacab7bbbb36484aa2b574ee23652ddc8b">lwpa_sendto</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, const void *message, size_t length, int flags, const <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *dest_addr)</td></tr>
+<tr class="memdesc:gacab7bbbb36484aa2b574ee23652ddc8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send data on a socket.  <a href="group__lwpa__socket.html#gacab7bbbb36484aa2b574ee23652ddc8b">More...</a><br /></td></tr>
+<tr class="separator:gacab7bbbb36484aa2b574ee23652ddc8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac74221647c7888f04191a50557c44ec6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gac74221647c7888f04191a50557c44ec6">lwpa_setsockopt</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, int level, int option_name, const void *option_value, size_t option_len)</td></tr>
+<tr class="memdesc:gac74221647c7888f04191a50557c44ec6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an option value on a socket.  <a href="group__lwpa__socket.html#gac74221647c7888f04191a50557c44ec6">More...</a><br /></td></tr>
+<tr class="separator:gac74221647c7888f04191a50557c44ec6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae9d6a2363a94d98ee50cdfe359f3715e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gae9d6a2363a94d98ee50cdfe359f3715e">lwpa_shutdown</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, int how)</td></tr>
+<tr class="memdesc:gae9d6a2363a94d98ee50cdfe359f3715e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shut down part of a full-duplex connection.  <a href="group__lwpa__socket.html#gae9d6a2363a94d98ee50cdfe359f3715e">More...</a><br /></td></tr>
+<tr class="separator:gae9d6a2363a94d98ee50cdfe359f3715e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga10b6686c28d4a8e546462e2981541835"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga10b6686c28d4a8e546462e2981541835">lwpa_socket</a> (unsigned int family, unsigned int type)</td></tr>
+<tr class="memdesc:ga10b6686c28d4a8e546462e2981541835"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a socket.  <a href="group__lwpa__socket.html#ga10b6686c28d4a8e546462e2981541835">More...</a><br /></td></tr>
+<tr class="separator:ga10b6686c28d4a8e546462e2981541835"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga846cd48d4882273a10d6f781128f03ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga846cd48d4882273a10d6f781128f03ea">lwpa_setblocking</a> (<a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> id, <a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a> blocking)</td></tr>
+<tr class="memdesc:ga846cd48d4882273a10d6f781128f03ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change the blocking behavior of a socket.  <a href="group__lwpa__socket.html#ga846cd48d4882273a10d6f781128f03ea">More...</a><br /></td></tr>
+<tr class="separator:ga846cd48d4882273a10d6f781128f03ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf1cb343c83189a6d72f1c5cf9d2a2d3d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gaf1cb343c83189a6d72f1c5cf9d2a2d3d">lwpa_poll</a> (<a class="el" href="struct_lwpa_pollfd.html">LwpaPollfd</a> *fds, size_t nfds, int timeout_ms)</td></tr>
+<tr class="memdesc:gaf1cb343c83189a6d72f1c5cf9d2a2d3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for some event on a set of sockets.  <a href="group__lwpa__socket.html#gaf1cb343c83189a6d72f1c5cf9d2a2d3d">More...</a><br /></td></tr>
+<tr class="separator:gaf1cb343c83189a6d72f1c5cf9d2a2d3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7c1c76581b63ab7c5b383e25dc200990"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990">lwpa_getaddrinfo</a> (const char *hostname, const char *service, const <a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *hints, <a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *result)</td></tr>
+<tr class="memdesc:ga7c1c76581b63ab7c5b383e25dc200990"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get address information for a named internet host and/or service.  <a href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990">More...</a><br /></td></tr>
+<tr class="separator:ga7c1c76581b63ab7c5b383e25dc200990"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafe366acfdbaa9d98d9459660798c73fd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gafe366acfdbaa9d98d9459660798c73fd">lwpa_nextaddr</a> (<a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *ai)</td></tr>
+<tr class="memdesc:gafe366acfdbaa9d98d9459660798c73fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the next address from the list returned by <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a>.  <a href="group__lwpa__socket.html#gafe366acfdbaa9d98d9459660798c73fd">More...</a><br /></td></tr>
+<tr class="separator:gafe366acfdbaa9d98d9459660798c73fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga85eeba64809a88e6a246e9471d5e2cd6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga85eeba64809a88e6a246e9471d5e2cd6">lwpa_freeaddrinfo</a> (<a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *ai)</td></tr>
+<tr class="memdesc:ga85eeba64809a88e6a246e9471d5e2cd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an addrinfo list returned by <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a>.  <a href="group__lwpa__socket.html#ga85eeba64809a88e6a246e9471d5e2cd6">More...</a><br /></td></tr>
+<tr class="separator:ga85eeba64809a88e6a246e9471d5e2cd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac6b5fcff898be3bbf7789a8c480082b1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gac6b5fcff898be3bbf7789a8c480082b1">lwpa_inet_ntop</a> (const <a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a> *src, char *dest, size_t size)</td></tr>
+<tr class="memdesc:gac6b5fcff898be3bbf7789a8c480082b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert IPv4 and IPv6 addresses from binary to text form.  <a href="group__lwpa__socket.html#gac6b5fcff898be3bbf7789a8c480082b1">More...</a><br /></td></tr>
+<tr class="separator:gac6b5fcff898be3bbf7789a8c480082b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4110e753475f9505e87b88e0097befb4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga4110e753475f9505e87b88e0097befb4">lwpa_inet_pton</a> (<a class="el" href="group__lwpa__inet.html#ga75918e41a21a5b4511b2b3c797e6f048">lwpa_iptype_t</a> type, const char *src, <a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a> *dest)</td></tr>
+<tr class="memdesc:ga4110e753475f9505e87b88e0097befb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert IPv4 and IPv6 addresses from text to binary form.  <a href="group__lwpa__socket.html#ga4110e753475f9505e87b88e0097befb4">More...</a><br /></td></tr>
+<tr class="separator:ga4110e753475f9505e87b88e0097befb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Flags for lwpa_recvfrom()</h2></td></tr>
+<tr class="memitem:ga701247f882da012c7f5b907d705ca3d5"><td class="memItemLeft" align="right" valign="top"><a id="ga701247f882da012c7f5b907d705ca3d5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_MSG_PEEK</b>&#160;&#160;&#160;0x1</td></tr>
+<tr class="separator:ga701247f882da012c7f5b907d705ca3d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Level values for lwpa_setsockopt() and lwpa_getsockopt()</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrpf9a824a7243efa30c234c40a44789304"></a>Refer to the group of option names for each level. </p>
+</td></tr>
+<tr class="memitem:ga3f1556c87ab3fbc847768f2fdcab4e9e"><td class="memItemLeft" align="right" valign="top"><a id="ga3f1556c87ab3fbc847768f2fdcab4e9e"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga3f1556c87ab3fbc847768f2fdcab4e9e">LWPA_SOL_SOCKET</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga3f1556c87ab3fbc847768f2fdcab4e9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">lwpa_socket API level. <br /></td></tr>
+<tr class="separator:ga3f1556c87ab3fbc847768f2fdcab4e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga774542431c261471aaab85da5e18d991"><td class="memItemLeft" align="right" valign="top"><a id="ga774542431c261471aaab85da5e18d991"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga774542431c261471aaab85da5e18d991">LWPA_IPPROTO_IP</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:ga774542431c261471aaab85da5e18d991"><td class="mdescLeft">&#160;</td><td class="mdescRight">IPv4 protocol level. <br /></td></tr>
+<tr class="separator:ga774542431c261471aaab85da5e18d991"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa5f6bba669bdcebac15dab57b5081628"><td class="memItemLeft" align="right" valign="top"><a id="gaa5f6bba669bdcebac15dab57b5081628"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gaa5f6bba669bdcebac15dab57b5081628">LWPA_IPPROTO_ICMPV6</a>&#160;&#160;&#160;2</td></tr>
+<tr class="memdesc:gaa5f6bba669bdcebac15dab57b5081628"><td class="mdescLeft">&#160;</td><td class="mdescRight">ICMPv6 protocol level. <br /></td></tr>
+<tr class="separator:gaa5f6bba669bdcebac15dab57b5081628"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga60e65b01d77733f64ed2e0f119f8181f"><td class="memItemLeft" align="right" valign="top"><a id="ga60e65b01d77733f64ed2e0f119f8181f"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga60e65b01d77733f64ed2e0f119f8181f">LWPA_IPPROTO_IPV6</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:ga60e65b01d77733f64ed2e0f119f8181f"><td class="mdescLeft">&#160;</td><td class="mdescRight">IPv6 protocol level. <br /></td></tr>
+<tr class="separator:ga60e65b01d77733f64ed2e0f119f8181f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga95f2416441dfe283fa14b64baa9a4523"><td class="memItemLeft" align="right" valign="top"><a id="ga95f2416441dfe283fa14b64baa9a4523"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga95f2416441dfe283fa14b64baa9a4523">LWPA_IPPROTO_TCP</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ga95f2416441dfe283fa14b64baa9a4523"><td class="mdescLeft">&#160;</td><td class="mdescRight">TCP protocol level. <br /></td></tr>
+<tr class="separator:ga95f2416441dfe283fa14b64baa9a4523"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8b2221240e9f6dc96f115d7271d4fc5b"><td class="memItemLeft" align="right" valign="top"><a id="ga8b2221240e9f6dc96f115d7271d4fc5b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga8b2221240e9f6dc96f115d7271d4fc5b">LWPA_IPPROTO_UDP</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:ga8b2221240e9f6dc96f115d7271d4fc5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">UDP protocol level. <br /></td></tr>
+<tr class="separator:ga8b2221240e9f6dc96f115d7271d4fc5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Options for level LWPA_SOL_SOCKET</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp46fbdfdd1389033a78091a1d196c70a7"></a>Used in the option parameter to <a class="el" href="group__lwpa__socket.html#gac74221647c7888f04191a50557c44ec6" title="Set an option value on a socket.">lwpa_setsockopt()</a> and <a class="el" href="group__lwpa__socket.html#ga76b8fb450bb999d48e6a21f132d75e03" title="Get an option value for a socket.">lwpa_getsockopt()</a>.</p>
+<p>Refer to the similarly-named option on your favorite man page for more details. </p>
+</td></tr>
+<tr class="memitem:ga8254e203b0290da5bfb8975f670f4507"><td class="memItemLeft" align="right" valign="top"><a id="ga8254e203b0290da5bfb8975f670f4507"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga8254e203b0290da5bfb8975f670f4507">LWPA_SO_BROADCAST</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga8254e203b0290da5bfb8975f670f4507"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:ga8254e203b0290da5bfb8975f670f4507"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf732095d54985fabfde60f464aad4db7"><td class="memItemLeft" align="right" valign="top"><a id="gaf732095d54985fabfde60f464aad4db7"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gaf732095d54985fabfde60f464aad4db7">LWPA_SO_ERROR</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gaf732095d54985fabfde60f464aad4db7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get only, value is int representing platform error value. <br /></td></tr>
+<tr class="separator:gaf732095d54985fabfde60f464aad4db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5f1f963886bbe0d32700e86f3bf22632"><td class="memItemLeft" align="right" valign="top"><a id="ga5f1f963886bbe0d32700e86f3bf22632"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga5f1f963886bbe0d32700e86f3bf22632">LWPA_SO_KEEPALIVE</a>&#160;&#160;&#160;2</td></tr>
+<tr class="memdesc:ga5f1f963886bbe0d32700e86f3bf22632"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:ga5f1f963886bbe0d32700e86f3bf22632"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga55a81e9ec4a9aba857524b726ec75256"><td class="memItemLeft" align="right" valign="top"><a id="ga55a81e9ec4a9aba857524b726ec75256"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga55a81e9ec4a9aba857524b726ec75256">LWPA_SO_LINGER</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:ga55a81e9ec4a9aba857524b726ec75256"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is <a class="el" href="struct_lwpa_linger.html" title="Option value for LWPA_SO_LINGER.">LwpaLinger</a>. <br /></td></tr>
+<tr class="separator:ga55a81e9ec4a9aba857524b726ec75256"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4391e79e13fa481add7709ec5b5cf563"><td class="memItemLeft" align="right" valign="top"><a id="ga4391e79e13fa481add7709ec5b5cf563"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga4391e79e13fa481add7709ec5b5cf563">LWPA_SO_RCVBUF</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ga4391e79e13fa481add7709ec5b5cf563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing byte size. <br /></td></tr>
+<tr class="separator:ga4391e79e13fa481add7709ec5b5cf563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga03acc4ad773d79b5c22644c28d27396f"><td class="memItemLeft" align="right" valign="top"><a id="ga03acc4ad773d79b5c22644c28d27396f"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga03acc4ad773d79b5c22644c28d27396f">LWPA_SO_SNDBUF</a>&#160;&#160;&#160;5</td></tr>
+<tr class="memdesc:ga03acc4ad773d79b5c22644c28d27396f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing byte size. <br /></td></tr>
+<tr class="separator:ga03acc4ad773d79b5c22644c28d27396f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga068077e81f7e9a8613d856b6ca6d9166"><td class="memItemLeft" align="right" valign="top"><a id="ga068077e81f7e9a8613d856b6ca6d9166"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga068077e81f7e9a8613d856b6ca6d9166">LWPA_SO_RCVTIMEO</a>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:ga068077e81f7e9a8613d856b6ca6d9166"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing ms. <br /></td></tr>
+<tr class="separator:ga068077e81f7e9a8613d856b6ca6d9166"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga70fe9d6049c2d57443614b8c1cfd84c5"><td class="memItemLeft" align="right" valign="top"><a id="ga70fe9d6049c2d57443614b8c1cfd84c5"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga70fe9d6049c2d57443614b8c1cfd84c5">LWPA_SO_SNDTIMEO</a>&#160;&#160;&#160;7</td></tr>
+<tr class="memdesc:ga70fe9d6049c2d57443614b8c1cfd84c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int representing ms. <br /></td></tr>
+<tr class="separator:ga70fe9d6049c2d57443614b8c1cfd84c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf90682239698ff4ffa860e2ada12ec28"><td class="memItemLeft" align="right" valign="top"><a id="gaf90682239698ff4ffa860e2ada12ec28"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gaf90682239698ff4ffa860e2ada12ec28">LWPA_SO_REUSEADDR</a>&#160;&#160;&#160;8</td></tr>
+<tr class="memdesc:gaf90682239698ff4ffa860e2ada12ec28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:gaf90682239698ff4ffa860e2ada12ec28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8d68ac126619d3327e3f6fc893c7e488"><td class="memItemLeft" align="right" valign="top"><a id="ga8d68ac126619d3327e3f6fc893c7e488"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga8d68ac126619d3327e3f6fc893c7e488">LWPA_SO_REUSEPORT</a>&#160;&#160;&#160;9</td></tr>
+<tr class="memdesc:ga8d68ac126619d3327e3f6fc893c7e488"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:ga8d68ac126619d3327e3f6fc893c7e488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacad2c1797aca1d5a3c20c272328789c0"><td class="memItemLeft" align="right" valign="top"><a id="gacad2c1797aca1d5a3c20c272328789c0"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gacad2c1797aca1d5a3c20c272328789c0">LWPA_SO_TYPE</a>&#160;&#160;&#160;10</td></tr>
+<tr class="memdesc:gacad2c1797aca1d5a3c20c272328789c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get only, value is int. <br /></td></tr>
+<tr class="separator:gacad2c1797aca1d5a3c20c272328789c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Options for level LWPA_IPPROTO_IP or LWPA_IPPROTO_IPV6</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp97821d0c8053869a0d40417b52204563"></a>Used in the option parameter to <a class="el" href="group__lwpa__socket.html#gac74221647c7888f04191a50557c44ec6" title="Set an option value on a socket.">lwpa_setsockopt()</a> and <a class="el" href="group__lwpa__socket.html#ga76b8fb450bb999d48e6a21f132d75e03" title="Get an option value for a socket.">lwpa_getsockopt()</a>.</p>
+<p>Refer to the similarly-named option on your favorite man page for more details. </p>
+</td></tr>
+<tr class="memitem:ga2711703676dc5940b484b4831619c23d"><td class="memItemLeft" align="right" valign="top"><a id="ga2711703676dc5940b484b4831619c23d"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga2711703676dc5940b484b4831619c23d">LWPA_IP_TTL</a>&#160;&#160;&#160;11</td></tr>
+<tr class="memdesc:ga2711703676dc5940b484b4831619c23d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int. <br /></td></tr>
+<tr class="separator:ga2711703676dc5940b484b4831619c23d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga33867e9f8eeb3cbdd8513483026935f8"><td class="memItemLeft" align="right" valign="top"><a id="ga33867e9f8eeb3cbdd8513483026935f8"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga33867e9f8eeb3cbdd8513483026935f8">LWPA_IP_MULTICAST_IF</a>&#160;&#160;&#160;12</td></tr>
+<tr class="memdesc:ga33867e9f8eeb3cbdd8513483026935f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is <a class="el" href="struct_lwpa_ip_addr.html" title="An IP address.">LwpaIpAddr</a>. <br /></td></tr>
+<tr class="separator:ga33867e9f8eeb3cbdd8513483026935f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2e184196155e7aba01e9f7bc315003b1"><td class="memItemLeft" align="right" valign="top"><a id="ga2e184196155e7aba01e9f7bc315003b1"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga2e184196155e7aba01e9f7bc315003b1">LWPA_IP_MULTICAST_TTL</a>&#160;&#160;&#160;13</td></tr>
+<tr class="memdesc:ga2e184196155e7aba01e9f7bc315003b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is int. <br /></td></tr>
+<tr class="separator:ga2e184196155e7aba01e9f7bc315003b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad0175e8affc43157d2487763ef6660fc"><td class="memItemLeft" align="right" valign="top"><a id="gad0175e8affc43157d2487763ef6660fc"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gad0175e8affc43157d2487763ef6660fc">LWPA_IP_MULTICAST_LOOP</a>&#160;&#160;&#160;14</td></tr>
+<tr class="memdesc:gad0175e8affc43157d2487763ef6660fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get/Set, value is boolean int. <br /></td></tr>
+<tr class="separator:gad0175e8affc43157d2487763ef6660fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab43a3e2b335d9bd16dd775829d259283"><td class="memItemLeft" align="right" valign="top"><a id="gab43a3e2b335d9bd16dd775829d259283"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#gab43a3e2b335d9bd16dd775829d259283">LWPA_MCAST_JOIN_GROUP</a>&#160;&#160;&#160;15</td></tr>
+<tr class="memdesc:gab43a3e2b335d9bd16dd775829d259283"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set only, value is <a class="el" href="struct_lwpa_mreq.html" title="Option value for LWPA_MCAST_JOIN_GROUP and LWPA_MCAST_LEAVE_GROUP.">LwpaMreq</a>. <br /></td></tr>
+<tr class="separator:gab43a3e2b335d9bd16dd775829d259283"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga30d044b29e2f4a000f282ab64a0d74fb"><td class="memItemLeft" align="right" valign="top"><a id="ga30d044b29e2f4a000f282ab64a0d74fb"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__socket.html#ga30d044b29e2f4a000f282ab64a0d74fb">LWPA_MCAST_LEAVE_GROUP</a>&#160;&#160;&#160;16</td></tr>
+<tr class="memdesc:ga30d044b29e2f4a000f282ab64a0d74fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set only, value is <a class="el" href="struct_lwpa_mreq.html" title="Option value for LWPA_MCAST_JOIN_GROUP and LWPA_MCAST_LEAVE_GROUP.">LwpaMreq</a>. <br /></td></tr>
+<tr class="separator:ga30d044b29e2f4a000f282ab64a0d74fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'how' values for lwpa_shutdown()</h2></td></tr>
+<tr class="memitem:ga8963c84f50c35f4baf558faf032fc8c1"><td class="memItemLeft" align="right" valign="top"><a id="ga8963c84f50c35f4baf558faf032fc8c1"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_SHUT_RD</b>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:ga8963c84f50c35f4baf558faf032fc8c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4bad0009beea168a54e3264f9508126d"><td class="memItemLeft" align="right" valign="top"><a id="ga4bad0009beea168a54e3264f9508126d"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_SHUT_WR</b>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:ga4bad0009beea168a54e3264f9508126d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga42cb17037f201082e09d479e3f78e4a7"><td class="memItemLeft" align="right" valign="top"><a id="ga42cb17037f201082e09d479e3f78e4a7"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_SHUT_RDWR</b>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:ga42cb17037f201082e09d479e3f78e4a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'family' values for lwpa_socket() and LwpaAddrinfo</h2></td></tr>
+<tr class="memitem:ga761cddf697bf0a216b1cb7d0393db8c3"><td class="memItemLeft" align="right" valign="top"><a id="ga761cddf697bf0a216b1cb7d0393db8c3"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_AF_UNSPEC</b>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:ga761cddf697bf0a216b1cb7d0393db8c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7085dece595edd0bbf64d284ebb92293"><td class="memItemLeft" align="right" valign="top"><a id="ga7085dece595edd0bbf64d284ebb92293"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_AF_INET</b>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:ga7085dece595edd0bbf64d284ebb92293"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga917f492675a80d909897d0af2ca62be7"><td class="memItemLeft" align="right" valign="top"><a id="ga917f492675a80d909897d0af2ca62be7"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_AF_INET6</b>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:ga917f492675a80d909897d0af2ca62be7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'type' values for lwpa_socket() and lwpa_getsockopt()</h2></td></tr>
+<tr class="memitem:gaf272f7f1e1b365e14d886b644c8a4e0b"><td class="memItemLeft" align="right" valign="top"><a id="gaf272f7f1e1b365e14d886b644c8a4e0b"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_STREAM</b>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:gaf272f7f1e1b365e14d886b644c8a4e0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga38c31d93201faf7b4a68223fb82418ff"><td class="memItemLeft" align="right" valign="top"><a id="ga38c31d93201faf7b4a68223fb82418ff"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_DGRAM</b>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:ga38c31d93201faf7b4a68223fb82418ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'events' and 'revents' values for LwpaPollfd</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrpc3d8c449a0ed7b733959604ea56a4308"></a>Refer to the similarly-named flags in your favorite poll() man page for more details. </p>
+</td></tr>
+<tr class="memitem:ga540585ef9d22f265d3fed71fbc091658"><td class="memItemLeft" align="right" valign="top"><a id="ga540585ef9d22f265d3fed71fbc091658"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_POLLIN</b>&#160;&#160;&#160;0x1</td></tr>
+<tr class="separator:ga540585ef9d22f265d3fed71fbc091658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaafdb90cee33c408ea7bdb62e9d076a41"><td class="memItemLeft" align="right" valign="top"><a id="gaafdb90cee33c408ea7bdb62e9d076a41"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_POLLOUT</b>&#160;&#160;&#160;0x2</td></tr>
+<tr class="separator:gaafdb90cee33c408ea7bdb62e9d076a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga463d4dc0500c6f11a3fb3b5b4754f173"><td class="memItemLeft" align="right" valign="top"><a id="ga463d4dc0500c6f11a3fb3b5b4754f173"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_POLLPRI</b>&#160;&#160;&#160;0x4</td></tr>
+<tr class="separator:ga463d4dc0500c6f11a3fb3b5b4754f173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3ebbbe7391b6cc3cfe67da3e15a35b83"><td class="memItemLeft" align="right" valign="top"><a id="ga3ebbbe7391b6cc3cfe67da3e15a35b83"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_POLLERR</b>&#160;&#160;&#160;0x8</td></tr>
+<tr class="separator:ga3ebbbe7391b6cc3cfe67da3e15a35b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">'flags' values for LwpaAddrinfo</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrp5519fef163f0524c614359b5d3f756bc"></a>Refer to the similarly-named flags in your favorite getaddrinfo() man page for more details. </p>
+</td></tr>
+<tr class="memitem:gaae11145d43ae43993b385ecb0ffb1ec2"><td class="memItemLeft" align="right" valign="top"><a id="gaae11145d43ae43993b385ecb0ffb1ec2"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_AI_PASSIVE</b>&#160;&#160;&#160;0x01</td></tr>
+<tr class="separator:gaae11145d43ae43993b385ecb0ffb1ec2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7e6eb0c8ef78b13af066ca5436c62841"><td class="memItemLeft" align="right" valign="top"><a id="ga7e6eb0c8ef78b13af066ca5436c62841"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_AI_CANONNAME</b>&#160;&#160;&#160;0x02</td></tr>
+<tr class="separator:ga7e6eb0c8ef78b13af066ca5436c62841"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga116a1ad40bbcf66b896536c6109a6fc7"><td class="memItemLeft" align="right" valign="top"><a id="ga116a1ad40bbcf66b896536c6109a6fc7"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>LWPA_AI_NUMERICHOST</b>&#160;&#160;&#160;0x04</td></tr>
+<tr class="separator:ga116a1ad40bbcf66b896536c6109a6fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ga8fbf24dfb5d096d9f1f2a09e0753a2a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">&#9670;&nbsp;</a></span>lwpa_socket_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef UNDEFINED <a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A socket handle. </p>
+<p>Typedefed to the system's socket identifier. </p>
+
+</div>
+</div>
+<a id="ga26e3a47bd5083fd59eea2099bad33789"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga26e3a47bd5083fd59eea2099bad33789">&#9670;&nbsp;</a></span>LwpaAddrinfo</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> <a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A structure containing name and address information about an internet host. </p>
+<p>Returned by <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a>. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gac258071ec7b4f5203764ffba0c0d92a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac258071ec7b4f5203764ffba0c0d92a7">&#9670;&nbsp;</a></span>lwpa_accept()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_accept </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> *&#160;</td>
+          <td class="paramname"><em>conn_sock</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Accept a connection on a socket. </p>
+<p>Refer to your favorite accept() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr type. Connected socket is returned in an output parameter rather than the return value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Listening socket on which to accept a new connection. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">address</td><td>Remote address from which the connection was accepted. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">conn_sock</td><td>Filled in on success with handle to connected socket. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (failure). </dd></dl>
+
+</div>
+</div>
+<a id="ga826977bc6733ed0c4f34a5746fa05543"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga826977bc6733ed0c4f34a5746fa05543">&#9670;&nbsp;</a></span>lwpa_bind()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_bind </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bind a name to a socket. </p>
+<p>Refer to your favorite bind() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to which to bind an address (traditionally called a 'name'). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Address to assign to the socket. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gab2a3f2980a490bb439f200921074d01f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab2a3f2980a490bb439f200921074d01f">&#9670;&nbsp;</a></span>lwpa_close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_close </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Close a socket. </p>
+<p>Refer to your favorite close() man page for more information.</p>
+<p>On UNIX-like systems, note that this may also successfully close descriptors that don't refer to sockets; however, for portability it should only be used on identifiers that were returned from an lwpa_* function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to close. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga7ce51adfd80ae9625f3c6c32a6dc66f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7ce51adfd80ae9625f3c6c32a6dc66f4">&#9670;&nbsp;</a></span>lwpa_connect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_connect </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initiate a connection on a socket. </p>
+<p>Refer to your favorite connect() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to connect. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Address to which to connect. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga85eeba64809a88e6a246e9471d5e2cd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga85eeba64809a88e6a246e9471d5e2cd6">&#9670;&nbsp;</a></span>lwpa_freeaddrinfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lwpa_freeaddrinfo </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>ai</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Free an addrinfo list returned by <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a>. </p>
+<p>Most platforms allocate memory when getaddrinfo() is called. This must always be called after any call to <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a> to free that memory. It can be called with any of the <a class="el" href="struct_lwpa_addrinfo.html" title="A structure containing name and address information about an internet host.">LwpaAddrinfo</a> instances in the list, and the whole list will be freed. See the example usage in the description of <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ai</td><td>Pointer to lwpa_addrinfo struct for which to free the platform memory. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga7c1c76581b63ab7c5b383e25dc200990"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7c1c76581b63ab7c5b383e25dc200990">&#9670;&nbsp;</a></span>lwpa_getaddrinfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_getaddrinfo </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>hostname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>service</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>hints</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>result</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get address information for a named internet host and/or service. </p>
+<p>Refer to your favorite getaddrinfo() man page for more information. One difference between this and the POSIX function is the way that multiple addresses are iterated. lwpa uses the <a class="el" href="group__lwpa__socket.html#gafe366acfdbaa9d98d9459660798c73fd" title="Get the next address from the list returned by lwpa_getaddrinfo().">lwpa_nextaddr()</a> function instead of a next pointer to iterate over multiple addresses. For example:</p>
+<div class="fragment"><div class="line"><a class="code" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> info;</div>
+<div class="line"><span class="keywordflow">if</span> (0 == <a class="code" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990">lwpa_getaddrinfo</a>(<span class="stringliteral">&quot;www.google.com&quot;</span>, <span class="stringliteral">&quot;http&quot;</span>, NULL, &amp;info))</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">do</span></div>
+<div class="line">  {</div>
+<div class="line">    <span class="keywordtype">char</span> inet_str[<a class="code" href="group__lwpa__socket.html#ga078d3101f67934bce6f13f193a4832ea">LWPA_INET6_ADDRSTRLEN</a>];</div>
+<div class="line">    <span class="keywordflow">if</span> (<a class="code" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647">LWPA_OK</a> == <a class="code" href="group__lwpa__socket.html#gac6b5fcff898be3bbf7789a8c480082b1">lwpa_inet_ntop</a>(&amp;info.<a class="code" href="struct_lwpa_addrinfo.html#a200d2e1203375035ef7d5c5c99e4a425">ai_addr</a>.<a class="code" href="struct_lwpa_sockaddr.html#aaafd70d57737ab374198d3d754411129">ip</a>, inet_str,</div>
+<div class="line">                                  <a class="code" href="group__lwpa__socket.html#ga078d3101f67934bce6f13f193a4832ea">LWPA_INET6_ADDRSTRLEN</a>))</div>
+<div class="line">    {</div>
+<div class="line">      printf(<span class="stringliteral">&quot;Address: %s\n&quot;</span>, inet_str);</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">else</span></div>
+<div class="line">      printf(<span class="stringliteral">&quot;Address conversion error!\n&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  } <span class="keywordflow">while</span> (<a class="code" href="group__lwpa__socket.html#gafe366acfdbaa9d98d9459660798c73fd">lwpa_nextaddr</a>(&amp;info));</div>
+<div class="line"> </div>
+<div class="line">  <a class="code" href="group__lwpa__socket.html#ga85eeba64809a88e6a246e9471d5e2cd6">lwpa_freeaddrinfo</a>(&amp;info);</div>
+<div class="line">}</div>
+<div class="ttc" id="agroup__lwpa__error_html_gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647"><div class="ttname"><a href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647">LWPA_OK</a></div><div class="ttdeci">@ LWPA_OK</div><div class="ttdoc">The call was successful, no error occurred.</div><div class="ttdef"><b>Definition:</b> lwpa_error.h:39</div></div>
+<div class="ttc" id="agroup__lwpa__socket_html_ga078d3101f67934bce6f13f193a4832ea"><div class="ttname"><a href="group__lwpa__socket.html#ga078d3101f67934bce6f13f193a4832ea">LWPA_INET6_ADDRSTRLEN</a></div><div class="ttdeci">#define LWPA_INET6_ADDRSTRLEN</div><div class="ttdoc">Maximum length of the string representation of an IPv6 address.</div><div class="ttdef"><b>Definition:</b> lwpa_socket.h:238</div></div>
+<div class="ttc" id="agroup__lwpa__socket_html_ga7c1c76581b63ab7c5b383e25dc200990"><div class="ttname"><a href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990">lwpa_getaddrinfo</a></div><div class="ttdeci">int lwpa_getaddrinfo(const char *hostname, const char *service, const LwpaAddrinfo *hints, LwpaAddrinfo *result)</div><div class="ttdoc">Get address information for a named internet host and/or service.</div><div class="ttdef"><b>Definition:</b> lwpa_socket.c:515</div></div>
+<div class="ttc" id="agroup__lwpa__socket_html_ga85eeba64809a88e6a246e9471d5e2cd6"><div class="ttname"><a href="group__lwpa__socket.html#ga85eeba64809a88e6a246e9471d5e2cd6">lwpa_freeaddrinfo</a></div><div class="ttdeci">void lwpa_freeaddrinfo(LwpaAddrinfo *ai)</div><div class="ttdoc">Free an addrinfo list returned by lwpa_getaddrinfo().</div><div class="ttdef"><b>Definition:</b> lwpa_socket.c:580</div></div>
+<div class="ttc" id="agroup__lwpa__socket_html_gac6b5fcff898be3bbf7789a8c480082b1"><div class="ttname"><a href="group__lwpa__socket.html#gac6b5fcff898be3bbf7789a8c480082b1">lwpa_inet_ntop</a></div><div class="ttdeci">lwpa_error_t lwpa_inet_ntop(const LwpaIpAddr *src, char *dest, size_t size)</div><div class="ttdoc">Convert IPv4 and IPv6 addresses from binary to text form.</div><div class="ttdef"><b>Definition:</b> lwpa_socket.c:586</div></div>
+<div class="ttc" id="agroup__lwpa__socket_html_gafe366acfdbaa9d98d9459660798c73fd"><div class="ttname"><a href="group__lwpa__socket.html#gafe366acfdbaa9d98d9459660798c73fd">lwpa_nextaddr</a></div><div class="ttdeci">bool lwpa_nextaddr(LwpaAddrinfo *ai)</div><div class="ttdoc">Get the next address from the list returned by lwpa_getaddrinfo().</div><div class="ttdef"><b>Definition:</b> lwpa_socket.c:544</div></div>
+<div class="ttc" id="astruct_lwpa_addrinfo_html"><div class="ttname"><a href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a></div><div class="ttdoc">A structure containing name and address information about an internet host.</div><div class="ttdef"><b>Definition:</b> lwpa_socket.h:213</div></div>
+<div class="ttc" id="astruct_lwpa_addrinfo_html_a200d2e1203375035ef7d5c5c99e4a425"><div class="ttname"><a href="struct_lwpa_addrinfo.html#a200d2e1203375035ef7d5c5c99e4a425">LwpaAddrinfo::ai_addr</a></div><div class="ttdeci">LwpaSockaddr ai_addr</div><div class="ttdoc">Address of host.</div><div class="ttdef"><b>Definition:</b> lwpa_socket.h:219</div></div>
+<div class="ttc" id="astruct_lwpa_sockaddr_html_aaafd70d57737ab374198d3d754411129"><div class="ttname"><a href="struct_lwpa_sockaddr.html#aaafd70d57737ab374198d3d754411129">LwpaSockaddr::ip</a></div><div class="ttdeci">LwpaIpAddr ip</div><div class="ttdoc">IP address.</div><div class="ttdef"><b>Definition:</b> lwpa_inet.h:178</div></div>
+</div><!-- fragment --><p>On an internet-connected machine with DNS resolution capability, the above code should print something like: </p><div class="fragment"><div class="line">Address: 172.217.4.196</div>
+<div class="line">Address: 172.217.4.196</div>
+<div class="line">Address: 2607:f8b0:4009:806::2004</div>
+<div class="line">Address: 2607:f8b0:4009:806::2004</div>
+</div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hostname</td><td>Either a string-represented numerical network address or a network hostname to resolve. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">service</td><td>Either a string-represented numerical port number or a service name. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hints</td><td>Structure containing hints restricting the address types that can be returned. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">result</td><td>On success, filled in with the first address result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (an error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga601cc36855c662b79f662ae5c42595f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga601cc36855c662b79f662ae5c42595f1">&#9670;&nbsp;</a></span>lwpa_getpeername()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_getpeername </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the name of the connected peer socket. </p>
+<p>Refer to your favorite getpeername() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Connected socket for which to get the peer address. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Filled in with peer address on success. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga1268a36d23336543beba21b086af9f4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1268a36d23336543beba21b086af9f4e">&#9670;&nbsp;</a></span>lwpa_getsockname()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_getsockname </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get socket name. </p>
+<p>Refer to your favorite getsockname() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Connected socket for which to get the bound address. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">address</td><td>Filled in with bound address on success. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga76b8fb450bb999d48e6a21f132d75e03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga76b8fb450bb999d48e6a21f132d75e03">&#9670;&nbsp;</a></span>lwpa_getsockopt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_getsockopt </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>level</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>option_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>option_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t *&#160;</td>
+          <td class="paramname"><em>option_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get an option value for a socket. </p>
+<p>Refer to your favorite getsockopt() man page for more information.</p>
+<p>Differences from POSIX: Some overlapping option values are consolidated and some legacy option values are not included. Some value types are different; see the documentation of each possible option value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket for which to get the option value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>Protocol level of the option for which to get the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">option_name</td><td>Name of the option for which to get the value. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">option_value</td><td>Filled in with option value on success. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">option_len</td><td>Contains size of buffer pointed to by option_value, filled in with actual size of value returned. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gac6b5fcff898be3bbf7789a8c480082b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac6b5fcff898be3bbf7789a8c480082b1">&#9670;&nbsp;</a></span>lwpa_inet_ntop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_inet_ntop </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>dest</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert IPv4 and IPv6 addresses from binary to text form. </p>
+<p>Refer to your favorite inet_ntop() man page for more information.</p>
+<p>Differences from POSIX: af parameter is omitted because that information is contained in the struct lwpa_ip.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>Address to convert to string form. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dest</td><td>Filled in on success with the string-represented address. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">size</td><td>Size in bytes of dest buf. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a>: Success.<br  />
+ <a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa9cf2f92a879c1eacc80a024bae41cd96" title="An invalid argument was provided to an API function.">LWPA_INVALID</a>: Invalid parameter.<br  />
+ <a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4" title="A system call or C library call failed in a way not covered by other errors.">LWPA_SYSERR</a>: System call failed. </dd></dl>
+
+</div>
+</div>
+<a id="ga4110e753475f9505e87b88e0097befb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4110e753475f9505e87b88e0097befb4">&#9670;&nbsp;</a></span>lwpa_inet_pton()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_inet_pton </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__inet.html#ga75918e41a21a5b4511b2b3c797e6f048">lwpa_iptype_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_ip_addr.html">LwpaIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>dest</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert IPv4 and IPv6 addresses from text to binary form. </p>
+<p>Refer to your favorite inet_pton() man page for more information.</p>
+<p>Differences from POSIX: lwpa_iptype_t used instead of AF_* value, since this function is only used for IP addresses.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of string-represented IP address pointed to by src. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>Character string containing a string-represented IP address. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dest</td><td>Filled in on success with the address. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a>: Success.<br  />
+ <a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa9cf2f92a879c1eacc80a024bae41cd96" title="An invalid argument was provided to an API function.">LWPA_INVALID</a>: Invalid parameter.<br  />
+ <a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4" title="A system call or C library call failed in a way not covered by other errors.">LWPA_SYSERR</a>: System call failed. </dd></dl>
+
+</div>
+</div>
+<a id="gab5c6cf7dbbff0ebd338e9ef6de183890"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab5c6cf7dbbff0ebd338e9ef6de183890">&#9670;&nbsp;</a></span>lwpa_listen()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_listen </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>backlog</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Listen for connections on a socket. </p>
+<p>Refer to your favorite listen() man page for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>LWPA_STREAM socket on which to listen. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">backlog</td><td>Maximum length of pending connection queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gafe366acfdbaa9d98d9459660798c73fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafe366acfdbaa9d98d9459660798c73fd">&#9670;&nbsp;</a></span>lwpa_nextaddr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a> lwpa_nextaddr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_addrinfo.html">LwpaAddrinfo</a> *&#160;</td>
+          <td class="paramname"><em>ai</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the next address from the list returned by <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a>. </p>
+<p>Most platforms allocate and return a linked list of address info structs in their getaddrinfo() implementation. To avoid further memory allocation in the abstraction layer, this non-POSIX-like way to iterate through the addrinfo structs is provided. To get all of the addresses returned from a <a class="el" href="group__lwpa__socket.html#ga7c1c76581b63ab7c5b383e25dc200990" title="Get address information for a named internet host and/or service.">lwpa_getaddrinfo()</a> call, keep calling this on the result struct until it returns false.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">ai</td><td>Pointer to last lwpa_addrinfo struct, filled in with values of the next address. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (next address was filled in) or false (no more addresses or error). </dd></dl>
+
+</div>
+</div>
+<a id="gaf1cb343c83189a6d72f1c5cf9d2a2d3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf1cb343c83189a6d72f1c5cf9d2a2d3d">&#9670;&nbsp;</a></span>lwpa_poll()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int lwpa_poll </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_pollfd.html">LwpaPollfd</a> *&#160;</td>
+          <td class="paramname"><em>fds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>nfds</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Wait for some event on a set of sockets. </p>
+<p>Refer to your favorite poll() man page for more information.</p>
+<p>On UNIX-like systems, note that this may also work for descriptors that don't refer to sockets; however, for portability it should only be used on identifiers that were returned from an lwpa_* function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">fds</td><td>Set of socket descriptors to be monitored. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nfds</td><td>Number of <a class="el" href="struct_lwpa_pollfd.html" title="A description for a socket to poll with lwpa_poll().">LwpaPollfd</a> structs in the fds array. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">timeout_ms</td><td>How long to wait for an event, in milliseconds. Use <a class="el" href="group__lwpa.html#ga1c2b0e972201228ff6c55879bab82861" title="For lwpa_ functions that take a millisecond timeout, this means to wait indefinitely.">LWPA_WAIT_FOREVER</a> to wait indefinitely. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of <a class="el" href="struct_lwpa_pollfd.html" title="A description for a socket to poll with lwpa_poll().">LwpaPollfd</a> structs which have nonzero revents fields (success), <a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa227b5a6ccb818da7bcc74cecbf193f7f" title="A connection timed out.">LWPA_TIMEDOUT</a> (timed out), or other lwpa_error_t value from the underlying system call (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga8a597ac866a5b3951f3b7543e0f96da5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8a597ac866a5b3951f3b7543e0f96da5">&#9670;&nbsp;</a></span>lwpa_recv()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int lwpa_recv </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Receive data on a connected socket. </p>
+<p>Refer to your favorite recv() man page for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to receive. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">buffer</td><td>Buffer in which to place received data. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of buffer. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Receive flags. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes received (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gab170a859b1992216dac42722d5773518"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab170a859b1992216dac42722d5773518">&#9670;&nbsp;</a></span>lwpa_recvfrom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int lwpa_recvfrom </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *&#160;</td>
+          <td class="paramname"><em>address</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Receive data on a socket. </p>
+<p>Refer to your favorite recvfrom() man page for more information.</p>
+<p>Differences from POSIX: addrlen parameter is omitted because there is only one lwpa sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to receive. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">buffer</td><td>Buffer in which to place received data. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of buffer. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Receive flags. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">address</td><td>If provided, filled in on success with peer address from which the data was received. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes received (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gae22d1b7fe2534cb4a57991a62397faf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae22d1b7fe2534cb4a57991a62397faf6">&#9670;&nbsp;</a></span>lwpa_send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int lwpa_send </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send data on a connected socket. </p>
+<p>Refer to your favorite send() man page for more information.</p>
+<p>Differences from POSIX: Returns int rather than nonstandard ssize_t.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>Message to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Send flags. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes sent (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gacab7bbbb36484aa2b574ee23652ddc8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacab7bbbb36484aa2b574ee23652ddc8b">&#9670;&nbsp;</a></span>lwpa_sendto()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int lwpa_sendto </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>message</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_sockaddr.html">LwpaSockaddr</a> *&#160;</td>
+          <td class="paramname"><em>dest_addr</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send data on a socket. </p>
+<p>Refer to your favorite sendto() man page for more information.</p>
+<p>Differences from POSIX: Returns int rather than nonstandard ssize_t. addrlen parameter is omitted because there is only one lwpa sockaddr type.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket on which to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">message</td><td>Message to send. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">length</td><td>Size in bytes of message. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">flags</td><td>Send flags. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dest_addr</td><td>Address to which to send the message. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes sent (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga846cd48d4882273a10d6f781128f03ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga846cd48d4882273a10d6f781128f03ea">&#9670;&nbsp;</a></span>lwpa_setblocking()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_setblocking </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a>&#160;</td>
+          <td class="paramname"><em>blocking</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Change the blocking behavior of a socket. </p>
+<p>This is similar to manipulating the O_NONBLOCK flag through the fcntl() function on a BSD socket.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket for which to change the blocking behavior. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">blocking</td><td>true (socket should block) or false (socket should not block). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gac74221647c7888f04191a50557c44ec6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac74221647c7888f04191a50557c44ec6">&#9670;&nbsp;</a></span>lwpa_setsockopt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_setsockopt </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>level</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>option_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>option_value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>option_len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set an option value on a socket. </p>
+<p>Refer to your favorite setsockopt() man page for more information.</p>
+<p>Differences from POSIX: Some overlapping option values are consolidated and some legacy option values are not included. Some value types are different; see the documentation of each possible option value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket for which to set the option value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">level</td><td>Protocol level of the option for which to set the value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">option_name</td><td>Name of the option for which to set the value. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">option_value</td><td>Value to set for the option. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">option_len</td><td>Size of value pointed to by option_value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="gae9d6a2363a94d98ee50cdfe359f3715e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae9d6a2363a94d98ee50cdfe359f3715e">&#9670;&nbsp;</a></span>lwpa_shutdown()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_shutdown </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a>&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>how</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shut down part of a full-duplex connection. </p>
+<p>Refer to your favorite shutdown() man page for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Socket to be shut down. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">how</td><td>How to shut down the socket, one of the LWPA_SHUT_* values. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a> (success) or lwpa_error_t code from system (error occurred). </dd></dl>
+
+</div>
+</div>
+<a id="ga10b6686c28d4a8e546462e2981541835"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga10b6686c28d4a8e546462e2981541835">&#9670;&nbsp;</a></span>lwpa_socket()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__socket.html#ga8fbf24dfb5d096d9f1f2a09e0753a2a6">lwpa_socket_t</a> lwpa_socket </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>family</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>type</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a socket. </p>
+<p>Refer to your favorite socket() man page for more information.</p>
+<p>Differences from POSIX: Rarely-used 'protocol' parameter is omitted. <a class="el" href="group__lwpa__socket.html#gabee47ca508b8e9b7b15ae6e7729cc087" title="An identifier for an invalid socket handle.">LWPA_SOCKET_INVALID</a> is the only invalid return value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">family</td><td>Protocol family that the socket should use. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Socket communication type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__socket.html#gabee47ca508b8e9b7b15ae6e7729cc087" title="An identifier for an invalid socket handle.">LWPA_SOCKET_INVALID</a> (error occurred) or a value other than <a class="el" href="group__lwpa__socket.html#gabee47ca508b8e9b7b15ae6e7729cc087" title="An identifier for an invalid socket handle.">LWPA_SOCKET_INVALID</a> (success). </dd></dl>
+
+</div>
+</div>
+<a id="ga6a9fbbc255caa2094bded46554aeb8c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6a9fbbc255caa2094bded46554aeb8c0">&#9670;&nbsp;</a></span>lwpa_socket_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lwpa_socket_deinit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Deinitialize the lwpa_socket module. </p>
+<p>Some platforms require deinitialization when an application is finished using socket/networking functionality. Others do not, and on those platforms this will simply be an empty function. This function must be called for every time that <a class="el" href="group__lwpa__socket.html#ga7158c969eed13894a54ebb8784381e1f" title="Initialize the lwpa_socket module.">lwpa_socket_init()</a> is called in an application. </p>
+
+</div>
+</div>
+<a id="ga7158c969eed13894a54ebb8784381e1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7158c969eed13894a54ebb8784381e1f">&#9670;&nbsp;</a></span>lwpa_socket_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__error.html#ga4de447127cf0baaa9afb0188e1e6afbf">lwpa_error_t</a> lwpa_socket_init </td>
+          <td>(</td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>platform_data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the lwpa_socket module. </p>
+<p>Some platforms require initialization before socket/networking functionality can be used. Others do not, and on those platforms this will simply be an empty function. This function can be called multiple times in a given application, but it must be paired with an equal number of calls to <a class="el" href="group__lwpa__socket.html#ga6a9fbbc255caa2094bded46554aeb8c0" title="Deinitialize the lwpa_socket module.">lwpa_socket_deinit()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">platform_data</td><td>A pointer to platform-specific data to use on initialization. The specific type is defined in lwpa_socket_[platform].h if it exists for a platform. NULL indicates use defaults. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfa857ed78ba3e816c71b69c16c85c21647" title="The call was successful, no error occurred.">LWPA_OK</a>: Initialization successful.<br  />
+ <a class="el" href="group__lwpa__error.html#gga4de447127cf0baaa9afb0188e1e6afbfabc09b1c02b9178906e1b6984f9021ad4" title="A system call or C library call failed in a way not covered by other errors.">LWPA_SYSERR</a>: An internal library or system call error occurred.<br  />
+</dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

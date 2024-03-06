@@ -1,0 +1,320 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: include/etcpal/uuid.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('uuid_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">uuid.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2022 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of EtcPal. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/EtcPal</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">/* etcpal/uuid.h: A type and helper functions for a Universally Unique Identifier (UUID) */</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#ifndef ETCPAL_UUID_H_</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#define ETCPAL_UUID_H_</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &quot;etcpal/error.h&quot;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">   89</a></span>&#160;<span class="preprocessor">#define ETCPAL_UUID_BYTES 16u</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="struct_etc_pal_uuid.html">   92</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;{</div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="struct_etc_pal_uuid.html#a814a9e92ac05977a8fce43ba49425d14">   94</a></span>&#160;  uint8_t <a class="code" href="struct_etc_pal_uuid.html#a814a9e92ac05977a8fce43ba49425d14">data</a>[<a class="code" href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">ETCPAL_UUID_BYTES</a>]; </div>
+<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="group__etcpal__uuid.html#ga3b447ed65229da6eb270791c6afd2e64">   95</a></span>&#160;} <a class="code" href="group__etcpal__uuid.html#ga3b447ed65229da6eb270791c6afd2e64">EtcPalUuid</a>;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="group__etcpal__uuid.html#ga6f2cff87ab29b0b26d0f641b065c998d">  105</a></span>&#160;<span class="preprocessor">#define ETCPAL_UUID_CMP(uuid1ptr, uuid2ptr) memcmp((uuid1ptr)-&gt;data, (uuid2ptr)-&gt;data, ETCPAL_UUID_BYTES)</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">extern</span> <span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a> <a class="code" href="group__etcpal__uuid.html#gae518c32bbc7d2266568ee9a703bb4f5e">kEtcPalNullUuid</a>;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="group__etcpal__uuid.html#ga3f7c7f1f596e00536adbefb78899ebd1">  118</a></span>&#160;<span class="preprocessor">#define ETCPAL_UUID_IS_NULL(uuidptr) (memcmp((uuidptr)-&gt;data, kEtcPalNullUuid.data, ETCPAL_UUID_BYTES) == 0)</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="group__etcpal__uuid.html#gabab14207e273082491f7be2a21275092">  121</a></span>&#160;<span class="preprocessor">#define ETCPAL_UUID_STRING_BYTES 37</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="group__etcpal__uuid.html#ga191ac9542f1d4eaa95488b3740bb57bf">  124</a></span>&#160;<span class="preprocessor">#define ETCPAL_UUID_DEV_STR_MAX_LEN 32</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__uuid.html#ga479b00b02ab33cf757e9476ad3286336">etcpal_uuid_to_string</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* uuid, <span class="keywordtype">char</span>* buf);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="group__etcpal__uuid.html#ga8da6cbed139b61853a98f41120e73b29">etcpal_string_to_uuid</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* str, <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* uuid);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">/************************ UUID Generation Functions **************************/</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__uuid.html#ga7a2029b259cc4270fb721b976f21972a">etcpal_generate_v1_uuid</a>(<a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* uuid);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__uuid.html#gacede094cfd672660efa757fa2625e083">etcpal_generate_v3_uuid</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* ns, <span class="keyword">const</span> <span class="keywordtype">void</span>* name, <span class="keywordtype">size_t</span> name_len, <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* uuid);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__uuid.html#ga1cabb8b6f72752b1a2ae72f776301242">etcpal_generate_v4_uuid</a>(<a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* uuid);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__uuid.html#gac74a0ebbade4f8c2b90a778529176c9b">etcpal_generate_v5_uuid</a>(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* ns, <span class="keyword">const</span> <span class="keywordtype">void</span>* name, <span class="keywordtype">size_t</span> name_len, <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* uuid);</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__uuid.html#gabb977b5a218b4b62224c016bf3932f10">etcpal_generate_os_preferred_uuid</a>(<a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>* uuid);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<a class="code" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> <a class="code" href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda">etcpal_generate_device_uuid</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>*    dev_str,</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                                           <span class="keyword">const</span> uint8_t* mac_addr,</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                                           uint32_t       uuid_num,</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                                           <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>*    uuid);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;}</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">/* C++ utilities */</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">/* Comparison operators for UUIDs */</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> operator&lt;(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>&amp; a, <span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>&amp; b)</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;{</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <span class="keywordflow">return</span> (<a class="code" href="group__etcpal__uuid.html#ga6f2cff87ab29b0b26d0f641b065c998d">ETCPAL_UUID_CMP</a>(&amp;a, &amp;b) &lt; 0);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;}</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>&amp; a, <span class="keyword">const</span> <a class="code" href="struct_etc_pal_uuid.html">EtcPalUuid</a>&amp; b)</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;{</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  <span class="keywordflow">return</span> (<a class="code" href="group__etcpal__uuid.html#ga6f2cff87ab29b0b26d0f641b065c998d">ETCPAL_UUID_CMP</a>(&amp;a, &amp;b) == 0);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;}</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ETCPAL_UUID_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="agroup__etcpal__error_html_ga743b0648f0ca798ef29c9f69c6e255af"><div class="ttname"><a href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a></div><div class="ttdeci">etcpal_error_t</div><div class="ttdoc">A set of error codes that can be returned by library functions.</div><div class="ttdef"><b>Definition:</b> error.h:49</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga1a5104de6a3c54113edf234e0840dcda"><div class="ttname"><a href="group__etcpal__uuid.html#ga1a5104de6a3c54113edf234e0840dcda">etcpal_generate_device_uuid</a></div><div class="ttdeci">etcpal_error_t etcpal_generate_device_uuid(const char *dev_str, const uint8_t *mac_addr, uint32_t uuid_num, EtcPalUuid *uuid)</div><div class="ttdoc">Generate a UUID from a combination of a custom string and MAC address.</div><div class="ttdef"><b>Definition:</b> uuid.c:309</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga1cabb8b6f72752b1a2ae72f776301242"><div class="ttname"><a href="group__etcpal__uuid.html#ga1cabb8b6f72752b1a2ae72f776301242">etcpal_generate_v4_uuid</a></div><div class="ttdeci">etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid *uuid)</div><div class="ttdoc">Generate a Version 4 UUID.</div><div class="ttdef"><b>Definition:</b> uuid.c:216</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga3b447ed65229da6eb270791c6afd2e64"><div class="ttname"><a href="group__etcpal__uuid.html#ga3b447ed65229da6eb270791c6afd2e64">EtcPalUuid</a></div><div class="ttdeci">struct EtcPalUuid EtcPalUuid</div><div class="ttdoc">The UUID type.</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga479b00b02ab33cf757e9476ad3286336"><div class="ttname"><a href="group__etcpal__uuid.html#ga479b00b02ab33cf757e9476ad3286336">etcpal_uuid_to_string</a></div><div class="ttdeci">bool etcpal_uuid_to_string(const EtcPalUuid *uuid, char *buf)</div><div class="ttdoc">Create a string representation of a UUID.</div><div class="ttdef"><b>Definition:</b> uuid.c:61</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga6f2cff87ab29b0b26d0f641b065c998d"><div class="ttname"><a href="group__etcpal__uuid.html#ga6f2cff87ab29b0b26d0f641b065c998d">ETCPAL_UUID_CMP</a></div><div class="ttdeci">#define ETCPAL_UUID_CMP(uuid1ptr, uuid2ptr)</div><div class="ttdoc">Compare two UUIDs.</div><div class="ttdef"><b>Definition:</b> uuid.h:105</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga7a2029b259cc4270fb721b976f21972a"><div class="ttname"><a href="group__etcpal__uuid.html#ga7a2029b259cc4270fb721b976f21972a">etcpal_generate_v1_uuid</a></div><div class="ttdeci">etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid *uuid)</div><div class="ttdoc">Generate a Version 1 UUID.</div><div class="ttdef"><b>Definition:</b> uuid.c:152</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_ga8da6cbed139b61853a98f41120e73b29"><div class="ttname"><a href="group__etcpal__uuid.html#ga8da6cbed139b61853a98f41120e73b29">etcpal_string_to_uuid</a></div><div class="ttdeci">bool etcpal_string_to_uuid(const char *str, EtcPalUuid *uuid)</div><div class="ttdoc">Create a UUID from a string representation.</div><div class="ttdef"><b>Definition:</b> uuid.c:85</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_gabb977b5a218b4b62224c016bf3932f10"><div class="ttname"><a href="group__etcpal__uuid.html#gabb977b5a218b4b62224c016bf3932f10">etcpal_generate_os_preferred_uuid</a></div><div class="ttdeci">etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid *uuid)</div><div class="ttdoc">Generate the preferred UUID version of the underlying OS.</div><div class="ttdef"><b>Definition:</b> uuid.c:282</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_gac74a0ebbade4f8c2b90a778529176c9b"><div class="ttname"><a href="group__etcpal__uuid.html#gac74a0ebbade4f8c2b90a778529176c9b">etcpal_generate_v5_uuid</a></div><div class="ttdeci">etcpal_error_t etcpal_generate_v5_uuid(const EtcPalUuid *ns, const void *name, size_t name_len, EtcPalUuid *uuid)</div><div class="ttdoc">Generate a Version 5 UUID.</div><div class="ttdef"><b>Definition:</b> uuid.c:243</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_gacede094cfd672660efa757fa2625e083"><div class="ttname"><a href="group__etcpal__uuid.html#gacede094cfd672660efa757fa2625e083">etcpal_generate_v3_uuid</a></div><div class="ttdeci">etcpal_error_t etcpal_generate_v3_uuid(const EtcPalUuid *ns, const void *name, size_t name_len, EtcPalUuid *uuid)</div><div class="ttdoc">Generate a Version 3 UUID.</div><div class="ttdef"><b>Definition:</b> uuid.c:178</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_gadfd6e6a51b681c03b6422d1454ddc954"><div class="ttname"><a href="group__etcpal__uuid.html#gadfd6e6a51b681c03b6422d1454ddc954">ETCPAL_UUID_BYTES</a></div><div class="ttdeci">#define ETCPAL_UUID_BYTES</div><div class="ttdoc">The number of bytes that make up a UUID.</div><div class="ttdef"><b>Definition:</b> uuid.h:89</div></div>
+<div class="ttc" id="agroup__etcpal__uuid_html_gae518c32bbc7d2266568ee9a703bb4f5e"><div class="ttname"><a href="group__etcpal__uuid.html#gae518c32bbc7d2266568ee9a703bb4f5e">kEtcPalNullUuid</a></div><div class="ttdeci">const EtcPalUuid kEtcPalNullUuid</div><div class="ttdoc">A null (all 0's) UUID, used by ETCPAL_UUID_IS_NULL() for comparison.</div><div class="ttdef"><b>Definition:</b> uuid.c:46</div></div>
+<div class="ttc" id="astruct_etc_pal_uuid_html"><div class="ttname"><a href="struct_etc_pal_uuid.html">EtcPalUuid</a></div><div class="ttdoc">The UUID type.</div><div class="ttdef"><b>Definition:</b> uuid.h:93</div></div>
+<div class="ttc" id="astruct_etc_pal_uuid_html_a814a9e92ac05977a8fce43ba49425d14"><div class="ttname"><a href="struct_etc_pal_uuid.html#a814a9e92ac05977a8fce43ba49425d14">EtcPalUuid::data</a></div><div class="ttdeci">uint8_t data[ETCPAL_UUID_BYTES]</div><div class="ttdoc">The 16-byte UUID data.</div><div class="ttdef"><b>Definition:</b> uuid.h:94</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_81a3fb26cc06c42d281987e41831a70b.html">etcpal</a></li><li class="navelem"><b>uuid.h</b></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

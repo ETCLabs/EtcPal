@@ -1,0 +1,412 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: include/etcpal/cpp/queue.h Source File</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('cpp_2queue_8h_source.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="headertitle">
+<div class="title">queue.h</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="cpp_2queue_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/******************************************************************************</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright 2022 ETC Inc.</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * you may not use this file except in compliance with the License.</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * You may obtain a copy of the License at</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *    http://www.apache.org/licenses/LICENSE-2.0</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> *</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * Unless required by applicable law or agreed to in writing, software</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment"> * See the License for the specific language governing permissions and</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="comment"> * limitations under the License.</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> *******************************************************************************</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="comment"> * This file is a part of EtcPal. For more information, go to:</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment"> * https://github.com/ETCLabs/EtcPal</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment"> ******************************************************************************/</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#ifndef ETCPAL_CPP_QUEUE_H</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#define ETCPAL_CPP_QUEUE_H</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;chrono&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;cstddef&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &lt;limits&gt;</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &quot;etcpal/common.h&quot;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &quot;etcpal/queue.h&quot;</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="cpp_2common_8h.html">etcpal/cpp/common.h</a>&quot;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">namespace </span>etcpal</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html">   93</a></span>&#160;<span class="keyword">class </span><a class="code" href="classetcpal_1_1_queue.html">Queue</a></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;{</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">explicit</span> <a class="code" href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">Queue</a>(<span class="keywordtype">size_t</span> size);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <a class="code" href="classetcpal_1_1_queue.html#a240bdcfcc136e53aeaac3aa454cc26bf">~Queue</a>();</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <a class="code" href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">Queue</a>(<span class="keyword">const</span> <a class="code" href="classetcpal_1_1_queue.html">Queue</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <a class="code" href="classetcpal_1_1_queue.html">Queue</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classetcpal_1_1_queue.html">Queue</a>&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <a class="code" href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">Queue</a>(<a class="code" href="classetcpal_1_1_queue.html">Queue</a>&amp;&amp; other)                 = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <a class="code" href="classetcpal_1_1_queue.html">Queue</a>&amp; operator=(<a class="code" href="classetcpal_1_1_queue.html">Queue</a>&amp;&amp; other) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#ad23735bc801c21635a277a31ac31b267">Send</a>(<span class="keyword">const</span> T&amp; data, <span class="keywordtype">int</span> timeout_ms = <a class="code" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a>);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#a4a645b7a56c142bd9b04f703893a5879">SendFromIsr</a>(<span class="keyword">const</span> T&amp; data);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160; </div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">Receive</a>(T&amp; data, <span class="keywordtype">int</span> timeout_ms = <a class="code" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a>);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">class</span> Rep, <span class="keyword">class</span> Period&gt;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keywordtype">bool</span>   <a class="code" href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">Receive</a>(T&amp; data, <span class="keyword">const</span> std::chrono::duration&lt;Rep, Period&gt;&amp; timeout);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keywordtype">bool</span>   <a class="code" href="classetcpal_1_1_queue.html#a6d23c1b53807ebce980dce934789a4e4">ReceiveFromIsr</a>(T&amp; data);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordtype">bool</span>   <a class="code" href="classetcpal_1_1_queue.html#a65e181fc77234e509cf5fa9aa9575839">Reset</a>();</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <span class="keywordtype">bool</span>   <a class="code" href="classetcpal_1_1_queue.html#a8e12342fc420701fbffd97025421575a">IsEmpty</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keywordtype">bool</span>   <a class="code" href="classetcpal_1_1_queue.html#a9cc49246382de0eeb66f493207fb4dbc">IsEmptyFromIsr</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keywordtype">bool</span>   <a class="code" href="classetcpal_1_1_queue.html#af5d30d3dd704e8e683b98a6ed6c5d9ca">IsFull</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordtype">bool</span>   <a class="code" href="classetcpal_1_1_queue.html#acf599d4a90f1b8f8c7892fe84789f6ac">IsFullFromIsr</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordtype">size_t</span> <a class="code" href="classetcpal_1_1_queue.html#ae99315f221f70d76e0ee29ae08ee59b0">SlotsUsed</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keywordtype">size_t</span> <a class="code" href="classetcpal_1_1_queue.html#ae855857d6bf35a221bff10549405453b">SlotsUsedFromIsr</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordtype">size_t</span> <a class="code" href="classetcpal_1_1_queue.html#aeecede9e1bc1a6e7394c5bf09b59b3f1">SlotsAvailable</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <a class="code" href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a> queue_{};</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;};</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">  128</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">Queue&lt;T&gt;::Queue</a>(<span class="keywordtype">size_t</span> size)</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;{</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <a class="code" href="group__etcpal__queue.html#gaefbd1625abdb0e502024b9c9749c2b17">etcpal_queue_create</a>(&amp;queue_, size, <span class="keyword">sizeof</span>(T));</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;}</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#a240bdcfcc136e53aeaac3aa454cc26bf">  135</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classetcpal_1_1_queue.html#a240bdcfcc136e53aeaac3aa454cc26bf">Queue&lt;T&gt;::~Queue</a>()</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;{</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <a class="code" href="group__etcpal__queue.html#ga89749b4899a165bb461570e8a91d470c">etcpal_queue_destroy</a>(&amp;queue_);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00149"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#ad23735bc801c21635a277a31ac31b267">  149</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#ad23735bc801c21635a277a31ac31b267">Queue&lt;T&gt;::Send</a>(<span class="keyword">const</span> T&amp; data, <span class="keywordtype">int</span> timeout_ms)</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;{</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7">etcpal_queue_timed_send</a>(&amp;queue_, &amp;data, timeout_ms);</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;}</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00158"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#a4a645b7a56c142bd9b04f703893a5879">  158</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#a4a645b7a56c142bd9b04f703893a5879">Queue&lt;T&gt;::SendFromIsr</a>(<span class="keyword">const</span> T&amp; data)</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;{</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2">etcpal_queue_send_from_isr</a>(&amp;queue_, &amp;data);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;}</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00168"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">  168</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">Queue&lt;T&gt;::Receive</a>(T&amp; data, <span class="keywordtype">int</span> timeout_ms)</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;{</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261">etcpal_queue_timed_receive</a>(&amp;queue_, &amp;data, timeout_ms);</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;}</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Rep, <span class="keyword">class</span> Period&gt;</div>
+<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#a2e1a4a59421e30ad677c4aab766a6683">  181</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">Queue&lt;T&gt;::Receive</a>(T&amp; data, <span class="keyword">const</span> std::chrono::duration&lt;Rep, Period&gt;&amp; timeout)</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;{</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;  <span class="keywordtype">int</span> timeout_ms_clamped =</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;      <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(std::min(std::chrono::milliseconds(timeout).count(),</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;                                <span class="keyword">static_cast&lt;</span>std::chrono::milliseconds::rep<span class="keyword">&gt;</span>(std::numeric_limits&lt;int&gt;::max())));</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261">etcpal_queue_timed_receive</a>(&amp;queue_, &amp;data, timeout_ms_clamped);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;}</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#a6d23c1b53807ebce980dce934789a4e4">  193</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#a6d23c1b53807ebce980dce934789a4e4">Queue&lt;T&gt;::ReceiveFromIsr</a>(T&amp; data)</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;{</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga7e17d87946f3241b16c03d86a0b426c3">etcpal_queue_receive_from_isr</a>(&amp;queue_, &amp;data);</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;}</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160; </div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00202"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#a65e181fc77234e509cf5fa9aa9575839">  202</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#a65e181fc77234e509cf5fa9aa9575839">Queue&lt;T&gt;::Reset</a>()</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;{</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga6d3ade96e77aca287711d3ddb0e87239">etcpal_queue_reset</a>(&amp;queue_);</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;}</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160; </div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00211"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#a8e12342fc420701fbffd97025421575a">  211</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#a8e12342fc420701fbffd97025421575a">Queue&lt;T&gt;::IsEmpty</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga3c0f4a48f832d88fead582a330255aec">etcpal_queue_is_empty</a>(&amp;queue_);</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;};</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00220"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#a9cc49246382de0eeb66f493207fb4dbc">  220</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#a9cc49246382de0eeb66f493207fb4dbc">Queue&lt;T&gt;::IsEmptyFromIsr</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga0a72aed21853d03ac10a09bafd148d0d">etcpal_queue_is_empty_from_isr</a>(&amp;queue_);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;};</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160; </div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00229"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#af5d30d3dd704e8e683b98a6ed6c5d9ca">  229</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#af5d30d3dd704e8e683b98a6ed6c5d9ca">Queue&lt;T&gt;::IsFull</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga6485e0e24d8240926a2291c0896bbcc6">etcpal_queue_is_full</a>(&amp;queue_);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;};</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160; </div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#acf599d4a90f1b8f8c7892fe84789f6ac">  238</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="classetcpal_1_1_queue.html#acf599d4a90f1b8f8c7892fe84789f6ac">Queue&lt;T&gt;::IsFullFromIsr</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga1fce7092855b5a04cab8e4b61e7a2641">etcpal_queue_is_full_from_isr</a>(&amp;queue_);</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;};</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00247"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#ae99315f221f70d76e0ee29ae08ee59b0">  247</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">size_t</span> <a class="code" href="classetcpal_1_1_queue.html#ae99315f221f70d76e0ee29ae08ee59b0">Queue&lt;T&gt;::SlotsUsed</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#gabfc3dcdf8460f0d0c0f58725f8a24c01">etcpal_queue_slots_used</a>(&amp;queue_);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;};</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; </div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00256"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#ae855857d6bf35a221bff10549405453b">  256</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">size_t</span> <a class="code" href="classetcpal_1_1_queue.html#ae855857d6bf35a221bff10549405453b">Queue&lt;T&gt;::SlotsUsedFromIsr</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#gadf793a0f6871dabea6fed364623225f2">etcpal_queue_slots_used_from_isr</a>(&amp;queue_);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;};</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="classetcpal_1_1_queue.html#aeecede9e1bc1a6e7394c5bf09b59b3f1">  265</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">size_t</span> <a class="code" href="classetcpal_1_1_queue.html#aeecede9e1bc1a6e7394c5bf09b59b3f1">Queue&lt;T&gt;::SlotsAvailable</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="group__etcpal__queue.html#ga13b02eb8709c25b8fd3bac45db5d8d8d">etcpal_queue_slots_available</a>(&amp;queue_);</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;};</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;};  <span class="comment">// namespace etcpal</span></div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// ETCPAL_CPP_RTOS_ERROR_H</span></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html"><div class="ttname"><a href="classetcpal_1_1_queue.html">etcpal::Queue</a></div><div class="ttdoc">An RTOS queue class.</div><div class="ttdef"><b>Definition:</b> queue.h:94</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_a240bdcfcc136e53aeaac3aa454cc26bf"><div class="ttname"><a href="classetcpal_1_1_queue.html#a240bdcfcc136e53aeaac3aa454cc26bf">etcpal::Queue::~Queue</a></div><div class="ttdeci">~Queue()</div><div class="ttdoc">Destroy a queue.</div><div class="ttdef"><b>Definition:</b> queue.h:135</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_a4a645b7a56c142bd9b04f703893a5879"><div class="ttname"><a href="classetcpal_1_1_queue.html#a4a645b7a56c142bd9b04f703893a5879">etcpal::Queue::SendFromIsr</a></div><div class="ttdeci">bool SendFromIsr(const T &amp;data)</div><div class="ttdoc">Add to a queue from an interrupt service routine.</div><div class="ttdef"><b>Definition:</b> queue.h:158</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_a65e181fc77234e509cf5fa9aa9575839"><div class="ttname"><a href="classetcpal_1_1_queue.html#a65e181fc77234e509cf5fa9aa9575839">etcpal::Queue::Reset</a></div><div class="ttdeci">bool Reset()</div><div class="ttdoc">Resets queue to empty state.</div><div class="ttdef"><b>Definition:</b> queue.h:202</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_a6d23c1b53807ebce980dce934789a4e4"><div class="ttname"><a href="classetcpal_1_1_queue.html#a6d23c1b53807ebce980dce934789a4e4">etcpal::Queue::ReceiveFromIsr</a></div><div class="ttdeci">bool ReceiveFromIsr(T &amp;data)</div><div class="ttdoc">Get an item from the queue from an interrupt context.</div><div class="ttdef"><b>Definition:</b> queue.h:193</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_a8e12342fc420701fbffd97025421575a"><div class="ttname"><a href="classetcpal_1_1_queue.html#a8e12342fc420701fbffd97025421575a">etcpal::Queue::IsEmpty</a></div><div class="ttdeci">bool IsEmpty() const</div><div class="ttdoc">Check if a queue is empty.</div><div class="ttdef"><b>Definition:</b> queue.h:211</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_a9cc49246382de0eeb66f493207fb4dbc"><div class="ttname"><a href="classetcpal_1_1_queue.html#a9cc49246382de0eeb66f493207fb4dbc">etcpal::Queue::IsEmptyFromIsr</a></div><div class="ttdeci">bool IsEmptyFromIsr() const</div><div class="ttdoc">Check if a queue is empty from an interrupt service routine.</div><div class="ttdef"><b>Definition:</b> queue.h:220</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_acf599d4a90f1b8f8c7892fe84789f6ac"><div class="ttname"><a href="classetcpal_1_1_queue.html#acf599d4a90f1b8f8c7892fe84789f6ac">etcpal::Queue::IsFullFromIsr</a></div><div class="ttdeci">bool IsFullFromIsr() const</div><div class="ttdoc">Check if a queue is full from an interrupt service routine.</div><div class="ttdef"><b>Definition:</b> queue.h:238</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_ad23735bc801c21635a277a31ac31b267"><div class="ttname"><a href="classetcpal_1_1_queue.html#ad23735bc801c21635a277a31ac31b267">etcpal::Queue::Send</a></div><div class="ttdeci">bool Send(const T &amp;data, int timeout_ms=ETCPAL_WAIT_FOREVER)</div><div class="ttdoc">Add some data to the queue.</div><div class="ttdef"><b>Definition:</b> queue.h:149</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_ae2bd22bccd067e5b8558810eb878f7bf"><div class="ttname"><a href="classetcpal_1_1_queue.html#ae2bd22bccd067e5b8558810eb878f7bf">etcpal::Queue::Receive</a></div><div class="ttdeci">bool Receive(T &amp;data, int timeout_ms=ETCPAL_WAIT_FOREVER)</div><div class="ttdoc">Get an item from the queue.</div><div class="ttdef"><b>Definition:</b> queue.h:168</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_ae729f6dede41f22b98b861eac4ac1895"><div class="ttname"><a href="classetcpal_1_1_queue.html#ae729f6dede41f22b98b861eac4ac1895">etcpal::Queue::Queue</a></div><div class="ttdeci">Queue(size_t size)</div><div class="ttdoc">Create a new queue.</div><div class="ttdef"><b>Definition:</b> queue.h:128</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_ae855857d6bf35a221bff10549405453b"><div class="ttname"><a href="classetcpal_1_1_queue.html#ae855857d6bf35a221bff10549405453b">etcpal::Queue::SlotsUsedFromIsr</a></div><div class="ttdeci">size_t SlotsUsedFromIsr() const</div><div class="ttdoc">Get number of slots being stored in the queue from an interrupt service routine.</div><div class="ttdef"><b>Definition:</b> queue.h:256</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_ae99315f221f70d76e0ee29ae08ee59b0"><div class="ttname"><a href="classetcpal_1_1_queue.html#ae99315f221f70d76e0ee29ae08ee59b0">etcpal::Queue::SlotsUsed</a></div><div class="ttdeci">size_t SlotsUsed() const</div><div class="ttdoc">Get number of slots being stored in the queue.</div><div class="ttdef"><b>Definition:</b> queue.h:247</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_aeecede9e1bc1a6e7394c5bf09b59b3f1"><div class="ttname"><a href="classetcpal_1_1_queue.html#aeecede9e1bc1a6e7394c5bf09b59b3f1">etcpal::Queue::SlotsAvailable</a></div><div class="ttdeci">size_t SlotsAvailable() const</div><div class="ttdoc">Get number of remaining slots in the queue.</div><div class="ttdef"><b>Definition:</b> queue.h:265</div></div>
+<div class="ttc" id="aclassetcpal_1_1_queue_html_af5d30d3dd704e8e683b98a6ed6c5d9ca"><div class="ttname"><a href="classetcpal_1_1_queue.html#af5d30d3dd704e8e683b98a6ed6c5d9ca">etcpal::Queue::IsFull</a></div><div class="ttdeci">bool IsFull() const</div><div class="ttdoc">Check if a queue is full.</div><div class="ttdef"><b>Definition:</b> queue.h:229</div></div>
+<div class="ttc" id="acpp_2common_8h_html"><div class="ttname"><a href="cpp_2common_8h.html">common.h</a></div><div class="ttdoc">Common definitions used by EtcPal C++ wrappers.</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga0a72aed21853d03ac10a09bafd148d0d"><div class="ttname"><a href="group__etcpal__queue.html#ga0a72aed21853d03ac10a09bafd148d0d">etcpal_queue_is_empty_from_isr</a></div><div class="ttdeci">bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t *id)</div><div class="ttdoc">Determine whether a queue is currently empty from an interrupt context.</div><div class="ttdef"><b>Definition:</b> queue.c:298</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga13b02eb8709c25b8fd3bac45db5d8d8d"><div class="ttname"><a href="group__etcpal__queue.html#ga13b02eb8709c25b8fd3bac45db5d8d8d">etcpal_queue_slots_available</a></div><div class="ttdeci">size_t etcpal_queue_slots_available(const etcpal_queue_t *id)</div><div class="ttdoc">Get number of remaining slots in the queue.</div><div class="ttdef"><b>Definition:</b> queue.c:349</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga13c3c4ca6b7b2ace00da407f52bba261"><div class="ttname"><a href="group__etcpal__queue.html#ga13c3c4ca6b7b2ace00da407f52bba261">etcpal_queue_timed_receive</a></div><div class="ttdeci">bool etcpal_queue_timed_receive(etcpal_queue_t *id, void *data, int timeout_ms)</div><div class="ttdoc">Retrieve the first item from a queue, giving up after a timeout.</div><div class="ttdef"><b>Definition:</b> queue.c:247</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga19c542b25dd6f5884c4d69ec8c891bb2"><div class="ttname"><a href="group__etcpal__queue.html#ga19c542b25dd6f5884c4d69ec8c891bb2">etcpal_queue_send_from_isr</a></div><div class="ttdeci">bool etcpal_queue_send_from_isr(etcpal_queue_t *id, const void *data)</div><div class="ttdoc">Add an item to a queue from an interrupt context.</div><div class="ttdef"><b>Definition:</b> queue.c:256</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga1fce7092855b5a04cab8e4b61e7a2641"><div class="ttname"><a href="group__etcpal__queue.html#ga1fce7092855b5a04cab8e4b61e7a2641">etcpal_queue_is_full_from_isr</a></div><div class="ttdeci">bool etcpal_queue_is_full_from_isr(const etcpal_queue_t *id)</div><div class="ttdoc">Determine whether a queue is currently full from an interrupt context.</div><div class="ttdef"><b>Definition:</b> queue.c:318</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga3c0f4a48f832d88fead582a330255aec"><div class="ttname"><a href="group__etcpal__queue.html#ga3c0f4a48f832d88fead582a330255aec">etcpal_queue_is_empty</a></div><div class="ttdeci">bool etcpal_queue_is_empty(const etcpal_queue_t *id)</div><div class="ttdoc">Determine whether a queue is currently empty.</div><div class="ttdef"><b>Definition:</b> queue.c:289</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga4f8a861cb4940f182992e38401855a2b"><div class="ttname"><a href="group__etcpal__queue.html#ga4f8a861cb4940f182992e38401855a2b">etcpal_queue_t</a></div><div class="ttdeci">PLATFORM_DEFINED etcpal_queue_t</div><div class="ttdoc">The queue identifier.</div><div class="ttdef"><b>Definition:</b> queue.dox:82</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga6485e0e24d8240926a2291c0896bbcc6"><div class="ttname"><a href="group__etcpal__queue.html#ga6485e0e24d8240926a2291c0896bbcc6">etcpal_queue_is_full</a></div><div class="ttdeci">bool etcpal_queue_is_full(const etcpal_queue_t *id)</div><div class="ttdoc">Determine whether a queue is currently full.</div><div class="ttdef"><b>Definition:</b> queue.c:309</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga6d3ade96e77aca287711d3ddb0e87239"><div class="ttname"><a href="group__etcpal__queue.html#ga6d3ade96e77aca287711d3ddb0e87239">etcpal_queue_reset</a></div><div class="ttdeci">bool etcpal_queue_reset(const etcpal_queue_t *id)</div><div class="ttdoc">Resets queue to empty state.</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga7e17d87946f3241b16c03d86a0b426c3"><div class="ttname"><a href="group__etcpal__queue.html#ga7e17d87946f3241b16c03d86a0b426c3">etcpal_queue_receive_from_isr</a></div><div class="ttdeci">bool etcpal_queue_receive_from_isr(etcpal_queue_t *id, void *data)</div><div class="ttdoc">Retrieve the first item from a queue from an interrupt context.</div><div class="ttdef"><b>Definition:</b> queue.c:265</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_ga89749b4899a165bb461570e8a91d470c"><div class="ttname"><a href="group__etcpal__queue.html#ga89749b4899a165bb461570e8a91d470c">etcpal_queue_destroy</a></div><div class="ttdeci">void etcpal_queue_destroy(etcpal_queue_t *id)</div><div class="ttdoc">Destroy a queue.</div><div class="ttdef"><b>Definition:</b> queue.c:191</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_gabfc3dcdf8460f0d0c0f58725f8a24c01"><div class="ttname"><a href="group__etcpal__queue.html#gabfc3dcdf8460f0d0c0f58725f8a24c01">etcpal_queue_slots_used</a></div><div class="ttdeci">size_t etcpal_queue_slots_used(const etcpal_queue_t *id)</div><div class="ttdoc">Get number of slots being stored in the queue.</div><div class="ttdef"><b>Definition:</b> queue.c:329</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_gadf793a0f6871dabea6fed364623225f2"><div class="ttname"><a href="group__etcpal__queue.html#gadf793a0f6871dabea6fed364623225f2">etcpal_queue_slots_used_from_isr</a></div><div class="ttdeci">size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t *id)</div><div class="ttdoc">Get number of slots being stored in the queue from an interrupt context.</div><div class="ttdef"><b>Definition:</b> queue.c:339</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_gae0c1e587408884bfdf7e9502cac7ffa7"><div class="ttname"><a href="group__etcpal__queue.html#gae0c1e587408884bfdf7e9502cac7ffa7">etcpal_queue_timed_send</a></div><div class="ttdeci">bool etcpal_queue_timed_send(etcpal_queue_t *id, const void *data, int timeout_ms)</div><div class="ttdoc">Add an item to a queue, giving up after a timeout.</div><div class="ttdef"><b>Definition:</b> queue.c:229</div></div>
+<div class="ttc" id="agroup__etcpal__queue_html_gaefbd1625abdb0e502024b9c9749c2b17"><div class="ttname"><a href="group__etcpal__queue.html#gaefbd1625abdb0e502024b9c9749c2b17">etcpal_queue_create</a></div><div class="ttdeci">bool etcpal_queue_create(etcpal_queue_t *id, size_t size, size_t item_size)</div><div class="ttdoc">Create a new queue.</div><div class="ttdef"><b>Definition:</b> queue.c:142</div></div>
+<div class="ttc" id="agroup__etcpal_html_ga1cfb33811295439bc08ce2e8b74c1d13"><div class="ttname"><a href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13">ETCPAL_WAIT_FOREVER</a></div><div class="ttdeci">#define ETCPAL_WAIT_FOREVER</div><div class="ttdoc">For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.</div><div class="ttdef"><b>Definition:</b> common.h:111</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_81a3fb26cc06c42d281987e41831a70b.html">etcpal</a></li><li class="navelem"><a class="el" href="dir_fa86f7c0f1af55176d8f05dc5aff685f.html">cpp</a></li><li class="navelem"><a class="el" href="cpp_2queue_8h.html">queue.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

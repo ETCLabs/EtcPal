@@ -1,0 +1,362 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: log (Logging)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__cpp__log.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#enum-members">Enumerations</a>  </div>
+  <div class="headertitle">
+<div class="title">log (Logging)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>C++ utilities for the <a class="el" href="group__etcpal__log.html">log (Logging)</a> module. </p>
+<p>This module contains a class <a class="el" href="classetcpal_1_1_logger.html" title="A class for dispatching log messages.">Logger</a> which is used to gather log messages dispatched from different portions of an application into a single stream with a unified format. It wraps the C logging module, which provides the core of this functionality, in a convenience layer which can also spawn a background thread to handle large log volumes. See the <a class="el" href="group__etcpal__log.html">documentation for the C module</a> for more detailed information on the log format.</p>
+<p>Generally a single instance per application is sufficient:</p>
+<div class="fragment"><div class="line"><span class="comment">// This class handles the log messages gathered by the Logger class.</span></div>
+<div class="line"><span class="keyword">class </span>MyLogHandler : <span class="keyword">public</span> <a class="code" href="classetcpal_1_1_log_message_handler.html">etcpal::LogMessageHandler</a></div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="classetcpal_1_1_log_timestamp.html">etcpal::LogTimestamp</a> GetLogTimestamp()<span class="keyword"> override</span></div>
+<div class="line"><span class="keyword">  </span>{</div>
+<div class="line">    <span class="comment">// Grab a timestamp from the local system and return it</span></div>
+<div class="line">    <span class="comment">// This function can also be omitted if you can&#39;t easily obtain system time. No timestamps</span></div>
+<div class="line">    <span class="comment">// will be prepended to log messages in that case.</span></div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordtype">void</span> HandleLogMessage(<span class="keyword">const</span> <a class="code" href="struct_etc_pal_log_strings.html">EtcPalLogStrings</a>&amp; strings)<span class="keyword"> override</span></div>
+<div class="line"><span class="keyword">  </span>{</div>
+<div class="line">    <span class="comment">// &quot;strings&quot; will contain strings pertaining to what action was requested by</span></div>
+<div class="line">    <span class="comment">// Logger::SetLogAction().</span></div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Dispatch log messages in an application-defined way.</span></div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// If human-readable logging is enabled, maybe...</span></div>
+<div class="line">    printf(<span class="stringliteral">&quot;%s\n&quot;</span>, strings.<a class="code" href="struct_etc_pal_log_strings.html#a4ac8b9667178849660fd3b1f99e93366">human_readable</a>);</div>
+<div class="line">    <span class="comment">// If syslog is enabled, maybe...</span></div>
+<div class="line">    <a class="code" href="group__etcpal__socket.html#gaf13f2f32e223ba9ef28e732cc8906508">etcpal_sendto</a>(my_syslog_socket, strings.<a class="code" href="struct_etc_pal_log_strings.html#a5911dbe6a47cb2b9cfbab87a8881b5b6">syslog</a>, strlen(strings.<a class="code" href="struct_etc_pal_log_strings.html#a5911dbe6a47cb2b9cfbab87a8881b5b6">syslog</a>), 0, &amp;my_syslog_server);</div>
+<div class="line">  }</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main()</div>
+<div class="line">{</div>
+<div class="line">  <a class="code" href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843">etcpal_init</a>(<a class="code" href="group__etcpal.html#ga8c7c1f9430362540e56af3a2742a25d4">ETCPAL_FEATURE_LOGGING</a>);</div>
+<div class="line"> </div>
+<div class="line">  MyLogHandler log_handler;</div>
+<div class="line">  <a class="code" href="classetcpal_1_1_logger.html">etcpal::Logger</a> logger;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Set parameters and start logging using the method-chaining setters:</span></div>
+<div class="line">  logger.<a class="code" href="classetcpal_1_1_logger.html#adf3a549fed7e9cf73833af591af43071">SetLogMask</a>(<a class="code" href="group__etcpal__log.html#gaecd624f2fc15671bb3e4c01ede198a08">ETCPAL_LOG_UPTO</a>(<a class="code" href="group__etcpal__log.html#ga9f05a0ad034946dfd20477e11d2923a7">ETCPAL_LOG_INFO</a>))</div>
+<div class="line">        .<a class="code" href="classetcpal_1_1_logger.html#a4ef737dccf9de6bcbeaa668726a4f146">SetLogAction</a>(kEtcPalLogCreateBoth)</div>
+<div class="line">        .<a class="code" href="classetcpal_1_1_logger.html#a17b3a97c6ab3a6682d84b873edc89b66">SetSyslogFacility</a>(<a class="code" href="group__etcpal__log.html#ga2f6c98d265250c28e6102c97a10dee17">ETCPAL_LOG_LOCAL1</a>)</div>
+<div class="line">        .<a class="code" href="classetcpal_1_1_logger.html#a96af94f561c632cd17da53244ddd5d8e">SetSyslogHostname</a>(my_hostname)</div>
+<div class="line">        .<a class="code" href="classetcpal_1_1_logger.html#a97e218391233bbc428c3e5c2ab5a90bd">SetSyslogAppName</a>(<span class="stringliteral">&quot;My App&quot;</span>)</div>
+<div class="line">        .<a class="code" href="classetcpal_1_1_logger.html#adf81d73315c517070a3421a23cbf4c42">SetSyslogProcId</a>(0)</div>
+<div class="line">        .<a class="code" href="classetcpal_1_1_logger.html#a84e487b1e20733405bd8b870e59f670c">Startup</a>(log_handler);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// By default, a background thread is started to dispatch the log messages.</span></div>
+<div class="line"> </div>
+<div class="line">  logger.<a class="code" href="classetcpal_1_1_logger.html#aa613ebedf6ebc98cccf35990217e2eab">Log</a>(<a class="code" href="group__etcpal__log.html#ga9f05a0ad034946dfd20477e11d2923a7">ETCPAL_LOG_INFO</a>, <span class="stringliteral">&quot;Starting up!&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Use the shortcuts to log at a specific priority level:</span></div>
+<div class="line"> </div>
+<div class="line">  logger.<a class="code" href="classetcpal_1_1_logger.html#a97d41b6faaf421937e6b82bd1c3067db">Warning</a>(<span class="stringliteral">&quot;Uh oh...&quot;</span>);</div>
+<div class="line">  logger.<a class="code" href="classetcpal_1_1_logger.html#ae78231bc988b651151e0f7099a873daa">Debug</a>(<span class="stringliteral">&quot;We&#39;ve reached line 250&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// All log functions accept printf-style format specifiers and arguments</span></div>
+<div class="line">  logger.<a class="code" href="classetcpal_1_1_logger.html#a221110f73de7530eee4f76769cabaf2b">Info</a>(<span class="stringliteral">&quot;This module has gone %d days without an accident&quot;</span>, -1);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Use the log_params() getter to add logging output from other libraries with C APIs that</span></div>
+<div class="line">  <span class="comment">// support it.</span></div>
+<div class="line">  somelib_init(&amp;logger.<a class="code" href="classetcpal_1_1_logger.html#a986c589bfc9aa466a31a84a9b8575546">log_params</a>());</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Shut down the logger when done to join the thread, if applicable.</span></div>
+<div class="line">  logger.<a class="code" href="classetcpal_1_1_logger.html#ac5f038c2b480cf9ef5e19e3eba8dbaf9">Shutdown</a>();</div>
+<div class="line">  <a class="code" href="group__etcpal.html#ga0792bdcd2f824009584744db01d7a352">etcpal_deinit</a>(<a class="code" href="group__etcpal.html#ga8c7c1f9430362540e56af3a2742a25d4">ETCPAL_FEATURE_LOGGING</a>);</div>
+<div class="line">  <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassetcpal_1_1_log_message_handler_html"><div class="ttname"><a href="classetcpal_1_1_log_message_handler.html">etcpal::LogMessageHandler</a></div><div class="ttdoc">An interface which handles log messages.</div><div class="ttdef"><b>Definition:</b> log.h:199</div></div>
+<div class="ttc" id="aclassetcpal_1_1_log_timestamp_html"><div class="ttname"><a href="classetcpal_1_1_log_timestamp.html">etcpal::LogTimestamp</a></div><div class="ttdoc">An object representing the current local time with millisecond resolution for logging purposes.</div><div class="ttdef"><b>Definition:</b> log.h:123</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html"><div class="ttname"><a href="classetcpal_1_1_logger.html">etcpal::Logger</a></div><div class="ttdoc">A class for dispatching log messages.</div><div class="ttdef"><b>Definition:</b> log.h:237</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a17b3a97c6ab3a6682d84b873edc89b66"><div class="ttname"><a href="classetcpal_1_1_logger.html#a17b3a97c6ab3a6682d84b873edc89b66">etcpal::Logger::SetSyslogFacility</a></div><div class="ttdeci">Logger &amp; SetSyslogFacility(int facility) noexcept</div><div class="ttdoc">Set the Syslog facility value; see RFC 5424 § 6.2.1.</div><div class="ttdef"><b>Definition:</b> log.h:582</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a221110f73de7530eee4f76769cabaf2b"><div class="ttname"><a href="classetcpal_1_1_logger.html#a221110f73de7530eee4f76769cabaf2b">etcpal::Logger::Info</a></div><div class="ttdeci">void Info(const char *format,...)</div><div class="ttdoc">Log a message at informational priority.</div><div class="ttdef"><b>Definition:</b> log.h:436</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a4ef737dccf9de6bcbeaa668726a4f146"><div class="ttname"><a href="classetcpal_1_1_logger.html#a4ef737dccf9de6bcbeaa668726a4f146">etcpal::Logger::SetLogAction</a></div><div class="ttdeci">Logger &amp; SetLogAction(int log_action) noexcept</div><div class="ttdoc">Set the types of log messages to create and dispatch to the LogMessageHandler.</div><div class="ttdef"><b>Definition:</b> log.h:575</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a84e487b1e20733405bd8b870e59f670c"><div class="ttname"><a href="classetcpal_1_1_logger.html#a84e487b1e20733405bd8b870e59f670c">etcpal::Logger::Startup</a></div><div class="ttdeci">bool Startup(LogMessageHandler &amp;message_handler)</div><div class="ttdoc">Start logging.</div><div class="ttdef"><b>Definition:</b> log.h:352</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a96af94f561c632cd17da53244ddd5d8e"><div class="ttname"><a href="classetcpal_1_1_logger.html#a96af94f561c632cd17da53244ddd5d8e">etcpal::Logger::SetSyslogHostname</a></div><div class="ttdeci">Logger &amp; SetSyslogHostname(const char *hostname) noexcept</div><div class="ttdoc">Set the Syslog HOSTNAME; see RFC 5424 § 6.2.4.</div><div class="ttdef"><b>Definition:</b> log.h:589</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a97d41b6faaf421937e6b82bd1c3067db"><div class="ttname"><a href="classetcpal_1_1_logger.html#a97d41b6faaf421937e6b82bd1c3067db">etcpal::Logger::Warning</a></div><div class="ttdeci">void Warning(const char *format,...)</div><div class="ttdoc">Log a message at warning priority.</div><div class="ttdef"><b>Definition:</b> log.h:454</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a97e218391233bbc428c3e5c2ab5a90bd"><div class="ttname"><a href="classetcpal_1_1_logger.html#a97e218391233bbc428c3e5c2ab5a90bd">etcpal::Logger::SetSyslogAppName</a></div><div class="ttdeci">Logger &amp; SetSyslogAppName(const char *app_name) noexcept</div><div class="ttdoc">Set the Syslog APP-NAME; see RFC 5424 § 6.2.5.</div><div class="ttdef"><b>Definition:</b> log.h:604</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_a986c589bfc9aa466a31a84a9b8575546"><div class="ttname"><a href="classetcpal_1_1_logger.html#a986c589bfc9aa466a31a84a9b8575546">etcpal::Logger::log_params</a></div><div class="ttdeci">const EtcPalLogParams &amp; log_params() const noexcept</div><div class="ttdoc">Get the log params used by this logger.</div><div class="ttdef"><b>Definition:</b> log.h:545</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_aa613ebedf6ebc98cccf35990217e2eab"><div class="ttname"><a href="classetcpal_1_1_logger.html#aa613ebedf6ebc98cccf35990217e2eab">etcpal::Logger::Log</a></div><div class="ttdeci">void Log(int pri, const char *format,...)</div><div class="ttdoc">Log a message.</div><div class="ttdef"><b>Definition:</b> log.h:418</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_ac5f038c2b480cf9ef5e19e3eba8dbaf9"><div class="ttname"><a href="classetcpal_1_1_logger.html#ac5f038c2b480cf9ef5e19e3eba8dbaf9">etcpal::Logger::Shutdown</a></div><div class="ttdeci">void Shutdown()</div><div class="ttdoc">Stop logging.</div><div class="ttdef"><b>Definition:</b> log.h:388</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_adf3a549fed7e9cf73833af591af43071"><div class="ttname"><a href="classetcpal_1_1_logger.html#adf3a549fed7e9cf73833af591af43071">etcpal::Logger::SetLogMask</a></div><div class="ttdeci">Logger &amp; SetLogMask(int log_mask) noexcept</div><div class="ttdoc">Set a new log mask.</div><div class="ttdef"><b>Definition:</b> log.h:568</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_adf81d73315c517070a3421a23cbf4c42"><div class="ttname"><a href="classetcpal_1_1_logger.html#adf81d73315c517070a3421a23cbf4c42">etcpal::Logger::SetSyslogProcId</a></div><div class="ttdeci">Logger &amp; SetSyslogProcId(const char *proc_id) noexcept</div><div class="ttdoc">Set the Syslog PROCID; see RFC 5424 § 6.2.6.</div><div class="ttdef"><b>Definition:</b> log.h:619</div></div>
+<div class="ttc" id="aclassetcpal_1_1_logger_html_ae78231bc988b651151e0f7099a873daa"><div class="ttname"><a href="classetcpal_1_1_logger.html#ae78231bc988b651151e0f7099a873daa">etcpal::Logger::Debug</a></div><div class="ttdeci">void Debug(const char *format,...)</div><div class="ttdoc">Log a message at debug priority.</div><div class="ttdef"><b>Definition:</b> log.h:427</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga2f6c98d265250c28e6102c97a10dee17"><div class="ttname"><a href="group__etcpal__log.html#ga2f6c98d265250c28e6102c97a10dee17">ETCPAL_LOG_LOCAL1</a></div><div class="ttdeci">#define ETCPAL_LOG_LOCAL1</div><div class="ttdoc">Reserved for local use.</div><div class="ttdef"><b>Definition:</b> log.h:154</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_ga9f05a0ad034946dfd20477e11d2923a7"><div class="ttname"><a href="group__etcpal__log.html#ga9f05a0ad034946dfd20477e11d2923a7">ETCPAL_LOG_INFO</a></div><div class="ttdeci">#define ETCPAL_LOG_INFO</div><div class="ttdoc">Informational.</div><div class="ttdef"><b>Definition:</b> log.h:181</div></div>
+<div class="ttc" id="agroup__etcpal__log_html_gaecd624f2fc15671bb3e4c01ede198a08"><div class="ttname"><a href="group__etcpal__log.html#gaecd624f2fc15671bb3e4c01ede198a08">ETCPAL_LOG_UPTO</a></div><div class="ttdeci">#define ETCPAL_LOG_UPTO(pri)</div><div class="ttdoc">Create a priority mask for all priorities through pri.</div><div class="ttdef"><b>Definition:</b> log.h:194</div></div>
+<div class="ttc" id="agroup__etcpal__socket_html_gaf13f2f32e223ba9ef28e732cc8906508"><div class="ttname"><a href="group__etcpal__socket.html#gaf13f2f32e223ba9ef28e732cc8906508">etcpal_sendto</a></div><div class="ttdeci">int etcpal_sendto(etcpal_socket_t id, const void *message, size_t length, int flags, const EtcPalSockAddr *dest_addr)</div><div class="ttdoc">Send data on a socket.</div></div>
+<div class="ttc" id="agroup__etcpal_html_ga0792bdcd2f824009584744db01d7a352"><div class="ttname"><a href="group__etcpal.html#ga0792bdcd2f824009584744db01d7a352">etcpal_deinit</a></div><div class="ttdeci">void etcpal_deinit(etcpal_features_t features)</div><div class="ttdoc">Deinitialize the EtcPal library.</div><div class="ttdef"><b>Definition:</b> common.c:136</div></div>
+<div class="ttc" id="agroup__etcpal_html_ga163b95dfe5ef6c68f2fb4d5b58a63843"><div class="ttname"><a href="group__etcpal.html#ga163b95dfe5ef6c68f2fb4d5b58a63843">etcpal_init</a></div><div class="ttdeci">etcpal_error_t etcpal_init(etcpal_features_t features)</div><div class="ttdoc">Initialize the EtcPal library.</div><div class="ttdef"><b>Definition:</b> common.c:87</div></div>
+<div class="ttc" id="agroup__etcpal_html_ga8c7c1f9430362540e56af3a2742a25d4"><div class="ttname"><a href="group__etcpal.html#ga8c7c1f9430362540e56af3a2742a25d4">ETCPAL_FEATURE_LOGGING</a></div><div class="ttdeci">#define ETCPAL_FEATURE_LOGGING</div><div class="ttdoc">Use the etcpal/log module.</div><div class="ttdef"><b>Definition:</b> common.h:130</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html"><div class="ttname"><a href="struct_etc_pal_log_strings.html">EtcPalLogStrings</a></div><div class="ttdoc">The set of log strings passed with a call to an etcpal_log_callback function.</div><div class="ttdef"><b>Definition:</b> log.h:288</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html_a4ac8b9667178849660fd3b1f99e93366"><div class="ttname"><a href="struct_etc_pal_log_strings.html#a4ac8b9667178849660fd3b1f99e93366">EtcPalLogStrings::human_readable</a></div><div class="ttdeci">const char * human_readable</div><div class="ttdoc">Log string formatted for readability per ETC convention.</div><div class="ttdef"><b>Definition:</b> log.h:294</div></div>
+<div class="ttc" id="astruct_etc_pal_log_strings_html_a5911dbe6a47cb2b9cfbab87a8881b5b6"><div class="ttname"><a href="struct_etc_pal_log_strings.html#a5911dbe6a47cb2b9cfbab87a8881b5b6">EtcPalLogStrings::syslog</a></div><div class="ttdeci">const char * syslog</div><div class="ttdoc">Log string formatted compliant to RFC 5424.</div><div class="ttdef"><b>Definition:</b> log.h:290</div></div>
+</div><!-- fragment --> <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_log_timestamp.html">LogTimestamp</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An object representing the current local time with millisecond resolution for logging purposes.  <a href="classetcpal_1_1_log_timestamp.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_log_message_handler.html">LogMessageHandler</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An interface which handles log messages.  <a href="classetcpal_1_1_log_message_handler.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_logger.html">Logger</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class for dispatching log messages.  <a href="classetcpal_1_1_logger.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga886bd6be55942894f6ddb878d1cfc662"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__cpp__log.html#ga886bd6be55942894f6ddb878d1cfc662">LogDispatchPolicy</a> { <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662aa9a2bb1cd77c7a81a96b73f10722040e">kDirect</a>
+, <a class="el" href="group__etcpal__cpp__log.html#gga886bd6be55942894f6ddb878d1cfc662a023506f9e1203a14ea275f5e6acb2e1a">kQueued</a>
+ }</td></tr>
+<tr class="memdesc:ga886bd6be55942894f6ddb878d1cfc662"><td class="mdescLeft">&#160;</td><td class="mdescRight">Options for the method by which the Logger dispatches log messages.  <a href="group__etcpal__cpp__log.html#ga886bd6be55942894f6ddb878d1cfc662">More...</a><br /></td></tr>
+<tr class="separator:ga886bd6be55942894f6ddb878d1cfc662"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga886bd6be55942894f6ddb878d1cfc662"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga886bd6be55942894f6ddb878d1cfc662">&#9670;&nbsp;</a></span>LogDispatchPolicy</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__etcpal__cpp__log.html#ga886bd6be55942894f6ddb878d1cfc662">LogDispatchPolicy</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Options for the method by which the <a class="el" href="classetcpal_1_1_logger.html" title="A class for dispatching log messages.">Logger</a> dispatches log messages. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga886bd6be55942894f6ddb878d1cfc662aa9a2bb1cd77c7a81a96b73f10722040e"></a>kDirect&#160;</td><td class="fielddoc"><p>Log messages propagate directly from Log() calls to output streams (normally only used for testing) </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga886bd6be55942894f6ddb878d1cfc662a023506f9e1203a14ea275f5e6acb2e1a"></a>kQueued&#160;</td><td class="fielddoc"><p>Log messages are queued and dispatched from another thread (recommended) </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

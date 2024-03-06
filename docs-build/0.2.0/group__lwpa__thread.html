@@ -1,0 +1,441 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>lwpa: lwpa_thread</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">lwpa
+   &#160;<span id="projectnumber">0.2.0</span>
+   </div>
+   <div id="projectbrief">LightWeight Platform Abstraction (lwpa)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__lwpa__thread.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">lwpa_thread<div class="ingroups"><a class="el" href="group__lwpa.html">lwpa</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Platform-neutral threads. </p>
+<p>#include "lwpa_thread.h" </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_lwpa_thread_params.html">LwpaThreadParams</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters for an lwpa_thread.  <a href="struct_lwpa_thread_params.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gabe69c3e7a2ee99bec3517c2afb0c6b76"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#gabe69c3e7a2ee99bec3517c2afb0c6b76">LWPA_THREAD_DEFAULT_PRIORITY</a></td></tr>
+<tr class="memdesc:gabe69c3e7a2ee99bec3517c2afb0c6b76"><td class="mdescLeft">&#160;</td><td class="mdescRight">The platform-specific default priority for an lwpa_thread.  <a href="group__lwpa__thread.html#gabe69c3e7a2ee99bec3517c2afb0c6b76">More...</a><br /></td></tr>
+<tr class="separator:gabe69c3e7a2ee99bec3517c2afb0c6b76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gade705a86763d0db86eb78ff6c58aed4a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#gade705a86763d0db86eb78ff6c58aed4a">LWPA_THREAD_DEFAULT_STACK</a></td></tr>
+<tr class="memdesc:gade705a86763d0db86eb78ff6c58aed4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The plaform-specific default stack size for an lwpa_thread.  <a href="group__lwpa__thread.html#gade705a86763d0db86eb78ff6c58aed4a">More...</a><br /></td></tr>
+<tr class="separator:gade705a86763d0db86eb78ff6c58aed4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab11c37b97da30254b66ecaf215062632"><td class="memItemLeft" align="right" valign="top"><a id="gab11c37b97da30254b66ecaf215062632"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#gab11c37b97da30254b66ecaf215062632">LWPA_THREAD_DEFAULT_NAME</a></td></tr>
+<tr class="memdesc:gab11c37b97da30254b66ecaf215062632"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default name for an lwpa_thread. <br /></td></tr>
+<tr class="separator:gab11c37b97da30254b66ecaf215062632"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad7eb7c6d53f153f8e9fed7a35bfd9d95"><td class="memItemLeft" align="right" valign="top"><a id="gad7eb7c6d53f153f8e9fed7a35bfd9d95"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#gad7eb7c6d53f153f8e9fed7a35bfd9d95">LWPA_THREAD_NAME_MAX_LENGTH</a></td></tr>
+<tr class="memdesc:gad7eb7c6d53f153f8e9fed7a35bfd9d95"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of an lwpa_thread name C-string. <br /></td></tr>
+<tr class="separator:gad7eb7c6d53f153f8e9fed7a35bfd9d95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:gaa3ccf9778a39583135ac168668a9ab1c"><td class="memItemLeft" align="right" valign="top"><a id="gaa3ccf9778a39583135ac168668a9ab1c"></a>
+typedef struct <a class="el" href="struct_lwpa_thread_params.html">LwpaThreadParams</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#gaa3ccf9778a39583135ac168668a9ab1c">LwpaThreadParams</a></td></tr>
+<tr class="memdesc:gaa3ccf9778a39583135ac168668a9ab1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of parameters for an lwpa_thread. <br /></td></tr>
+<tr class="separator:gaa3ccf9778a39583135ac168668a9ab1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga772303b983e1df853a66868f1419257c"><td class="memItemLeft" align="right" valign="top">typedef UNDEFINED&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#ga772303b983e1df853a66868f1419257c">lwpa_thread_t</a></td></tr>
+<tr class="memdesc:ga772303b983e1df853a66868f1419257c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The thread identifier.  <a href="group__lwpa__thread.html#ga772303b983e1df853a66868f1419257c">More...</a><br /></td></tr>
+<tr class="separator:ga772303b983e1df853a66868f1419257c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gac3533f2da6b083858517fcb2ba660649"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#gac3533f2da6b083858517fcb2ba660649">lwpa_thread_create</a> (<a class="el" href="group__lwpa__thread.html#ga772303b983e1df853a66868f1419257c">lwpa_thread_t</a> *id, const <a class="el" href="struct_lwpa_thread_params.html">LwpaThreadParams</a> *params, void(*thread_fn)(void *), void *thread_arg)</td></tr>
+<tr class="memdesc:gac3533f2da6b083858517fcb2ba660649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new thread.  <a href="group__lwpa__thread.html#gac3533f2da6b083858517fcb2ba660649">More...</a><br /></td></tr>
+<tr class="separator:gac3533f2da6b083858517fcb2ba660649"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac98ab5b271d1fdf59b2df4d04f38f7f3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#gac98ab5b271d1fdf59b2df4d04f38f7f3">lwpa_thread_stop</a> (<a class="el" href="group__lwpa__thread.html#ga772303b983e1df853a66868f1419257c">lwpa_thread_t</a> *id, int wait_ms)</td></tr>
+<tr class="memdesc:gac98ab5b271d1fdf59b2df4d04f38f7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop a thread.  <a href="group__lwpa__thread.html#gac98ab5b271d1fdf59b2df4d04f38f7f3">More...</a><br /></td></tr>
+<tr class="separator:gac98ab5b271d1fdf59b2df4d04f38f7f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1b3993fb872deb53b0129d43429b5cb1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__lwpa__thread.html#ga1b3993fb872deb53b0129d43429b5cb1">lwpa_thread_sleep</a> (int sleep_ms)</td></tr>
+<tr class="memdesc:ga1b3993fb872deb53b0129d43429b5cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides a platform-neutral sleep.  <a href="group__lwpa__thread.html#ga1b3993fb872deb53b0129d43429b5cb1">More...</a><br /></td></tr>
+<tr class="separator:ga1b3993fb872deb53b0129d43429b5cb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="gabe69c3e7a2ee99bec3517c2afb0c6b76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabe69c3e7a2ee99bec3517c2afb0c6b76">&#9670;&nbsp;</a></span>LWPA_THREAD_DEFAULT_PRIORITY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LWPA_THREAD_DEFAULT_PRIORITY</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The platform-specific default priority for an lwpa_thread. </p>
+<p>Note that thread priority is not valid on all platforms. </p>
+
+</div>
+</div>
+<a id="gade705a86763d0db86eb78ff6c58aed4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gade705a86763d0db86eb78ff6c58aed4a">&#9670;&nbsp;</a></span>LWPA_THREAD_DEFAULT_STACK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LWPA_THREAD_DEFAULT_STACK</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The plaform-specific default stack size for an lwpa_thread. </p>
+<p>Note that thread stack size is not valid on all platforms. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ga772303b983e1df853a66868f1419257c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga772303b983e1df853a66868f1419257c">&#9670;&nbsp;</a></span>lwpa_thread_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef UNDEFINED <a class="el" href="group__lwpa__thread.html#ga772303b983e1df853a66868f1419257c">lwpa_thread_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The thread identifier. </p>
+<p>Depending on the platform, this could be a scalar type or a struct. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gac3533f2da6b083858517fcb2ba660649"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac3533f2da6b083858517fcb2ba660649">&#9670;&nbsp;</a></span>lwpa_thread_create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a> lwpa_thread_create </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__thread.html#ga772303b983e1df853a66868f1419257c">lwpa_thread_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_lwpa_thread_params.html">LwpaThreadParams</a> *&#160;</td>
+          <td class="paramname"><em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void(*)(void *)&#160;</td>
+          <td class="paramname"><em>thread_fn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>thread_arg</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new thread. </p>
+<p>If your application has exit/shutdown behavior (i.e. it is a non-embedded application), it's good practice to always pair this with a call to <a class="el" href="group__lwpa__thread.html#gac98ab5b271d1fdf59b2df4d04f38f7f3" title="Stop a thread.">lwpa_thread_stop()</a> on exit. On some platforms, extra signaling resources are allocated when the thread is created that are not deallocated unless <a class="el" href="group__lwpa__thread.html#gac98ab5b271d1fdf59b2df4d04f38f7f3" title="Stop a thread.">lwpa_thread_stop()</a> is called.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">id</td><td>Identifier for the thread that was created. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">params</td><td>Thread parameters for the thread to create </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">thread_fn</td><td>Pointer to function that should be called from the new thread. This function takes one void* argument and returns void. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">thread_arg</td><td>Argument to the function called from the new thread. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (the thread was created) or false (the thread was not created). </dd></dl>
+
+</div>
+</div>
+<a id="ga1b3993fb872deb53b0129d43429b5cb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1b3993fb872deb53b0129d43429b5cb1">&#9670;&nbsp;</a></span>lwpa_thread_sleep()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lwpa_thread_sleep </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sleep_ms</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Provides a platform-neutral sleep. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">sleep_ms</td><td>How long to sleep, in milliseconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gac98ab5b271d1fdf59b2df4d04f38f7f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac98ab5b271d1fdf59b2df4d04f38f7f3">&#9670;&nbsp;</a></span>lwpa_thread_stop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__lwpa__bool.html#gabb452686968e48b67397da5f97445f5b">bool</a> lwpa_thread_stop </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lwpa__thread.html#ga772303b983e1df853a66868f1419257c">lwpa_thread_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>wait_ms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stop a thread. </p>
+<p>On some platforms, wait_ms is ignored and you always wait forever for a thread to stop.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the thread to stop. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">wait_ms</td><td>How long to wait for the thread to stop, in milliseconds (use <a class="el" href="group__lwpa.html#ga1c2b0e972201228ff6c55879bab82861" title="For lwpa_ functions that take a millisecond timeout, this means to wait indefinitely.">LWPA_WAIT_FOREVER</a> to wait indefinitely). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (the thread was stopped) or false (an error occurred). </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

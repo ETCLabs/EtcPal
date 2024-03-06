@@ -1,0 +1,296 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: error (Error Handling)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__cpp__error.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a>  </div>
+  <div class="headertitle">
+<div class="title">error (Error Handling)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>C++ utilities for the <a class="el" href="group__etcpal__error.html">error (Error Handling)</a> module. </p>
+<p>This module provides two main utilites: <a class="el" href="classetcpal_1_1_error.html" title="A wrapper class for the EtcPal error type.">Error</a>, which wraps an error code, and <a class="el" href="classetcpal_1_1_expected.html" title="A type representing either a value or an etcpal_error_t code.">Expected</a>, which represents either an error code or a value of configurable type. See the documentation for each of those classes for more details. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_error.html">Error</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A wrapper class for the EtcPal error type.  <a href="classetcpal_1_1_error.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_bad_expected_access.html">BadExpectedAccess</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exception representing bad access to an <a class="el" href="classetcpal_1_1_expected.html" title="A type representing either a value or an etcpal_error_t code.">Expected</a> instance.  <a href="classetcpal_1_1_bad_expected_access.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_expected.html">Expected&lt; T &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type representing either a value or an <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af" title="A set of error codes that can be returned by library functions.">etcpal_error_t</a> code.  <a href="classetcpal_1_1_expected.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Error Relational Operators</h2></td></tr>
+<tr class="memitem:ga96db54ab674807dd4281fa65cd2c35a3"><td class="memItemLeft" align="right" valign="top"><a id="ga96db54ab674807dd4281fa65cd2c35a3"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (<a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> code, const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;error)</td></tr>
+<tr class="separator:ga96db54ab674807dd4281fa65cd2c35a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae43854c8b40e4fd22b7423237f0ab780"><td class="memItemLeft" align="right" valign="top"><a id="gae43854c8b40e4fd22b7423237f0ab780"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (<a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> code, const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;error)</td></tr>
+<tr class="separator:gae43854c8b40e4fd22b7423237f0ab780"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad31d1e212afa7d305dea04b68c773f83"><td class="memItemLeft" align="right" valign="top"><a id="gad31d1e212afa7d305dea04b68c773f83"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;error, <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> code)</td></tr>
+<tr class="separator:gad31d1e212afa7d305dea04b68c773f83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafc18e3bfbb1220b08499ca27d4347cee"><td class="memItemLeft" align="right" valign="top"><a id="gafc18e3bfbb1220b08499ca27d4347cee"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;error, <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> code)</td></tr>
+<tr class="separator:gafc18e3bfbb1220b08499ca27d4347cee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae7894472c38227e6ad9b0675045cea5f"><td class="memItemLeft" align="right" valign="top"><a id="gae7894472c38227e6ad9b0675045cea5f"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;a, const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;b)</td></tr>
+<tr class="separator:gae7894472c38227e6ad9b0675045cea5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga681387245a1a71397eb2736e4143ed68"><td class="memItemLeft" align="right" valign="top"><a id="ga681387245a1a71397eb2736e4143ed68"></a>
+constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;a, const <a class="el" href="classetcpal_1_1_error.html">Error</a> &amp;b)</td></tr>
+<tr class="separator:ga681387245a1a71397eb2736e4143ed68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Expected Relational Operators</h2></td></tr>
+<tr class="memitem:ga35a6f1f083eb79230583eff2c3b5df73"><td class="memTemplParams" colspan="2"><a id="ga35a6f1f083eb79230583eff2c3b5df73"></a>
+template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:ga35a6f1f083eb79230583eff2c3b5df73"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T1 &gt; &amp;x, const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T2 &gt; &amp;y)</td></tr>
+<tr class="separator:ga35a6f1f083eb79230583eff2c3b5df73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7acbe7d0f2251aca3e9bfb2420c23324"><td class="memTemplParams" colspan="2"><a id="ga7acbe7d0f2251aca3e9bfb2420c23324"></a>
+template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:ga7acbe7d0f2251aca3e9bfb2420c23324"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T1 &gt; &amp;x, const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T2 &gt; &amp;y)</td></tr>
+<tr class="separator:ga7acbe7d0f2251aca3e9bfb2420c23324"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf3192e966bf13e3cfeeb8eeee0da10fb"><td class="memTemplParams" colspan="2"><a id="gaf3192e966bf13e3cfeeb8eeee0da10fb"></a>
+template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:gaf3192e966bf13e3cfeeb8eeee0da10fb"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T1 &gt; &amp;x, const T2 &amp;v)</td></tr>
+<tr class="separator:gaf3192e966bf13e3cfeeb8eeee0da10fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabb53235b8e8c33d48a1396096b51af61"><td class="memTemplParams" colspan="2"><a id="gabb53235b8e8c33d48a1396096b51af61"></a>
+template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:gabb53235b8e8c33d48a1396096b51af61"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (const T2 &amp;v, const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T1 &gt; &amp;x)</td></tr>
+<tr class="separator:gabb53235b8e8c33d48a1396096b51af61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga16787a16ba02e19898c23ed9b5b2d397"><td class="memTemplParams" colspan="2"><a id="ga16787a16ba02e19898c23ed9b5b2d397"></a>
+template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:ga16787a16ba02e19898c23ed9b5b2d397"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T1 &gt; &amp;x, const T2 &amp;v)</td></tr>
+<tr class="separator:ga16787a16ba02e19898c23ed9b5b2d397"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4d9482cdfd719c4d6f157648969957ac"><td class="memTemplParams" colspan="2"><a id="ga4d9482cdfd719c4d6f157648969957ac"></a>
+template&lt;typename T1 , typename T2 &gt; </td></tr>
+<tr class="memitem:ga4d9482cdfd719c4d6f157648969957ac"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (const T2 &amp;v, const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T1 &gt; &amp;x)</td></tr>
+<tr class="separator:ga4d9482cdfd719c4d6f157648969957ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga48659c504192939123f5a81a64fd70ec"><td class="memTemplParams" colspan="2"><a id="ga48659c504192939123f5a81a64fd70ec"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga48659c504192939123f5a81a64fd70ec"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T &gt; &amp;x, <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> e)</td></tr>
+<tr class="separator:ga48659c504192939123f5a81a64fd70ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga21c0edeaf1ac2e6a0113909b7822bd8d"><td class="memTemplParams" colspan="2"><a id="ga21c0edeaf1ac2e6a0113909b7822bd8d"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga21c0edeaf1ac2e6a0113909b7822bd8d"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator==</b> (<a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> e, const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T &gt; &amp;x)</td></tr>
+<tr class="separator:ga21c0edeaf1ac2e6a0113909b7822bd8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0c01be1ed43a9c241fa1e565a049a0cc"><td class="memTemplParams" colspan="2"><a id="ga0c01be1ed43a9c241fa1e565a049a0cc"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ga0c01be1ed43a9c241fa1e565a049a0cc"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T &gt; &amp;x, <a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> e)</td></tr>
+<tr class="separator:ga0c01be1ed43a9c241fa1e565a049a0cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae864af86c122acdfe7680548b32d62a5"><td class="memTemplParams" colspan="2"><a id="gae864af86c122acdfe7680548b32d62a5"></a>
+template&lt;typename T &gt; </td></tr>
+<tr class="memitem:gae864af86c122acdfe7680548b32d62a5"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator!=</b> (<a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> e, const <a class="el" href="classetcpal_1_1_expected.html">Expected</a>&lt; T &gt; &amp;x)</td></tr>
+<tr class="separator:gae864af86c122acdfe7680548b32d62a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,1746 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: inet (Internet Addressing)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__inet.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
+  <div class="headertitle">
+<div class="title">inet (Internet Addressing)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__net.html">Network Abstraction Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Identifiers for IP addresses and network interfaces. </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/inet.h&quot;</span></div>
+</div><!-- fragment --><p>Provides types representing internet addressing constructs. Many of these functions and types mimic those found in POSIX's <code>arpa/inet.h</code>, with some quality-of-life improvements. Several functions and macros are provided to inspect, compare and manipulate these types. </p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address.  <a href="struct_etc_pal_ip_addr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address with associated interface and port.  <a href="struct_etc_pal_sock_addr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_mac_addr.html">EtcPalMacAddr</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A MAC address.  <a href="struct_etc_pal_mac_addr.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_netint_info.html">EtcPalNetintInfo</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of a single address assigned to a network interface.  <a href="struct_etc_pal_netint_info.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_etc_pal_mcast_netint_id.html">EtcPalMcastNetintId</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of identifying information for a network interface, for multicast purposes.  <a href="struct_etc_pal_mcast_netint_id.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gad5f18940857b50304b956505fb77df20"><td class="memItemLeft" align="right" valign="top"><a id="gad5f18940857b50304b956505fb77df20"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gad5f18940857b50304b956505fb77df20">ETCPAL_IPV6_BYTES</a>&#160;&#160;&#160;16</td></tr>
+<tr class="memdesc:gad5f18940857b50304b956505fb77df20"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of bytes in an IPv6 address. <br /></td></tr>
+<tr class="separator:gad5f18940857b50304b956505fb77df20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2222b6d9e40f95ec1d74e1865537863f"><td class="memItemLeft" align="right" valign="top"><a id="ga2222b6d9e40f95ec1d74e1865537863f"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga2222b6d9e40f95ec1d74e1865537863f">ETCPAL_MAC_BYTES</a>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:ga2222b6d9e40f95ec1d74e1865537863f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of bytes in a MAC address. <br /></td></tr>
+<tr class="separator:ga2222b6d9e40f95ec1d74e1865537863f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4aadcedf06a097132f1eef8176b83419"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga4aadcedf06a097132f1eef8176b83419">ETCPAL_MAC_CMP</a>(mac1ptr,  mac2ptr)&#160;&#160;&#160;memcmp((mac1ptr)-&gt;data, (mac2ptr)-&gt;data, <a class="el" href="group__etcpal__inet.html#ga2222b6d9e40f95ec1d74e1865537863f">ETCPAL_MAC_BYTES</a>)</td></tr>
+<tr class="memdesc:ga4aadcedf06a097132f1eef8176b83419"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two EtcPalMacAddrs numerically.  <a href="group__etcpal__inet.html#ga4aadcedf06a097132f1eef8176b83419">More...</a><br /></td></tr>
+<tr class="separator:ga4aadcedf06a097132f1eef8176b83419"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga84ac8ff7c11b7b3d05e66192205ae0cb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga84ac8ff7c11b7b3d05e66192205ae0cb">ETCPAL_MAC_IS_NULL</a>(macptr)&#160;&#160;&#160;(memcmp((macptr)-&gt;data, kEtcPalNullMacAddr.data, <a class="el" href="group__etcpal__inet.html#ga2222b6d9e40f95ec1d74e1865537863f">ETCPAL_MAC_BYTES</a>) == 0)</td></tr>
+<tr class="memdesc:ga84ac8ff7c11b7b3d05e66192205ae0cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine if a MAC address is null.  <a href="group__etcpal__inet.html#ga84ac8ff7c11b7b3d05e66192205ae0cb">More...</a><br /></td></tr>
+<tr class="separator:ga84ac8ff7c11b7b3d05e66192205ae0cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7d30e1fd482aa981c7ee4a5082d6bc2d"><td class="memItemLeft" align="right" valign="top"><a id="ga7d30e1fd482aa981c7ee4a5082d6bc2d"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga7d30e1fd482aa981c7ee4a5082d6bc2d">ETCPAL_NETINTINFO_ID_LEN</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ga7d30e1fd482aa981c7ee4a5082d6bc2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of a network interface id. <br /></td></tr>
+<tr class="separator:ga7d30e1fd482aa981c7ee4a5082d6bc2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7f8d8782f4dea64648bb74e20db6d3c3"><td class="memItemLeft" align="right" valign="top"><a id="ga7f8d8782f4dea64648bb74e20db6d3c3"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga7f8d8782f4dea64648bb74e20db6d3c3">ETCPAL_NETINTINFO_FRIENDLY_NAME_LEN</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memdesc:ga7f8d8782f4dea64648bb74e20db6d3c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum length of a user-friendly network interface name. <br /></td></tr>
+<tr class="separator:ga7f8d8782f4dea64648bb74e20db6d3c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gacd7ec0d81e171166483c7629669bf05d"><td class="memItemLeft" align="right" valign="top"><a id="gacd7ec0d81e171166483c7629669bf05d"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gacd7ec0d81e171166483c7629669bf05d">ETCPAL_IP_STRING_BYTES</a>&#160;&#160;&#160;46</td></tr>
+<tr class="memdesc:gacd7ec0d81e171166483c7629669bf05d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum length of the string representation of an IP address. <br /></td></tr>
+<tr class="separator:gacd7ec0d81e171166483c7629669bf05d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga73f73b31cc309024d3284ebcf4b66b45"><td class="memItemLeft" align="right" valign="top"><a id="ga73f73b31cc309024d3284ebcf4b66b45"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga73f73b31cc309024d3284ebcf4b66b45">ETCPAL_MAC_STRING_BYTES</a>&#160;&#160;&#160;18</td></tr>
+<tr class="memdesc:ga73f73b31cc309024d3284ebcf4b66b45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum length of the string representation of a MAC address. <br /></td></tr>
+<tr class="separator:ga73f73b31cc309024d3284ebcf4b66b45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga80ecc76598182ef0f0b0fc5e08135873"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga80ecc76598182ef0f0b0fc5e08135873">EtcPalIpAddr</a></td></tr>
+<tr class="memdesc:ga80ecc76598182ef0f0b0fc5e08135873"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address.  <a href="group__etcpal__inet.html#ga80ecc76598182ef0f0b0fc5e08135873">More...</a><br /></td></tr>
+<tr class="separator:ga80ecc76598182ef0f0b0fc5e08135873"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabf23694805ba92b1a24ac0e79854e6b8"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gabf23694805ba92b1a24ac0e79854e6b8">EtcPalSockAddr</a></td></tr>
+<tr class="memdesc:gabf23694805ba92b1a24ac0e79854e6b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IP address with associated interface and port.  <a href="group__etcpal__inet.html#gabf23694805ba92b1a24ac0e79854e6b8">More...</a><br /></td></tr>
+<tr class="separator:gabf23694805ba92b1a24ac0e79854e6b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf55cf4dfc62676084b947a0e8f486884"><td class="memItemLeft" align="right" valign="top"><a id="gaf55cf4dfc62676084b947a0e8f486884"></a>
+typedef struct <a class="el" href="struct_etc_pal_mac_addr.html">EtcPalMacAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaf55cf4dfc62676084b947a0e8f486884">EtcPalMacAddr</a></td></tr>
+<tr class="memdesc:gaf55cf4dfc62676084b947a0e8f486884"><td class="mdescLeft">&#160;</td><td class="mdescRight">A MAC address. <br /></td></tr>
+<tr class="separator:gaf55cf4dfc62676084b947a0e8f486884"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga003c67a34af543e33ae4854360961ab7"><td class="memItemLeft" align="right" valign="top"><a id="ga003c67a34af543e33ae4854360961ab7"></a>
+typedef struct <a class="el" href="struct_etc_pal_netint_info.html">EtcPalNetintInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga003c67a34af543e33ae4854360961ab7">EtcPalNetintInfo</a></td></tr>
+<tr class="memdesc:ga003c67a34af543e33ae4854360961ab7"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of a single address assigned to a network interface. <br /></td></tr>
+<tr class="separator:ga003c67a34af543e33ae4854360961ab7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga713cdab9d717aa8f0d45797c97a9df90"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct_etc_pal_mcast_netint_id.html">EtcPalMcastNetintId</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga713cdab9d717aa8f0d45797c97a9df90">EtcPalMcastNetintId</a></td></tr>
+<tr class="memdesc:ga713cdab9d717aa8f0d45797c97a9df90"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of identifying information for a network interface, for multicast purposes.  <a href="group__etcpal__inet.html#ga713cdab9d717aa8f0d45797c97a9df90">More...</a><br /></td></tr>
+<tr class="separator:ga713cdab9d717aa8f0d45797c97a9df90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga847282e3fd17bf75ec83292326c455ee"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a> { <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8">kEtcPalIpTypeInvalid</a>
+, <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635">kEtcPalIpTypeV4</a>
+, <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae">kEtcPalIpTypeV6</a>
+ }</td></tr>
+<tr class="memdesc:ga847282e3fd17bf75ec83292326c455ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used to identify the type of IP address contained in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">More...</a><br /></td></tr>
+<tr class="separator:ga847282e3fd17bf75ec83292326c455ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gaa4b21b32f8776276e582d473e17bf768"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaa4b21b32f8776276e582d473e17bf768">etcpal_ip_is_link_local</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip)</td></tr>
+<tr class="memdesc:gaa4b21b32f8776276e582d473e17bf768"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a link-local address.  <a href="group__etcpal__inet.html#gaa4b21b32f8776276e582d473e17bf768">More...</a><br /></td></tr>
+<tr class="separator:gaa4b21b32f8776276e582d473e17bf768"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6f59d1ebf7873649f0812ee1cae171e7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga6f59d1ebf7873649f0812ee1cae171e7">etcpal_ip_is_loopback</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip)</td></tr>
+<tr class="memdesc:ga6f59d1ebf7873649f0812ee1cae171e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a loopback address.  <a href="group__etcpal__inet.html#ga6f59d1ebf7873649f0812ee1cae171e7">More...</a><br /></td></tr>
+<tr class="separator:ga6f59d1ebf7873649f0812ee1cae171e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga71b745e5bdc7c77bba5320241639f450"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga71b745e5bdc7c77bba5320241639f450">etcpal_ip_is_multicast</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip)</td></tr>
+<tr class="memdesc:ga71b745e5bdc7c77bba5320241639f450"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a multicast address.  <a href="group__etcpal__inet.html#ga71b745e5bdc7c77bba5320241639f450">More...</a><br /></td></tr>
+<tr class="separator:ga71b745e5bdc7c77bba5320241639f450"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaef79c0c7eac819d7decf1473246d3b82"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaef79c0c7eac819d7decf1473246d3b82">etcpal_ip_is_wildcard</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip)</td></tr>
+<tr class="memdesc:gaef79c0c7eac819d7decf1473246d3b82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a wildcard address.  <a href="group__etcpal__inet.html#gaef79c0c7eac819d7decf1473246d3b82">More...</a><br /></td></tr>
+<tr class="separator:gaef79c0c7eac819d7decf1473246d3b82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5d91044202026978c99000b6da2d226e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga5d91044202026978c99000b6da2d226e">etcpal_ip_set_wildcard</a> (<a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a> type, <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip)</td></tr>
+<tr class="memdesc:ga5d91044202026978c99000b6da2d226e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> with a wildcard address.  <a href="group__etcpal__inet.html#ga5d91044202026978c99000b6da2d226e">More...</a><br /></td></tr>
+<tr class="separator:ga5d91044202026978c99000b6da2d226e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf766d207bd3e85c6b3d75768f28a00c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaf766d207bd3e85c6b3d75768f28a00c6">etcpal_ip_cmp</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip1, const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip2)</td></tr>
+<tr class="memdesc:gaf766d207bd3e85c6b3d75768f28a00c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two EtcPalIpAddrs.  <a href="group__etcpal__inet.html#gaf766d207bd3e85c6b3d75768f28a00c6">More...</a><br /></td></tr>
+<tr class="separator:gaf766d207bd3e85c6b3d75768f28a00c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf897a891bcf59ccb447845628c2a04c2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaf897a891bcf59ccb447845628c2a04c2">etcpal_ip_and_port_equal</a> (const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *sock1, const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *sock2)</td></tr>
+<tr class="memdesc:gaf897a891bcf59ccb447845628c2a04c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether two instances of <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> contain identical IP addresses and ports.  <a href="group__etcpal__inet.html#gaf897a891bcf59ccb447845628c2a04c2">More...</a><br /></td></tr>
+<tr class="separator:gaf897a891bcf59ccb447845628c2a04c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9a86a44681bc856e5919578bbf652e38"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga9a86a44681bc856e5919578bbf652e38">etcpal_ip_mask_length</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *netmask)</td></tr>
+<tr class="memdesc:ga9a86a44681bc856e5919578bbf652e38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the length in bits of a netmask.  <a href="group__etcpal__inet.html#ga9a86a44681bc856e5919578bbf652e38">More...</a><br /></td></tr>
+<tr class="separator:ga9a86a44681bc856e5919578bbf652e38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0f8ba14963ce91bfd74626f2a1e957f0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga0f8ba14963ce91bfd74626f2a1e957f0">etcpal_ip_mask_from_length</a> (<a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a> type, unsigned int mask_length)</td></tr>
+<tr class="memdesc:ga0f8ba14963ce91bfd74626f2a1e957f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a netmask given a length in bits.  <a href="group__etcpal__inet.html#ga0f8ba14963ce91bfd74626f2a1e957f0">More...</a><br /></td></tr>
+<tr class="separator:ga0f8ba14963ce91bfd74626f2a1e957f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2112e37aae54451f5b7b03168183cace"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga2112e37aae54451f5b7b03168183cace">etcpal_ip_network_portions_equal</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip1, const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip2, const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *netmask)</td></tr>
+<tr class="memdesc:ga2112e37aae54451f5b7b03168183cace"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare the network portions of two IP addresses using a netmask.  <a href="group__etcpal__inet.html#ga2112e37aae54451f5b7b03168183cace">More...</a><br /></td></tr>
+<tr class="separator:ga2112e37aae54451f5b7b03168183cace"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad3a164fa82579c3047f6053f7266e6a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gad3a164fa82579c3047f6053f7266e6a8">ip_os_to_etcpal</a> (const etcpal_os_ipaddr_t *os_ip, <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip)</td></tr>
+<tr class="memdesc:gad3a164fa82579c3047f6053f7266e6a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a platform-specific IP address to an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#gad3a164fa82579c3047f6053f7266e6a8">More...</a><br /></td></tr>
+<tr class="separator:gad3a164fa82579c3047f6053f7266e6a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafe364c911711c469e0574821e30600e3"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gafe364c911711c469e0574821e30600e3">ip_etcpal_to_os</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *ip, etcpal_os_ipaddr_t *os_ip)</td></tr>
+<tr class="memdesc:gafe364c911711c469e0574821e30600e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to a platform-specific IP address.  <a href="group__etcpal__inet.html#gafe364c911711c469e0574821e30600e3">More...</a><br /></td></tr>
+<tr class="separator:gafe364c911711c469e0574821e30600e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga087efaef8630f32173eb397b4cb1ae7f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga087efaef8630f32173eb397b4cb1ae7f">sockaddr_os_to_etcpal</a> (const etcpal_os_sockaddr_t *os_sa, <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *sa)</td></tr>
+<tr class="memdesc:ga087efaef8630f32173eb397b4cb1ae7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a platform-specific socket address to an <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a>.  <a href="group__etcpal__inet.html#ga087efaef8630f32173eb397b4cb1ae7f">More...</a><br /></td></tr>
+<tr class="separator:ga087efaef8630f32173eb397b4cb1ae7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa8d939a802f0ab99ae1a6e8f9253a83d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaa8d939a802f0ab99ae1a6e8f9253a83d">sockaddr_etcpal_to_os</a> (const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *sa, etcpal_os_sockaddr_t *os_sa)</td></tr>
+<tr class="memdesc:gaa8d939a802f0ab99ae1a6e8f9253a83d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> to a platform-specific socket address.  <a href="group__etcpal__inet.html#gaa8d939a802f0ab99ae1a6e8f9253a83d">More...</a><br /></td></tr>
+<tr class="separator:gaa8d939a802f0ab99ae1a6e8f9253a83d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf98da0ae21f7960b5e046c55b8d79c4a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaf98da0ae21f7960b5e046c55b8d79c4a">etcpal_ip_to_string</a> (const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *src, char *dest)</td></tr>
+<tr class="memdesc:gaf98da0ae21f7960b5e046c55b8d79c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert IPv4 and IPv6 addresses from binary to text form.  <a href="group__etcpal__inet.html#gaf98da0ae21f7960b5e046c55b8d79c4a">More...</a><br /></td></tr>
+<tr class="separator:gaf98da0ae21f7960b5e046c55b8d79c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga92ba01cb2c81a8a97b9555ecf0ab2fe5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga92ba01cb2c81a8a97b9555ecf0ab2fe5">etcpal_string_to_ip</a> (<a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a> type, const char *src, <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *dest)</td></tr>
+<tr class="memdesc:ga92ba01cb2c81a8a97b9555ecf0ab2fe5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert IPv4 and IPv6 addresses from text to binary form.  <a href="group__etcpal__inet.html#ga92ba01cb2c81a8a97b9555ecf0ab2fe5">More...</a><br /></td></tr>
+<tr class="separator:ga92ba01cb2c81a8a97b9555ecf0ab2fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf1e26c55e9ece4a8a17bd9953eca0886"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaf1e26c55e9ece4a8a17bd9953eca0886">etcpal_mac_to_string</a> (const <a class="el" href="struct_etc_pal_mac_addr.html">EtcPalMacAddr</a> *src, char *dest)</td></tr>
+<tr class="memdesc:gaf1e26c55e9ece4a8a17bd9953eca0886"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a string representation of a MAC address.  <a href="group__etcpal__inet.html#gaf1e26c55e9ece4a8a17bd9953eca0886">More...</a><br /></td></tr>
+<tr class="separator:gaf1e26c55e9ece4a8a17bd9953eca0886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac2175076e5d4834fccf76e17a29bbbfe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gac2175076e5d4834fccf76e17a29bbbfe">etcpal_string_to_mac</a> (const char *src, <a class="el" href="struct_etc_pal_mac_addr.html">EtcPalMacAddr</a> *dest)</td></tr>
+<tr class="memdesc:gac2175076e5d4834fccf76e17a29bbbfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a MAC address from a string representation.  <a href="group__etcpal__inet.html#gac2175076e5d4834fccf76e17a29bbbfe">More...</a><br /></td></tr>
+<tr class="separator:gac2175076e5d4834fccf76e17a29bbbfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:gae648df0d068e3335073224fb0fb45512"><td class="memItemLeft" align="right" valign="top"><a id="gae648df0d068e3335073224fb0fb45512"></a>
+const <a class="el" href="struct_etc_pal_mac_addr.html">EtcPalMacAddr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gae648df0d068e3335073224fb0fb45512">kEtcPalNullMacAddr</a></td></tr>
+<tr class="memdesc:gae648df0d068e3335073224fb0fb45512"><td class="mdescLeft">&#160;</td><td class="mdescRight">A null (all 0's) MAC address, used by <a class="el" href="group__etcpal__inet.html#ga84ac8ff7c11b7b3d05e66192205ae0cb" title="Determine if a MAC address is null.">ETCPAL_MAC_IS_NULL()</a> for comparison. <br /></td></tr>
+<tr class="separator:gae648df0d068e3335073224fb0fb45512"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">EtcPalIpAddr macros</h2></td></tr>
+<tr><td class="ititle" colspan="2"><p><a class="anchor" id="amgrpeeda6e231eac28c10858aa837931c402"></a>A set of macros for interacting with a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.</p>
+<p>It is recommended to use these macros where possible rather than accessing the structure members directly; otherwise, it's easy to forget to fill in a field. </p>
+</td></tr>
+<tr class="memitem:gaeffa39a3f4885c198b5ed7f49463d0b0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaeffa39a3f4885c198b5ed7f49463d0b0">ETCPAL_IP_INVALID_INIT_VALUES</a>&#160;&#160;&#160;  <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8">kEtcPalIpTypeInvalid</a>, { 0 }</td></tr>
+<tr class="memdesc:gaeffa39a3f4885c198b5ed7f49463d0b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of initializer values for an invalid <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#gaeffa39a3f4885c198b5ed7f49463d0b0">More...</a><br /></td></tr>
+<tr class="separator:gaeffa39a3f4885c198b5ed7f49463d0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad8ef4406c72bd87baad2ce085fb29daf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gad8ef4406c72bd87baad2ce085fb29daf">ETCPAL_IP_INVALID_INIT</a></td></tr>
+<tr class="memdesc:gad8ef4406c72bd87baad2ce085fb29daf"><td class="mdescLeft">&#160;</td><td class="mdescRight">An initializer for an invalid <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#gad8ef4406c72bd87baad2ce085fb29daf">More...</a><br /></td></tr>
+<tr class="separator:gad8ef4406c72bd87baad2ce085fb29daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga19607012ab4fcba516b8f59d8d1df840"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga19607012ab4fcba516b8f59d8d1df840">ETCPAL_IPV4_INIT_VALUES</a>(v4_val)&#160;&#160;&#160;  <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635">kEtcPalIpTypeV4</a>, { .v4 = v4_val }</td></tr>
+<tr class="memdesc:ga19607012ab4fcba516b8f59d8d1df840"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of initializer values for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv4 address.  <a href="group__etcpal__inet.html#ga19607012ab4fcba516b8f59d8d1df840">More...</a><br /></td></tr>
+<tr class="separator:ga19607012ab4fcba516b8f59d8d1df840"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5a003e68fd0875858bf7dcdfad05db3f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga5a003e68fd0875858bf7dcdfad05db3f">ETCPAL_IPV4_INIT</a>(addr_val)</td></tr>
+<tr class="memdesc:ga5a003e68fd0875858bf7dcdfad05db3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">An initializer for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv4 address.  <a href="group__etcpal__inet.html#ga5a003e68fd0875858bf7dcdfad05db3f">More...</a><br /></td></tr>
+<tr class="separator:ga5a003e68fd0875858bf7dcdfad05db3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab26d4b7b0dd23818f02a54be33fa2bd2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gab26d4b7b0dd23818f02a54be33fa2bd2">ETCPAL_IPV6_INIT_VALUES</a>(...)</td></tr>
+<tr class="memdesc:gab26d4b7b0dd23818f02a54be33fa2bd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">A set of initializer values for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv6 address.  <a href="group__etcpal__inet.html#gab26d4b7b0dd23818f02a54be33fa2bd2">More...</a><br /></td></tr>
+<tr class="separator:gab26d4b7b0dd23818f02a54be33fa2bd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga66c5a1296b2777b56a9caa013a6a67aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga66c5a1296b2777b56a9caa013a6a67aa">ETCPAL_IPV6_INIT</a>(...)</td></tr>
+<tr class="memdesc:ga66c5a1296b2777b56a9caa013a6a67aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">An initializer for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv6 address.  <a href="group__etcpal__inet.html#ga66c5a1296b2777b56a9caa013a6a67aa">More...</a><br /></td></tr>
+<tr class="separator:ga66c5a1296b2777b56a9caa013a6a67aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4ed3a313f7503031100bb169ad03bc89"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga4ed3a313f7503031100bb169ad03bc89">ETCPAL_IP_IS_V4</a>(etcpal_ip_ptr)&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type == <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635">kEtcPalIpTypeV4</a>)</td></tr>
+<tr class="memdesc:ga4ed3a313f7503031100bb169ad03bc89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv4 address.  <a href="group__etcpal__inet.html#ga4ed3a313f7503031100bb169ad03bc89">More...</a><br /></td></tr>
+<tr class="separator:ga4ed3a313f7503031100bb169ad03bc89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga85d241eed93be1b271e5dc68a56e9473"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga85d241eed93be1b271e5dc68a56e9473">ETCPAL_IP_IS_V6</a>(etcpal_ip_ptr)&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type == <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae">kEtcPalIpTypeV6</a>)</td></tr>
+<tr class="memdesc:ga85d241eed93be1b271e5dc68a56e9473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv6 address.  <a href="group__etcpal__inet.html#ga85d241eed93be1b271e5dc68a56e9473">More...</a><br /></td></tr>
+<tr class="separator:ga85d241eed93be1b271e5dc68a56e9473"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga56a6933874bc52770eac5865f237e225"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga56a6933874bc52770eac5865f237e225">ETCPAL_IP_IS_INVALID</a>(etcpal_ip_ptr)&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type == <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8">kEtcPalIpTypeInvalid</a>)</td></tr>
+<tr class="memdesc:ga56a6933874bc52770eac5865f237e225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an invalid address.  <a href="group__etcpal__inet.html#ga56a6933874bc52770eac5865f237e225">More...</a><br /></td></tr>
+<tr class="separator:ga56a6933874bc52770eac5865f237e225"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga35262011f1ae20211d8aad5c79ab1b50"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga35262011f1ae20211d8aad5c79ab1b50">ETCPAL_IP_V4_ADDRESS</a>(etcpal_ip_ptr)&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;addr.v4)</td></tr>
+<tr class="memdesc:ga35262011f1ae20211d8aad5c79ab1b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the IPv4 address from a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#ga35262011f1ae20211d8aad5c79ab1b50">More...</a><br /></td></tr>
+<tr class="separator:ga35262011f1ae20211d8aad5c79ab1b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaaee800da95371923f9375dec1a6c0a5c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaaee800da95371923f9375dec1a6c0a5c">ETCPAL_IP_V6_ADDRESS</a>(etcpal_ip_ptr)&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;addr.v6.addr_buf)</td></tr>
+<tr class="memdesc:gaaee800da95371923f9375dec1a6c0a5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the IPv6 address from a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#gaaee800da95371923f9375dec1a6c0a5c">More...</a><br /></td></tr>
+<tr class="separator:gaaee800da95371923f9375dec1a6c0a5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga88982a2d40356f278c53563ddf96d8b2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga88982a2d40356f278c53563ddf96d8b2">ETCPAL_IP_V6_SCOPE_ID</a>(etcpal_ip_ptr)&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;addr.v6.scope_id)</td></tr>
+<tr class="memdesc:ga88982a2d40356f278c53563ddf96d8b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the IPv6 scope ID from an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#ga88982a2d40356f278c53563ddf96d8b2">More...</a><br /></td></tr>
+<tr class="separator:ga88982a2d40356f278c53563ddf96d8b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5e36f7ec503aef51829aed6fbd88c889"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#ga5e36f7ec503aef51829aed6fbd88c889">ETCPAL_IP_SET_V4_ADDRESS</a>(etcpal_ip_ptr,  val)</td></tr>
+<tr class="memdesc:ga5e36f7ec503aef51829aed6fbd88c889"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the IPv4 address in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#ga5e36f7ec503aef51829aed6fbd88c889">More...</a><br /></td></tr>
+<tr class="separator:ga5e36f7ec503aef51829aed6fbd88c889"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae0d14b2f44b81a6687390839e0aea869"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gae0d14b2f44b81a6687390839e0aea869">ETCPAL_IP_SET_V6_ADDRESS</a>(etcpal_ip_ptr,  addr_val)&#160;&#160;&#160;  <a class="el" href="group__etcpal__inet.html#gaeb96cdc37b6f57f448b0ac15971380d8">ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</a>(etcpal_ip_ptr, addr_val, 0u)</td></tr>
+<tr class="memdesc:gae0d14b2f44b81a6687390839e0aea869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the IPv6 address in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#gae0d14b2f44b81a6687390839e0aea869">More...</a><br /></td></tr>
+<tr class="separator:gae0d14b2f44b81a6687390839e0aea869"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaeb96cdc37b6f57f448b0ac15971380d8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gaeb96cdc37b6f57f448b0ac15971380d8">ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</a>(etcpal_ip_ptr,  addr_val,  scope_id_val)</td></tr>
+<tr class="memdesc:gaeb96cdc37b6f57f448b0ac15971380d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set an IPv6 address with an explicit scope ID in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>.  <a href="group__etcpal__inet.html#gaeb96cdc37b6f57f448b0ac15971380d8">More...</a><br /></td></tr>
+<tr class="separator:gaeb96cdc37b6f57f448b0ac15971380d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab7df63744affbe2833fcb455e69b6ff5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__inet.html#gab7df63744affbe2833fcb455e69b6ff5">ETCPAL_IP_SET_INVALID</a>(etcpal_ip_ptr)&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type = <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8">kEtcPalIpTypeInvalid</a>)</td></tr>
+<tr class="memdesc:gab7df63744affbe2833fcb455e69b6ff5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the type field in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to indicate that it does not contain a valid address.  <a href="group__etcpal__inet.html#gab7df63744affbe2833fcb455e69b6ff5">More...</a><br /></td></tr>
+<tr class="separator:gab7df63744affbe2833fcb455e69b6ff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="gad8ef4406c72bd87baad2ce085fb29daf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad8ef4406c72bd87baad2ce085fb29daf">&#9670;&nbsp;</a></span>ETCPAL_IP_INVALID_INIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_INVALID_INIT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  {                               \</div>
+<div class="line">    ETCPAL_IP_INVALID_INIT_VALUES \</div>
+<div class="line">  }</div>
+</div><!-- fragment -->
+<p>An initializer for an invalid <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>Usage: </p><div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> invalid_ip = <a class="code" href="group__etcpal__inet.html#gad8ef4406c72bd87baad2ce085fb29daf">ETCPAL_IP_INVALID_INIT</a>;</div>
+<div class="ttc" id="agroup__etcpal__inet_html_gad8ef4406c72bd87baad2ce085fb29daf"><div class="ttname"><a href="group__etcpal__inet.html#gad8ef4406c72bd87baad2ce085fb29daf">ETCPAL_IP_INVALID_INIT</a></div><div class="ttdeci">#define ETCPAL_IP_INVALID_INIT</div><div class="ttdoc">An initializer for an invalid EtcPalIpAddr.</div><div class="ttdef"><b>Definition:</b> inet.h:121</div></div>
+<div class="ttc" id="astruct_etc_pal_ip_addr_html"><div class="ttname"><a href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a></div><div class="ttdoc">An IP address.</div><div class="ttdef"><b>Definition:</b> inet.h:75</div></div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a id="gaeffa39a3f4885c198b5ed7f49463d0b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaeffa39a3f4885c198b5ed7f49463d0b0">&#9670;&nbsp;</a></span>ETCPAL_IP_INVALID_INIT_VALUES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_INVALID_INIT_VALUES&#160;&#160;&#160;  <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8">kEtcPalIpTypeInvalid</a>, { 0 }</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A set of initializer values for an invalid <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>Usage: </p><div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> invalid_ip = { <a class="code" href="group__etcpal__inet.html#gaeffa39a3f4885c198b5ed7f49463d0b0">ETCPAL_IP_INVALID_INIT_VALUES</a> };</div>
+<div class="ttc" id="agroup__etcpal__inet_html_gaeffa39a3f4885c198b5ed7f49463d0b0"><div class="ttname"><a href="group__etcpal__inet.html#gaeffa39a3f4885c198b5ed7f49463d0b0">ETCPAL_IP_INVALID_INIT_VALUES</a></div><div class="ttdeci">#define ETCPAL_IP_INVALID_INIT_VALUES</div><div class="ttdoc">A set of initializer values for an invalid EtcPalIpAddr.</div><div class="ttdef"><b>Definition:</b> inet.h:110</div></div>
+</div><!-- fragment --><p>To omit the enclosing brackets, use <a class="el" href="group__etcpal__inet.html#gad8ef4406c72bd87baad2ce085fb29daf" title="An initializer for an invalid EtcPalIpAddr.">ETCPAL_IP_INVALID_INIT</a>. </p>
+
+</div>
+</div>
+<a id="ga56a6933874bc52770eac5865f237e225"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga56a6933874bc52770eac5865f237e225">&#9670;&nbsp;</a></span>ETCPAL_IP_IS_INVALID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_IS_INVALID</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type == <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8">kEtcPalIpTypeInvalid</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an invalid address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (is invalid) or false (is not invalid). </dd></dl>
+
+</div>
+</div>
+<a id="ga4ed3a313f7503031100bb169ad03bc89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4ed3a313f7503031100bb169ad03bc89">&#9670;&nbsp;</a></span>ETCPAL_IP_IS_V4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_IS_V4</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type == <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635">kEtcPalIpTypeV4</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv4 address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (contains an IPv4 address) or false (does not contain an IPv4 address). </dd></dl>
+
+</div>
+</div>
+<a id="ga85d241eed93be1b271e5dc68a56e9473"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga85d241eed93be1b271e5dc68a56e9473">&#9670;&nbsp;</a></span>ETCPAL_IP_IS_V6</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_IS_V6</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type == <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae">kEtcPalIpTypeV6</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv6 address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (contains an IPv6 address) or false (does not contain an IPv6 address). </dd></dl>
+
+</div>
+</div>
+<a id="gab7df63744affbe2833fcb455e69b6ff5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab7df63744affbe2833fcb455e69b6ff5">&#9670;&nbsp;</a></span>ETCPAL_IP_SET_INVALID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_SET_INVALID</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;type = <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8">kEtcPalIpTypeInvalid</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the type field in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to indicate that it does not contain a valid address. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga5e36f7ec503aef51829aed6fbd88c889"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5e36f7ec503aef51829aed6fbd88c889">&#9670;&nbsp;</a></span>ETCPAL_IP_SET_V4_ADDRESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_SET_V4_ADDRESS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">val&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                                                 \</div>
+<div class="line">  {                                                  \</div>
+<div class="line">    (etcpal_ip_ptr)-&gt;type    = <a class="code" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635">kEtcPalIpTypeV4</a>;      \</div>
+<div class="line">    (etcpal_ip_ptr)-&gt;addr.v4 = val;                  \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="agroup__etcpal__inet_html_gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635"><div class="ttname"><a href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635">kEtcPalIpTypeV4</a></div><div class="ttdeci">@ kEtcPalIpTypeV4</div><div class="ttdoc">This EtcPalIpAddr contains an IPv4 address.</div><div class="ttdef"><b>Definition:</b> inet.h:57</div></div>
+</div><!-- fragment -->
+<p>Set the IPv4 address in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>Also sets the type field to indicate that this <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv4 address.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+    <tr><td class="paramname">val</td><td>IPv4 address to set (uint32_t). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gae0d14b2f44b81a6687390839e0aea869"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae0d14b2f44b81a6687390839e0aea869">&#9670;&nbsp;</a></span>ETCPAL_IP_SET_V6_ADDRESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_SET_V6_ADDRESS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">addr_val&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;  <a class="el" href="group__etcpal__inet.html#gaeb96cdc37b6f57f448b0ac15971380d8">ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</a>(etcpal_ip_ptr, addr_val, 0u)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the IPv6 address in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>Also sets the type field to indicate that this <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv6 address.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+    <tr><td class="paramname">addr_val</td><td>IPv6 address to set (uint8_t[]). Must be at least of length <a class="el" href="group__etcpal__inet.html#gad5f18940857b50304b956505fb77df20" title="The number of bytes in an IPv6 address.">ETCPAL_IPV6_BYTES</a>. Gets copied into the struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaeb96cdc37b6f57f448b0ac15971380d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaeb96cdc37b6f57f448b0ac15971380d8">&#9670;&nbsp;</a></span>ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_SET_V6_ADDRESS_WITH_SCOPE_ID</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">addr_val, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">scope_id_val&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span>                                                                                  \</div>
+<div class="line">  {                                                                                   \</div>
+<div class="line">    (etcpal_ip_ptr)-&gt;type = <a class="code" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae">kEtcPalIpTypeV6</a>;                                          \</div>
+<div class="line">    memcpy((etcpal_ip_ptr)-&gt;addr.v6.addr_buf, (addr_val), <a class="code" href="group__etcpal__inet.html#gad5f18940857b50304b956505fb77df20">ETCPAL_IPV6_BYTES</a>);         \</div>
+<div class="line">    (etcpal_ip_ptr)-&gt;addr.v6.scope_id = (scope_id_val);                               \</div>
+<div class="line">  } <span class="keywordflow">while</span> (0)</div>
+<div class="ttc" id="agroup__etcpal__inet_html_gad5f18940857b50304b956505fb77df20"><div class="ttname"><a href="group__etcpal__inet.html#gad5f18940857b50304b956505fb77df20">ETCPAL_IPV6_BYTES</a></div><div class="ttdeci">#define ETCPAL_IPV6_BYTES</div><div class="ttdoc">The number of bytes in an IPv6 address.</div><div class="ttdef"><b>Definition:</b> inet.h:63</div></div>
+<div class="ttc" id="agroup__etcpal__inet_html_gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae"><div class="ttname"><a href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae">kEtcPalIpTypeV6</a></div><div class="ttdeci">@ kEtcPalIpTypeV6</div><div class="ttdoc">This EtcPalIpAddr contains an IPv6 address.</div><div class="ttdef"><b>Definition:</b> inet.h:59</div></div>
+</div><!-- fragment -->
+<p>Set an IPv6 address with an explicit scope ID in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>Also sets the type field to indicate that this <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv6 address.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+    <tr><td class="paramname">addr_val</td><td>IPv6 address to set (uint8_t[]). Must be at least of length <a class="el" href="group__etcpal__inet.html#gad5f18940857b50304b956505fb77df20" title="The number of bytes in an IPv6 address.">ETCPAL_IPV6_BYTES</a>. Gets copied into the struct. </td></tr>
+    <tr><td class="paramname">scope_id_val</td><td>IPv6 scope ID to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga35262011f1ae20211d8aad5c79ab1b50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga35262011f1ae20211d8aad5c79ab1b50">&#9670;&nbsp;</a></span>ETCPAL_IP_V4_ADDRESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_V4_ADDRESS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;addr.v4)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the IPv4 address from a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>It is recommended to first use <a class="el" href="group__etcpal__inet.html#ga4ed3a313f7503031100bb169ad03bc89" title="Determine whether a EtcPalIpAddr contains an IPv4 address.">ETCPAL_IP_IS_V4()</a> to make sure this <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a valid IPv4 address.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The IPv4 address (uint32_t). </dd></dl>
+
+</div>
+</div>
+<a id="gaaee800da95371923f9375dec1a6c0a5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaaee800da95371923f9375dec1a6c0a5c">&#9670;&nbsp;</a></span>ETCPAL_IP_V6_ADDRESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_V6_ADDRESS</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;addr.v6.addr_buf)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the IPv6 address from a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>It is recommended to first use <a class="el" href="group__etcpal__inet.html#ga85d241eed93be1b271e5dc68a56e9473" title="Determine whether a EtcPalIpAddr contains an IPv6 address.">ETCPAL_IP_IS_V6()</a> to make sure this <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a valid IPv6 address.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The IPv6 address (uint8_t[]). </dd></dl>
+
+</div>
+</div>
+<a id="ga88982a2d40356f278c53563ddf96d8b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga88982a2d40356f278c53563ddf96d8b2">&#9670;&nbsp;</a></span>ETCPAL_IP_V6_SCOPE_ID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IP_V6_SCOPE_ID</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">etcpal_ip_ptr</td><td>)</td>
+          <td>&#160;&#160;&#160;((etcpal_ip_ptr)-&gt;addr.v6.scope_id)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the IPv6 scope ID from an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>See <a class="el" href="interface_indexes.html">Network Interface Indexes</a> for more information. It is recommended to first use <a class="el" href="group__etcpal__inet.html#ga85d241eed93be1b271e5dc68a56e9473" title="Determine whether a EtcPalIpAddr contains an IPv6 address.">ETCPAL_IP_IS_V6()</a> to make sure this <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a valid IPv6 address.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">etcpal_ip_ptr</td><td>Pointer to a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The IPv6 scope ID (unsigned int). </dd></dl>
+
+</div>
+</div>
+<a id="ga5a003e68fd0875858bf7dcdfad05db3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5a003e68fd0875858bf7dcdfad05db3f">&#9670;&nbsp;</a></span>ETCPAL_IPV4_INIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IPV4_INIT</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">addr_val</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  {                                   \</div>
+<div class="line">    ETCPAL_IPV4_INIT_VALUES(addr_val) \</div>
+<div class="line">  }</div>
+</div><!-- fragment -->
+<p>An initializer for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv4 address. </p>
+<p>Usage: </p><div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> v4 = <a class="code" href="group__etcpal__inet.html#ga5a003e68fd0875858bf7dcdfad05db3f">ETCPAL_IPV4_INIT</a>(0xc0a80101); <span class="comment">// 192.168.1.1</span></div>
+<div class="ttc" id="agroup__etcpal__inet_html_ga5a003e68fd0875858bf7dcdfad05db3f"><div class="ttname"><a href="group__etcpal__inet.html#ga5a003e68fd0875858bf7dcdfad05db3f">ETCPAL_IPV4_INIT</a></div><div class="ttdeci">#define ETCPAL_IPV4_INIT(addr_val)</div><div class="ttdoc">An initializer for an EtcPalIpAddr representing an IPv4 address.</div><div class="ttdef"><b>Definition:</b> inet.h:151</div></div>
+</div><!-- fragment --><p>Note: Using this macro requires support for C99 designated initializers in your compiler. </p>
+
+</div>
+</div>
+<a id="ga19607012ab4fcba516b8f59d8d1df840"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga19607012ab4fcba516b8f59d8d1df840">&#9670;&nbsp;</a></span>ETCPAL_IPV4_INIT_VALUES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IPV4_INIT_VALUES</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">v4_val</td><td>)</td>
+          <td>&#160;&#160;&#160;  <a class="el" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635">kEtcPalIpTypeV4</a>, { .v4 = v4_val }</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A set of initializer values for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv4 address. </p>
+<p>Usage: </p><div class="fragment"><div class="line"><a class="code" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> v4 = { <a class="code" href="group__etcpal__inet.html#ga19607012ab4fcba516b8f59d8d1df840">ETCPAL_IPV4_INIT_VALUES</a>(0xc0a80101) }; <span class="comment">// 192.168.1.1</span></div>
+<div class="ttc" id="agroup__etcpal__inet_html_ga19607012ab4fcba516b8f59d8d1df840"><div class="ttname"><a href="group__etcpal__inet.html#ga19607012ab4fcba516b8f59d8d1df840">ETCPAL_IPV4_INIT_VALUES</a></div><div class="ttdeci">#define ETCPAL_IPV4_INIT_VALUES(v4_val)</div><div class="ttdoc">A set of initializer values for an EtcPalIpAddr representing an IPv4 address.</div><div class="ttdef"><b>Definition:</b> inet.h:138</div></div>
+</div><!-- fragment --><p>Note: Using this macro requires support for C99 designated initializers in your compiler.</p>
+<p>To omit the enclosing brackets, use <a class="el" href="group__etcpal__inet.html#ga5a003e68fd0875858bf7dcdfad05db3f" title="An initializer for an EtcPalIpAddr representing an IPv4 address.">ETCPAL_IPV4_INIT()</a>. </p>
+
+</div>
+</div>
+<a id="ga66c5a1296b2777b56a9caa013a6a67aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga66c5a1296b2777b56a9caa013a6a67aa">&#9670;&nbsp;</a></span>ETCPAL_IPV6_INIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IPV6_INIT</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  {                                      \</div>
+<div class="line">    ETCPAL_IPV6_INIT_VALUES(__VA_ARGS__) \</div>
+<div class="line">  }</div>
+</div><!-- fragment -->
+<p>An initializer for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv6 address. </p>
+<p>Usage: </p><div class="fragment"><div class="line"><span class="comment">// 2001:db8::1234:5678</span></div>
+<div class="line"><a class="code" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> v6 = <a class="code" href="group__etcpal__inet.html#ga66c5a1296b2777b56a9caa013a6a67aa">ETCPAL_IPV6_INIT</a>(0x20, 0x01, 0x0d, 0xb8, 0x00, 0x00, 0x00, 0x00,</div>
+<div class="line">                                   0x00, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78);</div>
+<div class="ttc" id="agroup__etcpal__inet_html_ga66c5a1296b2777b56a9caa013a6a67aa"><div class="ttname"><a href="group__etcpal__inet.html#ga66c5a1296b2777b56a9caa013a6a67aa">ETCPAL_IPV6_INIT</a></div><div class="ttdeci">#define ETCPAL_IPV6_INIT(...)</div><div class="ttdoc">An initializer for an EtcPalIpAddr representing an IPv6 address.</div><div class="ttdef"><b>Definition:</b> inet.h:195</div></div>
+</div><!-- fragment --><p>Any number of initializer values can be used (the remaining IPv6 bytes will be initialized to 0).</p>
+<p>Note: Using this macro requires support for variadic macros and C99 designated initializers in your compiler. </p>
+
+</div>
+</div>
+<a id="gab26d4b7b0dd23818f02a54be33fa2bd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab26d4b7b0dd23818f02a54be33fa2bd2">&#9670;&nbsp;</a></span>ETCPAL_IPV6_INIT_VALUES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_IPV6_INIT_VALUES</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  <a class="code" href="group__etcpal__inet.html#gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae">kEtcPalIpTypeV6</a>,                                    \</div>
+<div class="line">  {                                                   \</div>
+<div class="line">    .v6 = {.addr_buf = {__VA_ARGS__}, .scope_id = 0 } \</div>
+<div class="line">  }</div>
+</div><!-- fragment -->
+<p>A set of initializer values for an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> representing an IPv6 address. </p>
+<p>Usage: </p><div class="fragment"><div class="line"><span class="comment">// 2001:db8::1234:5678</span></div>
+<div class="line"><a class="code" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> v6 = {</div>
+<div class="line">  <a class="code" href="group__etcpal__inet.html#gab26d4b7b0dd23818f02a54be33fa2bd2">ETCPAL_IPV6_INIT_VALUES</a>(0x20, 0x01, 0x0d, 0xb8, 0x00, 0x00, 0x00, 0x00,</div>
+<div class="line">                          0x00, 0x00, 0x00, 0x00, 0x12, 0x34, 0x56, 0x78)</div>
+<div class="line">};</div>
+<div class="ttc" id="agroup__etcpal__inet_html_gab26d4b7b0dd23818f02a54be33fa2bd2"><div class="ttname"><a href="group__etcpal__inet.html#gab26d4b7b0dd23818f02a54be33fa2bd2">ETCPAL_IPV6_INIT_VALUES</a></div><div class="ttdeci">#define ETCPAL_IPV6_INIT_VALUES(...)</div><div class="ttdoc">A set of initializer values for an EtcPalIpAddr representing an IPv6 address.</div><div class="ttdef"><b>Definition:</b> inet.h:174</div></div>
+</div><!-- fragment --><p>Any number of initializer values can be used (the remaining IPv6 bytes will be initialized to 0). To omit the enclosing brackets, use <a class="el" href="group__etcpal__inet.html#ga66c5a1296b2777b56a9caa013a6a67aa" title="An initializer for an EtcPalIpAddr representing an IPv6 address.">ETCPAL_IPV6_INIT()</a>.</p>
+<p>Note: Using this macro requires support for variadic macros and C99 designated initializers in your compiler. </p>
+
+</div>
+</div>
+<a id="ga4aadcedf06a097132f1eef8176b83419"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4aadcedf06a097132f1eef8176b83419">&#9670;&nbsp;</a></span>ETCPAL_MAC_CMP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_MAC_CMP</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mac1ptr, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mac2ptr&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;memcmp((mac1ptr)-&gt;data, (mac2ptr)-&gt;data, <a class="el" href="group__etcpal__inet.html#ga2222b6d9e40f95ec1d74e1865537863f">ETCPAL_MAC_BYTES</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compare two EtcPalMacAddrs numerically. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">mac1ptr</td><td>Pointer to first <a class="el" href="struct_etc_pal_mac_addr.html" title="A MAC address.">EtcPalMacAddr</a> to compare. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mac2ptr</td><td>Pointer to second <a class="el" href="struct_etc_pal_mac_addr.html" title="A MAC address.">EtcPalMacAddr</a> to compare. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>&lt; 0: mac1 &lt; mac2 </dd>
+<dd>
+0: mac1 == mac2 </dd>
+<dd>
+&gt; 0: mac1 &gt; mac2 </dd></dl>
+
+</div>
+</div>
+<a id="ga84ac8ff7c11b7b3d05e66192205ae0cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga84ac8ff7c11b7b3d05e66192205ae0cb">&#9670;&nbsp;</a></span>ETCPAL_MAC_IS_NULL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_MAC_IS_NULL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">macptr</td><td>)</td>
+          <td>&#160;&#160;&#160;(memcmp((macptr)-&gt;data, kEtcPalNullMacAddr.data, <a class="el" href="group__etcpal__inet.html#ga2222b6d9e40f95ec1d74e1865537863f">ETCPAL_MAC_BYTES</a>) == 0)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine if a MAC address is null. </p>
+<p>A MAC address is said to be 'null' when it is made up of all 0's.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">macptr</td><td>Pointer to <a class="el" href="struct_etc_pal_mac_addr.html" title="A MAC address.">EtcPalMacAddr</a> to null-check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true (MAC address is null) or false (MAC address is not null). </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ga80ecc76598182ef0f0b0fc5e08135873"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga80ecc76598182ef0f0b0fc5e08135873">&#9670;&nbsp;</a></span>EtcPalIpAddr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>An IP address. </p>
+<p>Can hold either an IPv4 or IPv6 address. Do not manipulate the members directly; use the macros defined in this module to access them. IPv4 addresses are in host byte order. IPv6 addresses also contain a scope ID, which is also sometimes referred to as a zone index (RFC 4007), to help disambiguate link-local addresses, among other uses. In most cases, this field can be left at its default value, which is set by the <a class="el" href="group__etcpal__inet.html#gae0d14b2f44b81a6687390839e0aea869" title="Set the IPv6 address in a EtcPalIpAddr.">ETCPAL_IP_SET_V6_ADDRESS()</a> macro. </p>
+
+</div>
+</div>
+<a id="ga713cdab9d717aa8f0d45797c97a9df90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga713cdab9d717aa8f0d45797c97a9df90">&#9670;&nbsp;</a></span>EtcPalMcastNetintId</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_etc_pal_mcast_netint_id.html">EtcPalMcastNetintId</a> <a class="el" href="struct_etc_pal_mcast_netint_id.html">EtcPalMcastNetintId</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A set of identifying information for a network interface, for multicast purposes. </p>
+<p>The primary key for a network interface is simply a combination of the interface index and the IP protocol used. The interface IP address is not required for this. </p>
+
+</div>
+</div>
+<a id="gabf23694805ba92b1a24ac0e79854e6b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabf23694805ba92b1a24ac0e79854e6b8">&#9670;&nbsp;</a></span>EtcPalSockAddr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>An IP address with associated interface and port. </p>
+<p>Ports are in host byte order. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga847282e3fd17bf75ec83292326c455ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga847282e3fd17bf75ec83292326c455ee">&#9670;&nbsp;</a></span>etcpal_iptype_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Used to identify the type of IP address contained in a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga847282e3fd17bf75ec83292326c455eea0e789a4e187f4a7fdbda7271a754eca8"></a>kEtcPalIpTypeInvalid&#160;</td><td class="fielddoc"><p>This <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> is not valid. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga847282e3fd17bf75ec83292326c455eea73ea615eceba61f26d92a63f3738f635"></a>kEtcPalIpTypeV4&#160;</td><td class="fielddoc"><p>This <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv4 address. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga847282e3fd17bf75ec83292326c455eead480ed8d686b23bdb2e5bfc06b93d7ae"></a>kEtcPalIpTypeV6&#160;</td><td class="fielddoc"><p>This <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains an IPv6 address. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gaf897a891bcf59ccb447845628c2a04c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf897a891bcf59ccb447845628c2a04c2">&#9670;&nbsp;</a></span>etcpal_ip_and_port_equal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_ip_and_port_equal </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>sock1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>sock2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether two instances of <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> contain identical IP addresses and ports. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">sock1</td><td>First <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> to compare. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sock2</td><td>Second <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> to compare. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: the IP address and port are identical. </dd>
+<dd>
+false: the IP address and port are not identical. </dd></dl>
+
+</div>
+</div>
+<a id="gaf766d207bd3e85c6b3d75768f28a00c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf766d207bd3e85c6b3d75768f28a00c6">&#9670;&nbsp;</a></span>etcpal_ip_cmp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int etcpal_ip_cmp </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compare two EtcPalIpAddrs. </p>
+<p>Rules for comparison:</p><ul>
+<li>All Invalid addresses are considered to be equal to each other and &lt; all IPv4 and IPv6 addresses</li>
+<li>All IPv4 addresses are considered to be &lt; all IPv6 addresses</li>
+<li>For two IPv4 or IPv6 addresses, the numerical address value is compared</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip1</td><td>First <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to compare. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip2</td><td>Second <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to compare. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>&lt; 0: ip1 &lt; ip2 </dd>
+<dd>
+0: ip1 == ip2 </dd>
+<dd>
+&gt; 0: ip1 &gt; ip2 </dd></dl>
+
+</div>
+</div>
+<a id="gaa4b21b32f8776276e582d473e17bf768"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa4b21b32f8776276e582d473e17bf768">&#9670;&nbsp;</a></span>etcpal_ip_is_link_local()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_ip_is_link_local </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a link-local address. </p>
+<p>Works for both IPv4 and IPv6 addresses.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip</td><td>Address to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: ip contains a link-local address. </dd>
+<dd>
+false: ip does not contain a link-local address. </dd></dl>
+
+</div>
+</div>
+<a id="ga6f59d1ebf7873649f0812ee1cae171e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6f59d1ebf7873649f0812ee1cae171e7">&#9670;&nbsp;</a></span>etcpal_ip_is_loopback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_ip_is_loopback </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a loopback address. </p>
+<p>Works for both IPv4 and IPv6 addresses.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip</td><td>Address to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: ip contains a loopback address. </dd>
+<dd>
+false: ip does not contain a loopback address. </dd></dl>
+
+</div>
+</div>
+<a id="ga71b745e5bdc7c77bba5320241639f450"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga71b745e5bdc7c77bba5320241639f450">&#9670;&nbsp;</a></span>etcpal_ip_is_multicast()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_ip_is_multicast </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a multicast address. </p>
+<p>Works for both IPv4 and IPv6 addresses.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip</td><td>Address to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: ip contains a multicast address. </dd>
+<dd>
+false: ip does not contain a multicast address. </dd></dl>
+
+</div>
+</div>
+<a id="gaef79c0c7eac819d7decf1473246d3b82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaef79c0c7eac819d7decf1473246d3b82">&#9670;&nbsp;</a></span>etcpal_ip_is_wildcard()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_ip_is_wildcard </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine whether a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> contains a wildcard address. </p>
+<p>Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to <a class="el" href="group__etcpal__socket.html#ga86f8e53de9955be4f0ea33f632cc4b2a" title="Bind a name to a socket.">etcpal_bind()</a> to indicate that a socket should be bound to all available network interfaces. It should not be used as a placeholder or invalid address - use <a class="el" href="group__etcpal__inet.html#gab7df63744affbe2833fcb455e69b6ff5" title="Set the type field in a EtcPalIpAddr to indicate that it does not contain a valid address.">ETCPAL_IP_SET_INVALID()</a> and <a class="el" href="group__etcpal__inet.html#ga56a6933874bc52770eac5865f237e225" title="Determine whether a EtcPalIpAddr contains an invalid address.">ETCPAL_IP_IS_INVALID()</a> for that.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip</td><td>Address to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: ip contains a wildcard address. </dd>
+<dd>
+false: ip does not contain a wildcard address. </dd></dl>
+
+</div>
+</div>
+<a id="ga0f8ba14963ce91bfd74626f2a1e957f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0f8ba14963ce91bfd74626f2a1e957f0">&#9670;&nbsp;</a></span>etcpal_ip_mask_from_length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> etcpal_ip_mask_from_length </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>mask_length</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a netmask given a length in bits. </p>
+<p>Creates either an IPv4 or IPv6 netmask, setting the most-significant mask_length bits.</p>
+<p>For example: type = kEtcPalIpTypeV4; mask_length = 16; result = 255.255.0.0 type = kEtcPalIpTypeV6; mask_length = 64; result = ffff:ffff:ffff:ffff::</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of netmask to create, either IPv4 or IPv6. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mask_length</td><td>Length in bits of the mask, counting from the MSB. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> containing the netmask. </dd></dl>
+
+</div>
+</div>
+<a id="ga9a86a44681bc856e5919578bbf652e38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9a86a44681bc856e5919578bbf652e38">&#9670;&nbsp;</a></span>etcpal_ip_mask_length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int etcpal_ip_mask_length </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>netmask</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the length in bits of a netmask. </p>
+<p>Counts the number of set ('1') bits in the netmask, starting from the MSB. Works for both IPv4 and IPv6 netmasks.</p>
+<p>For example: netmask = 255.255.0.0 (0xffff0000); result = 16 netmask = ffff:ffff:ffff:ffff::; result = 64</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">netmask</td><td>Netmask to count. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of set bits in the netmask. </dd></dl>
+
+</div>
+</div>
+<a id="ga2112e37aae54451f5b7b03168183cace"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2112e37aae54451f5b7b03168183cace">&#9670;&nbsp;</a></span>etcpal_ip_network_portions_equal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_ip_network_portions_equal </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>netmask</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compare the network portions of two IP addresses using a netmask. </p>
+<p>Returns true if the <em>network</em> portions of the IP addresses match. The host portions are disregarded.</p>
+<p>Some examples: ip1 = 192.168.0.1; ip2 = 192.168.0.2; netmask = 255.255.0.0 (/16); result = true ip1 = 192.168.0.1; ip2 = 192.168.1.1; netmask = 255.255.255.0 (/24); result = false ip1 = 2001:db8::1; ip2 = 2001:db8::2; netmask = ffff:ffff:ffff:ffff:: (/64); result = true ip1 = 2001:db8:1::1; ip2 = 2001:db8:2::1; netmask = ffff:ffff:ffff:ffff:: (/64); result = false</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip1</td><td>First <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to compare. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip2</td><td>Second <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to compare. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">netmask</td><td>The netmask to use for the comparison. This mask is used to determine the network portion of each address. The <a class="el" href="group__etcpal__inet.html#ga0f8ba14963ce91bfd74626f2a1e957f0" title="Create a netmask given a length in bits.">etcpal_ip_mask_from_length()</a> function can be used to turn a mask or prefix bit length into a mask. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The network portions of the IP addresses are equal. </dd>
+<dd>
+false: The network portions are not equal. </dd></dl>
+
+</div>
+</div>
+<a id="ga5d91044202026978c99000b6da2d226e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5d91044202026978c99000b6da2d226e">&#9670;&nbsp;</a></span>etcpal_ip_set_wildcard()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_ip_set_wildcard </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> with a wildcard address. </p>
+<p>Works for both IPv4 and IPv6 addresses. The wildcard address is used as an argument to <a class="el" href="group__etcpal__socket.html#ga86f8e53de9955be4f0ea33f632cc4b2a" title="Bind a name to a socket.">etcpal_bind()</a> to indicate that a socket should be bound to all available network interfaces. It should not be used as a placeholder or invalid address - use <a class="el" href="group__etcpal__inet.html#gab7df63744affbe2833fcb455e69b6ff5" title="Set the type field in a EtcPalIpAddr to indicate that it does not contain a valid address.">ETCPAL_IP_SET_INVALID()</a> and <a class="el" href="group__etcpal__inet.html#ga56a6933874bc52770eac5865f237e225" title="Determine whether a EtcPalIpAddr contains an invalid address.">ETCPAL_IP_IS_INVALID()</a> for that.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of wildcard to create, either IPv4 or IPv6. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">ip</td><td>Address in which to store the wildcard value. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaf98da0ae21f7960b5e046c55b8d79c4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf98da0ae21f7960b5e046c55b8d79c4a">&#9670;&nbsp;</a></span>etcpal_ip_to_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_ip_to_string </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>dest</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert IPv4 and IPv6 addresses from binary to text form. </p>
+<p>This function uses each platform's inet_ntop() function under the hood.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>Address to convert to string form. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dest</td><td>Filled in on success with the string-represented address. To avoid undefined behavior, this buffer must be at least of size <a class="el" href="group__etcpal__inet.html#gacd7ec0d81e171166483c7629669bf05d" title="Maximum length of the string representation of an IP address.">ETCPAL_IP_STRING_BYTES</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Success. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid parameter. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: System call failed. </dd></dl>
+
+</div>
+</div>
+<a id="gaf1e26c55e9ece4a8a17bd9953eca0886"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf1e26c55e9ece4a8a17bd9953eca0886">&#9670;&nbsp;</a></span>etcpal_mac_to_string()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_mac_to_string </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_mac_addr.html">EtcPalMacAddr</a> *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>dest</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a string representation of a MAC address. </p>
+<p>The resulting string will be of the form xx:xx:xx:xx:xx:xx (lowercase is used for hexadecimal letters per common convention).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>MAC address to convert to a string. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dest</td><td>Character buffer to which to write the resulting string. Must be at least of size <a class="el" href="group__etcpal__inet.html#ga73f73b31cc309024d3284ebcf4b66b45" title="Maximum length of the string representation of a MAC address.">ETCPAL_MAC_STRING_BYTES</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Conversion successful. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid argument. </dd></dl>
+
+</div>
+</div>
+<a id="ga92ba01cb2c81a8a97b9555ecf0ab2fe5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga92ba01cb2c81a8a97b9555ecf0ab2fe5">&#9670;&nbsp;</a></span>etcpal_string_to_ip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_string_to_ip </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__inet.html#ga847282e3fd17bf75ec83292326c455ee">etcpal_iptype_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>dest</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert IPv4 and IPv6 addresses from text to binary form. </p>
+<p>This function uses each platform's inet_pton() function under the hood.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>Type of string-represented IP address pointed to by src. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>Character string containing a string-represented IP address. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dest</td><td>Filled in on success with the address. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Success. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Invalid parameter. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: System call failed. </dd></dl>
+
+</div>
+</div>
+<a id="gac2175076e5d4834fccf76e17a29bbbfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac2175076e5d4834fccf76e17a29bbbfe">&#9670;&nbsp;</a></span>etcpal_string_to_mac()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__etcpal__error.html#ga743b0648f0ca798ef29c9f69c6e255af">etcpal_error_t</a> etcpal_string_to_mac </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_mac_addr.html">EtcPalMacAddr</a> *&#160;</td>
+          <td class="paramname"><em>dest</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a MAC address from a string representation. </p>
+<p>Parses a string-represented MAC address and fills in an <a class="el" href="struct_etc_pal_mac_addr.html" title="A MAC address.">EtcPalMacAddr</a> structure with the result. The input should be of the form: xx:xx:xx:xx:xx:xx, or xxxxxxxxxxxx (hexadecimal letters can be in upper- or lowercase).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">src</td><td>The null-terminated string to convert. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dest</td><td>MAC address structure to fill in with the parse result. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: Parse successful. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afadb17bb2ec24e7755170e8afbd5b10bc2" title="An invalid argument was provided to an API function.">kEtcPalErrInvalid</a>: Parse failed or invalid argument. </dd></dl>
+
+</div>
+</div>
+<a id="gafe364c911711c469e0574821e30600e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafe364c911711c469e0574821e30600e3">&#9670;&nbsp;</a></span>ip_etcpal_to_os()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t ip_etcpal_to_os </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">etcpal_os_ipaddr_t *&#160;</td>
+          <td class="paramname"><em>os_ip</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to a platform-specific IP address. </p>
+<p>Most of the time etcpal_os_ipaddr_t is defined as a struct sockaddr. Since most platforms use struct sockaddr (which holds an IP address, port, and additional information) in functions which only require IP addresses, this function will fill in only part of the etcpal_os_ipaddr_t (the address family, address, and for IPv6, the scope ID).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">ip</td><td>The <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a> to convert from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">os_ip</td><td>Filled in on success with the platform-specific IP address. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, the size of os_ip, for convenience. Returns 0 if an invalid argument was provided. </dd></dl>
+
+</div>
+</div>
+<a id="gad3a164fa82579c3047f6053f7266e6a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad3a164fa82579c3047f6053f7266e6a8">&#9670;&nbsp;</a></span>ip_os_to_etcpal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ip_os_to_etcpal </td>
+          <td>(</td>
+          <td class="paramtype">const etcpal_os_ipaddr_t *&#160;</td>
+          <td class="paramname"><em>os_ip</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_ip_addr.html">EtcPalIpAddr</a> *&#160;</td>
+          <td class="paramname"><em>ip</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert a platform-specific IP address to an <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </p>
+<p>Most of the time etcpal_os_ipaddr_t is defined as a struct sockaddr. Since most platforms use struct sockaddr (which holds an IP address, port, and additional information) in functions which only require IP addresses, this function will discard some information, including any port value in the sockaddr.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">os_ip</td><td>Platform-specific IP address to convert from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">ip</td><td>Filled in on success with the <a class="el" href="struct_etc_pal_ip_addr.html" title="An IP address.">EtcPalIpAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true on success, false if an invalid argument was provided. </dd></dl>
+
+</div>
+</div>
+<a id="gaa8d939a802f0ab99ae1a6e8f9253a83d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa8d939a802f0ab99ae1a6e8f9253a83d">&#9670;&nbsp;</a></span>sockaddr_etcpal_to_os()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t sockaddr_etcpal_to_os </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>sa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">etcpal_os_sockaddr_t *&#160;</td>
+          <td class="paramname"><em>os_sa</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert an <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> to a platform-specific socket address. </p>
+<p>On most platforms, etcpal_os_sockaddr_t is defined to struct sockaddr.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">sa</td><td>The <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a> to convert from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">os_sa</td><td>Filled in on success with the platform-specific socket address. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>On success, the size of os_sa, for convenience. Returns 0 if an invalid argument was provided. </dd></dl>
+
+</div>
+</div>
+<a id="ga087efaef8630f32173eb397b4cb1ae7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga087efaef8630f32173eb397b4cb1ae7f">&#9670;&nbsp;</a></span>sockaddr_os_to_etcpal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sockaddr_os_to_etcpal </td>
+          <td>(</td>
+          <td class="paramtype">const etcpal_os_sockaddr_t *&#160;</td>
+          <td class="paramname"><em>os_sa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_etc_pal_sock_addr.html">EtcPalSockAddr</a> *&#160;</td>
+          <td class="paramname"><em>sa</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert a platform-specific socket address to an <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a>. </p>
+<p>On most platforms, etcpal_os_sockaddr_t is defined to struct sockaddr.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">os_sa</td><td>Platform-specific socket address to convert from. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">sa</td><td>Filled in on success with the <a class="el" href="struct_etc_pal_sock_addr.html" title="An IP address with associated interface and port.">EtcPalSockAddr</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true on success, false if an invalid argument was provided. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

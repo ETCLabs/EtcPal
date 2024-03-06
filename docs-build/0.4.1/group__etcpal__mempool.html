@@ -1,0 +1,579 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: mempool (Memory Pools)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__mempool.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a>  </div>
+  <div class="headertitle">
+<div class="title">mempool (Memory Pools)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__core.html">Core Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Memory pools with fixed-size elements. </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/mempool.h&quot;</span></div>
+</div><!-- fragment --><p>This module can be used to declare memory pools containing some number of elements of an arbitrary type. Only elements of that type can be allocated from the pool or freed back into it. A pool element can be a singular type (e.g. <code>MyStruct</code>) or a fixed-size array (e.g. <code>uint8_t[100]</code>).</p>
+<p>If EtcPal is built with OS abstraction support (the default in most situations), allocations and deallocations are ensured to be thread-safe by an <a class="el" href="group__etcpal__mutex.html#ga7360372b14b0feb1ad9f22d2a42734a9" title="The mutex identifier.">etcpal_mutex_t</a> internally.</p>
+<p>For example: </p><div class="fragment"><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordtype">int</span> data1;</div>
+<div class="line">  <span class="keywordtype">int</span> data2;</div>
+<div class="line">} MyStruct;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Create a memory pool of 20 MyStruct instances</span></div>
+<div class="line"><span class="comment">// This line typically appears at file scope</span></div>
+<div class="line"><a class="code" href="group__etcpal__mempool.html#ga0d56307540e32e74ce5a87a52ce447b8">ETCPAL_MEMPOOL_DEFINE</a>(my_struct_pool, MyStruct, 20);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Then, at function scope...</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Initialize the pool</span></div>
+<div class="line"><a class="code" href="group__etcpal__mempool.html#ga2b7b0144747ea853ea526f283344c047">etcpal_mempool_init</a>(my_struct_pool);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Get an item from the pool</span></div>
+<div class="line">MyStruct* val = (MyStruct*)<a class="code" href="group__etcpal__mempool.html#ga3cda8bdb4dc13e12ba5e75ccadb23274">etcpal_mempool_alloc</a>(my_struct_pool);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordflow">if</span> (val)</div>
+<div class="line">{</div>
+<div class="line">  <span class="comment">// Do something with the item</span></div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Check the status of the pool</span></div>
+<div class="line">printf(<span class="stringliteral">&quot;my_struct_pool status: %zu used out of %zu total\n&quot;</span>, <a class="code" href="group__etcpal__mempool.html#gaa1a695b25f4ea895750e753303eb4f85">etcpal_mempool_used</a>(my_struct_pool),</div>
+<div class="line">       <a class="code" href="group__etcpal__mempool.html#ga8b10935dcb7665a6c4418831fd17c9cd">etcpal_mempool_size</a>(my_struct_pool));</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Free the item back to the pool</span></div>
+<div class="line"><a class="code" href="group__etcpal__mempool.html#gaf69c62d9c8df5f589fefbaf0283b2435">etcpal_mempool_free</a>(my_struct_pool, val);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// No deinitialization required</span></div>
+<div class="ttc" id="agroup__etcpal__mempool_html_ga0d56307540e32e74ce5a87a52ce447b8"><div class="ttname"><a href="group__etcpal__mempool.html#ga0d56307540e32e74ce5a87a52ce447b8">ETCPAL_MEMPOOL_DEFINE</a></div><div class="ttdeci">#define ETCPAL_MEMPOOL_DEFINE(name, type, size)</div><div class="ttdoc">Define a new memory pool.</div><div class="ttdef"><b>Definition:</b> mempool.h:139</div></div>
+<div class="ttc" id="agroup__etcpal__mempool_html_ga2b7b0144747ea853ea526f283344c047"><div class="ttname"><a href="group__etcpal__mempool.html#ga2b7b0144747ea853ea526f283344c047">etcpal_mempool_init</a></div><div class="ttdeci">#define etcpal_mempool_init(name)</div><div class="ttdoc">Initialize a memory pool.</div><div class="ttdef"><b>Definition:</b> mempool.h:181</div></div>
+<div class="ttc" id="agroup__etcpal__mempool_html_ga3cda8bdb4dc13e12ba5e75ccadb23274"><div class="ttname"><a href="group__etcpal__mempool.html#ga3cda8bdb4dc13e12ba5e75ccadb23274">etcpal_mempool_alloc</a></div><div class="ttdeci">#define etcpal_mempool_alloc(name)</div><div class="ttdoc">Allocate a new element from a memory pool.</div><div class="ttdef"><b>Definition:</b> mempool.h:188</div></div>
+<div class="ttc" id="agroup__etcpal__mempool_html_ga8b10935dcb7665a6c4418831fd17c9cd"><div class="ttname"><a href="group__etcpal__mempool.html#ga8b10935dcb7665a6c4418831fd17c9cd">etcpal_mempool_size</a></div><div class="ttdeci">#define etcpal_mempool_size(name)</div><div class="ttdoc">Get the total size of a memory pool.</div><div class="ttdef"><b>Definition:</b> mempool.h:210</div></div>
+<div class="ttc" id="agroup__etcpal__mempool_html_gaa1a695b25f4ea895750e753303eb4f85"><div class="ttname"><a href="group__etcpal__mempool.html#gaa1a695b25f4ea895750e753303eb4f85">etcpal_mempool_used</a></div><div class="ttdeci">#define etcpal_mempool_used(name)</div><div class="ttdoc">Get the number of elements currently allocated from a memory pool.</div><div class="ttdef"><b>Definition:</b> mempool.h:217</div></div>
+<div class="ttc" id="agroup__etcpal__mempool_html_gaf69c62d9c8df5f589fefbaf0283b2435"><div class="ttname"><a href="group__etcpal__mempool.html#gaf69c62d9c8df5f589fefbaf0283b2435">etcpal_mempool_free</a></div><div class="ttdeci">#define etcpal_mempool_free(name, mem)</div><div class="ttdoc">Free an element back to a memory pool.</div><div class="ttdef"><b>Definition:</b> mempool.h:200</div></div>
+</div><!-- fragment --> <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga1da98d192da467dfb2ec751bad279178"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#ga1da98d192da467dfb2ec751bad279178">ETCPAL_MEMPOOL_DECLARE</a>(name)&#160;&#160;&#160;extern EtcPalMempoolDesc name##_pool_desc;</td></tr>
+<tr class="memdesc:ga1da98d192da467dfb2ec751bad279178"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declare a pool as an external variable.  <a href="group__etcpal__mempool.html#ga1da98d192da467dfb2ec751bad279178">More...</a><br /></td></tr>
+<tr class="separator:ga1da98d192da467dfb2ec751bad279178"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d56307540e32e74ce5a87a52ce447b8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#ga0d56307540e32e74ce5a87a52ce447b8">ETCPAL_MEMPOOL_DEFINE</a>(name,  type,  size)</td></tr>
+<tr class="memdesc:ga0d56307540e32e74ce5a87a52ce447b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define a new memory pool.  <a href="group__etcpal__mempool.html#ga0d56307540e32e74ce5a87a52ce447b8">More...</a><br /></td></tr>
+<tr class="separator:ga0d56307540e32e74ce5a87a52ce447b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3a974aa750cca64861b630f0a7776232"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#ga3a974aa750cca64861b630f0a7776232">ETCPAL_MEMPOOL_DEFINE_ARRAY</a>(name,  type,  array_size,  pool_size)</td></tr>
+<tr class="memdesc:ga3a974aa750cca64861b630f0a7776232"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define a new memory pool composed of arrays of elements.  <a href="group__etcpal__mempool.html#ga3a974aa750cca64861b630f0a7776232">More...</a><br /></td></tr>
+<tr class="separator:ga3a974aa750cca64861b630f0a7776232"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2b7b0144747ea853ea526f283344c047"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#ga2b7b0144747ea853ea526f283344c047">etcpal_mempool_init</a>(name)&#160;&#160;&#160;etcpal_mempool_init_priv(&amp;name##_pool_desc)</td></tr>
+<tr class="memdesc:ga2b7b0144747ea853ea526f283344c047"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize a memory pool.  <a href="group__etcpal__mempool.html#ga2b7b0144747ea853ea526f283344c047">More...</a><br /></td></tr>
+<tr class="separator:ga2b7b0144747ea853ea526f283344c047"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3cda8bdb4dc13e12ba5e75ccadb23274"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#ga3cda8bdb4dc13e12ba5e75ccadb23274">etcpal_mempool_alloc</a>(name)&#160;&#160;&#160;etcpal_mempool_alloc_priv(&amp;name##_pool_desc)</td></tr>
+<tr class="memdesc:ga3cda8bdb4dc13e12ba5e75ccadb23274"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a new element from a memory pool.  <a href="group__etcpal__mempool.html#ga3cda8bdb4dc13e12ba5e75ccadb23274">More...</a><br /></td></tr>
+<tr class="separator:ga3cda8bdb4dc13e12ba5e75ccadb23274"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf69c62d9c8df5f589fefbaf0283b2435"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#gaf69c62d9c8df5f589fefbaf0283b2435">etcpal_mempool_free</a>(name,  mem)&#160;&#160;&#160;etcpal_mempool_free_priv(&amp;name##_pool_desc, mem)</td></tr>
+<tr class="memdesc:gaf69c62d9c8df5f589fefbaf0283b2435"><td class="mdescLeft">&#160;</td><td class="mdescRight">Free an element back to a memory pool.  <a href="group__etcpal__mempool.html#gaf69c62d9c8df5f589fefbaf0283b2435">More...</a><br /></td></tr>
+<tr class="separator:gaf69c62d9c8df5f589fefbaf0283b2435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8b10935dcb7665a6c4418831fd17c9cd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#ga8b10935dcb7665a6c4418831fd17c9cd">etcpal_mempool_size</a>(name)&#160;&#160;&#160;(name##_pool_desc.pool_size)</td></tr>
+<tr class="memdesc:ga8b10935dcb7665a6c4418831fd17c9cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total size of a memory pool.  <a href="group__etcpal__mempool.html#ga8b10935dcb7665a6c4418831fd17c9cd">More...</a><br /></td></tr>
+<tr class="separator:ga8b10935dcb7665a6c4418831fd17c9cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa1a695b25f4ea895750e753303eb4f85"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__mempool.html#gaa1a695b25f4ea895750e753303eb4f85">etcpal_mempool_used</a>(name)&#160;&#160;&#160;etcpal_mempool_used_priv(&amp;name##_pool_desc)</td></tr>
+<tr class="memdesc:gaa1a695b25f4ea895750e753303eb4f85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements currently allocated from a memory pool.  <a href="group__etcpal__mempool.html#gaa1a695b25f4ea895750e753303eb4f85">More...</a><br /></td></tr>
+<tr class="separator:gaa1a695b25f4ea895750e753303eb4f85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga3cda8bdb4dc13e12ba5e75ccadb23274"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3cda8bdb4dc13e12ba5e75ccadb23274">&#9670;&nbsp;</a></span>etcpal_mempool_alloc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define etcpal_mempool_alloc</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name</td><td>)</td>
+          <td>&#160;&#160;&#160;etcpal_mempool_alloc_priv(&amp;name##_pool_desc)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Allocate a new element from a memory pool. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool from which to allocate a new element. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to the newly-allocated element (success) or NULL (pool is out of memory). </dd></dl>
+
+</div>
+</div>
+<a id="ga1da98d192da467dfb2ec751bad279178"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1da98d192da467dfb2ec751bad279178">&#9670;&nbsp;</a></span>ETCPAL_MEMPOOL_DECLARE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_MEMPOOL_DECLARE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name</td><td>)</td>
+          <td>&#160;&#160;&#160;extern EtcPalMempoolDesc name##_pool_desc;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Declare a pool as an external variable. </p>
+<p>This optional macro is useful for header files; when used, it must be paired with a call of <a class="el" href="group__etcpal__mempool.html#ga0d56307540e32e74ce5a87a52ce447b8" title="Define a new memory pool.">ETCPAL_MEMPOOL_DEFINE()</a> or <a class="el" href="group__etcpal__mempool.html#ga3a974aa750cca64861b630f0a7776232" title="Define a new memory pool composed of arrays of elements.">ETCPAL_MEMPOOL_DEFINE_ARRAY()</a> using the same name.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga0d56307540e32e74ce5a87a52ce447b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0d56307540e32e74ce5a87a52ce447b8">&#9670;&nbsp;</a></span>ETCPAL_MEMPOOL_DEFINE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_MEMPOOL_DEFINE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">type, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">size&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  type                     name##_pool[size];                                       \</div>
+<div class="line">  struct EtcPalMempool     name##_pool_list[size];                                  \</div>
+<div class="line">  struct EtcPalMempoolDesc name##_pool_desc = {<span class="keyword">sizeof</span>(type),     <span class="comment">/* elem_size */</span>    \</div>
+<div class="line">                                               size,             <span class="comment">/* pool_size */</span>    \</div>
+<div class="line">                                               NULL,             <span class="comment">/* freelist */</span>     \</div>
+<div class="line">                                               name##_pool_list, <span class="comment">/* list */</span>         \</div>
+<div class="line">                                               0,                <span class="comment">/* current_used */</span> \</div>
+<div class="line">                                               name##_pool <span class="comment">/* pool */</span>}</div>
+</div><!-- fragment -->
+<p>Define a new memory pool. </p>
+<p>Expands to a number of variable definitions. Should not be used in a header file; if you want your memory pool to be accessible from multiple source files, use <a class="el" href="group__etcpal__mempool.html#ga1da98d192da467dfb2ec751bad279178" title="Declare a pool as an external variable.">ETCPAL_MEMPOOL_DECLARE()</a> in the header file in addition to this macro.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool. </td></tr>
+    <tr><td class="paramname">type</td><td>The type of each element in the memory pool (e.g. int, struct foo) </td></tr>
+    <tr><td class="paramname">size</td><td>The number of elements in the memory pool. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga3a974aa750cca64861b630f0a7776232"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3a974aa750cca64861b630f0a7776232">&#9670;&nbsp;</a></span>ETCPAL_MEMPOOL_DEFINE_ARRAY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_MEMPOOL_DEFINE_ARRAY</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">type, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">array_size, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">pool_size&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  type                     name##_pool[array_size][pool_size];                              \</div>
+<div class="line">  struct EtcPalMempool     name##_pool_list[pool_size];                                     \</div>
+<div class="line">  struct EtcPalMempoolDesc name##_pool_desc = {<span class="keyword">sizeof</span>(type[array_size]), <span class="comment">/* elem_size */</span>    \</div>
+<div class="line">                                               pool_size,                <span class="comment">/* pool_size */</span>    \</div>
+<div class="line">                                               NULL,                     <span class="comment">/* freelist */</span>     \</div>
+<div class="line">                                               name##_pool_list,         <span class="comment">/* list */</span>         \</div>
+<div class="line">                                               0,                        <span class="comment">/* current_used */</span> \</div>
+<div class="line">                                               name##_pool <span class="comment">/* pool */</span>}</div>
+</div><!-- fragment -->
+<p>Define a new memory pool composed of arrays of elements. </p>
+<p>This is an alternative to <a class="el" href="group__etcpal__mempool.html#ga0d56307540e32e74ce5a87a52ce447b8" title="Define a new memory pool.">ETCPAL_MEMPOOL_DEFINE()</a> for creating memory pools containing fixed-size arrays of elements.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool. </td></tr>
+    <tr><td class="paramname">type</td><td>The type of a single array element in the memory pool. </td></tr>
+    <tr><td class="paramname">array_size</td><td>The number of elements in each array. </td></tr>
+    <tr><td class="paramname">pool_size</td><td>The number of arrays in the memory pool. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaf69c62d9c8df5f589fefbaf0283b2435"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf69c62d9c8df5f589fefbaf0283b2435">&#9670;&nbsp;</a></span>etcpal_mempool_free</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define etcpal_mempool_free</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">mem&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td>&#160;&#160;&#160;etcpal_mempool_free_priv(&amp;name##_pool_desc, mem)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Free an element back to a memory pool. </p>
+<p>CAUTION: Just like with a normal free(), freeing a pointer to an element that has not previously been allocated or a pointer to somewhere outside of the memory pool will cause undefined behavior.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool to which to free an element. </td></tr>
+    <tr><td class="paramname">mem</td><td>Pointer to the element to free. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga2b7b0144747ea853ea526f283344c047"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2b7b0144747ea853ea526f283344c047">&#9670;&nbsp;</a></span>etcpal_mempool_init</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define etcpal_mempool_init</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name</td><td>)</td>
+          <td>&#160;&#160;&#160;etcpal_mempool_init_priv(&amp;name##_pool_desc)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize a memory pool. </p>
+<p>Must be called on a pool before using <a class="el" href="group__etcpal__mempool.html#ga3cda8bdb4dc13e12ba5e75ccadb23274" title="Allocate a new element from a memory pool.">etcpal_mempool_alloc()</a> or <a class="el" href="group__etcpal__mempool.html#gaf69c62d9c8df5f589fefbaf0283b2435" title="Free an element back to a memory pool.">etcpal_mempool_free()</a> on it. There is no deinitialization function because there is no cleanup necessary; to reset a pool, simply call this function again.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool to initialize. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afae403d046b4ba4e81dce121266c2cca8d" title="The call was successful, no error occurred.">kEtcPalErrOk</a>: The memory pool was initialized successfully. </dd>
+<dd>
+<a class="el" href="group__etcpal__error.html#gga743b0648f0ca798ef29c9f69c6e255afa38404e113508a0e291dbcc6c73743ae8" title="A system call or C library call failed in a way not covered by other errors.">kEtcPalErrSys</a>: An internal system call error occurred. </dd></dl>
+
+</div>
+</div>
+<a id="ga8b10935dcb7665a6c4418831fd17c9cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8b10935dcb7665a6c4418831fd17c9cd">&#9670;&nbsp;</a></span>etcpal_mempool_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define etcpal_mempool_size</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name</td><td>)</td>
+          <td>&#160;&#160;&#160;(name##_pool_desc.pool_size)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the total size of a memory pool. </p>
+<p>This is a constant value that was provided in the <a class="el" href="group__etcpal__mempool.html#ga0d56307540e32e74ce5a87a52ce447b8" title="Define a new memory pool.">ETCPAL_MEMPOOL_DEFINE()</a> call.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool of which to get the size. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The size of the memory pool. </dd></dl>
+
+</div>
+</div>
+<a id="gaa1a695b25f4ea895750e753303eb4f85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa1a695b25f4ea895750e753303eb4f85">&#9670;&nbsp;</a></span>etcpal_mempool_used</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define etcpal_mempool_used</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">name</td><td>)</td>
+          <td>&#160;&#160;&#160;etcpal_mempool_used_priv(&amp;name##_pool_desc)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the number of elements currently allocated from a memory pool. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The name of the memory pool for which to get the current usage. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The number of elements currently allocated. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

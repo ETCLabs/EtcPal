@@ -1,0 +1,589 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: EventGroup Class Reference</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('classetcpal_1_1_event_group.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">EventGroup Class Reference<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__cpp.html">C++ Wrappers</a> &raquo; <a class="el" href="group__etcpal__cpp__event__group.html">event_group (Event Groups)</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<div class="textblock"><p>A wrapper class for the EtcPal event group type. </p>
+<p>Example usage: </p><div class="fragment"><div class="line"><a class="code" href="classetcpal_1_1_event_group.html">etcpal::EventGroup</a> event_group;</div>
+<div class="line">constexpr <a class="code" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">etcpal::EventBits</a> kEventMessageReceived = 0x1;</div>
+<div class="line">constexpr <a class="code" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">etcpal::EventBits</a> kEventMessageError = 0x2;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> event_handler_thread()</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">while</span> (keep_running)</div>
+<div class="line">  {</div>
+<div class="line">    <a class="code" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">etcpal::EventBits</a> <span class="keyword">event</span> = event_group.<a class="code" href="classetcpal_1_1_event_group.html#a0485e3165b2d4927e65b6ad0d8e63b74">Wait</a>(kEventMessageReceived | kEventMessageError,</div>
+<div class="line">                                               <a class="code" href="group__etcpal__event__group.html#gae7f8a36d6d226e95f2c7d4fa9474e1e1">ETCPAL_EVENT_GROUP_AUTO_CLEAR</a>);</div>
+<div class="line">    <span class="keywordflow">if</span> (event &amp; kEventMessageReceived)</div>
+<div class="line">    {</div>
+<div class="line">      <span class="comment">// Handle message received...</span></div>
+<div class="line">    }</div>
+<div class="line">    <span class="comment">// Note: Depending on the user implementation, kEventMessageReceived and kEventMessageError</span></div>
+<div class="line">    <span class="comment">// could be set at the same time.</span></div>
+<div class="line">    <span class="keywordflow">if</span> (event &amp; kEventMessageError)</div>
+<div class="line">    {</div>
+<div class="line">      <span class="comment">// Handle message error...</span></div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Since we passed ETCPAL_EVENT_GROUP_AUTO_CLEAR to Wait(), the event bits do not need to</span></div>
+<div class="line">    <span class="comment">// be explicitly cleared before the next iteration.</span></div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> message_listener_thread()</div>
+<div class="line">{</div>
+<div class="line">  <span class="keywordflow">while</span> (keep_running)</div>
+<div class="line">  {</div>
+<div class="line">    <span class="comment">// Get message...</span></div>
+<div class="line">    <a class="code" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">etcpal::EventBits</a> event_bits = kEventMessageReceived;</div>
+<div class="line">    <span class="keywordflow">if</span> (message_error)</div>
+<div class="line">    {</div>
+<div class="line">      event_bits |= kEventMessageError;</div>
+<div class="line">    }</div>
+<div class="line">    event_group.<a class="code" href="classetcpal_1_1_event_group.html#a8941ac4db3dc5dbf13842a68e2474b77">SetBits</a>(event_bits);</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassetcpal_1_1_event_group_html"><div class="ttname"><a href="classetcpal_1_1_event_group.html">etcpal::EventGroup</a></div><div class="ttdoc">A wrapper class for the EtcPal event group type.</div><div class="ttdef"><b>Definition:</b> event_group.h:88</div></div>
+<div class="ttc" id="aclassetcpal_1_1_event_group_html_a0485e3165b2d4927e65b6ad0d8e63b74"><div class="ttname"><a href="classetcpal_1_1_event_group.html#a0485e3165b2d4927e65b6ad0d8e63b74">etcpal::EventGroup::Wait</a></div><div class="ttdeci">EventBits Wait(EventBits bits, int flags=0)</div><div class="ttdoc">Wait for one or more bits in an event group.</div><div class="ttdef"><b>Definition:</b> event_group.h:129</div></div>
+<div class="ttc" id="aclassetcpal_1_1_event_group_html_a8941ac4db3dc5dbf13842a68e2474b77"><div class="ttname"><a href="classetcpal_1_1_event_group.html#a8941ac4db3dc5dbf13842a68e2474b77">etcpal::EventGroup::SetBits</a></div><div class="ttdeci">void SetBits(EventBits bits_to_set)</div><div class="ttdoc">Set one or more bits in an event group.</div><div class="ttdef"><b>Definition:</b> event_group.h:155</div></div>
+<div class="ttc" id="acpp_2event__group_8h_html_adf88a2feae4a7de0c6d7416d08a89698"><div class="ttname"><a href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">etcpal::EventBits</a></div><div class="ttdeci">etcpal_event_bits_t EventBits</div><div class="ttdoc">The type that holds the event bitfield.</div><div class="ttdef"><b>Definition:</b> event_group.h:38</div></div>
+<div class="ttc" id="agroup__etcpal__event__group_html_gae7f8a36d6d226e95f2c7d4fa9474e1e1"><div class="ttname"><a href="group__etcpal__event__group.html#gae7f8a36d6d226e95f2c7d4fa9474e1e1">ETCPAL_EVENT_GROUP_AUTO_CLEAR</a></div><div class="ttdeci">#define ETCPAL_EVENT_GROUP_AUTO_CLEAR</div><div class="ttdoc">Clear bits automatically when they are returned from a wait function.</div><div class="ttdef"><b>Definition:</b> event_group.h:40</div></div>
+</div><!-- fragment --><p>See <a class="el" href="group__etcpal__event__group.html">event_group (Event Groups)</a> for more information. </p>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a1124b535c20e8d1cf40b6bf0285712f0"><td class="memItemLeft" align="right" valign="top"><a id="a1124b535c20e8d1cf40b6bf0285712f0"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a1124b535c20e8d1cf40b6bf0285712f0">EventGroup</a> ()</td></tr>
+<tr class="memdesc:a1124b535c20e8d1cf40b6bf0285712f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new event group. <br /></td></tr>
+<tr class="separator:a1124b535c20e8d1cf40b6bf0285712f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94820ca5e1b2c2cbbd563f7ed300f66e"><td class="memItemLeft" align="right" valign="top"><a id="a94820ca5e1b2c2cbbd563f7ed300f66e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a94820ca5e1b2c2cbbd563f7ed300f66e">~EventGroup</a> ()</td></tr>
+<tr class="memdesc:a94820ca5e1b2c2cbbd563f7ed300f66e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the event group. <br /></td></tr>
+<tr class="separator:a94820ca5e1b2c2cbbd563f7ed300f66e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23765ad78c15090402e656ec013dbc08"><td class="memItemLeft" align="right" valign="top"><a id="a23765ad78c15090402e656ec013dbc08"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>EventGroup</b> (const <a class="el" href="classetcpal_1_1_event_group.html">EventGroup</a> &amp;other)=delete</td></tr>
+<tr class="separator:a23765ad78c15090402e656ec013dbc08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acbd31f195564be049249c8ea95df88e0"><td class="memItemLeft" align="right" valign="top"><a id="acbd31f195564be049249c8ea95df88e0"></a>
+<a class="el" href="classetcpal_1_1_event_group.html">EventGroup</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classetcpal_1_1_event_group.html">EventGroup</a> &amp;other)=delete</td></tr>
+<tr class="separator:acbd31f195564be049249c8ea95df88e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0f12439347b42a2652deeaf96802d4a"><td class="memItemLeft" align="right" valign="top"><a id="ad0f12439347b42a2652deeaf96802d4a"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>EventGroup</b> (<a class="el" href="classetcpal_1_1_event_group.html">EventGroup</a> &amp;&amp;other)=delete</td></tr>
+<tr class="separator:ad0f12439347b42a2652deeaf96802d4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa43c9eec57541a9cc56c5858a36b128"><td class="memItemLeft" align="right" valign="top"><a id="aaa43c9eec57541a9cc56c5858a36b128"></a>
+<a class="el" href="classetcpal_1_1_event_group.html">EventGroup</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classetcpal_1_1_event_group.html">EventGroup</a> &amp;&amp;other)=delete</td></tr>
+<tr class="separator:aaa43c9eec57541a9cc56c5858a36b128"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0485e3165b2d4927e65b6ad0d8e63b74"><td class="memItemLeft" align="right" valign="top"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a0485e3165b2d4927e65b6ad0d8e63b74">Wait</a> (<a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> bits, int flags=0)</td></tr>
+<tr class="memdesc:a0485e3165b2d4927e65b6ad0d8e63b74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for one or more bits in an event group.  <a href="classetcpal_1_1_event_group.html#a0485e3165b2d4927e65b6ad0d8e63b74">More...</a><br /></td></tr>
+<tr class="separator:a0485e3165b2d4927e65b6ad0d8e63b74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accaf0585b4ff7ed5c4f662d632b73cc8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#accaf0585b4ff7ed5c4f662d632b73cc8">TryWait</a> (<a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> bits, int flags=0, int timeout_ms=0)</td></tr>
+<tr class="memdesc:accaf0585b4ff7ed5c4f662d632b73cc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for one or more bits in an event group until a timeout expires.  <a href="classetcpal_1_1_event_group.html#accaf0585b4ff7ed5c4f662d632b73cc8">More...</a><br /></td></tr>
+<tr class="separator:accaf0585b4ff7ed5c4f662d632b73cc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8941ac4db3dc5dbf13842a68e2474b77"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a8941ac4db3dc5dbf13842a68e2474b77">SetBits</a> (<a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> bits_to_set)</td></tr>
+<tr class="memdesc:a8941ac4db3dc5dbf13842a68e2474b77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set one or more bits in an event group.  <a href="classetcpal_1_1_event_group.html#a8941ac4db3dc5dbf13842a68e2474b77">More...</a><br /></td></tr>
+<tr class="separator:a8941ac4db3dc5dbf13842a68e2474b77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91b2d653df2c04cea00337695fed03d1"><td class="memItemLeft" align="right" valign="top"><a id="a91b2d653df2c04cea00337695fed03d1"></a>
+<a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a91b2d653df2c04cea00337695fed03d1">GetBits</a> ()</td></tr>
+<tr class="memdesc:a91b2d653df2c04cea00337695fed03d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current bitfield from an event group. <br /></td></tr>
+<tr class="separator:a91b2d653df2c04cea00337695fed03d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00b51ef9ad31be233f2005ed798f8b6c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a00b51ef9ad31be233f2005ed798f8b6c">ClearBits</a> (<a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> bits_to_clear)</td></tr>
+<tr class="memdesc:a00b51ef9ad31be233f2005ed798f8b6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear one or more bits in an event group.  <a href="classetcpal_1_1_event_group.html#a00b51ef9ad31be233f2005ed798f8b6c">More...</a><br /></td></tr>
+<tr class="separator:a00b51ef9ad31be233f2005ed798f8b6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2163854253b96737e4af5123d636af6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a2163854253b96737e4af5123d636af6a">SetBitsFromIsr</a> (<a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> bits_to_set)</td></tr>
+<tr class="memdesc:a2163854253b96737e4af5123d636af6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set one or more bits in an event group from an interrupt context.  <a href="classetcpal_1_1_event_group.html#a2163854253b96737e4af5123d636af6a">More...</a><br /></td></tr>
+<tr class="separator:a2163854253b96737e4af5123d636af6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1176e819049613d157ea7d0e42fa3312"><td class="memItemLeft" align="right" valign="top"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a1176e819049613d157ea7d0e42fa3312">GetBitsFromIsr</a> ()</td></tr>
+<tr class="memdesc:a1176e819049613d157ea7d0e42fa3312"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current bitfield from an event group from an interrupt context.  <a href="classetcpal_1_1_event_group.html#a1176e819049613d157ea7d0e42fa3312">More...</a><br /></td></tr>
+<tr class="separator:a1176e819049613d157ea7d0e42fa3312"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41ba5cddf117130676e4a27cb3ebcdd5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a41ba5cddf117130676e4a27cb3ebcdd5">ClearBitsFromIsr</a> (<a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> bits_to_clear)</td></tr>
+<tr class="memdesc:a41ba5cddf117130676e4a27cb3ebcdd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear one or more bits in an event group from an interrupt context.  <a href="classetcpal_1_1_event_group.html#a41ba5cddf117130676e4a27cb3ebcdd5">More...</a><br /></td></tr>
+<tr class="separator:a41ba5cddf117130676e4a27cb3ebcdd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6aa96e85b1f0f64527c0befa610e2df0"><td class="memItemLeft" align="right" valign="top"><a id="a6aa96e85b1f0f64527c0befa610e2df0"></a>
+<a class="el" href="group__etcpal__event__group.html#gad366db88a3a26f1ff9451f8ed3333c4e">etcpal_event_group_t</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classetcpal_1_1_event_group.html#a6aa96e85b1f0f64527c0befa610e2df0">get</a> ()</td></tr>
+<tr class="memdesc:a6aa96e85b1f0f64527c0befa610e2df0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference to the underlying etcpal_event_group_t type. <br /></td></tr>
+<tr class="separator:a6aa96e85b1f0f64527c0befa610e2df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a00b51ef9ad31be233f2005ed798f8b6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00b51ef9ad31be233f2005ed798f8b6c">&#9670;&nbsp;</a></span>ClearBits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ClearBits </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td>
+          <td class="paramname"><em>bits_to_clear</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clear one or more bits in an event group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bits_to_clear</td><td>Mask of bits to clear. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a41ba5cddf117130676e4a27cb3ebcdd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41ba5cddf117130676e4a27cb3ebcdd5">&#9670;&nbsp;</a></span>ClearBitsFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ClearBitsFromIsr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td>
+          <td class="paramname"><em>bits_to_clear</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clear one or more bits in an event group from an interrupt context. </p>
+<p><b>NOTE</b>: Only meaningful on some platforms. See the table in <a class="el" href="group__etcpal__event__group.html">event_group (Event Groups)</a> and the description of <a class="el" href="group__etcpal__event__group.html#ga1054ca42842a22492e6304de4241facb" title="Clear one or more bits in an event group from an interrupt context.">etcpal_event_group_clear_bits_from_isr()</a> for more information. On platforms on which it is not meaningful, executes the equivalent of <a class="el" href="classetcpal_1_1_event_group.html#a00b51ef9ad31be233f2005ed798f8b6c" title="Clear one or more bits in an event group.">ClearBits()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bits_to_clear</td><td>Mask of bits to clear. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1176e819049613d157ea7d0e42fa3312"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1176e819049613d157ea7d0e42fa3312">&#9670;&nbsp;</a></span>GetBitsFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> GetBitsFromIsr </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the current bitfield from an event group from an interrupt context. </p>
+<p><b>NOTE</b>: Only meaningful on some platforms. See the table in <a class="el" href="group__etcpal__event__group.html">event_group (Event Groups)</a> and the description of <a class="el" href="group__etcpal__event__group.html#gae34841ea23ebe95855dbd022c1207af1" title="Get the current bitfield from an event group from an interrupt context.">etcpal_event_group_get_bits_from_isr()</a> for more information. On platforms on which it is not meaningful, executes the equivalent of <a class="el" href="classetcpal_1_1_event_group.html#a91b2d653df2c04cea00337695fed03d1" title="Get the current bitfield from an event group.">GetBits()</a>. </p>
+
+</div>
+</div>
+<a id="a8941ac4db3dc5dbf13842a68e2474b77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8941ac4db3dc5dbf13842a68e2474b77">&#9670;&nbsp;</a></span>SetBits()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SetBits </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td>
+          <td class="paramname"><em>bits_to_set</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set one or more bits in an event group. </p>
+<p>See <a class="el" href="group__etcpal__event__group.html#gaa7e0ecaa3b305362c79edc1926bee120" title="Set one or more bits in an event group.">etcpal_event_group_set_bits()</a> for more information.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bits_to_set</td><td>Mask of bits in the event group to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2163854253b96737e4af5123d636af6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2163854253b96737e4af5123d636af6a">&#9670;&nbsp;</a></span>SetBitsFromIsr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void SetBitsFromIsr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td>
+          <td class="paramname"><em>bits_to_set</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set one or more bits in an event group from an interrupt context. </p>
+<p><b>NOTE</b>: Only meaningful on some platforms. See the table in <a class="el" href="group__etcpal__event__group.html">event_group (Event Groups)</a> and the description of <a class="el" href="group__etcpal__event__group.html#ga39ba56549fc91c52ee5719fdc95853bd" title="Set one or more bits in an event group from an interrupt context.">etcpal_event_group_set_bits_from_isr()</a> for more information. On platforms on which it is not meaningful, executes the equivalent of <a class="el" href="classetcpal_1_1_event_group.html#a8941ac4db3dc5dbf13842a68e2474b77" title="Set one or more bits in an event group.">SetBits()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bits_to_set</td><td>Mask of bits in the event group to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="accaf0585b4ff7ed5c4f662d632b73cc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accaf0585b4ff7ed5c4f662d632b73cc8">&#9670;&nbsp;</a></span>TryWait()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> TryWait </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td>
+          <td class="paramname"><em>bits</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait for one or more bits in an event group until a timeout expires. </p>
+<p><b>NOTE</b>: Timeouts other than 0 or <a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13" title="For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.">ETCPAL_WAIT_FOREVER</a> are typically only honored on real-time platforms. See the table in <a class="el" href="group__etcpal__event__group.html">event_group (Event Groups)</a> for more information. On platforms where timeouts are not honored, passing 0 for timeout_ms returns the state of the event bits immediately, while any other value executes the equivalent of <a class="el" href="classetcpal_1_1_event_group.html#a0485e3165b2d4927e65b6ad0d8e63b74" title="Wait for one or more bits in an event group.">Wait()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bits</td><td>Mask of bits in the event group to wait for. </td></tr>
+    <tr><td class="paramname">flags</td><td>Flags that define waiting options. </td></tr>
+    <tr><td class="paramname">timeout_ms</td><td>Maximum amount of time to wait for the event bits, in milliseconds. If <a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13" title="For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.">ETCPAL_WAIT_FOREVER</a> is given, the result is the same as if <a class="el" href="classetcpal_1_1_event_group.html#a0485e3165b2d4927e65b6ad0d8e63b74" title="Wait for one or more bits in an event group.">Wait()</a> was called. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0485e3165b2d4927e65b6ad0d8e63b74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0485e3165b2d4927e65b6ad0d8e63b74">&#9670;&nbsp;</a></span>Wait()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a> Wait </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="cpp_2event__group_8h.html#adf88a2feae4a7de0c6d7416d08a89698">EventBits</a>&#160;</td>
+          <td class="paramname"><em>bits</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait for one or more bits in an event group. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bits</td><td>Mask of bits in the event group to wait for. </td></tr>
+    <tr><td class="paramname">flags</td><td>Flags that define waiting options. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The result of <a class="el" href="group__etcpal__event__group.html#ga2ce63fdddde875fda44575076de44925" title="Wait for one or more bits in an event group.">etcpal_event_group_wait()</a> on the underlying event group. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>include/etcpal/cpp/<a class="el" href="cpp_2event__group_8h_source.html">event_group.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>etcpal</b></li><li class="navelem"><a class="el" href="classetcpal_1_1_event_group.html">EventGroup</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>

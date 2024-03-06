@@ -1,0 +1,499 @@
+<!-- HTML header for doxygen 1.9.1-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>EtcPal: recursive_mutex (Recursive Mutexes)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="etcdevtool.css" rel="stylesheet" type="text/css"/>
+<link href="etcpal_dox_styles.css" rel="stylesheet" type="text/css"/>
+<!-- BEGIN CUSTOM SCRIPTS -->
+<!-- BEGIN ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () {
+    $.get('/EtcPalDocs/versions.txt', function (data) {
+      if (data) {
+        var lines = data.split('\n');
+        if (lines.length > 0) {
+          var version_select = $("#version_select").empty();
+          lines.forEach(function (line) {
+            line = line.trim();
+            if (!line) {
+              return;
+            }
+            line = line.split(':');
+            var option_name = line[0].replace(/^v/, '');
+            if (line.length > 1) {
+              option_name += ' (' + line[1] + ')';
+            }
+            var option_val = '/EtcPalDocs/' + line[0];
+            var option = $('<option></option>').attr("value", option_val)
+              .text(option_name);
+            if (window.location.pathname.match(line[0])) {
+              option = option.attr("selected", "selected");
+            }
+            version_select.append(option);
+          });
+        }
+      }
+    }, 'text');
+  });
+</script>
+<!-- END ETCDEVTOOL VERSION SELECTOR SCRIPT -->
+<script type="text/javascript">
+  $(function () { selectAllC() });
+</script>
+<script type="text/javascript">
+  function selectAllC() {
+    // Enable all C-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_c")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_c")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectAllCpp() {
+    // Enable all C++-language blocks
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.endsWith("_cpp")) {
+        tabcontent[i].style.display = "block";
+      } else {
+        tabcontent[i].style.display = "none"
+      }
+    }
+    // Enable all C++-language buttons
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.endsWith("_cpp")) {
+        if (!tablinks[i].className.includes("active")) {
+          tablinks[i].className = tablinks[i].className += " active";
+        }
+      } else {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+  }
+  function selectLanguage(evt, block_id, language) {
+    // Get all elements with class="tabcontent" and hide them
+    var tabcontent = document.getElementsByClassName("code-tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      if (tabcontent[i].id.startsWith("div_" + block_id)) {
+        tabcontent[i].style.display = "none";
+      }
+    }
+    // Get all elements with class="tablinks" and remove the class "active"
+    var tablinks = document.getElementsByClassName("code-tab-links");
+    for (i = 0; i < tablinks.length; i++) {
+      if (tablinks[i].id.startsWith("button_" + block_id)) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+    }
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById("div_" + block_id + "_" + language).style.display = "block";
+    if (!evt.currentTarget.className.includes("active")) {
+      evt.currentTarget.className += " active";
+    }
+  }
+</script>
+<!-- END CUSTOM SCRIPTS -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">EtcPal
+   &#160;<span id="projectnumber">0.4.1</span>
+   </div>
+   <div id="projectbrief">ETC Platform Abstraction Layer (EtcPal)</div>
+  </td>
+  <!-- BEGIN VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+  <td style="text-align: right; padding-right: 0.5em">
+    <div id="otherversions">
+      View other versions:
+      <select id="version_select" onchange="location = this.value">
+      </select>
+    </div>
+  </td>
+  <!-- END VERSION SELECTOR INSERTED BY ETCDEVTOOL -->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(document).ready(function(){initNavTree('group__etcpal__recursive__mutex.html',''); initResizable(); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
+  <div class="headertitle">
+<div class="title">recursive_mutex (Recursive Mutexes)<div class="ingroups"><a class="el" href="group__etcpal.html">EtcPal</a> &raquo; <a class="el" href="group__etcpal__os.html">OS Abstraction Modules</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 class="groupheader">Overview</h2>
+<p>Mutual-exclusion (mutex) objects with recursion support. </p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;etcpal/recursive_mutex.h&quot;</span></div>
+</div><!-- fragment --><p><b>WARNING:</b> Recursive mutexes are rarely necessary for new code. They are often used to retrofit thread-safety into existing code. They can hide nasty bugs. Use regular <a class="el" href="group__etcpal__mutex.html">mutex (Mutexes)</a> whenever possible.</p>
+<p>For further reference:</p><ul>
+<li><a href="http://www.fieryrobot.com/blog/2008/10/14/recursive-locks-will-kill-you/">One</a></li>
+<li><a href="https://groups.google.com/g/comp.programming.threads/c/tcrTKnfP8HI/m/me2K7_byNdgJ">Two</a></li>
+<li><a href="https://blog.stephencleary.com/2013/04/recursive-re-entrant-locks.html">Three</a></li>
+</ul>
+<p>Recursive mutexes behave like mutexes, but they can be locked multiple times from the same thread before being unlocked. A recursive mutex must be unlocked an equal number of times as it was locked before it is considered to be available again. Where possible on real-time platforms, the mutex provides priority inheritance.</p>
+<p>See the <a class="el" href="group__etcpal__mutex.html">mutex (Mutexes)</a> documentation for more information on basic mutex behavior.</p>
+<p>etcpal_recursive_mutex are not available on all platforms, and their implementations use different constructs under the hood on various platforms. Also, different platforms affect the behavior of certain functions.</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Platform   </th><th class="markdownTableHeadNone">Recursive Mutexes available   </th><th class="markdownTableHeadNone"><a class="el" href="group__etcpal__recursive__mutex.html#ga752b7f9693eb78835fccb80beac59eb2" title="Whether etcpal_recursive_mutex_timed_lock() is meaningful on this platform.">ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK</a>   </th><th class="markdownTableHeadNone">Underlying Type    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">FreeRTOS   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone"><a href="https://www.freertos.org/RTOS-Recursive-Mutexes.html">Recursive Mutexes</a>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Linux   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone"><a href="https://linux.die.net/man/3/pthread_mutex_init">pthread_mutex</a>    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">macOS   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone"><a href="https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html">pthread_mutex</a>    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">MQX   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone">N/A   </td><td class="markdownTableBodyNone">N/A    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Windows   </td><td class="markdownTableBodyNone">Yes   </td><td class="markdownTableBodyNone">No   </td><td class="markdownTableBodyNone"><a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx">Critical Section objects</a>   </td></tr>
+</table>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga752b7f9693eb78835fccb80beac59eb2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#ga752b7f9693eb78835fccb80beac59eb2">ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK</a>&#160;&#160;&#160;/* platform-defined */</td></tr>
+<tr class="memdesc:ga752b7f9693eb78835fccb80beac59eb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <a class="el" href="group__etcpal__recursive__mutex.html#gafb88fc7f6b18d47218220198d588f322" title="Try to lock a mutex, giving up after a timeout.">etcpal_recursive_mutex_timed_lock()</a> is meaningful on this platform.  <a href="group__etcpal__recursive__mutex.html#ga752b7f9693eb78835fccb80beac59eb2">More...</a><br /></td></tr>
+<tr class="separator:ga752b7f9693eb78835fccb80beac59eb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:gab023065e9028d318e1c559e6c7493e6b"><td class="memItemLeft" align="right" valign="top">typedef PLATFORM_DEFINED&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a></td></tr>
+<tr class="memdesc:gab023065e9028d318e1c559e6c7493e6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The mutex identifier.  <a href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">More...</a><br /></td></tr>
+<tr class="separator:gab023065e9028d318e1c559e6c7493e6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga694158054907acac552eccb8e88d020a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#ga694158054907acac552eccb8e88d020a">etcpal_recursive_mutex_create</a> (<a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *id)</td></tr>
+<tr class="memdesc:ga694158054907acac552eccb8e88d020a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new mutex.  <a href="group__etcpal__recursive__mutex.html#ga694158054907acac552eccb8e88d020a">More...</a><br /></td></tr>
+<tr class="separator:ga694158054907acac552eccb8e88d020a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3b0a40808f7c27f4a5f90754ef9fcf53"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53">etcpal_recursive_mutex_lock</a> (<a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *id)</td></tr>
+<tr class="memdesc:ga3b0a40808f7c27f4a5f90754ef9fcf53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lock a mutex.  <a href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53">More...</a><br /></td></tr>
+<tr class="separator:ga3b0a40808f7c27f4a5f90754ef9fcf53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga616eae5bd1a7f76b82be8c01c64e39ad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#ga616eae5bd1a7f76b82be8c01c64e39ad">etcpal_recursive_mutex_try_lock</a> (<a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *id)</td></tr>
+<tr class="memdesc:ga616eae5bd1a7f76b82be8c01c64e39ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to lock a mutex.  <a href="group__etcpal__recursive__mutex.html#ga616eae5bd1a7f76b82be8c01c64e39ad">More...</a><br /></td></tr>
+<tr class="separator:ga616eae5bd1a7f76b82be8c01c64e39ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafb88fc7f6b18d47218220198d588f322"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#gafb88fc7f6b18d47218220198d588f322">etcpal_recursive_mutex_timed_lock</a> (<a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *id, int timeout_ms)</td></tr>
+<tr class="memdesc:gafb88fc7f6b18d47218220198d588f322"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to lock a mutex, giving up after a timeout.  <a href="group__etcpal__recursive__mutex.html#gafb88fc7f6b18d47218220198d588f322">More...</a><br /></td></tr>
+<tr class="separator:gafb88fc7f6b18d47218220198d588f322"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6adbf97bdbbd324ee5d2cba2f1d07a2d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#ga6adbf97bdbbd324ee5d2cba2f1d07a2d">etcpal_recursive_mutex_unlock</a> (<a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *id)</td></tr>
+<tr class="memdesc:ga6adbf97bdbbd324ee5d2cba2f1d07a2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unlock a mutex.  <a href="group__etcpal__recursive__mutex.html#ga6adbf97bdbbd324ee5d2cba2f1d07a2d">More...</a><br /></td></tr>
+<tr class="separator:ga6adbf97bdbbd324ee5d2cba2f1d07a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1a42ba95ca28f89502795b71f59cb060"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__etcpal__recursive__mutex.html#ga1a42ba95ca28f89502795b71f59cb060">etcpal_recursive_mutex_destroy</a> (<a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *id)</td></tr>
+<tr class="memdesc:ga1a42ba95ca28f89502795b71f59cb060"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy a mutex object.  <a href="group__etcpal__recursive__mutex.html#ga1a42ba95ca28f89502795b71f59cb060">More...</a><br /></td></tr>
+<tr class="separator:ga1a42ba95ca28f89502795b71f59cb060"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ga752b7f9693eb78835fccb80beac59eb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga752b7f9693eb78835fccb80beac59eb2">&#9670;&nbsp;</a></span>ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK&#160;&#160;&#160;/* platform-defined */</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether <a class="el" href="group__etcpal__recursive__mutex.html#gafb88fc7f6b18d47218220198d588f322" title="Try to lock a mutex, giving up after a timeout.">etcpal_recursive_mutex_timed_lock()</a> is meaningful on this platform. </p>
+<p>If defined to 0, <a class="el" href="group__etcpal__recursive__mutex.html#gafb88fc7f6b18d47218220198d588f322" title="Try to lock a mutex, giving up after a timeout.">etcpal_recursive_mutex_timed_lock()</a> executes the equivalent of <a class="el" href="group__etcpal__recursive__mutex.html#ga616eae5bd1a7f76b82be8c01c64e39ad" title="Try to lock a mutex.">etcpal_recursive_mutex_try_lock()</a> if given a timeout of 0, or <a class="el" href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53" title="Lock a mutex.">etcpal_recursive_mutex_lock()</a> otherwise. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="gab023065e9028d318e1c559e6c7493e6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab023065e9028d318e1c559e6c7493e6b">&#9670;&nbsp;</a></span>etcpal_recursive_mutex_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef PLATFORM_DEFINED <a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The mutex identifier. </p>
+<p>Depending on the platform, this could be a scalar type or a struct. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga694158054907acac552eccb8e88d020a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga694158054907acac552eccb8e88d020a">&#9670;&nbsp;</a></span>etcpal_recursive_mutex_create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_recursive_mutex_create </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a new mutex. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">id</td><td>Mutex identifier on which to create a mutex. If this function returns true, id becomes valid for calls to other etcpal_recursive_mutex API functions. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The mutex was created. </dd>
+<dd>
+false: The mutex was not created. </dd></dl>
+
+</div>
+</div>
+<a id="ga1a42ba95ca28f89502795b71f59cb060"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1a42ba95ca28f89502795b71f59cb060">&#9670;&nbsp;</a></span>etcpal_recursive_mutex_destroy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_recursive_mutex_destroy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroy a mutex object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the mutex to destroy. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga3b0a40808f7c27f4a5f90754ef9fcf53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3b0a40808f7c27f4a5f90754ef9fcf53">&#9670;&nbsp;</a></span>etcpal_recursive_mutex_lock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_recursive_mutex_lock </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Lock a mutex. </p>
+<p>Blocks until the mutex is locked.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the mutex to lock. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The mutex is locked. </dd>
+<dd>
+false: The mutex is invalid or an error occurred. </dd></dl>
+
+</div>
+</div>
+<a id="gafb88fc7f6b18d47218220198d588f322"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafb88fc7f6b18d47218220198d588f322">&#9670;&nbsp;</a></span>etcpal_recursive_mutex_timed_lock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_recursive_mutex_timed_lock </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeout_ms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Try to lock a mutex, giving up after a timeout. </p>
+<p>This function is not honored on all platforms. The value of <a class="el" href="group__etcpal__recursive__mutex.html#ga752b7f9693eb78835fccb80beac59eb2" title="Whether etcpal_recursive_mutex_timed_lock() is meaningful on this platform.">ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK</a> can be used to determine whether this function is honored on the current platform. If it is defined to 0, this function executes the equivalent of <a class="el" href="group__etcpal__recursive__mutex.html#ga616eae5bd1a7f76b82be8c01c64e39ad" title="Try to lock a mutex.">etcpal_recursive_mutex_try_lock()</a> if timeout_ms is 0, or <a class="el" href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53" title="Lock a mutex.">etcpal_recursive_mutex_lock()</a> otherwise.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the mutex to try to acquire. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">timeout_ms</td><td>Maximum amount of time to wait for the mutex to become available, in milliseconds. If <a class="el" href="group__etcpal.html#ga1cfb33811295439bc08ce2e8b74c1d13" title="For etcpal_ functions that take a millisecond timeout, this means to wait indefinitely.">ETCPAL_WAIT_FOREVER</a> is given, the result is the same as if <a class="el" href="group__etcpal__recursive__mutex.html#ga3b0a40808f7c27f4a5f90754ef9fcf53" title="Lock a mutex.">etcpal_recursive_mutex_lock()</a> was called. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The mutex is locked. </dd>
+<dd>
+false: The timeout expired while waiting to lock the mutex, the mutex is invalid or an error occurred. </dd></dl>
+
+</div>
+</div>
+<a id="ga616eae5bd1a7f76b82be8c01c64e39ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga616eae5bd1a7f76b82be8c01c64e39ad">&#9670;&nbsp;</a></span>etcpal_recursive_mutex_try_lock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool etcpal_recursive_mutex_try_lock </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Try to lock a mutex. </p>
+<p>Returns immediately either failure or success.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the mutex to try to lock. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true: The mutex is locked. </dd>
+<dd>
+false: The mutex is locked by another thread, the mutex is invalid or an error occurred. </dd></dl>
+
+</div>
+</div>
+<a id="ga6adbf97bdbbd324ee5d2cba2f1d07a2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6adbf97bdbbd324ee5d2cba2f1d07a2d">&#9670;&nbsp;</a></span>etcpal_recursive_mutex_unlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void etcpal_recursive_mutex_unlock </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__etcpal__recursive__mutex.html#gab023065e9028d318e1c559e6c7493e6b">etcpal_recursive_mutex_t</a> *&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Unlock a mutex. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">id</td><td>Identifier for the mutex to unlock. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+  </ul>
+</div>
+</body>
+</html>
