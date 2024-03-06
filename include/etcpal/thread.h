@@ -26,7 +26,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 /**
  * @defgroup etcpal_thread thread (Threading)
  * @ingroup etcpal_os
@@ -81,6 +80,7 @@ extern "C" {
  * macOS    | No                            |
  * MQX      | No                            |
  * Windows  | Yes                           |
+ * Zephyr   | Yes                           |
  *
  * Manipulate the EtcPalThreadParams structure to change parameters about the thread to be created:
  *
@@ -107,6 +107,8 @@ extern "C" {
  * The application writer is responsible for managing the interaction between starting the
  * scheduler and starting EtcPal threads, just like when starting native RTOS tasks.
  *
+ * **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see: <a
+ * href="targeting_zephyr.html">Targeting Zephyr</a>
  * @{
  */
 
@@ -122,6 +124,7 @@ extern "C" {
  * macOS    | No               | Yes                | Yes                 | No                         |
  * MQX      | Yes              | Yes                | Yes                 | Yes, EtcPalThreadParamsMqx |
  * Windows  | Yes              | Yes                | Yes                 | No                         |
+ * Zephyr   | Yes              | Yes                | Yes                 | No                         |
  */
 typedef struct EtcPalThreadParams
 {
@@ -202,14 +205,13 @@ etcpal_thread_os_handle_t etcpal_thread_get_os_handle(etcpal_thread_t* id);
 
 #if !defined(etcpal_thread_get_current_os_handle) || DOXYGEN
 etcpal_thread_os_handle_t etcpal_thread_get_current_os_handle(void);
-#endif
 
 /**
  * @}
  */
 
+#endif
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* ETCPAL_THREAD_H_ */

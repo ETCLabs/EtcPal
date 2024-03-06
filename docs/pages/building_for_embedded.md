@@ -37,6 +37,7 @@ are found on the pages below:
 * @subpage targeting_freertos
 * @subpage targeting_lwip
 * @subpage targeting_mqx
+* @subpage targeting_zephyr
 
 The method for including EtcPal via CMake is different depending on if your project already uses
 CMake or not.

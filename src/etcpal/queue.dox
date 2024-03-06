@@ -70,7 +70,10 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | macOS    | No               | N/A                               | N/A                             |
  * | MQX      | No               | N/A                               | N/A                             |
  * | Windows  | Yes              | Yes                               | No                              |
+ * | Zephyr   | Yes              | Yes                               | Yes                             |
  *
+ * **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see: <a
+ * href="targeting_zephyr.html">Targeting Zephyr</a>
  * @{
  */
 

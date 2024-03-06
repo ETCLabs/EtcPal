@@ -66,6 +66,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | macOS    | No                            |
  * | MQX      | Yes                           |
  * | Windows  | No                            |
+ * | Zephyr   | Yes                           |
  *
  * @{
  */

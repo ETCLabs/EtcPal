@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,18 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/hash.h"
-#include "unity_fixture.h"
+#include "etcpal/common.h"
+#include "etcpal/etcpal_zephyr_common.h"
 
-#include <functional>
-#include <string>
-
-extern "C" {
-
-TEST_GROUP(etcpal_cpp_hash);
-
-TEST_SETUP(etcpal_cpp_hash)
+k_timeout_t ms_to_zephyr_timeout(int timeout_ms)
 {
-}
-
-TEST_TEAR_DOWN(etcpal_cpp_hash)
-{
-}
-
-TEST(etcpal_cpp_hash, hash_combine_works)
-{
-  int         val1 = 1234;
-  std::string val2("5678");
-
-  size_t seed = std::hash<int>()(val1);
-  etcpal::HashCombine(seed, val2);
-
-  TEST_ASSERT_NOT_EQUAL(seed, 0u);
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
-}
-
-TEST_GROUP_RUNNER(etcpal_cpp_hash)
-{
-  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
-}
+  switch (timeout_ms)
+  {
+    case ETCPAL_WAIT_FOREVER:
+      return K_FOREVER;
+    case ETCPAL_NO_WAIT:
+      return K_NO_WAIT;
+    default:
+      return K_MSEC(timeout_ms);
+  }
 }

@@ -3686,6 +3686,13 @@
       <anchor>ga1cfb33811295439bc08ce2e8b74c1d13</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ETCPAL_NO_WAIT</name>
+      <anchorfile>group__etcpal.html</anchorfile>
+      <anchor>ga1cfb33811295439bc08ce2e8b74c1d13</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>uint32_t</type>
       <name>etcpal_features_t</name>
@@ -6907,6 +6914,11 @@
     <name>targeting_freertos</name>
     <title>Targeting FreeRTOS</title>
     <filename>targeting_freertos</filename>
+  </compound>
+  <compound kind="page">
+    <name>targeting_zephyr</name>
+    <title>Targeting Zephyr</title>
+    <filename>targeting_zephyr</filename>
   </compound>
   <compound kind="page">
     <name>targeting_lwip</name>

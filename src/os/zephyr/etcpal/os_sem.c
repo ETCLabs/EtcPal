@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,51 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/hash.h"
-#include "unity_fixture.h"
+#include "etcpal/sem.h"
+#include "etcpal/etcpal_zephyr_common.h"
+#include "etcpal/private/common.h"
+#include <zephyr/kernel.h>
 
-#include <functional>
-#include <string>
-
-extern "C" {
-
-TEST_GROUP(etcpal_cpp_hash);
-
-TEST_SETUP(etcpal_cpp_hash)
+bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned int max_count)
 {
+  if (!id)
+  {
+    return false;
+  }
+
+  int err = k_sem_init(id, initial_count, max_count);
+  return err == 0;
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_hash)
+bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
+  if (!id)
+  {
+    return false;
+  }
+
+  int err = k_sem_take(id, ms_to_zephyr_timeout(timeout_ms));
+  return err == 0;
 }
 
-TEST(etcpal_cpp_hash, hash_combine_works)
+bool etcpal_sem_post(etcpal_sem_t* id)
 {
-  int         val1 = 1234;
-  std::string val2("5678");
+  if (!id)
+  {
+    return false;
+  }
 
-  size_t seed = std::hash<int>()(val1);
-  etcpal::HashCombine(seed, val2);
+  if (id->count >= id->limit)
+  {
+    return false;
+  }
 
-  TEST_ASSERT_NOT_EQUAL(seed, 0u);
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
+  k_sem_give(id);
+  return true;
 }
 
-TEST_GROUP_RUNNER(etcpal_cpp_hash)
+void etcpal_sem_destroy(etcpal_sem_t* id)
 {
-  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
-}
+  ETCPAL_UNUSED_ARG(id);
+  // Not needed
 }

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,37 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/hash.h"
-#include "unity_fixture.h"
+#ifndef ETCPAL_OS_THREAD_H_
+#define ETCPAL_OS_THREAD_H_
 
-#include <functional>
-#include <string>
+#include <stdbool.h>
+#include <zephyr/kernel.h>
+#include "etcpal/common.h"
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
-TEST_GROUP(etcpal_cpp_hash);
+#define ETCPAL_THREAD_DEFAULT_PRIORITY 14
+#define ETCPAL_THREAD_DEFAULT_STACK    4096
+#define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
+#define ETCPAL_THREAD_NAME_MAX_LENGTH  CONFIG_THREAD_MAX_NAME_LEN
 
-TEST_SETUP(etcpal_cpp_hash)
+#define ETCPAL_THREAD_HAS_TIMED_JOIN 1
+
+typedef k_tid_t etcpal_thread_os_handle_t;
+#define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
+
+typedef struct
 {
-}
+  struct k_thread   thread;
+  k_thread_stack_t* stack;
+} etcpal_thread_t;
 
-TEST_TEAR_DOWN(etcpal_cpp_hash)
-{
-}
+#define etcpal_thread_get_current_os_handle k_current_get
 
-TEST(etcpal_cpp_hash, hash_combine_works)
-{
-  int         val1 = 1234;
-  std::string val2("5678");
-
-  size_t seed = std::hash<int>()(val1);
-  etcpal::HashCombine(seed, val2);
-
-  TEST_ASSERT_NOT_EQUAL(seed, 0u);
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
+#ifdef __cplusplus
 }
+#endif
 
-TEST_GROUP_RUNNER(etcpal_cpp_hash)
-{
-  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
-}
-}
+#endif /* ETCPAL_OS_THREAD_H_ */

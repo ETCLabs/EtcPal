@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,37 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/hash.h"
-#include "unity_fixture.h"
+#include "etcpal/rwlock.h"
+#include "etcpal/private/common.h"
 
-#include <functional>
-#include <string>
+#define MS_IN_S      1000
+#define MS_TO_S(ms)  ((ms) / MS_IN_S)
+#define MS_TO_NS(ms) ((ms)*1000000)
 
-extern "C" {
-
-TEST_GROUP(etcpal_cpp_hash);
-
-TEST_SETUP(etcpal_cpp_hash)
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
+  if (!id)
+  {
+    return false;
+  }
+
+  struct timespec time = {
+      .tv_sec  = MS_TO_S(timeout_ms),
+      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  };
+  return !pthread_rwlock_timedrdlock(id, &time);
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_hash)
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
-}
+  if (!id)
+  {
+    return false;
+  }
 
-TEST(etcpal_cpp_hash, hash_combine_works)
-{
-  int         val1 = 1234;
-  std::string val2("5678");
-
-  size_t seed = std::hash<int>()(val1);
-  etcpal::HashCombine(seed, val2);
-
-  TEST_ASSERT_NOT_EQUAL(seed, 0u);
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
-}
-
-TEST_GROUP_RUNNER(etcpal_cpp_hash)
-{
-  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
-}
+  struct timespec time = {
+      .tv_sec  = MS_TO_S(timeout_ms),
+      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  };
+  return !pthread_rwlock_timedwrlock(id, &time);
 }

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,25 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/hash.h"
-#include "unity_fixture.h"
+#include "etcpal/uuid.h"
+#include "etcpal/private/common.h"
 
-#include <functional>
-#include <string>
-
-extern "C" {
-
-TEST_GROUP(etcpal_cpp_hash);
-
-TEST_SETUP(etcpal_cpp_hash)
+// This could possibly be implemented using net_if_get_link_addr, but this would require getting a pointer to the Zephyr
+// net_if struct and possibly DeviceTree integration. Leaving unimplemented for now.
+etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
 {
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_hash)
+etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
 {
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
 }
 
-TEST(etcpal_cpp_hash, hash_combine_works)
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
 {
-  int         val1 = 1234;
-  std::string val2("5678");
-
-  size_t seed = std::hash<int>()(val1);
-  etcpal::HashCombine(seed, val2);
-
-  TEST_ASSERT_NOT_EQUAL(seed, 0u);
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
-}
-
-TEST_GROUP_RUNNER(etcpal_cpp_hash)
-{
-  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
-}
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
 }

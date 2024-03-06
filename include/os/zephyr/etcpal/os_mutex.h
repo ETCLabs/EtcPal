@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,31 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/hash.h"
-#include "unity_fixture.h"
+#ifndef ETCPAL_OS_MUTEX_H_
+#define ETCPAL_OS_MUTEX_H_
 
-#include <functional>
-#include <string>
+#include "etcpal/common.h"
+#include "etcpal/etcpal_zephyr_common.h"
+#include <zephyr/kernel.h>
+#include <stdbool.h>
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
-TEST_GROUP(etcpal_cpp_hash);
+typedef struct k_mutex etcpal_mutex_t;
 
-TEST_SETUP(etcpal_cpp_hash)
-{
+#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
+
+#define etcpal_mutex_create(idptr)   ((bool)(!k_mutex_init((idptr))))
+#define etcpal_mutex_lock(idptr)     (etcpal_mutex_timed_lock((idptr), ETCPAL_WAIT_FOREVER))
+#define etcpal_mutex_try_lock(idptr) (etcpal_mutex_timed_lock((idptr), ETCPAL_NO_WAIT))
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
+#define etcpal_mutex_unlock(idptr) (k_mutex_unlock((idptr)))
+void etcpal_mutex_destroy(etcpal_mutex_t* id);
+
+#ifdef __cplusplus
 }
+#endif
 
-TEST_TEAR_DOWN(etcpal_cpp_hash)
-{
-}
-
-TEST(etcpal_cpp_hash, hash_combine_works)
-{
-  int         val1 = 1234;
-  std::string val2("5678");
-
-  size_t seed = std::hash<int>()(val1);
-  etcpal::HashCombine(seed, val2);
-
-  TEST_ASSERT_NOT_EQUAL(seed, 0u);
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
-}
-
-TEST_GROUP_RUNNER(etcpal_cpp_hash)
-{
-  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
-}
-}
+#endif /* ETCPAL_OS_MUTEX_H_ */

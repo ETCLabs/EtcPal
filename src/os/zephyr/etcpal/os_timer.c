@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,39 +17,29 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/hash.h"
-#include "unity_fixture.h"
+#include "etcpal/timer.h"
+#include "etcpal/private/timer.h"
 
-#include <functional>
-#include <string>
+#include <zephyr/kernel.h>
+#include <unistd.h>
 
-extern "C" {
+#if !defined(ETCPAL_BUILDING_MOCK_LIB)
 
-TEST_GROUP(etcpal_cpp_hash);
-
-TEST_SETUP(etcpal_cpp_hash)
+etcpal_error_t etcpal_timer_init(void)
 {
+  // No init necessary
+  return kEtcPalErrOk;
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_hash)
+void etcpal_timer_deinit(void)
 {
+  // No deinitialization necessary on this platform.
 }
 
-TEST(etcpal_cpp_hash, hash_combine_works)
+uint32_t etcpal_getms(void)
 {
-  int         val1 = 1234;
-  std::string val2("5678");
-
-  size_t seed = std::hash<int>()(val1);
-  etcpal::HashCombine(seed, val2);
-
-  TEST_ASSERT_NOT_EQUAL(seed, 0u);
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<int>()(val1));
-  TEST_ASSERT_NOT_EQUAL(seed, std::hash<std::string>()(val2));
+  // https://docs.zephyrproject.org/3.1.0/kernel/timeutil.html
+  return k_uptime_get();
 }
 
-TEST_GROUP_RUNNER(etcpal_cpp_hash)
-{
-  RUN_TEST_CASE(etcpal_cpp_hash, hash_combine_works);
-}
-}
+#endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

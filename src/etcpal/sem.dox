@@ -60,6 +60,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | macOS    | No                         | No                            | No                        | Yes                          | [Dispatch Semaphores](https://developer.apple.com/documentation/dispatch/dispatch_semaphore?language=objc)
  * | MQX      | Yes                        | No                            | No                        | No                           | Lightweight Semaphores |
  * | Windows  | Yes                        | No                            | Yes                       | No                           | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
+ * | Zephyr   | Yes                        | Yes                           | Yes                       | No                           | [Semaphores](https://docs.zephyrproject.org/latest/kernel/services/synchronization/semaphores.html) |
  *
  * @{
  */
