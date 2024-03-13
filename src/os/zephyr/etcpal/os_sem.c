@@ -16,7 +16,7 @@ bool etcpal_sem_try_wait(etcpal_sem_t *id) {
 }
 
 bool etcpal_sem_timed_wait(etcpal_sem_t *id, int timeout_ms) {
-  return k_sem_take(id, K_TIMEOUT_ABS_MS(timeout_ms)) == 0;
+  return k_sem_take(id, K_MSEC(timeout_ms)) == 0;
 }
 
 bool etcpal_sem_post(etcpal_sem_t *id) {
