@@ -9,6 +9,9 @@
 bin/
 lib/
 
+# Doxygen
+docs-build/
+
 # Toolchain Artifacts #
 #######################
 
