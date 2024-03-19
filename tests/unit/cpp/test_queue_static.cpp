@@ -154,9 +154,9 @@ TEST(etcpal_cpp_static_queue, can_detect_slots_available)
   TEST_ASSERT_TRUE(q.Receive(received_data));
   TEST_ASSERT_TRUE(q.SlotsAvailable() == 1);
 }
-TEST_GROUP_RUNNER(etcpal_cpp_queue)
+TEST_GROUP_RUNNER(etcpal_cpp_static_queue)
 {
-  RUN_TEST_CASE(etcpal_cpp_queue, can_send_and_receive);
+  RUN_TEST_CASE(etcpal_cpp_static_queue, can_send_and_receive);
   // RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_send);
   // RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_receive);
   // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_empty);
