@@ -125,7 +125,7 @@ public:
 private:
   etcpal_queue_t queue_{};
   // Cannot have a 0-sized array in the case where N=0
-  uint8_t        buffer[N * sizeof(T) + 1];
+  uint8_t buffer[N * sizeof(T) + 1];
 };
 
 /// @brief Create a new queue.
