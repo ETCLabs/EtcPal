@@ -181,6 +181,12 @@ static inline bool pop_data_from_isr(etcpal_queue_t* queue, void* data)
   return true_if_success;
 }
 
+bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer)
+{
+  // Not implemented
+  return false;
+}
+
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {
   if (!id)

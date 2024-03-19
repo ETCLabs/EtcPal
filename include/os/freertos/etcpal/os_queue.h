@@ -36,6 +36,7 @@ typedef QueueHandle_t etcpal_queue_t;
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   1
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
+bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer);
 void etcpal_queue_destroy(etcpal_queue_t* id);
 
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
