@@ -39,11 +39,10 @@ TEST(etcpal_cpp_static_queue, check_empty)
   TEST_ASSERT_TRUE(q.IsEmpty());
 }
 
-
 TEST(etcpal_cpp_static_queue, can_send_and_receive)
 {
   etcpal::Queue<unsigned char, 3> q;
-  unsigned char                data = 0xDE;
+  unsigned char                   data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
   unsigned char received_data = 0;
   TEST_ASSERT_TRUE(q.Receive(received_data));
@@ -54,7 +53,7 @@ TEST(etcpal_cpp_static_queue, will_timeout_on_send)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
-  unsigned char                data = 0xDE;
+  unsigned char                   data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
   data = 0xAD;
   TEST_ASSERT_TRUE(q.Send(data));
@@ -74,7 +73,7 @@ TEST(etcpal_cpp_static_queue, will_timeout_on_receive)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
-  unsigned char                data = 0xDE;
+  unsigned char                   data = 0xDE;
   TEST_ASSERT_TRUE(q.Send(data));
   unsigned char received_data = 0x00;
   TEST_ASSERT_TRUE(q.Receive(received_data, 10));
@@ -84,7 +83,6 @@ TEST(etcpal_cpp_static_queue, will_timeout_on_receive)
   TEST_ASSERT_FALSE(q.Receive(received_data, 0));
 #endif
 }
-
 
 TEST(etcpal_cpp_static_queue, can_detect_empty)
 {
@@ -103,7 +101,6 @@ TEST(etcpal_cpp_static_queue, can_detect_empty)
   TEST_ASSERT_TRUE(q.Send(data));
   TEST_ASSERT_FALSE(q.IsEmpty());
 }
-
 
 TEST(etcpal_cpp_static_queue, can_detect_reset)
 {
