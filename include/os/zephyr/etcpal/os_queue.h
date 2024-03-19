@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2024 ETC Inc.
+ * Copyright 2022 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,36 +32,33 @@
 extern "C" {
 #endif
 
-typedef struct
-{
-  struct k_msgq queue;
-  uint8_t*      buffer;
-} etcpal_queue_t;
+typedef struct k_msgq etcpal_queue_t;
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS 1
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   1
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
+bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer);
 void etcpal_queue_destroy(etcpal_queue_t* id);
 
-#define etcpal_queue_send(idptr, dataptr) (etcpal_queue_timed_send((idptr), (dataptr), ETCPAL_WAIT_FOREVER))
+bool etcpal_queue_send(etcpal_queue_t* id, const void* data);
 bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms);
-#define etcpal_queue_send_from_isr etcpal_queue_send
+bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data);
 
-#define etcpal_queue_receive(idptr, dataptr) (etcpal_queue_timed_receive((idptr), (dataptr), ETCPAL_WAIT_FOREVER))
+bool etcpal_queue_receive(etcpal_queue_t* id, void* data);
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
-#define etcpal_queue_receive_from_isr etcpal_queue_receive
+bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data);
 
 bool etcpal_queue_reset(etcpal_queue_t* id);
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id);
-#define etcpal_queue_is_empty_from_isr etcpal_queue_is_empty
+bool etcpal_queue_is_empty_from_isr(const etcpal_queue_t* id);
 
 bool etcpal_queue_is_full(const etcpal_queue_t* id);
-#define etcpal_queue_is_full_from_isr etcpal_queue_is_full
+bool etcpal_queue_is_full_from_isr(const etcpal_queue_t* id);
 
 size_t etcpal_queue_slots_used(const etcpal_queue_t* id);
-#define etcpal_queue_slots_used_from_isr etcpal_queue_slots_used
+size_t etcpal_queue_slots_used_from_isr(const etcpal_queue_t* id);
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id);
 
