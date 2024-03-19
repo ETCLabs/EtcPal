@@ -157,13 +157,13 @@ TEST(etcpal_cpp_static_queue, can_detect_slots_available)
 TEST_GROUP_RUNNER(etcpal_cpp_queue)
 {
   RUN_TEST_CASE(etcpal_cpp_queue, can_send_and_receive);
-  //RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_send);
-  //RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_receive);
-  //RUN_TEST_CASE(etcpal_cpp_queue, can_detect_empty);
-  //RUN_TEST_CASE(etcpal_cpp_queue, can_detect_reset);
-  //RUN_TEST_CASE(etcpal_cpp_queue, can_detect_full);
-  //RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_used);
-  //RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_available);
+  // RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_send);
+  // RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_receive);
+  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_empty);
+  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_reset);
+  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_full);
+  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_used);
+  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_available);
 }
 
 }  // extern "C"
