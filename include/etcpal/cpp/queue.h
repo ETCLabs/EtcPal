@@ -23,13 +23,15 @@
 #ifndef ETCPAL_CPP_QUEUE_H
 #define ETCPAL_CPP_QUEUE_H
 
+#include "etcpal/common.h"
+#include "etcpal/cpp/common.h"
+#include "etcpal/queue.h"
+
 #include <algorithm>
 #include <chrono>
 #include <cstddef>
 #include <limits>
-#include "etcpal/common.h"
-#include "etcpal/cpp/common.h"
-#include "etcpal/queue.h"
+#include <assert.h>
 
 namespace etcpal
 {
