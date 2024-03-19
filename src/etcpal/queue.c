@@ -183,6 +183,10 @@ static inline bool pop_data_from_isr(etcpal_queue_t* queue, void* data)
 
 bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer)
 {
+  ETCPAL_UNUSED_ARG(id);
+  ETCPAL_UNUSED_ARG(size);
+  ETCPAL_UNUSED_ARG(item_size);
+  ETCPAL_UNUSED_ARG(buffer);
   // Not implemented
   return false;
 }
