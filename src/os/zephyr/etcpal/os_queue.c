@@ -140,12 +140,10 @@ size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 
 bool etcpal_queue_send(etcpal_queue_t* id, const void* data)
 {
-  bool true_if_success = false;
+  return etcpal_queue_timed_send(id, data, ETCPAL_WAIT_FOREVER);
+}
 
-  if (k_msgq_put(&id->queue, data, K_FOREVER) == 0)
-  {
-    true_if_success = true;
-  }
-
-  return true_if_success;
+bool etcpal_queue_receive(etcpal_queue_t* id, void* data)
+{
+  return etcpal_queue_timed_receive(id, data, ETCPAL_WAIT_FOREVER);
 }
