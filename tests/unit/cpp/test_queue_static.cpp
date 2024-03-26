@@ -23,23 +23,23 @@
 
 extern "C" {
 
-TEST_GROUP(etcpal_cpp_static_queue);
+TEST_GROUP(etcpal_cpp_queue_static);
 
-TEST_SETUP(etcpal_cpp_static_queue)
+TEST_SETUP(etcpal_cpp_queue_static)
 {
 }
 
-TEST_TEAR_DOWN(etcpal_cpp_static_queue)
+TEST_TEAR_DOWN(etcpal_cpp_queue_static)
 {
 }
 
-TEST(etcpal_cpp_static_queue, check_empty)
+TEST(etcpal_cpp_queue_static, check_empty)
 {
   etcpal::Queue<unsigned char, 5> q;
   TEST_ASSERT_TRUE(q.IsEmpty());
 }
 
-TEST(etcpal_cpp_static_queue, can_send_and_receive)
+TEST(etcpal_cpp_queue_static, can_send_and_receive)
 {
   etcpal::Queue<unsigned char, 3> q;
   unsigned char                   data = 0xDE;
@@ -49,7 +49,7 @@ TEST(etcpal_cpp_static_queue, can_send_and_receive)
   TEST_ASSERT_EQUAL(data, received_data);
 }
 
-TEST(etcpal_cpp_static_queue, will_timeout_on_send)
+TEST(etcpal_cpp_queue_static, will_timeout_on_send)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
@@ -69,7 +69,7 @@ TEST(etcpal_cpp_static_queue, will_timeout_on_send)
 #endif
 }
 
-TEST(etcpal_cpp_static_queue, will_timeout_on_receive)
+TEST(etcpal_cpp_queue_static, will_timeout_on_receive)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
@@ -84,7 +84,7 @@ TEST(etcpal_cpp_static_queue, will_timeout_on_receive)
 #endif
 }
 
-TEST(etcpal_cpp_static_queue, can_detect_empty)
+TEST(etcpal_cpp_queue_static, can_detect_empty)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
@@ -102,7 +102,7 @@ TEST(etcpal_cpp_static_queue, can_detect_empty)
   TEST_ASSERT_FALSE(q.IsEmpty());
 }
 
-TEST(etcpal_cpp_static_queue, can_detect_reset)
+TEST(etcpal_cpp_queue_static, can_detect_reset)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
@@ -116,7 +116,27 @@ TEST(etcpal_cpp_static_queue, can_detect_reset)
   TEST_ASSERT_TRUE(q.IsEmpty());
 }
 
-TEST(etcpal_cpp_static_queue, can_detect_slots_used)
+TEST(etcpal_cpp_queue_static, can_detect_full)
+{
+  // Create queue for 3 chars
+  etcpal::Queue<unsigned char, 3> q;
+  TEST_ASSERT_FALSE(q.IsFull());
+
+  unsigned char data = 0xDE;
+  TEST_ASSERT_TRUE(q.Send(data));
+  TEST_ASSERT_TRUE(q.Send(data));
+  TEST_ASSERT_TRUE(q.Send(data));
+  TEST_ASSERT_TRUE(q.IsFull());
+
+  unsigned char received_data = 0x00;
+  TEST_ASSERT_TRUE(q.Receive(received_data));
+  TEST_ASSERT_FALSE(q.IsFull());
+
+  TEST_ASSERT_TRUE(q.Send(data));
+  TEST_ASSERT_TRUE(q.IsFull());
+}
+
+TEST(etcpal_cpp_queue_static, can_detect_slots_used)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
@@ -136,7 +156,7 @@ TEST(etcpal_cpp_static_queue, can_detect_slots_used)
   TEST_ASSERT_TRUE(q.SlotsUsed() == 3);
 }
 
-TEST(etcpal_cpp_static_queue, can_detect_slots_available)
+TEST(etcpal_cpp_queue_static, can_detect_slots_available)
 {
   // Create queue for 3 chars
   etcpal::Queue<unsigned char, 3> q;
@@ -154,16 +174,16 @@ TEST(etcpal_cpp_static_queue, can_detect_slots_available)
   TEST_ASSERT_TRUE(q.Receive(received_data));
   TEST_ASSERT_TRUE(q.SlotsAvailable() == 1);
 }
-TEST_GROUP_RUNNER(etcpal_cpp_static_queue)
+TEST_GROUP_RUNNER(etcpal_cpp_queue_static)
 {
-  RUN_TEST_CASE(etcpal_cpp_static_queue, can_send_and_receive);
-  // RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_send);
-  // RUN_TEST_CASE(etcpal_cpp_queue, will_timeout_on_receive);
-  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_empty);
-  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_reset);
-  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_full);
-  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_used);
-  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_available);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, can_send_and_receive);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, will_timeout_on_send);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, will_timeout_on_receive);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, can_detect_empty);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, can_detect_reset);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, can_detect_full);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, can_detect_slots_used);
+  RUN_TEST_CASE(etcpal_cpp_queue_static, can_detect_slots_available);
 }
 
 }  // extern "C"

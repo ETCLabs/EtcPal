@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
     "minor": 15,
@@ -17,7 +17,7 @@
         "ETCPAL_ENABLE_CLANG_TIDY": true,
         "CMAKE_C_COMPILER": "cl.exe",
         "CMAKE_CXX_COMPILER": "cl.exe",
-        "CMAKE_INSTALL_PREFIX": "${binaryDir}/install"
+        "CMAKE_INSTALL_PREFIX": "install"
       },
       "binaryDir": "${sourceDir}/build",
       "architecture": {
@@ -55,7 +55,7 @@
         "ETCPAL_BUILD_TESTS": true,
         "ETCPAL_BUILD_EXAMPLES": true,
         "ETCPAL_BUILD_MOCK_LIB": true,
-        "CMAKE_INSTALL_PREFIX": "${binaryDir}/install"
+        "CMAKE_INSTALL_PREFIX": "install"
       },
       "binaryDir": "${sourceDir}/build"
     },
@@ -68,7 +68,7 @@
         "ETCPAL_BUILD_EXAMPLES": true,
         "ETCPAL_BUILD_MOCK_LIB": true,
         "ETCPAL_ENABLE_CLANG_TIDY": true,
-        "CMAKE_INSTALL_PREFIX": "${binaryDir}/install"
+        "CMAKE_INSTALL_PREFIX": "install"
       },
       "binaryDir": "${sourceDir}/build"
     },
@@ -89,6 +89,12 @@
         "CMAKE_BUILD_TYPE": "Release"
       },
       "binaryDir": "${sourceDir}/build/release"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "GoogleTests",
+      "configurePreset": "windows-ninja-msvc-stub-debug"
     }
   ]
 }
