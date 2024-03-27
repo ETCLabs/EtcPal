@@ -149,7 +149,9 @@ inline Queue<T, N>::Queue(size_t size)
 template <class T, unsigned N>
 inline Queue<T, N>::Queue()
 {
-  etcpal_queue_create_static(&queue_, N, sizeof(T), buffer);
+  bool true_if_success = false;
+  true_if_success      = etcpal_queue_create_static(&queue_, N, sizeof(T), buffer);
+  assert(true_if_success);
 }
 
 /// @brief Destroy a queue.
