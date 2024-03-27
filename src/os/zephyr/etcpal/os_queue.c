@@ -55,6 +55,12 @@ bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_m
   return err == 0;
 }
 
+bool etcpal_queue_send_from_isr(etcpal_queue_t* id, const void* data)
+{
+  // Zephyr's queue send is compatible with isr's.
+  return etcpal_queue_timed_send(id, data, 0);
+}
+
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 {
   if (!id || !data)
@@ -64,6 +70,11 @@ bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms)
 
   int err = k_msgq_get(&id->queue, data, ms_to_zephyr_timeout(timeout_ms));
   return err == 0;
+}
+
+bool etcpal_queue_receive_from_isr(etcpal_queue_t* id, void* data)
+{
+  return etcpal_queue_timed_receive(id, data, 0);
 }
 
 void etcpal_queue_destroy(etcpal_queue_t* id)
