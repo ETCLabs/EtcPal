@@ -140,8 +140,10 @@ template <class T, unsigned N>
 inline Queue<T, N>::Queue(size_t size)
 {
   // Queue size is specified by N in the case that N != 0
+  bool true_if_success = false;
   assert(N == 0);
-  etcpal_queue_create(&queue_, size, sizeof(T));
+  true_if_success = etcpal_queue_create(&queue_, size, sizeof(T));
+  assert(true_if_success);
 }
 
 template <class T, unsigned N>
