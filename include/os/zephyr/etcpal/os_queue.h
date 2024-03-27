@@ -47,22 +47,22 @@ void etcpal_queue_destroy(etcpal_queue_t* id);
 
 #define etcpal_queue_send(idptr, dataptr) (etcpal_queue_timed_send((idptr), (dataptr), ETCPAL_WAIT_FOREVER))
 bool etcpal_queue_timed_send(etcpal_queue_t* id, const void* data, int timeout_ms);
-#define etcpal_queue_send_from_isr etcpal_queue_send
+#define etcpal_queue_send_from_isr(idptr, dataptr) etcpal_queue_timed_send(idptr, dataptr, ETCPAL_NO_WAIT)
 
 #define etcpal_queue_receive(idptr, dataptr) (etcpal_queue_timed_receive((idptr), (dataptr), ETCPAL_WAIT_FOREVER))
 bool etcpal_queue_timed_receive(etcpal_queue_t* id, void* data, int timeout_ms);
-#define etcpal_queue_receive_from_isr etcpal_queue_receive
+#define etcpal_queue_receive_from_isr(idptr, dataptr) etcpal_queue_timed_receive(idptr, dataptr, ETCPAL_NO_WAIT)
 
 bool etcpal_queue_reset(etcpal_queue_t* id);
 
 bool etcpal_queue_is_empty(const etcpal_queue_t* id);
-#define etcpal_queue_is_empty_from_isr etcpal_queue_is_empty
+#define etcpal_queue_is_empty_from_isr(idptr) etcpal_queue_is_empty(idptr)
 
 bool etcpal_queue_is_full(const etcpal_queue_t* id);
-#define etcpal_queue_is_full_from_isr etcpal_queue_is_full
+#define etcpal_queue_is_full_from_isr(idptr) etcpal_queue_is_full(idptr)
 
 size_t etcpal_queue_slots_used(const etcpal_queue_t* id);
-#define etcpal_queue_slots_used_from_isr etcpal_queue_slots_used
+#define etcpal_queue_slots_used_from_isr(idptr) etcpal_queue_slots_used(idptr)
 
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id);
 
