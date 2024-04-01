@@ -90,11 +90,5 @@
       },
       "binaryDir": "${sourceDir}/build/release"
     }
-  ],
-  "buildPresets": [
-    {
-      "name": "GoogleTests",
-      "configurePreset": "windows-ninja-msvc-stub-debug"
-    }
   ]
 }
