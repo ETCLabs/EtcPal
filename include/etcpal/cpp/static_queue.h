@@ -100,7 +100,6 @@ class StaticQueue
   static_assert(N > 0, "The number of elements in a static queue must be greater than 0");
 
 public:
-  explicit StaticQueue(size_t size);
   explicit StaticQueue();
   ~StaticQueue();
 
@@ -131,20 +130,6 @@ private:
   etcpal_queue_t queue_{};
   uint8_t        buffer[N * sizeof(T)];
 };
-
-/// @brief Create a new queue.
-///
-/// The creation may be dynamic
-/// @param size The size of the queue.
-template <class T, unsigned N>
-inline StaticQueue<T, N>::StaticQueue(size_t size)
-{
-  // Queue size is specified by N in the case that N != 0
-  bool true_if_success = false;
-  assert(N == 0);
-  true_if_success = etcpal_queue_create(&queue_, size, sizeof(T));
-  assert(true_if_success);
-}
 
 template <class T, unsigned N>
 inline StaticQueue<T, N>::StaticQueue()
