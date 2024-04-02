@@ -89,7 +89,7 @@ namespace etcpal
 /// OS queues are only available on RTOS platforms. See the @ref etcpal_queue
 /// module for details on what platforms this class is available on.
 
-/// @ingroup etcpal_cpp_queue
+/// @ingroup etcpal_cpp_static_queue
 /// @brief An RTOS queue class.
 ///
 /// See the module description for @ref etcpal_cpp_queue for usage information.
