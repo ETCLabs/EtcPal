@@ -52,6 +52,7 @@ typedef struct
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS ETCPAL_SEM_HAS_TIMED_WAIT
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   ETCPAL_SEM_HAS_POST_FROM_ISR
+#define ETCPAL_QUEUE_HAS_STATIC          0
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
 bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer);
