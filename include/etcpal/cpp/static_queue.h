@@ -35,11 +35,11 @@
 
 namespace etcpal
 {
-/// @defgroup etcpal_cpp_static_queue Static Queue (RTOS queues)
+/// @defgroup etcpal_cpp_static_queue static_queue (RTOS queues)
 /// @ingroup etcpal_cpp
-/// @brief C++ utilities for the @ref etcpal_static_queue module.
+/// @brief Static C++ utilities for the @ref etcpal_queue module.
 ///
-/// Provides a template class Static Queue which can be used to create blocking OS
+/// Provides a template class StaticQueue which can be used to create blocking OS
 /// queues of arbitrary objects. 'Static' queues are queues for which the underlying memory is allocated statically.
 ///
 /// @code
