@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2024 ETC Inc.
+ * Copyright 2022 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 #include "etcpal/queue.h"
 #include "etcpal/private/common.h"
 
+/*************************** Function definitions ****************************/
+
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {
   if (!id)
@@ -33,6 +35,12 @@ bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
     return false;
   }
   k_msgq_init(&id->queue, id->buffer, item_size, size);
+  return true;
+}
+
+bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer)
+{
+  k_msgq_init(&id->queue, buffer, item_size, size);
   return true;
 }
 
@@ -117,7 +125,6 @@ size_t etcpal_queue_slots_used(const etcpal_queue_t* id)
 
   return attrs.used_msgs;
 }
-
 size_t etcpal_queue_slots_available(const etcpal_queue_t* id)
 {
   if (!id)

@@ -45,6 +45,10 @@ extern "C" void run_all_tests(void)  // NOLINT
   RUN_TEST_GROUP(etcpal_cpp_queue);
 #endif
 
+#if !DISABLE_STATIC_QUEUE_TESTS
+  RUN_TEST_GROUP(etcpal_cpp_queue_static);
+#endif
+
 #endif
 #if !ETCPAL_NO_NETWORKING_SUPPORT
   RUN_TEST_GROUP(etcpal_cpp_inet);
