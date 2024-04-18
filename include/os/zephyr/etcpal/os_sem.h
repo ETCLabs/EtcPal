@@ -41,7 +41,7 @@ bool etcpal_sem_create(etcpal_sem_t* id, unsigned int initial_count, unsigned in
 #define etcpal_sem_try_wait(idptr) (etcpal_sem_timed_wait((idptr), ETCPAL_NO_WAIT))
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms);
 bool etcpal_sem_post(etcpal_sem_t* id);
-#define etcpal_sem_post_from_isr etcpal_sem_post;  // Regular post is ISR safe
+#define etcpal_sem_post_from_isr(x) etcpal_sem_post(x);  // Regular post is ISR safe
 void etcpal_sem_destroy(etcpal_sem_t* id);
 
 #ifdef __cplusplus
