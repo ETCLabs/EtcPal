@@ -38,11 +38,41 @@ extern "C" {
 typedef k_tid_t etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
 
-typedef struct
-{
-  struct k_thread   thread;
+typedef struct {
+  void (*fn)(void*);
+  void*             arg;
+  //etcpal_sem_t sig;
+  etcpal_thread_os_handle_t      tid;
+  struct k_thread thread;
   k_thread_stack_t* stack;
+  
+ // stack_data_t *stack_data_pointer;
+  
+
 } etcpal_thread_t;
+
+typedef enum {
+  /// Will trigger an error
+  NOT_SPECIFIED,
+  /// Thread will be pre-emtpible
+  PREEMPTIVE,
+  /// Thread will only be marked unready on it's own terms, except by META_IRQ
+  /// threads/
+  COOPERATIVE,
+  /// Not yet implemented in this port. Special, high-priority threads that can even
+  /// pre-empt COOPERTIVE threads. These threads are second in priority only to IRQs themselves.
+  /// The purpose of a META_IRQ thread is to be the 'back-half' of a hardware interrupt handler.
+  META_IRQ       
+  }scheduling_mode_t;
+
+typedef struct {
+  // If this is null, the current thread's resource pool
+  // will be used to allocate the new thread's resource pool
+  k_thread_stack_t* stack_data_pointer;
+  scheduling_mode_t sched_mode;
+} EtcPalThreadParamsZephyr;
+
+
 
 #define etcpal_thread_get_current_os_handle k_current_get
 
