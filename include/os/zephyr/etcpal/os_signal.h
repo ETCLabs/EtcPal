@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #include <stdbool.h>
 #include <zephyr/kernel.h>
 #include "etcpal/common.h"
+#include "etcpal/etcpal_zephyr_common.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,15 +31,15 @@ extern "C" {
 
 typedef struct k_sem etcpal_signal_t;
 
-#define ETCPAL_SIGNAL_HAS_TIMED_WAIT    0
-#define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 0
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT    1
+#define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 1
 
-bool etcpal_signal_create(etcpal_signal_t* id);
-bool etcpal_signal_wait(etcpal_signal_t* id);
-bool etcpal_signal_try_wait(etcpal_signal_t* id);
-bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms);
-void etcpal_signal_post(etcpal_signal_t* id);
-#define etcpal_signal_post_from_isr etcpal_signal_post
+#define etcpal_signal_create(idptr)                 ((bool)(!k_sem_init((idptr), 0, 1)))
+#define etcpal_signal_wait(idptr)                   ((bool)(!k_sem_take((idptr), K_FOREVER)))
+#define etcpal_signal_try_wait(idptr)               ((bool)(!k_sem_take((idptr), K_NO_WAIT)))
+#define etcpal_signal_timed_wait(idptr, timeout_ms) ((bool)(!k_sem_take((idptr), ms_to_zephyr_timeout((timeout_ms)))))
+#define etcpal_signal_post(idptr)                   (k_sem_give((idptr)))
+#define etcpal_signal_post_from_isr(idptr)          (etcpal_signal_post((idptr)))
 void etcpal_signal_destroy(etcpal_signal_t* id);
 
 #ifdef __cplusplus

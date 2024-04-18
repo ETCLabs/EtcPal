@@ -24,6 +24,7 @@
 #include <string>
 
 extern "C" {
+
 TEST_GROUP(etcpal_cpp_hash);
 
 TEST_SETUP(etcpal_cpp_hash)

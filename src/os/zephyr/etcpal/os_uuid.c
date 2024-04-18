@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,38 +17,25 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/**
- * @file etcpal/version.h
- * @brief Provides the current version of the EtcPal library.
- */
+#include "etcpal/uuid.h"
+#include "etcpal/private/common.h"
 
-#ifndef ETCPAL_VERSION_H_
-#define ETCPAL_VERSION_H_
+// This could possibly be implemented using net_if_get_link_addr, but this would require getting a pointer to the Zephyr
+// net_if struct and possibly DeviceTree integration. Leaving unimplemented for now.
+etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
+{
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
+}
 
-/* clang-format off */
+etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
+{
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
+}
 
-/**
- * @name EtcPal version numbers
- * @{
- */
-#define ETCPAL_VERSION_MAJOR 1
-#define ETCPAL_VERSION_MINOR 0
-#define ETCPAL_VERSION_PATCH 0
-#define ETCPAL_VERSION_BUILD 15
-/**
- * @}
- */
-
-/**
- * @name EtcPal version strings
- * @{
- */
-#define ETCPAL_VERSION_STRING "1.0.0.15"
-#define ETCPAL_VERSION_DATESTR "06.Mar.2024"
-#define ETCPAL_VERSION_COPYRIGHT "Copyright 2024 ETC Inc."
-#define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
-/**
- * @}
- */
-
-#endif /* ETCPAL_VERSION_H_ */
+etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
+{
+  ETCPAL_UNUSED_ARG(uuid);
+  return kEtcPalErrNotImpl;
+}

@@ -63,14 +63,17 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * Queues are implemented using native constructs on RTOS platforms, and using other EtcPal
  * constructs such as semaphores on full OS platforms. The current availability is as follows:
  *
- * | Platform | Queues Available | #ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS | #ETCPAL_QUEUE_HAS_ISR_FUNCTIONS |
- * |----------|------------------|-----------------------------------|---------------------------------|
- * | FreeRTOS | Yes              | Yes                               | Yes                             |
- * | Linux    | Yes              | No                                | No                              |
- * | macOS    | No               | N/A                               | N/A                             |
- * | MQX      | No               | N/A                               | N/A                             |
- * | Windows  | Yes              | Yes                               | No                              |
+ * | Platform | Queues Available | #ETCPAL_QUEUE_HAS_STATIC | #ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS | #ETCPAL_QUEUE_HAS_ISR_FUNCTIONS |
+ * |----------|------------------|-------------------------|-----------------------------------|---------------------------------|
+ * | FreeRTOS | Yes              | No                      | Yes                               | Yes                             |
+ * | Linux    | Yes              | No                      | No                                | No                              |
+ * | macOS    | No               | No                      | N/A                               | N/A                             |
+ * | MQX      | No               | No                      | N/A                               | N/A                             |
+ * | Windows  | Yes              | No                      | Yes                               | No                              |
+ * | Zephyr   | Yes              | Yes                     | Yes                               | Yes                             |
  *
+ * **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see: <a
+ * href="targeting_zephyr.html">Targeting Zephyr</a>
  * @{
  */
 
@@ -80,6 +83,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * Depending on the platform, this could be a scalar type or a struct.
  */
 typedef PLATFORM_DEFINED etcpal_queue_t;
+
+/**
+ * @brief Whether etcpal_queue_create_static() is meaningful on this platform.
+ *
+ * If defined to 0, etcpal_queue_create_static() does nothing and returns false.
+ */
+#define ETCPAL_QUEUE_HAS_STATIC /* platform-defined */
 
 /**
  * @brief Whether etcpal_queue_timed_send() and etcpal_queue_timed_receive() are meaningful on this
@@ -112,6 +122,18 @@ typedef PLATFORM_DEFINED etcpal_queue_t;
  * @return false: The queue was not created.
  */
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size);
+
+/**
+ * @brief Create a new queue with a buffer provided by the user.
+ * @param[out] id Queue identifier on which to create a queue. If this function returns true, id
+                  becomes valid for calls to other etcpal_queue API functions.
+ * @param[in] size The maximum number of items that can be held in the queue.
+ * @param[in] item_size The size in bytes of the item type to be held in the queue.
+ * @param[in] buffer The buffer to use for the queue.
+ * @return true: The queue was created.
+ * @return false: The queue was not created.
+ */
+ bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer);
 
 /**
  * @brief Destroy a queue.

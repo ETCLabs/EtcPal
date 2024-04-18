@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,42 @@
  ******************************************************************************/
 
 #include "etcpal/mutex.h"
+#include "etcpal/private/common.h"
 
+bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
+{
+  if (!id)
+  {
+    return false;
+  }
 
-bool etcpal_mutex_create(etcpal_mutex_t *id) {
-	return (k_mutex_init(id) == 0);
+  int err = k_mutex_lock(id, ms_to_zephyr_timeout(timeout_ms));
+  if (err)
+  {
+    return false;
+  }
+
+  /*
+   * Zephyr does not support true mutexes, only recursive mutexes. In the case that a true mutex is locked twice from
+   * the same thread, EtcPal expects the lock to deadlock until the timeout is complete. Since Zephyr's mutexes are
+   * recursive, we need to spoof this behavior by sleeping the thread for the given timeout. We assume this
+   * implementation to be okay since it is not guaranteed by all platforms that a lock can be released by a thread other
+   * than the one holding it leaving no way for the lock to be released while the thread sleeps.
+   *
+   * *NOTE* If we hit this case from a etcpal_mutex_lock the thread will sleep forever.
+   * */
+  if (id->lock_count > 1)
+  {
+    k_mutex_unlock(id);
+    k_sleep(ms_to_zephyr_timeout(timeout_ms));
+    return false;
+  }
+
+  return true;
 }
 
-bool etcpal_mutex_lock(etcpal_mutex_t *id) {
-  return (k_mutex_lock(id, K_FOREVER) == 0);
-}
-
-bool etcpal_mutex_try_lock(etcpal_mutex_t *id) {
-	return (k_mutex_lock(id, K_NO_WAIT) == 0);
-}
-
-bool etcpal_mutex_timed_lock(etcpal_mutex_t *id, int timeout_ms) {
-	return (k_mutex_lock(id, K_MSEC(timeout_ms)) == 0);
-}
-
-void etcpal_mutex_unlock(etcpal_mutex_t *id) {
-	k_mutex_unlock(id);
-}
-
-void etcpal_mutex_destroy(etcpal_mutex_t *id) {
-  // Not implemented
+void etcpal_mutex_destroy(etcpal_mutex_t* id)
+{
+  ETCPAL_UNUSED_ARG(id);
+  // Not needed
 }

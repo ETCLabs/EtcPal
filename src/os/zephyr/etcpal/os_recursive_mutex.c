@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,38 +17,11 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/**
- * @file etcpal/version.h
- * @brief Provides the current version of the EtcPal library.
- */
+#include "etcpal/recursive_mutex.h"
+#include "etcpal/private/common.h"
 
-#ifndef ETCPAL_VERSION_H_
-#define ETCPAL_VERSION_H_
-
-/* clang-format off */
-
-/**
- * @name EtcPal version numbers
- * @{
- */
-#define ETCPAL_VERSION_MAJOR 1
-#define ETCPAL_VERSION_MINOR 0
-#define ETCPAL_VERSION_PATCH 0
-#define ETCPAL_VERSION_BUILD 15
-/**
- * @}
- */
-
-/**
- * @name EtcPal version strings
- * @{
- */
-#define ETCPAL_VERSION_STRING "1.0.0.15"
-#define ETCPAL_VERSION_DATESTR "06.Mar.2024"
-#define ETCPAL_VERSION_COPYRIGHT "Copyright 2024 ETC Inc."
-#define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
-/**
- * @}
- */
-
-#endif /* ETCPAL_VERSION_H_ */
+void etcpal_recursive_mutex_destroy(etcpal_recursive_mutex_t* id)
+{
+  ETCPAL_UNUSED_ARG(id);
+  // Not needed
+}

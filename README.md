@@ -25,6 +25,7 @@ EtcPal is currently ported for the following platforms:
 * macOS
 * Microsoft Windows
 * MQX
+* Zephyr (OS abstraction only)
 
 EtcPal is also buildable in no-OS (bare-metal) environments, with its platform-neutral utility
 functionality still available.

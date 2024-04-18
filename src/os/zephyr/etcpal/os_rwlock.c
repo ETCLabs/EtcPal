@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,38 +17,37 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-/**
- * @file etcpal/version.h
- * @brief Provides the current version of the EtcPal library.
- */
+#include "etcpal/rwlock.h"
+#include "etcpal/private/common.h"
 
-#ifndef ETCPAL_VERSION_H_
-#define ETCPAL_VERSION_H_
+#define MS_IN_S      1000
+#define MS_TO_S(ms)  ((ms) / MS_IN_S)
+#define MS_TO_NS(ms) ((ms)*1000000)
 
-/* clang-format off */
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  if (!id)
+  {
+    return false;
+  }
 
-/**
- * @name EtcPal version numbers
- * @{
- */
-#define ETCPAL_VERSION_MAJOR 1
-#define ETCPAL_VERSION_MINOR 0
-#define ETCPAL_VERSION_PATCH 0
-#define ETCPAL_VERSION_BUILD 15
-/**
- * @}
- */
+  struct timespec time = {
+      .tv_sec  = MS_TO_S(timeout_ms),
+      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  };
+  return !pthread_rwlock_timedrdlock(id, &time);
+}
 
-/**
- * @name EtcPal version strings
- * @{
- */
-#define ETCPAL_VERSION_STRING "1.0.0.15"
-#define ETCPAL_VERSION_DATESTR "06.Mar.2024"
-#define ETCPAL_VERSION_COPYRIGHT "Copyright 2024 ETC Inc."
-#define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
-/**
- * @}
- */
+bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  if (!id)
+  {
+    return false;
+  }
 
-#endif /* ETCPAL_VERSION_H_ */
+  struct timespec time = {
+      .tv_sec  = MS_TO_S(timeout_ms),
+      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
+  };
+  return !pthread_rwlock_timedwrlock(id, &time);
+}

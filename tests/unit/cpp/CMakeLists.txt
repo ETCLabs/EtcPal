@@ -38,6 +38,13 @@ if(ETCPAL_HAVE_OS_SUPPORT)
   else()
     target_sources(etcpal_cpp_unit_tests PRIVATE test_queue.cpp)
   endif()
+
+  # Statically allocated queues are only implemented for Zephyr OS
+  if(NOT(ETCPAL_OS_TARGET STREQUAL "zephyr"))
+    target_compile_definitions(etcpal_cpp_unit_tests PRIVATE DISABLE_STATIC_QUEUE_TESTS)
+  else()
+    target_sources(etcpal_cpp_unit_tests PRIVATE test_queue_static.cpp)
+  endif()
 endif()
 
 if(ETCPAL_HAVE_NETWORKING_SUPPORT)

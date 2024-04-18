@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@
 etcpal_error_t etcpal_timer_init(void)
 {
   // No init necessary
-  return kEtcPalErrNotImpl;
+  return kEtcPalErrOk;
 }
 
 void etcpal_timer_deinit(void)
@@ -39,7 +39,7 @@ void etcpal_timer_deinit(void)
 uint32_t etcpal_getms(void)
 {
   // https://docs.zephyrproject.org/3.1.0/kernel/timeutil.html
-	return k_uptime_get();
+  return k_uptime_get();
 }
 
 #endif  // !defined(ETCPAL_BUILDING_MOCK_LIB)

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2024 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
+
 #include <errno.h>
 #include "etcpal/error.h"
 
 etcpal_error_t errno_os_to_etcpal(int os_errno);
-	
+
 #ifdef __cplusplus
 }
 #endif

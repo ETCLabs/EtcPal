@@ -21,6 +21,11 @@
 #include "freertos_timed_wait.h"
 
 /*************************** Function definitions ****************************/
+bool etcpal_queue_create_static(etcpal_queue_t* id, size_t size, size_t item_size, uint8_t* buffer)
+{
+  // Not implemented
+  return false;
+}
 
 bool etcpal_queue_create(etcpal_queue_t* id, size_t size, size_t item_size)
 {

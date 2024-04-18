@@ -17,8 +17,8 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#ifndef ETCPAL_OS_MUTEX_H_
-#define ETCPAL_OS_MUTEX_H_
+#ifndef ETCPAL_OS_RECURSIVE_MUTEX_H_
+#define ETCPAL_OS_RECURSIVE_MUTEX_H_
 
 #include "etcpal/common.h"
 #include "etcpal/etcpal_zephyr_common.h"
@@ -29,19 +29,20 @@
 extern "C" {
 #endif
 
-typedef struct k_mutex etcpal_mutex_t;
+typedef struct k_mutex etcpal_recursive_mutex_t;
 
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
+#define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK 1
 
-#define etcpal_mutex_create(idptr)   ((bool)(!k_mutex_init((idptr))))
-#define etcpal_mutex_lock(idptr)     (etcpal_mutex_timed_lock((idptr), ETCPAL_WAIT_FOREVER))
-#define etcpal_mutex_try_lock(idptr) (etcpal_mutex_timed_lock((idptr), ETCPAL_NO_WAIT))
-bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms);
-#define etcpal_mutex_unlock(idptr) (k_mutex_unlock((idptr)))
-void etcpal_mutex_destroy(etcpal_mutex_t* id);
+#define etcpal_recursive_mutex_create(idptr)   ((bool)(!k_mutex_init((idptr))))
+#define etcpal_recursive_mutex_lock(idptr)     ((bool)(!k_mutex_lock((idptr), K_FOREVER)))
+#define etcpal_recursive_mutex_try_lock(idptr) ((bool)(!k_mutex_lock((idptr), K_NO_WAIT)))
+#define etcpal_recursive_mutex_timed_lock(idptr, timeout_ms) \
+  ((bool)(!k_mutex_lock((idptr), ms_to_zephyr_timeout((timeout_ms)))))
+#define etcpal_recursive_mutex_unlock(idptr) (k_mutex_unlock((idptr)))
+void etcpal_recursive_mutex_destroy(etcpal_recursive_mutex_t* id);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* ETCPAL_OS_MUTEX_H_ */
+#endif /* ETCPAL_OS_RECURSIVE_MUTEX_H_ */

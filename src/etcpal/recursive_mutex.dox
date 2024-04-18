@@ -38,6 +38,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | macOS    | Yes                         | No                                     | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html) |
  * | MQX      | No                          | N/A                                    | N/A                |
  * | Windows  | Yes                         | No                                     | [Critical Section objects](https://msdn.microsoft.com/en-us/library/windows/desktop/ms682530(v=vs.85).aspx) |
+ * | Zephyr   | Yes                         | Yes                                    | [Mutexes](https://docs.zephyrproject.org/latest/kernel/services/synchronization/mutexes.html) |
  *
  * @{
  */

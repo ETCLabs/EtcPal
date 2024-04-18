@@ -71,6 +71,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | macOS    | No                           | [pthread_mutex](https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/pthread_mutex_init.3.html) |
  * | MQX      | Yes                          | Lightweight Semaphores |
  * | Windows  | No                           | [SRWLocks](https://docs.microsoft.com/en-us/windows/win32/sync/slim-reader-writer--srw--locks) |
+ * | Zephyr   | Yes                          | [Mutexes](https://docs.zephyrproject.org/latest/kernel/services/synchronization/mutexes.html) |
  *
  * @{
  */

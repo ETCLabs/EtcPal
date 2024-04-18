@@ -62,6 +62,7 @@ if(ETCPAL_HAVE_NETWORKING_SUPPORT)
     ${ETCPAL_ROOT}/include/etcpal/netint.h
     ${ETCPAL_ROOT}/include/etcpal/socket.h
     ${ETCPAL_ROOT}/include/etcpal/cpp/inet.h
+    ${ETCPAL_ROOT}/include/etcpal/cpp/netint.h
   )
 
   set(ETCPAL_CORE_SOURCES ${ETCPAL_CORE_SOURCES}
