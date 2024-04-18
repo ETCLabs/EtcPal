@@ -51,7 +51,6 @@ WarningsAsErrors: ''
 # - etcpal/cpp/*.h
 HeaderFilterRegex: '.*etcpal\/([^\/]+\.h|private\/[^\/]+\.h|cpp\/[^\/]+\.h)'
 
-AnalyzeTemporaryDtors: false
 FormatStyle:     file
 CheckOptions:
 # cppcoreguidelines
