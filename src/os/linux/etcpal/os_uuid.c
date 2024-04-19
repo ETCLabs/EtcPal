@@ -29,7 +29,7 @@ etcpal_error_t etcpal_generate_v1_uuid(EtcPalUuid* uuid)
   if (!uuid)
     return kEtcPalErrInvalid;
 
-  uuid_t os_uuid;
+  uuid_t os_uuid = {0};
   uuid_generate_time(os_uuid);
   memcpy(uuid->data, os_uuid, ETCPAL_UUID_BYTES);
   return kEtcPalErrOk;
@@ -40,7 +40,7 @@ etcpal_error_t etcpal_generate_v4_uuid(EtcPalUuid* uuid)
   if (!uuid)
     return kEtcPalErrInvalid;
 
-  uuid_t os_uuid;
+  uuid_t os_uuid = {0};
   uuid_generate_random(os_uuid);
   memcpy(uuid->data, os_uuid, ETCPAL_UUID_BYTES);
   return kEtcPalErrOk;
@@ -51,7 +51,7 @@ etcpal_error_t etcpal_generate_os_preferred_uuid(EtcPalUuid* uuid)
   if (!uuid)
     return kEtcPalErrInvalid;
 
-  uuid_t os_uuid;
+  uuid_t os_uuid = {0};
   uuid_generate(os_uuid);
   memcpy(uuid->data, os_uuid, ETCPAL_UUID_BYTES);
   return kEtcPalErrOk;
