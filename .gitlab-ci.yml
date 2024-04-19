@@ -64,7 +64,7 @@ macos-build-and-test:
     reports:
       junit: build/test_results_*.xml
 
-linux-build-and-test:
+linux-gcc-build-and-test:
   stage: build
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/gcc-cmake:latest
   tags:
@@ -80,6 +80,36 @@ linux-build-and-test:
       SANITIZER_DEFS:
       - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
       - -DETCPAL_ENABLE_TSAN=ON
+  script:
+  - python3 -m pip install unity-test-parser
+  - mkdir build
+  - cd build
+  # The CMAKE_CXX_FLAGS var must be quoted here and not in the variable because of this bug:
+  # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1742
+  - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ${CMAKE_DEFS} ${SANITIZER_DEFS} -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}" ..
+  - cmake --build .
+  - cd ..
+  - python3 tools/ci/run_tests.py build
+  artifacts:
+    when: always
+    reports:
+      junit: build/test_results_*.xml
+
+linux-clang-build-and-test:
+  stage: build
+  image: etc-docker.artifactory.etcconnect.com/etc/common-tech/clang-cmake-msan:latest
+  tags:
+  - etc-linux-docker
+  variables:
+    # TODO remove ETCPAL_TEST_IPV6=OFF when DEVOPS-1383 is completed
+    CMAKE_DEFS: -DETCPAL_TEST_IPV6=OFF
+  parallel:
+    matrix:
+    - CMAKE_CXX_FLAGS:
+      - -fexceptions
+      - -fno-exceptions
+      SANITIZER_DEFS:
+      - -DETCPAL_ENABLE_MSAN=ON
   script:
   - python3 -m pip install unity-test-parser
   - mkdir build
