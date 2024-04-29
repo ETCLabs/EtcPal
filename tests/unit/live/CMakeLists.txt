@@ -32,6 +32,9 @@ if(ETCPAL_HAVE_OS_SUPPORT)
       test_event_group.c
       test_recursive_mutex.c
     )
+    if (ETCPAL_OS_TARGET STREQUAL "linux")  # Fix undefined reference to `log' error in dev container
+      target_link_libraries(etcpal_live_unit_tests PUBLIC m)
+    endif()
   endif()
 
   # Queues not supported on MQX or Apple platforms
