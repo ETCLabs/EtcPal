@@ -17,7 +17,9 @@
 		// Configure properties specific to VS Code.
 		"vscode": {
 			"settings": {
-				"lldb.showDisassembly": "never"
+				"lldb.showDisassembly": "never",
+				"perforceStaticAnalysis.activeToolSelection": "Klocwork",
+				"klocworkSystemProperties.logging.level": "verbose"
 			},
 			"extensions": [
 				"ms-vscode.cpptools-extension-pack",

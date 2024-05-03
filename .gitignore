@@ -75,3 +75,9 @@ Thumbs.db
 .vscode/
 *.code-workspace
 *.filters
+
+# Klocwork files
+.kwlp/
+.kwps/
+kwinject.out
+kwtables/
