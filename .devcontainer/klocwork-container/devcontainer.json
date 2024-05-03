@@ -7,6 +7,7 @@
   	"service": "klocwork",
 	"shutdownAction": "none",
 	"workspaceFolder": "/workspace",
+	"mounts": ["source=${localEnv:HOME}${localEnv:USERPROFILE}/.klocwork,target=/home/kwuser/.klocwork,type=bind"],
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
@@ -21,7 +22,8 @@
 			"extensions": [
 				"ms-vscode.cpptools-extension-pack",
 				"ms-azuretools.vscode-docker",
-				"vadimcn.vscode-lldb"
+				"vadimcn.vscode-lldb",
+				"/klocwork/p4savscodeextension.vsix"
 			]
 		}
 	}
