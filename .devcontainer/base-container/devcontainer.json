@@ -2,13 +2,11 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
 {
-	"name": "EtcPal Development",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	// "image": "etc-docker.artifactory.etcconnect.com/etc/common-tech/clang-cmake-msan:latest",
-	"build": {
-        // Path is relative to the devcontainer.json file.
-        "dockerfile": "Dockerfile"
-    },
+	"name": "Base Dev Container",
+	"dockerComposeFile": ["../../docker-compose.yml"],
+  	"service": "gcc-cmake",
+	"shutdownAction": "none",
+	"workspaceFolder": "/workspace",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
