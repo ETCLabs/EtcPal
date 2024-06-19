@@ -33,7 +33,7 @@ extern "C" {
 #define ETCPAL_THREAD_DEFAULT_STACK    2000
 #define ETCPAL_THREAD_DEFAULT_NAME     "etcpal_thread"
 #define ETCPAL_THREAD_HAS_TIMED_JOIN   1
-#define ETCPAL_THREAD_NAME_MAX_LENGTH  16
+#define ETCPAL_THREAD_NAME_MAX_LENGTH  configMAX_TASK_NAME_LEN
 
 typedef TaskHandle_t etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
