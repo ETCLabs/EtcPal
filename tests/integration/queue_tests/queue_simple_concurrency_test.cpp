@@ -62,7 +62,7 @@ static void register_value_received(long long int val)
   etcpal_sem_post(&occ_map_lock);
 }
 
-static bool check_occurrences(unsigned num_expected_occurrences)
+static bool check_occurrences(unsigned short num_expected_occurrences)
 {
   bool true_if_success = true;
   etcpal_sem_wait(&occ_map_lock);
@@ -71,7 +71,7 @@ static bool check_occurrences(unsigned num_expected_occurrences)
     if (val_occ_pair.second != num_expected_occurrences)
     {
       true_if_success = false;
-      printf("\r\n\tERROR: The value %lld occurred %d times, expected %d occurrences", val_occ_pair.first,
+      printf("\r\n\tERROR: The value %lld occurred %u times, expected %hu occurrences", val_occ_pair.first,
              val_occ_pair.second, num_expected_occurrences);
     }
   }
@@ -122,14 +122,14 @@ static void reader_func(etcpal::Queue<long long int>& queue)
 std::vector<etcpal::Thread> writer_threads;
 std::vector<etcpal::Thread> reader_threads;
 
-static void create_writer_test(etcpal::Queue<long long int>& q, int num_writers)
+static void create_writer_test(etcpal::Queue<long long int>& q, unsigned short num_writers)
 {
   writer_threads.reserve(num_writers);
   std::array<char, ETCPAL_THREAD_NAME_MAX_LENGTH> thread_name{};
 
-  for (int i = 0; i < num_writers; i++)
+  for (unsigned short i = 0u; i < num_writers; i++)
   {
-    sprintf(thread_name.data(), "Writer %d", i);
+    sprintf(thread_name.data(), "Writer %hu", i);
 
     etcpal::Thread thread;
     thread.SetPriority(1).SetStackSize(0x5000).SetName(thread_name.data()).Start(writer_func, std::ref(q));
@@ -137,14 +137,14 @@ static void create_writer_test(etcpal::Queue<long long int>& q, int num_writers)
   }
 }
 
-static void create_reader_test(etcpal::Queue<long long int>& q, int num_readers)
+static void create_reader_test(etcpal::Queue<long long int>& q, unsigned short num_readers)
 {
   reader_threads.reserve(num_readers);
   std::array<char, ETCPAL_THREAD_NAME_MAX_LENGTH> thread_name{};
 
-  for (int i = 0; i < num_readers; i++)
+  for (unsigned short i = 0u; i < num_readers; i++)
   {
-    sprintf(thread_name.data(), "Reader %d", i);
+    sprintf(thread_name.data(), "Reader %hu", i);
 
     etcpal::Thread thread;
     thread.SetPriority(1).SetStackSize(0x5000).SetName(thread_name.data()).Start(reader_func, std::ref(q));
@@ -152,16 +152,14 @@ static void create_reader_test(etcpal::Queue<long long int>& q, int num_readers)
   }
 }
 
-static void wait_for_writer_complete(int num_threads)
+static void wait_for_writer_complete()
 {
-  ETCPAL_UNUSED_ARG(num_threads);
   for (auto& thread : writer_threads)
     thread.Join();
 }
 
-static void wait_for_reader_complete(int num_threads)
+static void wait_for_reader_complete()
 {
-  ETCPAL_UNUSED_ARG(num_threads);
   for (auto& thread : reader_threads)
     thread.Join();
 }
@@ -181,12 +179,12 @@ bool concurrent_small_queue_few_writers()
   writer_failure = false;
 
   // Each of 8 thread writes 1 element, to fill a queue with 8 slots
-  int                          num_threads = 8;
+  unsigned short               num_threads = 8u;
   etcpal::Queue<long long int> q(8);
   num_writes = 1;
 
   create_writer_test(q, num_threads);
-  wait_for_writer_complete(num_threads);
+  wait_for_writer_complete();
   cleanup_writers();
   return !writer_failure;
 }
@@ -197,11 +195,11 @@ bool concurrent_large_queue_few_writers_many_items()
 
   // Each of 8 threads writes 10000 elements, to fill a queue with 80000 elements
   num_writes                               = 10000;
-  int                          num_threads = 8;
+  unsigned short               num_threads = 8u;
   etcpal::Queue<long long int> q(80000);
 
   create_writer_test(q, num_threads);
-  wait_for_writer_complete(num_threads);
+  wait_for_writer_complete();
   cleanup_writers();
   return !writer_failure;
 }
@@ -212,11 +210,11 @@ bool concurrent_large_queue_many_writers_few_items()
 
   // Each of 100 threads writes 800 elements, to fill a queue with 80000 elements
   num_writes                               = 800;
-  int                          num_threads = 100;
+  unsigned short               num_threads = 100u;
   etcpal::Queue<long long int> q(80000);
 
   create_writer_test(q, num_threads);
-  wait_for_writer_complete(num_threads);
+  wait_for_writer_complete();
   cleanup_writers();
   return !writer_failure;
 }
@@ -234,15 +232,15 @@ bool concurrent_small_queue_one_reader_few_writers_few_items()
 
   num_writes                               = 8;
   num_reads                                = 64;
-  int                          num_writers = 8;
-  int                          num_readers = 1;
+  unsigned short               num_writers = 8u;
+  unsigned short               num_readers = 1u;
   etcpal::Queue<long long int> q(8);
 
   create_writer_test(q, num_writers);
   create_reader_test(q, num_readers);
 
-  wait_for_writer_complete(num_writers);
-  wait_for_reader_complete(num_readers);
+  wait_for_writer_complete();
+  wait_for_reader_complete();
 
   occurrence_fail = !check_occurrences(num_writers);
   reset_occurrence_counter();
@@ -266,15 +264,15 @@ bool concurrent_small_queue_few_readers_few_writers_few_items()
 
   num_writes                               = 8;
   num_reads                                = 8;
-  int                          num_writers = 8;
-  int                          num_readers = 8;
+  unsigned short               num_writers = 8u;
+  unsigned short               num_readers = 8u;
   etcpal::Queue<long long int> q(8);
 
   create_writer_test(q, num_writers);
   create_reader_test(q, num_readers);
 
-  wait_for_writer_complete(num_writers);
-  wait_for_reader_complete(num_readers);
+  wait_for_writer_complete();
+  wait_for_reader_complete();
 
   occurrence_fail = !check_occurrences(num_writers);
   reset_occurrence_counter();
@@ -298,15 +296,15 @@ bool concurrent_small_queue_few_readers_many_writers_many_items()
 
   num_writes                               = 800;
   num_reads                                = 10000;
-  int                          num_writers = 100;
-  int                          num_readers = 8;
+  unsigned short               num_writers = 100u;
+  unsigned short               num_readers = 8u;
   etcpal::Queue<long long int> q(8);
 
   create_writer_test(q, num_writers);
   create_reader_test(q, num_readers);
 
-  wait_for_writer_complete(num_writers);
-  wait_for_reader_complete(num_readers);
+  wait_for_writer_complete();
+  wait_for_reader_complete();
 
   occurrence_fail = !check_occurrences(num_writers);
   reset_occurrence_counter();
@@ -330,15 +328,15 @@ bool concurrent_small_queue_many_readers_few_writers_many_items()
 
   num_writes                               = 10000;
   num_reads                                = 800;
-  int                          num_writers = 8;
-  int                          num_readers = 100;
+  unsigned short               num_writers = 8u;
+  unsigned short               num_readers = 100u;
   etcpal::Queue<long long int> q(8);
 
   create_writer_test(q, num_writers);
   create_reader_test(q, num_readers);
 
-  wait_for_writer_complete(num_writers);
-  wait_for_reader_complete(num_readers);
+  wait_for_writer_complete();
+  wait_for_reader_complete();
 
   occurrence_fail = !check_occurrences(num_writers);
   reset_occurrence_counter();

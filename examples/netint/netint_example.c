@@ -108,6 +108,10 @@ int main(void)
   if ((num_interfaces == 0) || !netint_arr)
   {
     printf((num_interfaces == 0) ? "Error: No network interfaces found on system.\n" : "Error: Out of memory.\n");
+
+    if (netint_arr)
+      free(netint_arr);
+
     etcpal_deinit(ETCPAL_FEATURE_NETINTS);
     return 1;
   }

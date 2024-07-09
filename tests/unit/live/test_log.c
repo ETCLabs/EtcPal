@@ -748,6 +748,8 @@ static char get_sanitized_char(size_t i)
 // Test logging a maximum length string.
 TEST(etcpal_log, maximum_length_human_string_works)
 {
+  static const char* kHumanStrHeading = "1970-01-01 00:00:00.000-12:00 [DBUG] ";
+
   EtcPalLogParams lparams        = ETCPAL_LOG_PARAMS_INIT;
   lparams.action                 = ETCPAL_LOG_CREATE_HUMAN_READABLE;
   lparams.log_fn                 = log_callback;
@@ -759,8 +761,8 @@ TEST(etcpal_log, maximum_length_human_string_works)
 
   static char expect_human_str[ETCPAL_LOG_STR_MAX_LEN];
   static char expect_raw_str[ETCPAL_LOG_STR_MAX_LEN];
-  strcpy(expect_human_str, "1970-01-01 00:00:00.000-12:00 [DBUG] ");
-  size_t str_pos = strlen(expect_human_str);
+  strcpy(expect_human_str, kHumanStrHeading);
+  size_t str_pos = strlen(kHumanStrHeading);
 
   // Now build our actual log message
   static char to_log_str[ETCPAL_RAW_LOG_MSG_MAX_LEN];
@@ -796,6 +798,8 @@ TEST(etcpal_log, maximum_length_human_string_works)
 
 TEST(etcpal_log, maximum_length_syslog_string_works)
 {
+  static const char* kSyslogStrHeading = "<191>1 1970-01-01T00:00:00.000-12:00 ";
+
   EtcPalLogParams lparams        = ETCPAL_LOG_PARAMS_INIT;
   lparams.action                 = ETCPAL_LOG_CREATE_SYSLOG;
   lparams.log_fn                 = log_callback;
@@ -805,9 +809,9 @@ TEST(etcpal_log, maximum_length_syslog_string_works)
 
   static char expect_syslog_str[ETCPAL_SYSLOG_STR_MAX_LEN];
   static char expect_raw_str[ETCPAL_LOG_STR_MAX_LEN];
-  strcpy(expect_syslog_str, "<191>1 1970-01-01T00:00:00.000-12:00 ");
+  strcpy(expect_syslog_str, kSyslogStrHeading);
 
-  size_t str_pos = strlen(expect_syslog_str);
+  size_t str_pos = strlen(kSyslogStrHeading);
 
   // Create our very long syslog header components
   size_t i = 0;
@@ -880,6 +884,8 @@ TEST(etcpal_log, maximum_length_syslog_string_works)
 
 TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
 {
+  static const char* kSyslogStrHeading = "<191>Jan  1 00:00:00 ";
+
   EtcPalLogParams lparams        = ETCPAL_LOG_PARAMS_INIT;
   lparams.action                 = ETCPAL_LOG_CREATE_LEGACY_SYSLOG;
   lparams.log_fn                 = log_callback;
@@ -889,8 +895,8 @@ TEST(etcpal_log, maximum_length_legacy_syslog_string_works)
 
   static char expect_syslog_str[ETCPAL_SYSLOG_STR_MAX_LEN];
   static char expect_raw_str[ETCPAL_LOG_STR_MAX_LEN];
-  strcpy(expect_syslog_str, "<191>Jan  1 00:00:00 ");
-  size_t str_pos = strlen(expect_syslog_str);
+  strcpy(expect_syslog_str, kSyslogStrHeading);
+  size_t str_pos = strlen(kSyslogStrHeading);
 
   // Create our very long syslog header components
   size_t i = 0;

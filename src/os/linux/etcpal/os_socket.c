@@ -645,7 +645,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       if (option_len == sizeof(EtcPalGroupReq))
       {
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
-        if (ETCPAL_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
+        if (ETCPAL_IP_IS_V4(&greq->group))
         {
           struct group_req val = {0};
           val.gr_interface     = (uint32_t)greq->ifindex;
@@ -662,7 +662,7 @@ int setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value,
       if (option_len == sizeof(EtcPalGroupReq))
       {
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
-        if (ETCPAL_IP_IS_V4(&greq->group) && greq->ifindex >= 0)
+        if (ETCPAL_IP_IS_V4(&greq->group))
         {
           struct group_req val = {0};
           val.gr_interface     = (uint32_t)greq->ifindex;
@@ -710,7 +710,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
       if (option_len == sizeof(EtcPalGroupReq))
       {
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
-        if (ETCPAL_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
+        if (ETCPAL_IP_IS_V6(&greq->group))
         {
           struct group_req val = {0};
           val.gr_interface     = (uint32_t)greq->ifindex;
@@ -727,7 +727,7 @@ int setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value
       if (option_len == sizeof(EtcPalGroupReq))
       {
         EtcPalGroupReq* greq = (EtcPalGroupReq*)option_value;
-        if (ETCPAL_IP_IS_V6(&greq->group) && greq->ifindex >= 0)
+        if (ETCPAL_IP_IS_V6(&greq->group))
         {
           struct group_req val = {0};
           val.gr_interface     = (uint32_t)greq->ifindex;

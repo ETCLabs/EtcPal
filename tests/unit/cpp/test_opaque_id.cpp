@@ -105,10 +105,13 @@ TEST(etcpal_cpp_opaque_id, std_set_works)
 
   TEST_ASSERT_EQUAL(ids.size(), 2u);
 
-  auto set_it = ids.begin();
-  TEST_ASSERT_EQUAL(set_it->value(), -1);
-  ++set_it;
-  TEST_ASSERT_EQUAL(set_it->value(), 1);
+  for (auto set_it = ids.begin(); set_it != ids.end(); ++set_it)
+  {
+    if (set_it == ids.begin())
+      TEST_ASSERT_EQUAL(set_it->value(), -1);
+    else
+      TEST_ASSERT_EQUAL(set_it->value(), 1);
+  }
 }
 
 TEST(etcpal_cpp_opaque_id, std_hash_works)

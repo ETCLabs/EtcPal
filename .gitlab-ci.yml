@@ -14,16 +14,21 @@ stages:
 
 variables:
   COMMON_CMAKE_DEFS: -DETCPAL_BUILD_MOCK_LIB=ON -DETCPAL_BUILD_TESTS=ON -DETCPAL_BUILD_EXAMPLES=ON -DETCPAL_WARN_AS_ERROR=ON
+  KLOCWORK_PROJECT: "EtcPal"
 
 include:
 # Helper for environment setup for native Ninja builds with Windows/MSVC
 - project: "etc/common-tech/tools/gitlab-ci-util"
-  ref: v2.0.1
+  ref: v2.2.1
   file: "/ci-yml/msvc-environment.yml"
+# Versioned build automation
 - project: "etc/common-tech/tools/gitlab-ci-util"
-  # Versioned build automation
-  ref: v2.0.1
+  ref: v2.2.1
   file: "/ci-yml/deploy-versioned-build.yml"
+# Klocwork static analysis
+- project: "etc/common-tech/tools/gitlab-ci-util"
+  ref: v2.2.1
+  file: "/ci-yml/linux-klocwork.yml"
 
 windows-build-and-test:
   stage: build

@@ -24,9 +24,19 @@ bool etcpal_recursive_mutex_create(etcpal_recursive_mutex_t* id)
   if (id)
   {
     pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    return (bool)(!pthread_mutex_init(id, &attr));
+    if (pthread_mutexattr_init(&attr) != 0)
+      return false;
+
+    if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) != 0)
+    {
+      pthread_mutexattr_destroy(&attr);
+      return false;
+    }
+
+    bool res = (pthread_mutex_init(id, &attr) == 0);
+
+    pthread_mutexattr_destroy(&attr);  // No longer needed, can be cleaned up now
+    return res;
   }
   return false;
 }

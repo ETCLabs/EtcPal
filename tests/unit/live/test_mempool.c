@@ -110,12 +110,14 @@ TEST(etcpal_mempool, alloc_and_free_array_works)
   {
     TestElem* elem_arr = (TestElem*)etcpal_mempool_alloc(alloc_array_test);
     TEST_ASSERT(elem_arr);
-
-    // Write to each spot in the array - failure could be caught by a segfault or similar
-    for (size_t j = 0; j < ALLOC_TEST_MEMP_ARR_SIZE; ++j)
+    if (elem_arr)
     {
-      elem_arr[j].val1 = 1;
-      elem_arr[j].val2 = 2;
+      // Write to each spot in the array - failure could be caught by a segfault or similar
+      for (size_t j = 0; j < ALLOC_TEST_MEMP_ARR_SIZE; ++j)
+      {
+        elem_arr[j].val1 = 1;
+        elem_arr[j].val2 = 2;
+      }
     }
 
     test_arr[i] = elem_arr;

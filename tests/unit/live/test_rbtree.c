@@ -234,7 +234,8 @@ TEST(etcpal_rbtree, insert_node_functions_work)
 
   int* found = (int*)etcpal_rbtree_find(&tree, &to_find);
   TEST_ASSERT_NOT_NULL_MESSAGE(found, test_error_msg);
-  TEST_ASSERT_EQUAL(*found, to_find);
+  if (found)
+    TEST_ASSERT_EQUAL(*found, to_find);
 
   // Try removing one item
   int to_remove = RANDOM_INT_IN_ARRAY();
@@ -267,7 +268,8 @@ TEST(etcpal_rbtree, insert_functions_work)
 
   int* found = (int*)etcpal_rbtree_find(&tree, &to_find);
   TEST_ASSERT_NOT_NULL_MESSAGE(found, test_error_msg);
-  TEST_ASSERT_EQUAL(*found, to_find);
+  if (found)
+    TEST_ASSERT_EQUAL(*found, to_find);
 
   // Make sure removing something that wasn't in the tree fails.
   int not_in_tree = INT_ARRAY_SIZE;
@@ -339,36 +341,42 @@ TEST(etcpal_rbtree, iterators_work_as_expected)
   // Although the elements were inserted in random order, the tree should be sorted so 0 should be
   // the first value.
   TEST_ASSERT_NOT_NULL(val);
-  TEST_ASSERT_EQUAL(*val, 0);
-
-  // Test iterating through the tree in forward order.
-  int num_iterations = 1;
-  int last_val       = *val;
-  while ((val = (int*)etcpal_rbiter_next(&iter)) != NULL)
+  if (val)
   {
-    ++num_iterations;
-    // Each value given by the iterator should be the next one in order in the tree.
-    TEST_ASSERT_EQUAL(*val, last_val + 1);
-    last_val = *val;
+    TEST_ASSERT_EQUAL(*val, 0);
+
+    // Test iterating through the tree in forward order.
+    int num_iterations = 1;
+    int last_val       = *val;
+    while ((val = (int*)etcpal_rbiter_next(&iter)) != NULL)
+    {
+      ++num_iterations;
+      // Each value given by the iterator should be the next one in order in the tree.
+      TEST_ASSERT_EQUAL(*val, last_val + 1);
+      last_val = *val;
+    }
+    TEST_ASSERT_EQUAL(num_iterations, INT_ARRAY_SIZE);
   }
-  TEST_ASSERT_EQUAL(num_iterations, INT_ARRAY_SIZE);
 
   // Get the last value.
   val = (int*)etcpal_rbiter_last(&iter, &tree);
   TEST_ASSERT_NOT_NULL(val);
-  TEST_ASSERT_EQUAL(*val, INT_ARRAY_SIZE - 1);
-
-  // Test iterating through the tree in reverse order.
-  num_iterations = 1;
-  last_val       = *val;
-  while ((val = (int*)etcpal_rbiter_prev(&iter)) != NULL)
+  if (val)
   {
-    ++num_iterations;
-    // Each value given by the iterator should be the previous one in order in the tree.
-    TEST_ASSERT_EQUAL(*val, last_val - 1);
-    last_val = *val;
+    TEST_ASSERT_EQUAL(*val, INT_ARRAY_SIZE - 1);
+
+    // Test iterating through the tree in reverse order.
+    int num_iterations = 1;
+    int last_val       = *val;
+    while ((val = (int*)etcpal_rbiter_prev(&iter)) != NULL)
+    {
+      ++num_iterations;
+      // Each value given by the iterator should be the previous one in order in the tree.
+      TEST_ASSERT_EQUAL(*val, last_val - 1);
+      last_val = *val;
+    }
+    TEST_ASSERT_EQUAL(num_iterations, INT_ARRAY_SIZE);
   }
-  TEST_ASSERT_EQUAL(num_iterations, INT_ARRAY_SIZE);
 }
 
 TEST(etcpal_rbtree, max_height_is_within_bounds)

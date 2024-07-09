@@ -436,7 +436,7 @@ etcpal_error_t send_netlink_route_request(int socket, int family)
   memset(&naddr, 0, sizeof(naddr));
   naddr.nl_family = AF_NETLINK;
 
-  if (sendto(socket, &req.nl_header, req.nl_header.nlmsg_len, 0, (struct sockaddr*)&naddr, sizeof(naddr)) >= 0)
+  if (sendto(socket, &req, req.nl_header.nlmsg_len, 0, (struct sockaddr*)&naddr, sizeof(naddr)) >= 0)
     return kEtcPalErrOk;
 
   return errno_os_to_etcpal(errno);

@@ -330,7 +330,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   TEST_ASSERT_EQUAL(event.err, kEtcPalErrOk);
 
   // Receive data on the socket.
-  uint8_t        recv_buf[POLL_UDP_IN_TEST_MESSAGE_LENGTH];
+  uint8_t        recv_buf[POLL_UDP_IN_TEST_MESSAGE_LENGTH] = {0};
   EtcPalSockAddr from_addr;
   TEST_ASSERT_EQUAL(POLL_UDP_IN_TEST_MESSAGE_LENGTH,
                     (size_t)etcpal_recvfrom(event.socket, recv_buf, POLL_UDP_IN_TEST_MESSAGE_LENGTH, 0, &from_addr));

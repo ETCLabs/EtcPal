@@ -470,7 +470,7 @@ etcpal_error_t etcpal_rbtree_remove_with_cb(EtcPalRbTree* self, const void* valu
             s->red = 1;
             q->red = 1;
           }
-          else
+          else if (ETCPAL_ASSERT_VERIFY(g))
           {
             int dir2 = g->link[1] == p;
             if (rb_node_is_red(s->link[last]))

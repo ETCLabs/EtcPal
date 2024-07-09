@@ -151,13 +151,14 @@ int main(void)
   if (res == kEtcPalErrOk)
     res = print_packet_info(bytes_received, &msg);
 
+  // Clean up
+  if (rcvsock != ETCPAL_SOCKET_INVALID)
+    etcpal_close(rcvsock);
+
   if (res != kEtcPalErrOk)
-  {
     printf("Error occurred: '%s'\n", etcpal_strerror(res));
-    return 1;
-  }
 
   // Must always deinit with the same feature macro combination that was passed to init().
   etcpal_deinit(ETCPAL_FEATURE_SOCKETS);
-  return 0;
+  return (res == kEtcPalErrOk) ? 0 : 1;
 }

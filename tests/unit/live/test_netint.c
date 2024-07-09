@@ -156,33 +156,37 @@ TEST(etcpal_netint, get_netints_by_index_works)
     EtcPalNetintInfo* current_arr_by_index   = calloc(num_netints, sizeof(EtcPalNetintInfo));
     size_t            current_index_arr_size = 0;
 
-    const EtcPalNetintInfo* netint           = netints;
-    const EtcPalNetintInfo* netint_for_index = current_arr_by_index;
-    while (netint < (netints + num_netints))
+    TEST_ASSERT(current_arr_by_index);
+    if (current_arr_by_index)
     {
-      if (netint->index > current_index)
+      const EtcPalNetintInfo* netint           = netints;
+      const EtcPalNetintInfo* netint_for_index = current_arr_by_index;
+      while (netint < (netints + num_netints))
       {
-        current_index = netint->index;
+        if (netint->index > current_index)
+        {
+          current_index = netint->index;
 
-        // The previous get-by-index array should be exhausted
-        TEST_ASSERT_EQUAL_PTR(current_arr_by_index + current_index_arr_size, netint_for_index);
+          // The previous get-by-index array should be exhausted
+          TEST_ASSERT_EQUAL_PTR(current_arr_by_index + current_index_arr_size, netint_for_index);
 
-        // Get the new one
-        current_index_arr_size = num_netints;
-        TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces_for_index(netint->index, current_arr_by_index,
-                                                                               &current_index_arr_size));
-        TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
+          // Get the new one
+          current_index_arr_size = num_netints;
+          TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_netint_get_interfaces_for_index(netint->index, current_arr_by_index,
+                                                                                 &current_index_arr_size));
+          TEST_ASSERT_GREATER_THAN_UINT(0u, current_index_arr_size);
 
-        netint_for_index = current_arr_by_index;
+          netint_for_index = current_arr_by_index;
+        }
+
+        // Now check this netints element (netint) against the corresponding arr_by_index entry (netint_for_index)
+        TEST_ASSERT_EQUAL(0, etcpal_netint_info_cmp(netint, netint_for_index));
+        ++netint;
+        ++netint_for_index;
       }
 
-      // Now check this netints element (netint) against the corresponding arr_by_index entry (netint_for_index)
-      TEST_ASSERT_EQUAL(0, etcpal_netint_info_cmp(netint, netint_for_index));
-      ++netint;
-      ++netint_for_index;
+      free(current_arr_by_index);
     }
-
-    free(current_arr_by_index);
 
     // Refresh network interfaces between test iterations
     refresh_netints();
