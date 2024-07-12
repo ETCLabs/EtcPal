@@ -109,7 +109,7 @@ inline etcpal::Expected<std::vector<etcpal::NetintInfo>> GetInterfaces(NetintInd
   if (err == kEtcPalErrOk)
   {
     std::vector<etcpal::NetintInfo> netints(num_netints);
-    for (int i = 0; i < num_netints; ++i)
+    for (size_t i = 0u; i < num_netints; ++i)
       netints[i] = etcpal::NetintInfo(c_netints[i]);
 
     return netints;
