@@ -56,11 +56,11 @@ namespace etcpal
 /// etcpal::TimePoint::Now() - tp).
 /// @return A string representing the duration, in the format of "_ hr _ min _ sec _ ms" (with zeroes being omitted up
 /// to the first non-zero value or 0 ms).
-inline std::string DurationToString(uint32_t duration_ms) noexcept
+inline std::string DurationToString(int32_t duration_ms) noexcept
 {
   std::stringstream res;
 
-  std::chrono::milliseconds milliseconds{duration_ms};
+  std::chrono::milliseconds milliseconds{std::abs(duration_ms)};
 
   auto seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);
   milliseconds -= std::chrono::duration_cast<std::chrono::milliseconds>(seconds);
@@ -69,6 +69,8 @@ inline std::string DurationToString(uint32_t duration_ms) noexcept
   auto hours = std::chrono::duration_cast<std::chrono::hours>(minutes);
   minutes -= std::chrono::duration_cast<std::chrono::minutes>(hours);
 
+  if (duration_ms < 0)
+    res << "-";
   if (hours > std::chrono::hours{0})
     res << hours.count() << " hr ";
   if (minutes > std::chrono::minutes{0})
@@ -144,8 +146,6 @@ public:
 
   ETCPAL_CONSTEXPR_14 TimePoint& operator+=(uint32_t duration) noexcept;
   ETCPAL_CONSTEXPR_14 TimePoint& operator-=(uint32_t duration) noexcept;
-  
-  ETCPAL_CONSTEXPR_14 uint32_t operator-(const TimePoint& rhs) noexcept;
 
   static TimePoint   Now() noexcept;
   static std::string DurationToString(uint32_t duration) noexcept;
@@ -177,14 +177,6 @@ ETCPAL_CONSTEXPR_14_OR_INLINE TimePoint& TimePoint::operator-=(uint32_t duration
 {
   ms_ -= duration;
   return *this;
-}
-
-/// @brief Get the duration between two TimePoints.
-/// @param rhs The TimePoint to measure the duration from until this TimePoint.
-/// @return The millisecond duration between this TimePoint and rhs. 
-ETCPAL_CONSTEXPR_14_OR_INLINE uint32_t TimePoint::operator-(const TimePoint& rhs) noexcept
-{
-  return ms_ - rhs.ms_;
 }
 
 /// @brief Get a TimePoint representing the current time.
