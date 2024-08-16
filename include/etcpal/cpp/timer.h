@@ -147,8 +147,7 @@ public:
   ETCPAL_CONSTEXPR_14 TimePoint& operator+=(uint32_t duration) noexcept;
   ETCPAL_CONSTEXPR_14 TimePoint& operator-=(uint32_t duration) noexcept;
 
-  static TimePoint   Now() noexcept;
-  static std::string DurationToString(uint32_t duration) noexcept;
+  static TimePoint Now() noexcept;
 
 private:
   uint32_t ms_{0};
