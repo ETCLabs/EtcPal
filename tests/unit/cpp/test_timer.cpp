@@ -27,6 +27,28 @@
 
 extern "C" {
 
+TEST_GROUP(etcpal_duration_to_string);
+
+TEST_SETUP(etcpal_duration_to_string)
+{
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_init(ETCPAL_FEATURE_TIMERS));
+}
+
+TEST_TEAR_DOWN(etcpal_duration_to_string)
+{
+  etcpal_deinit(ETCPAL_FEATURE_TIMERS);
+}
+
+TEST(etcpal_duration_to_string, duration_to_string_works)
+{
+  etcpal::TimePoint tp1(20);
+  etcpal::TimePoint tp2(30);
+  // For now just run & verify something is returned.
+  TEST_ASSERT_FALSE(etcpal::DurationToString(tp2 - tp1).empty());
+  TEST_ASSERT_FALSE(etcpal::DurationToString(etcpal::TimePoint::Now() - tp1).empty());
+  TEST_ASSERT_FALSE(etcpal::DurationToString(etcpal::TimePoint::Now() - tp2).empty());
+}
+
 TEST_GROUP(etcpal_time_point);
 
 TEST_SETUP(etcpal_time_point)
@@ -190,6 +212,7 @@ TEST(etcpal_cpp_timer, duration_interval_works)
 
 TEST_GROUP_RUNNER(etcpal_cpp_timer)
 {
+  RUN_TEST_CASE(etcpal_duration_to_string, duration_to_string_works);
   RUN_TEST_CASE(etcpal_time_point, default_constructor_works);
   RUN_TEST_CASE(etcpal_time_point, equality_operators_work);
   RUN_TEST_CASE(etcpal_time_point, comparison_operators_work);

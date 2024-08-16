@@ -26,6 +26,8 @@
 #include <algorithm>
 #include <chrono>
 #include <limits>
+#include <sstream>
+#include <string>
 #include "etcpal/timer.h"
 #include "etcpal/cpp/common.h"
 
@@ -47,6 +49,39 @@ namespace etcpal
 ///
 /// Provides a class for representing points in time (TimePoint) and one which implements a passive
 /// monotonic timer (Timer).
+
+/// @ingroup etcpal_cpp_timer
+/// @brief Get a string represention of a millisecond duration.
+/// @param duration_ms The millisecond duration (can be obtained by substracting two TimePoints, e.g.
+/// etcpal::TimePoint::Now() - tp).
+/// @return A string representing the duration, in the format of "_ hr _ min _ sec _ ms" (with zeroes being omitted up
+/// to the first non-zero value or 0 ms).
+inline std::string DurationToString(int32_t duration_ms) noexcept
+{
+  std::stringstream res;
+
+  std::chrono::milliseconds milliseconds{std::abs(duration_ms)};
+
+  auto seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);
+  milliseconds -= std::chrono::duration_cast<std::chrono::milliseconds>(seconds);
+  auto minutes = std::chrono::duration_cast<std::chrono::minutes>(seconds);
+  seconds -= std::chrono::duration_cast<std::chrono::seconds>(minutes);
+  auto hours = std::chrono::duration_cast<std::chrono::hours>(minutes);
+  minutes -= std::chrono::duration_cast<std::chrono::minutes>(hours);
+
+  if (duration_ms < 0)
+    res << "-";
+  if (hours > std::chrono::hours{0})
+    res << hours.count() << " hr ";
+  if (minutes > std::chrono::minutes{0})
+    res << minutes.count() << " min ";
+  if (seconds > std::chrono::seconds{0})
+    res << seconds.count() << " sec ";
+
+  res << milliseconds.count() << " ms";
+
+  return res.str();
+}
 
 /// @ingroup etcpal_cpp_timer
 /// @brief Represents a point in time.

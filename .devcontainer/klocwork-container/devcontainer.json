@@ -2,12 +2,12 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/javascript-node
 {
-	"name": "Klocwork Dev Container",
+	"name": "Klocwork",
 	"dockerComposeFile": ["../../docker-compose.yml"],
   	"service": "klocwork",
 	"shutdownAction": "none",
-	"workspaceFolder": "/workspace",
-	"mounts": ["source=${localEnv:HOME}${localEnv:USERPROFILE}/.klocwork,target=/home/kwuser/.klocwork,type=bind"],
+	"workspaceFolder": "/etcpal",
+	"mounts": ["source=${localEnv:HOME}${localEnv:USERPROFILE}/.klocwork,target=/home/kwuser/.klocwork,type=bind,consistency=cached"],
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
