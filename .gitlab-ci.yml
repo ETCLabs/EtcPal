@@ -19,15 +19,15 @@ variables:
 include:
 # Helper for environment setup for native Ninja builds with Windows/MSVC
 - project: "etc/common-tech/tools/gitlab-ci-util"
-  ref: v2.2.2
+  ref: v2.3.1
   file: "/ci-yml/msvc-environment.yml"
 # Versioned build automation
 - project: "etc/common-tech/tools/gitlab-ci-util"
-  ref: v2.2.2
+  ref: v2.3.1
   file: "/ci-yml/deploy-versioned-build.yml"
 # Klocwork static analysis
 - project: "etc/common-tech/tools/gitlab-ci-util"
-  ref: v2.2.2
+  ref: v2.3.1
   file: "/ci-yml/linux-klocwork.yml"
 
 windows-build-and-test:
