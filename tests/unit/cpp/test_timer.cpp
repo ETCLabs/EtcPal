@@ -121,6 +121,12 @@ TEST(etcpal_time_point, operator_minus_works)
   TEST_ASSERT_EQUAL_INT32(tp1 - tp2, -1);
 }
 
+TEST(etcpal_time_point, time_elapsed_to_string_works)
+{
+  const etcpal::TimePoint kTp(0);
+  TEST_ASSERT_FALSE(kTp.TimeElapsedToString().empty());  // For now just run & verify something is returned
+}
+
 TEST_GROUP(etcpal_cpp_timer);
 
 TEST_SETUP(etcpal_cpp_timer)
@@ -196,6 +202,7 @@ TEST_GROUP_RUNNER(etcpal_cpp_timer)
   RUN_TEST_CASE(etcpal_time_point, value_getter_works);
   RUN_TEST_CASE(etcpal_time_point, incremental_operators_work);
   RUN_TEST_CASE(etcpal_time_point, operator_minus_works);
+  RUN_TEST_CASE(etcpal_time_point, time_elapsed_to_string_works);
   RUN_TEST_CASE(etcpal_cpp_timer, get_interval_works);
   RUN_TEST_CASE(etcpal_cpp_timer, timers_report_expired_properly);
   RUN_TEST_CASE(etcpal_cpp_timer, reset_works);
