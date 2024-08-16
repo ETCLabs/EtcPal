@@ -26,6 +26,8 @@
 #include <algorithm>
 #include <chrono>
 #include <limits>
+#include <sstream>
+#include <string>
 #include "etcpal/timer.h"
 #include "etcpal/cpp/common.h"
 
@@ -113,6 +115,7 @@ public:
   ETCPAL_CONSTEXPR_14 TimePoint& operator-=(uint32_t duration) noexcept;
 
   static TimePoint Now() noexcept;
+  std::string      TimeElapsedToString() const;
 
 private:
   uint32_t ms_{0};
@@ -147,6 +150,34 @@ ETCPAL_CONSTEXPR_14_OR_INLINE TimePoint& TimePoint::operator-=(uint32_t duration
 inline TimePoint TimePoint::Now() noexcept
 {
   return etcpal_getms();
+}
+
+/// @brief Get a string representing the amount of time that has elapsed since this TimePoint.
+/// @return A string representing the elapsed duration, in the format of "_ hr _ min _ sec _ ms" (with zeroes being
+/// omitted up to the first non-zero value).
+inline std::string TimePoint::TimeElapsedToString() const
+{
+  std::stringstream res;
+
+  std::chrono::milliseconds milliseconds{etcpal::TimePoint::Now().value() - ms_};
+
+  auto seconds = std::chrono::duration_cast<std::chrono::seconds>(milliseconds);
+  milliseconds -= std::chrono::duration_cast<std::chrono::milliseconds>(seconds);
+  auto minutes = std::chrono::duration_cast<std::chrono::minutes>(seconds);
+  seconds -= std::chrono::duration_cast<std::chrono::seconds>(minutes);
+  auto hours = std::chrono::duration_cast<std::chrono::hours>(minutes);
+  minutes -= std::chrono::duration_cast<std::chrono::minutes>(hours);
+
+  if (hours > std::chrono::hours{0})
+    res << hours.count() << " hr ";
+  if (minutes > std::chrono::minutes{0})
+    res << minutes.count() << " min ";
+  if (seconds > std::chrono::seconds{0})
+    res << seconds.count() << " sec ";
+
+  res << milliseconds.count() << " ms";
+
+  return res.str();
 }
 
 /// @ingroup etcpal_cpp_timer
