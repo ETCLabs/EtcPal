@@ -51,7 +51,7 @@ windows-build-and-test:
 macos-build-and-test:
   stage: build
   tags:
-  - ct-mac-m2
+  - ct-macos
   parallel:
     matrix:
     - SANITIZER_DEFS:
