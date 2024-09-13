@@ -66,8 +66,8 @@ bool etcpal_uuid_to_string(const EtcPalUuid* uuid, char* buf)
   const uint8_t* c = uuid->data;
 
   /* Minimum buffer size is well documented and cannot be exceeded by this format string. */
-  sprintf(buf, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0], c[1], c[2], c[3], c[4],
-          c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
+  snprintf(buf, ETCPAL_UUID_STRING_BYTES, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", c[0],
+           c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8], c[9], c[10], c[11], c[12], c[13], c[14], c[15]);
   return true;
 }
 
