@@ -50,6 +50,10 @@ function(add_etcpal_library target_name)
     target_compile_definitions(${target_name} PRIVATE
       ETCPAL_TARGETING_FREERTOS=1
     )
+  elseif(ETCPAL_OS_TARGET STREQUAL "macos")
+    target_compile_options(${target_name} PRIVATE
+      -Wno-deprecated-declarations
+    )
   endif()
 
   target_link_libraries(${target_name} PUBLIC ${ETCPAL_OS_ADDITIONAL_LIBS} ${ETCPAL_NET_ADDITIONAL_LIBS})
