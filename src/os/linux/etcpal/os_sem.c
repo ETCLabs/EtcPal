@@ -19,7 +19,19 @@
 
 #include "etcpal/sem.h"
 
+#include <time.h>
+
+#define MS_PER_SEC 1000
+#define NS_PER_MS  1000000
+
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  return (timeout_ms == 0 ? etcpal_sem_try_wait(id) : etcpal_sem_wait(id));
+  const time_t seconds      = timeout_ms / MS_PER_SEC;
+  const time_t nano_seconds = (timeout_ms - (seconds * MS_PER_SEC)) * NS_PER_MS;
+  struct timespec ts
+  {
+    seconds, nano_seconds
+  };
+
+  return !sem_timedwait(id, &ts);
 }

@@ -66,7 +66,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | Platform | Queues Available | #ETCPAL_QUEUE_HAS_STATIC | #ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS | #ETCPAL_QUEUE_HAS_ISR_FUNCTIONS |
  * |----------|------------------|-------------------------|-----------------------------------|---------------------------------|
  * | FreeRTOS | Yes              | No                      | Yes                               | Yes                             |
- * | Linux    | Yes              | No                      | No                                | No                              |
+ * | Linux    | Yes              | No                      | Yes                               | No                              |
  * | macOS    | No               | No                      | N/A                               | N/A                             |
  * | MQX      | No               | No                      | N/A                               | N/A                             |
  * | Windows  | Yes              | No                      | Yes                               | No                              |

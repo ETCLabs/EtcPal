@@ -11,17 +11,17 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * #include "etcpal/sem.h"
  * ```
  *
- * A counting semaphore is a synchronization value which can never fall below zero. Each time the 
+ * A counting semaphore is a synchronization value which can never fall below zero. Each time the
  * semaphore is _posted_, its count increases. Each time the semaphore is _taken_, its count
  * decreases, unless the count is zero, in which case the task waiting for it is blocked until it
  * is posted again. This is often used for tracking events that can occur multiple times before
- * being serviced or pools of resources. 
+ * being serviced or pools of resources.
  *
  * Usage example:
  * @code
  * static etcpal_sem_t sem;
  * #define SEM_MAX_COUNT 20
- * 
+ *
  * void main(void)
  * {
  *   etcpal_sem_create(&sem, 0, SEM_MAX_COUNT);
@@ -37,7 +37,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  *       // interrupt is received.
  *     }
  *   }
- *   
+ *
  *   etcpal_sem_destroy(&sem);
  *   return 0;
  * }
@@ -56,7 +56,7 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * | Platform | #ETCPAL_SEM_HAS_TIMED_WAIT | #ETCPAL_SEM_HAS_POST_FROM_ISR | #ETCPAL_SEM_HAS_MAX_COUNT | #ETCPAL_SEM_MUST_BE_BALANCED | Underlying Type    |
  * |----------|----------------------------|-------------------------------|---------------------------|------------------------------|--------------------|
  * | FreeRTOS | Yes                        | Yes                           | Yes                       | No                           | [Counting Semaphores](https://www.freertos.org/Real-time-embedded-RTOS-Counting-Semaphores.html) |
- * | Linux    | No                         | No                            | No                        | No                           | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
+ * | Linux    | Yes                        | No                            | No                        | No                           | [POSIX Semaphores](https://linux.die.net/man/7/sem_overview) |
  * | macOS    | No                         | No                            | No                        | Yes                          | [Dispatch Semaphores](https://developer.apple.com/documentation/dispatch/dispatch_semaphore?language=objc)
  * | MQX      | Yes                        | No                            | No                        | No                           | Lightweight Semaphores |
  * | Windows  | Yes                        | No                            | Yes                       | No                           | [Semaphore objects](https://docs.microsoft.com/en-us/windows/win32/sync/using-semaphore-objects) |
@@ -74,7 +74,7 @@ typedef PLATFORM_DEFINED etcpal_sem_t;
 
 /**
  * @brief Whether etcpal_sem_timed_wait() is meaningful on this platform.
- * 
+ *
  * If defined to 0, etcpal_sem_timed_wait() executes the equivalent of etcpal_sem_try_wait() if
  * given a timeout of 0, or etcpal_sem_wait() otherwise.
  */
