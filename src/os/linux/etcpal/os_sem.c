@@ -19,7 +19,30 @@
 
 #include "etcpal/sem.h"
 
+#include <time.h>
+
+enum
+{
+  kMsPerSec = 1000,
+  kNsPerMs  = 1000000
+};
+
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
-  return (timeout_ms == 0 ? etcpal_sem_try_wait(id) : etcpal_sem_wait(id));
+  if (timeout_ms == ETCPAL_WAIT_FOREVER)
+  {
+    return etcpal_sem_wait(id);
+  }
+
+  struct timespec ts;
+  if (clock_gettime(CLOCK_REALTIME, &ts) == -1)
+  {
+    return false;
+  }
+  const time_t seconds      = (time_t)timeout_ms / kMsPerSec;
+  const time_t nano_seconds = ((time_t)timeout_ms - (seconds * kMsPerSec)) * kNsPerMs;
+  ts.tv_sec += seconds;
+  ts.tv_nsec += nano_seconds;
+
+  return !sem_timedwait(id, &ts);
 }
