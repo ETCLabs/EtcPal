@@ -26,7 +26,7 @@ enum
 {
   kMsPerSec = 1000,
   kNsPerMs  = 1000000,
-  kMaxNs    = 999999999
+  kNsPerSec = 1000000000
 };
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
@@ -45,12 +45,12 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
   const time_t timeout_nsec = ((time_t)timeout_ms - (timeout_sec * kMsPerSec)) * kNsPerMs;
   ts.tv_sec += timeout_sec;
   ts.tv_nsec += timeout_nsec;
-  if (ts.tv_nsec > kMaxNs)
+  if (ts.tv_nsec >= kNsPerSec)
   {
     ts.tv_sec++;
-    ts.tv_nsec -= kMaxNs;
+    ts.tv_nsec -= kNsPerSec;
   }
 
-  ETCPAL_ASSERT_VERIFY(ts.tv_nsec <= kMaxNs);
+  ETCPAL_ASSERT_VERIFY(ts.tv_nsec < kNsPerSec);
   return !sem_timedwait(id, &ts);
 }
