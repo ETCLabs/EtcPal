@@ -19,12 +19,14 @@
 
 #include "etcpal/sem.h"
 
+#include "etcpal/private/common.h"
 #include <time.h>
 
 enum
 {
   kMsPerSec = 1000,
-  kNsPerMs  = 1000000
+  kNsPerMs  = 1000000,
+  kNsPerSec = 1000000000
 };
 
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
@@ -39,10 +41,16 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
   {
     return false;
   }
-  const time_t seconds      = (time_t)timeout_ms / kMsPerSec;
-  const time_t nano_seconds = ((time_t)timeout_ms - (seconds * kMsPerSec)) * kNsPerMs;
-  ts.tv_sec += seconds;
-  ts.tv_nsec += nano_seconds;
+  const time_t timeout_sec  = (time_t)timeout_ms / kMsPerSec;
+  const time_t timeout_nsec = ((time_t)timeout_ms - (timeout_sec * kMsPerSec)) * kNsPerMs;
+  ts.tv_sec += timeout_sec;
+  ts.tv_nsec += timeout_nsec;
+  if (ts.tv_nsec >= kNsPerSec)
+  {
+    ts.tv_sec++;
+    ts.tv_nsec -= kNsPerSec;
+  }
 
+  ETCPAL_ASSERT_VERIFY(ts.tv_nsec < kNsPerSec);
   return !sem_timedwait(id, &ts);
 }

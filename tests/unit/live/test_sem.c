@@ -106,6 +106,35 @@ TEST(etcpal_sem, timed_wait_works)
   etcpal_sem_destroy(&sem);
 }
 
+/**
+ * This test is designed to check if the timed wait handles a time overflow properly. On some platforms, absolute times
+ * are used meaning that an existing time value is added to. For instance, the current time might be 10s 999,999,999ns.
+ * If you want to wait 10ms, the time to wait till should be 11s 9,999,999ns instead of 10s 1,009,999,999ns. If this is
+ * handled improperly, the semaphore won't work properly. We test with 999ms multiple times to maximize the chance of
+ * hitting this case.
+ */
+#if ETCPAL_SEM_HAS_TIMED_WAIT
+TEST(etcpal_sem, timed_wait_no_overflow)
+{
+  etcpal_sem_t sem;
+  // Create with an initial count of 0 - wait should not work
+  TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 0, 10));
+
+  for (int i = 0; i < 3; i++)
+  {
+    EtcPalTimer timer;
+    etcpal_timer_start(&timer, 2000);
+
+    TEST_ASSERT_FALSE(etcpal_sem_timed_wait(&sem, 999));
+
+    // Need to allow wiggle room for OS innaccuracies
+    TEST_ASSERT_GREATER_THAN_UINT32(950, etcpal_timer_elapsed(&timer));
+  }
+
+  etcpal_sem_destroy(&sem);
+}
+#endif
+
 #if ETCPAL_SEM_HAS_MAX_COUNT
 TEST(etcpal_sem, max_count)
 {
