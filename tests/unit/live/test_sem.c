@@ -128,7 +128,7 @@ TEST(etcpal_sem, timed_wait_no_overflow)
     TEST_ASSERT_FALSE(etcpal_sem_timed_wait(&sem, 999));
 
     // Need to allow wiggle room for OS innaccuracies
-    TEST_ASSERT_GREATER_THAN_UINT32(800, etcpal_timer_elapsed(&timer));
+    TEST_ASSERT_GREATER_THAN_UINT32(950, etcpal_timer_elapsed(&timer));
   }
 
   etcpal_sem_destroy(&sem);
