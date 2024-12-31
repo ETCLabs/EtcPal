@@ -5,6 +5,7 @@ etcpal_add_live_test(etcpal_cpp_unit_tests CXX
   test_hash.cpp
   test_main.cpp
   test_opaque_id.cpp
+  test_stop_token.cpp
   test_uuid.cpp
 )
 
