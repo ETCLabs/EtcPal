@@ -87,6 +87,10 @@
 
 namespace etcpal
 {
+
+template <typename...>
+using void_t = void;
+
 /// @cond detail
 
 namespace detail
