@@ -1,11 +1,18 @@
 #pragma once
 
+#include <algorithm>
 #include <atomic>
 #include <functional>
 #include <memory>
+#include <mutex>
+#include <vector>
+
+#if (__cplusplus >= 201703)
 #include <memory_resource>
 #include <variant>
+#endif  // #if (__cplusplus >= 201703)
 
+#include <etcpal/cpp/common.h>
 #include <etcpal/cpp/mutex.h>
 
 namespace etcpal
@@ -15,12 +22,20 @@ struct NoStopState_t
 {
 };
 
-inline constexpr auto NoStopState = NoStopState_t{};
+ETCPAL_INLINE_VARIABLE constexpr auto NoStopState = NoStopState_t{};
 
-template <typename Allocator = std::pmr::polymorphic_allocator<std::byte>>
+using DefaultAllocator =
+#if (__cplusplus >= 201703)
+    std::pmr::polymorphic_allocator<std::byte>
+#else   // #if (__cplusplus >= 201703)
+    std::allocator<unsigned char>
+#endif  // #if (__cplusplus >= 201703)
+    ;
+
+template <typename Allocator = DefaultAllocator>
 class StopToken;
 
-template <typename Callback, typename Allocator = std::pmr::polymorphic_allocator<std::byte>>
+template <typename Callback, typename Allocator = DefaultAllocator>
 class StopCallback;
 
 namespace detail
@@ -45,17 +60,17 @@ class Callback : public MutableCallbackBase
 {
 public:
   Callback(Function&& fun) : fun_{std::move(fun)} {}
-  void operator()() override { std::invoke(fun_); }
+  void operator()() override { fun_(); }
 
 private:
   Function fun_;
 };
 template <typename Function>
-class Callback<Function, std::enable_if_t<std::is_invocable_v<const Function>>> : public ConstCallbackBase
+class Callback<Function, void_t<decltype(std::declval<const Function>()())>> : public ConstCallbackBase
 {
 public:
   Callback(Function&& fun) : fun_{std::move(fun)} {}
-  void operator()() const override { std::invoke(fun_); }
+  void operator()() const override { fun_(); }
 
 private:
   Function fun_;
@@ -63,15 +78,106 @@ private:
 
 }  // namespace detail
 
-template <typename Allocator = std::pmr::polymorphic_allocator<std::byte>>
+template <typename Allocator = DefaultAllocator>
 class StopSource
 {
 private:
   struct StopContext
   {
-    using CallbackRef       = std::variant<std::monostate,
-                                           std::reference_wrapper<const detail::ConstCallbackBase>,
-                                           std::reference_wrapper<detail::MutableCallbackBase>>;
+    struct CallbackRef
+    {
+      bool is_const;
+      bool has_value = false;
+      union RefUnion
+      {
+        constexpr RefUnion() noexcept : null_callback{} {}
+        constexpr RefUnion(const detail::ConstCallbackBase& init) noexcept : const_callback{init} {}
+        constexpr RefUnion(detail::MutableCallbackBase& init) noexcept : mutable_callback{init} {}
+
+        std::nullptr_t                                          null_callback;
+        std::reference_wrapper<const detail::ConstCallbackBase> const_callback;
+        std::reference_wrapper<detail::MutableCallbackBase>     mutable_callback;
+      } fun;
+
+      constexpr CallbackRef() = default;
+      constexpr CallbackRef(const detail::ConstCallbackBase& f) noexcept : is_const{true}, has_value{true}, fun{f} {}
+      constexpr CallbackRef(detail::MutableCallbackBase& f) noexcept : is_const{false}, has_value{true}, fun{f} {}
+
+      ~CallbackRef() noexcept { deinit(); }
+
+      constexpr auto operator=(std::nullptr_t rhs) noexcept -> CallbackRef&
+      {
+        deinit();
+        has_value = false;
+        new (std::addressof(fun.null_callback)) std::nullptr_t;
+
+        return *this;
+      }
+      constexpr auto operator=(const detail::ConstCallbackBase& rhs) noexcept -> CallbackRef&
+      {
+        deinit();
+        has_value = true;
+        is_const  = true;
+        new (std::addressof(fun.const_callback)) decltype(fun.const_callback){rhs};
+
+        return *this;
+      }
+      constexpr auto operator=(detail::MutableCallbackBase& rhs) noexcept -> CallbackRef&
+      {
+        deinit();
+        has_value = true;
+        is_const  = false;
+        new (std::addressof(fun.mutable_callback)) decltype(fun.mutable_callback){rhs};
+
+        return *this;
+      }
+
+      void operator()() const noexcept
+      {
+        if (!has_value)
+        {
+          return;
+        }
+
+        if (is_const)
+        {
+          fun.const_callback();
+        }
+        else
+        {
+          fun.mutable_callback();
+        }
+      }
+
+      constexpr void deinit() noexcept
+      {
+        if (!has_value)
+        {
+          using T = std::nullptr_t;
+          fun.null_callback.~T();
+        }
+        else if (is_const)
+        {
+          using T = decltype(fun.const_callback);
+          fun.const_callback.~T();
+        }
+        else
+        {
+          using T = decltype(fun.mutable_callback);
+          fun.mutable_callback.~T();
+        }
+      }
+
+      [[nodiscard]] constexpr bool operator==(std::nullptr_t rhs) const noexcept { return !has_value; }
+      [[nodiscard]] constexpr bool operator==(const detail::ConstCallbackBase& rhs) const noexcept
+      {
+        return has_value && is_const && (std::addressof(fun.const_callback.get()) == std::addressof(rhs));
+      }
+      [[nodiscard]] constexpr bool operator==(const detail::MutableCallbackBase& rhs) const noexcept
+      {
+        return has_value && is_const && (std::addressof(fun.mutable_callback.get()) == std::addressof(rhs));
+      }
+    };
     using CallbackAllocator = typename std::allocator_traits<Allocator>::template rebind_alloc<CallbackRef>;
     using CallbackStorage   = std::vector<CallbackRef, CallbackAllocator>;
 
@@ -80,8 +186,8 @@ private:
 
     Mutex             cb_mutex       = {};
     CallbackStorage   callbacks      = CallbackStorage{CallbackAllocator{}};
-    std::atomic<int>  num_sources    = 1;
-    std::atomic<bool> stop_requested = false;
+    std::atomic<int>  num_sources{1};
+    std::atomic<bool> stop_requested{false};
   };
 
 public:
@@ -124,7 +230,7 @@ public:
       return false;
     }
 
-    const auto guard    = std::lock_guard{ctrl_block_->cb_mutex};
+    const std::lock_guard<Mutex> guard{ctrl_block_->cb_mutex};
     bool       expected = false;
     if (!ctrl_block_->stop_requested.compare_exchange_weak(expected, true))
     {
@@ -133,20 +239,25 @@ public:
 
     for (const auto& var : ctrl_block_->callbacks)
     {
-      std::visit(
-          [](const auto& fun) {
-            if constexpr (!std::is_same_v<std::monostate, std::remove_cv_t<std::remove_reference_t<decltype(fun)>>>)
-            {
-              std::invoke(fun);
-            }
-          },
-          var);
+      if (!var.has_value)
+      {
+        continue;
+      }
+
+      if (var.is_const)
+      {
+        var.fun.const_callback();
+      }
+      else
+      {
+        var.fun.mutable_callback();
+      }
     }
 
     return true;
   }
 
-  [[nodiscard]] auto get_token() const noexcept { return StopToken{ctrl_block_}; }
+  [[nodiscard]] auto get_token() const noexcept { return StopToken<Allocator>{ctrl_block_}; }
   [[nodiscard]] bool stop_requested() const noexcept { return ctrl_block_ && ctrl_block_->stop_requested; }
   [[nodiscard]] bool stop_possible() const noexcept { return ctrl_block_.get(); }
 
@@ -195,7 +306,7 @@ public:
 
   template <typename C>
   explicit StopCallback(const StopToken<Allocator>& token,
-                        C&&                         cb) noexcept(std::is_nothrow_constructible_v<Callback, C>)
+                        C&&                         cb) noexcept(std::is_nothrow_constructible<Callback, C>::value)
       : token_{token}, callback_{std::forward<C>(cb)}
   {
     if (!token_.ctrl_block_)
@@ -204,14 +315,14 @@ public:
     }
     if (token_.ctrl_block_->stop_requested)
     {
-      std::invoke(callback_);
+      callback_();
       return;
     }
 
-    const auto guard = std::lock_guard{token_.ctrl_block_->cb_mutex};
+    std::lock_guard<Mutex> guard{token_.ctrl_block_->cb_mutex};
     for (auto& fun : token_.ctrl_block_->callbacks)
     {
-      if (std::holds_alternative<std::monostate>(fun))
+      if (!fun.has_value)
       {
         fun = callback_;
         return;
@@ -221,7 +332,8 @@ public:
     token_.ctrl_block_->callbacks.push_back(callback_);
   }
   template <typename C>
-  explicit StopCallback(StopToken<Allocator>&& token, C&& cb) noexcept(std::is_nothrow_constructible_v<Callback, C>)
+  explicit StopCallback(StopToken<Allocator>&& token,
+                        C&&                    cb) noexcept(std::is_nothrow_constructible<Callback, C>::value)
       : token_{std::move(token)}, callback_{std::forward<C>(cb)}
   {
   }
@@ -239,31 +351,15 @@ public:
       return;
     }
 
-    const auto guard    = std::lock_guard{token_.ctrl_block_->cb_mutex};
-    const auto position = std::find_if(
-        std::begin(token_.ctrl_block_->callbacks), std::end(token_.ctrl_block_->callbacks), [this](const auto& var) {
-          return std::visit(
-              [this](const auto& fun) {
-                using fun_type = std::remove_cv_t<std::remove_reference_t<decltype(fun)>>;
-                if constexpr (std::is_same_v<std::monostate, fun_type>)
-                {
-                  return false;
-                }
-                else if constexpr (std::is_same_v<typename fun_type::type, detail::Callback<callback_type>>)
-                {
-                  return fun.get() == callback_;
-                }
-
-                return false;
-              },
-              var);
-        });
+    std::lock_guard<Mutex> guard{token_.ctrl_block_->cb_mutex};
+    const auto             position =
+        std::find(std::begin(token_.ctrl_block_->callbacks), std::end(token_.ctrl_block_->callbacks), callback_);
     if (position == std::end(token_.ctrl_block_->callbacks))
     {
       return;
     }
 
-    *position = std::monostate{};
+    *position = nullptr;
   }
 
 private:
@@ -271,11 +367,13 @@ private:
   mutable detail::Callback<callback_type> callback_;
 };
 
+#if (__cplusplus >= 201703L)
 template <typename Callback, typename Allocator>
 StopCallback(const StopToken<Allocator>&, Callback&&)
     -> StopCallback<std::remove_reference_t<std::remove_cv_t<Callback>>, Allocator>;
 template <typename Callback, typename Allocator>
 StopCallback(StopToken<Allocator>&&, Callback&&)
     -> StopCallback<std::remove_reference_t<std::remove_cv_t<Callback>>, Allocator>;
+#endif  // #if (__cplusplus >= 201703L)
 
 }  // namespace etcpal
