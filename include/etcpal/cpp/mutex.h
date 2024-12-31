@@ -96,8 +96,10 @@ public:
   Mutex& operator=(Mutex&& other) = delete;
 
   bool Lock();
+  bool lock() { return Lock(); }
   bool TryLock(int timeout_ms = 0);
   void Unlock();
+  void unlock() { Unlock(); }
 
   etcpal_mutex_t& get();
 
