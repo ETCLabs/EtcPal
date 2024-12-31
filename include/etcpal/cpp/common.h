@@ -54,6 +54,12 @@
 #define ETCPAL_CONSTEXPR_14_OR_INLINE inline
 #endif
 
+#if (__cplusplus >= 201703L)
+#define ETCPAL_INLINE_VARIABLE inline
+#else
+#define ETCPAL_INLINE_VARIABLE static
+#endif
+
 /// @def ETCPAL_NO_EXCEPTIONS
 /// @brief Explicitly removes all "throw" statements from EtcPal C++ headers.
 ///
