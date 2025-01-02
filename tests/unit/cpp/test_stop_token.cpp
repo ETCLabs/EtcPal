@@ -23,8 +23,9 @@ TEST(etcpal_cpp_stop_token, stop_source)
   auto       buffer          = std::array<std::byte, 1 << 8>{};
   auto       memory_resource = std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer)};
   const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
-#endif  // #if (__cplusplus >= 201703L)
+#else   // #if (__cplusplus >= 201703L)
   const auto alloc = etcpal::DefaultAllocator{};
+#endif  // #if (__cplusplus >= 201703L)
 
   // initialize source with state
   auto ssource = etcpal::StopSource<>{alloc};
