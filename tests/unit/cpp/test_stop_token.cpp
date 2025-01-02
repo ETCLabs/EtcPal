@@ -28,7 +28,11 @@ TEST(etcpal_cpp_stop_token, stop_source)
 #endif  // #if (__cplusplus >= 201703L)
 
   // initialize source with state
-  auto ssource = etcpal::StopSource<>{alloc};
+  auto ssource = etcpal::StopSource
+#if (__cplusplus < 201703L)
+      <>
+#endif  // #if (__cplusplus < 201703L)
+      {alloc};
   TEST_ASSERT_FALSE(ssource.stop_requested());
   TEST_ASSERT_TRUE(ssource.stop_possible());
 
@@ -37,13 +41,14 @@ TEST(etcpal_cpp_stop_token, stop_source)
   constexpr auto end_val  = 6;
   auto           test_val = init_val;
   const auto     token    = ssource.get_token();
+  const
 #if (__cplusplus >= 201703L)
-  const auto callback = etcpal::StopCallback{token, [&] { test_val = end_val; }};
+      auto callback = etcpal::StopCallback
 #else   // #if (__cplusplus >= 201703L)
-  const auto set_to_end  = [&] { test_val = end_val; };
-  const auto set_to_init = [&] { test_val = init_val; };
-  const etcpal::StopCallback<std::function<void()>, std::remove_cv_t<decltype(alloc)> > callback{token, set_to_end};
+      etcpal::StopCallback<std::function<void()>, std::remove_cv_t<decltype(alloc)> >
+          callback
 #endif  // #if (__cplusplus >= 201703L)
+      {token, [&] { test_val = end_val; }};
   TEST_ASSERT_FALSE(token.stop_requested());
   TEST_ASSERT_TRUE(token.stop_possible());
   TEST_ASSERT_TRUE(test_val == init_val);
@@ -58,15 +63,19 @@ TEST(etcpal_cpp_stop_token, stop_source)
   TEST_ASSERT_FALSE(ssource.request_stop());
 
   // registering callback on stopped token should invoke the callback
-#if (__cplusplus >= 201703L)
-  etcpal::StopCallback{token, [&] { test_val = init_val; }};
-#else   // #if (__cplusplus >= 201703L)
-  etcpal::StopCallback<std::function<void()>, std::remove_cv_t<decltype(alloc)> >{token, set_to_init};
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::StopCallback
+#if (__cplusplus < 201703L)
+      <std::function<void()>, std::remove_cv_t<decltype(alloc)> >
+#endif  // #if (__cplusplus < 201703L)
+      {token, [&] { test_val = init_val; }};
   TEST_ASSERT_TRUE(test_val == init_val);
 
   // replacing valid source with empty source should not affect already-triggered token
-  ssource = etcpal::StopSource<>{etcpal::NoStopState};
+  ssource = etcpal::StopSource
+#if (__cplusplus < 201703L)
+      <>
+#endif  // #if (__cplusplus < 201703L)
+      {etcpal::NoStopState};
   TEST_ASSERT_FALSE(ssource.stop_requested());
   TEST_ASSERT_FALSE(ssource.stop_possible());
   TEST_ASSERT_FALSE(ssource.request_stop());
@@ -80,11 +89,11 @@ TEST(etcpal_cpp_stop_token, stop_source)
   TEST_ASSERT_FALSE(etcpal::StopToken<>{}.stop_requested());
 
   // registering callback on empty token should not invoke the callback
-#if (__cplusplus >= 201703L)
-  etcpal::StopCallback{ssource.get_token(), [&] { test_val = end_val; }};
-#else   // #if (__cplusplus >= 201703L)
-  etcpal::StopCallback<std::function<void()>, std::remove_cv_t<decltype(alloc)> >{ssource.get_token(), set_to_end};
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::StopCallback
+#if (__cplusplus < 201703L)
+      <std::function<void()>, std::remove_cv_t<decltype(alloc)> >
+#endif  // #if (__cplusplus < 201703L)
+      {ssource.get_token(), [&] { test_val = end_val; }};
   TEST_ASSERT_TRUE(test_val == init_val);
 }
 
