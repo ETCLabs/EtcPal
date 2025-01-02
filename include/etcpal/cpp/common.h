@@ -91,6 +91,12 @@ namespace etcpal
 template <typename...>
 using void_t = void;
 
+struct InPlace_t
+{
+};
+
+ETCPAL_INLINE_VARIABLE constexpr auto in_place = InPlace_t{};
+
 /// @cond detail
 
 namespace detail
