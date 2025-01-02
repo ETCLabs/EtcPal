@@ -7,10 +7,11 @@ project(EtcPal)
 set(ETCPAL_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(ETCPAL_CMAKE ${ETCPAL_ROOT}/cmake)
 
-option(ETCPAL_BUILD_MOCK_LIB "Build the EtcPalMock library" OFF)
-option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" OFF)
-option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps" OFF)
-option(ETCPAL_INSTALL_PDBS "Include PDBs in EtcPal install target" ON)
+option(ETCPAL_BUILD_MOCK_LIB "Build the EtcPalMock library"          OFF)
+option(ETCPAL_BUILD_TESTS    "Build the EtcPal unit tests"           OFF)
+option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps"         OFF)
+option(ETCPAL_INSTALL_PDBS   "Include PDBs in EtcPal install target" ON)
+option(ETCPAL_TEST_AS_CXX14  "Force all tests to conform to C++14"   ON)
 
 option(ETCPAL_EXPLICITLY_DISABLE_EXCEPTIONS "Disable throwing of exceptions throughout the EtcPal C++ headers" OFF)
 

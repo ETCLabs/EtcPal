@@ -77,7 +77,7 @@ function(etcpal_add_custom_test target_name language)
   etcpal_record_test(${target_name})
   set_target_properties(${target_name} PROPERTIES FOLDER tests)
 
-  if(${language} STREQUAL CXX)
+  if(${language} STREQUAL CXX AND ETCPAL_TEST_AS_CXX14)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 14)
   endif()
 
