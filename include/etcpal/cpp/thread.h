@@ -33,10 +33,13 @@
 #include <string>
 #include <type_traits>
 #include <utility>
-#include "etcpal/common.h"
-#include "etcpal/thread.h"
-#include "etcpal/cpp/common.h"
-#include "etcpal/cpp/error.h"
+
+#include <etcpal/common.h>
+#include <etcpal/thread.h>
+
+#include <etcpal/cpp/common.h>
+#include <etcpal/cpp/error.h>
+#include <etcpal/cpp/stop_token.h>
 
 namespace etcpal
 {
@@ -200,6 +203,41 @@ public:
 private:
   std::unique_ptr<etcpal_thread_t> thread_;
   EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
+};
+
+class JThread
+{
+public:
+  using native_handle_type = etcpal_thread_os_handle_t;
+
+  JThread() noexcept = default;
+  template <typename Fun,
+            typename... Args,
+            decltype(std::declval<Fun>(std::declval<const StopToken<>&>(), std::declval<Args>()...))* = nullptr>
+  explicit JThread(Fun&& fun, Args&&... args);
+  template <typename Fun, typename... Args, decltype(std::declval<Fun>(std::declval<Args>()...))* = nullptr>
+  explicit JThread(Fun&& fun, Args&&... args);
+
+  JThread(const JThread& rhs)     = delete;
+  JThread(JThread&& rhs) noexcept = default;
+
+  ~JThread() noexcept { request_stop(); }
+
+  auto operator=(const JThread& rhs) -> JThread&     = delete;
+  auto operator=(JThread&& rhs) noexcept -> JThread& = default;
+
+  [[nodiscard]] bool joinable() const noexcept { return thread_.joinable(); }
+  [[nodiscard]] auto native_handle() const noexcept { return thread_.os_handle(); }
+
+  void join() noexcept { thread_.Join(); }
+
+  [[nodiscard]] auto get_stop_source() const noexcept { return ssource_; }
+  [[nodiscard]] auto get_stop_token() const noexcept { return ssource_.get_token(); }
+  bool               request_stop() noexcept { return ssource_.request_stop(); }
+
+private:
+  StopSource<> ssource_ = StopSource<>{NoStopState};
+  Thread       thread_  = {};
 };
 
 /// @cond Internal thread function
@@ -513,5 +551,18 @@ Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) no
 }
 
 };  // namespace etcpal
+
+template <typename Fun,
+          typename... Args,
+          decltype(std::declval<Fun>(std::declval<const etcpal::StopToken<>&>(), std::declval<Args>()...))*>
+etcpal::JThread::JThread(Fun&& fun, Args&&... args)
+    : ssource_{}, thread_{std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
+{
+}
+
+template <typename Fun, typename... Args, decltype(std::declval<Fun>(std::declval<Args>()...))*>
+etcpal::JThread::JThread(Fun&& fun, Args&&... args) : thread_{std::forward<Fun>(fun), std::forward<Args>(args)...}
+{
+}
 
 #endif  // ETCPAL_CPP_THREAD_H_
