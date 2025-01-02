@@ -26,6 +26,7 @@ extern "C" void run_all_tests(void)  // NOLINT
   RUN_TEST_GROUP(etcpal_cpp_hash);
   RUN_TEST_GROUP(etcpal_cpp_uuid);
   RUN_TEST_GROUP(etcpal_cpp_opaque_id);
+  RUN_TEST_GROUP(etcpal_cpp_optional);
 #if !ETCPAL_NO_OS_SUPPORT
 #if !DISABLE_EVENT_GROUP_TESTS
   RUN_TEST_GROUP(etcpal_cpp_event_group);
