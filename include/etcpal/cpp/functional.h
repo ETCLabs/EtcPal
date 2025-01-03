@@ -1,12 +1,11 @@
 #pragma once
 
-#include <memory>
-#include <memory_resource>
+#include <etcpal/cpp/common.h>
 
 namespace etcpal
 {
 
-template <typename Signature, typename Allocator = std::pmr::polymorphic_allocator<std::byte>>
+template <typename Signature, typename Allocator = DefaultAllocator>
 class move_only_function;
 
 namespace detail
@@ -85,7 +84,7 @@ class Callable;
         : ptr_{typename std::allocator_traits<Allocator>::template rebind<Callable<F>>{alloc}.allocate(1),       \
                detail::DeleteUsingAlloc<Allocator>{alloc}}                                                       \
     {                                                                                                            \
-      new (ptr_.get()) Callable{std::forward<F>(f)};                                                             \
+      new (ptr_.get()) Callable<F>{std::forward<F>(f)};                                                          \
     }                                                                                                            \
                                                                                                                  \
     R operator()(Args... args) ETCPAL_CALLABLE_QUALIFIERS                                                        \

@@ -23,6 +23,12 @@
 #ifndef ETCPAL_CPP_COMMON_H_
 #define ETCPAL_CPP_COMMON_H_
 
+#include <memory>
+
+#if (__cplusplus >= 201703)
+#include <memory_resource>
+#endif  // #if (__cplusplus >= 201703)
+
 /// @defgroup etcpal_cpp C++ Wrappers
 /// @ingroup etcpal
 /// @brief C++ Wrappers for EtcPal modules.
@@ -87,6 +93,14 @@
 
 namespace etcpal
 {
+
+using DefaultAllocator =
+#if (__cplusplus >= 201703)
+    std::pmr::polymorphic_allocator<std::byte>
+#else   // #if (__cplusplus >= 201703)
+    std::allocator<unsigned char>
+#endif  // #if (__cplusplus >= 201703)
+    ;
 
 template <typename...>
 using void_t = void;
