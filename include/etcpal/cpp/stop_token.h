@@ -7,11 +7,6 @@
 #include <mutex>
 #include <vector>
 
-#if (__cplusplus >= 201703)
-#include <memory_resource>
-#include <variant>
-#endif  // #if (__cplusplus >= 201703)
-
 #include <etcpal/cpp/common.h>
 #include <etcpal/cpp/mutex.h>
 
@@ -23,14 +18,6 @@ struct NoStopState_t
 };
 
 ETCPAL_INLINE_VARIABLE constexpr auto NoStopState = NoStopState_t{};
-
-using DefaultAllocator =
-#if (__cplusplus >= 201703)
-    std::pmr::polymorphic_allocator<std::byte>
-#else   // #if (__cplusplus >= 201703)
-    std::allocator<unsigned char>
-#endif  // #if (__cplusplus >= 201703)
-    ;
 
 template <typename Allocator = DefaultAllocator>
 class StopToken;
