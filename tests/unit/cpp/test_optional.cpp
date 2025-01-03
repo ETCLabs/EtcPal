@@ -22,7 +22,12 @@ TEST_TEAR_DOWN(etcpal_cpp_optional)
 
 TEST(etcpal_cpp_optional, optional)
 {
-  const auto is_engaged = etcpal::Select{[](etcpal::Nullopt_t) { return false; }, [](auto&&) { return true; }};
+  const auto is_engaged =
+#if (__cplusplus >= 201703L)
+      etcpal::Select{[](etcpal::Nullopt_t) { return false; }, [](auto&&) { return true; }};
+#else   // #if (__cplusplus < 201703L)
+      etcpal::make_selection([](etcpal::Nullopt_t) { return false; }, [](auto&&) { return true; });
+#endif  // #if (__cplusplus < 201703L)
 
   // initialization
   TEST_ASSERT_FALSE(etcpal::Optional<int>{});
