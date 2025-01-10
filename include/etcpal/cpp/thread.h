@@ -213,9 +213,9 @@ public:
   JThread() noexcept = default;
   template <typename Fun,
             typename... Args,
-            decltype(std::declval<Fun>(std::declval<const StopToken<>&>(), std::declval<Args>()...))* = nullptr>
+            decltype(std::declval<Fun>()(std::declval<const StopToken<>&>(), std::declval<Args>()...))* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
-  template <typename Fun, typename... Args, decltype(std::declval<Fun>(std::declval<Args>()...))* = nullptr>
+  template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
 
   JThread(const JThread& rhs)     = delete;
@@ -224,7 +224,7 @@ public:
   ~JThread() noexcept { request_stop(); }
 
   auto operator=(const JThread& rhs) -> JThread&     = delete;
-  auto operator=(JThread&& rhs) noexcept -> JThread& = default;
+  inline auto operator=(JThread&& rhs) noexcept -> JThread&;
 
   [[nodiscard]] bool joinable() const noexcept { return thread_.joinable(); }
   [[nodiscard]] auto native_handle() const noexcept { return thread_.os_handle(); }
@@ -554,15 +554,29 @@ Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) no
 
 template <typename Fun,
           typename... Args,
-          decltype(std::declval<Fun>(std::declval<const etcpal::StopToken<>&>(), std::declval<Args>()...))*>
+          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<>&>(), std::declval<Args>()...))*>
 etcpal::JThread::JThread(Fun&& fun, Args&&... args)
     : ssource_{}, thread_{std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
 {
 }
 
-template <typename Fun, typename... Args, decltype(std::declval<Fun>(std::declval<Args>()...))*>
+template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))*>
 etcpal::JThread::JThread(Fun&& fun, Args&&... args) : thread_{std::forward<Fun>(fun), std::forward<Args>(args)...}
 {
+}
+
+inline auto etcpal::JThread::operator=(JThread&& rhs) noexcept -> JThread&
+{
+  request_stop();
+  if (joinable())
+  {
+    join();
+  }
+
+  ssource_ = std::move(rhs.ssource_);
+  thread_  = std::move(rhs.thread_);
+
+  return *this;
 }
 
 #endif  // ETCPAL_CPP_THREAD_H_
