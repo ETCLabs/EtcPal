@@ -132,13 +132,12 @@ public:
   explicit FutureSharedState(const Allocator& alloc) noexcept : allocator_{alloc} {}
 
   [[nodiscard]] auto set_value(T&& value) noexcept -> StateChangeResult;
-  template <typename Continuation>
-  [[nodiscard]] auto set_continuation(Continuation&& continuation) noexcept -> StateChangeResult;
   [[nodiscard]] auto set_exception(std::exception_ptr exception) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
   [[nodiscard]] auto get_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
   [[nodiscard]] auto await_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
+  void               abandon() noexcept;
 
   [[nodiscard]] auto get_allocator() const noexcept { return allocator_; }
 
@@ -162,6 +161,8 @@ public:
 
   Promise(const Promise& rhs)     = delete;
   Promise(Promise&& rhs) noexcept = default;
+
+  ~Promise() noexcept;
 
   auto operator=(const Promise& rhs) -> Promise&     = delete;
   auto operator=(Promise&& rhs) noexcept -> Promise& = default;
@@ -187,16 +188,6 @@ public:
   auto operator=(Future&& rhs) noexcept -> Future& = default;
 
   [[nodiscard]] auto get() -> T;
-  template <typename Continuation>
-  [[nodiscard]] auto and_then(Continuation&& continuation)
-      -> Future<decltype(std::forward<Continuation>(
-                    continuation)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
-                Allocator>;
-  template <typename Continuation, typename Executor>
-  [[nodiscard]] auto and_then(Continuation&& continuation, const Executor& executor)
-      -> Future<decltype(std::forward<Continuation>(
-                    continuation)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
-                Allocator>;
 
   [[nodiscard]] bool valid() const noexcept;
   [[nodiscard]] auto wait() const noexcept -> FutureStatus;
@@ -237,6 +228,8 @@ public:
   [[nodiscard]] auto post(UseFuture tag, F&& fun) -> Future<decltype(std::forward<F>(fun)()), Allocator>;
   template <typename F>
   auto post(F&& fun);
+
+  [[nodiscard]] auto get_executor() noexcept { return Executor{*this}; }
 
 private:
   using Task          = MoveOnlyFunction<void(), Allocator>;
@@ -307,7 +300,7 @@ public:
   explicit Executor(ThreadPool& pool) noexcept : pool_{std::addressof(pool)} {}
 
   template <typename F>
-  auto post(F&& fun)
+  auto post(F&& fun) const
   {
     return pool_->post(std::forward<F>(fun));
   }
@@ -340,36 +333,6 @@ template <typename T, typename Allocator>
 }
 
 template <typename T, typename Allocator>
-template <typename Continuation>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_continuation(
-    Continuation&& continuation) noexcept -> StateChangeResult
-{
-  std::lock_guard<Mutex> guard{mutex_};
-  const auto             status = static_cast<FutureStatus>(status_.GetBits());
-  if (continuation_)
-  {
-    return {FutureActionResult::continuation_already_set, status, value_, exception_, {}};
-  }
-  if (is_consumed(status))
-  {
-    return {FutureActionResult::value_already_obtained, status, value_, exception_, {}};
-  }
-
-  if (has_value(status))
-  {
-    const auto new_status = status | FutureStatus::continued | FutureStatus::consumed;
-    status_.SetBits(static_cast<EventBits>(new_status));
-    return {FutureActionResult::continuation_invocation_required, new_status, value_, exception_,
-            std::forward<Continuation>(continuation)};
-  }
-  else
-  {
-    continuation_ = Task{std::forward<Continuation>(continuation), allocator_};
-    return {FutureActionResult::continuation_set_suceeded, status, value_, exception_, {}};
-  }
-}
-
-template <typename T, typename Allocator>
 [[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_exception(std::exception_ptr exception) noexcept
     -> StateChangeResult
 {
@@ -399,7 +362,7 @@ template <typename Rep, typename Period>
     const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult
 {
   const auto status = static_cast<FutureStatus>(
-      status_.TryWait(static_cast<EventBits>(FutureStatus::ready), 0,
+      status_.TryWait(static_cast<EventBits>(FutureStatus::ready | FutureStatus::abandoned), 0,
                       std::chrono::duration_cast<std::chrono::milliseconds>(timeout).count()));
   std::lock_guard<Mutex> guard{mutex_};
   if (is_abandoned(status))
@@ -420,6 +383,20 @@ template <typename Rep, typename Period>
   }
 
   return {FutureActionResult::value_get_succeeded, status, value_, exception_, {}};
+}
+
+template <typename T, typename Allocator>
+void etcpal::detail::FutureSharedState<T, Allocator>::abandon() noexcept
+{
+  const std::lock_guard<Mutex> guard{mutex_};
+  const auto                   status = static_cast<FutureStatus>(status_.GetBits());
+  if (has_value(status))
+  {
+    return;
+  }
+
+  status_.SetBits(static_cast<EventBits>(FutureStatus::abandoned));
+  continuation_ = nullptr;
 }
 
 template <typename T, typename Allocator>
@@ -445,6 +422,15 @@ template <typename T, typename Allocator>
 etcpal::Promise<T, Allocator>::Promise(const Allocator& alloc)
     : state_{std::allocate_shared<detail::FutureSharedState<T, Allocator>>(alloc, alloc)}
 {
+}
+
+template <typename T, typename Allocator>
+etcpal::Promise<T, Allocator>::~Promise() noexcept
+{
+  if (state_)
+  {
+    state_->abandon();
+  }
 }
 
 template <typename T, typename Allocator>
@@ -511,64 +497,6 @@ template <typename T, typename Allocator>
     default:
       throw std::logic_error{"invalid future status"};
   }
-}
-
-template <typename T, typename Allocator>
-template <typename Continuation>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(Continuation&& continuation)
-    -> Future<decltype(std::forward<Continuation>(
-                  continuation)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
-              Allocator>
-{
-  if (!state_)
-  {
-    throw FutureError{"future has no shared state"};
-  }
-
-  auto promise = Promise<decltype(std::forward<Continuation>(continuation)(
-      FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>{state_->get_allocator()};
-  auto future  = promise.get_future();
-  auto status  = state_->set_continuation([fun = std::forward<Continuation>(continuation), prom = std::move(promise)](
-                                             auto status, auto& value, auto exception) mutable {
-    prom.set_value(std::forward<Continuation>(fun)(status, value, exception));
-  });
-  switch (status.result)
-  {
-    case detail::FutureActionResult::continuation_set_suceeded:
-      break;
-    case detail::FutureActionResult::continuation_invocation_required:
-      status.continuation(status.status, status.value, status.exception);
-      break;
-
-    case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{"future already has a continuation"};
-    case detail::FutureActionResult::value_already_obtained:
-      throw FutureError{"future has already been consumed"};
-    default:
-      throw std::logic_error{"invalid future status"};
-  }
-
-  return future;
-}
-
-template <typename T, typename Allocator>
-template <typename Continuation, typename Executor>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(Continuation&& continuation, const Executor& executor)
-    -> Future<decltype(std::forward<Continuation>(
-                  continuation)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
-              Allocator>
-{
-  if (!state_)
-  {
-    throw FutureError{"future has no shared state"};
-  }
-
-  return and_then(
-      [cont = std::forward<Continuation>(continuation), exec = executor](auto status, auto& value, auto exception) {
-        exec.post([fun = std::move(cont), status, val = std::move(value), exception]() mutable {
-          fun(status, std::move(val), exception);
-        });
-      });
 }
 
 template <typename T, typename Allocator>
