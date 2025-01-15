@@ -78,18 +78,51 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
 {
   if (!id || !bits || !id->valid)
     return 0;
-  if (timeout_ms != 0)
+  if (timeout_ms == ETCPAL_WAIT_FOREVER)
     return etcpal_event_group_wait(id, bits, flags);
 
-  // Just check once and return the state of the bits
-  etcpal_event_bits_t result = 0;
+  if (timeout_ms == 0)
+  {
+    // Just check once and return the state of the bits
+    etcpal_event_bits_t result = 0;
+    if (0 == pthread_mutex_lock(&id->mutex))
+    {
+      result = id->bits;
+      check_and_clear_bits(&id->bits, bits, flags);
+      pthread_mutex_unlock(&id->mutex);
+    }
+    return result;
+  }
+
   if (0 == pthread_mutex_lock(&id->mutex))
   {
-    result = id->bits;
-    check_and_clear_bits(&id->bits, bits, flags);
+    etcpal_event_bits_t result = id->bits;
+    while (!check_and_clear_bits(&id->bits, bits, flags))
+    {
+      const int             timeout_sec = timeout_ms / 1000;
+      const struct timespec time        = {timeout_sec, 1000000 * (timeout_ms - (timeout_sec * 1000))};
+
+      struct timespec timeout_spec;
+      clock_gettime(CLOCK_REALTIME, &timeout_spec);
+      timeout_spec.tv_sec += time.tv_sec;
+      timeout_spec.tv_nsec += time.tv_nsec;
+      if (timeout_spec.tv_nsec >= 1000000000)
+      {
+        timeout_spec.tv_sec += 1;
+        timeout_spec.tv_nsec -= 1000000000;
+      }
+      if (0 != pthread_cond_timedwait(&id->cond, &id->mutex, &timeout_spec))
+      {
+        pthread_mutex_unlock(&id->mutex);
+        return false;
+      }
+      result = id->bits;
+    }
     pthread_mutex_unlock(&id->mutex);
+    return result;
   }
-  return result;
+
+  return false;
 }
 
 void etcpal_event_group_set_bits(etcpal_event_group_t* id, etcpal_event_bits_t bits_to_set)
