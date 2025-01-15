@@ -31,6 +31,7 @@ extern "C" void run_all_tests(void)  // NOLINT
 #if !DISABLE_EVENT_GROUP_TESTS
   RUN_TEST_GROUP(etcpal_cpp_event_group);
 #endif
+  RUN_TEST_GROUP(etcpal_cpp_async);
   RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
   RUN_TEST_GROUP(etcpal_cpp_log);
   RUN_TEST_GROUP(etcpal_cpp_mutex);
