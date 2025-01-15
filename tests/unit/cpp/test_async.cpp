@@ -44,17 +44,15 @@ TEST(etcpal_cpp_async, thread_pool)
   constexpr auto num_items = 1024;
 
   etcpal::ThreadPool<32> pool{alloc};
-  auto                   futures         = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
-  auto                   chained_futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+  auto                   futures           = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+  auto                   abandoned_futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
   for (auto i = 0; i < num_items; ++i)
   {
     auto promise = etcpal::Promise<int>{alloc};
     futures.push_back(promise.get_future());
     pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
 
-    auto chained_promise = etcpal::Promise<int>{alloc};
-    chained_futures.push_back(
-        chained_promise.get_future().and_then([](auto status, auto& value, auto exception) -> int { return 1; }));
+    abandoned_futures.push_back(etcpal::Promise<int>{alloc}.get_future());
   }
 
   for (auto i = 0; i < num_items; ++i)
@@ -63,6 +61,8 @@ TEST(etcpal_cpp_async, thread_pool)
 
     TEST_ASSERT_TRUE(futures[i].wait_for(50ms) == etcpal::FutureStatus::ready);
     TEST_ASSERT_TRUE(futures[i].get() == i);
+
+    TEST_ASSERT_TRUE(abandoned_futures[i].wait_for(50ms) == etcpal::FutureStatus::abandoned);
   }
 }
 
