@@ -409,7 +409,7 @@ constexpr auto etcpal::Optional<T>::operator=(Optional<U>&& rhs) noexcept -> Opt
 template <typename T>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::value() & -> T&
 {
-  return *this ? *this : throw BadOptionalAccess{};
+  return *this ? **this : throw BadOptionalAccess{};
 }
 
 template <typename T>
@@ -421,7 +421,7 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::value() const& -> const T&
 {
-  return *this ? *this : throw BadOptionalAccess{};
+  return *this ? **this : throw BadOptionalAccess{};
 }
 
 template <typename T>
@@ -434,7 +434,7 @@ template <typename T>
 template <typename U>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::value_or(U&& default_value) const& -> T
 {
-  return *this ? *this : std::forward<U>(default_value);
+  return *this ? **this : std::forward<U>(default_value);
 }
 
 template <typename T>
