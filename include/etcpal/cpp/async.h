@@ -119,20 +119,22 @@ template <typename T, typename Allocator>
 class FutureSharedState
 {
 public:
-  using Task = MoveOnlyFunction<void(FutureStatus, Optional<T>&, std::exception_ptr), Allocator>;
+  using Type = std::conditional_t<std::is_same<T, void>::value, std::nullptr_t, T>;
+  using Task = MoveOnlyFunction<void(FutureStatus, Optional<Type>&, std::exception_ptr), Allocator>;
 
   struct StateChangeResult
   {
     FutureActionResult result;
     FutureStatus       status;
-    Optional<T>&       value;
+    Optional<Type>&    value;
     std::exception_ptr exception;
     Task               continuation;
   };
 
   explicit FutureSharedState(const Allocator& alloc) noexcept : allocator_{alloc} {}
 
-  [[nodiscard]] auto set_value(T&& value) noexcept -> StateChangeResult;
+  template <typename U, typename = std::enable_if_t<std::is_convertible<U, Type>::value>>
+  [[nodiscard]] auto set_value(U&& value) noexcept -> StateChangeResult;
   [[nodiscard]] auto set_exception(std::exception_ptr exception) noexcept -> StateChangeResult;
   template <typename Func>
   [[nodiscard]] auto set_continuation(Func&& continuation) noexcept -> StateChangeResult;
@@ -144,10 +146,15 @@ public:
 
   [[nodiscard]] auto get_allocator() const noexcept { return allocator_; }
 
+  template <typename U = T, typename Arg, typename = std::enable_if_t<!std::is_same<U, void>::value>>
+  [[nodiscard]] static auto return_value(Arg&& value) noexcept -> T;
+  template <typename U = T, typename = std::enable_if_t<std::is_same<U, void>::value>>
+  [[nodiscard]] static void return_value(std::nullptr_t value) noexcept;
+
 private:
   struct State
   {
-    Optional<T>        value_;
+    Optional<Type>     value_;
     Task               continuation_;
     std::exception_ptr exception_;
   };
@@ -176,8 +183,10 @@ public:
 
   [[nodiscard]] auto get_future() const noexcept { return Future<T, Allocator>{state_}; }
 
-  void set_value(const T& value);
-  void set_value(T&& value);
+  template <typename U, typename = std::enable_if_t<std::is_convertible<U, T>::value>>
+  void set_value(U&& value);
+  template <typename U = T, typename = std::enable_if_t<std::is_same<U, void>::value>>
+  void set_value();
 
 private:
   std::shared_ptr<detail::FutureSharedState<T, Allocator>> state_ =
@@ -356,6 +365,19 @@ template <typename T, typename Series, typename Lock>
   return has_value(status) && !is_consumed(status);
 }
 
+template <typename T, typename Allocator, typename F, typename... Args>
+void fulfill_promise(Promise<T, Allocator>& promise, F&& function, Args&&... args)
+{
+  promise.set_value(std::forward<F>(function)(std::forward<Args>(args)...));
+}
+
+template <typename Allocator, typename F, typename... Args>
+void fulfill_promise(Promise<void, Allocator>& promise, F&& function, Args&&... args)
+{
+  std::forward<F>(function)(std::forward<Args>(args)...);
+  promise.set_value();
+}
+
 }  // namespace detail
 
 }  // namespace etcpal
@@ -390,7 +412,8 @@ private:
 };
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_value(T&& value) noexcept -> StateChangeResult
+template <typename U, typename>
+[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_value(U&& value) noexcept -> StateChangeResult
 {
   const auto state  = state_.lock();
   const auto status = static_cast<FutureStatus>(status_.GetBits());
@@ -404,7 +427,7 @@ template <typename T, typename Allocator>
   }
 
   const auto new_status = state->continuation_ ? (FutureStatus::ready | FutureStatus::continued) : FutureStatus::ready;
-  state->value_         = std::move(value);
+  state->value_         = std::forward<U>(value);
   status_.SetBits(static_cast<EventBits>(new_status));
 
   return {state->continuation_ ? FutureActionResult::continuation_invocation_required
@@ -505,6 +528,19 @@ void etcpal::detail::FutureSharedState<T, Allocator>::abandon() noexcept
 }
 
 template <typename T, typename Allocator>
+template <typename U, typename Arg, typename>
+[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::return_value(Arg&& value) noexcept -> T
+{
+  return std::move(value);
+}
+
+template <typename T, typename Allocator>
+template <typename U, typename>
+[[nodiscard]] void etcpal::detail::FutureSharedState<T, Allocator>::return_value(std::nullptr_t value) noexcept
+{
+}
+
+template <typename T, typename Allocator>
 template <typename Rep, typename Period>
 [[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::get_value(
     const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult
@@ -540,25 +576,42 @@ etcpal::Promise<T, Allocator>::~Promise() noexcept
 }
 
 template <typename T, typename Allocator>
-void etcpal::Promise<T, Allocator>::set_value(const T& value)
+template <typename U, typename>
+void etcpal::Promise<T, Allocator>::set_value(U&& value)
 {
   if (!state_)
   {
     throw FutureError{"promise has no associated state"};
   }
 
-  set_value(T{value});
+  auto result = state_->set_value(std::forward<U>(value));
+  switch (result.result)
+  {
+    case detail::FutureActionResult::value_set_succeeded:
+      return;
+    case detail::FutureActionResult::continuation_invocation_required:
+      result.continuation(result.status, result.value, result.exception);
+      return;
+
+    case detail::FutureActionResult::value_already_set:
+      [[fallthrough]];
+    case detail::FutureActionResult::exception_already_set:
+      throw FutureError{"promise already fulfilled"};
+    default:
+      throw std::logic_error{"invalid promise status"};
+  }
 }
 
 template <typename T, typename Allocator>
-void etcpal::Promise<T, Allocator>::set_value(T&& value)
+template <typename U, typename>
+void etcpal::Promise<T, Allocator>::set_value()
 {
   if (!state_)
   {
     throw FutureError{"promise has no associated state"};
   }
 
-  auto result = state_->set_value(std::move(value));
+  auto result = state_->set_value(nullptr);
   switch (result.result)
   {
     case detail::FutureActionResult::value_set_succeeded:
@@ -590,7 +643,7 @@ template <typename T, typename Allocator>
     case detail::FutureActionResult::exception_throwing_required:
       std::rethrow_exception(result.exception);
     case detail::FutureActionResult::value_get_succeeded:
-      return std::move(*result.value);
+      return state_->return_value(std::move(*result.value));
 
     case detail::FutureActionResult::broken_promise:
       throw FutureError{"broken promise"};
@@ -657,7 +710,7 @@ template <typename F, typename Executor>
   auto result = state_->set_continuation(
       [fun = std::forward<F>(cont), exec, prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
         exec.post([f = std::move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
-          p.set_value(std::forward<F>(f)(status, val, exception));
+          detail::fulfill_promise(p, std::forward<F>(f), status, val, exception);
         });
       });
   switch (result.result)
@@ -747,6 +800,7 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{al
                                       (*task)();
                                     }
                                   }
+                                  queue_status_.SetBits(static_cast<EventBits>(detail::QueueStatus::all_bits));
                                 }};
   }
 }
