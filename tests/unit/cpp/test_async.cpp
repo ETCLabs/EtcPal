@@ -37,7 +37,7 @@ TEST(etcpal_cpp_async, promise_future)
   using namespace std::chrono_literals;
 
 #if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 21>{};
+  auto buffer = std::array<std::byte, 1 << 8>{};
   auto memory_resource =
       std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
   const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
