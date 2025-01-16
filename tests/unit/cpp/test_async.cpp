@@ -34,9 +34,10 @@ TEST(etcpal_cpp_async, promise_future)
 TEST(etcpal_cpp_async, thread_pool)
 {
 #if (__cplusplus >= 201703L)
-  auto       buffer          = std::array<std::byte, 1 << 14>{};
-  auto       memory_resource = std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer)};
-  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  auto buffer = std::array<std::byte, 1 << 19>{};
+  auto memory_resource =
+      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
+  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
   const auto alloc = etcpal::DefaultAllocator{};
 #endif  // #if (__cplusplus >= 201703L)
@@ -46,6 +47,8 @@ TEST(etcpal_cpp_async, thread_pool)
   etcpal::ThreadPool<32> pool{alloc};
   auto                   futures           = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
   auto                   abandoned_futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+  futures.reserve(num_items);
+  abandoned_futures.reserve(num_items);
   for (auto i = 0; i < num_items; ++i)
   {
     auto promise = etcpal::Promise<int>{alloc};
