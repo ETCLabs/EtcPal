@@ -197,6 +197,9 @@ public:
   template <typename F>
   [[nodiscard]] auto and_then(F&& cont)
       -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>;
+  template <typename F, typename Executor>
+  [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
+      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>;
 
   [[nodiscard]] bool valid() const noexcept;
   [[nodiscard]] auto wait() const noexcept -> FutureStatus;
@@ -363,19 +366,20 @@ public:
   explicit Executor(ThreadPool& pool) noexcept : pool_{std::addressof(pool)} {}
 
   template <typename Alloc = Allocator, typename F>
-  [[nodiscard]] auto post(UseFuture tag, F&& fun, const Alloc& alloc) -> Future<decltype(std::forward<F>(fun)()), Alloc>
+  [[nodiscard]] auto post(UseFuture tag, F&& fun, const Alloc& alloc) const
+      -> Future<decltype(std::forward<F>(fun)()), Alloc>
   {
     return pool_->post(tag, std::forward<F>(fun), alloc);
   }
 
   template <typename F>
-  [[nodiscard]] auto post(UseFuture tag, F&& fun) -> Future<decltype(std::forward<F>(fun)()), Allocator>
+  [[nodiscard]] auto post(UseFuture tag, F&& fun) const -> Future<decltype(std::forward<F>(fun)()), Allocator>
   {
     return pool_->post(tag, std::forward<F>(fun));
   }
 
   template <typename F>
-  auto post(F&& fun)
+  auto post(F&& fun) const
   {
     return pool_->post(std::forward<F>(fun));
   }
@@ -635,6 +639,43 @@ template <typename F>
 }
 
 template <typename T, typename Allocator>
+template <typename F, typename Executor>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
+    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>
+{
+  if (!state_)
+  {
+    throw FutureError{"promise has no associated state"};
+  }
+
+  auto promise =
+      Promise<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>{
+          state_->get_allocator()};
+  auto future = promise.get_future();
+  auto result = state_->set_continuation(
+      [fun = std::forward<F>(cont), exec, prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
+        exec.post([f = std::move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
+          p.set_value(std::forward<F>(f)(status, val, exception));
+        });
+      });
+  switch (result.result)
+  {
+    case detail::FutureActionResult::continuation_set_suceeded:
+      break;
+    case detail::FutureActionResult::continuation_invocation_required:
+      result.continuation(result.status, result.value, result.exception);
+      break;
+
+    case detail::FutureActionResult::continuation_already_set:
+      throw FutureError{"promise already has a continuation"};
+    default:
+      throw std::logic_error{"invalid promise status"};
+  }
+
+  return future;
+}
+
+template <typename T, typename Allocator>
 [[nodiscard]] bool etcpal::Future<T, Allocator>::valid() const noexcept
 {
   return state_ != nullptr;
@@ -739,7 +780,7 @@ auto etcpal::ThreadPool<N, Allocator>::post(UseFuture tag, F&& fun, const Alloc&
 
   auto promise = Promise<T, Alloc>{alloc};
   auto future  = promise.get_future();
-  post([f = std::forward<F>(fun), prom = std::move(promise)]() mutable { prom.set_value(std::forward<F>(f)); });
+  post([f = std::forward<F>(fun), prom = std::move(promise)]() mutable { prom.set_value(std::forward<F>(f)()); });
 
   return future;
 }
