@@ -205,6 +205,7 @@ private:
   EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
 };
 
+template <typename Allocator = DefaultAllocator>
 class JThread
 {
 public:
@@ -213,7 +214,13 @@ public:
   JThread() noexcept = default;
   template <typename Fun,
             typename... Args,
-            decltype(std::declval<Fun>()(std::declval<const StopToken<>&>(), std::declval<Args>()...))* = nullptr>
+            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
+                                         std::declval<Args>()...))* = nullptr>
+  explicit JThread(const Allocator& alloc, Fun&& fun, Args&&... args);
+  template <typename Fun,
+            typename... Args,
+            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
+                                         std::declval<Args>()...))* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
   template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
@@ -236,8 +243,8 @@ public:
   bool               request_stop() noexcept { return ssource_.request_stop(); }
 
 private:
-  StopSource<> ssource_ = StopSource<>{NoStopState};
-  Thread       thread_  = {};
+  StopSource<Allocator> ssource_ = StopSource<Allocator>{NoStopState};
+  Thread                thread_  = {};
 };
 
 /// @cond Internal thread function
@@ -552,20 +559,33 @@ Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) no
 
 };  // namespace etcpal
 
+template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<>&>(), std::declval<Args>()...))*>
-etcpal::JThread::JThread(Fun&& fun, Args&&... args)
+          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+etcpal::JThread<Allocator>::JThread(const Allocator& alloc, Fun&& fun, Args&&... args)
+    : ssource_{alloc}, thread_{std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
+{
+}
+
+template <typename Allocator>
+template <typename Fun,
+          typename... Args,
+          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+etcpal::JThread<Allocator>::JThread(Fun&& fun, Args&&... args)
     : ssource_{}, thread_{std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
 {
 }
 
+template <typename Allocator>
 template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))*>
-etcpal::JThread::JThread(Fun&& fun, Args&&... args) : thread_{std::forward<Fun>(fun), std::forward<Args>(args)...}
+etcpal::JThread<Allocator>::JThread(Fun&& fun, Args&&... args)
+    : thread_{std::forward<Fun>(fun), std::forward<Args>(args)...}
 {
 }
 
-inline auto etcpal::JThread::operator=(JThread&& rhs) noexcept -> JThread&
+template <typename Allocator>
+inline auto etcpal::JThread<Allocator>::operator=(JThread&& rhs) noexcept -> JThread&
 {
   request_stop();
   if (joinable())

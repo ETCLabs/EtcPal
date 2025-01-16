@@ -42,7 +42,7 @@ TEST(etcpal_cpp_synchronized, synchronized)
       test_val_copy.apply([&](auto& val) { val = *test_val.clock(); });
     }
   };
-  auto threads = std::vector<etcpal::JThread>{};
+  auto threads = std::vector<etcpal::JThread<>>{};
   for (auto i = 0; i < num_threads; ++i)
   {
     threads.push_back(etcpal::JThread{increment_and_copy});

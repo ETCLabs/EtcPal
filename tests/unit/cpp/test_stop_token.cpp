@@ -5,16 +5,34 @@
 
 #include <unity_fixture.h>
 
+#if (__cplusplus >= 201703L)
+
+namespace
+{
+
+auto* default_resource = std::pmr::null_memory_resource();
+
+}
+
+#endif  // #if (__cplusplus >= 201703L)
+
 extern "C" {
 
 TEST_GROUP(etcpal_cpp_stop_token);
 
 TEST_SETUP(etcpal_cpp_stop_token)
 {
+#if (__cplusplus >= 201703L)
+  default_resource = std::pmr::get_default_resource();
+  std::pmr::set_default_resource(std::pmr::null_memory_resource());
+#endif  // #if (__cplusplus >= 201703L)
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_stop_token)
 {
+#if (__cplusplus >= 201703L)
+  std::pmr::set_default_resource(default_resource);
+#endif  // #if (__cplusplus >= 201703L)
 }
 
 TEST(etcpal_cpp_stop_token, stop_source)
