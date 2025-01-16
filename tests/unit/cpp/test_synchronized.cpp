@@ -1,7 +1,8 @@
 #include <etcpal/cpp/synchronized.h>
 
-#include <etcpal/cpp/thread.h>
+#include <etcpal/cpp/mutex.h>
 #include <etcpal/cpp/rwlock.h>
+#include <etcpal/cpp/thread.h>
 
 #include <unity_fixture.h>
 

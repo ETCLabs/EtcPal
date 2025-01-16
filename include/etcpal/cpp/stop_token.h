@@ -8,7 +8,8 @@
 #include <vector>
 
 #include <etcpal/cpp/common.h>
-#include <etcpal/cpp/mutex.h>
+#include <etcpal/cpp/rwlock.h>
+#include <etcpal/cpp/synchronized.h>
 
 namespace etcpal
 {
@@ -258,10 +259,9 @@ struct etcpal::StopSource<Allocator>::StopContext
   StopContext() = default;
   StopContext(const CallbackAllocator& alloc) : callbacks{alloc} {}
 
-  Mutex             cb_mutex  = {};
-  CallbackStorage   callbacks = CallbackStorage{CallbackAllocator{}};
-  std::atomic<int>  num_sources{1};
-  std::atomic<bool> stop_requested{false};
+  Synchronized<CallbackStorage, RwLock> callbacks{CallbackStorage{CallbackAllocator{}}};
+  std::atomic<int>                      num_sources{1};
+  std::atomic<bool>                     stop_requested{false};
 };
 
 template <typename Allocator>
@@ -305,14 +305,13 @@ bool etcpal::StopSource<Allocator>::request_stop() noexcept
     return false;
   }
 
-  const std::lock_guard<Mutex> guard{ctrl_block_->cb_mutex};
   bool                         expected = false;
   if (!ctrl_block_->stop_requested.compare_exchange_weak(expected, true))
   {
     return false;
   }
 
-  for (const auto& var : ctrl_block_->callbacks)
+  for (const auto& var : *ctrl_block_->callbacks.lock())
   {
     if (!var.has_value)
     {
@@ -359,8 +358,8 @@ etcpal::StopCallback<Callback, Allocator>::StopCallback(const StopToken<Allocato
     return;
   }
 
-  std::lock_guard<Mutex> guard{token_.ctrl_block_->cb_mutex};
-  for (auto& fun : token_.ctrl_block_->callbacks)
+  const auto callbacks = token_.ctrl_block_->callbacks.lock();
+  for (auto& fun : *callbacks)
   {
     if (!fun.has_value)
     {
@@ -369,7 +368,7 @@ etcpal::StopCallback<Callback, Allocator>::StopCallback(const StopToken<Allocato
     }
   }
 
-  token_.ctrl_block_->callbacks.push_back(callback_);
+  callbacks->push_back(callback_);
 }
 
 template <typename Callback, typename Allocator>
@@ -388,10 +387,9 @@ etcpal::StopCallback<Callback, Allocator>::~StopCallback() noexcept
     return;
   }
 
-  std::lock_guard<Mutex> guard{token_.ctrl_block_->cb_mutex};
-  const auto             position =
-      std::find(std::begin(token_.ctrl_block_->callbacks), std::end(token_.ctrl_block_->callbacks), callback_);
-  if (position == std::end(token_.ctrl_block_->callbacks))
+  const auto callbacks = token_.ctrl_block_->callbacks.lock();
+  const auto position  = std::find(std::begin(*callbacks), std::end(*callbacks), callback_);
+  if (position == std::end(*callbacks))
   {
     return;
   }

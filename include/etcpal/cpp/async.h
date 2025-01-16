@@ -7,8 +7,9 @@
 #include <etcpal/cpp/common.h>
 #include <etcpal/cpp/event_group.h>
 #include <etcpal/cpp/functional.h>
-#include <etcpal/cpp/mutex.h>
 #include <etcpal/cpp/optional.h>
+#include <etcpal/cpp/rwlock.h>
+#include <etcpal/cpp/synchronized.h>
 #include <etcpal/cpp/thread.h>
 
 namespace etcpal
@@ -142,12 +143,16 @@ public:
   [[nodiscard]] auto get_allocator() const noexcept { return allocator_; }
 
 private:
-  Mutex              mutex_;
-  EventGroup         status_;
-  Optional<T>        value_;
-  Task               continuation_;
-  std::exception_ptr exception_;
-  Allocator          allocator_;
+  struct State
+  {
+    Optional<T>        value_;
+    Task               continuation_;
+    std::exception_ptr exception_;
+  };
+
+  EventGroup                  status_;
+  Synchronized<State, RwLock> state_;
+  Allocator                   allocator_;
 };
 
 }  // namespace detail
@@ -236,11 +241,10 @@ private:
   using TaskAllocator = typename std::allocator_traits<Allocator>::template rebind_alloc<Task>;
   using TaskQueue     = std::queue<Task, std::deque<Task, TaskAllocator>>;
 
-  EventGroup             queue_status_ = {};
-  Mutex                  queue_mutex_  = {};
-  TaskQueue              queue_        = {};
-  std::array<JThread, N> threads_      = {};
-  Allocator              allocator_    = {};
+  EventGroup                      queue_status_ = {};
+  Synchronized<TaskQueue, RwLock> queue_        = {};
+  std::array<JThread, N>          threads_      = {};
+  Allocator                       allocator_    = {};
 };
 
 namespace detail
@@ -307,18 +311,19 @@ template <typename IntType>
   return static_cast<QueueStatus>(queue_size << 1);
 }
 
-template <typename T, typename Series>
-[[nodiscard]] auto pop_one(std::queue<T, Series>& queue, Mutex& mutex, EventGroup& queue_status) noexcept -> Optional<T>
+template <typename T, typename Series, typename Lock>
+[[nodiscard]] auto pop_one(Synchronized<std::queue<T, Series>, Lock>& sync_queue, EventGroup& queue_status) noexcept
+    -> Optional<T>
 {
-  std::lock_guard<Mutex> guard{mutex};
-  if (queue.empty())
+  auto queue = sync_queue.lock();
+  if (queue->empty())
   {
     return {};
   }
 
-  auto value = std::move(queue.front());
-  queue.pop();
-  queue_status.SetBits(static_cast<EventBits>(to_queue_status(queue.size())));
+  auto value = std::move(queue->front());
+  queue->pop();
+  queue_status.SetBits(static_cast<EventBits>(to_queue_status(queue->size())));
 
   return value;
 }
@@ -366,48 +371,48 @@ private:
 template <typename T, typename Allocator>
 [[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_value(T&& value) noexcept -> StateChangeResult
 {
-  std::lock_guard<Mutex> guard{mutex_};
+  auto                   state  = state_.lock();
   const auto             status = static_cast<FutureStatus>(status_.GetBits());
-  if (exception_)
+  if (state->exception_)
   {
-    return {FutureActionResult::exception_already_set, status, value_, exception_, {}};
+    return {FutureActionResult::exception_already_set, status, state->value_, state->exception_, {}};
   }
   if (has_value(status))
   {
-    return {FutureActionResult::value_already_set, status, value_, exception_, {}};
+    return {FutureActionResult::value_already_set, status, state->value_, state->exception_, {}};
   }
 
-  const auto new_status = continuation_ ? (FutureStatus::ready | FutureStatus::continued) : FutureStatus::ready;
-  value_                = std::move(value);
+  const auto new_status = state->continuation_ ? (FutureStatus::ready | FutureStatus::continued) : FutureStatus::ready;
+  state->value_         = std::move(value);
   status_.SetBits(static_cast<EventBits>(new_status));
 
-  return {
-      continuation_ ? FutureActionResult::continuation_invocation_required : FutureActionResult::value_set_succeeded,
-      new_status, value_, exception_, std::move(continuation_)};
+  return {state->continuation_ ? FutureActionResult::continuation_invocation_required
+                               : FutureActionResult::value_set_succeeded,
+          new_status, state->value_, state->exception_, std::move(state->continuation_)};
 }
 
 template <typename T, typename Allocator>
 [[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_exception(std::exception_ptr exception) noexcept
     -> StateChangeResult
 {
-  std::lock_guard<Mutex> guard{mutex_};
+  auto                   state  = state_.lock();
   const auto             status = static_cast<FutureStatus>(status_.GetBits());
-  if (exception_)
+  if (state->exception_)
   {
-    return {FutureActionResult::exception_already_set, status, value_, exception_, {}};
+    return {FutureActionResult::exception_already_set, status, state->value_, state->exception_, {}};
   }
   if (has_value(status))
   {
-    return {FutureActionResult::value_already_set, status, value_, exception_, {}};
+    return {FutureActionResult::value_already_set, status, state->value_, state->exception_, {}};
   }
 
-  const auto new_status = continuation_ ? (FutureStatus::ready | FutureStatus::continued) : FutureStatus::ready;
-  exception_            = exception;
+  const auto new_status = state->continuation_ ? (FutureStatus::ready | FutureStatus::continued) : FutureStatus::ready;
+  state->exception_     = exception;
   status_.SetBits(static_cast<EventBits>(new_status));
 
-  return {
-      continuation_ ? FutureActionResult::continuation_invocation_required : FutureActionResult::exception_set_suceeded,
-      new_status, value_, exception_, std::move(continuation_)};
+  return {state->continuation_ ? FutureActionResult::continuation_invocation_required
+                               : FutureActionResult::exception_set_suceeded,
+          new_status, state->value_, state->exception_, std::move(state->continuation_)};
 }
 
 template <typename T, typename Allocator>
@@ -418,31 +423,31 @@ template <typename Rep, typename Period>
   const auto status = static_cast<FutureStatus>(
       status_.TryWait(static_cast<EventBits>(FutureStatus::ready | FutureStatus::abandoned), 0,
                       std::chrono::duration_cast<std::chrono::milliseconds>(timeout).count()));
-  std::lock_guard<Mutex> guard{mutex_};
+  auto state = state_.lock();
   if (is_abandoned(status))
   {
-    return {FutureActionResult::broken_promise, status, value_, exception_, {}};
+    return {FutureActionResult::broken_promise, status, state->value_, state->exception_, {}};
   }
   if (!has_value(status))
   {
-    return {FutureActionResult::value_get_timeout, status, value_, exception_, {}};
+    return {FutureActionResult::value_get_timeout, status, state->value_, state->exception_, {}};
   }
   if (is_consumed(status))
   {
-    return {FutureActionResult::value_already_obtained, status, value_, exception_, {}};
+    return {FutureActionResult::value_already_obtained, status, state->value_, state->exception_, {}};
   }
-  if (continuation_)
+  if (state->continuation_)
   {
-    return {FutureActionResult::continuation_already_set, status, value_, exception_, {}};
+    return {FutureActionResult::continuation_already_set, status, state->value_, state->exception_, {}};
   }
 
-  return {FutureActionResult::value_get_succeeded, status, value_, exception_, {}};
+  return {FutureActionResult::value_get_succeeded, status, state->value_, state->exception_, {}};
 }
 
 template <typename T, typename Allocator>
 void etcpal::detail::FutureSharedState<T, Allocator>::abandon() noexcept
 {
-  const std::lock_guard<Mutex> guard{mutex_};
+  auto                         state  = state_.lock();
   const auto                   status = static_cast<FutureStatus>(status_.GetBits());
   if (has_value(status))
   {
@@ -450,7 +455,7 @@ void etcpal::detail::FutureSharedState<T, Allocator>::abandon() noexcept
   }
 
   status_.SetBits(static_cast<EventBits>(FutureStatus::abandoned));
-  continuation_ = nullptr;
+  state->continuation_ = nullptr;
 }
 
 template <typename T, typename Allocator>
@@ -464,12 +469,13 @@ template <typename Rep, typename Period>
     return result;
   }
 
-  const auto new_status =
-      result.status | (continuation_ ? FutureStatus::consumed : (FutureStatus::consumed | FutureStatus::continued));
+  auto       state = state_.lock();
+  const auto new_status = result.status | (state->continuation_ ? FutureStatus::consumed
+                                                                : (FutureStatus::consumed | FutureStatus::continued));
   status_.SetBits(static_cast<EventBits>(new_status));
 
-  return {exception_ ? FutureActionResult::exception_throwing_required : FutureActionResult::value_get_succeeded,
-          new_status, value_, exception_, std::move(continuation_)};
+  return {state->exception_ ? FutureActionResult::exception_throwing_required : FutureActionResult::value_get_succeeded,
+          new_status, state->value_, state->exception_, std::move(state->continuation_)};
 }
 
 template <typename T, typename Allocator>
@@ -618,7 +624,7 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{al
       while (token.stop_possible() && !token.stop_requested())
       {
         queue_status_.Wait(static_cast<EventBits>(detail::QueueStatus::all_bits));
-        if (auto task = detail::pop_one(queue_, queue_mutex_, queue_status_))
+        if (auto task = detail::pop_one(queue_, queue_status_))
         {
           (*task)();
         }
@@ -630,7 +636,7 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{al
 template <std::size_t N, typename Allocator>
 etcpal::ThreadPool<N, Allocator>::~ThreadPool() noexcept
 {
-  const std::lock_guard<Mutex> guard{queue_mutex_};
+  const auto queue = queue_.lock();
   for (auto& thread : threads_)
   {
     thread.request_stop();
@@ -642,11 +648,11 @@ template <std::size_t N, typename Allocator>
 template <typename F>
 auto etcpal::ThreadPool<N, Allocator>::post(F&& fun)
 {
-  const std::lock_guard<Mutex> guard{queue_mutex_};
-  queue_.push(Task{std::forward<F>(fun)});
-  queue_status_.SetBits(static_cast<EventBits>(detail::to_queue_status(queue_.size())));
+  auto queue = queue_.lock();
+  queue->push(Task{std::forward<F>(fun)});
+  queue_status_.SetBits(static_cast<EventBits>(detail::to_queue_status(queue->size())));
 
-  return queue_.size();
+  return queue->size();
 }
 
 template <std::size_t N, typename Allocator>
