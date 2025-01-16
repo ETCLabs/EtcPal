@@ -305,7 +305,7 @@ bool etcpal::StopSource<Allocator>::request_stop() noexcept
     return false;
   }
 
-  bool                         expected = false;
+  bool expected = false;
   if (!ctrl_block_->stop_requested.compare_exchange_weak(expected, true))
   {
     return false;
