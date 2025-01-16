@@ -223,7 +223,7 @@ public:
 
   ~JThread() noexcept { request_stop(); }
 
-  auto operator=(const JThread& rhs) -> JThread&     = delete;
+  auto        operator=(const JThread& rhs) -> JThread& = delete;
   inline auto operator=(JThread&& rhs) noexcept -> JThread&;
 
   [[nodiscard]] bool joinable() const noexcept { return thread_.joinable(); }
