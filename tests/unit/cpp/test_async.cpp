@@ -144,6 +144,8 @@ TEST(etcpal_cpp_async, promise_chain)
 
   auto max_val_promise = etcpal::Promise<int>{alloc};
   auto min_val_promise = etcpal::Promise<int>{alloc};
+  auto max_val         = max_val_promise.get_future();
+  auto min_val         = min_val_promise.get_future();
   auto task_chain_done =
       pool.post(etcpal::use_future,
                 [&] {
@@ -159,12 +161,12 @@ TEST(etcpal_cpp_async, promise_chain)
           .and_then([](auto status, auto& nums,
                        auto exception) { std::sort(std::begin(nums.value().get()), std::end(nums.value().get())); },
                     pool.get_executor());
-  TEST_ASSERT_TRUE(max_val_promise.get_future().wait_for(50ms) == etcpal::FutureStatus::ready);
-  TEST_ASSERT_TRUE(min_val_promise.get_future().wait_for(50ms) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(max_val.wait_for(50ms) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(min_val.wait_for(50ms) == etcpal::FutureStatus::ready);
   TEST_ASSERT_TRUE(task_chain_done.wait_for(50ms) == etcpal::FutureStatus::ready);
   TEST_ASSERT_TRUE(std::is_sorted(std::cbegin(numbers), std::cend(numbers)));
-  TEST_ASSERT_TRUE(max_val_promise.get_future().get() == numbers.back());
-  TEST_ASSERT_TRUE(min_val_promise.get_future().get() == numbers.front());
+  TEST_ASSERT_TRUE(max_val.get() == numbers.back());
+  TEST_ASSERT_TRUE(min_val.get() == numbers.front());
 }
 
 TEST_GROUP_RUNNER(etcpal_cpp_async)
