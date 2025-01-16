@@ -1,5 +1,7 @@
 #include <etcpal/cpp/async.h>
 
+#include <random>
+
 #include <unity_fixture.h>
 
 #if (__cplusplus >= 201703L)
@@ -119,9 +121,56 @@ TEST(etcpal_cpp_async, thread_pool)
   }
 }
 
+TEST(etcpal_cpp_async, promise_chain)
+{
+  using namespace std::chrono_literals;
+
+#if (__cplusplus >= 201703L)
+  auto buffer = std::array<std::byte, 1 << 13>{};
+  auto memory_resource =
+      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
+  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+#else   // #if (__cplusplus >= 201703L)
+  const auto alloc = etcpal::DefaultAllocator{};
+#endif  // #if (__cplusplus >= 201703L)
+
+  constexpr auto num_elements = std::size_t{1024};
+
+  etcpal::ThreadPool<8> pool{alloc};
+  auto                  numbers = std::vector<int, etcpal::DefaultAllocator>(num_elements, alloc);
+  auto                  rd      = std::mt19937{std::random_device{}()};
+  auto                  dist    = std::uniform_int_distribution<int>{-100, 100};
+  std::generate(std::begin(numbers), std::end(numbers), [&] { return dist(rd); });
+
+  auto max_val_promise = etcpal::Promise<int>{alloc};
+  auto min_val_promise = etcpal::Promise<int>{alloc};
+  auto task_chain_done =
+      pool.post(etcpal::use_future,
+                [&] {
+                  std::make_heap(std::begin(numbers), std::end(numbers));
+                  max_val_promise.set_value(numbers.front());
+                  return std::ref(numbers);
+                })
+          .and_then([&](auto status, auto& nums, auto exception) {
+            std::make_heap(std::begin(nums.value().get()), std::end(nums.value().get()), std::greater<>{});
+            min_val_promise.set_value(nums->get().front());
+            return std::ref(nums.value().get());
+          })
+          .and_then([](auto status, auto& nums,
+                       auto exception) { std::sort(std::begin(nums.value().get()), std::end(nums.value().get())); },
+                    pool.get_executor());
+  TEST_ASSERT_TRUE(max_val_promise.get_future().wait_for(50ms) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(min_val_promise.get_future().wait_for(50ms) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(task_chain_done.wait_for(50ms) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(std::is_sorted(std::cbegin(numbers), std::cend(numbers)));
+  TEST_ASSERT_TRUE(max_val_promise.get_future().get() == numbers.back());
+  TEST_ASSERT_TRUE(min_val_promise.get_future().get() == numbers.front());
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_async)
 {
   RUN_TEST_CASE(etcpal_cpp_async, promise_future);
   RUN_TEST_CASE(etcpal_cpp_async, thread_pool);
+  RUN_TEST_CASE(etcpal_cpp_async, promise_chain);
 }
 }
