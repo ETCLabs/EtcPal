@@ -153,11 +153,13 @@ TEST(etcpal_cpp_async, promise_chain)
                   max_val_promise.set_value(numbers.front());
                   return std::ref(numbers);
                 })
-          .and_then([&](auto status, auto& nums, auto exception) {
-            std::make_heap(std::begin(nums.value().get()), std::end(nums.value().get()), std::greater<>{});
-            min_val_promise.set_value(nums->get().front());
-            return std::ref(nums.value().get());
-          })
+          .and_then(
+              [&](auto status, auto& nums, auto exception) {
+                std::make_heap(std::begin(nums.value().get()), std::end(nums.value().get()), std::greater<>{});
+                min_val_promise.set_value(nums->get().front());
+                return std::ref(nums.value().get());
+              },
+              pool.get_executor())
           .and_then([](auto status, auto& nums,
                        auto exception) { std::sort(std::begin(nums.value().get()), std::end(nums.value().get())); },
                     pool.get_executor());
