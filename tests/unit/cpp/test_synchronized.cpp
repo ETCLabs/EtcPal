@@ -45,7 +45,7 @@ TEST(etcpal_cpp_synchronized, synchronized)
   auto threads = std::vector<etcpal::JThread<>>{};
   for (auto i = 0; i < num_threads; ++i)
   {
-    threads.push_back(etcpal::JThread{increment_and_copy});
+    threads.push_back(etcpal::JThread<>{increment_and_copy});
   }
   threads.clear();
   TEST_ASSERT_TRUE(test_rw_val.capply([](auto val) { return val; }) == increments_per_thread * num_threads);

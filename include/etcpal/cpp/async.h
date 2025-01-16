@@ -738,16 +738,16 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{al
 {
   for (auto& thread : threads_)
   {
-    thread = JThread{allocator_, [&](const auto& token) {
-                       while (token.stop_possible() && !token.stop_requested())
-                       {
-                         queue_status_.Wait(static_cast<EventBits>(detail::QueueStatus::all_bits));
-                         if (auto task = detail::pop_one(queue_, queue_status_))
-                         {
-                           (*task)();
-                         }
-                       }
-                     }};
+    thread = JThread<Allocator>{allocator_, [&](const auto& token) {
+                                  while (token.stop_possible() && !token.stop_requested())
+                                  {
+                                    queue_status_.Wait(static_cast<EventBits>(detail::QueueStatus::all_bits));
+                                    if (auto task = detail::pop_one(queue_, queue_status_))
+                                    {
+                                      (*task)();
+                                    }
+                                  }
+                                }};
   }
 }
 
