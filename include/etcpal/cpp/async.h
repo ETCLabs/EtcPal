@@ -100,6 +100,8 @@ namespace detail
 enum class FutureActionResult
 {
   broken_promise,
+  future_retrieve_succeeeded,
+  future_already_retrieved,
   value_already_set,
   value_already_obtained,
   value_set_succeeded,
@@ -133,6 +135,7 @@ public:
 
   explicit FutureSharedState(const Allocator& alloc) noexcept : allocator_{alloc} {}
 
+  [[nodiscard]] auto set_future_retrieved() noexcept -> FutureActionResult;
   template <typename U, typename = std::enable_if_t<std::is_convertible<U, Type>::value>>
   [[nodiscard]] auto set_value(U&& value) noexcept -> StateChangeResult;
   [[nodiscard]] auto set_exception(std::exception_ptr exception) noexcept -> StateChangeResult;
@@ -162,6 +165,7 @@ private:
   EventGroup                  status_;
   Synchronized<State, RwLock> state_;
   Allocator                   allocator_;
+  std::atomic<bool>           future_retrieved_;
 };
 
 }  // namespace detail
@@ -181,7 +185,7 @@ public:
   auto operator=(const Promise& rhs) -> Promise&     = delete;
   auto operator=(Promise&& rhs) noexcept -> Promise& = default;
 
-  [[nodiscard]] auto get_future() const noexcept { return Future<T, Allocator>{state_}; }
+  [[nodiscard]] auto get_future();
 
   template <typename U, typename = std::enable_if_t<std::is_convertible<U, T>::value>>
   void set_value(U&& value);
@@ -412,6 +416,14 @@ private:
 };
 
 template <typename T, typename Allocator>
+[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_future_retrieved() noexcept
+    -> FutureActionResult
+{
+  return future_retrieved_.exchange(true) ? FutureActionResult::future_already_retrieved
+                                          : FutureActionResult::future_retrieve_succeeeded;
+}
+
+template <typename T, typename Allocator>
 template <typename U, typename>
 [[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_value(U&& value) noexcept -> StateChangeResult
 {
@@ -572,6 +584,26 @@ etcpal::Promise<T, Allocator>::~Promise() noexcept
   if (state_)
   {
     state_->abandon();
+  }
+}
+
+template <typename T, typename Allocator>
+[[nodiscard]] auto etcpal::Promise<T, Allocator>::get_future()
+{
+  if (!state_)
+  {
+    throw FutureError{"promise has no associated state"};
+  }
+
+  switch (state_->set_future_retrieved())
+  {
+    case detail::FutureActionResult::future_retrieve_succeeeded:
+      return Future<T, Allocator>{state_};
+
+    case detail::FutureActionResult::future_already_retrieved:
+      throw FutureError{"future has already be obtained from this promise"};
+    default:
+      throw std::logic_error{"invalid promise status"};
   }
 }
 
