@@ -82,6 +82,7 @@ TEST(etcpal_cpp_async, thread_pool)
     TEST_ASSERT_TRUE(continued_futures[i].wait_for(50ms) == etcpal::FutureStatus::ready);
     TEST_ASSERT_TRUE(continued_futures[i].get() == i);
 
+    TEST_ASSERT_TRUE(continued_exec_futures[i].wait_for(50ms) == etcpal::FutureStatus::ready);
     auto twice_contnued =
         continued_exec_futures[i].and_then([](auto status, auto& value, auto exception) { return value.value(); });
     TEST_ASSERT_TRUE(twice_contnued.wait_for(50ms) == etcpal::FutureStatus::ready);
