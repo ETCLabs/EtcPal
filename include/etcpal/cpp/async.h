@@ -149,7 +149,7 @@ public:
   template <typename U = T, typename Arg, typename = std::enable_if_t<!std::is_same<U, void>::value>>
   [[nodiscard]] static auto return_value(Arg&& value) noexcept -> T;
   template <typename U = T, typename = std::enable_if_t<std::is_same<U, void>::value>>
-  [[nodiscard]] static void return_value(std::nullptr_t value) noexcept;
+  static void return_value(std::nullptr_t value) noexcept;
 
 private:
   struct State
@@ -536,7 +536,7 @@ template <typename U, typename Arg, typename>
 
 template <typename T, typename Allocator>
 template <typename U, typename>
-[[nodiscard]] void etcpal::detail::FutureSharedState<T, Allocator>::return_value(std::nullptr_t value) noexcept
+void etcpal::detail::FutureSharedState<T, Allocator>::return_value(std::nullptr_t value) noexcept
 {
 }
 
