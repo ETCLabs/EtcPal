@@ -134,6 +134,7 @@ public:
 
   [[nodiscard]] auto set_value(T&& value) noexcept -> StateChangeResult;
   [[nodiscard]] auto set_exception(std::exception_ptr exception) noexcept -> StateChangeResult;
+  [[nodiscard]] auto set_continuation(Task&& continuation) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
   [[nodiscard]] auto get_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
@@ -193,6 +194,9 @@ public:
   auto operator=(Future&& rhs) noexcept -> Future& = default;
 
   [[nodiscard]] auto get() -> T;
+  template <typename F>
+  [[nodiscard]] auto and_then(F&& cont)
+      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>;
 
   [[nodiscard]] bool valid() const noexcept;
   [[nodiscard]] auto wait() const noexcept -> FutureStatus;
@@ -358,8 +362,20 @@ class etcpal::ThreadPool<N, Allocator>::Executor
 public:
   explicit Executor(ThreadPool& pool) noexcept : pool_{std::addressof(pool)} {}
 
+  template <typename Alloc = Allocator, typename F>
+  [[nodiscard]] auto post(UseFuture tag, F&& fun, const Alloc& alloc) -> Future<decltype(std::forward<F>(fun)()), Alloc>
+  {
+    return pool_->post(tag, std::forward<F>(fun), alloc);
+  }
+
   template <typename F>
-  auto post(F&& fun) const
+  [[nodiscard]] auto post(UseFuture tag, F&& fun) -> Future<decltype(std::forward<F>(fun)()), Allocator>
+  {
+    return pool_->post(tag, std::forward<F>(fun));
+  }
+
+  template <typename F>
+  auto post(F&& fun)
   {
     return pool_->post(std::forward<F>(fun));
   }
@@ -413,6 +429,30 @@ template <typename T, typename Allocator>
   return {state->continuation_ ? FutureActionResult::continuation_invocation_required
                                : FutureActionResult::exception_set_suceeded,
           new_status, state->value_, state->exception_, std::move(state->continuation_)};
+}
+
+template <typename T, typename Allocator>
+[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_continuation(Task&& continuation) noexcept
+    -> StateChangeResult
+{
+  const auto state  = state_.lock();
+  const auto status = static_cast<FutureStatus>(status_.GetBits());
+  if (state->continuation_)
+  {
+    return {FutureActionResult::continuation_already_set, status, state->value_, state->exception_, {}};
+  }
+
+  if (!state->exception_ && !has_value(status))
+  {
+    state->continuation_ = std::move(continuation);
+    return {FutureActionResult::continuation_set_suceeded, status, state->value_, state->exception_, {}};
+  }
+
+  const auto new_status = static_cast<FutureStatus>(status_.GetBits()) | FutureStatus::continued;
+  status_.SetBits(static_cast<EventBits>(new_status));
+
+  return {FutureActionResult::continuation_invocation_required, new_status, state->value_, state->exception_,
+          std::forward<Task>(continuation)};
 }
 
 template <typename T, typename Allocator>
@@ -557,6 +597,41 @@ template <typename T, typename Allocator>
     default:
       throw std::logic_error{"invalid future status"};
   }
+}
+
+template <typename T, typename Allocator>
+template <typename F>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
+    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>
+{
+  if (!state_)
+  {
+    throw FutureError{"promise has no associated state"};
+  }
+
+  auto promise =
+      Promise<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>{
+          state_->get_allocator()};
+  auto future = promise.get_future();
+  auto result = state_->set_continuation(
+      [fun = std::forward<F>(cont), prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
+        prom.set_value(std::forward<F>(fun)(status, value, exception));
+      });
+  switch (result.result)
+  {
+    case detail::FutureActionResult::continuation_set_suceeded:
+      break;
+    case detail::FutureActionResult::continuation_invocation_required:
+      result.continuation(result.status, result.value, result.exception);
+      break;
+
+    case detail::FutureActionResult::continuation_already_set:
+      throw FutureError{"promise already has a continuation"};
+    default:
+      throw std::logic_error{"invalid promise status"};
+  }
+
+  return future;
 }
 
 template <typename T, typename Allocator>
