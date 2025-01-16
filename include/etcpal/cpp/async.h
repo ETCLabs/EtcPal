@@ -134,7 +134,8 @@ public:
 
   [[nodiscard]] auto set_value(T&& value) noexcept -> StateChangeResult;
   [[nodiscard]] auto set_exception(std::exception_ptr exception) noexcept -> StateChangeResult;
-  [[nodiscard]] auto set_continuation(Task&& continuation) noexcept -> StateChangeResult;
+  template <typename Func>
+  [[nodiscard]] auto set_continuation(Func&& continuation) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
   [[nodiscard]] auto get_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
@@ -436,7 +437,8 @@ template <typename T, typename Allocator>
 }
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_continuation(Task&& continuation) noexcept
+template <typename Cont>
+[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_continuation(Cont&& continuation) noexcept
     -> StateChangeResult
 {
   const auto state  = state_.lock();
@@ -448,7 +450,7 @@ template <typename T, typename Allocator>
 
   if (!state->exception_ && !has_value(status))
   {
-    state->continuation_ = std::move(continuation);
+    state->continuation_ = Task{std::forward<Cont>(continuation), allocator_};
     return {FutureActionResult::continuation_set_suceeded, status, state->value_, state->exception_, {}};
   }
 
@@ -456,7 +458,7 @@ template <typename T, typename Allocator>
   status_.SetBits(static_cast<EventBits>(new_status));
 
   return {FutureActionResult::continuation_invocation_required, new_status, state->value_, state->exception_,
-          std::forward<Task>(continuation)};
+          Task{std::forward<Cont>(continuation), allocator_}};
 }
 
 template <typename T, typename Allocator>
@@ -765,7 +767,7 @@ template <typename F>
 auto etcpal::ThreadPool<N, Allocator>::post(F&& fun)
 {
   const auto queue = queue_.lock();
-  queue->push(Task{std::forward<F>(fun)});
+  queue->push(Task{std::forward<F>(fun), allocator_});
   queue_status_.SetBits(static_cast<EventBits>(detail::to_queue_status(queue->size())));
 
   return queue->size();
