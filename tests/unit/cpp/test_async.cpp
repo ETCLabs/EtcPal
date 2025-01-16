@@ -65,9 +65,9 @@ TEST(etcpal_cpp_async, thread_pool)
     pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
 
     continued_exec_futures.push_back(
-        pool.post(
-                etcpal::use_future, [i]() { return i; }, alloc)
-            .and_then([](auto status, auto& value, auto exception) { return value.value(); }, pool.get_executor()));
+        pool.post(etcpal::use_future, [i]() { return i; }).and_then([](auto status, auto& value, auto exception) {
+          return value.value();
+        }));
 
     abandoned_futures.push_back(etcpal::Promise<int>{alloc}.get_future());
   }
