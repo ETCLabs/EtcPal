@@ -246,12 +246,66 @@ private:
 namespace detail
 {
 
-enum QueueStatus : EventBits
+enum class QueueStatus : EventBits
 {
-  empty     = 1 << 0,
-  has_tasks = 1 << 1,
-  shut_down = 1 << 2
+  shut_down  = 1,                             // reserve lowest bit for shutdown flag
+  count_mask = ~EventBits{} & ~EventBits{1},  // all other bits are the queue item count
+  all_bits   = ~EventBits{}
 };
+
+[[nodiscard]] constexpr auto operator~(QueueStatus value) noexcept
+{
+  return static_cast<QueueStatus>(~static_cast<EventBits>(value));
+}
+[[nodiscard]] constexpr auto operator&(QueueStatus lhs, QueueStatus rhs) noexcept
+{
+  return static_cast<QueueStatus>(static_cast<EventBits>(lhs) & static_cast<EventBits>(rhs));
+}
+[[nodiscard]] constexpr auto operator|(QueueStatus lhs, QueueStatus rhs) noexcept
+{
+  return static_cast<QueueStatus>(static_cast<EventBits>(lhs) | static_cast<EventBits>(rhs));
+}
+[[nodiscard]] constexpr auto operator^(QueueStatus lhs, QueueStatus rhs) noexcept
+{
+  return static_cast<QueueStatus>(static_cast<EventBits>(lhs) ^ static_cast<EventBits>(rhs));
+}
+template <typename IntType>
+[[nodiscard]] constexpr auto operator<<(QueueStatus lhs, IntType rhs) noexcept
+{
+  return static_cast<QueueStatus>(static_cast<EventBits>(lhs) << rhs);
+}
+template <typename IntType>
+[[nodiscard]] constexpr auto operator>>(QueueStatus lhs, IntType rhs) noexcept
+{
+  return static_cast<QueueStatus>(static_cast<EventBits>(lhs) >> rhs);
+}
+[[nodiscard]] constexpr auto& operator&=(QueueStatus& lhs, QueueStatus rhs) noexcept
+{
+  return lhs = lhs & rhs;
+}
+[[nodiscard]] constexpr auto& operator|=(QueueStatus& lhs, QueueStatus rhs) noexcept
+{
+  return lhs = lhs | rhs;
+}
+[[nodiscard]] constexpr auto& operator^=(QueueStatus& lhs, QueueStatus rhs) noexcept
+{
+  return lhs = lhs ^ rhs;
+}
+template <typename IntType>
+[[nodiscard]] constexpr auto& operator<<=(QueueStatus& lhs, IntType rhs) noexcept
+{
+  return lhs = lhs << rhs;
+}
+template <typename IntType>
+[[nodiscard]] constexpr auto& operator>>=(QueueStatus& lhs, IntType rhs) noexcept
+{
+  return lhs = lhs >> rhs;
+}
+
+[[nodiscard]] constexpr auto to_queue_status(std::size_t queue_size) noexcept
+{
+  return static_cast<QueueStatus>(queue_size << 1);
+}
 
 template <typename T, typename Series>
 [[nodiscard]] auto pop_one(std::queue<T, Series>& queue, Mutex& mutex, EventGroup& queue_status) noexcept -> Optional<T>
@@ -264,7 +318,7 @@ template <typename T, typename Series>
 
   auto value = std::move(queue.front());
   queue.pop();
-  queue_status.SetBits(queue.size());
+  queue_status.SetBits(static_cast<EventBits>(to_queue_status(queue.size())));
 
   return value;
 }
@@ -563,7 +617,7 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{al
     thread = JThread{[&](const auto& token) {
       while (token.stop_possible() && !token.stop_requested())
       {
-        queue_status_.Wait(std::numeric_limits<EventBits>::max());
+        queue_status_.Wait(static_cast<EventBits>(detail::QueueStatus::all_bits));
         if (auto task = detail::pop_one(queue_, queue_mutex_, queue_status_))
         {
           (*task)();
@@ -581,7 +635,7 @@ etcpal::ThreadPool<N, Allocator>::~ThreadPool() noexcept
   {
     thread.request_stop();
   }
-  queue_status_.SetBits(std::numeric_limits<EventBits>::max());
+  queue_status_.SetBits(static_cast<EventBits>(detail::QueueStatus::shut_down));
 }
 
 template <std::size_t N, typename Allocator>
@@ -590,7 +644,7 @@ auto etcpal::ThreadPool<N, Allocator>::post(F&& fun)
 {
   const std::lock_guard<Mutex> guard{queue_mutex_};
   queue_.push(Task{std::forward<F>(fun)});
-  queue_status_.SetBits(queue_.size());
+  queue_status_.SetBits(static_cast<EventBits>(detail::to_queue_status(queue_.size())));
 
   return queue_.size();
 }
