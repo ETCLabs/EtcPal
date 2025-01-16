@@ -2,23 +2,50 @@
 
 #include <unity_fixture.h>
 
+#if (__cplusplus >= 201703L)
+
+namespace
+{
+
+auto* default_resource = std::pmr::null_memory_resource();
+
+}
+
+#endif  // #if (__cplusplus >= 201703L)
+
 extern "C" {
 
 TEST_GROUP(etcpal_cpp_async);
 
 TEST_SETUP(etcpal_cpp_async)
 {
+#if (__cplusplus >= 201703L)
+  default_resource = std::pmr::get_default_resource();
+  std::pmr::set_default_resource(std::pmr::null_memory_resource());
+#endif  // #if (__cplusplus >= 201703L)
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_async)
 {
+#if (__cplusplus >= 201703L)
+  std::pmr::set_default_resource(default_resource);
+#endif  // #if (__cplusplus >= 201703L)
 }
 
 TEST(etcpal_cpp_async, promise_future)
 {
   using namespace std::chrono_literals;
 
-  auto promise = etcpal::Promise<int>{};
+#if (__cplusplus >= 201703L)
+  auto buffer = std::array<std::byte, 1 << 21>{};
+  auto memory_resource =
+      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
+  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+#else   // #if (__cplusplus >= 201703L)
+  const auto alloc = etcpal::DefaultAllocator{};
+#endif  // #if (__cplusplus >= 201703L)
+
+  auto promise = etcpal::Promise<int>{alloc};
   auto future  = promise.get_future();
 
   TEST_ASSERT_TRUE(future.valid());

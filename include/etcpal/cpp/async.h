@@ -249,10 +249,10 @@ private:
   using TaskAllocator = typename std::allocator_traits<Allocator>::template rebind_alloc<Task>;
   using TaskQueue     = std::queue<Task, std::deque<Task, TaskAllocator>>;
 
-  EventGroup                      queue_status_ = {};
-  Synchronized<TaskQueue, RwLock> queue_        = {};
-  std::array<JThread, N>          threads_      = {};
-  Allocator                       allocator_    = {};
+  EventGroup                        queue_status_ = {};
+  Synchronized<TaskQueue, RwLock>   queue_        = {};
+  std::array<JThread<Allocator>, N> threads_      = {};
+  Allocator                         allocator_    = {};
 };
 
 namespace detail
@@ -738,16 +738,16 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{al
 {
   for (auto& thread : threads_)
   {
-    thread = JThread{[&](const auto& token) {
-      while (token.stop_possible() && !token.stop_requested())
-      {
-        queue_status_.Wait(static_cast<EventBits>(detail::QueueStatus::all_bits));
-        if (auto task = detail::pop_one(queue_, queue_status_))
-        {
-          (*task)();
-        }
-      }
-    }};
+    thread = JThread{allocator_, [&](const auto& token) {
+                       while (token.stop_possible() && !token.stop_requested())
+                       {
+                         queue_status_.Wait(static_cast<EventBits>(detail::QueueStatus::all_bits));
+                         if (auto task = detail::pop_one(queue_, queue_status_))
+                         {
+                           (*task)();
+                         }
+                       }
+                     }};
   }
 }
 
