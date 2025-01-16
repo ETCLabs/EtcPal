@@ -37,9 +37,10 @@ TEST(etcpal_cpp_optional, optional)
 
   // destruction
 #if (__cplusplus >= 201703L)
-  auto       buffer          = std::array<std::byte, 1 << 8>{};
-  auto       memory_resource = std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer)};
-  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  auto buffer = std::array<std::byte, 1 << 5>{};
+  auto memory_resource =
+      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
+  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
   const auto alloc = etcpal::DefaultAllocator{};
 #endif  // #if (__cplusplus >= 201703L)
