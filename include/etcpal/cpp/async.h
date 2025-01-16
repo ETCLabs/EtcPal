@@ -315,7 +315,7 @@ template <typename T, typename Series, typename Lock>
 [[nodiscard]] auto pop_one(Synchronized<std::queue<T, Series>, Lock>& sync_queue, EventGroup& queue_status) noexcept
     -> Optional<T>
 {
-  auto queue = sync_queue.lock();
+  const auto queue = sync_queue.lock();
   if (queue->empty())
   {
     return {};
@@ -371,8 +371,8 @@ private:
 template <typename T, typename Allocator>
 [[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_value(T&& value) noexcept -> StateChangeResult
 {
-  auto                   state  = state_.lock();
-  const auto             status = static_cast<FutureStatus>(status_.GetBits());
+  const auto state  = state_.lock();
+  const auto status = static_cast<FutureStatus>(status_.GetBits());
   if (state->exception_)
   {
     return {FutureActionResult::exception_already_set, status, state->value_, state->exception_, {}};
@@ -395,8 +395,8 @@ template <typename T, typename Allocator>
 [[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_exception(std::exception_ptr exception) noexcept
     -> StateChangeResult
 {
-  auto                   state  = state_.lock();
-  const auto             status = static_cast<FutureStatus>(status_.GetBits());
+  const auto state  = state_.lock();
+  const auto status = static_cast<FutureStatus>(status_.GetBits());
   if (state->exception_)
   {
     return {FutureActionResult::exception_already_set, status, state->value_, state->exception_, {}};
@@ -423,7 +423,7 @@ template <typename Rep, typename Period>
   const auto status = static_cast<FutureStatus>(
       status_.TryWait(static_cast<EventBits>(FutureStatus::ready | FutureStatus::abandoned), 0,
                       std::chrono::duration_cast<std::chrono::milliseconds>(timeout).count()));
-  auto state = state_.lock();
+  const auto state = state_.lock();
   if (is_abandoned(status))
   {
     return {FutureActionResult::broken_promise, status, state->value_, state->exception_, {}};
@@ -447,8 +447,8 @@ template <typename Rep, typename Period>
 template <typename T, typename Allocator>
 void etcpal::detail::FutureSharedState<T, Allocator>::abandon() noexcept
 {
-  auto                         state  = state_.lock();
-  const auto                   status = static_cast<FutureStatus>(status_.GetBits());
+  const auto state  = state_.lock();
+  const auto status = static_cast<FutureStatus>(status_.GetBits());
   if (has_value(status))
   {
     return;
@@ -469,7 +469,7 @@ template <typename Rep, typename Period>
     return result;
   }
 
-  auto       state = state_.lock();
+  const auto state      = state_.lock();
   const auto new_status = result.status | (state->continuation_ ? FutureStatus::consumed
                                                                 : (FutureStatus::consumed | FutureStatus::continued));
   status_.SetBits(static_cast<EventBits>(new_status));
@@ -648,7 +648,7 @@ template <std::size_t N, typename Allocator>
 template <typename F>
 auto etcpal::ThreadPool<N, Allocator>::post(F&& fun)
 {
-  auto queue = queue_.lock();
+  const auto queue = queue_.lock();
   queue->push(Task{std::forward<F>(fun)});
   queue_status_.SetBits(static_cast<EventBits>(detail::to_queue_status(queue->size())));
 
