@@ -8,6 +8,7 @@ etcpal_add_live_test(etcpal_cpp_unit_tests CXX
   test_optional.cpp
   test_stop_token.cpp
   test_uuid.cpp
+  test_variant.cpp
 )
 
 if(ETCPAL_HAVE_OS_SUPPORT)
