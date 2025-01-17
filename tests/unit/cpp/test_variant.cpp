@@ -90,6 +90,9 @@ TEST(etcpal_cpp_variant, variant)
   TEST_ASSERT_TRUE((StringOrNumber{test_string_1} >= StringOrNumber{test_string_0}));
   TEST_ASSERT_FALSE((StringOrNumber{test_string_0} >= StringOrNumber{test_string_1}));
 
+  // value access
+  TEST_ASSERT_TRUE((StringOrNumber{test_string_0}).get<String>() == test_string_0);
+
   // destruction
   const auto test_value = std::allocate_shared<int>(alloc);
   // initialization
