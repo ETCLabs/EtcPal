@@ -24,6 +24,10 @@ struct InPlaceIndex_t
 
 ETCPAL_INLINE_VARIABLE constexpr auto variant_npos = static_cast<std::size_t>(-1);
 
+class BadVariantAccess : public std::exception
+{
+};
+
 namespace detail
 {
 
@@ -200,21 +204,21 @@ public:
   template <typename R, typename Visitor>
   constexpr auto visit(Visitor&& visitor) & -> R;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() const&& noexcept -> const U&&;
+  [[nodiscard]] constexpr auto get() const&& -> const U&&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() const& noexcept -> const U&;
+  [[nodiscard]] constexpr auto get() const& -> const U&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() && noexcept -> U&&;
+  [[nodiscard]] constexpr auto get() && -> U&&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() & noexcept -> U&;
+  [[nodiscard]] constexpr auto get() & -> U&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() const&& noexcept -> const detail::TypeAtIndex_t<I, T...>&&;
+  [[nodiscard]] constexpr auto get() const&& -> const detail::TypeAtIndex_t<I, T...>&&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() const& noexcept -> const detail::TypeAtIndex_t<I, T...>&;
+  [[nodiscard]] constexpr auto get() const& -> const detail::TypeAtIndex_t<I, T...>&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() && noexcept -> detail::TypeAtIndex_t<I, T...>&&;
+  [[nodiscard]] constexpr auto get() && -> detail::TypeAtIndex_t<I, T...>&&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() & noexcept -> detail::TypeAtIndex_t<I, T...>&;
+  [[nodiscard]] constexpr auto get() & -> detail::TypeAtIndex_t<I, T...>&;
 
   [[nodiscard]] friend constexpr bool operator==(const Variant& lhs, const Variant& rhs) noexcept
   {
@@ -225,9 +229,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l == r; },
-                                      [](const auto& r) -> bool {
-                                        throw std::logic_error{"variant relational operator comparing different types"};
-                                      }));
+                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
     });
   }
   [[nodiscard]] friend constexpr bool operator!=(const Variant& lhs, const Variant& rhs) noexcept
@@ -243,9 +245,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l != r; },
-                                      [](const auto& r) -> bool {
-                                        throw std::logic_error{"variant relational operator comparing different types"};
-                                      }));
+                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
     });
   }
   [[nodiscard]] friend constexpr bool operator<(const Variant& lhs, const Variant& rhs) noexcept
@@ -261,9 +261,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l < r; },
-                                      [](const auto& r) -> bool {
-                                        throw std::logic_error{"variant relational operator comparing different types"};
-                                      }));
+                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
     });
   }
   [[nodiscard]] friend constexpr bool operator>(const Variant& lhs, const Variant& rhs) noexcept
@@ -279,9 +277,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l > r; },
-                                      [](const auto& r) -> bool {
-                                        throw std::logic_error{"variant relational operator comparing different types"};
-                                      }));
+                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
     });
   }
   [[nodiscard]] friend constexpr bool operator<=(const Variant& lhs, const Variant& rhs) noexcept
@@ -297,9 +293,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l <= r; },
-                                      [](const auto& r) -> bool {
-                                        throw std::logic_error{"variant relational operator comparing different types"};
-                                      }));
+                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
     });
   }
   [[nodiscard]] friend constexpr bool operator>=(const Variant& lhs, const Variant& rhs) noexcept
@@ -315,9 +309,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l >= r; },
-                                      [](const auto& r) -> bool {
-                                        throw std::logic_error{"variant relational operator comparing different types"};
-                                      }));
+                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
     });
   }
 
@@ -412,7 +404,7 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw std::logic_error{"invalid variant index"};
+      throw BadVariantAccess{};
     }
 
     return std::forward<V>(visitor)(std::move(value));
@@ -423,7 +415,7 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw std::logic_error{"invalid variant index"};
+      throw BadVariantAccess{};
     }
 
     return std::forward<V>(visitor)(value);
@@ -434,7 +426,7 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw std::logic_error{"invalid variant index"};
+      throw BadVariantAccess{};
     }
 
     return std::forward<V>(visitor)(std::move(value));
@@ -445,11 +437,16 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw std::logic_error{"invalid variant index"};
+      throw BadVariantAccess{};
     }
 
     return std::forward<V>(visitor)(value);
   }
+
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) noexcept { return value; }
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<1> tag) const noexcept { return empty; }
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<1> tag) noexcept { return empty; }
 };
 
 template <typename T, typename U, typename... Rest>
@@ -536,6 +533,19 @@ union etcpal::detail::VariadicUnion<T, U, Rest...>
   {
     return (index == 0) ? std::forward<V>(visitor)(value) : rest.visit(index - 1, std::forward<V>(visitor));
   }
+
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) noexcept { return value; }
+  template <std::size_t I, typename = std::enable_if_t<I != 0>>
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<I> tag) const noexcept
+  {
+    return rest.get(InPlaceIndex_t<I - 1>{});
+  }
+  template <std::size_t I, typename = std::enable_if_t<I != 0>>
+  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<I> tag) noexcept
+  {
+    return rest.get(InPlaceIndex_t<I - 1>{});
+  }
 };
 
 template <typename... T>
@@ -613,11 +623,8 @@ constexpr auto etcpal::Variant<T...>::operator=(const Variant& rhs) noexcept(
   if (type_ == rhs.type_)
   {
     storage_.visit(type_, [&](auto& lhs) {
-      rhs.storage_.visit(
-          rhs.type_, make_selection([&](const decltype(lhs)& arg) { lhs = arg; },
-                                    [](auto&& arg) {
-                                      throw std::logic_error{"variants with matching indices not visited correctly"};
-                                    }));
+      rhs.storage_.visit(rhs.type_, make_selection([&](const decltype(lhs)& arg) { lhs = arg; },
+                                                   [](auto&& arg) { throw BadVariantAccess{}; }));
     });
     return *this;
   }
@@ -642,11 +649,8 @@ constexpr auto etcpal::Variant<T...>::operator=(Variant&& rhs) noexcept -> Varia
   if (type_ == rhs.type_)
   {
     storage_.visit(type_, [&](auto& lhs) {
-      rhs.storage_.visit(
-          rhs.type_, make_selection([&](decltype(lhs)& arg) { lhs = std::move(arg); },
-                                    [](auto&& arg) {
-                                      throw std::logic_error{"variants with matching indices not visited correctly"};
-                                    }));
+      rhs.storage_.visit(rhs.type_, make_selection([&](decltype(lhs)& arg) { lhs = std::move(arg); },
+                                                   [](auto&& arg) { throw BadVariantAccess{}; }));
     });
     return *this;
   }
@@ -719,4 +723,80 @@ template <typename R, typename Visitor>
 constexpr auto etcpal::Variant<T...>::visit(Visitor&& visitor) & -> R
 {
   return storage_.visit(type_, std::forward<Visitor>(visitor));
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const&& -> const U&&
+{
+  return std::move(get<detail::index_of<U, T...>()>());
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const& -> const U&
+{
+  return get<detail::index_of<U, T...>()>();
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() && -> U&&
+{
+  return std::move(get<detail::index_of<U, T...>()>());
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() & -> U&
+{
+  return get<detail::index_of<U, T...>()>();
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const&& -> const detail::TypeAtIndex_t<I, T...>&&
+{
+  if (index() != I)
+  {
+    throw BadVariantAccess{};
+  }
+
+  return std::move(storage_.get(InPlaceIndex_t<I>{}));
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const& -> const detail::TypeAtIndex_t<I, T...>&
+{
+  if (index() != I)
+  {
+    throw BadVariantAccess{};
+  }
+
+  return storage_.get(InPlaceIndex_t<I>{});
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() && -> detail::TypeAtIndex_t<I, T...>&&
+{
+  if (index() != I)
+  {
+    throw BadVariantAccess{};
+  }
+
+  return std::move(storage_.get(InPlaceIndex_t<I>{}));
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() & -> detail::TypeAtIndex_t<I, T...>&
+{
+  if (index() != I)
+  {
+    throw BadVariantAccess{};
+  }
+
+  return storage_.get(InPlaceIndex_t<I>{});
 }
