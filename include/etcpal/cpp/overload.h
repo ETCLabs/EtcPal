@@ -13,9 +13,6 @@ class Overload;
 namespace detail
 {
 
-template <typename First, typename, typename...>
-using FirstOf = First;
-
 template <typename F, typename, typename... Args>
 struct IsCallable : public std::false_type
 {
