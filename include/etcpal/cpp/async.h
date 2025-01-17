@@ -165,7 +165,7 @@ private:
   EventGroup                  status_;
   Synchronized<State, RwLock> state_;
   Allocator                   allocator_;
-  std::atomic<bool>           future_retrieved_;
+  std::atomic<bool>           future_retrieved_{false};
 };
 
 }  // namespace detail
