@@ -120,15 +120,15 @@ public:
 
   [[nodiscard]] constexpr auto operator->() noexcept -> std::remove_reference_t<T>* { return std::addressof(**this); }
   [[nodiscard]] constexpr auto operator->() const noexcept -> const std::remove_reference_t<T>*;
-  [[nodiscard]] constexpr auto operator*() & noexcept -> T& { return storage_.storage.value; }
-  [[nodiscard]] constexpr auto operator*() && noexcept -> T&& { return std::move(storage_.storage.value); }
-  [[nodiscard]] constexpr auto operator*() const& noexcept -> const T& { return storage_.storage.value; }
-  [[nodiscard]] constexpr auto operator*() const&& noexcept -> const T&& { return std::move(storage_.storage.value); }
+  [[nodiscard]] constexpr decltype(auto) operator*() & noexcept { return *storage_; }
+  [[nodiscard]] constexpr decltype(auto) operator*() && noexcept { return *std::move(storage_); }
+  [[nodiscard]] constexpr decltype(auto) operator*() const& noexcept { return *storage_; }
+  [[nodiscard]] constexpr decltype(auto) operator*() const&& noexcept { return *std::move(storage_); }
 
-  [[nodiscard]] constexpr auto value() & -> T&;
-  [[nodiscard]] constexpr auto value() && -> T&&;
-  [[nodiscard]] constexpr auto value() const& -> const T&;
-  [[nodiscard]] constexpr auto value() const&& -> const T&&;
+  [[nodiscard]] constexpr decltype(auto) value() & { return *this ? *storage_ : throw BadOptionalAccess{}; }
+  [[nodiscard]] constexpr decltype(auto) value() &&;
+  [[nodiscard]] constexpr decltype(auto) value() const& { return *this ? *storage_ : throw BadOptionalAccess{}; }
+  [[nodiscard]] constexpr decltype(auto) value() const&&;
 
   template <typename U>
   [[nodiscard]] constexpr auto value_or(U&& default_value) const& -> T;
@@ -211,7 +211,7 @@ private:
   template <typename U>
   friend class Optional;
 
-  detail::StorageFor<T> storage_;
+  detail::StorageFor<T> storage_ = {};
 };
 
 }  // namespace etcpal
@@ -333,10 +333,10 @@ struct etcpal::detail::StorageFor
     return *this;
   }
 
-  [[nodiscard]] constexpr auto&    operator*() const&& noexcept { return std::move(storage.value); }
-  [[nodiscard]] constexpr auto&    operator*() const& noexcept { return storage.value; }
-  [[nodiscard]] constexpr auto&    operator*() && noexcept { return std::move(storage.value); }
-  [[nodiscard]] constexpr auto&    operator*() & noexcept { return storage.value; }
+  [[nodiscard]] constexpr auto     operator*() const&& noexcept -> const T&& { return std::move(storage.value); }
+  [[nodiscard]] constexpr auto     operator*() const& noexcept -> const T& { return storage.value; }
+  [[nodiscard]] constexpr auto     operator*() && noexcept -> T&& { return std::move(storage.value); }
+  [[nodiscard]] constexpr auto     operator*() & noexcept -> T& { return storage.value; }
   [[nodiscard]] explicit constexpr operator bool() const noexcept { return engaged; }
 
   constexpr void reset() noexcept
@@ -521,27 +521,15 @@ template <typename T>
 }
 
 template <typename T>
-[[nodiscard]] constexpr auto etcpal::Optional<T>::value() & -> T&
+[[nodiscard]] constexpr decltype(auto) etcpal::Optional<T>::value() &&
 {
-  return *this ? **this : throw BadOptionalAccess{};
+  return *this ? *std::move(*storage_) : throw BadOptionalAccess{};
 }
 
 template <typename T>
-[[nodiscard]] constexpr auto etcpal::Optional<T>::value() && -> T&&
+[[nodiscard]] constexpr decltype(auto) etcpal::Optional<T>::value() const&&
 {
-  return *this ? std::move(**this) : throw BadOptionalAccess{};
-}
-
-template <typename T>
-[[nodiscard]] constexpr auto etcpal::Optional<T>::value() const& -> const T&
-{
-  return *this ? **this : throw BadOptionalAccess{};
-}
-
-template <typename T>
-[[nodiscard]] constexpr auto etcpal::Optional<T>::value() const&& -> const T&&
-{
-  return *this ? std::move(**this) : throw BadOptionalAccess{};
+  return *this ? *std::move(*storage_) : throw BadOptionalAccess{};
 }
 
 template <typename T>
@@ -569,7 +557,7 @@ template <typename T>
 template <typename F>
 constexpr auto etcpal::Optional<T>::and_then(F&& f) &&
 {
-  return *this ? std::forward<F>(f)(std::move(**this)) : decltype(std::forward<F>(f)(std::move(**this))){};
+  return *this ? std::forward<F>(f)(*std::move(*this)) : decltype(std::forward<F>(f)(*std::move(*this))){};
 }
 
 template <typename T>
@@ -583,7 +571,7 @@ template <typename T>
 template <typename F>
 constexpr auto etcpal::Optional<T>::and_then(F&& f) const&&
 {
-  return *this ? std::forward<F>(f)(std::move(**this)) : decltype(std::forward<F>(f)(std::move(**this))){};
+  return *this ? std::forward<F>(f)(*std::move(*this)) : decltype(std::forward<F>(f)(*std::move(*this))){};
 }
 
 template <typename T>
@@ -598,8 +586,8 @@ template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::transform(F&& f) &&
 {
-  using result_type = Optional<decltype(std::forward<F>(f)(std::move(**this)))>;
-  return *this ? result_type{std::forward<F>(f)(std::move(**this))} : result_type{};
+  using result_type = Optional<decltype(std::forward<F>(f)(*std::move(*this)))>;
+  return *this ? result_type{std::forward<F>(f)(*std::move(*this))} : result_type{};
 }
 
 template <typename T>
@@ -614,8 +602,8 @@ template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::transform(F&& f) const&&
 {
-  using result_type = Optional<decltype(std::forward<F>(f)(std::move(**this)))>;
-  return *this ? result_type{std::forward<F>(f)(std::move(**this))} : result_type{};
+  using result_type = Optional<decltype(std::forward<F>(f)(*std::move(*this)))>;
+  return *this ? result_type{std::forward<F>(f)(*std::move(*this))} : result_type{};
 }
 
 template <typename T>
@@ -629,7 +617,7 @@ template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::or_else(F&& f) && -> Optional
 {
-  return *this ? std::move(**this) : std::forward<F>(f)();
+  return *this ? *std::move(*this) : std::forward<F>(f)();
 }
 
 template <typename T>
@@ -643,7 +631,7 @@ template <typename T>
 template <typename F>
 constexpr decltype(auto) etcpal::Optional<T>::visit(F&& f) &&
 {
-  return *this ? std::forward<F>(f)(std::move(**this)) : std::forward<F>(f)(nullopt);
+  return *this ? std::forward<F>(f)(*std::move(*this)) : std::forward<F>(f)(nullopt);
 }
 
 template <typename T>
@@ -657,7 +645,7 @@ template <typename T>
 template <typename F>
 constexpr decltype(auto) etcpal::Optional<T>::visit(F&& f) const&&
 {
-  return *this ? std::forward<F>(f)(std::move(**this)) : std::forward<F>(f)(nullopt);
+  return *this ? std::forward<F>(f)(*std::move(*this)) : std::forward<F>(f)(nullopt);
 }
 
 template <typename T>
