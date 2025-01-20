@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <etcpal/cpp/common.h>
+#include <etcpal/cpp/functional.h>
 #include <etcpal/cpp/rwlock.h>
 #include <etcpal/cpp/synchronized.h>
 
@@ -79,19 +80,8 @@ private:
   std::shared_ptr<StopContext> ctrl_block_ = {};
 };
 
-namespace detail
-{
-
-class StopCallbackBase
-{
-public:
-  virtual void invoke() const = 0;
-};
-
-}  // namespace detail
-
 template <typename Callback, typename Allocator>
-class StopCallback : private detail::StopCallbackBase
+class StopCallback
 {
 public:
   using callback_type = Callback;
@@ -112,8 +102,6 @@ public:
   ~StopCallback() noexcept;
 
 private:
-  void invoke() const override { callback_(); }
-
   StopToken<Allocator>  token_;
   mutable callback_type callback_;
 };
@@ -132,9 +120,8 @@ StopCallback(StopToken<Allocator>&&, Callback&&)
 template <typename Allocator>
 struct etcpal::StopSource<Allocator>::StopContext
 {
-  using CallbackAllocator =
-      typename std::allocator_traits<Allocator>::template rebind_alloc<const detail::StopCallbackBase*>;
-  using CallbackStorage = std::vector<const detail::StopCallbackBase*, CallbackAllocator>;
+  using CallbackAllocator = typename std::allocator_traits<Allocator>::template rebind_alloc<FunctionRef<void()>>;
+  using CallbackStorage   = std::vector<FunctionRef<void()>, CallbackAllocator>;
 
   StopContext() = default;
   StopContext(const CallbackAllocator& alloc) : callbacks{alloc} {}
@@ -191,11 +178,11 @@ bool etcpal::StopSource<Allocator>::request_stop() noexcept
     return false;
   }
 
-  for (const auto* const var : *ctrl_block_->callbacks.lock())
+  for (const auto& var : *ctrl_block_->callbacks.lock())
   {
     if (var)
     {
-      var->invoke();
+      var();
     }
   }
 
@@ -230,16 +217,16 @@ etcpal::StopCallback<Callback, Allocator>::StopCallback(const StopToken<Allocato
   }
 
   const auto callbacks = token_.ctrl_block_->callbacks.lock();
-  for (const auto* fun : *callbacks)
+  for (auto& fun : *callbacks)
   {
     if (!fun)
     {
-      fun = this;
+      fun = FunctionRef<void()>{callback_};
       return;
     }
   }
 
-  callbacks->push_back(this);
+  callbacks->push_back(callback_);
 }
 
 template <typename Callback, typename Allocator>
@@ -259,8 +246,9 @@ etcpal::StopCallback<Callback, Allocator>::~StopCallback() noexcept
   }
 
   const auto callbacks = token_.ctrl_block_->callbacks.lock();
-  const auto position =
-      std::find(std::begin(*callbacks), std::end(*callbacks), static_cast<detail::StopCallbackBase*>(this));
+  const auto position  = std::find_if(std::begin(*callbacks), std::end(*callbacks), [&](const auto& val) {
+    return val.target_address() == std::addressof(callback_);
+  });
   if (position == std::end(*callbacks))
   {
     return;
