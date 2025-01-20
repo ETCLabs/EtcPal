@@ -7,6 +7,7 @@
 #include <type_traits>
 
 #include <etcpal/cpp/common.h>
+#include <etcpal/cpp/optional.h>
 #include <etcpal/cpp/overload.h>
 
 namespace etcpal
@@ -36,7 +37,10 @@ struct ConstructFrom
 {
   template <typename... Args, typename = std::enable_if_t<std::is_constructible<T, Args...>::value>>
   [[nodiscard]] constexpr auto operator()(Args&&... args) const
-      noexcept(std::is_nothrow_constructible<T, Args...>::value) -> T;
+      noexcept(std::is_nothrow_constructible<T, Args...>::value) -> T
+  {
+    return T{std::forward<Args>(args)...};
+  }
 };
 
 template <typename... T>
@@ -219,6 +223,22 @@ public:
   [[nodiscard]] constexpr auto get() && -> detail::TypeAtIndex_t<I, T...>&&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
   [[nodiscard]] constexpr auto get() & -> detail::TypeAtIndex_t<I, T...>&;
+  template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
+  [[nodiscard]] constexpr auto get_if() const&& noexcept -> Optional<const U&&>;
+  template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
+  [[nodiscard]] constexpr auto get_if() const& noexcept -> Optional<const U&>;
+  template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
+  [[nodiscard]] constexpr auto get_if() && noexcept -> Optional<U&&>;
+  template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
+  [[nodiscard]] constexpr auto get_if() & noexcept -> Optional<U&>;
+  template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
+  [[nodiscard]] constexpr auto get_if() const&& noexcept -> Optional<const detail::TypeAtIndex_t<I, T...>&&>;
+  template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
+  [[nodiscard]] constexpr auto get_if() const& noexcept -> Optional<const detail::TypeAtIndex_t<I, T...>&>;
+  template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
+  [[nodiscard]] constexpr auto get_if() && noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&&>;
+  template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
+  [[nodiscard]] constexpr auto get_if() & noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&>;
 
   [[nodiscard]] friend constexpr bool operator==(const Variant& lhs, const Variant& rhs) noexcept
   {
@@ -356,6 +376,8 @@ union etcpal::detail::VariadicUnion<T>
       : value{std::forward<Args>(args)...}
   {
   }
+
+  constexpr VariadicUnion(const VariadicUnion& rhs) : empty{} {}
 
   ~VariadicUnion() noexcept {}
 
@@ -799,4 +821,82 @@ template <std::size_t I, typename>
   }
 
   return storage_.get(InPlaceIndex_t<I>{});
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const&& noexcept -> Optional<const U&&>
+{
+  return std::move(*this).template get_if<detail::index_of<U, T...>()>();
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const& noexcept -> Optional<const U&>
+{
+  return get_if<detail::index_of<U, T...>()>();
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() && noexcept -> Optional<U&&>
+{
+  return std::move(*this).template get_if<detail::index_of<U, T...>()>();
+}
+
+template <typename... T>
+template <typename U, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() & noexcept -> Optional<U&>
+{
+  return get_if<detail::index_of<U, T...>()>();
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const&& noexcept
+    -> Optional<const detail::TypeAtIndex_t<I, T...>&&>
+{
+  if (index() != I)
+  {
+    return {};
+  }
+
+  return std::move(storage_.get(InPlaceIndex_t<I>{}));
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const& noexcept
+    -> Optional<const detail::TypeAtIndex_t<I, T...>&>
+{
+  if (index() != I)
+  {
+    return {};
+  }
+
+  return storage_.get(InPlaceIndex_t<I>{});
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() && noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&&>
+{
+  if (index() != I)
+  {
+    return {};
+  }
+
+  return std::move(storage_.get(InPlaceIndex_t<I>{}));
+}
+
+template <typename... T>
+template <std::size_t I, typename>
+[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() & noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&>
+{
+  if (index() != I)
+  {
+    return {};
+  }
+
+  return Optional<detail::TypeAtIndex_t<I, T...>&>{storage_.get(InPlaceIndex_t<I>{})};
 }
