@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utility>
+#include <functional>
 
 #include <etcpal/cpp/common.h>
 
@@ -130,12 +131,12 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT                         \
     {                                                                                                                  \
-      if (!buffer_)                                                                                                    \
+      if (!ptr_)                                                                                                       \
       {                                                                                                                \
         throw std::bad_function_call{};                                                                                \
       }                                                                                                                \
                                                                                                                        \
-      return std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*buffer_)(std::forward<Args>(args)...);      \
+      return std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...);         \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
