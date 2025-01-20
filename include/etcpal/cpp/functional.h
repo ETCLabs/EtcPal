@@ -124,12 +124,13 @@ class Callable;
       catch (...)                                                                                                      \
       {                                                                                                                \
         typename std::allocator_traits<Allocator>::template rebind_alloc<Callable<F>>{alloc}.deallocate(fun, 1);       \
+        throw;                                                                                                         \
       }                                                                                                                \
     }                                                                                                                  \
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT                         \
     {                                                                                                                  \
-      return (*ptr_)(std::forward<Args>(args)...);                                                                     \
+      return std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...);         \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
