@@ -366,7 +366,7 @@ struct etcpal::detail::StorageFor<T, std::enable_if_t<std::is_reference<T>::valu
   explicit constexpr StorageFor(T init) noexcept : value{std::addressof(init)} {}
 
   constexpr StorageFor(const StorageFor& rhs) noexcept = default;
-  constexpr StorageFor(StorageFor&& rhs) noexcept : value{std::exchange(rhs.value, false)} {}
+  constexpr StorageFor(StorageFor&& rhs) noexcept : value{std::exchange(rhs.value, nullptr)} {}
 
   ~StorageFor() noexcept = default;
 
