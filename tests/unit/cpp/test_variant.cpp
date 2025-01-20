@@ -92,6 +92,8 @@ TEST(etcpal_cpp_variant, variant)
 
   // value access
   TEST_ASSERT_TRUE((StringOrNumber{test_string_0}).get<String>() == test_string_0);
+  TEST_ASSERT_TRUE((StringOrNumber{test_string_0}).get_if<String>());
+  TEST_ASSERT_FALSE((StringOrNumber{0}).get_if<String>());
 
   // destruction
   const auto test_value = std::allocate_shared<int>(alloc);
