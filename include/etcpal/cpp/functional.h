@@ -130,7 +130,12 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT                         \
     {                                                                                                                  \
-      return std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...);         \
+      if (!buffer_)                                                                                                    \
+      {                                                                                                                \
+        throw std::bad_function_call{};                                                                                \
+      }                                                                                                                \
+                                                                                                                       \
+      return std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*buffer_)(std::forward<Args>(args)...);      \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
