@@ -191,6 +191,17 @@ public:
   [[nodiscard]] constexpr auto index() const noexcept { return type_; }
   [[nodiscard]] constexpr bool valueless_by_exception() const noexcept { return index() == variant_npos; }
 
+  template <typename U, typename... Args, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
+  auto& emplace(Args&&... args) noexcept(std::is_nothrow_constructible<U, Args...>::value);
+  template <typename U, typename V, typename... Args, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
+  auto& emplace(std::initializer_list<V> ilist,
+                Args&&... args) noexcept(std::is_nothrow_constructible<U, std::initializer_list<V>, Args...>::value);
+  template <std::size_t I, typename... Args, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
+  auto& emplace(Args&&... args) noexcept(std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, Args...>::value);
+  template <std::size_t I, typename V, typename... Args, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
+  auto& emplace(std::initializer_list<V> ilist, Args&&... args) noexcept(
+      std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, std::initializer_list<V>, Args...>::value);
+
   template <typename Visitor>
   constexpr decltype(auto) visit(Visitor&& visitor) const&&;
   template <typename Visitor>
@@ -391,6 +402,13 @@ union etcpal::detail::VariadicUnion<T>
 
   template <typename... Args>
   constexpr auto& construct(InPlaceIndex_t<1> type_to_construct, Args&&... args) noexcept
+  {
+    new (std::addressof(empty)) EmptyType;
+    return empty;
+  }
+
+  template <typename... Args>
+  constexpr auto& construct(InPlaceIndex_t<variant_npos> type_to_construct, Args&&... args) noexcept
   {
     new (std::addressof(empty)) EmptyType;
     return empty;
@@ -689,6 +707,49 @@ constexpr auto etcpal::Variant<T...>::operator=(Variant&& rhs) noexcept -> Varia
   }
 
   return *this;
+}
+
+template <typename... T>
+template <typename U, typename... Args, typename>
+auto& etcpal::Variant<T...>::emplace(Args&&... args) noexcept(std::is_nothrow_constructible<U, Args...>::value)
+{
+  storage_.destruct(index());
+  storage_.construct(InPlaceIndex_t<detail::index_of<U, T...>()>{}, std::forward<Args>(args)...);
+
+  return get<U>();
+}
+
+template <typename... T>
+template <typename U, typename V, typename... Args, typename>
+auto& etcpal::Variant<T...>::emplace(std::initializer_list<V> ilist, Args&&... args) noexcept(
+    std::is_nothrow_constructible<U, std::initializer_list<V>, Args...>::value)
+{
+  storage_.destruct(index());
+  storage_.construct(InPlaceIndex_t<detail::index_of<U, T...>()>{}, ilist, std::forward<Args>(args)...);
+
+  return get<U>();
+}
+
+template <typename... T>
+template <std::size_t I, typename... Args, typename>
+auto& etcpal::Variant<T...>::emplace(Args&&... args) noexcept(
+    std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, Args...>::value)
+{
+  storage_.destruct(index());
+  storage_.construct(InPlaceIndex_t<I>{}, std::forward<Args>(args)...);
+
+  return get<I>();
+}
+
+template <typename... T>
+template <std::size_t I, typename V, typename... Args, typename>
+auto& etcpal::Variant<T...>::emplace(std::initializer_list<V> ilist, Args&&... args) noexcept(
+    std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, std::initializer_list<V>, Args...>::value)
+{
+  storage_.destruct(index());
+  storage_.construct(InPlaceIndex_t<I>{}, ilist, std::forward<Args>(args)...);
+
+  return get<I>();
 }
 
 template <typename... T>
