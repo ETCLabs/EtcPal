@@ -230,8 +230,8 @@ public:
 
   ~JThread() noexcept { request_stop(); }
 
-  auto        operator=(const JThread& rhs) -> JThread& = delete;
-  inline auto operator=(JThread&& rhs) noexcept -> JThread&;
+  auto operator=(const JThread& rhs) -> JThread& = delete;
+  auto operator=(JThread&& rhs) noexcept -> JThread&;
 
   [[nodiscard]] bool joinable() const noexcept { return thread_.joinable(); }
   [[nodiscard]] auto native_handle() const noexcept { return thread_.os_handle(); }
@@ -585,7 +585,7 @@ etcpal::JThread<Allocator>::JThread(Fun&& fun, Args&&... args)
 }
 
 template <typename Allocator>
-inline auto etcpal::JThread<Allocator>::operator=(JThread&& rhs) noexcept -> JThread&
+auto etcpal::JThread<Allocator>::operator=(JThread&& rhs) noexcept -> JThread&
 {
   request_stop();
   if (joinable())
