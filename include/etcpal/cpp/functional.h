@@ -109,11 +109,12 @@ class Callable;
     MoveOnlyFunction(std::nullptr_t tag) noexcept : MoveOnlyFunction{}                                                 \
     {                                                                                                                  \
     }                                                                                                                  \
-    template <                                                                                                         \
-        typename F,                                                                                                    \
-        typename = std::enable_if_t<                                                                                   \
-            !std::is_same<std::remove_cv_t<std::remove_reference_t<F>>, MoveOnlyFunction>::value,                      \
-            void_t<decltype(std::declval<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>()(std::declval<Args>()...))>>>      \
+    template <typename F,                                                                                              \
+              typename = std::enable_if_t<                                                                             \
+                  !std::is_same<std::remove_cv_t<std::remove_reference_t<F>>, MoveOnlyFunction>::value &&              \
+                  std::is_convertible<                                                                                 \
+                      decltype(std::declval<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>()(std::declval<Args>()...)),     \
+                      R>::value>>                                                                                      \
     MoveOnlyFunction(F&& f, const Allocator& alloc = {})                                                               \
     {                                                                                                                  \
       auto* const fun =                                                                                                \
@@ -131,7 +132,7 @@ class Callable;
       }                                                                                                                \
     }                                                                                                                  \
                                                                                                                        \
-    R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT                         \
+    R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
       if (!ptr_)                                                                                                       \
       {                                                                                                                \
@@ -150,52 +151,59 @@ class Callable;
     std::unique_ptr<FunBase, detail::DeleteUsingAlloc<Allocator>> ptr_ = {};                                           \
   }
 
-#define ETCPAL_IMPLEMENT_FUNCTION_REF                                                                                \
-  template <typename R, typename... Args>                                                                            \
-  class etcpal::FunctionRef<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_NOEXCEPT>                                  \
-  {                                                                                                                  \
-  public:                                                                                                            \
-    FunctionRef() noexcept = default;                                                                                \
-    FunctionRef(std::nullptr_t tag) noexcept : FunctionRef{}                                                         \
-    {                                                                                                                \
-    }                                                                                                                \
-    template <                                                                                                       \
-        typename F,                                                                                                  \
-        typename = std::enable_if_t<                                                                                 \
-            !std::is_same<std::remove_cv_t<std::remove_reference_t<F>>, FunctionRef>::value &&                       \
-            std::is_convertible<decltype(std::declval<ETCPAL_CALLABLE_CV F>()(std::declval<Args>()...)), R>::value>> \
-    FunctionRef(F&& f) noexcept                                                                                      \
-        : fun_{[](ETCPAL_CALLABLE_CV void* obj, Args... args) -> R {                                                 \
-          return (*reinterpret_cast<ETCPAL_CALLABLE_CV std::remove_reference_t<F>*>(obj))(                           \
-              std::forward<Args>(args)...);                                                                          \
-        }}                                                                                                           \
-        , obj_{reinterpret_cast<ETCPAL_CALLABLE_CV void*>(std::addressof(f))}                                        \
-    {                                                                                                                \
-    }                                                                                                                \
-                                                                                                                     \
-    R operator()(Args... args) const ETCPAL_CALLABLE_NOEXCEPT                                                        \
-    {                                                                                                                \
-      if (!fun_)                                                                                                     \
-      {                                                                                                              \
-        throw std::bad_function_call{};                                                                              \
-      }                                                                                                              \
-                                                                                                                     \
-      return fun_(obj_, std::forward<Args>(args)...);                                                                \
-    }                                                                                                                \
-                                                                                                                     \
-    [[nodiscard]] explicit operator bool() const noexcept                                                            \
-    {                                                                                                                \
-      return fun_ != nullptr;                                                                                        \
-    }                                                                                                                \
-                                                                                                                     \
-    [[nodiscard]] auto* target_address() const noexcept                                                              \
-    {                                                                                                                \
-      return obj_;                                                                                                   \
-    }                                                                                                                \
-                                                                                                                     \
-  private:                                                                                                           \
-    R (*fun_)(ETCPAL_CALLABLE_CV void*, Args...) = nullptr;                                                          \
-    ETCPAL_CALLABLE_CV void* obj_                = nullptr;                                                          \
+#define ETCPAL_IMPLEMENT_FUNCTION_REF                                                                                 \
+  template <typename R, typename... Args>                                                                             \
+  class etcpal::FunctionRef<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_NOEXCEPT>                                   \
+  {                                                                                                                   \
+  public:                                                                                                             \
+    constexpr FunctionRef() noexcept = default;                                                                       \
+    constexpr FunctionRef(std::nullptr_t tag) noexcept : FunctionRef{}                                                \
+    {                                                                                                                 \
+    }                                                                                                                 \
+    constexpr FunctionRef(R (*f)(Args...) ETCPAL_CALLABLE_NOEXCEPT) noexcept : fun_{f}                                \
+    {                                                                                                                 \
+    }                                                                                                                 \
+    template <                                                                                                        \
+        typename F,                                                                                                   \
+        typename = std::enable_if_t<                                                                                  \
+            !std::is_same<std::remove_cv_t<std::remove_reference_t<F>>, FunctionRef>::value &&                        \
+            std::is_convertible<decltype(std::declval<ETCPAL_CALLABLE_CV F&>()(std::declval<Args>()...)), R>::value>> \
+    FunctionRef(F&& f) noexcept                                                                                       \
+        : fun_{[](ETCPAL_CALLABLE_CV void* obj, Args... args) -> R {                                                  \
+          return (*reinterpret_cast<ETCPAL_CALLABLE_CV std::remove_reference_t<F>*>(obj))(                            \
+              std::forward<Args>(args)...);                                                                           \
+        }}                                                                                                            \
+        , obj_{reinterpret_cast<ETCPAL_CALLABLE_CV void*>(std::addressof(f))}                                         \
+    {                                                                                                                 \
+    }                                                                                                                 \
+                                                                                                                      \
+    constexpr R operator()(Args... args) const ETCPAL_CALLABLE_NOEXCEPT                                               \
+    {                                                                                                                 \
+      return obj_ ? fun_.thunk(obj_, std::forward<Args>(args)...) : fun_.actual(std::forward<Args>(args)...);         \
+    }                                                                                                                 \
+                                                                                                                      \
+    [[nodiscard]] explicit constexpr operator bool() const noexcept                                                   \
+    {                                                                                                                 \
+      return obj_ ? (fun_.thunk != nullptr) : (fun_.actual != nullptr);                                               \
+    }                                                                                                                 \
+                                                                                                                      \
+    [[nodiscard]] auto target_address() const noexcept -> ETCPAL_CALLABLE_CV void*                                    \
+    {                                                                                                                 \
+      return obj_ ? obj_ : reinterpret_cast<ETCPAL_CALLABLE_CV void*>(fun_.actual);                                   \
+    }                                                                                                                 \
+                                                                                                                      \
+    [[nodiscard]] constexpr auto target() const noexcept -> R (*)(Args...) ETCPAL_CALLABLE_NOEXCEPT                   \
+    {                                                                                                                 \
+      return obj_ ? nullptr : fun_.actual;                                                                            \
+    }                                                                                                                 \
+                                                                                                                      \
+  private:                                                                                                            \
+    union                                                                                                             \
+    {                                                                                                                 \
+      R (*thunk)(ETCPAL_CALLABLE_CV void*, Args...) ETCPAL_CALLABLE_NOEXCEPT;                                         \
+      R (*actual)(Args...) ETCPAL_CALLABLE_NOEXCEPT;                                                                  \
+    } fun_                        = {};                                                                               \
+    ETCPAL_CALLABLE_CV void* obj_ = nullptr;                                                                          \
   }
 
 #define ETCPAL_CALLABLE_NOEXCEPT
