@@ -148,20 +148,20 @@ TEST(etcpal_cpp_async, promise_chain)
   auto min_val         = min_val_promise.get_future();
   auto task_chain_done =
       pool.post(etcpal::use_future,
-                [&] {
+                [&]() -> std::vector<int, etcpal::DefaultAllocator>& {
                   std::make_heap(std::begin(numbers), std::end(numbers));
                   max_val_promise.set_value(numbers.front());
-                  return std::ref(numbers);
+                  return numbers;
                 })
           .and_then(
-              [&](auto status, auto& nums, auto exception) {
-                std::make_heap(std::begin(nums.value().get()), std::end(nums.value().get()), std::greater<>{});
-                min_val_promise.set_value(nums->get().front());
-                return std::ref(nums.value().get());
+              [&](auto status, auto& nums, auto exception) -> std::vector<int, etcpal::DefaultAllocator>& {
+                std::make_heap(std::begin(nums.value()), std::end(nums.value()), std::greater<>{});
+                min_val_promise.set_value(nums->front());
+                return *nums;
               },
               pool.get_executor())
           .and_then([](auto status, auto& nums,
-                       auto exception) { std::sort(std::begin(nums.value().get()), std::end(nums.value().get())); },
+                       auto exception) { std::sort(std::begin(nums.value()), std::end(nums.value())); },
                     pool.get_executor());
   TEST_ASSERT_TRUE(max_val.wait_for(50ms) == etcpal::FutureStatus::ready);
   TEST_ASSERT_TRUE(min_val.wait_for(50ms) == etcpal::FutureStatus::ready);
