@@ -371,7 +371,11 @@ struct etcpal::detail::StorageFor<T, std::enable_if_t<std::is_reference<T>::valu
   ~StorageFor() noexcept = default;
 
   constexpr auto operator=(const StorageFor& rhs) noexcept -> StorageFor& = default;
-  constexpr auto operator=(StorageFor&& rhs) noexcept -> StorageFor& { value = std::exchange(rhs.value, nullptr); }
+  constexpr auto operator=(StorageFor&& rhs) noexcept -> StorageFor&
+  {
+    value = std::exchange(rhs.value, nullptr);
+    return *this;
+  }
 
   [[nodiscard]] constexpr auto     operator*() const noexcept -> T { return static_cast<T>(*value); }
   [[nodiscard]] explicit constexpr operator bool() const noexcept { return value; }
