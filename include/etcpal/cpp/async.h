@@ -210,10 +210,12 @@ public:
   [[nodiscard]] auto get() -> T;
   template <typename F>
   [[nodiscard]] auto and_then(F&& cont)
-      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>;
+      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
+                Allocator>;
   template <typename F, typename Executor>
   [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
-      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>;
+      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
+                Allocator>;
 
   [[nodiscard]] bool valid() const noexcept;
   [[nodiscard]] auto wait() const noexcept -> FutureStatus;
@@ -693,7 +695,8 @@ template <typename T, typename Allocator>
 template <typename T, typename Allocator>
 template <typename F>
 [[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
-    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>
+    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
+              Allocator>
 {
   if (!state_)
   {
@@ -728,7 +731,8 @@ template <typename F>
 template <typename T, typename Allocator>
 template <typename F, typename Executor>
 [[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
-    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>
+    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
+              Allocator>
 {
   if (!state_)
   {
