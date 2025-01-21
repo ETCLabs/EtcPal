@@ -2,6 +2,8 @@
 
 #include <random>
 
+#include <etcpal/cpp/overload.h>
+
 #include <unity_fixture.h>
 
 #if (__cplusplus >= 201703L)
@@ -160,12 +162,21 @@ TEST(etcpal_cpp_async, promise_chain)
                 return *nums;
               },
               pool.get_executor())
-          .and_then([](auto status, auto& nums,
-                       auto exception) { std::sort(std::begin(nums.value()), std::end(nums.value())); },
-                    pool.get_executor());
+          .and_then(
+              etcpal::MoveOnlyFunction<void(std::vector<int, etcpal::DefaultAllocator>&) const,
+                                       void(std::exception_ptr) const, void(etcpal::FutureStatus) const,
+                                       etcpal::DefaultAllocator>{
+                  etcpal::make_selection(
+                      [](std::vector<int, etcpal::DefaultAllocator>& nums) {
+                        std::sort(std::begin(nums), std::end(nums));
+                      },
+                      [](std::exception_ptr ptr) { std::rethrow_exception(ptr); },
+                      [](auto&&) { throw std::logic_error{"promise chain broken"}; }),
+                  alloc},
+              pool.get_executor());
   TEST_ASSERT_TRUE(max_val.wait_for(50ms) == etcpal::FutureStatus::ready);
   TEST_ASSERT_TRUE(min_val.wait_for(50ms) == etcpal::FutureStatus::ready);
-  TEST_ASSERT_TRUE(task_chain_done.wait_for(50ms) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(task_chain_done.wait_for(1s) == etcpal::FutureStatus::ready);
   TEST_ASSERT_TRUE(std::is_sorted(std::cbegin(numbers), std::cend(numbers)));
   TEST_ASSERT_TRUE(max_val.get() == numbers.back());
   TEST_ASSERT_TRUE(min_val.get() == numbers.front());

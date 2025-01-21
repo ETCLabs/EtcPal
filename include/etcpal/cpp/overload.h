@@ -10,32 +10,6 @@ namespace etcpal
 template <typename... T>
 class Overload;
 
-namespace detail
-{
-
-template <typename F, typename, typename... Args>
-struct IsCallable : public std::false_type
-{
-};
-
-template <typename F, typename... Args>
-struct IsCallable<F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...> : public std::true_type
-{
-};
-
-template <typename F, typename, typename... Args>
-struct IsNothrowCallable : public std::false_type
-{
-};
-
-template <typename F, typename... Args>
-struct IsNothrowCallable<F, std::enable_if_t<noexcept(std::declval<F>()(std::declval<Args>()...))>, Args...>
-    : public std::true_type
-{
-};
-
-}  // namespace detail
-
 template <typename T>
 class Overload<T>
 {
@@ -43,25 +17,25 @@ public:
   explicit constexpr Overload(const T& init) noexcept(noexcept(T{init})) : value_{init} {}
   explicit constexpr Overload(T&& init) noexcept : value_{std::move(init)} {}
 
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T, void, Args...>::value>>
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
-      detail::IsNothrowCallable<const T, void, Args...>::value)
+      detail::IsNothrowCallable<const T, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T&, void, Args...>::value>>
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T&, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
-      detail::IsNothrowCallable<const T&, void, Args...>::value)
+      detail::IsNothrowCallable<const T&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T, void, Args...>::value>>
-  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<T, void, Args...>::value)
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T, Args...>::value>>
+  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<T, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T&, void, Args...>::value>>
-  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<T&, void, Args...>::value)
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T&, Args...>::value>>
+  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<T&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
@@ -91,51 +65,47 @@ public:
   {
   }
 
-  template <typename... Args, std::enable_if_t<detail::IsCallable<const First, void, Args...>::value>* = nullptr>
+  template <typename... Args, std::enable_if_t<detail::IsCallable<const First, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
-      detail::IsNothrowCallable<const First, void, Args...>::value)
+      detail::IsNothrowCallable<const First, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<const Parent, void, Args...>::value>* = nullptr>
+  template <typename... Args, std::enable_if_t<detail::IsCallable<const Parent, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
-      detail::IsNothrowCallable<const Parent, void, Args...>::value)
+      detail::IsNothrowCallable<const Parent, Args...>::value)
   {
     return static_cast<const Parent&&>(*this)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<const First&, void, Args...>::value>* = nullptr>
+  template <typename... Args, std::enable_if_t<detail::IsCallable<const First&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
-      detail::IsNothrowCallable<const First&, void, Args...>::value)
+      detail::IsNothrowCallable<const First&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<const Parent&, void, Args...>::value>* = nullptr>
+  template <typename... Args, std::enable_if_t<detail::IsCallable<const Parent&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
-      detail::IsNothrowCallable<const Parent&, void, Args...>::value)
+      detail::IsNothrowCallable<const Parent&, Args...>::value)
   {
     return static_cast<const Parent&>(*this)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<First, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) && noexcept(
-      detail::IsNothrowCallable<First, void, Args...>::value)
+  template <typename... Args, std::enable_if_t<detail::IsCallable<First, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<First, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<Parent, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) && noexcept(
-      detail::IsNothrowCallable<Parent, void, Args...>::value)
+  template <typename... Args, std::enable_if_t<detail::IsCallable<Parent, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<Parent, Args...>::value)
   {
     return static_cast<Parent&&>(*this)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<First&, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) & noexcept(
-      detail::IsNothrowCallable<First&, void, Args...>::value)
+  template <typename... Args, std::enable_if_t<detail::IsCallable<First&, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<First&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<Parent&, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) & noexcept(
-      detail::IsNothrowCallable<Parent&, void, Args...>::value)
+  template <typename... Args, std::enable_if_t<detail::IsCallable<Parent&, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<Parent&, Args...>::value)
   {
     return static_cast<Parent&>(*this)(std::forward<Args>(args)...);
   }
@@ -166,25 +136,25 @@ public:
   explicit constexpr Select(const T& init) noexcept(noexcept(T{init})) : value_{init} {}
   explicit constexpr Select(T&& init) noexcept : value_{std::move(init)} {}
 
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T, void, Args...>::value>>
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
-      detail::IsNothrowCallable<const T, void, Args...>::value)
+      detail::IsNothrowCallable<const T, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T&, void, Args...>::value>>
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<const T&, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
-      detail::IsNothrowCallable<const T&, void, Args...>::value)
+      detail::IsNothrowCallable<const T&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T, void, Args...>::value>>
-  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<T, void, Args...>::value)
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T, Args...>::value>>
+  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<T, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
-  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T&, void, Args...>::value>>
-  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<T&, void, Args...>::value)
+  template <typename... Args, typename = std::enable_if_t<detail::IsCallable<T&, Args...>::value>>
+  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<T&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
@@ -214,59 +184,55 @@ public:
   {
   }
 
-  template <typename... Args, std::enable_if_t<detail::IsCallable<const First, void, Args...>::value>* = nullptr>
+  template <typename... Args, std::enable_if_t<detail::IsCallable<const First, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
-      detail::IsNothrowCallable<const First, void, Args...>::value)
+      detail::IsNothrowCallable<const First, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
   template <typename... Args,
-            std::enable_if_t<!detail::IsCallable<const First, void, Args...>::value &&
-                             detail::IsCallable<const Parent, void, Args...>::value>* = nullptr>
+            std::enable_if_t<!detail::IsCallable<const First, Args...>::value &&
+                             detail::IsCallable<const Parent, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
-      detail::IsNothrowCallable<const Parent, void, Args...>::value)
+      detail::IsNothrowCallable<const Parent, Args...>::value)
   {
     return static_cast<const Parent&&>(*this)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<const First&, void, Args...>::value>* = nullptr>
+  template <typename... Args, std::enable_if_t<detail::IsCallable<const First&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
-      detail::IsNothrowCallable<const First&, void, Args...>::value)
+      detail::IsNothrowCallable<const First&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
   template <typename... Args,
-            std::enable_if_t<!detail::IsCallable<const First&, void, Args...>::value &&
-                             detail::IsCallable<const Parent&, void, Args...>::value>* = nullptr>
+            std::enable_if_t<!detail::IsCallable<const First&, Args...>::value &&
+                             detail::IsCallable<const Parent&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
-      detail::IsNothrowCallable<const Parent&, void, Args...>::value)
+      detail::IsNothrowCallable<const Parent&, Args...>::value)
   {
     return static_cast<const Parent&>(*this)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<First, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) && noexcept(
-      detail::IsNothrowCallable<First, void, Args...>::value)
+  template <typename... Args, std::enable_if_t<detail::IsCallable<First, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<First, Args...>::value)
   {
     return std::move(value_)(std::forward<Args>(args)...);
   }
   template <typename... Args,
-            std::enable_if_t<!detail::IsCallable<First, void, Args...>::value &&
-                             detail::IsCallable<Parent, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) && noexcept(
-      detail::IsNothrowCallable<Parent, void, Args...>::value)
+            std::enable_if_t<!detail::IsCallable<First, Args...>::value &&
+                             detail::IsCallable<Parent, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) && noexcept(detail::IsNothrowCallable<Parent, Args...>::value)
   {
     return static_cast<Parent&&>(*this)(std::forward<Args>(args)...);
   }
-  template <typename... Args, std::enable_if_t<detail::IsCallable<First&, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) & noexcept(
-      detail::IsNothrowCallable<First&, void, Args...>::value)
+  template <typename... Args, std::enable_if_t<detail::IsCallable<First&, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<First&, Args...>::value)
   {
     return value_(std::forward<Args>(args)...);
   }
   template <typename... Args,
-            std::enable_if_t<!detail::IsCallable<First&, void, Args...>::value &&
-                             detail::IsCallable<Parent&, void, Args...>::value>* = nullptr>
-  constexpr decltype(auto) operator()(Args&&... args) & noexcept(
-      detail::IsNothrowCallable<Parent&, void, Args...>::value)
+            std::enable_if_t<!detail::IsCallable<First&, Args...>::value &&
+                             detail::IsCallable<Parent&, Args...>::value>* = nullptr>
+  constexpr decltype(auto) operator()(Args&&... args) & noexcept(detail::IsNothrowCallable<Parent&, Args...>::value)
   {
     return static_cast<Parent&>(*this)(std::forward<Args>(args)...);
   }
