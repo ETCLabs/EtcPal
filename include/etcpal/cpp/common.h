@@ -125,6 +125,87 @@ enum class Enabler
 template <typename First, typename...>
 using FirstOf = First;
 
+template <typename F, typename, typename... Args>
+struct IsCallableImpl : public std::false_type
+{
+};
+
+template <typename F, typename... Args>
+struct IsCallableImpl<F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...> : public std::true_type
+{
+};
+
+template <typename F, typename... Args>
+using IsCallable = IsCallableImpl<F, void, Args...>;
+
+template <typename R, typename F, typename, typename... Args>
+struct IsCallableRImpl : public std::false_type
+{
+};
+
+template <typename R, typename F, typename... Args>
+struct IsCallableRImpl<R, F, void_t<decltype(R{std::declval<F>()(std::declval<Args>()...)})>, Args...>
+    : public std::true_type
+{
+};
+
+template <typename F, typename... Args>
+struct IsCallableRImpl<void, F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...>
+    : public std::true_type
+{
+};
+
+template <typename R, typename F, typename... Args>
+using IsCallableR = IsCallableRImpl<R, F, void, Args...>;
+
+template <typename F, typename, typename... Args>
+struct IsNothrowCallableImpl : public std::false_type
+{
+};
+
+template <typename F, typename... Args>
+struct IsNothrowCallableImpl<F, std::enable_if_t<noexcept(std::declval<F>()(std::declval<Args>()...))>, Args...>
+    : public std::true_type
+{
+};
+
+template <typename F, typename... Args>
+using IsNothrowCallable = IsNothrowCallableImpl<F, void, Args...>;
+
+template <typename R, typename F, typename, typename... Args>
+struct IsNothrowCallableRImpl : public std::false_type
+{
+};
+
+template <typename R, typename F, typename... Args>
+struct IsNothrowCallableImpl<R, F, std::enable_if_t<noexcept(R{std::declval<F>()(std::declval<Args>()...)})>, Args...>
+    : public std::true_type
+{
+};
+
+template <typename F, typename... Args>
+struct IsNothrowCallableImpl<void, F, std::enable_if_t<noexcept(std::declval<F>()(std::declval<Args>()...))>, Args...>
+    : public std::true_type
+{
+};
+
+template <typename R, typename F, typename... Args>
+using IsNothrowCallableR = IsNothrowCallableRImpl<R, F, void, Args...>;
+
+template <typename F, typename, typename... Args>
+struct CallResult
+{
+};
+
+template <typename F, typename... Args>
+struct CallResult<F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...>
+{
+  using type = decltype(std::declval<F>()(std::declval<Args>()...));
+};
+
+template <typename F, typename... Args>
+using CallResult_t = typename CallResult<F, void, Args...>::type;
+
 }  // namespace detail
 
 /// @endcond

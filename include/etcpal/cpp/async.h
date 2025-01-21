@@ -208,13 +208,30 @@ public:
   auto operator=(Future&& rhs) noexcept -> Future& = default;
 
   [[nodiscard]] auto get() -> T;
-  template <typename F>
+  template <typename F,
+            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value>>
   [[nodiscard]] auto and_then(F&& cont)
-      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
-                Allocator>;
-  template <typename F, typename Executor>
+      -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>;
+  template <typename F,
+            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
+                                        detail::IsCallable<F, std::exception_ptr>::value>>
+  [[nodiscard]] auto and_then(F&& cont) -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
+                                                                     detail::CallResult_t<F, T>,
+                                                                     detail::CallResult_t<F, std::exception_ptr>>,
+                                                  Allocator>;
+  template <typename F,
+            typename Executor,
+            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value>>
   [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
-      -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
+      -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>;
+  template <typename F,
+            typename Executor,
+            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
+                                        detail::IsCallable<F, std::exception_ptr>::value>>
+  [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
+      -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
+                                   detail::CallResult_t<F, T>,
+                                   detail::CallResult_t<F, std::exception_ptr>>,
                 Allocator>;
 
   [[nodiscard]] bool valid() const noexcept;
@@ -693,19 +710,17 @@ template <typename T, typename Allocator>
 }
 
 template <typename T, typename Allocator>
-template <typename F>
+template <typename F, typename>
 [[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
-    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
-              Allocator>
+    -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
 {
   if (!state_)
   {
     throw FutureError{"promise has no associated state"};
   }
 
-  auto promise =
-      Promise<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>{
-          state_->get_allocator()};
+  auto promise = Promise<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
+      state_->get_allocator()};
   auto future = promise.get_future();
   auto result = state_->set_continuation(
       [fun = std::forward<F>(cont), prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
@@ -729,9 +744,11 @@ template <typename F>
 }
 
 template <typename T, typename Allocator>
-template <typename F, typename Executor>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
-    -> Future<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{})),
+template <typename F, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
+    -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
+                                 detail::CallResult_t<F, T>,
+                                 detail::CallResult_t<F, std::exception_ptr>>,
               Allocator>
 {
   if (!state_)
@@ -739,14 +756,110 @@ template <typename F, typename Executor>
     throw FutureError{"promise has no associated state"};
   }
 
-  auto promise =
-      Promise<decltype(std::forward<F>(cont)(FutureStatus{}, std::declval<Optional<T>&>(), std::exception_ptr{}))>{
-          state_->get_allocator()};
+  auto promise = Promise<std::common_type_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
+                                            detail::CallResult_t<F, std::exception_ptr>>,
+                         Allocator>{state_->get_allocator()};
+  auto future  = promise.get_future();
+  auto result  = state_->set_continuation(
+      [fun = std::forward<F>(cont), prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
+        if (value)
+        {
+          detail::fulfill_promise(prom, std::forward<F>(fun), *value);
+        }
+        else if (exception)
+        {
+          detail::fulfill_promise(prom, std::forward<F>(fun), exception);
+        }
+        else
+        {
+          detail::fulfill_promise(prom, std::forward<F>(fun), status);
+        }
+      });
+  switch (result.result)
+  {
+    case detail::FutureActionResult::continuation_set_suceeded:
+      break;
+    case detail::FutureActionResult::continuation_invocation_required:
+      result.continuation(result.status, result.value, result.exception);
+      break;
+
+    case detail::FutureActionResult::continuation_already_set:
+      throw FutureError{"promise already has a continuation"};
+    default:
+      throw std::logic_error{"invalid promise status"};
+  }
+
+  return future;
+}
+
+template <typename T, typename Allocator>
+template <typename F, typename Executor, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
+    -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
+{
+  if (!state_)
+  {
+    throw FutureError{"promise has no associated state"};
+  }
+
+  auto promise = Promise<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
+      state_->get_allocator()};
   auto future = promise.get_future();
   auto result = state_->set_continuation(
       [fun = std::forward<F>(cont), exec, prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
         exec.post([f = std::move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
           detail::fulfill_promise(p, std::forward<F>(f), status, val, exception);
+        });
+      });
+  switch (result.result)
+  {
+    case detail::FutureActionResult::continuation_set_suceeded:
+      break;
+    case detail::FutureActionResult::continuation_invocation_required:
+      result.continuation(result.status, result.value, result.exception);
+      break;
+
+    case detail::FutureActionResult::continuation_already_set:
+      throw FutureError{"promise already has a continuation"};
+    default:
+      throw std::logic_error{"invalid promise status"};
+  }
+
+  return future;
+}
+
+template <typename T, typename Allocator>
+template <typename F, typename Executor, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
+    -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
+                                 detail::CallResult_t<F, T>,
+                                 detail::CallResult_t<F, std::exception_ptr>>,
+              Allocator>
+{
+  if (!state_)
+  {
+    throw FutureError{"promise has no associated state"};
+  }
+
+  auto promise = Promise<std::common_type_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
+                                            detail::CallResult_t<F, std::exception_ptr>>,
+                         Allocator>{state_->get_allocator()};
+  auto future  = promise.get_future();
+  auto result  = state_->set_continuation(
+      [fun = std::forward<F>(cont), exec, prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
+        exec.post([f = std::forward<F>(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
+          if (val)
+          {
+            detail::fulfill_promise(p, std::forward<F>(f), *val);
+          }
+          else if (exception)
+          {
+            detail::fulfill_promise(p, std::forward<F>(f), exception);
+          }
+          else
+          {
+            detail::fulfill_promise(p, std::forward<F>(f), status);
+          }
         });
       });
   switch (result.result)
