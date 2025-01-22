@@ -144,14 +144,11 @@ struct IsCallableRImpl : public std::false_type
 };
 
 template <typename R, typename F, typename... Args>
-struct IsCallableRImpl<R, F, void_t<decltype(R{std::declval<F>()(std::declval<Args>()...)})>, Args...>
-    : public std::true_type
-{
-};
-
-template <typename F, typename... Args>
-struct IsCallableRImpl<void, F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...>
-    : public std::true_type
+struct IsCallableRImpl<
+    R,
+    F,
+    std::enable_if_t<std::is_convertible<decltype(std::declval<F>()(std::declval<Args>()...)), R>::value>,
+    Args...> : public std::true_type
 {
 };
 
