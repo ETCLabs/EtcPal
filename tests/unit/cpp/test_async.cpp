@@ -164,8 +164,7 @@ TEST(etcpal_cpp_async, promise_chain)
               pool.get_executor())
           .and_then(
               etcpal::MoveOnlyFunction<void(std::vector<int, etcpal::DefaultAllocator>&) const,
-                                       void(std::exception_ptr) const, void(etcpal::FutureStatus) const,
-                                       etcpal::DefaultAllocator>{
+                                       void(std::exception_ptr) const, void(etcpal::FutureStatus) const>{
                   etcpal::make_selection(
                       [](std::vector<int, etcpal::DefaultAllocator>& nums) {
                         std::sort(std::begin(nums), std::end(nums));
