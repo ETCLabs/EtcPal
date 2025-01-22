@@ -205,6 +205,9 @@ using CallResult_t = typename CallResult<F, void, Args...>::type;
 
 }  // namespace detail
 
+template <typename T>
+using RemoveCVRef_t = std::remove_cv_t<std::remove_reference_t<T>>;
+
 /// @endcond
 }  // namespace etcpal
 
