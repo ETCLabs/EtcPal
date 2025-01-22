@@ -8,6 +8,7 @@
 #include <etcpal/cpp/event_group.h>
 #include <etcpal/cpp/functional.h>
 #include <etcpal/cpp/optional.h>
+#include <etcpal/cpp/overload.h>
 #include <etcpal/cpp/rwlock.h>
 #include <etcpal/cpp/synchronized.h>
 #include <etcpal/cpp/thread.h>
@@ -216,9 +217,9 @@ public:
             typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
                                         detail::IsCallable<F, std::exception_ptr>::value>>
   [[nodiscard]] auto and_then(F&& cont)
-      -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
-                         : true ? std::declval<detail::CallResult_t<F, T>>()
-                                : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
+      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
+                                          detail::CallResult_t<F, T>,
+                                          detail::CallResult_t<F, std::exception_ptr>>,
                 Allocator>;
   template <typename F,
             typename Executor,
@@ -230,9 +231,32 @@ public:
             typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
                                         detail::IsCallable<F, std::exception_ptr>::value>>
   [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
-      -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
-                         : true ? std::declval<detail::CallResult_t<F, T>>()
-                                : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
+      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
+                                          detail::CallResult_t<F, T>,
+                                          detail::CallResult_t<F, std::exception_ptr>>,
+                Allocator>;
+  template <typename F1,
+            typename F2,
+            typename F3,
+            typename = std::enable_if_t<detail::IsCallable<detail::Selection<F1, F2, F3>, FutureStatus>::value &&
+                                        detail::IsCallable<detail::Selection<F1, F2, F3>, T>::value &&
+                                        detail::IsCallable<detail::Selection<F1, F2, F3>, std::exception_ptr>::value>>
+  [[nodiscard]] auto and_then(F1&& f1, F2&& f2, F3&& f3)
+      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
+                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
+                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
+                Allocator>;
+  template <typename F1,
+            typename F2,
+            typename F3,
+            typename Executor,
+            typename = std::enable_if_t<detail::IsCallable<detail::Selection<F1, F2, F3>, FutureStatus>::value &&
+                                        detail::IsCallable<detail::Selection<F1, F2, F3>, T>::value &&
+                                        detail::IsCallable<detail::Selection<F1, F2, F3>, std::exception_ptr>::value>>
+  [[nodiscard]] auto and_then(F1&& f1, F2&& f2, F3&& f3, const Executor& exec)
+      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
+                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
+                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
                 Allocator>;
 
   [[nodiscard]] bool valid() const noexcept;
@@ -748,9 +772,9 @@ template <typename F, typename>
 template <typename T, typename Allocator>
 template <typename F, typename>
 [[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
-    -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
-                       : true ? std::declval<detail::CallResult_t<F, T>>()
-                              : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
+    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
+                                        detail::CallResult_t<F, T>,
+                                        detail::CallResult_t<F, std::exception_ptr>>,
               Allocator>
 {
   if (!state_)
@@ -834,9 +858,9 @@ template <typename F, typename Executor, typename>
 template <typename T, typename Allocator>
 template <typename F, typename Executor, typename>
 [[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
-    -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
-                       : true ? std::declval<detail::CallResult_t<F, T>>()
-                              : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
+    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
+                                        detail::CallResult_t<F, T>,
+                                        detail::CallResult_t<F, std::exception_ptr>>,
               Allocator>
 {
   if (!state_)
@@ -881,6 +905,28 @@ template <typename F, typename Executor, typename>
   }
 
   return future;
+}
+
+template <typename T, typename Allocator>
+template <typename F1, typename F2, typename F3, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F1&& f1, F2&& f2, F3&& f3)
+    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
+                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
+                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
+              Allocator>
+{
+  return and_then(make_selection(std::forward<F1>(f1), std::forward<F2>(f2), std::forward<F3>(f3)));
+}
+
+template <typename T, typename Allocator>
+template <typename F1, typename F2, typename F3, typename Executor, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F1&& f1, F2&& f2, F3&& f3, const Executor& exec)
+    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
+                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
+                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
+              Allocator>
+{
+  return and_then(make_selection(std::forward<F1>(f1), std::forward<F2>(f2), std::forward<F3>(f3)), exec);
 }
 
 template <typename T, typename Allocator>
