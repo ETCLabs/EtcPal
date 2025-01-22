@@ -140,9 +140,7 @@ class Callable;
     template <typename F,                                                                                              \
               typename = std::enable_if_t<                                                                             \
                   !std::is_same<std::remove_cv_t<std::remove_reference_t<F>>, MoveOnlyFunction>::value &&              \
-                  std::is_convertible<                                                                                 \
-                      decltype(std::declval<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>()(std::declval<Args>()...)),     \
-                      R>::value>>                                                                                      \
+                  detail::IsCallableR<R, ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF, Args...>::value>>                   \
     MoveOnlyFunction(F&& f, const Allocator& alloc = {})                                                               \
     {                                                                                                                  \
       auto* const fun =                                                                                                \
@@ -202,7 +200,7 @@ class Callable;
               typename Allocator,                                                                                      \
               typename = std::enable_if_t<                                                                             \
                   !std::is_same<std::remove_cv_t<std::remove_reference_t<F>>, MoveOnlyFunction>::value &&              \
-                  detail::IsCallableR<R, F, Args...>::value>>                                                          \
+                  detail::IsCallableR<R, ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF, Args...>::value>>                   \
     MoveOnlyFunction(F&& f, const Allocator& alloc)                                                                    \
         : Parent{std::forward<F>(f), alloc}, thunk{[](ETCPAL_CALLABLE_CV void* obj, Args... args) -> R {               \
           return static_cast<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>(*reinterpret_cast<ETCPAL_CALLABLE_CV F*>(obj))( \
@@ -213,7 +211,7 @@ class Callable;
     template <typename F,                                                                                              \
               typename = std::enable_if_t<                                                                             \
                   !std::is_same<std::remove_cv_t<std::remove_reference_t<F>>, MoveOnlyFunction>::value &&              \
-                  detail::IsCallableR<R, F, Args...>::value>>                                                          \
+                  detail::IsCallableR<R, ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF, Args...>::value>>                   \
     MoveOnlyFunction(F&& f)                                                                                            \
         : Parent{std::forward<F>(f)}, thunk{[](ETCPAL_CALLABLE_CV void* obj, Args... args) -> R {                      \
           return static_cast<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>(*reinterpret_cast<ETCPAL_CALLABLE_CV F*>(obj))( \
