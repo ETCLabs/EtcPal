@@ -83,20 +83,18 @@ public:
   template <typename U                                            = T,
             std::enable_if_t<std::is_convertible<U&&, T>::value>* = nullptr,
             typename Enable                                       = T,
-            typename = std::enable_if_t<std::is_constructible<T, U&&>::value &&
-                                        !std::is_same<std::remove_cv_t<std::remove_reference_t<U>>, InPlace_t>::value &&
-                                        !detail::IsOptional<std::remove_cv_t<std::remove_reference_t<U>>>::value &&
-                                        !std::is_reference<Enable>::value>>
+            typename                                              = std::enable_if_t<
+                                                             std::is_constructible<T, U&&>::value && !std::is_same<RemoveCVRef_t<U>, InPlace_t>::value &&
+                                                             !detail::IsOptional<RemoveCVRef_t<U>>::value && !std::is_reference<Enable>::value>>
   constexpr Optional(U&& rhs) noexcept(std::is_nothrow_constructible<T, U>::value);
   template <typename U = T, typename = std::enable_if_t<std::is_reference<U>::value>>
   constexpr Optional(T rhs) noexcept;
   template <typename U                                             = T,
             std::enable_if_t<!std::is_convertible<U&&, T>::value>* = nullptr,
             typename Enable                                        = T,
-            typename = std::enable_if_t<std::is_constructible<T, U&&>::value &&
-                                        !std::is_same<std::remove_cv_t<std::remove_reference_t<U>>, InPlace_t>::value &&
-                                        !detail::IsOptional<std::remove_cv_t<std::remove_reference_t<U>>>::value &&
-                                        !std::is_reference<Enable>::value>>
+            typename                                               = std::enable_if_t<
+                                                              std::is_constructible<T, U&&>::value && !std::is_same<RemoveCVRef_t<U>, InPlace_t>::value &&
+                                                              !detail::IsOptional<RemoveCVRef_t<U>>::value && !std::is_reference<Enable>::value>>
   explicit constexpr Optional(U&& rhs) noexcept(std::is_nothrow_constructible<T, U>::value);
 
   ~Optional() noexcept = default;
