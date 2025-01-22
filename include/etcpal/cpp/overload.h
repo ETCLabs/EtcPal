@@ -246,10 +246,19 @@ template <typename... T>
 Select(T&&...) -> Select<RemoveCVRef_t<T>...>;
 #endif  // #if (__cplusplus >= 201703L)
 
+namespace detail
+{
+
+template <typename... T>
+using Selection = Select<RemoveCVRef_t<T>...>;
+
+}
+
 template <typename... T>
 [[nodiscard]] constexpr auto make_selection(T&&... args) noexcept(
-    std::is_nothrow_constructible<Select<RemoveCVRef_t<T>...>, T...>::value)
+    std::is_nothrow_constructible<detail::Selection<T...>, T...>::value)
 {
-  return Select<RemoveCVRef_t<T>...>{std::forward<T>(args)...};
+  return detail::Selection<T...>{std::forward<T>(args)...};
 }
+
 }  // namespace etcpal
