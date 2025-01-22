@@ -46,7 +46,11 @@ class Callable;
     explicit FunBase(const Allocator& alloc) noexcept : allocator_{alloc}                                              \
     {                                                                                                                  \
     }                                                                                                                  \
+    FunBase(const FunBase& rhs)                                                                        = delete;       \
+    FunBase(FunBase&& rhs)                                                                             = delete;       \
     virtual ~FunBase() noexcept                                                                        = default;      \
+    auto      operator=(const FunBase& rhs) -> FunBase&                                                = delete;       \
+    auto      operator=(FunBase&& rhs) -> FunBase&                                                     = delete;       \
     virtual R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT = 0;            \
     [[nodiscard]] virtual auto target_ptr() const noexcept -> const void*                              = 0;            \
     [[nodiscard]] virtual auto target_ptr() noexcept -> void*                                          = 0;            \
@@ -158,12 +162,8 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
-      if (!ptr_)                                                                                                       \
-      {                                                                                                                \
-        throw std::bad_function_call{};                                                                                \
-      }                                                                                                                \
-                                                                                                                       \
-      return std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...);         \
+      return ptr_ ? std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...)   \
+                  : throw std::bad_function_call{};                                                                    \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
@@ -174,12 +174,12 @@ class Callable;
   protected:                                                                                                           \
     [[nodiscard]] auto* target_ptr() const noexcept                                                                    \
     {                                                                                                                  \
-      return ptr_.get();                                                                                               \
+      return ptr_->target_ptr();                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] auto* target_ptr() noexcept                                                                          \
     {                                                                                                                  \
-      return ptr_.get();                                                                                               \
+      return ptr_->target_ptr();                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
   private:                                                                                                             \
@@ -224,7 +224,7 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
-      return thunk(target_ptr(), std::forward<Args>(args)...);                                                         \
+      return target_ptr() ? thunk(target_ptr(), std::forward<Args>(args)...) : throw std::bad_function_call{};         \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<detail::IsCallable<const Parent, T...>::value>>               \
     constexpr decltype(auto) operator()(T&&... args) const&& noexcept(                                                 \
