@@ -126,6 +126,7 @@ TEST(etcpal_cpp_async, thread_pool)
 TEST(etcpal_cpp_async, promise_chain)
 {
   using namespace std::chrono_literals;
+  using NumVector = std::vector<int, etcpal::DefaultAllocator>;
 
 #if (__cplusplus >= 201703L)
   auto buffer = std::array<std::byte, 1 << 13>{};
@@ -139,9 +140,9 @@ TEST(etcpal_cpp_async, promise_chain)
   constexpr auto num_elements = std::size_t{1024};
 
   etcpal::ThreadPool<8> pool{alloc};
-  auto                  numbers = std::vector<int, etcpal::DefaultAllocator>(num_elements, alloc);
+  auto                  numbers = NumVector(num_elements, alloc);
   auto                  rd      = std::mt19937{std::random_device{}()};
-  auto                  dist    = std::uniform_int_distribution<int>{-100, 100};
+  auto                  dist    = std::uniform_int_distribution<int>{-1000, 1000};
   std::generate(std::begin(numbers), std::end(numbers), [&] { return dist(rd); });
 
   auto max_val_promise = etcpal::Promise<int>{alloc};
@@ -150,27 +151,30 @@ TEST(etcpal_cpp_async, promise_chain)
   auto min_val         = min_val_promise.get_future();
   auto task_chain_done =
       pool.post(etcpal::use_future,
-                [&]() -> std::vector<int, etcpal::DefaultAllocator>& {
+                [&]() -> NumVector& {
                   std::make_heap(std::begin(numbers), std::end(numbers));
                   max_val_promise.set_value(numbers.front());
                   return numbers;
                 })
           .and_then(
-              [&](auto status, auto& nums, auto exception) -> std::vector<int, etcpal::DefaultAllocator>& {
-                std::make_heap(std::begin(nums.value()), std::end(nums.value()), std::greater<>{});
-                min_val_promise.set_value(nums->front());
-                return *nums;
-              },
+              etcpal::MoveOnlyFunction<NumVector&(NumVector&) const, NumVector&(std::exception_ptr) const,
+                                       NumVector&(etcpal::FutureStatus) const>{
+                  etcpal::make_overload(
+                      [&](NumVector& nums) -> NumVector& {
+                        std::make_heap(std::begin(nums), std::end(nums), std::greater<>{});
+                        min_val_promise.set_value(nums.front());
+                        return nums;
+                      },
+                      [](std::exception_ptr ptr) -> NumVector& { std::rethrow_exception(ptr); },
+                      [](etcpal::FutureStatus err) -> NumVector& { throw std::logic_error{"promise chain broken"}; }),
+                  alloc},
               pool.get_executor())
           .and_then(
-              etcpal::MoveOnlyFunction<void(std::vector<int, etcpal::DefaultAllocator>&) const,
-                                       void(std::exception_ptr) const, void(etcpal::FutureStatus) const>{
-                  etcpal::make_selection(
-                      [](std::vector<int, etcpal::DefaultAllocator>& nums) {
-                        std::sort(std::begin(nums), std::end(nums));
-                      },
-                      [](std::exception_ptr ptr) { std::rethrow_exception(ptr); },
-                      [](auto&&) { throw std::logic_error{"promise chain broken"}; }),
+              etcpal::MoveOnlyFunction<void(NumVector&) const, void(std::exception_ptr) const,
+                                       void(etcpal::FutureStatus) const>{
+                  etcpal::make_selection([](NumVector& nums) { std::sort(std::begin(nums), std::end(nums)); },
+                                         [](std::exception_ptr ptr) { std::rethrow_exception(ptr); },
+                                         [](auto&&) { throw std::logic_error{"promise chain broken"}; }),
                   alloc},
               pool.get_executor());
   TEST_ASSERT_TRUE(max_val.wait_for(50ms) == etcpal::FutureStatus::ready);

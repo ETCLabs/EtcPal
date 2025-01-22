@@ -215,10 +215,11 @@ public:
   template <typename F,
             typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
                                         detail::IsCallable<F, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F&& cont) -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
-                                                                     detail::CallResult_t<F, T>,
-                                                                     detail::CallResult_t<F, std::exception_ptr>>,
-                                                  Allocator>;
+  [[nodiscard]] auto and_then(F&& cont)
+      -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
+                         : true ? std::declval<detail::CallResult_t<F, T>>()
+                                : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
+                Allocator>;
   template <typename F,
             typename Executor,
             typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value>>
@@ -229,9 +230,9 @@ public:
             typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
                                         detail::IsCallable<F, std::exception_ptr>::value>>
   [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
-      -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
-                                   detail::CallResult_t<F, T>,
-                                   detail::CallResult_t<F, std::exception_ptr>>,
+      -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
+                         : true ? std::declval<detail::CallResult_t<F, T>>()
+                                : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
                 Allocator>;
 
   [[nodiscard]] bool valid() const noexcept;
@@ -356,7 +357,8 @@ template <typename T, typename Series, typename Lock>
     -> Optional<T>
 {
   const auto queue = sync_queue.lock();
-  if (queue->empty())
+  if (queue->empty() || ((static_cast<detail::QueueStatus>(queue_status.GetBits()) & detail::QueueStatus::shut_down) ==
+                         detail::QueueStatus::shut_down))
   {
     return {};
   }
@@ -746,9 +748,9 @@ template <typename F, typename>
 template <typename T, typename Allocator>
 template <typename F, typename>
 [[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
-    -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
-                                 detail::CallResult_t<F, T>,
-                                 detail::CallResult_t<F, std::exception_ptr>>,
+    -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
+                       : true ? std::declval<detail::CallResult_t<F, T>>()
+                              : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
               Allocator>
 {
   if (!state_)
@@ -756,8 +758,9 @@ template <typename F, typename>
     throw FutureError{"promise has no associated state"};
   }
 
-  auto promise = Promise<std::common_type_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
-                                            detail::CallResult_t<F, std::exception_ptr>>,
+  auto promise = Promise<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
+                                  : true ? std::declval<detail::CallResult_t<F, T>>()
+                                         : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
                          Allocator>{state_->get_allocator()};
   auto future  = promise.get_future();
   auto result  = state_->set_continuation(
@@ -831,9 +834,9 @@ template <typename F, typename Executor, typename>
 template <typename T, typename Allocator>
 template <typename F, typename Executor, typename>
 [[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
-    -> Future<std::common_type_t<detail::CallResult_t<F, FutureStatus>,
-                                 detail::CallResult_t<F, T>,
-                                 detail::CallResult_t<F, std::exception_ptr>>,
+    -> Future<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
+                       : true ? std::declval<detail::CallResult_t<F, T>>()
+                              : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
               Allocator>
 {
   if (!state_)
@@ -841,8 +844,9 @@ template <typename F, typename Executor, typename>
     throw FutureError{"promise has no associated state"};
   }
 
-  auto promise = Promise<std::common_type_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
-                                            detail::CallResult_t<F, std::exception_ptr>>,
+  auto promise = Promise<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
+                                  : true ? std::declval<detail::CallResult_t<F, T>>()
+                                         : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
                          Allocator>{state_->get_allocator()};
   auto future  = promise.get_future();
   auto result  = state_->set_continuation(
@@ -958,11 +962,11 @@ template <std::size_t N, typename Allocator>
 etcpal::ThreadPool<N, Allocator>::~ThreadPool() noexcept
 {
   const auto queue = queue_.lock();
+  queue_status_.SetBits(static_cast<EventBits>(detail::QueueStatus::shut_down));
   for (auto& thread : threads_)
   {
     thread.request_stop();
   }
-  queue_status_.SetBits(static_cast<EventBits>(detail::QueueStatus::shut_down));
 }
 
 template <std::size_t N, typename Allocator>
