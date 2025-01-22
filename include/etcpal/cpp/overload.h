@@ -116,14 +116,14 @@ private:
 
 #if (__cplusplus >= 201703L)
 template <typename... T>
-Overload(T&&...) -> Overload<std::remove_cv_t<std::remove_reference_t<T>>...>;
+Overload(T&&...) -> Overload<RemoveCVRef_t<T>...>;
 #endif  // #if (__cplusplus >= 201703L)
 
 template <typename... T>
 [[nodiscard]] constexpr auto make_overload(T&&... args) noexcept(
-    std::is_nothrow_constructible<Overload<std::remove_cv_t<std::remove_reference_t<T>>...>, T...>::value)
+    std::is_nothrow_constructible<Overload<RemoveCVRef_t<T>...>, T...>::value)
 {
-  return Overload<std::remove_cv_t<std::remove_reference_t<T>>...>{std::forward<T>(args)...};
+  return Overload<RemoveCVRef_t<T>...>{std::forward<T>(args)...};
 }
 
 template <typename... T>
@@ -243,13 +243,13 @@ private:
 
 #if (__cplusplus >= 201703L)
 template <typename... T>
-Select(T&&...) -> Select<std::remove_cv_t<std::remove_reference_t<T>>...>;
+Select(T&&...) -> Select<RemoveCVRef_t<T>...>;
 #endif  // #if (__cplusplus >= 201703L)
 
 template <typename... T>
 [[nodiscard]] constexpr auto make_selection(T&&... args) noexcept(
-    std::is_nothrow_constructible<Select<std::remove_cv_t<std::remove_reference_t<T>>...>, T...>::value)
+    std::is_nothrow_constructible<Select<RemoveCVRef_t<T>...>, T...>::value)
 {
-  return Select<std::remove_cv_t<std::remove_reference_t<T>>...>{std::forward<T>(args)...};
+  return Select<RemoveCVRef_t<T>...>{std::forward<T>(args)...};
 }
 }  // namespace etcpal
