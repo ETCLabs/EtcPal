@@ -102,9 +102,21 @@ class Callable;
     F fun_;                                                                                                            \
   };                                                                                                                   \
                                                                                                                        \
+  template <typename R, typename... Args>                                                                              \
+  class etcpal::MoveOnlyFunction<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT>           \
+      : public MoveOnlyFunction<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,            \
+                                DefaultAllocator>                                                                      \
+  {                                                                                                                    \
+  public:                                                                                                              \
+    using Parent = MoveOnlyFunction<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,        \
+                                    DefaultAllocator>;                                                                 \
+    using Parent::Parent;                                                                                              \
+  };                                                                                                                   \
+                                                                                                                       \
   template <typename R, typename... Args, typename Allocator>                                                          \
-  class etcpal::MoveOnlyFunction<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,           \
-                                 Allocator>                                                                            \
+  class etcpal::MoveOnlyFunction<                                                                                      \
+      R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,                                      \
+      etcpal::detail::FirstOf<Allocator, decltype(Allocator{}.deallocate(Allocator{}.allocate(1), 1))>>                \
   {                                                                                                                    \
   private:                                                                                                             \
     template <typename F>                                                                                              \
