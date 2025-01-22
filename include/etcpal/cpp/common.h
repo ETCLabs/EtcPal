@@ -203,6 +203,32 @@ struct CallResult<F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))
 template <typename F, typename... Args>
 using CallResult_t = typename CallResult<F, void, Args...>::type;
 
+template <typename... T>
+struct CommonCVRefType
+{
+};
+
+template <typename... T>
+using CommonCVRefType_t = typename CommonCVRefType<T...>::type;
+
+template <typename T>
+struct CommonCVRefType<T>
+{
+  using type = T;
+};
+
+template <typename T1, typename T2>
+struct CommonCVRefType<T1, T2>
+{
+  using type = decltype(true ? std::declval<T1>() : std::declval<T2>());
+};
+
+template <typename T1, typename T2, typename T3, typename... Rest>
+struct CommonCVRefType<T1, T2, T3, Rest...>
+    : public CommonCVRefType<CommonCVRefType_t<T1, T2>, CommonCVRefType_t<T3, Rest...>>
+{
+};
+
 }  // namespace detail
 
 template <typename T>
