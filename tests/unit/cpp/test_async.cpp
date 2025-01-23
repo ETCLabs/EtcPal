@@ -157,17 +157,19 @@ TEST(etcpal_cpp_async, promise_chain)
                   return numbers;
                 })
           .and_then(
+              pool.get_executor(),
               [&](NumVector& nums) -> NumVector& {
                 std::make_heap(std::begin(nums), std::end(nums), std::greater<>{});
                 min_val_promise.set_value(nums.front());
                 return nums;
               },
               [](std::exception_ptr ptr) -> NumVector& { std::rethrow_exception(ptr); },
-              [](etcpal::FutureStatus err) -> NumVector& { throw std::logic_error{"promise chain broken"}; },
-              pool.get_executor())
-          .and_then([](NumVector& nums) { std::sort(std::begin(nums), std::end(nums)); },
-                    [](std::exception_ptr ptr) { std::rethrow_exception(ptr); },
-                    [](auto&&) { throw std::logic_error{"promise chain broken"}; }, pool.get_executor());
+              [](etcpal::FutureStatus err) -> NumVector& { throw std::logic_error{"promise chain broken"}; })
+          .and_then(
+              pool.get_executor(),
+              [](NumVector& nums) { std::sort(std::begin(nums), std::end(nums)); },
+              [](std::exception_ptr ptr) { std::rethrow_exception(ptr); },
+              [](auto&&) { throw std::logic_error{"promise chain broken"}; });
   TEST_ASSERT_TRUE(max_val.wait_for(50ms) == etcpal::FutureStatus::ready);
   TEST_ASSERT_TRUE(min_val.wait_for(50ms) == etcpal::FutureStatus::ready);
   TEST_ASSERT_TRUE(task_chain_done.wait_for(1s) == etcpal::FutureStatus::ready);
