@@ -23,7 +23,18 @@ enum class FutureStatus : unsigned int
   deferred  = 1 << 2,  //!< promise fulfillment has been deferred
   abandoned = 1 << 3,  //!< promise has been abandoned before being fulfilled
   continued = 1 << 4,  //!< future has had its continuation invoked
-  consumed  = 1 << 5   //!< future value has been obtained
+  consumed  = 1 << 5,  //!< future value has been obtained
+  no_state  = 1 << 6   //!< future has no associated state
+};
+
+enum class FutureErrc : unsigned int
+{
+  no_state,
+  broken_promise,
+  future_already_promised,
+  future_already_retrieved,
+  promise_already_satisfied,
+  continuation_already_set
 };
 
 [[nodiscard]] constexpr auto operator~(FutureStatus value) noexcept
@@ -84,6 +95,16 @@ class FutureError : public std::logic_error
 {
 public:
   FutureError() : std::logic_error{"future error"} {}
+  FutureError(FutureErrc status)
+      : std::logic_error{(status == FutureErrc::no_state)                    ? "no associated future state"
+                         : (status == FutureErrc::future_already_promised)   ? "broken promise"
+                         : (status == FutureErrc::future_already_retrieved)  ? "future value has already been retrieved"
+                         : (status == FutureErrc::promise_already_satisfied) ? "promise has already been satisfied"
+                         : (status == FutureErrc::continuation_already_set)
+                             ? "promise has already had a continuation assigned"
+                             : "future error"}
+  {
+  }
 
 private:
   template <typename T, typename Allocator>
@@ -221,16 +242,19 @@ public:
                                           detail::CallResult_t<F, T>,
                                           detail::CallResult_t<F, std::exception_ptr>>,
                 Allocator>;
-  template <typename F,
-            typename Executor,
-            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
+  template <
+      typename Executor,
+      typename F,
+      typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value &&
+                                  !(detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
+                                    detail::IsCallable<F, std::exception_ptr>::value)>>
+  [[nodiscard]] auto and_then(const Executor& exec, F&& cont)
       -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>;
-  template <typename F,
-            typename Executor,
+  template <typename Executor,
+            typename F,
             typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
                                         detail::IsCallable<F, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F&& cont, const Executor& exec)
+  [[nodiscard]] auto and_then(const Executor& exec, F&& cont)
       -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
                                           detail::CallResult_t<F, T>,
                                           detail::CallResult_t<F, std::exception_ptr>>,
@@ -246,14 +270,14 @@ public:
                                           detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
                                           detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
                 Allocator>;
-  template <typename F1,
+  template <typename Executor,
+            typename F1,
             typename F2,
             typename F3,
-            typename Executor,
             typename = std::enable_if_t<detail::IsCallable<detail::Selection<F1, F2, F3>, FutureStatus>::value &&
                                         detail::IsCallable<detail::Selection<F1, F2, F3>, T>::value &&
                                         detail::IsCallable<detail::Selection<F1, F2, F3>, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F1&& f1, F2&& f2, F3&& f3, const Executor& exec)
+  [[nodiscard]] auto and_then(const Executor& exec, F1&& f1, F2&& f2, F3&& f3)
       -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
                                           detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
                                           detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
@@ -407,11 +431,6 @@ template <typename T, typename Series, typename Lock>
 [[nodiscard]] constexpr bool is_consumed(FutureStatus status) noexcept
 {
   return (status & (FutureStatus::consumed | FutureStatus::continued)) != FutureStatus{};
-}
-
-[[nodiscard]] constexpr bool has_unconsumed_value(FutureStatus status) noexcept
-{
-  return has_value(status) && !is_consumed(status);
 }
 
 template <typename T, typename Allocator, typename F, typename... Args>
@@ -637,7 +656,7 @@ template <typename T, typename Allocator>
 {
   if (!state_)
   {
-    throw FutureError{"promise has no associated state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
   switch (state_->set_future_retrieved())
@@ -646,7 +665,7 @@ template <typename T, typename Allocator>
       return Future<T, Allocator>{state_};
 
     case detail::FutureActionResult::future_already_retrieved:
-      throw FutureError{"future has already be obtained from this promise"};
+      throw FutureError{FutureErrc::future_already_promised};
     default:
       throw std::logic_error{"invalid promise status"};
   }
@@ -658,7 +677,7 @@ void etcpal::Promise<T, Allocator>::set_value(U&& value)
 {
   if (!state_)
   {
-    throw FutureError{"promise has no associated state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
   auto result = state_->set_value(std::forward<U>(value));
@@ -673,7 +692,7 @@ void etcpal::Promise<T, Allocator>::set_value(U&& value)
     case detail::FutureActionResult::value_already_set:
       [[fallthrough]];
     case detail::FutureActionResult::exception_already_set:
-      throw FutureError{"promise already fulfilled"};
+      throw FutureError{FutureErrc::promise_already_satisfied};
     default:
       throw std::logic_error{"invalid promise status"};
   }
@@ -685,7 +704,7 @@ void etcpal::Promise<T, Allocator>::set_value()
 {
   if (!state_)
   {
-    throw FutureError{"promise has no associated state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
   auto result = state_->set_value(nullptr);
@@ -700,7 +719,7 @@ void etcpal::Promise<T, Allocator>::set_value()
     case detail::FutureActionResult::value_already_set:
       [[fallthrough]];
     case detail::FutureActionResult::exception_already_set:
-      throw FutureError{"promise already fulfilled"};
+      throw FutureError{FutureErrc::promise_already_satisfied};
     default:
       throw std::logic_error{"invalid promise status"};
   }
@@ -711,7 +730,7 @@ template <typename T, typename Allocator>
 {
   if (!state_)
   {
-    throw FutureError{"future has no shared state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
   auto result = state_->get_value(std::chrono::milliseconds{ETCPAL_WAIT_FOREVER});
@@ -723,11 +742,11 @@ template <typename T, typename Allocator>
       return state_->return_value(std::move(*result.value));
 
     case detail::FutureActionResult::broken_promise:
-      throw FutureError{"broken promise"};
+      throw FutureError{FutureErrc::broken_promise};
     case detail::FutureActionResult::value_already_obtained:
-      throw FutureError{"attempting to obtain a future value that has already been obtained"};
+      throw FutureError{FutureErrc::future_already_retrieved};
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{"attempting to obtain a future value when a continuation has already been set"};
+      throw FutureError{FutureErrc::continuation_already_set};
     case detail::FutureActionResult::value_get_timeout:
       throw std::logic_error{"timed out waiting forever for a future value"};
     default:
@@ -742,7 +761,7 @@ template <typename F, typename>
 {
   if (!state_)
   {
-    throw FutureError{"promise has no associated state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
   auto promise = Promise<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
@@ -761,7 +780,7 @@ template <typename F, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{"promise already has a continuation"};
+      throw FutureError{FutureErrc::continuation_already_set};
     default:
       throw std::logic_error{"invalid promise status"};
   }
@@ -779,12 +798,11 @@ template <typename F, typename>
 {
   if (!state_)
   {
-    throw FutureError{"promise has no associated state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
-  auto promise = Promise<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
-                                  : true ? std::declval<detail::CallResult_t<F, T>>()
-                                         : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
+  auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
+                                                   detail::CallResult_t<F, std::exception_ptr>>,
                          Allocator>{state_->get_allocator()};
   auto future  = promise.get_future();
   auto result  = state_->set_continuation(
@@ -811,7 +829,7 @@ template <typename F, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{"promise already has a continuation"};
+      throw FutureError{FutureErrc::continuation_already_set};
     default:
       throw std::logic_error{"invalid promise status"};
   }
@@ -820,13 +838,13 @@ template <typename F, typename>
 }
 
 template <typename T, typename Allocator>
-template <typename F, typename Executor, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
+template <typename Executor, typename F, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont)
     -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
 {
   if (!state_)
   {
-    throw FutureError{"promise has no associated state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
   auto promise = Promise<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
@@ -847,7 +865,7 @@ template <typename F, typename Executor, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{"promise already has a continuation"};
+      throw FutureError{FutureErrc::continuation_already_set};
     default:
       throw std::logic_error{"invalid promise status"};
   }
@@ -856,8 +874,8 @@ template <typename F, typename Executor, typename>
 }
 
 template <typename T, typename Allocator>
-template <typename F, typename Executor, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont, const Executor& exec)
+template <typename Executor, typename F, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont)
     -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
                                         detail::CallResult_t<F, T>,
                                         detail::CallResult_t<F, std::exception_ptr>>,
@@ -865,12 +883,11 @@ template <typename F, typename Executor, typename>
 {
   if (!state_)
   {
-    throw FutureError{"promise has no associated state"};
+    throw FutureError{FutureErrc::no_state};
   }
 
-  auto promise = Promise<decltype(true   ? std::declval<detail::CallResult_t<F, FutureStatus>>()
-                                  : true ? std::declval<detail::CallResult_t<F, T>>()
-                                         : std::declval<detail::CallResult_t<F, std::exception_ptr>>()),
+  auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
+                                                   detail::CallResult_t<F, std::exception_ptr>>,
                          Allocator>{state_->get_allocator()};
   auto future  = promise.get_future();
   auto result  = state_->set_continuation(
@@ -899,7 +916,7 @@ template <typename F, typename Executor, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{"promise already has a continuation"};
+      throw FutureError{FutureErrc::continuation_already_set};
     default:
       throw std::logic_error{"invalid promise status"};
   }
@@ -919,14 +936,14 @@ template <typename F1, typename F2, typename F3, typename>
 }
 
 template <typename T, typename Allocator>
-template <typename F1, typename F2, typename F3, typename Executor, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F1&& f1, F2&& f2, F3&& f3, const Executor& exec)
+template <typename Executor, typename F1, typename F2, typename F3, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F1&& f1, F2&& f2, F3&& f3)
     -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
                                         detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
                                         detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
               Allocator>
 {
-  return and_then(make_selection(std::forward<F1>(f1), std::forward<F2>(f2), std::forward<F3>(f3)), exec);
+  return and_then(exec, make_selection(std::forward<F1>(f1), std::forward<F2>(f2), std::forward<F3>(f3)));
 }
 
 template <typename T, typename Allocator>
