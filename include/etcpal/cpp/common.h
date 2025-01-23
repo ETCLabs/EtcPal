@@ -234,6 +234,12 @@ struct CommonCVRefType<T1, T2, T3, Rest...>
 template <typename T>
 using RemoveCVRef_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
+template <typename Enum>
+[[nodiscard]] constexpr auto to_underlying(Enum value) noexcept
+{
+  return static_cast<std::underlying_type_t<Enum>>(value);
+}
+
 /// @endcond
 }  // namespace etcpal
 
