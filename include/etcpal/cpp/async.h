@@ -12,6 +12,7 @@
 #include <etcpal/cpp/rwlock.h>
 #include <etcpal/cpp/synchronized.h>
 #include <etcpal/cpp/thread.h>
+#include <etcpal/cpp/variant.h>
 
 namespace etcpal
 {
@@ -30,6 +31,7 @@ enum class FutureStatus : unsigned int
 enum class FutureErrc : unsigned int
 {
   no_state,
+  timeout,
   broken_promise,
   future_already_promised,
   future_already_retrieved,
@@ -230,6 +232,13 @@ public:
   auto operator=(Future&& rhs) noexcept -> Future& = default;
 
   [[nodiscard]] auto get() -> T;
+  [[nodiscard]] auto get_if() noexcept -> Variant<T, FutureErrc, std::exception_ptr>;
+  template <typename Rep, typename Period>
+  [[nodiscard]] auto get_if(const std::chrono::duration<Rep, Period>& timeout = std::chrono::milliseconds{
+                                ETCPAL_WAIT_FOREVER}) noexcept -> Variant<T, FutureErrc, std::exception_ptr>;
+  template <typename Clock, typename Duration>
+  [[nodiscard]] auto get_if(const std::chrono::time_point<Clock, Duration>& timeout) noexcept
+      -> Variant<T, FutureErrc, std::exception_ptr>;
   template <typename F,
             typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value>>
   [[nodiscard]] auto and_then(F&& cont)
@@ -749,6 +758,66 @@ template <typename T, typename Allocator>
       throw FutureError{FutureErrc::continuation_already_set};
     case detail::FutureActionResult::value_get_timeout:
       throw std::logic_error{"timed out waiting forever for a future value"};
+    default:
+      throw std::logic_error{"invalid future status"};
+  }
+}
+
+template <typename T, typename Allocator>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::get_if() noexcept -> Variant<T, FutureErrc, std::exception_ptr>
+{
+  if (!state_)
+  {
+    return FutureErrc::no_state;
+  }
+
+  auto result = state_->get_value(std::chrono::milliseconds{ETCPAL_WAIT_FOREVER});
+  switch (result.result)
+  {
+    case detail::FutureActionResult::exception_throwing_required:
+      return result.exception;
+    case detail::FutureActionResult::value_get_succeeded:
+      return state_->return_value(std::move(*result.value));
+
+    case detail::FutureActionResult::broken_promise:
+      return FutureErrc::broken_promise;
+    case detail::FutureActionResult::value_already_obtained:
+      return FutureErrc::future_already_retrieved;
+    case detail::FutureActionResult::continuation_already_set:
+      return FutureErrc::continuation_already_set;
+    case detail::FutureActionResult::value_get_timeout:
+      throw std::logic_error{"timed out waiting forever for a future value"};
+    default:
+      throw std::logic_error{"invalid future status"};
+  }
+}
+
+template <typename T, typename Allocator>
+template <typename Rep, typename Period>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::get_if(const std::chrono::duration<Rep, Period>& timeout) noexcept
+    -> Variant<T, FutureErrc, std::exception_ptr>
+{
+  if (!state_)
+  {
+    return FutureErrc::no_state;
+  }
+
+  auto result = state_->get_value(timeout);
+  switch (result.result)
+  {
+    case detail::FutureActionResult::exception_throwing_required:
+      return result.exception;
+    case detail::FutureActionResult::value_get_succeeded:
+      return state_->return_value(std::move(*result.value));
+
+    case detail::FutureActionResult::broken_promise:
+      return FutureErrc::broken_promise;
+    case detail::FutureActionResult::value_already_obtained:
+      return FutureErrc::future_already_retrieved;
+    case detail::FutureActionResult::continuation_already_set:
+      return FutureErrc::continuation_already_set;
+    case detail::FutureActionResult::value_get_timeout:
+      return FutureErrc::timeout;
     default:
       throw std::logic_error{"invalid future status"};
   }
