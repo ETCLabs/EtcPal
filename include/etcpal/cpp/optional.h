@@ -525,13 +525,13 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr decltype(auto) etcpal::Optional<T>::value() &&
 {
-  return *this ? *std::move(*storage_) : throw BadOptionalAccess{};
+  return *this ? *std::move(storage_) : throw BadOptionalAccess{};
 }
 
 template <typename T>
 [[nodiscard]] constexpr decltype(auto) etcpal::Optional<T>::value() const&&
 {
-  return *this ? *std::move(*storage_) : throw BadOptionalAccess{};
+  return *this ? *std::move(storage_) : throw BadOptionalAccess{};
 }
 
 template <typename T>

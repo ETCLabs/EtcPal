@@ -145,25 +145,27 @@ namespace etcpal
 ///
 /// This is one of the few EtcPal wrappers that does heap allocation, as the thread function and
 /// arguments need to be stored.
-class Thread
+template <typename Allocator = DefaultAllocator>
+class BasicThread
 {
 public:
   /// @brief Create a new thread object which does not yet represent a thread.
-  Thread() = default;
-  template <class Function,
-            class... Args,
-            typename std::enable_if<!std::is_arithmetic<Function>::value, bool>::type = true>
-  Thread(Function&& func, Args&&... args);
-  Thread(unsigned int priority, unsigned int stack_size, const char* name, void* platform_data = nullptr);
-  virtual ~Thread();
-
-  Thread(Thread&& other) noexcept;
-  Thread& operator=(Thread&& other) noexcept;
+  BasicThread() = default;
+  template <class Function, class... Args, std::enable_if_t<detail::IsCallable<Function, Args...>::value>* = nullptr>
+  BasicThread(Function&& func, Args&&... args);
+  template <class Function, class... Args, std::enable_if_t<detail::IsCallable<Function, Args...>::value>* = nullptr>
+  BasicThread(const Allocator& alloc, Function&& func, Args&&... args);
+  BasicThread(unsigned int priority, unsigned int stack_size, const char* name, void* platform_data = nullptr);
 
   /// Deleted copy constructor - threads are not copyable
-  Thread(const Thread& other) = delete;
+  BasicThread(const BasicThread& other) = delete;
+  BasicThread(BasicThread&& other) noexcept;
+
+  virtual ~BasicThread();
+
   /// Deleted copy assignment operator - threads are not copyable
-  Thread& operator=(const Thread& other) = delete;
+  BasicThread& operator=(const BasicThread& other) = delete;
+  BasicThread& operator=(BasicThread&& other) noexcept;
 
   bool joinable() const noexcept;
 
@@ -175,19 +177,22 @@ public:
   void*                     platform_data() const noexcept;
   const EtcPalThreadParams& params() const noexcept;
   etcpal_thread_os_handle_t os_handle() const noexcept;
+  [[nodiscard]] auto        get_allocator() const noexcept { return thread_ ? thread_->alloc : Allocator{}; }
   /// @}
 
   /// @name Setters
   /// @{
-  Thread& SetPriority(unsigned int priority) noexcept;
-  Thread& SetStackSize(unsigned int stack_size) noexcept;
-  Thread& SetName(const char* name) noexcept;
-  Thread& SetName(const std::string& name) noexcept;
-  Thread& SetPlatformData(void* platform_data) noexcept;
-  Thread& SetParams(const EtcPalThreadParams& params) noexcept;
+  BasicThread& SetPriority(unsigned int priority) noexcept;
+  BasicThread& SetStackSize(unsigned int stack_size) noexcept;
+  BasicThread& SetName(const char* name) noexcept;
+  BasicThread& SetName(const std::string& name) noexcept;
+  BasicThread& SetPlatformData(void* platform_data) noexcept;
+  BasicThread& SetParams(const EtcPalThreadParams& params) noexcept;
   /// @}
 
-  template <class Function, class... Args>
+  template <class Function, class... Args, typename = std::enable_if_t<detail::IsCallable<Function, Args...>::value>>
+  Error Start(const Allocator& alloc, Function&& func, Args&&... args);
+  template <class Function, class... Args, typename = std::enable_if_t<detail::IsCallable<Function, Args...>::value>>
   Error Start(Function&& func, Args&&... args);
   Error Join(int timeout_ms = ETCPAL_WAIT_FOREVER) noexcept;
   Error Terminate() noexcept;
@@ -197,13 +202,21 @@ public:
   static Error Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept;
 
   /// @cond
-  using FunctionType = std::function<void()>;
+  using FunctionType = MoveOnlyFunction<void(), Allocator>;
   /// @endcond
 
 private:
-  std::unique_ptr<etcpal_thread_t> thread_;
-  EtcPalThreadParams               params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
+  struct CtrlBlock
+  {
+    Allocator       alloc = Allocator{};
+    etcpal_thread_t thread;
+  };
+
+  std::unique_ptr<CtrlBlock, detail::DeleteUsingAlloc<Allocator>> thread_ = nullptr;
+  EtcPalThreadParams                                              params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
 };
+
+using Thread = BasicThread<>;
 
 template <typename Allocator = DefaultAllocator>
 class JThread
@@ -214,27 +227,23 @@ public:
   JThread() noexcept = default;
   template <typename Fun,
             typename... Args,
-            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
-                                         std::declval<Args>()...))* = nullptr>
+            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(const EtcPalThreadParams& params, const Allocator& alloc, Fun&& fun, Args&&... args);
   template <typename Fun,
             typename... Args,
-            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
-                                         std::declval<Args>()...))* = nullptr>
+            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args);
-  template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))* = nullptr>
+  template <typename Fun, typename... Args, std::enable_if_t<detail::IsCallable<Fun, Args...>::value>* = nullptr>
   explicit JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args);
   template <typename Fun,
             typename... Args,
-            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
-                                         std::declval<Args>()...))* = nullptr>
+            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(const Allocator& alloc, Fun&& fun, Args&&... args);
   template <typename Fun,
             typename... Args,
-            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
-                                         std::declval<Args>()...))* = nullptr>
+            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
-  template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))* = nullptr>
+  template <typename Fun, typename... Args, std::enable_if_t<detail::IsCallable<Fun, Args...>::value>* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
 
   JThread(const JThread& rhs)     = delete;
@@ -255,20 +264,9 @@ public:
   bool               request_stop() noexcept { return ssource_.request_stop(); }
 
 private:
-  StopSource<Allocator> ssource_ = StopSource<Allocator>{NoStopState};
-  Thread                thread_  = {};
+  StopSource<Allocator>  ssource_ = StopSource<Allocator>{NoStopState};
+  BasicThread<Allocator> thread_  = {};
 };
-
-/// @cond Internal thread function
-
-extern "C" inline void CppThreadFn(void* arg)
-{
-  std::unique_ptr<Thread::FunctionType> p_func(static_cast<Thread::FunctionType*>(arg));
-  // Tear the roof off the sucker
-  (*p_func)();
-}
-
-/// @endcond
 
 /// @brief Create a new thread object and associate it with a new thread of execution.
 ///
@@ -278,13 +276,20 @@ extern "C" inline void CppThreadFn(void* arg)
 /// @param args Arguments to pass to func.
 /// @throw std::runtime_error if Start() returns an error code.
 /// @post `joinable() == true`
-template <class Function, class... Args, typename std::enable_if<!std::is_arithmetic<Function>::value, bool>::type>
-Thread::Thread(Function&& func, Args&&... args)
+template <typename Allocator>
+template <class Function, class... Args, std::enable_if_t<etcpal::detail::IsCallable<Function, Args...>::value>*>
+BasicThread<Allocator>::BasicThread(const Allocator& alloc, Function&& func, Args&&... args)
 {
-  ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params_);
-  auto result = Start(std::forward<Function>(func), std::forward<Args>(args)...);
+  auto result = Start(alloc, std::forward<Function>(func), std::forward<Args>(args)...);
   if (!result)
     ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
+}
+
+template <typename Allocator>
+template <class Function, class... Args, std::enable_if_t<etcpal::detail::IsCallable<Function, Args...>::value>*>
+BasicThread<Allocator>::BasicThread(Function&& func, Args&&... args)
+    : BasicThread{Allocator{}, std::forward<Function>(func), std::forward<Args>(args)...}
+{
 }
 
 /// @brief Create a new thread object which does not yet represent a thread, passing explicit parameters.
@@ -296,8 +301,19 @@ Thread::Thread(Function&& func, Args&&... args)
 /// @param name A name for the thread, maximum length #ETCPAL_THREAD_NAME_MAX_LENGTH.
 /// @param platform_data Pointer to a platform-specific parameter structure. See
 ///                      #EtcPalThreadParams for more information.
-inline Thread::Thread(unsigned int priority, unsigned int stack_size, const char* name, void* platform_data)
+template <typename Allocator>
+BasicThread<Allocator>::BasicThread(unsigned int priority,
+                                    unsigned int stack_size,
+                                    const char*  name,
+                                    void*        platform_data)
     : params_{priority, stack_size, name, platform_data}
+{
+}
+
+template <typename Allocator>
+BasicThread<Allocator>::BasicThread(BasicThread&& rhs) noexcept
+    : thread_{std::move(rhs.thread_)}
+    , params_{std::exchange(rhs.params_, EtcPalThreadParams{ETCPAL_THREAD_PARAMS_INIT_VALUES})}
 {
 }
 
@@ -305,67 +321,59 @@ inline Thread::Thread(unsigned int priority, unsigned int stack_size, const char
 ///
 /// If *this has a valid associated thread (`joinable() == true`), the thread is joined before the
 /// destructor finishes.
-inline Thread::~Thread()
+template <typename Allocator>
+BasicThread<Allocator>::~BasicThread()
 {
   if (thread_)
-    etcpal_thread_join(thread_.get());
+    etcpal_thread_join(std::addressof(thread_->thread));
 }
 
-/// @brief Move another thread into this thread.
-///
-/// If *this has a valid associated thread (`joinable() == true`), the behavior is undefined.
-/// After this call, *this has the parameters of other, and other is set to a default-constructed
-/// state.
-inline Thread::Thread(Thread&& other) noexcept
+template <typename Allocator>
+auto BasicThread<Allocator>::operator=(BasicThread&& rhs) noexcept -> BasicThread&
 {
-  *this = std::move(other);
-}
-
-/// @brief Move another thread into this thread.
-///
-/// If *this has a valid associated thread (`joinable() == true`), the behavior is undefined.
-/// After this call, *this has the parameters of other, and other is set to a default-constructed
-/// state.
-inline Thread& Thread::operator=(Thread&& other) noexcept
-{
-  thread_ = std::move(other.thread_);
-  params_ = other.params_;
-  ETCPAL_THREAD_SET_DEFAULT_PARAMS(&other.params_);
+  thread_ = std::move(rhs.thread_);
+  params_ = std::exchange(rhs.params_, EtcPalThreadParams{ETCPAL_THREAD_PARAMS_INIT_VALUES});
   return *this;
 }
 
 /// @brief Whether the thread object identifies an active thread of execution.
-inline bool Thread::joinable() const noexcept
+template <typename Allocator>
+bool BasicThread<Allocator>::joinable() const noexcept
 {
   return (bool)thread_;
 }
 
 /// @brief Get the priority of this thread (not valid on all platforms).
-inline unsigned int Thread::priority() const noexcept
+template <typename Allocator>
+unsigned int BasicThread<Allocator>::priority() const noexcept
 {
   return params_.priority;
 }
 
 /// @brief Get the stack size of this thread in bytes (not valid on all platforms).
-inline unsigned int Thread::stack_size() const noexcept
+template <typename Allocator>
+unsigned int BasicThread<Allocator>::stack_size() const noexcept
 {
   return params_.stack_size;
 }
 
 /// @brief Get the name of this thread.
-inline const char* Thread::name() const noexcept
+template <typename Allocator>
+const char* BasicThread<Allocator>::name() const noexcept
 {
   return params_.thread_name;
 }
 
 /// @brief Get the platform-specific data of this thread.
-inline void* Thread::platform_data() const noexcept
+template <typename Allocator>
+void* BasicThread<Allocator>::platform_data() const noexcept
 {
   return params_.platform_data;
 }
 
 /// @brief Get a reference the parameters of this thread.
-inline const EtcPalThreadParams& Thread::params() const noexcept
+template <typename Allocator>
+const EtcPalThreadParams& BasicThread<Allocator>::params() const noexcept
 {
   return params_;
 }
@@ -373,9 +381,10 @@ inline const EtcPalThreadParams& Thread::params() const noexcept
 /// @brief Get the native OS handle of this thread.
 /// @return The thread's OS handle, or ETCPAL_THREAD_OS_HANDLE_INVALID if the thread is not running
 ///         (`joinable() == false`).
-inline etcpal_thread_os_handle_t Thread::os_handle() const noexcept
+template <typename Allocator>
+etcpal_thread_os_handle_t BasicThread<Allocator>::os_handle() const noexcept
 {
-  return thread_ ? etcpal_thread_get_os_handle(thread_.get()) : ETCPAL_THREAD_OS_HANDLE_INVALID;
+  return thread_ ? etcpal_thread_get_os_handle(std::addressof(thread_->thread)) : ETCPAL_THREAD_OS_HANDLE_INVALID;
 }
 
 /// @brief Set the priority of this thread.
@@ -385,7 +394,8 @@ inline etcpal_thread_os_handle_t Thread::os_handle() const noexcept
 ///
 /// @param priority Priority to set.
 /// @return A reference to this thread, for method chaining.
-inline Thread& Thread::SetPriority(unsigned int priority) noexcept
+template <typename Allocator>
+BasicThread<Allocator>& BasicThread<Allocator>::SetPriority(unsigned int priority) noexcept
 {
   params_.priority = priority;
   return *this;
@@ -398,7 +408,8 @@ inline Thread& Thread::SetPriority(unsigned int priority) noexcept
 ///
 /// @param stack_size Stack size to set.
 /// @return A reference to this thread, for method chaining.
-inline Thread& Thread::SetStackSize(unsigned int stack_size) noexcept
+template <typename Allocator>
+BasicThread<Allocator>& BasicThread<Allocator>::SetStackSize(unsigned int stack_size) noexcept
 {
   params_.stack_size = stack_size;
   return *this;
@@ -412,7 +423,8 @@ inline Thread& Thread::SetStackSize(unsigned int stack_size) noexcept
 ///
 /// @param name Name to set.
 /// @return A reference to this thread, for method chaining.
-inline Thread& Thread::SetName(const char* name) noexcept
+template <typename Allocator>
+BasicThread<Allocator>& BasicThread<Allocator>::SetName(const char* name) noexcept
 {
   params_.thread_name = name;
   return *this;
@@ -426,7 +438,8 @@ inline Thread& Thread::SetName(const char* name) noexcept
 ///
 /// @param name Name to set.
 /// @return A reference to this thread, for method chaining.
-inline Thread& Thread::SetName(const std::string& name) noexcept
+template <typename Allocator>
+BasicThread<Allocator>& BasicThread<Allocator>::SetName(const std::string& name) noexcept
 {
   params_.thread_name = name.c_str();
   return *this;
@@ -440,7 +453,8 @@ inline Thread& Thread::SetName(const std::string& name) noexcept
 ///
 /// @param platform_data Pointer to platform-specific data structure.
 /// @return A reference to this thread, for method chaining.
-inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
+template <typename Allocator>
+BasicThread<Allocator>& BasicThread<Allocator>::SetPlatformData(void* platform_data) noexcept
 {
   params_.platform_data = platform_data;
   return *this;
@@ -453,7 +467,8 @@ inline Thread& Thread::SetPlatformData(void* platform_data) noexcept
 ///
 /// @param params EtcPalThreadParams to use when starting the thread.
 /// @return A reference to this thread, for method chaining.
-inline Thread& Thread::SetParams(const EtcPalThreadParams& params) noexcept
+template <typename Allocator>
+BasicThread<Allocator>& BasicThread<Allocator>::SetParams(const EtcPalThreadParams& params) noexcept
 {
   params_ = params;
   return *this;
@@ -481,28 +496,80 @@ inline Thread& Thread::SetParams(const EtcPalThreadParams& params) noexcept
 /// @return #kEtcPalErrNoMem: Allocation failed while starting thread.
 /// @return #kEtcPalErrInvalid: The thread was already running (`joinable() == true`).
 /// @return Other codes translated from system error codes are possible.
-template <class Function, class... Args>
-Error Thread::Start(Function&& func, Args&&... args)
+template <typename Allocator>
+template <class Function, class... Args, typename>
+Error BasicThread<Allocator>::Start(const Allocator& alloc, Function&& func, Args&&... args)
 {
   if (thread_)
     return kEtcPalErrInvalid;
 
-  thread_ = std::unique_ptr<etcpal_thread_t>(new etcpal_thread_t);
-  if (!thread_)
+  try
+  {
+    auto* const ptr = typename std::allocator_traits<Allocator>::template rebind_alloc<CtrlBlock>{alloc}.allocate(1);
+    if (!ptr)
+    {
+      return kEtcPalErrNoMem;
+    }
+    try
+    {
+      new (ptr) CtrlBlock(CtrlBlock{alloc});
+      thread_ = std::unique_ptr<CtrlBlock, detail::DeleteUsingAlloc<Allocator>>{
+          ptr, detail::DeleteUsingAlloc<Allocator>{std::addressof(ptr->alloc)}};
+    }
+    catch (...)
+    {
+      typename std::allocator_traits<Allocator>::template rebind_alloc<CtrlBlock>{alloc}.deallocate(thread_.get(), 1);
+      throw;
+    }
+  }
+  catch (const std::bad_alloc& exe)
+  {
     return kEtcPalErrNoMem;
+  }
 
-  // TODO evaluate changing bind to lambda
-  auto new_f = std::unique_ptr<FunctionType>(new FunctionType(
-      std::bind(std::forward<Function>(func), std::forward<Args>(args)...)));  // NOLINT(modernize-avoid-bind)
+  auto* new_f =
+      typename std::allocator_traits<Allocator>::template rebind_alloc<FunctionType>{thread_->alloc}.allocate(1);
   if (!new_f)
+  {
     return kEtcPalErrNoMem;
+  }
+  try
+  {
+    new (new_f) FunctionType(std::bind(std::forward<Function>(func), std::forward<Args>(args)...), thread_->alloc);
+    auto ptr = std::unique_ptr<FunctionType, detail::DeleteUsingAlloc<Allocator>>{
+        new_f, detail::DeleteUsingAlloc<Allocator>{std::addressof(new_f->get_allocator().value())}};
+    Error create_res = etcpal_thread_create(
+        std::addressof(thread_->thread), &params_,
+        [](void* arg) {
+          auto* const f   = reinterpret_cast<FunctionType*>(arg);
+          const auto  fun = std::unique_ptr<FunctionType, detail::DeleteUsingAlloc<Allocator>>{
+              f, detail::DeleteUsingAlloc<Allocator>{std::addressof(f->get_allocator().value())}};
+          (*fun)();
+        },
+        new_f);
+    if (create_res)
+    {
+      ptr.release();
+    }
+    else
+    {
+      thread_.reset();
+    }
 
-  Error create_res = etcpal_thread_create(thread_.get(), &params_, CppThreadFn, new_f.get());
-  if (create_res)
-    new_f.release();
-  else
-    thread_.reset();
-  return create_res;
+    return create_res;
+  }
+  catch (...)
+  {
+    typename std::allocator_traits<Allocator>::template rebind_alloc<FunctionType>{alloc}.deallocate(new_f, 1);
+    throw;
+  }
+}
+
+template <typename Allocator>
+template <class Function, class... Args, typename>
+Error BasicThread<Allocator>::Start(Function&& func, Args&&... args)
+{
+  return Start(Allocator{}, std::forward<Function>(func), std::forward<Args>(args)...);
 }
 
 /// @brief Wait for the thread to finish execution.
@@ -516,12 +583,13 @@ Error Thread::Start(Function&& func, Args&&... args)
 /// @return #kEtcPalErrTimedOut: The thread did not join within the specified timeout.
 /// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
 /// @return Other codes translated from system error codes are possible.
-inline Error Thread::Join(int timeout_ms) noexcept
+template <typename Allocator>
+Error BasicThread<Allocator>::Join(int timeout_ms) noexcept
 {
   if (!thread_)
     return kEtcPalErrInvalid;
 
-  Error join_res = etcpal_thread_timed_join(thread_.get(), timeout_ms);
+  Error join_res = etcpal_thread_timed_join(std::addressof(thread_->thread), timeout_ms);
   if (join_res)
     thread_.reset();
   return join_res;
@@ -536,7 +604,8 @@ inline Error Thread::Join(int timeout_ms) noexcept
 /// @return #kEtcPalErrOk: The thread was terminated; joinable() is now false.
 /// @return #kEtcPalErrInvalid: The thread was not running (`joinable() == false`).
 /// @return Other codes translated from system error codes are possible.
-inline Error Thread::Terminate() noexcept
+template <typename Allocator>
+Error BasicThread<Allocator>::Terminate() noexcept
 {
   if (!thread_)
     return kEtcPalErrInvalid;
@@ -551,7 +620,8 @@ inline Error Thread::Terminate() noexcept
 ///
 /// @return #kEtcPalErrOk: The sleep completed.
 /// @return #kEtcPalErrSys: The system call may have been interrupted and awoke early.
-inline Error Thread::Sleep(unsigned int ms) noexcept
+template <typename Allocator>
+Error BasicThread<Allocator>::Sleep(unsigned int ms) noexcept
 {
   return etcpal_thread_sleep(ms);
 }
@@ -559,8 +629,9 @@ inline Error Thread::Sleep(unsigned int ms) noexcept
 /// @brief Blocks the current thread for the specified duration.
 ///
 /// Note: Duration will be clamped to [0, UINT_MAX] milliseconds.
+template <typename Allocator>
 template <typename Rep, typename Period>
-Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept
+Error BasicThread<Allocator>::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) noexcept
 {
   // This implementation cannot sleep longer than UINT_MAX.
   unsigned int sleep_ms_clamped = static_cast<unsigned int>(
@@ -574,11 +645,11 @@ Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) no
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, const Allocator& alloc, Fun&& fun, Args&&... args)
     : ssource_{alloc}, thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
 {
-  const auto result = thread_.Start(std::forward<Fun>(fun), get_stop_token(), std::forward<Args>(args)...);
+  const auto result = thread_.Start(alloc, std::forward<Fun>(fun), get_stop_token(), std::forward<Args>(args)...);
   if (!result)
   {
     ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
@@ -588,7 +659,7 @@ etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, const Allo
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args)
     : ssource_{}, thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
 {
@@ -600,7 +671,7 @@ etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun,
 }
 
 template <typename Allocator>
-template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))*>
+template <typename Fun, typename... Args, std::enable_if_t<etcpal::detail::IsCallable<Fun, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args)
     : thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
 {
@@ -614,23 +685,23 @@ etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun,
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const Allocator& alloc, Fun&& fun, Args&&... args)
-    : ssource_{alloc}, thread_{std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
+    : ssource_{alloc}, thread_{alloc, std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
 {
 }
 
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(Fun&& fun, Args&&... args)
     : ssource_{}, thread_{std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
 {
 }
 
 template <typename Allocator>
-template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))*>
+template <typename Fun, typename... Args, std::enable_if_t<etcpal::detail::IsCallable<Fun, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(Fun&& fun, Args&&... args)
     : thread_{std::forward<Fun>(fun), std::forward<Args>(args)...}
 {

@@ -135,6 +135,21 @@ struct IsCallableImpl<F, void_t<decltype(std::declval<F>()(std::declval<Args>().
 {
 };
 
+template <typename T, typename U, typename Obj, typename... Args>
+decltype(auto) invoke_member_function(T U::* f, Obj&& obj, Args&&... args) noexcept(
+    noexcept(((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...)))
+{
+  return ((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...);
+}
+
+template <typename T, typename... Args>
+struct IsCallableImpl<T,
+                      std::enable_if_t<std::is_member_function_pointer<T>::value,
+                                       decltype(invoke_member_function(std::declval<T>(), std::declval<Args>()...))>,
+                      Args...> : public std::true_type
+{
+};
+
 template <typename F, typename... Args>
 using IsCallable = IsCallableImpl<F, void, Args...>;
 
@@ -148,6 +163,17 @@ struct IsCallableRImpl<
     R,
     F,
     std::enable_if_t<std::is_convertible<decltype(std::declval<F>()(std::declval<Args>()...)), R>::value>,
+    Args...> : public std::true_type
+{
+};
+
+template <typename R, typename T, typename... Args>
+struct IsCallableImpl<
+    R,
+    T,
+    std::enable_if_t<
+        std::is_member_function_pointer<T>::value &&
+        std::is_convertible<decltype(invoke_member_function(std::declval<T>(), std::declval<Args>()...)), R>::value>,
     Args...> : public std::true_type
 {
 };
