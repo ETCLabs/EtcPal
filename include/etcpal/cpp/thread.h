@@ -216,6 +216,18 @@ public:
             typename... Args,
             decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
                                          std::declval<Args>()...))* = nullptr>
+  explicit JThread(const EtcPalThreadParams& params, const Allocator& alloc, Fun&& fun, Args&&... args);
+  template <typename Fun,
+            typename... Args,
+            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
+                                         std::declval<Args>()...))* = nullptr>
+  explicit JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args);
+  template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))* = nullptr>
+  explicit JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args);
+  template <typename Fun,
+            typename... Args,
+            decltype(std::declval<Fun>()(std::declval<const StopToken<Allocator>&>(),
+                                         std::declval<Args>()...))* = nullptr>
   explicit JThread(const Allocator& alloc, Fun&& fun, Args&&... args);
   template <typename Fun,
             typename... Args,
@@ -558,6 +570,46 @@ Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) no
 }
 
 };  // namespace etcpal
+
+template <typename Allocator>
+template <typename Fun,
+          typename... Args,
+          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, const Allocator& alloc, Fun&& fun, Args&&... args)
+    : ssource_{alloc}, thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
+{
+  const auto result = thread_.Start(std::forward<Fun>(fun), get_stop_token(), std::forward<Args>(args)...);
+  if (!result)
+  {
+    ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
+  }
+}
+
+template <typename Allocator>
+template <typename Fun,
+          typename... Args,
+          decltype(std::declval<Fun>()(std::declval<const etcpal::StopToken<Allocator>&>(), std::declval<Args>()...))*>
+etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args)
+    : ssource_{}, thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
+{
+  const auto result = thread_.Start(std::forward<Fun>(fun), get_stop_token(), std::forward<Args>(args)...);
+  if (!result)
+  {
+    ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
+  }
+}
+
+template <typename Allocator>
+template <typename Fun, typename... Args, decltype(std::declval<Fun>()(std::declval<Args>()...))*>
+etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args)
+    : thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
+{
+  const auto result = thread_.Start(std::forward<Fun>(fun), std::forward<Args>(args)...);
+  if (!result)
+  {
+    ETCPAL_THROW(std::runtime_error("Error while starting EtcPal thread: " + result.ToString()));
+  }
+}
 
 template <typename Allocator>
 template <typename Fun,
