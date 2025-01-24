@@ -319,8 +319,9 @@ class ThreadPool
 public:
   class Executor;
 
+  explicit ThreadPool(const EtcPalThreadParams& params, const Allocator& alloc = {});
+  explicit ThreadPool(const Allocator& alloc);
   ThreadPool() : ThreadPool{Allocator{}} {}
-  ThreadPool(const Allocator& alloc);
 
   ~ThreadPool() noexcept;
 
@@ -1072,11 +1073,12 @@ template <typename Clock, typename Duration>
 }
 
 template <std::size_t N, typename Allocator>
-etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{alloc}, allocator_{alloc}
+etcpal::ThreadPool<N, Allocator>::ThreadPool(const EtcPalThreadParams& params, const Allocator& alloc)
+    : queue_{alloc}, allocator_{alloc}
 {
   for (auto& thread : threads_)
   {
-    thread = JThread<Allocator>{allocator_, [&](const auto& token) {
+    thread = JThread<Allocator>{params, allocator_, [&](const auto& token) {
                                   while (token.stop_possible() && !token.stop_requested())
                                   {
                                     queue_status_.Wait(static_cast<EventBits>(detail::QueueStatus::all_bits));
@@ -1088,6 +1090,12 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc) : queue_{al
                                   queue_status_.SetBits(static_cast<EventBits>(detail::QueueStatus::all_bits));
                                 }};
   }
+}
+
+template <std::size_t N, typename Allocator>
+etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc)
+    : ThreadPool{EtcPalThreadParams{ETCPAL_THREAD_PARAMS_INIT_VALUES}, alloc}
+{
 }
 
 template <std::size_t N, typename Allocator>
