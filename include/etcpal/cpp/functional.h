@@ -4,6 +4,7 @@
 #include <functional>
 
 #include <etcpal/cpp/common.h>
+#include <etcpal/cpp/optional.h>
 
 namespace etcpal
 {
@@ -24,8 +25,9 @@ struct DeleteUsingAlloc
   template <typename T>
   void operator()(T* ptr) const noexcept
   {
+    auto rebound = typename std::allocator_traits<Allocator>::template rebind_alloc<T>{*alloc};
     ptr->~T();
-    typename std::allocator_traits<Allocator>::template rebind_alloc<T>{*alloc}.deallocate(ptr, 1);
+    rebound.deallocate(ptr, 1);
   }
 };
 
@@ -157,6 +159,14 @@ class Callable;
         throw;                                                                                                         \
       }                                                                                                                \
     }                                                                                                                  \
+    template <typename T, typename U>                                                                                  \
+    MoveOnlyFunction(T U::* f, const Allocator& alloc = {})                                                            \
+        : MoveOnlyFunction{[f](auto&& obj, auto&&... args) {                                                           \
+                             return ((*std::forward<decltype(obj)>(obj)).*f)(std::forward<decltype(args)>(args)...);   \
+                           },                                                                                          \
+                           alloc}                                                                                      \
+    {                                                                                                                  \
+    }                                                                                                                  \
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
@@ -167,6 +177,26 @@ class Callable;
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
     {                                                                                                                  \
       return ptr_ != nullptr;                                                                                          \
+    }                                                                                                                  \
+                                                                                                                       \
+    [[nodiscard]] auto get_allocator() const noexcept -> Optional<const Allocator&>                                    \
+    {                                                                                                                  \
+      if (!ptr_)                                                                                                       \
+      {                                                                                                                \
+        return {};                                                                                                     \
+      }                                                                                                                \
+                                                                                                                       \
+      return ptr_->get_allocator();                                                                                    \
+    }                                                                                                                  \
+                                                                                                                       \
+    [[nodiscard]] auto get_allocator() noexcept -> Optional<Allocator&>                                                \
+    {                                                                                                                  \
+      if (!ptr_)                                                                                                       \
+      {                                                                                                                \
+        return {};                                                                                                     \
+      }                                                                                                                \
+                                                                                                                       \
+      return ptr_->get_allocator();                                                                                    \
     }                                                                                                                  \
                                                                                                                        \
   protected:                                                                                                           \
@@ -245,6 +275,15 @@ class Callable;
     constexpr decltype(auto) operator()(T&&... args) & noexcept(detail::IsNothrowCallable<Parent&, T...>::value)       \
     {                                                                                                                  \
       return static_cast<Parent&>(*this)(std::forward<T>(args)...);                                                    \
+    }                                                                                                                  \
+                                                                                                                       \
+    [[nodiscard]] auto get_allocator() const noexcept                                                                  \
+    {                                                                                                                  \
+      return Parent::get_allocator();                                                                                  \
+    }                                                                                                                  \
+    [[nodiscard]] auto get_allocator() noexcept                                                                        \
+    {                                                                                                                  \
+      return Parent::get_allocator();                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
