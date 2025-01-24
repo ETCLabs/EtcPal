@@ -75,7 +75,7 @@ TEST(etcpal_cpp_async, thread_pool)
 
   constexpr auto num_items = 1024;
 
-  etcpal::ThreadPool<32> pool{alloc};
+  etcpal::ThreadPool<32> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
   auto                   futures                = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
   auto                   futures_for_get_if     = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
   auto                   continued_futures      = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
@@ -147,7 +147,7 @@ TEST(etcpal_cpp_async, promise_chain)
 
   constexpr auto num_elements = std::size_t{1024};
 
-  etcpal::ThreadPool<8> pool{alloc};
+  etcpal::ThreadPool<8> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
   auto                  numbers = NumVector(num_elements, alloc);
   auto                  rd      = std::mt19937{std::random_device{}()};
   auto                  dist    = std::uniform_int_distribution<int>{-1000, 1000};
@@ -174,8 +174,7 @@ TEST(etcpal_cpp_async, promise_chain)
               [](std::exception_ptr ptr) -> NumVector& { std::rethrow_exception(ptr); },
               [](etcpal::FutureStatus err) -> NumVector& { throw std::logic_error{"promise chain broken"}; })
           .and_then(
-              pool.get_executor(),
-              [](NumVector& nums) { std::sort(std::begin(nums), std::end(nums)); },
+              pool.get_executor(), [](NumVector& nums) { std::sort(std::begin(nums), std::end(nums)); },
               [](std::exception_ptr ptr) { std::rethrow_exception(ptr); },
               [](auto&&) { throw std::logic_error{"promise chain broken"}; });
   TEST_ASSERT_TRUE(max_val.wait_for(50ms) == etcpal::FutureStatus::ready);
