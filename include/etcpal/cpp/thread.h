@@ -177,7 +177,6 @@ public:
   void*                     platform_data() const noexcept;
   const EtcPalThreadParams& params() const noexcept;
   etcpal_thread_os_handle_t os_handle() const noexcept;
-  [[nodiscard]] auto get_allocator() const noexcept { return thread_ ? thread_.get_deleter().allocator : Allocator{}; }
   /// @}
 
   /// @name Setters
