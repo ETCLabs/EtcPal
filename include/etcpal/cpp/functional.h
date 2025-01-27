@@ -4,6 +4,7 @@
 #include <functional>
 
 #include <etcpal/cpp/common.h>
+#include <etcpal/cpp/memory.h>
 #include <etcpal/cpp/optional.h>
 
 namespace etcpal
@@ -17,23 +18,9 @@ class FunctionRef;
 namespace detail
 {
 
-template <typename Allocator>
-struct DeleteUsingAlloc
-{
-  Allocator* alloc;
-
-  template <typename T>
-  void operator()(T* ptr) const noexcept
-  {
-    auto rebound = typename std::allocator_traits<Allocator>::template rebind_alloc<T>{*alloc};
-    ptr->~T();
-    rebound.deallocate(ptr, 1);
-  }
-};
-
-template <typename Signature, typename Allocator>
+template <typename Signature>
 class FunBase;
-template <typename Signature, typename Allocator, typename F>
+template <typename Signature, typename F>
 class Callable;
 
 }  // namespace detail
@@ -41,13 +28,11 @@ class Callable;
 }  // namespace etcpal
 
 #define ETCPAL_IMPLEMENT_VIRTUAL_CALLABLE                                                                              \
-  template <typename R, typename... Args, typename Allocator>                                                          \
-  class etcpal::detail::FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT, Allocator> \
+  template <typename R, typename... Args>                                                                              \
+  class etcpal::detail::FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT>            \
   {                                                                                                                    \
   public:                                                                                                              \
-    explicit FunBase(const Allocator& alloc) noexcept : allocator_{alloc}                                              \
-    {                                                                                                                  \
-    }                                                                                                                  \
+    FunBase() noexcept                                                                                 = default;      \
     FunBase(const FunBase& rhs)                                                                        = delete;       \
     FunBase(FunBase&& rhs)                                                                             = delete;       \
     virtual ~FunBase() noexcept                                                                        = default;      \
@@ -56,34 +41,17 @@ class Callable;
     virtual R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT = 0;            \
     [[nodiscard]] virtual auto target_ptr() const noexcept -> const void*                              = 0;            \
     [[nodiscard]] virtual auto target_ptr() noexcept -> void*                                          = 0;            \
-                                                                                                                       \
-    [[nodiscard]] auto get_allocator() const noexcept -> const Allocator&                                              \
-    {                                                                                                                  \
-      return allocator_;                                                                                               \
-    }                                                                                                                  \
-    [[nodiscard]] auto get_allocator() noexcept -> Allocator&                                                          \
-    {                                                                                                                  \
-      return allocator_;                                                                                               \
-    }                                                                                                                  \
-                                                                                                                       \
-  private:                                                                                                             \
-    Allocator allocator_;                                                                                              \
   };                                                                                                                   \
                                                                                                                        \
-  template <typename R, typename... Args, typename Allocator, typename F>                                              \
-  class etcpal::detail::Callable<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,           \
-                                 Allocator, F>                                                                         \
-      : public FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT, Allocator>          \
+  template <typename R, typename... Args, typename F>                                                                  \
+  class etcpal::detail::Callable<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT, F>        \
+      : public FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT>                     \
   {                                                                                                                    \
   public:                                                                                                              \
-    Callable(const F& fun, const Allocator& alloc) noexcept(noexcept(F{fun}))                                          \
-        : FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT, Allocator>{alloc}        \
-        , fun_{fun}                                                                                                    \
+    Callable(const F& fun) noexcept(noexcept(F{fun})) : fun_{fun}                                                      \
     {                                                                                                                  \
     }                                                                                                                  \
-    Callable(F&& fun, const Allocator& alloc) noexcept                                                                 \
-        : FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT, Allocator>{alloc}        \
-        , fun_{std::move(fun)}                                                                                         \
+    Callable(F&& fun) noexcept : fun_{std::move(fun)}                                                                  \
     {                                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
@@ -127,10 +95,8 @@ class Callable;
   private:                                                                                                             \
     template <typename F>                                                                                              \
     using Callable = detail::Callable<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,      \
-                                      Allocator,                                                                       \
                                       RemoveCVRef_t<F>>;                                                               \
-    using FunBase =                                                                                                    \
-        detail::FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT, Allocator>;        \
+    using FunBase  = detail::FunBase<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT>;      \
                                                                                                                        \
   public:                                                                                                              \
     using result_type = R;                                                                                             \
@@ -144,20 +110,8 @@ class Callable;
         typename = std::enable_if_t<!std::is_same<RemoveCVRef_t<F>, MoveOnlyFunction>::value &&                        \
                                     detail::IsCallableR<R, ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF, Args...>::value>> \
     MoveOnlyFunction(F&& f, const Allocator& alloc = {})                                                               \
+        : ptr_{allocate_unique<Callable<F>>(alloc, std::forward<F>(f))}                                                \
     {                                                                                                                  \
-      auto* const fun =                                                                                                \
-          typename std::allocator_traits<Allocator>::template rebind_alloc<Callable<F>>{alloc}.allocate(1);            \
-      try                                                                                                              \
-      {                                                                                                                \
-        new (fun) Callable<F>{std::forward<F>(f), alloc};                                                              \
-        ptr_ = std::unique_ptr<FunBase, detail::DeleteUsingAlloc<Allocator>>{                                          \
-            fun, detail::DeleteUsingAlloc<Allocator>{std::addressof(fun->get_allocator())}};                           \
-      }                                                                                                                \
-      catch (...)                                                                                                      \
-      {                                                                                                                \
-        typename std::allocator_traits<Allocator>::template rebind_alloc<Callable<F>>{alloc}.deallocate(fun, 1);       \
-        throw;                                                                                                         \
-      }                                                                                                                \
     }                                                                                                                  \
     template <typename T, typename U>                                                                                  \
     MoveOnlyFunction(T U::* f, const Allocator& alloc = {})                                                            \
@@ -179,26 +133,6 @@ class Callable;
       return ptr_ != nullptr;                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto get_allocator() const noexcept -> Optional<const Allocator&>                                    \
-    {                                                                                                                  \
-      if (!ptr_)                                                                                                       \
-      {                                                                                                                \
-        return {};                                                                                                     \
-      }                                                                                                                \
-                                                                                                                       \
-      return ptr_->get_allocator();                                                                                    \
-    }                                                                                                                  \
-                                                                                                                       \
-    [[nodiscard]] auto get_allocator() noexcept -> Optional<Allocator&>                                                \
-    {                                                                                                                  \
-      if (!ptr_)                                                                                                       \
-      {                                                                                                                \
-        return {};                                                                                                     \
-      }                                                                                                                \
-                                                                                                                       \
-      return ptr_->get_allocator();                                                                                    \
-    }                                                                                                                  \
-                                                                                                                       \
   protected:                                                                                                           \
     [[nodiscard]] auto* target_ptr() const noexcept                                                                    \
     {                                                                                                                  \
@@ -211,7 +145,7 @@ class Callable;
     }                                                                                                                  \
                                                                                                                        \
   private:                                                                                                             \
-    std::unique_ptr<FunBase, detail::DeleteUsingAlloc<Allocator>> ptr_ = {};                                           \
+    std::unique_ptr<FunBase, DeleteUsingAlloc<FunBase, Allocator>> ptr_ = {};                                          \
   };                                                                                                                   \
                                                                                                                        \
   template <typename R, typename... Args, typename FirstSignature, typename... Rest>                                   \
@@ -275,15 +209,6 @@ class Callable;
     constexpr decltype(auto) operator()(T&&... args) & noexcept(detail::IsNothrowCallable<Parent&, T...>::value)       \
     {                                                                                                                  \
       return static_cast<Parent&>(*this)(std::forward<T>(args)...);                                                    \
-    }                                                                                                                  \
-                                                                                                                       \
-    [[nodiscard]] auto get_allocator() const noexcept                                                                  \
-    {                                                                                                                  \
-      return Parent::get_allocator();                                                                                  \
-    }                                                                                                                  \
-    [[nodiscard]] auto get_allocator() noexcept                                                                        \
-    {                                                                                                                  \
-      return Parent::get_allocator();                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \

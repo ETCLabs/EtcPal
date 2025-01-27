@@ -177,7 +177,7 @@ public:
   void*                     platform_data() const noexcept;
   const EtcPalThreadParams& params() const noexcept;
   etcpal_thread_os_handle_t os_handle() const noexcept;
-  [[nodiscard]] auto        get_allocator() const noexcept { return thread_ ? thread_->alloc : Allocator{}; }
+  [[nodiscard]] auto get_allocator() const noexcept { return thread_ ? thread_.get_deleter().allocator : Allocator{}; }
   /// @}
 
   /// @name Setters
@@ -208,12 +208,12 @@ public:
 private:
   struct CtrlBlock
   {
-    Allocator       alloc = Allocator{};
+    FunctionType    entry_point;
     etcpal_thread_t thread;
   };
 
-  std::unique_ptr<CtrlBlock, detail::DeleteUsingAlloc<Allocator>> thread_ = nullptr;
-  EtcPalThreadParams                                              params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
+  std::unique_ptr<CtrlBlock, DeleteUsingAlloc<CtrlBlock, Allocator>> thread_ = nullptr;
+  EtcPalThreadParams                                                 params_{ETCPAL_THREAD_PARAMS_INIT_VALUES};
 };
 
 using Thread = BasicThread<>;
@@ -505,63 +505,21 @@ Error BasicThread<Allocator>::Start(const Allocator& alloc, Function&& func, Arg
 
   try
   {
-    auto* const ptr = typename std::allocator_traits<Allocator>::template rebind_alloc<CtrlBlock>{alloc}.allocate(1);
-    if (!ptr)
-    {
-      return kEtcPalErrNoMem;
-    }
-    try
-    {
-      new (ptr) CtrlBlock(CtrlBlock{alloc});
-      thread_ = std::unique_ptr<CtrlBlock, detail::DeleteUsingAlloc<Allocator>>{
-          ptr, detail::DeleteUsingAlloc<Allocator>{std::addressof(ptr->alloc)}};
-    }
-    catch (...)
-    {
-      typename std::allocator_traits<Allocator>::template rebind_alloc<CtrlBlock>{alloc}.deallocate(thread_.get(), 1);
-      throw;
-    }
-  }
-  catch (const std::bad_alloc& exe)
-  {
-    return kEtcPalErrNoMem;
-  }
-
-  auto* new_f =
-      typename std::allocator_traits<Allocator>::template rebind_alloc<FunctionType>{thread_->alloc}.allocate(1);
-  if (!new_f)
-  {
-    return kEtcPalErrNoMem;
-  }
-  try
-  {
-    new (new_f) FunctionType(std::bind(std::forward<Function>(func), std::forward<Args>(args)...), thread_->alloc);
-    auto ptr = std::unique_ptr<FunctionType, detail::DeleteUsingAlloc<Allocator>>{
-        new_f, detail::DeleteUsingAlloc<Allocator>{std::addressof(new_f->get_allocator().value())}};
+    thread_ = allocate_unique<CtrlBlock>(
+        alloc, CtrlBlock{FunctionType{std::bind(std::forward<Function>(func), std::forward<Args>(args)...), alloc}});
     Error create_res = etcpal_thread_create(
-        std::addressof(thread_->thread), &params_,
-        [](void* arg) {
-          auto* const f   = reinterpret_cast<FunctionType*>(arg);
-          const auto  fun = std::unique_ptr<FunctionType, detail::DeleteUsingAlloc<Allocator>>{
-              f, detail::DeleteUsingAlloc<Allocator>{std::addressof(f->get_allocator().value())}};
-          (*fun)();
-        },
-        new_f);
-    if (create_res)
-    {
-      ptr.release();
-    }
-    else
+        std::addressof(thread_->thread), &params_, [](void* arg) { (*reinterpret_cast<FunctionType*>(arg))(); },
+        std::addressof(thread_->entry_point));
+    if (!create_res)
     {
       thread_.reset();
     }
 
     return create_res;
   }
-  catch (...)
+  catch (const std::bad_alloc& exe)
   {
-    typename std::allocator_traits<Allocator>::template rebind_alloc<FunctionType>{alloc}.deallocate(new_f, 1);
-    throw;
+    return kEtcPalErrNoMem;
   }
 }
 
