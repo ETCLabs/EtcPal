@@ -41,10 +41,11 @@ TEST(etcpal_cpp_async, promise_future)
   using namespace std::chrono_literals;
 
 #if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 8>{};
-  auto memory_resource =
+  auto buffer = std::array<std::byte, 1 << 13>{};
+  auto monotonic =
       std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(monotonic)};
+  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
   const auto alloc = etcpal::DefaultAllocator{};
 #endif  // #if (__cplusplus >= 201703L)
@@ -66,9 +67,10 @@ TEST(etcpal_cpp_async, thread_pool)
 {
 #if (__cplusplus >= 201703L)
   auto buffer = std::array<std::byte, 1 << 22>{};
-  auto memory_resource =
+  auto monotonic =
       std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(monotonic)};
+  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
   const auto alloc = etcpal::DefaultAllocator{};
 #endif  // #if (__cplusplus >= 201703L)
@@ -137,10 +139,11 @@ TEST(etcpal_cpp_async, promise_chain)
   using NumVector = std::vector<int, etcpal::DefaultAllocator>;
 
 #if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 13>{};
-  auto memory_resource =
+  auto buffer = std::array<std::byte, 1 << 17>{};
+  auto monotonic =
       std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(monotonic)};
+  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
   const auto alloc = etcpal::DefaultAllocator{};
 #endif  // #if (__cplusplus >= 201703L)
