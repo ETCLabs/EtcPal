@@ -1,10 +1,9 @@
 #include <etcpal/cpp/optional.h>
 
 #include <array>
-#include <memory>
-#include <memory_resource>
 
 #include <etcpal/cpp/overload.h>
+#include <etcpal/cpp/memory.h>
 
 #include <unity_fixture.h>
 
@@ -54,14 +53,9 @@ TEST(etcpal_cpp_optional, optional)
   TEST_ASSERT_TRUE(etcpal::Optional<int>{0});
 
   // destruction
-#if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 5>{};
-  auto memory_resource =
-      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
-#else   // #if (__cplusplus >= 201703L)
-  const auto alloc = etcpal::DefaultAllocator{};
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::BlockMemory<1 << 5, sizeof(std::max_align_t), true> buffer{};
+  const auto                                                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+
   const auto test_value = std::allocate_shared<int>(alloc);
   // initialization
   auto test_optional = etcpal::Optional<std::shared_ptr<int>>{test_value};

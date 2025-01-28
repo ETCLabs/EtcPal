@@ -2,6 +2,8 @@
 
 #include <unity_fixture.h>
 
+#include <etcpal/cpp/memory.h>
+
 #if (__cplusplus >= 201703L)
 
 namespace
@@ -65,14 +67,9 @@ TEST(etcpal_cpp_variant, variant)
 
   using String         = std::basic_string<char, std::char_traits<char>, etcpal::DefaultAllocator>;
   using StringOrNumber = etcpal::Variant<int, String>;
-#if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 5>{};
-  auto memory_resource =
-      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
-#else   // #if (__cplusplus >= 201703L)
-  const auto alloc = etcpal::DefaultAllocator{};
-#endif  // #if (__cplusplus >= 201703L)
+
+  etcpal::BlockMemory<1 << 5, sizeof(std::max_align_t), true> buffer{};
+  const auto                                                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   // comparision
   const auto test_string_0 = String{"test string 0", alloc};
