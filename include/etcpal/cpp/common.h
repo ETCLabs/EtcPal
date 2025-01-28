@@ -94,14 +94,6 @@
 namespace etcpal
 {
 
-using DefaultAllocator =
-#if (__cplusplus >= 201703)
-    std::pmr::polymorphic_allocator<std::byte>
-#else   // #if (__cplusplus >= 201703)
-    std::allocator<unsigned char>
-#endif  // #if (__cplusplus >= 201703)
-    ;
-
 template <typename...>
 using void_t = void;
 

@@ -40,14 +40,14 @@ TEST(etcpal_cpp_async, promise_future)
 {
   using namespace std::chrono_literals;
 
+  constexpr auto block_size = sizeof(std::max_align_t);
 #if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 13>{};
-  auto monotonic =
-      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(monotonic)};
+  etcpal::SyncBlockMemory<1 << 13, etcpal::RwLock, block_size, true> buffer{};
+  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
   const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
-  const auto alloc = etcpal::DefaultAllocator{};
+  etcpal::SyncBlockMemory<1 << 8, etcpal::RwLock, block_size, true> buffer{};
+  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 #endif  // #if (__cplusplus >= 201703L)
 
   auto promise = etcpal::Promise<int>{alloc};
@@ -66,13 +66,14 @@ TEST(etcpal_cpp_async, promise_future)
 TEST(etcpal_cpp_async, thread_pool)
 {
 #if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 22>{};
-  auto monotonic =
-      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(monotonic)};
+  constexpr auto                                                     block_size = sizeof(std::max_align_t) << 4;
+  etcpal::SyncBlockMemory<1 << 22, etcpal::RwLock, block_size, true> buffer{};
+  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
   const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
-  const auto alloc = etcpal::DefaultAllocator{};
+  constexpr auto                                                     block_size = sizeof(std::max_align_t);
+  etcpal::SyncBlockMemory<1 << 21, etcpal::RwLock, block_size, true> buffer{};
+  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 #endif  // #if (__cplusplus >= 201703L)
 
   constexpr auto num_items = 1024;
@@ -138,14 +139,14 @@ TEST(etcpal_cpp_async, promise_chain)
   using namespace std::chrono_literals;
   using NumVector = std::vector<int, etcpal::DefaultAllocator>;
 
+  constexpr auto                                                     block_size = sizeof(std::max_align_t);
+  etcpal::SyncBlockMemory<1 << 13, etcpal::RwLock, block_size, true> buffer{};
 #if (__cplusplus >= 201703L)
-  auto buffer = std::array<std::byte, 1 << 17>{};
-  auto monotonic =
-      std::pmr::monotonic_buffer_resource{std::data(buffer), std::size(buffer), std::pmr::null_memory_resource()};
-  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(monotonic)};
-  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  auto memory_resource =
+      std::pmr::synchronized_pool_resource{std::pmr::pool_options{0, block_size << 2}, std::addressof(buffer)};
+  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
-  const auto alloc = etcpal::DefaultAllocator{};
+  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 #endif  // #if (__cplusplus >= 201703L)
 
   constexpr auto num_elements = std::size_t{1024};

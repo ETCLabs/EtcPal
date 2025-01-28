@@ -323,8 +323,10 @@ BasicThread<Allocator>::BasicThread(BasicThread&& rhs) noexcept
 template <typename Allocator>
 BasicThread<Allocator>::~BasicThread()
 {
-  if (thread_)
-    etcpal_thread_join(std::addressof(thread_->thread));
+  if (joinable())
+  {
+    Join();
+  }
 }
 
 template <typename Allocator>
