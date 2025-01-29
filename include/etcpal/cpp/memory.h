@@ -601,12 +601,12 @@ template <std::size_t SmallSize, bool Debug>
 class DualLevelBlockPoolStatistics
 {
 public:
-  void               report_new_small_buffer() noexcept {}
-  void               report_small_deallocation(std::size_t wastage) noexcept {}
-  void               report_allocation(std::size_t bytes) noexcept {}
-  [[nodiscard]] auto report_lock() const noexcept { return true; }
-  void               report_locked(bool arg) noexcept {}
-  [[nodiscard]] auto report_allocator_entry() const noexcept { return true; }
+  constexpr void               report_new_small_buffer() noexcept {}
+  constexpr void               report_small_deallocation(std::size_t wastage) noexcept {}
+  constexpr void               report_allocation(std::size_t bytes) noexcept {}
+  [[nodiscard]] constexpr auto report_lock() const noexcept { return true; }
+  constexpr void               report_locked(bool arg) noexcept {}
+  [[nodiscard]] constexpr auto report_allocator_entry() const noexcept { return true; }
 };
 
 template <std::size_t SmallSize>
