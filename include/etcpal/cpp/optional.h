@@ -212,6 +212,13 @@ private:
   detail::StorageFor<T> storage_ = {};
 };
 
+template <typename T>
+[[nodiscard]] constexpr auto make_optional(T&& value) noexcept(
+    std::is_nothrow_constructible<Optional<RemoveCVRef_t<T>>, T>::value)
+{
+  return Optional<RemoveCVRef_t<T>>{std::forward<T>(value)};
+}
+
 }  // namespace etcpal
 
 template <typename T, typename>
