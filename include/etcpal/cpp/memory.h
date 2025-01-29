@@ -2,6 +2,7 @@
 
 #include <cstddef>
 
+#include <algorithm>
 #include <array>
 #include <bitset>
 #include <chrono>
@@ -813,33 +814,20 @@ protected:
     const auto start = Stats::report_lock();
     auto       pools = small_pools_.lock();
     Stats::report_locked(start);
-    for (auto& pool_ptr : *pools)
+    const auto erase_start = std::remove_if(pools->begin(), pools->end(), [](const auto& ptr) {
+      const auto pool = ptr->lock();
+      return pool->empty() && (pool->free_bytes() < block_size);
+    });
+    for (auto i = erase_start; i != pools->end(); ++i)
     {
-      const auto check_lock_start = Stats::report_lock();
-      auto       pool             = make_optional(pool_ptr->lock());
-      Stats::report_locked(check_lock_start);
-      if ((*pool)->empty() && (*pool)->free_bytes() < block_size)
-      {
-        Stats::report_small_deallocation((*pool)->free_bytes());
-        Stats::report_new_small_buffer();
-        pool.reset();
-        pool_ptr                    = allocate_unique<SyncSmallBuffer>(DefaultAllocator{std::addressof(pool_)});
-        const auto write_lock_start = Stats::report_lock();
-        auto       new_pool         = pool_ptr->lock();
-        Stats::report_locked(write_lock_start);
-
-        return new_pool->allocate(bytes, alignment);
-      }
+      Stats::report_small_deallocation((*i)->lock()->free_bytes());
     }
+    pools->erase(erase_start, pools->end());
 
     Stats::report_new_small_buffer();
     pools->push_back(allocate_unique<SyncSmallBuffer>(DefaultAllocator{std::addressof(pool_)}));
 
-    const auto write_lock_start = Stats::report_lock();
-    auto       new_pool         = pools->back()->lock();
-    Stats::report_locked(write_lock_start);
-
-    return new_pool->allocate(bytes, alignment);
+    return pools->back()->lock()->allocate(bytes, alignment);
   }
 
   [[nodiscard]] bool try_deallocate_from_small_buffers(void* p, std::size_t bytes, std::size_t alignment)
