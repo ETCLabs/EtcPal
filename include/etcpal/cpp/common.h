@@ -24,6 +24,7 @@
 #define ETCPAL_CPP_COMMON_H_
 
 #include <memory>
+#include <utility>
 
 #if (__cplusplus >= 201703)
 #include <memory_resource>
@@ -256,6 +257,44 @@ template <typename Enum>
 [[nodiscard]] constexpr auto to_underlying(Enum value) noexcept
 {
   return static_cast<std::underlying_type_t<Enum>>(value);
+}
+
+template <typename Action>
+class [[maybe_unused]] FinalAction
+{
+public:
+  constexpr FinalAction(Action&& action) noexcept : action_{std::move(action)}, valid_{true} {}
+  constexpr FinalAction(const Action& action) noexcept(std::is_nothrow_copy_constructible<Action>::value)
+      : action_{action}, valid_{true}
+  {
+  }
+
+  FinalAction(const FinalAction& rhs) = delete;
+  constexpr FinalAction(FinalAction&& rhs) noexcept
+      : action_{std::move(rhs.action_)}, valid_{std::exchange(rhs.valid_, false)}
+  {
+  }
+
+  ~FinalAction() noexcept { action_(); }
+
+  auto operator=(const FinalAction& rhs) = delete;
+  auto operator=(FinalAction&& rhs)      = delete;
+
+private:
+  Action action_;
+  bool   valid_ = false;
+};
+
+#if (__cplusplus >= 201703L)
+template <typename Action>
+FinalAction(Action&&) -> FinalAction<RemoveCVRef_t<Action>>;
+#endif  // #if (__cplusplus >= 201703L)
+
+template <typename Action>
+[[nodiscard]] constexpr auto finally(Action&& action) noexcept(
+    std::is_nothrow_constructible<FinalAction<RemoveCVRef_t<Action>>>::value)
+{
+  return FinalAction<RemoveCVRef_t<Action>>{std::forward<Action>(action)};
 }
 
 /// @endcond
