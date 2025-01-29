@@ -4,6 +4,7 @@
 #include <utility>
 
 #include <etcpal/cpp/common.h>
+#include <etcpal/cpp/optional.h>
 
 namespace etcpal
 {
@@ -21,6 +22,11 @@ struct IsReaderWriterLock : public std::false_type
 
 struct Unlock;
 struct WriteUnlock;
+struct ReadUnlock;
+
+struct NoLock
+{
+};
 
 }  // namespace detail
 
@@ -33,7 +39,11 @@ public:
   [[nodiscard]] auto operator*() const noexcept -> T& { return value_->value_; }
   [[nodiscard]] auto operator->() const noexcept -> T* { return std::addressof(value_->value_); }
 
+  [[nodiscard]] static auto try_acquire(Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>;
+
 private:
+  explicit SynchronizedRef(detail::NoLock tag, Synchronized<T, Lock>& value) noexcept : value_(std::addressof(value)) {}
+
   std::unique_ptr<Synchronized<T, Lock>, detail::Unlock> value_;
 };
 
@@ -46,7 +56,11 @@ public:
   [[nodiscard]] auto operator*() const noexcept -> const T& { return value_->value_; }
   [[nodiscard]] auto operator->() const noexcept -> const T* { return std::addressof(value_->value_); }
 
+  [[nodiscard]] static auto try_acquire(const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>;
+
 private:
+  explicit SynchronizedRef(detail::NoLock tag, Synchronized<T, Lock>& value) noexcept : value_(std::addressof(value)) {}
+
   std::unique_ptr<const Synchronized<T, Lock>, detail::Unlock> value_;
 };
 
@@ -59,7 +73,11 @@ public:
   [[nodiscard]] auto operator*() const noexcept -> T& { return value_->value_; }
   [[nodiscard]] auto operator->() const noexcept -> T* { return std::addressof(value_->value_); }
 
+  [[nodiscard]] static auto try_acquire(Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>;
+
 private:
+  explicit SynchronizedRef(detail::NoLock tag, Synchronized<T, Lock>& value) noexcept : value_(std::addressof(value)) {}
+
   std::unique_ptr<Synchronized<T, Lock>, detail::WriteUnlock> value_;
 };
 
@@ -69,19 +87,18 @@ class SynchronizedRef<const T, Lock, std::enable_if_t<detail::IsReaderWriterLock
 public:
   explicit SynchronizedRef(const Synchronized<T, Lock>& value) noexcept;
 
-  SynchronizedRef(const SynchronizedRef& rhs) noexcept;
-  SynchronizedRef(SynchronizedRef&& rhs) noexcept : value_{std::exchange(rhs.value_, nullptr)} {}
-
-  ~SynchronizedRef() noexcept;
-
-  auto operator=(const SynchronizedRef& rhs) noexcept -> SynchronizedRef&;
-  auto operator=(SynchronizedRef&& rhs) noexcept -> SynchronizedRef&;
-
   [[nodiscard]] auto operator*() const noexcept -> const T& { return value_->value_; }
   [[nodiscard]] auto operator->() const noexcept -> const T* { return std::addressof(value_->value_); }
 
+  [[nodiscard]] static auto try_acquire(const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>;
+
 private:
-  const Synchronized<T, Lock>* value_;
+  explicit SynchronizedRef(detail::NoLock tag, const Synchronized<T, Lock>& value) noexcept
+      : value_(std::addressof(value))
+  {
+  }
+
+  std::unique_ptr<const Synchronized<T, Lock>, detail::ReadUnlock> value_;
 };
 
 template <typename T, typename Lock>
@@ -101,10 +118,14 @@ public:
   [[nodiscard]] auto clock() const noexcept { return lock(); }
   [[nodiscard]] auto lock() const noexcept { return SynchronizedRef<const T, Lock>{*this}; }
   [[nodiscard]] auto lock() noexcept { return SynchronizedRef<T, Lock>{*this}; }
+  [[nodiscard]] auto try_clock() const noexcept { return try_lock(); }
+  [[nodiscard]] auto try_lock() const noexcept { return SynchronizedRef<const T, Lock>::try_acquire(*this); }
+  [[nodiscard]] auto try_lock() noexcept { return SynchronizedRef<T, Lock>::try_acquire(*this); }
 
 private:
   friend struct detail::Unlock;
   friend struct detail::WriteUnlock;
+  friend struct detail::ReadUnlock;
   friend class SynchronizedRef<T, Lock>;
   friend class SynchronizedRef<const T, Lock>;
 
@@ -148,11 +169,32 @@ struct etcpal::detail::WriteUnlock
   }
 };
 
+struct etcpal::detail::ReadUnlock
+{
+  template <typename T, typename Lock>
+  void operator()(const Synchronized<T, Lock>* value) const noexcept
+  {
+    value->mutex_.ReadUnlock();
+  }
+};
+
 template <typename T, typename Lock, typename Enable>
 etcpal::SynchronizedRef<T, Lock, Enable>::SynchronizedRef(Synchronized<T, Lock>& value) noexcept
     : value_{std::addressof(value)}
 {
   value_->mutex_.lock();
+}
+
+template <typename T, typename Lock, typename Enable>
+[[nodiscard]] auto etcpal::SynchronizedRef<T, Lock, Enable>::try_acquire(Synchronized<T, Lock>& value) noexcept
+    -> Optional<SynchronizedRef>
+{
+  if (value.mutex_.try_lock())
+  {
+    SynchronizedRef{detail::NoLock{}, value};
+  }
+
+  return {};
 }
 
 template <typename T, typename Lock>
@@ -164,11 +206,37 @@ etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<!etcpal::detail::IsReade
 }
 
 template <typename T, typename Lock>
+[[nodiscard]] auto
+etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<!etcpal::detail::IsReaderWriterLock<Lock>::value>>::try_acquire(
+    const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
+{
+  if (value.mutex_.try_lock())
+  {
+    SynchronizedRef{detail::NoLock{}, value};
+  }
+
+  return {};
+}
+
+template <typename T, typename Lock>
 etcpal::SynchronizedRef<T, Lock, std::enable_if_t<etcpal::detail::IsReaderWriterLock<Lock>::value>>::SynchronizedRef(
     Synchronized<T, Lock>& value) noexcept
     : value_{std::addressof(value)}
 {
   value_->mutex_.WriteLock();
+}
+
+template <typename T, typename Lock>
+[[nodiscard]] auto
+etcpal::SynchronizedRef<T, Lock, std::enable_if_t<etcpal::detail::IsReaderWriterLock<Lock>::value>>::try_acquire(
+    Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
+{
+  if (value.mutex_.TryWriteLock())
+  {
+    return SynchronizedRef{detail::NoLock{}, value};
+  }
+
+  return {};
 }
 
 template <typename T, typename Lock>
@@ -180,53 +248,16 @@ etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<etcpal::detail::IsReader
 }
 
 template <typename T, typename Lock>
-etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<etcpal::detail::IsReaderWriterLock<Lock>::value>>::
-    SynchronizedRef(const SynchronizedRef& rhs) noexcept
-    : value_{rhs.value_}
+[[nodiscard]] auto
+etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<etcpal::detail::IsReaderWriterLock<Lock>::value>>::try_acquire(
+    const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
 {
-  value_->mutex_.ReadLock();
-}
-
-template <typename T, typename Lock>
-etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<etcpal::detail::IsReaderWriterLock<Lock>::value>>::
-    ~SynchronizedRef() noexcept
-{
-  if (value_)
+  if (value.mutex_.TryReadLock())
   {
-    value_->mutex_.ReadUnlock();
-  }
-}
-
-template <typename T, typename Lock>
-auto etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<etcpal::detail::IsReaderWriterLock<Lock>::value>>::
-operator=(const SynchronizedRef& rhs) noexcept -> SynchronizedRef&
-{
-  if (value_)
-  {
-    value_->mutex_.ReadUnlock();
+    return SynchronizedRef{detail::NoLock{}, value};
   }
 
-  value_ = rhs.value_;
-  if (value_)
-  {
-    value_->mutex_.ReadLock();
-  }
-
-  return *this;
-}
-
-template <typename T, typename Lock>
-auto etcpal::SynchronizedRef<const T, Lock, std::enable_if_t<etcpal::detail::IsReaderWriterLock<Lock>::value>>::
-operator=(SynchronizedRef&& rhs) noexcept -> SynchronizedRef&
-{
-  if (value_)
-  {
-    value_->mutex_.ReadUnlock();
-  }
-
-  value_ = std::exchange(rhs.value_, nullptr);
-
-  return *this;
+  return {};
 }
 
 template <typename T, typename Lock>
