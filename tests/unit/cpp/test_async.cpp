@@ -70,7 +70,7 @@ TEST(etcpal_cpp_async, thread_pool)
   auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
   const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
-  etcpal::SyncDualLevelBlockPool<1 << 21, block_size << 3> buffer{};
+  etcpal::SyncDualLevelBlockPool<1 << 22, block_size << 8> buffer{};
   const auto                                               alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 #endif  // #if (__cplusplus >= 201703L)
 
