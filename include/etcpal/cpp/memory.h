@@ -10,7 +10,6 @@
 #include <stdexcept>
 #include <vector>
 
-#include <etcpal/cpp/optional.h>
 #include <etcpal/cpp/synchronized.h>
 #include <etcpal/cpp/rwlock.h>
 
@@ -719,7 +718,7 @@ template <std::size_t Size,
           std::size_t SmallBlockSize = detail::make_max_aligned(std::numeric_limits<unsigned char>::max()),
           typename Lock              = detail::DummyLock,
           std::size_t BlockSize =
-              detail::make_max_aligned(sizeof(Synchronized<Optional<MonotonicBuffer<SmallBlockSize>>, Lock>) >> 5),
+              detail::make_max_aligned(sizeof(Synchronized<MonotonicBuffer<SmallBlockSize>, Lock>) >> 5),
           bool Debug = false>
 class BasicDualLevelBlockPool : public MemoryResource, detail::DualLevelBlockPoolStatistics<SmallBlockSize, Debug>
 {
@@ -735,7 +734,7 @@ private:
   using Stats = detail::DualLevelBlockPoolStatistics<small_size, debug>;
 
 public:
-  BasicDualLevelBlockPool()                                   = default;
+  BasicDualLevelBlockPool() { small_pools_.lock()->resize(0); }
   BasicDualLevelBlockPool(const BasicDualLevelBlockPool& rhs) = delete;
   BasicDualLevelBlockPool(BasicDualLevelBlockPool&& rhs)      = delete;
 
@@ -746,13 +745,7 @@ public:
       const auto small_pools = small_pools_.clock();
       for (const auto& pool : *small_pools)
       {
-        if (!pool)
-        {
-          break;
-        }
-
-        pool->lock()->visit(make_selection(
-            [&](const SmallBuffer& p) { Stats::report_small_deallocation(p.free_bytes()); }, [](auto&&...) {}));
+        Stats::report_small_deallocation(pool->lock()->free_bytes());
       }
     }
   }
@@ -762,7 +755,7 @@ public:
 
 private:
   using SmallBuffer     = MonotonicBuffer<small_size>;
-  using SyncSmallBuffer = Synchronized<Optional<SmallBuffer>, LockType>;
+  using SyncSmallBuffer = Synchronized<SmallBuffer, LockType>;
   using SmallBufferPtr  = std::unique_ptr<SyncSmallBuffer, DeleteUsingAlloc<SyncSmallBuffer, DefaultAllocator>>;
 
 protected:
@@ -797,22 +790,12 @@ protected:
     Stats::report_locked(pool_lock_start);
     for (const auto& small_pool_ptr : *small_pools)
     {
-      if (!small_pool_ptr)
-      {
-        break;
-      }
-
       const auto buff_lock_start = Stats::report_lock();
       auto       pool            = small_pool_ptr->lock();
       Stats::report_locked(buff_lock_start);
-      if (!(*pool))
+      if (pool->free_bytes() >= bytes)
       {
-        Stats::report_new_small_buffer();
-        pool->emplace();
-      }
-      if ((*pool)->free_bytes() >= bytes)
-      {
-        return (*pool)->allocate(bytes, alignment);
+        return pool->allocate(bytes, alignment);
       }
     }
 
@@ -830,19 +813,22 @@ protected:
     const auto start = Stats::report_lock();
     auto       pools = small_pools_.lock();
     Stats::report_locked(start);
-    Stats::report_new_small_buffer();
-    for (auto& pool : *pools)
+    for (auto& pool_ptr : *pools)
     {
-      if (!pool)
+      const auto check_lock_start = Stats::report_lock();
+      auto       pool             = make_optional(pool_ptr->lock());
+      Stats::report_locked(check_lock_start);
+      if ((*pool)->empty() && (*pool)->free_bytes() < block_size)
       {
+        Stats::report_small_deallocation((*pool)->free_bytes());
         Stats::report_new_small_buffer();
-        pool = allocate_unique<SyncSmallBuffer>(DefaultAllocator{std::addressof(pool_)});
-
+        pool.reset();
+        pool_ptr                    = allocate_unique<SyncSmallBuffer>(DefaultAllocator{std::addressof(pool_)});
         const auto write_lock_start = Stats::report_lock();
-        auto       new_pool         = pool->lock();
+        auto       new_pool         = pool_ptr->lock();
         Stats::report_locked(write_lock_start);
 
-        return new_pool->emplace().allocate(bytes, alignment);
+        return new_pool->allocate(bytes, alignment);
       }
     }
 
@@ -853,7 +839,7 @@ protected:
     auto       new_pool         = pools->back()->lock();
     Stats::report_locked(write_lock_start);
 
-    return new_pool->emplace().allocate(bytes, alignment);
+    return new_pool->allocate(bytes, alignment);
   }
 
   [[nodiscard]] bool try_deallocate_from_small_buffers(void* p, std::size_t bytes, std::size_t alignment)
@@ -863,29 +849,12 @@ protected:
     Stats::report_locked(pool_lock_start);
     for (auto& pool_ptr : *small_pools)
     {
-      if (!pool_ptr)
-      {
-        break;
-      }
-
       const auto buffer_lock_start = Stats::report_lock();
       auto       pool              = pool_ptr->lock();
       Stats::report_locked(buffer_lock_start);
-      if (!(*pool))
+      if (pool->owns(p))
       {
-        continue;
-      }
-
-      auto& buffer = *pool;
-      if (buffer->owns(p))
-      {
-        buffer->deallocate(p, bytes, alignment);
-        if (buffer->empty() && buffer->free_bytes() < block_size)
-        {
-          Stats::report_small_deallocation(buffer->free_bytes());
-          buffer.reset();
-        }
-
+        pool->deallocate(p, bytes, alignment);
         return true;
       }
     }
@@ -919,5 +888,52 @@ template <std::size_t Size,
           std::size_t BlockSize      = SyncDualLevelBlockPool<Size, SmallBlockSize>::block_size,
           typename Lock              = typename SyncDualLevelBlockPool<Size, BlockSize>::LockType>
 using DebugSyncDualLevelBlockPool = SyncDualLevelBlockPool<Size, SmallBlockSize, BlockSize, Lock, true>;
+
+class MemoryPerformanceRecorder : public MemoryResource
+{
+public:
+  MemoryPerformanceRecorder(MemoryResource& upstream) noexcept : upstream_{std::addressof(upstream)} {}
+  MemoryPerformanceRecorder(const MemoryPerformanceRecorder& rhs) = delete;
+  MemoryPerformanceRecorder(MemoryPerformanceRecorder&& rhs)      = delete;
+
+  ~MemoryPerformanceRecorder() noexcept
+  {
+    std::cout << "\n"
+                 "++++++++++++++++++++++++++++++++++++++++++++++++\n"
+                 "Allocator Statistics for Generic Memory Resource\n"
+                 "================================================\n"
+                 "time spent in allocator - "
+              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_spent_).count() << "ms\n";
+  }
+
+  auto operator=(const MemoryPerformanceRecorder& rhs) -> MemoryPerformanceRecorder& = delete;
+  auto operator=(MemoryPerformanceRecorder&& rhs) -> MemoryPerformanceRecorder&      = delete;
+
+protected:
+  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  {
+    const auto  start = std::chrono::high_resolution_clock::now();
+    auto* const p     = upstream_->allocate(bytes, alignment);
+    time_spent_ += std::chrono::high_resolution_clock::now() - start;
+
+    return p;
+  }
+
+  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+  {
+    const auto start = std::chrono::high_resolution_clock::now();
+    upstream_->deallocate(p, bytes, alignment);
+    time_spent_ += std::chrono::high_resolution_clock::now() - start;
+  }
+
+  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  {
+    return this == std::addressof(rhs);
+  }
+
+private:
+  MemoryResource*                              upstream_;
+  std::chrono::high_resolution_clock::duration time_spent_ = {};
+};
 
 }  // namespace etcpal
