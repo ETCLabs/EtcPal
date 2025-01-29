@@ -2,12 +2,13 @@
 
 #include <cstddef>
 
+#include <array>
 #include <bitset>
 #include <chrono>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
-
-#include <iostream>
+#include <vector>
 
 #include <etcpal/cpp/synchronized.h>
 #include <etcpal/cpp/rwlock.h>
@@ -24,6 +25,8 @@ using DefaultAllocator     = PolymorphicAllocator<std::byte>;
 class MemoryResource
 {
 public:
+  virtual ~MemoryResource() noexcept = default;
+
   [[nodiscard]] void* allocate(std::size_t bytes, std::size_t alignment = alignof(std::max_align_t))
   {
     return do_allocate(bytes, alignment);
@@ -38,7 +41,7 @@ public:
 
 protected:
   [[nodiscard]] virtual void* do_allocate(std::size_t bytes, std::size_t alignment)            = 0;
-  [[nodiscard]] virtual void  do_deallocate(void* p, std::size_t bytes, std::size_t alignment) = 0;
+  virtual void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) = 0;
   [[nodiscard]] virtual bool  do_is_equal(const MemoryResource& rhs) const noexcept            = 0;
 };
 
@@ -94,6 +97,106 @@ private:
 using DefaultAllocator = PolymorphicAllocator<unsigned char>;
 #endif  // #if (__cplusplus >= 201703L)
 
+template <std::size_t Size = std::numeric_limits<std::uint8_t>::max(), bool Debug = false>
+class MonotonicBuffer : public MemoryResource
+{
+public:
+  MonotonicBuffer()                                              = default;
+  MonotonicBuffer(const MonotonicBuffer& rhs)                    = delete;
+  MonotonicBuffer(MonotonicBuffer&& rhs)                         = delete;
+  ~MonotonicBuffer() noexcept override                           = default;
+  auto operator=(const MonotonicBuffer& rhs) -> MonotonicBuffer& = delete;
+  auto operator=(MonotonicBuffer&& rhs) -> MonotonicBuffer&      = delete;
+
+  [[nodiscard]] auto free_bytes() const noexcept { return Size - allocd_bytes_; }
+  [[nodiscard]] bool owns(void* p) const noexcept { return (p >= buffer_.data()) && (p < buffer_.data() + Size); }
+  [[nodiscard]] bool empty() const noexcept { return num_allocs_ == 0; }
+
+protected:
+  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  {
+    if (allocd_bytes_ + bytes > buffer_.size())
+    {
+      throw std::bad_alloc{};
+    }
+
+    auto* const p = static_cast<void*>(buffer_.data() + allocd_bytes_);
+    ++num_allocs_;
+    allocd_bytes_ += bytes;
+
+    return p;
+  }
+
+  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override { --num_allocs_; }
+
+  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  {
+    return this == std::addressof(rhs);
+  }
+
+private:
+  alignas(std::max_align_t) std::array<unsigned char, Size> buffer_;
+  std::size_t allocd_bytes_ = 0;
+  std::size_t num_allocs_   = 0;
+};
+
+template <std::size_t Size>
+class MonotonicBuffer<Size, true> : public MonotonicBuffer<Size, false>
+{
+public:
+  ~MonotonicBuffer() noexcept override
+  {
+    std::cout << "\n"
+                 "+++++++++++++++++++++++++++++++++++++++++\n"
+                 "Allocator Statistics for Monotonic Buffer\n"
+                 "=========================================\n"
+                 "total allocations - "
+              << total_allocs_
+              << " allocations\n"
+                 "                  - "
+              << Size - MonotonicBuffer<Size, false>::free_bytes()
+              << " bytes\n"
+                 "wastage           - "
+              << MonotonicBuffer<Size, false>::free_bytes() * 100.0 / Size
+              << "%\n"
+                 "total time in allocator - "
+              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_alloc_).count()
+              << "ms\n"
+                 "-----------------------------------------\n";
+    if (!MonotonicBuffer<Size, false>::empty())
+    {
+      throw std::logic_error{"allocation count is not zero"};
+    }
+  }
+
+protected:
+  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  {
+    const auto  start = std::chrono::high_resolution_clock::now();
+    auto* const p     = MonotonicBuffer<Size, false>::do_allocate(bytes, alignment);
+    time_in_alloc_ += std::chrono::high_resolution_clock::now() - start;
+    ++total_allocs_;
+
+    return p;
+  }
+
+  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+  {
+    const auto start = std::chrono::high_resolution_clock::now();
+    MonotonicBuffer<Size, false>::do_deallocate(p, bytes, alignment);
+    time_in_alloc_ += std::chrono::high_resolution_clock::now() - start;
+  }
+
+  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  {
+    return this == std::addressof(rhs);
+  }
+
+private:
+  int                                          total_allocs_  = 0;
+  std::chrono::high_resolution_clock::duration time_in_alloc_ = {};
+};
+
 template <std::size_t Size, std::size_t BlockSize = sizeof(std::max_align_t), bool Debug = false>
 class BlockMemory : public MemoryResource
 {
@@ -101,7 +204,7 @@ public:
   BlockMemory()                                          = default;
   BlockMemory(const BlockMemory& rhs)                    = delete;
   BlockMemory(BlockMemory&& rhs)                         = delete;
-  ~BlockMemory() noexcept                                = default;
+  ~BlockMemory() noexcept override                       = default;
   auto operator=(const BlockMemory& rhs) -> BlockMemory& = delete;
   auto operator=(BlockMemory&& rhs) -> BlockMemory&      = delete;
 
@@ -214,9 +317,10 @@ template <std::size_t Size, std::size_t BlockSize>
 class BlockMemory<Size, BlockSize, true> : public BlockMemory<Size, BlockSize, false>
 {
 public:
-  ~BlockMemory() noexcept
+  ~BlockMemory() noexcept override
   {
     std::cout << "\n"
+                 "+++++++++++++++++++++++++++++++++++++++++++++++\n"
                  "Allocator Statistics for Block Memory Allocator\n"
                  "===============================================\n"
                  "block size               - "
@@ -235,6 +339,9 @@ public:
                  "smallest allocation      - "
               << smallest_alloc_
               << " bytes\n"
+                 "                         - "
+              << BlockMemory<Size, BlockSize, false>::to_blocks(smallest_alloc_)
+              << " blocks\n"
                  "largest allocation       - "
               << largest_alloc_ / 1024.0
               << " kiB\n"
@@ -265,7 +372,8 @@ public:
               << "%)\n"
                  "total time in allocator  - "
               << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_allocator_).count()
-              << "ms\n";
+              << "ms\n"
+                 "-----------------------------------------------\n";
     if (allocated_blocks_ != 0)
     {
       throw std::logic_error{"allocation count is not zero"};
@@ -385,14 +493,16 @@ template <std::size_t Size, typename Lock, std::size_t BlockSize>
 class SyncBlockMemory<Size, Lock, BlockSize, true> : public MemoryResource
 {
 public:
-  ~SyncBlockMemory() noexcept
+  ~SyncBlockMemory() noexcept override
   {
     std::cout << "\n"
+                 "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
                  "Allocator Statistics for Synchronized Block Memory Allocator\n"
                  "============================================================\n"
                  "time on allocator synchronization - "
               << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_allocator_).count()
-              << "ms\n";
+              << "ms\n"
+                 "------------------------------------------------------------\n";
   }
 
 protected:
@@ -423,6 +533,7 @@ private:
   Synchronized<BlockMemory<Size, BlockSize, true>, Lock> memory_{};
   std::chrono::high_resolution_clock::duration           time_in_allocator_ = {};
 };
+
 template <typename T, typename Allocator>
 struct DeleteUsingAlloc
 {
@@ -481,5 +592,246 @@ template <typename T, typename Allocator, typename... Args, std::enable_if_t<!st
 
   return std::unique_ptr<T, DeleteUsingAlloc<T, Allocator>>{ptr, DeleteUsingAlloc<T, Allocator>{alloc}};
 }
+
+namespace detail
+{
+
+template <std::size_t SmallSize, bool Debug>
+class DualLevelBlockPoolStatistics
+{
+public:
+  void report_new_small_buffer() noexcept {}
+  void report_small_deallocation(std::size_t wastage) noexcept {}
+  void report_allocation(std::size_t bytes) noexcept {}
+};
+
+template <std::size_t SmallSize>
+class DualLevelBlockPoolStatistics<SmallSize, true>
+{
+public:
+  static constexpr auto small_size = SmallSize;
+
+  ~DualLevelBlockPoolStatistics() noexcept
+  {
+    std::cout << "\n"
+                 "++++++++++++++++++++++++++++++++++++++++++++++\n"
+                 "Allocator Statistics for Dual Level Block Pool\n"
+                 "==============================================\n"
+                 "blocks                       - "
+              << total_block_bytes_ / 1024.0 << " kiB ("
+              << total_block_bytes_ * 100.0 / (total_small_buffer_bytes_ + total_block_bytes_)
+              << "%)\n"
+                 "small buffers                - "
+              << total_small_buffers_ << " x " << small_size / 1024.0
+              << " kiB\n"
+                 "                             - "
+              << total_small_buffers_ * small_size / 1024.0 << " kiB ("
+              << total_small_buffer_bytes_ * 100.0 / (total_small_buffer_bytes_ + total_block_bytes_)
+              << "%)\n"
+                 "small buffer high water mark - "
+              << max_small_buffers_
+              << " buffers\n"
+                 "                             - "
+              << max_small_buffers_ * small_size / 1024.0
+              << " kiB\n"
+                 "small buffer wastage         - "
+              << small_buffer_wastage_ / 1024.0 << " kiB ("
+              << small_buffer_wastage_ * 100.0 / (total_small_buffers_ * small_size)
+              << "%)\n"
+                 "----------------------------------------------\n";
+  }
+
+  void report_new_small_buffer() noexcept
+  {
+    ++total_small_buffers_;
+    ++curr_small_buffers_;
+    max_small_buffers_ = std::max(curr_small_buffers_, max_small_buffers_);
+  }
+
+  void report_small_deallocation(std::size_t wastage) noexcept
+  {
+    small_buffer_wastage_ += wastage;
+    --curr_small_buffers_;
+  }
+
+  void report_allocation(std::size_t bytes) noexcept
+  {
+    if (bytes <= small_size)
+    {
+      total_small_buffer_bytes_ += bytes;
+    }
+    else
+    {
+      total_block_bytes_ += bytes;
+    }
+  }
+
+private:
+  int         total_small_buffers_      = 0;
+  int         curr_small_buffers_       = 0;
+  int         max_small_buffers_        = 0;
+  std::size_t small_buffer_wastage_     = 0;
+  std::size_t total_block_bytes_        = 0;
+  std::size_t total_small_buffer_bytes_ = 0;
+};
+
+[[nodiscard]] constexpr auto make_max_aligned(std::size_t size) noexcept
+{
+  return (size % alignof(std::max_align_t) == 0) ? size
+                                                 : ((size / alignof(std::max_align_t)) + 1) * alignof(std::max_align_t);
+}
+
+}  // namespace detail
+
+template <std::size_t Size,
+          std::size_t SmallBlockSize = detail::make_max_aligned(std::numeric_limits<unsigned char>::max()),
+          std::size_t BlockSize      = detail::make_max_aligned(sizeof(MonotonicBuffer<SmallBlockSize>) >> 5),
+          bool        Debug          = false>
+class DualLevelBlockPool : public MemoryResource, detail::DualLevelBlockPoolStatistics<SmallBlockSize, Debug>
+{
+public:
+  static constexpr auto capacity   = Size;
+  static constexpr auto small_size = SmallBlockSize;
+  static constexpr auto block_size = BlockSize;
+  static constexpr bool debug      = Debug;
+
+  DualLevelBlockPool()                              = default;
+  DualLevelBlockPool(const DualLevelBlockPool& rhs) = delete;
+  DualLevelBlockPool(DualLevelBlockPool&& rhs)      = delete;
+
+  ~DualLevelBlockPool() noexcept override
+  {
+    if (debug)
+    {
+      for (const auto& pool : small_pools_)
+      {
+        if (pool)
+        {
+          detail::DualLevelBlockPoolStatistics<small_size, debug>::report_small_deallocation(pool->free_bytes());
+        }
+      }
+    }
+  }
+
+  auto operator=(const DualLevelBlockPool& rhs) -> DualLevelBlockPool& = delete;
+  auto operator=(DualLevelBlockPool&& rhs) -> DualLevelBlockPool&      = delete;
+
+private:
+  using SmallBuffer    = MonotonicBuffer<small_size>;
+  using SmallBufferPtr = std::unique_ptr<SmallBuffer, DeleteUsingAlloc<SmallBuffer, DefaultAllocator>>;
+
+protected:
+  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  {
+    detail::DualLevelBlockPoolStatistics<small_size, debug>::report_allocation(bytes);
+    return (bytes <= small_size) ? allocate_from_small_buffers(bytes, alignment) : pool_.allocate(bytes, alignment);
+  }
+
+  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+  {
+    if (try_deallocate_from_small_buffers(p, bytes, alignment))
+    {
+      return;
+    }
+
+    pool_.deallocate(p, bytes, alignment);
+  }
+
+  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  {
+    return this == std::addressof(rhs);
+  }
+
+  [[nodiscard]] void* allocate_from_small_buffers(std::size_t bytes, std::size_t alignment)
+  {
+    for (auto& buffer : small_pools_)
+    {
+      if (!buffer)
+      {
+        detail::DualLevelBlockPoolStatistics<small_size, debug>::report_new_small_buffer();
+        buffer = allocate_unique<SmallBuffer>(DefaultAllocator{std::addressof(pool_)});
+        return buffer->allocate(bytes, alignment);
+      }
+      if (buffer && buffer->free_bytes() >= bytes)
+      {
+        return buffer->allocate(bytes, alignment);
+      }
+    }
+
+    detail::DualLevelBlockPoolStatistics<small_size, debug>::report_new_small_buffer();
+    small_pools_.push_back(allocate_unique<SmallBuffer>(DefaultAllocator{std::addressof(pool_)}));
+    return small_pools_.back()->allocate(bytes, alignment);
+  }
+
+  [[nodiscard]] bool try_deallocate_from_small_buffers(void* p, std::size_t bytes, std::size_t alignment)
+  {
+    for (auto& buffer : small_pools_)
+    {
+      if (buffer && buffer->owns(p))
+      {
+        buffer->deallocate(p, bytes, alignment);
+        if (buffer->empty() && buffer->free_bytes() < block_size)
+        {
+          detail::DualLevelBlockPoolStatistics<small_size, debug>::report_small_deallocation(buffer->free_bytes());
+          buffer = nullptr;
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+private:
+  BlockMemory<capacity, block_size, debug>      pool_{};
+  std::vector<SmallBufferPtr, DefaultAllocator> small_pools_ = std::vector<SmallBufferPtr, DefaultAllocator>{
+      small_size / sizeof(SmallBufferPtr), DefaultAllocator{std::addressof(pool_)}};
+};
+
+template <std::size_t Size,
+          std::size_t SmallBlockSize = DualLevelBlockPool<Size>::small_size,
+          std::size_t BlockSize      = DualLevelBlockPool<Size, SmallBlockSize>::block_size,
+          typename Lock              = RwLock,
+          bool Debug                 = false>
+class SyncDualLevelBlockPool : public MemoryResource
+{
+public:
+  using LockType = Lock;
+
+  static constexpr auto capacity   = Size;
+  static constexpr auto block_size = BlockSize;
+  static constexpr auto small_size = SmallBlockSize;
+  static constexpr bool debug      = Debug;
+
+protected:
+  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  {
+    return memory_.lock()->allocate(bytes, alignment);
+  }
+
+  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+  {
+    memory_.lock()->deallocate(p, bytes, alignment);
+  }
+
+  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  {
+    return this == std::addressof(rhs);
+  }
+
+private:
+  Synchronized<DualLevelBlockPool<capacity, small_size, block_size, debug>, LockType> memory_{};
+};
+
+template <std::size_t Size,
+          std::size_t SmallBlockSize = DualLevelBlockPool<Size>::small_size,
+          std::size_t BlockSize      = DualLevelBlockPool<Size, SmallBlockSize>::block_size>
+using DebugDualLevelBlockPool = DualLevelBlockPool<Size, SmallBlockSize, BlockSize, true>;
+template <std::size_t Size,
+          std::size_t SmallBlockSize = SyncDualLevelBlockPool<Size>::small_size,
+          std::size_t BlockSize      = SyncDualLevelBlockPool<Size, SmallBlockSize>::block_size,
+          typename Lock              = typename SyncDualLevelBlockPool<Size, BlockSize>::LockType>
+using DebugSyncDualLevelBlockPool = SyncDualLevelBlockPool<Size, SmallBlockSize, BlockSize, Lock, true>;
 
 }  // namespace etcpal

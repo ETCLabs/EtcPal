@@ -40,14 +40,13 @@ TEST(etcpal_cpp_async, promise_future)
 {
   using namespace std::chrono_literals;
 
-  constexpr auto block_size = sizeof(std::max_align_t);
 #if (__cplusplus >= 201703L)
-  etcpal::SyncBlockMemory<1 << 13, etcpal::RwLock, block_size, true> buffer{};
-  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
-  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  etcpal::SyncBlockMemory<1 << 13> buffer{};
+  auto                             memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
+  const auto                       alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
-  etcpal::SyncBlockMemory<1 << 8, etcpal::RwLock, block_size, true> buffer{};
-  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  etcpal::SyncBlockMemory<1 << 9> buffer{};
+  const auto                      alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 #endif  // #if (__cplusplus >= 201703L)
 
   auto promise = etcpal::Promise<int>{alloc};
@@ -65,15 +64,14 @@ TEST(etcpal_cpp_async, promise_future)
 
 TEST(etcpal_cpp_async, thread_pool)
 {
+  constexpr auto block_size = sizeof(std::max_align_t) << 4;
 #if (__cplusplus >= 201703L)
-  constexpr auto                                                     block_size = sizeof(std::max_align_t) << 4;
-  etcpal::SyncBlockMemory<1 << 22, etcpal::RwLock, block_size, true> buffer{};
+  etcpal::SyncBlockMemory<1 << 22, etcpal::RwLock, block_size> buffer{};
   auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
   const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
-  constexpr auto                                                     block_size = sizeof(std::max_align_t);
-  etcpal::SyncBlockMemory<1 << 21, etcpal::RwLock, block_size, true> buffer{};
-  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  etcpal::SyncDualLevelBlockPool<1 << 21, block_size << 3> buffer{};
+  const auto                                               alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 #endif  // #if (__cplusplus >= 201703L)
 
   constexpr auto num_items = 1024;
@@ -139,12 +137,10 @@ TEST(etcpal_cpp_async, promise_chain)
   using namespace std::chrono_literals;
   using NumVector = std::vector<int, etcpal::DefaultAllocator>;
 
-  constexpr auto                                                     block_size = sizeof(std::max_align_t);
-  etcpal::SyncBlockMemory<1 << 13, etcpal::RwLock, block_size, true> buffer{};
+  etcpal::SyncDualLevelBlockPool<1 << 17> buffer{};
 #if (__cplusplus >= 201703L)
-  auto memory_resource =
-      std::pmr::synchronized_pool_resource{std::pmr::pool_options{0, block_size << 2}, std::addressof(buffer)};
-  const auto alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
+  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
+  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
 #else   // #if (__cplusplus >= 201703L)
   const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 #endif  // #if (__cplusplus >= 201703L)

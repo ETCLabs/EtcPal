@@ -53,8 +53,8 @@ TEST(etcpal_cpp_optional, optional)
   TEST_ASSERT_TRUE(etcpal::Optional<int>{0});
 
   // destruction
-  etcpal::BlockMemory<1 << 5, sizeof(std::max_align_t), true> buffer{};
-  const auto                                                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  etcpal::BlockMemory<1 << 5> buffer{};
+  const auto                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   const auto test_value = std::allocate_shared<int>(alloc);
   // initialization
