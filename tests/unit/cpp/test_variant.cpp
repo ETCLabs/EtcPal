@@ -68,8 +68,8 @@ TEST(etcpal_cpp_variant, variant)
   using String         = std::basic_string<char, std::char_traits<char>, etcpal::DefaultAllocator>;
   using StringOrNumber = etcpal::Variant<int, String>;
 
-  etcpal::BlockMemory<1 << 5, sizeof(std::max_align_t), true> buffer{};
-  const auto                                                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  etcpal::BlockMemory<1 << 5> buffer{};
+  const auto                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   // comparision
   const auto test_string_0 = String{"test string 0", alloc};

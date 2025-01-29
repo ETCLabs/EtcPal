@@ -37,8 +37,8 @@ TEST_TEAR_DOWN(etcpal_cpp_stop_token)
 
 TEST(etcpal_cpp_stop_token, stop_source)
 {
-  etcpal::BlockMemory<1 << 8, sizeof(std::max_align_t), true> buffer{};
-  const auto                                                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  etcpal::BlockMemory<1 << 8> buffer{};
+  const auto                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   // initialize source with state
   auto ssource = etcpal::StopSource
