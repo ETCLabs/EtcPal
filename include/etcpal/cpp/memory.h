@@ -792,11 +792,16 @@ protected:
     for (const auto& small_pool_ptr : *small_pools)
     {
       const auto buff_lock_start = Stats::report_lock();
-      auto       pool            = small_pool_ptr->lock();
+      auto       pool            = small_pool_ptr->try_lock();
       Stats::report_locked(buff_lock_start);
-      if (pool->free_bytes() >= bytes)
+      if (!pool)
       {
-        return pool->allocate(bytes, alignment);
+        continue;
+      }
+
+      if ((*pool)->free_bytes() >= bytes)
+      {
+        return (*pool)->allocate(bytes, alignment);
       }
     }
 
