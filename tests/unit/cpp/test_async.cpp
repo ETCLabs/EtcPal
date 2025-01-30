@@ -58,8 +58,8 @@ TEST(etcpal_cpp_async, promise_future)
 
 TEST(etcpal_cpp_async, thread_pool)
 {
-  etcpal::SyncDualLevelBlockPool<1 << 22, sizeof(std::max_align_t) << 10> buffer{};
-  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  etcpal::SyncDualLevelBlockPool<1 << 22> buffer{};
+  const auto                              alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   constexpr auto num_items = 1024;
 
@@ -157,7 +157,7 @@ TEST(etcpal_cpp_async, promise_chain)
   using namespace std::chrono_literals;
   using NumVector = std::vector<int, etcpal::DefaultAllocator>;
 
-  etcpal::SyncDualLevelBlockPool<1 << 17> buffer{};
+  etcpal::SyncDualLevelBlockPool<1 << 14> buffer{};
   const auto                              alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   constexpr auto num_elements = std::size_t{1024};
