@@ -64,56 +64,82 @@ TEST(etcpal_cpp_async, promise_future)
 
 TEST(etcpal_cpp_async, thread_pool)
 {
-  constexpr auto block_size = sizeof(std::max_align_t) << 4;
-#if (__cplusplus >= 201703L)
-  etcpal::SyncBlockMemory<1 << 22, etcpal::RwLock, block_size> buffer{};
-  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
-  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
-#else   // #if (__cplusplus >= 201703L)
-  etcpal::SyncDualLevelBlockPool<1 << 22, block_size << 8> buffer{};
-  const auto                                               alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::SyncDualLevelBlockPool<1 << 22, sizeof(std::max_align_t) << 12> buffer{};
+  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   constexpr auto num_items = 1024;
 
   etcpal::ThreadPool<32> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
-  auto                   futures                = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
-  auto                   futures_for_get_if     = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
-  auto                   continued_futures      = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
-  auto                   continued_exec_futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
-  auto                   abandoned_futures      = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
-  futures.reserve(num_items);
-  continued_futures.reserve(num_items);
-  futures_for_get_if.reserve(num_items);
-  continued_exec_futures.reserve(num_items);
-  abandoned_futures.reserve(num_items);
+  auto                   future_futures                = pool.post(etcpal::use_future, [&] {
+    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    for (auto i = 0; i < num_items; ++i)
+    {
+      auto promise = etcpal::Promise<int>{alloc};
+      futures.push_back(promise.get_future());
+      pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
+    }
+
+    return futures;
+  });
+  auto                   future_futures_for_get_if     = pool.post(etcpal::use_future, [&] {
+    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    for (auto i = 0; i < num_items; ++i)
+    {
+      auto promise = etcpal::Promise<int>{alloc};
+      futures.push_back(promise.get_future());
+      pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
+    }
+
+    return futures;
+  });
+  auto                   future_continued_futures      = pool.post(etcpal::use_future, [&] {
+    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    for (auto i = 0; i < num_items; ++i)
+    {
+      auto promise = etcpal::Promise<int>{alloc};
+      futures.push_back(
+          promise.get_future().and_then([](auto status, auto& value, auto exception) { return value.value(); }));
+      pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
+    }
+
+    return futures;
+  });
+  auto                   future_continued_exec_futures = pool.post(etcpal::use_future, [&] {
+    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    for (auto i = 0; i < num_items; ++i)
+    {
+      futures.push_back(
+          pool.post(etcpal::use_future, [i]() { return i; }).and_then([](auto status, auto& value, auto exception) {
+            return value.value();
+          }));
+    }
+
+    return futures;
+  });
+  auto                   future_abandoned_futures      = pool.post(etcpal::use_future, [&] {
+    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    for (auto i = 0; i < num_items; ++i)
+    {
+      futures.push_back(etcpal::Promise<int>{alloc}.get_future());
+    }
+
+    return futures;
+  });
+
+  using namespace std::chrono_literals;
+
+  TEST_ASSERT_TRUE(future_futures.wait_for(1s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_futures_for_get_if.wait_for(1s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_continued_futures.wait_for(1s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_continued_exec_futures.wait_for(1s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_abandoned_futures.wait_for(1s) == etcpal::FutureStatus::ready);
+  auto futures                = future_futures.get();
+  auto futures_for_get_if     = future_futures_for_get_if.get();
+  auto continued_futures      = future_continued_futures.get();
+  auto continued_exec_futures = future_continued_exec_futures.get();
+  auto abandoned_futures      = future_abandoned_futures.get();
   for (auto i = 0; i < num_items; ++i)
   {
-    auto promise = etcpal::Promise<int>{alloc};
-    futures.push_back(promise.get_future());
-    pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
-
-    promise = etcpal::Promise<int>{alloc};
-    futures_for_get_if.push_back(promise.get_future());
-    pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
-
-    promise = etcpal::Promise<int>{alloc};
-    continued_futures.push_back(
-        promise.get_future().and_then([](auto status, auto& value, auto exception) { return value.value(); }));
-    pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
-
-    continued_exec_futures.push_back(
-        pool.post(etcpal::use_future, [i]() { return i; }).and_then([](auto status, auto& value, auto exception) {
-          return value.value();
-        }));
-
-    abandoned_futures.push_back(etcpal::Promise<int>{alloc}.get_future());
-  }
-
-  for (auto i = 0; i < num_items; ++i)
-  {
-    using namespace std::chrono_literals;
-
     TEST_ASSERT_TRUE(futures[i].wait_for(50ms) == etcpal::FutureStatus::ready);
     TEST_ASSERT_TRUE(futures[i].get() == i);
 
