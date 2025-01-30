@@ -98,9 +98,94 @@ private:
 using DefaultAllocator = PolymorphicAllocator<unsigned char>;
 #endif  // #if (__cplusplus >= 201703L)
 
-template <std::size_t Size = std::numeric_limits<std::uint8_t>::max(), bool Debug = false>
-class MonotonicBuffer : public MemoryResource
+namespace detail
 {
+
+template <std::size_t Size, bool Debug>
+class MonotonicBufferStatistics
+{
+public:
+  static constexpr void report_deallocation() noexcept {}
+  static constexpr void report_allocation(const unsigned char* prev_end,
+                                          std::size_t          bytes,
+                                          const unsigned char* new_end) noexcept
+  {
+  }
+
+  [[nodiscard]] static constexpr auto report_allocator_entry() noexcept
+  {
+    return finally([] {});
+  }
+};
+
+template <std::size_t Size>
+class MonotonicBufferStatistics<Size, true>
+{
+public:
+  ~MonotonicBufferStatistics() noexcept
+  {
+    std::cout << "\n"
+                 "+++++++++++++++++++++++++++++++++++++++++\n"
+                 "Allocator Statistics for Monotonic Buffer\n"
+                 "=========================================\n"
+                 "total allocations       - "
+              << total_allocs_
+              << " allocations\n"
+                 "                        - "
+              << total_bytes_allocd_
+              << " bytes\n"
+                 "wastage                 - "
+              << (Size - total_bytes_allocd_ + padding_bytes_) << " bytes ("
+              << (Size - total_bytes_allocd_ + padding_bytes_) * 100.0 / Size
+              << "%)\n"
+                 "                        - "
+              << Size - total_bytes_allocd_
+              << " bytes left over\n"
+                 "                        - "
+              << padding_bytes_
+              << " bytes padding\n"
+                 "total time in allocator - "
+              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_alloc_).count()
+              << "ms\n"
+                 "-----------------------------------------\n";
+    if (current_allocs_ != 0)
+    {
+      throw std::logic_error{"allocation count is not zero"};
+    }
+  }
+
+  void report_deallocation() noexcept { --current_allocs_; }
+  void report_allocation(const unsigned char* prev_end, std::size_t bytes, const unsigned char* new_end) noexcept
+  {
+    ++current_allocs_;
+    ++total_allocs_;
+    total_bytes_allocd_ += new_end - prev_end;
+    padding_bytes_ += new_end - prev_end - bytes;
+  }
+
+  [[nodiscard]] auto report_allocator_entry() noexcept
+  {
+    return finally([&, start = std::chrono::high_resolution_clock::now()] {
+      time_in_alloc_ += std::chrono::high_resolution_clock::now() - start;
+    });
+  }
+
+private:
+  int                                          current_allocs_     = 0;
+  int                                          total_allocs_       = 0;
+  std::size_t                                  total_bytes_allocd_ = 0;
+  std::size_t                                  padding_bytes_      = 0;
+  std::chrono::high_resolution_clock::duration time_in_alloc_      = {};
+};
+
+}  // namespace detail
+
+template <std::size_t Size = std::numeric_limits<std::uint8_t>::max(), bool Debug = false>
+class MonotonicBuffer : public MemoryResource, private detail::MonotonicBufferStatistics<Size, Debug>
+{
+private:
+  using Stats = detail::MonotonicBufferStatistics<Size, Debug>;
+
 public:
   MonotonicBuffer()                                              = default;
   MonotonicBuffer(const MonotonicBuffer& rhs)                    = delete;
@@ -109,85 +194,32 @@ public:
   auto operator=(const MonotonicBuffer& rhs) -> MonotonicBuffer& = delete;
   auto operator=(MonotonicBuffer&& rhs) -> MonotonicBuffer&      = delete;
 
-  [[nodiscard]] auto free_bytes() const noexcept { return Size - allocd_bytes_; }
-  [[nodiscard]] bool owns(void* p) const noexcept { return (p >= buffer_.data()) && (p < buffer_.data() + Size); }
-  [[nodiscard]] bool empty() const noexcept { return num_allocs_ == 0; }
-
-protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  [[nodiscard]] auto  free_bytes() const noexcept { return Size - allocd_bytes_; }
+  [[nodiscard]] bool  owns(void* p) const noexcept { return (p >= buffer_.data()) && (p < buffer_.data() + Size); }
+  [[nodiscard]] bool  empty() const noexcept { return num_allocs_ == 0; }
+  [[nodiscard]] void* try_allocate(std::size_t bytes, std::size_t alignment) noexcept
   {
-    auto*       curr = static_cast<void*>(buffer_.data() + allocd_bytes_);
-    auto        free = free_bytes();
-    auto* const p    = std::align(alignment, bytes, curr, free);
-    if (!p)
-    {
-      throw std::bad_alloc{};
-    }
-
-    ++num_allocs_;
-    allocd_bytes_ = static_cast<unsigned char*>(p) + bytes - buffer_.data();
-
-    return p;
-  }
-
-  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override { --num_allocs_; }
-
-  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
-  {
-    return this == std::addressof(rhs);
-  }
-
-private:
-  alignas(std::max_align_t) std::array<unsigned char, Size> buffer_;
-  std::size_t allocd_bytes_ = 0;
-  std::size_t num_allocs_   = 0;
-};
-
-template <std::size_t Size>
-class MonotonicBuffer<Size, true> : public MonotonicBuffer<Size, false>
-{
-public:
-  ~MonotonicBuffer() noexcept override
-  {
-    std::cout << "\n"
-                 "+++++++++++++++++++++++++++++++++++++++++\n"
-                 "Allocator Statistics for Monotonic Buffer\n"
-                 "=========================================\n"
-                 "total allocations - "
-              << total_allocs_
-              << " allocations\n"
-                 "                  - "
-              << Size - MonotonicBuffer<Size, false>::free_bytes()
-              << " bytes\n"
-                 "wastage           - "
-              << MonotonicBuffer<Size, false>::free_bytes() * 100.0 / Size
-              << "%\n"
-                 "total time in allocator - "
-              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_alloc_).count()
-              << "ms\n"
-                 "-----------------------------------------\n";
-    if (!MonotonicBuffer<Size, false>::empty())
-    {
-      throw std::logic_error{"allocation count is not zero"};
-    }
+    const auto timer = Stats::report_allocator_entry();
+    return try_alloc_impl(bytes, alignment);
   }
 
 protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
-    const auto  start = std::chrono::high_resolution_clock::now();
-    auto* const p     = MonotonicBuffer<Size, false>::do_allocate(bytes, alignment);
-    time_in_alloc_ += std::chrono::high_resolution_clock::now() - start;
-    ++total_allocs_;
+    const auto timer = Stats::report_allocator_entry();
+    if (auto* const p = try_alloc_impl(bytes, alignment))
+    {
+      return p;
+    }
 
-    return p;
+    throw std::bad_alloc{};
   }
 
   void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
   {
-    const auto start = std::chrono::high_resolution_clock::now();
-    MonotonicBuffer<Size, false>::do_deallocate(p, bytes, alignment);
-    time_in_alloc_ += std::chrono::high_resolution_clock::now() - start;
+    const auto timer = Stats::report_allocator_entry();
+    Stats::report_deallocation();
+    --num_allocs_;
   }
 
   [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
@@ -196,8 +228,27 @@ protected:
   }
 
 private:
-  int                                          total_allocs_  = 0;
-  std::chrono::high_resolution_clock::duration time_in_alloc_ = {};
+  [[nodiscard]] void* try_alloc_impl(std::size_t bytes, std::size_t alignment) noexcept
+  {
+    auto* const init_end = buffer_.data() + allocd_bytes_;
+    auto*       curr     = static_cast<void*>(init_end);
+    auto        free     = free_bytes();
+    auto* const p        = std::align(alignment, bytes, curr, free);
+    if (!p)
+    {
+      return p;
+    }
+
+    ++num_allocs_;
+    allocd_bytes_ = static_cast<unsigned char*>(p) + bytes - buffer_.data();
+    Stats::report_allocation(init_end, bytes, buffer_.data() + allocd_bytes_);
+
+    return p;
+  }
+
+  alignas(std::max_align_t) std::array<unsigned char, Size> buffer_;
+  std::size_t allocd_bytes_ = 0;
+  std::size_t num_allocs_   = 0;
 };
 
 template <std::size_t Size, std::size_t BlockSize = sizeof(std::max_align_t), bool Debug = false>
@@ -603,12 +654,16 @@ template <std::size_t SmallSize, bool Debug>
 class DualLevelBlockPoolStatistics
 {
 public:
-  constexpr void               report_new_small_buffer() noexcept {}
-  constexpr void               report_small_deallocation(std::size_t wastage) noexcept {}
-  constexpr void               report_allocation(std::size_t bytes) noexcept {}
-  [[nodiscard]] constexpr auto report_lock() const noexcept { return true; }
-  constexpr void               report_locked(bool arg) noexcept {}
-  [[nodiscard]] constexpr auto report_allocator_entry() const noexcept { return true; }
+  static constexpr void               report_new_small_buffer() noexcept {}
+  static constexpr void               report_small_deallocation(std::size_t wastage) noexcept {}
+  static constexpr void               report_small_allocation(std::size_t bytes, std::size_t padding) noexcept {}
+  static constexpr void               report_large_allocation(std::size_t bytes) noexcept {}
+  [[nodiscard]] static constexpr auto report_lock() noexcept { return true; }
+  static constexpr void               report_locked(bool arg) noexcept {}
+  [[nodiscard]] static constexpr auto report_allocator_entry() noexcept
+  {
+    return finally([] {});
+  }
 };
 
 template <std::size_t SmallSize>
@@ -644,6 +699,9 @@ public:
               << small_buffer_wastage_ / 1024.0 << " kiB ("
               << small_buffer_wastage_ * 100.0 / (total_small_buffers_ * small_size)
               << "%)\n"
+                 "                             - "
+              << small_buffer_padding_
+              << " bytes padding\n"
                  "time spent synchronizing     - "
               << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_spent_locking_).count()
               << "ms (" << time_spent_locking_.count() * 100.0 / total_time_.count()
@@ -667,16 +725,12 @@ public:
     --curr_small_buffers_;
   }
 
-  void report_allocation(std::size_t bytes) noexcept
+  void report_large_allocation(std::size_t bytes) noexcept { total_block_bytes_ += bytes; }
+  void report_small_allocation(std::size_t bytes, std::size_t padding) noexcept
   {
-    if (bytes <= small_size)
-    {
-      total_small_buffer_bytes_ += bytes;
-    }
-    else
-    {
-      total_block_bytes_ += bytes;
-    }
+    total_small_buffer_bytes_ += bytes;
+    small_buffer_wastage_ += padding;
+    small_buffer_padding_ += padding;
   }
 
   [[nodiscard]] auto report_lock() const noexcept { return std::chrono::high_resolution_clock::now(); }
@@ -697,6 +751,7 @@ private:
   int                                          curr_small_buffers_       = 0;
   int                                          max_small_buffers_        = 0;
   std::size_t                                  small_buffer_wastage_     = 0;
+  std::size_t                                  small_buffer_padding_     = 0;
   std::size_t                                  total_block_bytes_        = 0;
   std::size_t                                  total_small_buffer_bytes_ = 0;
   std::chrono::high_resolution_clock::duration time_spent_locking_       = {};
@@ -758,7 +813,7 @@ public:
   auto operator=(BasicDualLevelBlockPool&& rhs) -> BasicDualLevelBlockPool&      = delete;
 
 private:
-  using SmallBuffer     = MonotonicBuffer<small_size>;
+  using SmallBuffer     = MonotonicBuffer<small_size, debug>;
   using SyncSmallBuffer = Synchronized<SmallBuffer, LockType>;
   using SmallBufferPtr  = std::unique_ptr<SyncSmallBuffer, DeleteUsingAlloc<SyncSmallBuffer, DefaultAllocator>>;
 
@@ -766,9 +821,14 @@ protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     const auto timer = Stats::report_allocator_entry();
-    Stats::report_allocation(bytes);
+    if (bytes <= small_size)
+    {
+      return allocate_from_small_buffers(bytes, alignment);
+    }
 
-    return (bytes <= small_size) ? allocate_from_small_buffers(bytes, alignment) : pool_.allocate(bytes, alignment);
+    Stats::report_large_allocation(bytes);
+
+    return pool_.allocate(bytes, alignment);
   }
 
   void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
@@ -802,9 +862,11 @@ protected:
         continue;
       }
 
-      if ((*pool)->free_bytes() >= bytes)
+      const auto prev_free = (*pool)->free_bytes();
+      if (auto* const p = (*pool)->try_allocate(bytes, alignment))
       {
-        return (*pool)->allocate(bytes, alignment);
+        Stats::report_small_allocation(bytes, prev_free - (*pool)->free_bytes() - bytes);
+        return p;
       }
     }
 
@@ -842,6 +904,7 @@ protected:
     const auto new_lock_start = Stats::report_lock();
     auto       new_pool       = pools->back()->lock();
     Stats::report_locked(new_lock_start);
+    Stats::report_small_allocation(bytes, 0);
 
     return new_pool->allocate(bytes, alignment);
   }
