@@ -58,7 +58,7 @@ TEST(etcpal_cpp_async, promise_future)
 
 TEST(etcpal_cpp_async, thread_pool)
 {
-  etcpal::SyncDualLevelBlockPool<1 << 22, sizeof(std::max_align_t) << 12> buffer{};
+  etcpal::SyncDualLevelBlockPool<1 << 22, sizeof(std::max_align_t) << 10> buffer{};
   const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   constexpr auto num_items = 1024;
