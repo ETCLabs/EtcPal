@@ -116,14 +116,16 @@ public:
 protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
-    if (allocd_bytes_ + bytes > buffer_.size())
+    auto*       curr = static_cast<void*>(buffer_.data() + allocd_bytes_);
+    auto        free = free_bytes();
+    auto* const p    = std::align(alignment, bytes, curr, free);
+    if (!p)
     {
       throw std::bad_alloc{};
     }
 
-    auto* const p = static_cast<void*>(buffer_.data() + allocd_bytes_);
     ++num_allocs_;
-    allocd_bytes_ += bytes;
+    allocd_bytes_ = static_cast<unsigned char*>(p) + bytes - buffer_.data();
 
     return p;
   }
@@ -709,8 +711,9 @@ private:
 
 struct DummyLock
 {
-  static void lock() {}
-  static void unlock() {}
+  static constexpr void lock() noexcept {}
+  static constexpr void unlock() noexcept {}
+  static constexpr bool try_lock() noexcept { return true; }
 };
 
 }  // namespace detail
@@ -810,8 +813,7 @@ protected:
 
   [[nodiscard]] void* allocate_from_small_buffers(std::size_t bytes, std::size_t alignment)
   {
-    auto* const p = try_allocate_from_existing_small_buffers(bytes, alignment);
-    if (p)
+    if (auto* const p = try_allocate_from_existing_small_buffers(bytes, alignment))
     {
       return p;
     }
@@ -819,20 +821,29 @@ protected:
     const auto start = Stats::report_lock();
     auto       pools = small_pools_.lock();
     Stats::report_locked(start);
-    const auto erase_start = std::remove_if(pools->begin(), pools->end(), [](const auto& ptr) {
-      const auto pool = ptr->lock();
-      return pool->empty() && (pool->free_bytes() < block_size);
-    });
-    for (auto i = erase_start; i != pools->end(); ++i)
-    {
-      Stats::report_small_deallocation((*i)->lock()->free_bytes());
-    }
-    pools->erase(erase_start, pools->end());
+    pools->erase(std::partition(pools->begin(), pools->end(),
+                                [&](const SmallBufferPtr& ptr) {
+                                  const auto check_lock_start = Stats::report_lock();
+                                  const auto pool             = ptr->lock();
+                                  Stats::report_locked(check_lock_start);
+                                  if (pool->empty() && (pool->free_bytes() < block_size))
+                                  {
+                                    Stats::report_small_deallocation(pool->free_bytes());
+                                    return false;
+                                  }
+
+                                  return true;
+                                }),
+                 pools->end());
 
     Stats::report_new_small_buffer();
     pools->push_back(allocate_unique<SyncSmallBuffer>(DefaultAllocator{std::addressof(pool_)}));
 
-    return pools->back()->lock()->allocate(bytes, alignment);
+    const auto new_lock_start = Stats::report_lock();
+    auto       new_pool       = pools->back()->lock();
+    Stats::report_locked(new_lock_start);
+
+    return new_pool->allocate(bytes, alignment);
   }
 
   [[nodiscard]] bool try_deallocate_from_small_buffers(void* p, std::size_t bytes, std::size_t alignment)
