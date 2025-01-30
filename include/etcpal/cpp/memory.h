@@ -774,8 +774,9 @@ struct DummyLock
 }  // namespace detail
 
 template <std::size_t Size,
-          std::size_t SmallBlockSize = detail::make_max_aligned(std::numeric_limits<unsigned char>::max()),
-          typename Lock              = detail::DummyLock,
+          std::size_t SmallBlockSize =
+              detail::make_max_aligned(std::max<std::size_t>(Size >> 10, std::numeric_limits<unsigned char>::max())),
+          typename Lock = detail::DummyLock,
           std::size_t BlockSize =
               detail::make_max_aligned(sizeof(Synchronized<MonotonicBuffer<SmallBlockSize>, Lock>) >> 5),
           bool Debug = false>
@@ -813,7 +814,7 @@ public:
   auto operator=(BasicDualLevelBlockPool&& rhs) -> BasicDualLevelBlockPool&      = delete;
 
 private:
-  using SmallBuffer     = MonotonicBuffer<small_size, debug>;
+  using SmallBuffer     = MonotonicBuffer<small_size>;
   using SyncSmallBuffer = Synchronized<SmallBuffer, LockType>;
   using SmallBufferPtr  = std::unique_ptr<SyncSmallBuffer, DeleteUsingAlloc<SyncSmallBuffer, DefaultAllocator>>;
 
