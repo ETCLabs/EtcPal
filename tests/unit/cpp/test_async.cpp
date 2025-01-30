@@ -40,14 +40,8 @@ TEST(etcpal_cpp_async, promise_future)
 {
   using namespace std::chrono_literals;
 
-#if (__cplusplus >= 201703L)
-  etcpal::SyncBlockMemory<1 << 13> buffer{};
-  auto                             memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
-  const auto                       alloc = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
-#else   // #if (__cplusplus >= 201703L)
   etcpal::SyncBlockMemory<1 << 9> buffer{};
   const auto                      alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
-#endif  // #if (__cplusplus >= 201703L)
 
   auto promise = etcpal::Promise<int>{alloc};
   auto future  = promise.get_future();
@@ -164,12 +158,7 @@ TEST(etcpal_cpp_async, promise_chain)
   using NumVector = std::vector<int, etcpal::DefaultAllocator>;
 
   etcpal::SyncDualLevelBlockPool<1 << 17> buffer{};
-#if (__cplusplus >= 201703L)
-  auto       memory_resource = std::pmr::synchronized_pool_resource{std::addressof(buffer)};
-  const auto alloc           = std::pmr::polymorphic_allocator<std::byte>{std::addressof(memory_resource)};
-#else   // #if (__cplusplus >= 201703L)
-  const auto alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
-#endif  // #if (__cplusplus >= 201703L)
+  const auto                              alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
 
   constexpr auto num_elements = std::size_t{1024};
 
