@@ -28,6 +28,12 @@ struct NoLock
 {
 };
 
+template <typename Lock>
+struct LockWrapper
+{
+  mutable Lock mutex_;
+};
+
 }  // namespace detail
 
 template <typename T, typename Lock, typename = void>
@@ -102,7 +108,7 @@ private:
 };
 
 template <typename T, typename Lock>
-class Synchronized
+class Synchronized : private detail::LockWrapper<Lock>
 {
 public:
   template <typename... Args>
@@ -129,8 +135,7 @@ private:
   friend class SynchronizedRef<T, Lock>;
   friend class SynchronizedRef<const T, Lock>;
 
-  mutable Lock mutex_ = {};
-  T            value_ = {};
+  T value_ = {};
 };
 
 }  // namespace etcpal
