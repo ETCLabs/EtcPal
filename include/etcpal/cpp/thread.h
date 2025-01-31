@@ -145,7 +145,7 @@ namespace etcpal
 ///
 /// This is one of the few EtcPal wrappers that does heap allocation, as the thread function and
 /// arguments need to be stored.
-template <typename Allocator = DefaultAllocator>
+template <typename Allocator = polymorphic_allocator<>>
 class BasicThread
 {
 public:
@@ -217,7 +217,7 @@ private:
 
 using Thread = BasicThread<>;
 
-template <typename Allocator = DefaultAllocator>
+template <typename Allocator = polymorphic_allocator<>>
 class JThread
 {
 public:

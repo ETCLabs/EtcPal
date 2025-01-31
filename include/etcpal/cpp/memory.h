@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdlib>
 
 #include <algorithm>
 #include <array>
@@ -18,15 +19,14 @@ namespace etcpal
 {
 
 #if (__cplusplus >= 201703L)
-using MemoryResource = std::pmr::memory_resource;
-template <typename T>
-using PolymorphicAllocator = std::pmr::polymorphic_allocator<T>;
-using DefaultAllocator     = PolymorphicAllocator<std::byte>;
-#else   // #if (__cplusplus >= 201703L)
-class MemoryResource
+using namespace std::pmr;
+template <typename T = std::byte>
+using polymorphic_allocator = std::pmr::polymorphic_allocator<T>;
+#else  // #if (__cplusplus >= 201703L)
+class memory_resource
 {
 public:
-  virtual ~MemoryResource() noexcept = default;
+  virtual ~memory_resource() noexcept = default;
 
   [[nodiscard]] void* allocate(std::size_t bytes, std::size_t alignment = alignof(std::max_align_t))
   {
@@ -38,64 +38,99 @@ public:
     do_deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool is_equal(const MemoryResource& rhs) const noexcept { return do_is_equal(rhs); }
+  [[nodiscard]] bool is_equal(const memory_resource& rhs) const noexcept { return do_is_equal(rhs); }
 
 protected:
   [[nodiscard]] virtual void* do_allocate(std::size_t bytes, std::size_t alignment)            = 0;
   virtual void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) = 0;
-  [[nodiscard]] virtual bool  do_is_equal(const MemoryResource& rhs) const noexcept            = 0;
+  [[nodiscard]] virtual bool  do_is_equal(const memory_resource& rhs) const noexcept           = 0;
 };
 
-template <typename T>
-class PolymorphicAllocator
+namespace detail
+{
+
+[[nodiscard]] inline auto default_resource_ptr() noexcept -> memory_resource*&
+{
+  struct MallocResource : public memory_resource
+  {
+  protected:
+    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override { return ::malloc(bytes); }
+    void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override { ::free(p); }
+    [[nodiscard]] bool  do_is_equal(const memory_resource& rhs) const noexcept override
+    {
+      return this == std::addressof(rhs);
+    }
+  };
+
+  static MallocResource   malloc_resource{};
+  static memory_resource* resource = std::addressof(malloc_resource);
+
+  return resource;
+}
+
+}  // namespace detail
+
+[[nodiscard]] inline auto set_default_resource(memory_resource* resource) noexcept -> memory_resource*
+{
+  return detail::default_resource_ptr() = resource;
+}
+
+[[nodiscard]] inline auto get_default_resource() noexcept -> memory_resource*
+{
+  return detail::default_resource_ptr();
+}
+template <typename T = unsigned char>
+class polymorphic_allocator
 {
 public:
   using value_type = T;
 
-  PolymorphicAllocator() noexcept = default;
+  polymorphic_allocator() noexcept = default;
   template <typename U>
-  PolymorphicAllocator(const PolymorphicAllocator<U>& rhs) noexcept : resource_{rhs.resource()}
+  polymorphic_allocator(const polymorphic_allocator<U>& rhs) noexcept : resource_{rhs.resource()}
   {
   }
-  PolymorphicAllocator(MemoryResource* res) noexcept : resource_{res} {}
+  polymorphic_allocator(memory_resource* res) noexcept : resource_{res} {}
 
+  void               deallocate(T* p, std::size_t n) { resource_->deallocate(p, sizeof(T) * n, alignof(T)); }
   [[nodiscard]] auto allocate(std::size_t n) -> T*
   {
-    if (!resource_)
-    {
-      return std::allocator<T>{}.allocate(n);
-    }
-
     return reinterpret_cast<T*>(resource_->allocate(sizeof(T) * n, alignof(T)));
   }
 
-  void deallocate(T* p, std::size_t n)
-  {
-    if (!resource_)
-    {
-      std::allocator<T>{}.deallocate(p, n);
-      return;
-    }
+  [[nodiscard]] auto resource() const noexcept -> memory_resource* { return resource_; }
 
-    resource_->deallocate(p, sizeof(T) * n, alignof(T));
-  }
-
-  [[nodiscard]] auto resource() const noexcept -> MemoryResource* { return resource_; }
-
-  [[nodiscard]] friend bool operator==(const PolymorphicAllocator& lhs, const PolymorphicAllocator& rhs) noexcept
+  [[nodiscard]] friend bool operator==(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
   {
     return (lhs.resource_ && rhs.resource_) || lhs.resource_->is_equal(*rhs.resource_);
   }
-  [[nodiscard]] friend bool operator!=(const PolymorphicAllocator& lhs, const PolymorphicAllocator& rhs) noexcept
+  [[nodiscard]] friend bool operator!=(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
   {
     return !(lhs == rhs);
   }
 
 private:
-  MemoryResource* resource_ = nullptr;
+  memory_resource* resource_ = get_default_resource();
 };
 
-using DefaultAllocator = PolymorphicAllocator<unsigned char>;
+[[nodiscard]] inline auto null_memory_resource() noexcept -> memory_resource*
+{
+  struct NullResource : public memory_resource
+  {
+  protected:
+    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override { throw std::bad_alloc{}; }
+    void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override {}
+    [[nodiscard]] bool  do_is_equal(const memory_resource& rhs) const noexcept override
+    {
+      return this == std::addressof(rhs);
+    }
+  };
+
+  static NullResource resource{};
+
+  return std::addressof(resource);
+}
+
 #endif  // #if (__cplusplus >= 201703L)
 
 namespace detail
@@ -181,7 +216,7 @@ private:
 }  // namespace detail
 
 template <std::size_t Size = std::numeric_limits<std::uint8_t>::max(), bool Debug = false>
-class MonotonicBuffer : public MemoryResource, private detail::MonotonicBufferStatistics<Size, Debug>
+class MonotonicBuffer : public memory_resource, private detail::MonotonicBufferStatistics<Size, Debug>
 {
 private:
   using Stats = detail::MonotonicBufferStatistics<Size, Debug>;
@@ -222,7 +257,7 @@ protected:
     --num_allocs_;
   }
 
-  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -252,7 +287,7 @@ private:
 };
 
 template <std::size_t Size, std::size_t BlockSize = sizeof(std::max_align_t), bool Debug = false>
-class BlockMemory : public MemoryResource
+class BlockMemory : public memory_resource
 {
 public:
   BlockMemory()                                          = default;
@@ -298,7 +333,7 @@ protected:
     }
   }
 
-  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -521,7 +556,7 @@ template <std::size_t Size,
           typename Lock         = RwLock,
           std::size_t BlockSize = sizeof(std::max_align_t),
           bool        Debug     = false>
-class SyncBlockMemory : public MemoryResource
+class SyncBlockMemory : public memory_resource
 {
 protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
@@ -534,7 +569,7 @@ protected:
     memory_.lock()->deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -544,7 +579,7 @@ private:
 };
 
 template <std::size_t Size, typename Lock, std::size_t BlockSize>
-class SyncBlockMemory<Size, Lock, BlockSize, true> : public MemoryResource
+class SyncBlockMemory<Size, Lock, BlockSize, true> : public memory_resource
 {
 public:
   ~SyncBlockMemory() noexcept override
@@ -578,7 +613,7 @@ protected:
     alloc->deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -780,7 +815,7 @@ template <std::size_t Size,
           std::size_t BlockSize =
               detail::make_max_aligned(sizeof(Synchronized<MonotonicBuffer<SmallBlockSize>, Lock>) >> 5),
           bool Debug = false>
-class BasicDualLevelBlockPool : public MemoryResource, detail::DualLevelBlockPoolStatistics<SmallBlockSize, Debug>
+class BasicDualLevelBlockPool : public memory_resource, detail::DualLevelBlockPoolStatistics<SmallBlockSize, Debug>
 {
 public:
   using LockType = Lock;
@@ -816,7 +851,7 @@ public:
 private:
   using SmallBuffer     = MonotonicBuffer<small_size>;
   using SyncSmallBuffer = Synchronized<SmallBuffer, LockType>;
-  using SmallBufferPtr  = std::unique_ptr<SyncSmallBuffer, DeleteUsingAlloc<SyncSmallBuffer, DefaultAllocator>>;
+  using SmallBufferPtr  = std::unique_ptr<SyncSmallBuffer, DeleteUsingAlloc<SyncSmallBuffer, polymorphic_allocator<>>>;
 
 protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
@@ -843,7 +878,7 @@ protected:
     pool_.deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -900,7 +935,7 @@ protected:
                  pools->end());
 
     Stats::report_new_small_buffer();
-    pools->push_back(allocate_unique<SyncSmallBuffer>(DefaultAllocator{std::addressof(pool_)}));
+    pools->push_back(allocate_unique<SyncSmallBuffer>(polymorphic_allocator<>{std::addressof(pool_)}));
 
     const auto new_lock_start = Stats::report_lock();
     auto       new_pool       = pools->back()->lock();
@@ -931,9 +966,9 @@ protected:
   }
 
 private:
-  SyncBlockMemory<capacity, LockType, block_size, debug>                pool_{};
-  Synchronized<std::vector<SmallBufferPtr, DefaultAllocator>, LockType> small_pools_{
-      small_size / sizeof(SmallBufferPtr), DefaultAllocator{std::addressof(pool_)}};
+  SyncBlockMemory<capacity, LockType, block_size, debug>                       pool_{};
+  Synchronized<std::vector<SmallBufferPtr, polymorphic_allocator<>>, LockType> small_pools_{
+      small_size / sizeof(SmallBufferPtr), polymorphic_allocator<>{std::addressof(pool_)}};
 };
 
 template <std::size_t Size,
@@ -957,10 +992,10 @@ template <std::size_t Size,
           typename Lock              = typename SyncDualLevelBlockPool<Size, BlockSize>::LockType>
 using DebugSyncDualLevelBlockPool = SyncDualLevelBlockPool<Size, SmallBlockSize, BlockSize, Lock, true>;
 
-class MemoryPerformanceRecorder : public MemoryResource
+class MemoryPerformanceRecorder : public memory_resource
 {
 public:
-  MemoryPerformanceRecorder(MemoryResource& upstream) noexcept : upstream_{std::addressof(upstream)} {}
+  MemoryPerformanceRecorder(memory_resource& upstream) noexcept : upstream_{std::addressof(upstream)} {}
   MemoryPerformanceRecorder(const MemoryPerformanceRecorder& rhs) = delete;
   MemoryPerformanceRecorder(MemoryPerformanceRecorder&& rhs)      = delete;
 
@@ -994,13 +1029,13 @@ protected:
     time_spent_ += std::chrono::high_resolution_clock::now() - start;
   }
 
-  [[nodiscard]] bool do_is_equal(const MemoryResource& rhs) const noexcept override
+  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
 
 private:
-  MemoryResource*                              upstream_;
+  memory_resource*                             upstream_;
   std::chrono::high_resolution_clock::duration time_spent_ = {};
 };
 
