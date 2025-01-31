@@ -21,13 +21,13 @@ struct NoStopState_t
 
 ETCPAL_INLINE_VARIABLE constexpr auto NoStopState = NoStopState_t{};
 
-template <typename Allocator = DefaultAllocator>
+template <typename Allocator = polymorphic_allocator<>>
 class StopToken;
 
-template <typename Callback, typename Allocator = DefaultAllocator>
+template <typename Callback, typename Allocator = polymorphic_allocator<>>
 class StopCallback;
 
-template <typename Allocator = DefaultAllocator>
+template <typename Allocator = polymorphic_allocator<>>
 class StopSource
 {
 private:

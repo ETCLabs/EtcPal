@@ -5,16 +5,11 @@
 
 #include <unity_fixture.h>
 
-#if (__cplusplus >= 201703L)
-
 namespace
 {
 
-auto* default_resource = std::pmr::null_memory_resource();
-
+auto* default_resource = etcpal::null_memory_resource();
 }
-
-#endif  // #if (__cplusplus >= 201703L)
 
 extern "C" {
 
@@ -22,23 +17,19 @@ TEST_GROUP(etcpal_cpp_stop_token);
 
 TEST_SETUP(etcpal_cpp_stop_token)
 {
-#if (__cplusplus >= 201703L)
-  default_resource = std::pmr::get_default_resource();
-  std::pmr::set_default_resource(std::pmr::null_memory_resource());
-#endif  // #if (__cplusplus >= 201703L)
+  default_resource = etcpal::get_default_resource();
+  etcpal::set_default_resource(etcpal::null_memory_resource());
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_stop_token)
 {
-#if (__cplusplus >= 201703L)
-  std::pmr::set_default_resource(default_resource);
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::set_default_resource(default_resource);
 }
 
 TEST(etcpal_cpp_stop_token, stop_source)
 {
   etcpal::BlockMemory<1 << 8> buffer{};
-  const auto                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  const auto                  alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   // initialize source with state
   auto ssource = etcpal::StopSource
