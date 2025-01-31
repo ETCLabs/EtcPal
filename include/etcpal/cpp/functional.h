@@ -79,11 +79,11 @@ class Callable;
   template <typename R, typename... Args>                                                                              \
   class etcpal::MoveOnlyFunction<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT>           \
       : public MoveOnlyFunction<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,            \
-                                DefaultAllocator>                                                                      \
+                                polymorphic_allocator<>>                                                               \
   {                                                                                                                    \
   public:                                                                                                              \
     using Parent = MoveOnlyFunction<R(Args...) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT,        \
-                                    DefaultAllocator>;                                                                 \
+                                    polymorphic_allocator<>>;                                                          \
     using Parent::Parent;                                                                                              \
   };                                                                                                                   \
                                                                                                                        \

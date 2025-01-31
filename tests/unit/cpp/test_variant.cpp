@@ -4,16 +4,11 @@
 
 #include <etcpal/cpp/memory.h>
 
-#if (__cplusplus >= 201703L)
-
 namespace
 {
 
-auto* default_resource = std::pmr::null_memory_resource();
-
+auto* default_resource = etcpal::null_memory_resource();
 }
-
-#endif  // #if (__cplusplus >= 201703L)
 
 extern "C" {
 
@@ -21,17 +16,13 @@ TEST_GROUP(etcpal_cpp_variant);
 
 TEST_SETUP(etcpal_cpp_variant)
 {
-#if (__cplusplus >= 201703L)
-  default_resource = std::pmr::get_default_resource();
-  std::pmr::set_default_resource(std::pmr::null_memory_resource());
-#endif  // #if (__cplusplus >= 201703L)
+  default_resource = etcpal::get_default_resource();
+  etcpal::set_default_resource(etcpal::null_memory_resource());
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_variant)
 {
-#if (__cplusplus >= 201703L)
-  std::pmr::set_default_resource(default_resource);
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::set_default_resource(default_resource);
 }
 
 namespace
@@ -65,11 +56,11 @@ TEST(etcpal_cpp_variant, variant)
   TEST_ASSERT_TRUE((etcpal::Variant<int, double>{etcpal::InPlaceType_t<int>{}}).index() == 0);
   TEST_ASSERT_TRUE((etcpal::Variant<int, double>{etcpal::InPlaceType_t<double>{}}).index() == 1);
 
-  using String         = std::basic_string<char, std::char_traits<char>, etcpal::DefaultAllocator>;
+  using String         = std::basic_string<char, std::char_traits<char>, etcpal::polymorphic_allocator<>>;
   using StringOrNumber = etcpal::Variant<int, String>;
 
   etcpal::BlockMemory<1 << 5> buffer{};
-  const auto                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  const auto                  alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   // comparision
   const auto test_string_0 = String{"test string 0", alloc};

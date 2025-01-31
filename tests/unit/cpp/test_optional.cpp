@@ -7,16 +7,11 @@
 
 #include <unity_fixture.h>
 
-#if (__cplusplus >= 201703L)
-
 namespace
 {
 
-auto* default_resource = std::pmr::null_memory_resource();
-
+auto* default_resource = etcpal::null_memory_resource();
 }
-
-#endif  // #if (__cplusplus >= 201703L)
 
 extern "C" {
 
@@ -24,17 +19,13 @@ TEST_GROUP(etcpal_cpp_optional);
 
 TEST_SETUP(etcpal_cpp_optional)
 {
-#if (__cplusplus >= 201703L)
-  default_resource = std::pmr::get_default_resource();
-  std::pmr::set_default_resource(std::pmr::null_memory_resource());
-#endif  // #if (__cplusplus >= 201703L)
+  default_resource = etcpal::get_default_resource();
+  etcpal::set_default_resource(etcpal::null_memory_resource());
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_optional)
 {
-#if (__cplusplus >= 201703L)
-  std::pmr::set_default_resource(default_resource);
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::set_default_resource(default_resource);
 }
 
 TEST(etcpal_cpp_optional, optional)
@@ -54,7 +45,7 @@ TEST(etcpal_cpp_optional, optional)
 
   // destruction
   etcpal::BlockMemory<1 << 5> buffer{};
-  const auto                  alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  const auto                  alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   const auto test_value = std::allocate_shared<int>(alloc);
   // initialization

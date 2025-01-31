@@ -17,6 +17,7 @@
 namespace etcpal
 {
 
+/// @brief Status of an operation on a future or promised value.
 enum class FutureStatus : unsigned int
 {
   ready     = 1 << 0,  //!< promise has been fulfilled with either a value or an exception
@@ -26,17 +27,6 @@ enum class FutureStatus : unsigned int
   continued = 1 << 4,  //!< future has had its continuation invoked
   consumed  = 1 << 5,  //!< future value has been obtained
   no_state  = 1 << 6   //!< future has no associated state
-};
-
-enum class FutureErrc : unsigned int
-{
-  no_state,
-  timeout,
-  broken_promise,
-  future_already_promised,
-  future_already_retrieved,
-  promise_already_satisfied,
-  continuation_already_set
 };
 
 [[nodiscard]] constexpr auto operator~(FutureStatus value) noexcept
@@ -88,9 +78,21 @@ template <typename IntType>
   return lhs = lhs >> rhs;
 }
 
-template <typename T, typename Allocator = DefaultAllocator>
+/// @brief Errors that may happen to an operation on a future or promised value.
+enum class FutureErrc : unsigned int
+{
+  no_state,                   //!< no associated shared state
+  timeout,                    //!< timed out waiting for an operation to complete
+  broken_promise,             //!< the associated promise has been abandoned
+  future_already_promised,    //!< a future value has already been promised to a caller
+  future_already_retrieved,   //!< a future value has already been retrieved by a caller
+  promise_already_satisfied,  //!< the promise has already been fulfilled with a value or exception
+  continuation_already_set    //!< the promise has already had a continuation assigned
+};
+
+template <typename T, typename Allocator = polymorphic_allocator<>>
 class Promise;
-template <typename T, typename Allocator = DefaultAllocator>
+template <typename T, typename Allocator = polymorphic_allocator<>>
 class Future;
 
 class FutureError : public std::logic_error
@@ -194,6 +196,13 @@ private:
 
 }  // namespace detail
 
+/// @brief A type representing a promise to produce a value in the future.
+///
+/// A promise/future pair acts like a single-shot mailbox for some asynchronous task to eventually deliver a result of
+/// type @a T. This implementation supports custom allocators
+///
+/// @tparam T
+/// @tparam Allocator
 template <typename T, typename Allocator>
 class Promise
 {
@@ -313,7 +322,7 @@ struct UseFuture
 
 ETCPAL_INLINE_VARIABLE constexpr auto use_future = UseFuture{};
 
-template <std::size_t N, typename Allocator = DefaultAllocator>
+template <std::size_t N, typename Allocator = polymorphic_allocator<>>
 class ThreadPool
 {
 public:

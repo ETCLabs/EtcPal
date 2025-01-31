@@ -6,16 +6,11 @@
 
 #include <unity_fixture.h>
 
-#if (__cplusplus >= 201703L)
-
 namespace
 {
 
-auto* default_resource = std::pmr::null_memory_resource();
-
+auto* default_resource = etcpal::null_memory_resource();
 }
-
-#endif  // #if (__cplusplus >= 201703L)
 
 extern "C" {
 
@@ -23,17 +18,13 @@ TEST_GROUP(etcpal_cpp_async);
 
 TEST_SETUP(etcpal_cpp_async)
 {
-#if (__cplusplus >= 201703L)
-  default_resource = std::pmr::get_default_resource();
-  std::pmr::set_default_resource(std::pmr::null_memory_resource());
-#endif  // #if (__cplusplus >= 201703L)
+  default_resource = etcpal::get_default_resource();
+  etcpal::set_default_resource(etcpal::null_memory_resource());
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_async)
 {
-#if (__cplusplus >= 201703L)
-  std::pmr::set_default_resource(default_resource);
-#endif  // #if (__cplusplus >= 201703L)
+  etcpal::set_default_resource(default_resource);
 }
 
 TEST(etcpal_cpp_async, promise_future)
@@ -41,7 +32,7 @@ TEST(etcpal_cpp_async, promise_future)
   using namespace std::chrono_literals;
 
   etcpal::SyncBlockMemory<1 << 9> buffer{};
-  const auto                      alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  const auto                      alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   auto promise = etcpal::Promise<int>{alloc};
   auto future  = promise.get_future();
@@ -59,13 +50,13 @@ TEST(etcpal_cpp_async, promise_future)
 TEST(etcpal_cpp_async, thread_pool)
 {
   etcpal::SyncDualLevelBlockPool<1 << 22> buffer{};
-  const auto                              alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   constexpr auto num_items = 1024;
 
   etcpal::ThreadPool<32> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
   auto                   future_futures                = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       auto promise = etcpal::Promise<int>{alloc};
@@ -76,7 +67,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_futures_for_get_if     = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       auto promise = etcpal::Promise<int>{alloc};
@@ -87,7 +78,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_continued_futures      = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       auto promise = etcpal::Promise<int>{alloc};
@@ -99,7 +90,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_continued_exec_futures = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       futures.push_back(
@@ -111,7 +102,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_abandoned_futures      = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::DefaultAllocator>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       futures.push_back(etcpal::Promise<int>{alloc}.get_future());
@@ -155,10 +146,10 @@ TEST(etcpal_cpp_async, thread_pool)
 TEST(etcpal_cpp_async, promise_chain)
 {
   using namespace std::chrono_literals;
-  using NumVector = std::vector<int, etcpal::DefaultAllocator>;
+  using NumVector = std::vector<int, etcpal::polymorphic_allocator<>>;
 
   etcpal::SyncDualLevelBlockPool<1 << 14> buffer{};
-  const auto                              alloc = etcpal::DefaultAllocator{std::addressof(buffer)};
+  const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   constexpr auto num_elements = std::size_t{1024};
 
