@@ -238,6 +238,10 @@ public:
     return try_alloc_impl(bytes, alignment);
   }
 
+  [[nodiscard]] constexpr auto        data() const noexcept { return buffer_.data(); }
+  [[nodiscard]] static constexpr auto size() noexcept { return Size; }
+  [[nodiscard]] static constexpr bool debug_mode() noexcept { return Debug; }
+
 protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
@@ -281,15 +285,19 @@ private:
     return p;
   }
 
-  alignas(std::max_align_t) std::array<unsigned char, Size> buffer_;
-  std::size_t allocd_bytes_ = 0;
-  std::size_t num_allocs_   = 0;
+  alignas(std::max_align_t) std::array<unsigned char, Size> buffer_ = {};
+  std::size_t allocd_bytes_                                         = 0;
+  std::size_t num_allocs_                                           = 0;
 };
 
 template <std::size_t Size, std::size_t BlockSize = sizeof(std::max_align_t), bool Debug = false>
 class BlockMemory : public memory_resource
 {
 public:
+  static constexpr auto capacity   = Size;
+  static constexpr auto block_size = BlockSize;
+  static constexpr bool debug      = Debug;
+
   BlockMemory()                                          = default;
   BlockMemory(const BlockMemory& rhs)                    = delete;
   BlockMemory(BlockMemory&& rhs)                         = delete;
@@ -393,13 +401,14 @@ protected:
   }
 
 private:
+  static_assert(Size % BlockSize == 0, "total memory must be a multiple of the block size");
   static_assert(Size >= BlockSize, "memory buffer must be large enough to contain at least one block");
   static_assert(BlockSize % alignof(std::max_align_t) == 0,
                 "memory block size must be a multiple of the maximum alignment");
 
-  alignas(std::max_align_t) std::array<unsigned char, Size> buffer_;
-  int                               first_free_block_ = 0;
-  std::bitset<2 * Size / BlockSize> live_             = {};
+  alignas(std::max_align_t) std::array<unsigned char, Size> buffer_ = {};
+  int                               first_free_block_               = 0;
+  std::bitset<2 * Size / BlockSize> live_                           = {};
 };
 
 template <std::size_t Size, std::size_t BlockSize>
@@ -685,7 +694,55 @@ template <typename T, typename Allocator, typename... Args, std::enable_if_t<!st
 namespace detail
 {
 
-template <std::size_t SmallSize, bool Debug>
+struct DummyLock
+{
+  static constexpr void lock() noexcept {}
+  static constexpr void unlock() noexcept {}
+  static constexpr bool try_lock() noexcept { return true; }
+};
+
+[[nodiscard]] constexpr auto make_max_aligned(std::size_t size) noexcept
+{
+  return (size % alignof(std::max_align_t) == 0) ? size
+                                                 : ((size / alignof(std::max_align_t)) + 1) * alignof(std::max_align_t);
+}
+
+template <std::size_t SmallBlockSize, typename Lock, bool Debug>
+[[nodiscard]] constexpr auto size_for_32_blocks_per_buffer() noexcept
+{
+  constexpr auto sync_buffer_size = sizeof(Synchronized<MonotonicBuffer<SmallBlockSize, Debug>, Lock>);
+  return make_max_aligned(std::max(sync_buffer_size >> 5, sizeof(std::max_align_t)));
+}
+
+template <std::size_t Size, typename Lock, bool Debug>
+[[nodiscard]] constexpr auto largest_sync_buffer_sized_under() noexcept
+{
+  constexpr auto overhead     = sizeof(Synchronized<MonotonicBuffer<Size, Debug>, Lock>) - Size;
+  constexpr auto reduced_size = Size - overhead;
+  static_assert(overhead <= Size - sizeof(std::max_align_t), "small blocks are smaller than allowed");
+  static_assert(make_max_aligned(sizeof(Synchronized<MonotonicBuffer<reduced_size, Debug>, Lock>)) <= Size,
+                "monotonic buffer of calculated size must fit inside the given amount of memory");
+
+  return reduced_size;
+}
+
+}  // namespace detail
+
+template <std::size_t Size,
+          std::size_t SmallBlockSize        = std::max(Size >> 9, BlockMemory<Size>::block_size << 5),
+          typename Lock                     = detail::DummyLock,
+          bool        Debug                 = false,
+          bool        DebugMonotonicBuffers = false,
+          std::size_t BlockSize             = detail::size_for_32_blocks_per_buffer<
+                          detail::largest_sync_buffer_sized_under<SmallBlockSize, Lock, DebugMonotonicBuffers>(),
+                          Lock,
+                          DebugMonotonicBuffers>()>
+class BasicDualLevelBlockPool;
+
+namespace detail
+{
+
+template <typename Pool>
 class DualLevelBlockPoolStatistics
 {
 public:
@@ -701,11 +758,11 @@ public:
   }
 };
 
-template <std::size_t SmallSize>
-class DualLevelBlockPoolStatistics<SmallSize, true>
+template <std::size_t Size, std::size_t SmallSize, std::size_t BlockSize, typename Lock, bool DebugMonoBuffs>
+class DualLevelBlockPoolStatistics<BasicDualLevelBlockPool<Size, SmallSize, Lock, true, DebugMonoBuffs, BlockSize>>
 {
 public:
-  static constexpr auto small_size = SmallSize;
+  static constexpr auto small_size = largest_sync_buffer_sized_under<SmallSize, Lock, DebugMonoBuffs>();
 
   ~DualLevelBlockPoolStatistics() noexcept
   {
@@ -793,29 +850,18 @@ private:
   std::chrono::high_resolution_clock::duration total_time_               = {};
 };
 
-[[nodiscard]] constexpr auto make_max_aligned(std::size_t size) noexcept
-{
-  return (size % alignof(std::max_align_t) == 0) ? size
-                                                 : ((size / alignof(std::max_align_t)) + 1) * alignof(std::max_align_t);
-}
-
-struct DummyLock
-{
-  static constexpr void lock() noexcept {}
-  static constexpr void unlock() noexcept {}
-  static constexpr bool try_lock() noexcept { return true; }
-};
-
 }  // namespace detail
 
 template <std::size_t Size,
-          std::size_t SmallBlockSize =
-              detail::make_max_aligned(std::max<std::size_t>(Size >> 10, std::numeric_limits<unsigned char>::max())),
-          typename Lock = detail::DummyLock,
-          std::size_t BlockSize =
-              detail::make_max_aligned(sizeof(Synchronized<MonotonicBuffer<SmallBlockSize>, Lock>) >> 5),
-          bool Debug = false>
-class BasicDualLevelBlockPool : public memory_resource, detail::DualLevelBlockPoolStatistics<SmallBlockSize, Debug>
+          std::size_t SmallBlockSize,
+          typename Lock,
+          bool        Debug,
+          bool        DebugMonotonicBuffers,
+          std::size_t BlockSize>
+class BasicDualLevelBlockPool
+    : public memory_resource,
+      private detail::DualLevelBlockPoolStatistics<
+          BasicDualLevelBlockPool<Size, SmallBlockSize, Lock, Debug, DebugMonotonicBuffers, BlockSize>>
 {
 public:
   using LockType = Lock;
@@ -826,7 +872,11 @@ public:
   static constexpr bool debug      = Debug;
 
 private:
-  using Stats = detail::DualLevelBlockPoolStatistics<small_size, debug>;
+  static constexpr bool debug_monotonic_buffers = DebugMonotonicBuffers;
+  static constexpr auto actual_monotonic_buffer_size =
+      detail::largest_sync_buffer_sized_under<small_size, LockType, debug_monotonic_buffers>();
+
+  using Stats = detail::DualLevelBlockPoolStatistics<BasicDualLevelBlockPool>;
 
 public:
   BasicDualLevelBlockPool() { small_pools_.lock()->resize(0); }
@@ -849,7 +899,7 @@ public:
   auto operator=(BasicDualLevelBlockPool&& rhs) -> BasicDualLevelBlockPool&      = delete;
 
 private:
-  using SmallBuffer     = MonotonicBuffer<small_size>;
+  using SmallBuffer     = MonotonicBuffer<actual_monotonic_buffer_size, debug_monotonic_buffers>;
   using SyncSmallBuffer = Synchronized<SmallBuffer, LockType>;
   using SmallBufferPtr  = std::unique_ptr<SyncSmallBuffer, DeleteUsingAlloc<SyncSmallBuffer, polymorphic_allocator<>>>;
 
@@ -857,7 +907,7 @@ protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     const auto timer = Stats::report_allocator_entry();
-    if (bytes <= small_size)
+    if (bytes <= actual_monotonic_buffer_size)
     {
       return allocate_from_small_buffers(bytes, alignment);
     }
@@ -975,13 +1025,13 @@ template <std::size_t Size,
           std::size_t SmallBlockSize = BasicDualLevelBlockPool<Size>::small_size,
           std::size_t BlockSize      = BasicDualLevelBlockPool<Size, SmallBlockSize>::block_size,
           bool        Debug          = false>
-using DualLevelBlockPool = BasicDualLevelBlockPool<Size, SmallBlockSize, detail::DummyLock, BlockSize, Debug>;
+using DualLevelBlockPool = BasicDualLevelBlockPool<Size, SmallBlockSize, detail::DummyLock, Debug, false, BlockSize>;
 template <std::size_t Size,
           std::size_t SmallBlockSize = DualLevelBlockPool<Size>::small_size,
           std::size_t BlockSize      = DualLevelBlockPool<Size, SmallBlockSize>::block_size,
           typename Lock              = RwLock,
           bool Debug                 = false>
-using SyncDualLevelBlockPool = BasicDualLevelBlockPool<Size, SmallBlockSize, Lock, BlockSize, Debug>;
+using SyncDualLevelBlockPool = BasicDualLevelBlockPool<Size, SmallBlockSize, Lock, Debug, false, BlockSize>;
 template <std::size_t Size,
           std::size_t SmallBlockSize = DualLevelBlockPool<Size>::small_size,
           std::size_t BlockSize      = DualLevelBlockPool<Size, SmallBlockSize>::block_size>
@@ -989,7 +1039,7 @@ using DebugDualLevelBlockPool = DualLevelBlockPool<Size, SmallBlockSize, BlockSi
 template <std::size_t Size,
           std::size_t SmallBlockSize = SyncDualLevelBlockPool<Size>::small_size,
           std::size_t BlockSize      = SyncDualLevelBlockPool<Size, SmallBlockSize>::block_size,
-          typename Lock              = typename SyncDualLevelBlockPool<Size, BlockSize>::LockType>
+          typename Lock              = typename SyncDualLevelBlockPool<Size, SmallBlockSize, BlockSize>::LockType>
 using DebugSyncDualLevelBlockPool = SyncDualLevelBlockPool<Size, SmallBlockSize, BlockSize, Lock, true>;
 
 class MemoryPerformanceRecorder : public memory_resource
