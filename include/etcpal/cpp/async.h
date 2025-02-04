@@ -248,57 +248,43 @@ public:
   template <typename Clock, typename Duration>
   [[nodiscard]] auto get_if(const std::chrono::time_point<Clock, Duration>& timeout) noexcept
       -> Variant<T, FutureErrc, std::exception_ptr>;
-  template <typename F,
-            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F&& cont)
-      -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>;
-  template <typename F,
-            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
-                                        detail::IsCallable<F, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F&& cont)
-      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
-                                          detail::CallResult_t<F, T>,
-                                          detail::CallResult_t<F, std::exception_ptr>>,
+  template <typename... F,
+            typename = std::enable_if_t<
+                detail::IsCallable<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>::value &&
+                !(detail::IsCallable<detail::Selection<F...>, FutureStatus>::value &&
+                  detail::IsCallable<detail::Selection<F...>, T>::value &&
+                  detail::IsCallable<detail::Selection<F...>, std::exception_ptr>::value)>>
+  [[nodiscard]] auto and_then(F&&... cont)
+      -> Future<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>,
                 Allocator>;
-  template <
-      typename Executor,
-      typename F,
-      typename = std::enable_if_t<detail::IsCallable<F, FutureStatus, Optional<T>&, std::exception_ptr>::value &&
-                                  !(detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
-                                    detail::IsCallable<F, std::exception_ptr>::value)>>
-  [[nodiscard]] auto and_then(const Executor& exec, F&& cont)
-      -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>;
-  template <typename Executor,
-            typename F,
-            typename = std::enable_if_t<detail::IsCallable<F, FutureStatus>::value && detail::IsCallable<F, T>::value &&
-                                        detail::IsCallable<F, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(const Executor& exec, F&& cont)
-      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
-                                          detail::CallResult_t<F, T>,
-                                          detail::CallResult_t<F, std::exception_ptr>>,
-                Allocator>;
-  template <typename F1,
-            typename F2,
-            typename F3,
-            typename = std::enable_if_t<detail::IsCallable<detail::Selection<F1, F2, F3>, FutureStatus>::value &&
-                                        detail::IsCallable<detail::Selection<F1, F2, F3>, T>::value &&
-                                        detail::IsCallable<detail::Selection<F1, F2, F3>, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F1&& f1, F2&& f2, F3&& f3)
-      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
-                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
-                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
+  template <typename... F,
+            typename = std::enable_if_t<detail::IsCallable<detail::Selection<F...>, FutureStatus>::value &&
+                                        detail::IsCallable<detail::Selection<F...>, T>::value &&
+                                        detail::IsCallable<detail::Selection<F...>, std::exception_ptr>::value>>
+  [[nodiscard]] auto and_then(F&&... cont)
+      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
+                                          detail::CallResult_t<detail::Selection<F...>, T>,
+                                          detail::CallResult_t<detail::Selection<F...>, std::exception_ptr>>,
                 Allocator>;
   template <typename Executor,
-            typename F1,
-            typename F2,
-            typename F3,
-            typename = std::enable_if_t<detail::IsCallable<detail::Selection<F1, F2, F3>, FutureStatus>::value &&
-                                        detail::IsCallable<detail::Selection<F1, F2, F3>, T>::value &&
-                                        detail::IsCallable<detail::Selection<F1, F2, F3>, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(const Executor& exec, F1&& f1, F2&& f2, F3&& f3)
-      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
-                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
-                                          detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
+            typename... F,
+            typename = std::enable_if_t<
+                detail::IsCallable<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>::value &&
+                !(detail::IsCallable<detail::Selection<F...>, FutureStatus>::value &&
+                  detail::IsCallable<detail::Selection<F...>, T>::value &&
+                  detail::IsCallable<detail::Selection<F...>, std::exception_ptr>::value)>>
+  [[nodiscard]] auto and_then(const Executor& exec, F&&... cont)
+      -> Future<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>,
+                Allocator>;
+  template <typename Executor,
+            typename... F,
+            typename = std::enable_if_t<detail::IsCallable<detail::Selection<F...>, FutureStatus>::value &&
+                                        detail::IsCallable<detail::Selection<F...>, T>::value &&
+                                        detail::IsCallable<detail::Selection<F...>, std::exception_ptr>::value>>
+  [[nodiscard]] auto and_then(const Executor& exec, F&&... cont)
+      -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
+                                          detail::CallResult_t<detail::Selection<F...>, T>,
+                                          detail::CallResult_t<detail::Selection<F...>, std::exception_ptr>>,
                 Allocator>;
 
   [[nodiscard]] bool valid() const noexcept;
@@ -834,22 +820,22 @@ template <typename Rep, typename Period>
 }
 
 template <typename T, typename Allocator>
-template <typename F, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
-    -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
+template <typename... F, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&&... cont)
+    -> Future<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
 {
   if (!state_)
   {
     throw FutureError{FutureErrc::no_state};
   }
 
-  auto promise = Promise<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
+  auto promise =
+      Promise<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
       state_->get_allocator()};
   auto future = promise.get_future();
   auto result = state_->set_continuation(
-      [fun = std::forward<F>(cont), prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
-        prom.set_value(std::forward<F>(fun)(status, value, exception));
-      });
+      [fun = make_selection(std::forward<F>(cont)...), prom = std::move(promise)](
+          auto status, auto& value, auto exception) mutable { prom.set_value(fun(status, value, exception)); });
   switch (result.result)
   {
     case detail::FutureActionResult::continuation_set_suceeded:
@@ -868,11 +854,11 @@ template <typename F, typename>
 }
 
 template <typename T, typename Allocator>
-template <typename F, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&& cont)
-    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
-                                        detail::CallResult_t<F, T>,
-                                        detail::CallResult_t<F, std::exception_ptr>>,
+template <typename... F, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&&... cont)
+    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
+                                        detail::CallResult_t<detail::Selection<F...>, T>,
+                                        detail::CallResult_t<detail::Selection<F...>, std::exception_ptr>>,
               Allocator>
 {
   if (!state_)
@@ -880,23 +866,24 @@ template <typename F, typename>
     throw FutureError{FutureErrc::no_state};
   }
 
-  auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
-                                                   detail::CallResult_t<F, std::exception_ptr>>,
+  auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
+                                                   detail::CallResult_t<detail::Selection<F...>, T>,
+                                                   detail::CallResult_t<detail::Selection<F...>, std::exception_ptr>>,
                          Allocator>{state_->get_allocator()};
   auto future  = promise.get_future();
-  auto result  = state_->set_continuation(
-      [fun = std::forward<F>(cont), prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
+  auto result  = state_->set_continuation([fun = make_selection(std::forward<F>(cont)...), prom = std::move(promise)](
+                                             auto status, auto& value, auto exception) mutable {
         if (value)
         {
-          detail::fulfill_promise(prom, std::forward<F>(fun), *value);
+      detail::fulfill_promise(prom, fun, *value);
         }
         else if (exception)
         {
-          detail::fulfill_promise(prom, std::forward<F>(fun), exception);
+      detail::fulfill_promise(prom, fun, exception);
         }
         else
         {
-          detail::fulfill_promise(prom, std::forward<F>(fun), status);
+      detail::fulfill_promise(prom, fun, status);
         }
       });
   switch (result.result)
@@ -917,22 +904,23 @@ template <typename F, typename>
 }
 
 template <typename T, typename Allocator>
-template <typename Executor, typename F, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont)
-    -> Future<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
+template <typename Executor, typename... F, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&&... cont)
+    -> Future<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
 {
   if (!state_)
   {
     throw FutureError{FutureErrc::no_state};
   }
 
-  auto promise = Promise<detail::CallResult_t<F, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
+  auto promise =
+      Promise<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
       state_->get_allocator()};
   auto future = promise.get_future();
-  auto result = state_->set_continuation(
-      [fun = std::forward<F>(cont), exec, prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
+  auto result = state_->set_continuation([fun  = make_selection(std::forward<F>(cont)...), exec,
+                                          prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
         exec.post([f = std::move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
-          detail::fulfill_promise(p, std::forward<F>(f), status, val, exception);
+      detail::fulfill_promise(p, f, status, val, exception);
         });
       });
   switch (result.result)
@@ -953,11 +941,11 @@ template <typename Executor, typename F, typename>
 }
 
 template <typename T, typename Allocator>
-template <typename Executor, typename F, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont)
-    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>,
-                                        detail::CallResult_t<F, T>,
-                                        detail::CallResult_t<F, std::exception_ptr>>,
+template <typename Executor, typename... F, typename>
+[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&&... cont)
+    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
+                                        detail::CallResult_t<detail::Selection<F...>, T>,
+                                        detail::CallResult_t<detail::Selection<F...>, std::exception_ptr>>,
               Allocator>
 {
   if (!state_)
@@ -965,24 +953,25 @@ template <typename Executor, typename F, typename>
     throw FutureError{FutureErrc::no_state};
   }
 
-  auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<F, FutureStatus>, detail::CallResult_t<F, T>,
-                                                   detail::CallResult_t<F, std::exception_ptr>>,
+  auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
+                                                   detail::CallResult_t<detail::Selection<F...>, T>,
+                                                   detail::CallResult_t<detail::Selection<F...>, std::exception_ptr>>,
                          Allocator>{state_->get_allocator()};
   auto future  = promise.get_future();
-  auto result  = state_->set_continuation(
-      [fun = std::forward<F>(cont), exec, prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
-        exec.post([f = std::forward<F>(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
+  auto result  = state_->set_continuation([fun  = make_selection(std::forward<F>(cont)...), exec,
+                                          prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
+    exec.post([f = move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
           if (val)
           {
-            detail::fulfill_promise(p, std::forward<F>(f), *val);
+        detail::fulfill_promise(p, f, *val);
           }
           else if (exception)
           {
-            detail::fulfill_promise(p, std::forward<F>(f), exception);
+        detail::fulfill_promise(p, f, exception);
           }
           else
           {
-            detail::fulfill_promise(p, std::forward<F>(f), status);
+        detail::fulfill_promise(p, f, status);
           }
         });
       });
@@ -1001,28 +990,6 @@ template <typename Executor, typename F, typename>
   }
 
   return future;
-}
-
-template <typename T, typename Allocator>
-template <typename F1, typename F2, typename F3, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F1&& f1, F2&& f2, F3&& f3)
-    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
-                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
-                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
-              Allocator>
-{
-  return and_then(make_selection(std::forward<F1>(f1), std::forward<F2>(f2), std::forward<F3>(f3)));
-}
-
-template <typename T, typename Allocator>
-template <typename Executor, typename F1, typename F2, typename F3, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F1&& f1, F2&& f2, F3&& f3)
-    -> Future<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F1, F2, F3>, FutureStatus>,
-                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, T>,
-                                        detail::CallResult_t<detail::Selection<F1, F2, F3>, std::exception_ptr>>,
-              Allocator>
-{
-  return and_then(exec, make_selection(std::forward<F1>(f1), std::forward<F2>(f2), std::forward<F3>(f3)));
 }
 
 template <typename T, typename Allocator>
