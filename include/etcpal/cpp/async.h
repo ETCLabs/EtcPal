@@ -325,6 +325,8 @@ public:
       -> Future<decltype(std::forward<F>(fun)()), Alloc>;
   template <typename F>
   [[nodiscard]] auto post(UseFuture tag, F&& fun) -> Future<decltype(std::forward<F>(fun)()), Allocator>;
+  template <typename Alloc = Allocator, typename F>
+  auto post(F&& fun, const Alloc& alloc);
   template <typename F>
   auto post(F&& fun);
 
@@ -472,6 +474,12 @@ public:
   [[nodiscard]] auto post(UseFuture tag, F&& fun) const -> Future<decltype(std::forward<F>(fun)()), Allocator>
   {
     return pool_->post(tag, std::forward<F>(fun));
+  }
+
+  template <typename F, typename Alloc = Allocator>
+  auto post(F&& fun, const Alloc& alloc) const
+  {
+    return pool_->post(std::forward<F>(fun), alloc);
   }
 
   template <typename F>
@@ -1086,14 +1094,21 @@ etcpal::ThreadPool<N, Allocator>::~ThreadPool() noexcept
 }
 
 template <std::size_t N, typename Allocator>
-template <typename F>
-auto etcpal::ThreadPool<N, Allocator>::post(F&& fun)
+template <typename Alloc, typename F>
+auto etcpal::ThreadPool<N, Allocator>::post(F&& fun, const Alloc& alloc)
 {
   const auto queue = queue_.lock();
-  queue->push(Task{std::forward<F>(fun), allocator_});
+  queue->push(Task{std::forward<F>(fun), alloc});
   queue_status_.SetBits(static_cast<EventBits>(detail::to_queue_status(queue->size())));
 
   return queue->size();
+}
+
+template <std::size_t N, typename Allocator>
+template <typename F>
+auto etcpal::ThreadPool<N, Allocator>::post(F&& fun)
+{
+  return post(std::forward<F>(fun), allocator_);
 }
 
 template <std::size_t N, typename Allocator>
