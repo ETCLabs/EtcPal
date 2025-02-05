@@ -13,18 +13,24 @@
 namespace etcpal
 {
 
+/// @brief Tag type indicating the given type should be engaged into the variant.
+/// @tparam T The type to engage.
 template <typename T>
 struct InPlaceType_t
 {
 };
 
+/// @brief Tag type indicating the type at the given index should be engaged into the variant.
+/// @tparam I The index of the type to engage.
 template <std::size_t I>
 struct InPlaceIndex_t
 {
 };
 
+/// @brief Tag value indicating an invalid variant type index.
 ETCPAL_INLINE_VARIABLE constexpr auto variant_npos = static_cast<std::size_t>(-1);
 
+/// @brief Exception type indicating the variant does not contain the requested type.
 class BadVariantAccess : public std::exception
 {
 };
@@ -150,27 +156,57 @@ union VariadicUnion;
 
 }  // namespace detail
 
+/// @brief A type-safe tagged union type with more monadic operations than the `std::variant` in `C++17`.
+/// @tparam T The types that the variant can possibly contain.
 template <typename... T>
 class Variant
 {
 public:
+  /// @brief Construct a variant holding a default-constructed value of the type with index `0`.
   template <typename U = detail::TypeAtIndex_t<0, T...>,
             typename   = std::enable_if_t<std::is_default_constructible<U>::value>>
   constexpr Variant() noexcept(std::is_nothrow_default_constructible<U>::value);
+  /// @brief Construct a variant using overload resolution to select the best-matching converting constructor.
+  /// @tparam U The type of value to initialize this variant with.
+  /// @param init The value to initialize this variant with.
   template <typename U, typename V = decltype(make_overload(detail::ConstructFrom<T>{}...)(std::declval<U>()))>
   constexpr Variant(U&& init) noexcept(noexcept(make_overload(detail::ConstructFrom<T>{}...)(std::forward<U>(init))));
+  /// @brief Construct a variant holding a value of the given type constructed using the given arguments.
+  /// @tparam U    The type of value to initialize this variant to hold.
+  /// @tparam Args The types of arguments to initialize the wrapped value with.
+  /// @param tag  Tag inidicating what type the variant should hold.
+  /// @param args The arguments to initialize the wrapped value with.
   template <typename U, typename... Args, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
   explicit constexpr Variant(InPlaceType_t<U> tag,
                              Args&&... args) noexcept(std::is_nothrow_constructible<U, Args...>::value);
+  /// @brief Construct a variant holding a value of the given type constructed using the given arguments.
+  /// @tparam U    The type of value to initialize this variant to hold.
+  /// @tparam V    The type of values to list-initialize the wrapped value with.
+  /// @tparam Args The types of arguments to initialize the wrapped value with.
+  /// @param tag   Tag inidicating what type the variant should hold.
+  /// @param ilist The initializer list to initialize the wrapped value with.
+  /// @param args  The arguments to initialize the wrapped value with.
   template <typename U, typename V, typename... Args, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
   explicit constexpr Variant(InPlaceType_t<U> tag, std::initializer_list<V> list, Args&&... args) noexcept(
       std::is_nothrow_constructible<U, std::initializer_list<V>, Args...>::value);
+  /// @brief Construct a variant holding a value of the type at the given index constructed using the given arguments.
+  /// @tparam I    The index of the type of value to initialize this variant to hold.
+  /// @tparam Args The types of arguments to initialize the wrapped value with.
+  /// @param tag  Tag inidicating what type the variant should hold.
+  /// @param args The arguments to initialize the wrapped value with.
   template <std::size_t I,
             typename... Args,
             typename = std::enable_if_t<std::less<>{}(I, sizeof...(T)) &&
                                         std::is_constructible<detail::TypeAtIndex_t<I, T...>, Args...>::value>>
   explicit constexpr Variant(InPlaceIndex_t<I> tag, Args&&... args) noexcept(
       std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, Args...>::value);
+  /// @brief Construct a variant holding a value of the type at the given index constructed using the given arguments.
+  /// @tparam I    The index of the type of value to initialize this variant to hold.
+  /// @tparam V    The type of values to list-initialize the wrapped value with.
+  /// @tparam Args The types of arguments to initialize the wrapped value with.
+  /// @param tag   Tag inidicating what type the variant should hold.
+  /// @param ilist The initializer list to initialize the wrapped value with.
+  /// @param args  The arguments to initialize the wrapped value with.
   template <std::size_t I,
             typename V,
             typename... Args,
@@ -180,17 +216,42 @@ public:
   explicit constexpr Variant(InPlaceIndex_t<I> tag, std::initializer_list<V> list, Args&&... args) noexcept(
       std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, std::initializer_list<V>, Args...>::value);
 
+  /// @brief Copy construct a variant.
+  /// @param rhs The variant to copy from.
   constexpr Variant(const Variant& rhs) noexcept(detail::AllNothrowCopyConstructible<T...>::value);
+  /// @brief Move construct a variant.
+  /// @param rhs The variant to move from.
   constexpr Variant(Variant&& rhs) noexcept;
 
-  ~Variant() noexcept;
+  ~Variant() noexcept;  //!< Destroy the variant, destroying the wrapped value.
 
+  /// @brief Copy assign to this variant.
+  /// @param rhs The variant to copy from.
+  /// @return Self-reference.
   constexpr auto operator=(const Variant& rhs) noexcept(detail::AllNothrowCopyAssignable<T...>::value) -> Variant&;
+  /// @brief Move assign to this variant.
+  /// @param rhs The variant to move from.
+  /// @return Self-reference.
   constexpr auto operator=(Variant&& rhs) noexcept -> Variant&;
 
+  /// @name Observers
+  /// @brief Inspect what type the variant currently holds.
+  /// @return The index of the currently-engaged type, or the valueless-by-exception status.
+  /// @{
   [[nodiscard]] constexpr auto index() const noexcept { return type_; }
   [[nodiscard]] constexpr bool valueless_by_exception() const noexcept { return index() == variant_npos; }
+  /// @}
 
+  /// @name Emplacement
+  /// @brief In-place construct a value into this variant.
+  /// @tparam U    The type of value to place into this variant.
+  /// @tparam I    The index of the type to place into this variant.
+  /// @tparam V    The type of arguments to list-initialize the wrapped value with.
+  /// @tparam Args The types of arguments to initialize the wrapped value with.
+  /// @param ilist The initializer list to initialize the wrapped value with.
+  /// @param args  The arguments to initialize the wrapped value with.
+  /// @return Reference to the newly-emplaced value.
+  /// @{
   template <typename U, typename... Args, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
   auto& emplace(Args&&... args) noexcept(std::is_nothrow_constructible<U, Args...>::value);
   template <typename U, typename V, typename... Args, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
@@ -201,7 +262,14 @@ public:
   template <std::size_t I, typename V, typename... Args, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
   auto& emplace(std::initializer_list<V> ilist, Args&&... args) noexcept(
       std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, std::initializer_list<V>, Args...>::value);
+  /// @}
 
+  /// @name Visitation
+  /// @brief Visit the variant with a callable object invocable with any of the types in `T...` as an argument.
+  /// @tparam Visitor The type of visitor to visit the variant with.
+  /// @param visitor The visitor to visit the variant with.
+  /// @return The visitation result.
+  /// @{
   template <typename Visitor>
   constexpr decltype(auto) visit(Visitor&& visitor) const&&;
   template <typename Visitor>
@@ -218,6 +286,15 @@ public:
   constexpr auto visit(Visitor&& visitor) && -> R;
   template <typename R, typename Visitor>
   constexpr auto visit(Visitor&& visitor) & -> R;
+  /// @}
+
+  /// @name Typed Access
+  /// @brief Access the variant assuming the engaged type.
+  /// @tparam U The type to assume the variant holds.
+  /// @tparam I The index of the type to assume the variant holds.
+  /// @return Reference to the requested type if it exists, or an empty optional otherwise.
+  /// @throws BadVariantAccess if the variant does not acutally contain the requested type.
+  /// @{
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
   [[nodiscard]] constexpr auto get() const&& -> const U&&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
@@ -250,7 +327,21 @@ public:
   [[nodiscard]] constexpr auto get_if() && noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&&>;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
   [[nodiscard]] constexpr auto get_if() & noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&>;
+  /// @}
 
+  /// @name Relational Operators
+  ///
+  /// @brief Compare two variants.
+  ///
+  /// If two variants have the same type indices engaged, their wrapped values are compared using the underlying
+  /// relational operators. Otherwise, variants are compared via their engaged type indices.
+  ///
+  /// @param lhs The left-hand relational operand.
+  /// @param rhs The right-hand relational operand.
+  ///
+  /// @return The relational comparision result.
+  ///
+  /// @{
   [[nodiscard]] friend constexpr bool operator==(const Variant& lhs, const Variant& rhs) noexcept
   {
     if ((lhs.index() != rhs.index()) || (lhs.valueless_by_exception() && rhs.valueless_by_exception()))
@@ -343,6 +434,7 @@ public:
                                       [](const auto& r) -> bool { throw BadVariantAccess{}; }));
     });
   }
+  /// @}
 
 private:
   std::size_t                 type_;

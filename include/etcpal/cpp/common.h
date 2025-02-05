@@ -95,17 +95,18 @@
 namespace etcpal
 {
 
+/// @brief Implementation of `std::void_t`.
 template <typename...>
 using void_t = void;
 
+/// @brief Tag type to indicate a wrapped type should be in-place constructed.
 struct InPlace_t
 {
 };
-
+/// @brief Tag value to indicate a wrapped type should be in-place constructed.
 ETCPAL_INLINE_VARIABLE constexpr auto in_place = InPlace_t{};
 
 /// @cond detail
-
 namespace detail
 {
 enum class Enabler
@@ -249,16 +250,29 @@ struct CommonCVRefType<T1, T2, T3, Rest...>
 };
 
 }  // namespace detail
+/// @endcond
 
+/// @brief Implementation of `std::remove_cvref_t`.
+/// @tparam T The type to remove reference and cv-qualifiers from.
 template <typename T>
 using RemoveCVRef_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
+/// @brief Convert an enumeration to its underlying type.
+/// @tparam Enum The enumeration type to convert.
+/// @param value The enumeration value to convert.
+/// @return The underlying integral enumeration value.
 template <typename Enum>
 [[nodiscard]] constexpr auto to_underlying(Enum value) noexcept
 {
   return static_cast<std::underlying_type_t<Enum>>(value);
 }
 
+/// @brief A scope-based finalizer.
+///
+/// The given action type must be invocable with no arguments, and must not throw any exceptions. Its return value is
+/// always ignored.
+///
+/// @tparam Action The type of action to invoke on scope exit.
 template <typename Action>
 class [[maybe_unused]] FinalAction
 {
@@ -290,6 +304,10 @@ template <typename Action>
 FinalAction(Action&&) -> FinalAction<RemoveCVRef_t<Action>>;
 #endif  // #if (__cplusplus >= 201703L)
 
+/// @brief Create a scope-exit finalizer that runs the given action.
+/// @tparam Action The type of action to invoke on scope exit.
+/// @param action The action to invoke on scope exit.
+/// @return A finalizer that runs the given action on destruction.
 template <typename Action>
 [[nodiscard]] constexpr auto finally(Action&& action) noexcept(
     std::is_nothrow_constructible<FinalAction<RemoveCVRef_t<Action>>>::value)
@@ -297,7 +315,6 @@ template <typename Action>
   return FinalAction<RemoveCVRef_t<Action>>{std::forward<Action>(action)};
 }
 
-/// @endcond
 }  // namespace etcpal
 
 #endif  // ETCPAL_CPP_COMMON_H_

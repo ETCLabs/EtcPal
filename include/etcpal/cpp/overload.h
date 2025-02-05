@@ -7,6 +7,15 @@
 namespace etcpal
 {
 
+/// @brief An overload set combining all of the given objects.
+///
+/// An `Overload<T...>{v...}` combines the call operators of all of the objects in `v...` into a single invocable
+/// object. For example, and `Overload<void(*)(), std::function<int(int)>>` may be invoked using no arguments to return
+/// nothing, or using an argument of type `int` to return an `int`. `Overload<T...>` forms a true overload set amongst
+/// the types `T...`; therefore, any set of arguments that match multiple types in `T...`, including if `T...` contains
+/// repeats, constitutes an overload resolution ambiguity error.
+///
+/// @tparam T The types of objects in this overload set.
 template <typename... T>
 class Overload;
 
@@ -119,6 +128,10 @@ template <typename... T>
 Overload(T&&...) -> Overload<RemoveCVRef_t<T>...>;
 #endif  // #if (__cplusplus >= 201703L)
 
+/// @brief Construct an overload set from the given callable objects.
+/// @tparam T The types of objects to form an overload set with.
+/// @param args The objects to form an overload set with.
+/// @return The new overload set object.
 template <typename... T>
 [[nodiscard]] constexpr auto make_overload(T&&... args) noexcept(
     std::is_nothrow_constructible<Overload<RemoveCVRef_t<T>...>, T...>::value)
@@ -126,6 +139,12 @@ template <typename... T>
   return Overload<RemoveCVRef_t<T>...>{std::forward<T>(args)...};
 }
 
+/// @brief A prioritized overload set combining all of the given objects.
+///
+/// `Select<T...>{v...}` forms an overload set like `Overload<T...>{v...}`, but resolves ambiguities between the types
+/// `T...` in favor of the type that came earlier in the list.
+///
+/// @tparam T The types of objects in this prioritized overload set.
 template <typename... T>
 class Select;
 
@@ -254,6 +273,10 @@ using Selection = Select<RemoveCVRef_t<T>...>;
 
 }
 
+/// @brief Construct a prioritized overload set from the given objects.
+/// @tparam T The types of objects to create a prioritized overload set from.
+/// @param args The objects to create a prioritized overload set from.
+/// @return The new prioritized overload set.
 template <typename... T>
 [[nodiscard]] constexpr auto make_selection(T&&... args) noexcept(
     std::is_nothrow_constructible<detail::Selection<T...>, T...>::value)

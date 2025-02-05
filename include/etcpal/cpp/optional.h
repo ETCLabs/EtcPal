@@ -10,15 +10,17 @@
 namespace etcpal
 {
 
+/// @brief Tag type indicating an empty optional.
 struct Nullopt_t
 {
 };
+/// @brief Tag value indicating an empty optional.
+ETCPAL_INLINE_VARIABLE constexpr auto nullopt = Nullopt_t{};
 
+/// @brief An exception indicating a checked attempt to access an empty optional.
 class BadOptionalAccess : public std::exception
 {
 };
-
-ETCPAL_INLINE_VARIABLE constexpr auto nullopt = Nullopt_t{};
 
 template <typename T>
 class Optional;
@@ -41,38 +43,62 @@ struct StorageFor;
 
 }  // namespace detail
 
+/// @brief An implementation of `std::optional` with reference support, and more monadic operations.
+/// @tparam T The contained value type.
 template <typename T>
 class Optional
 {
 public:
-  constexpr Optional() noexcept = default;
-  constexpr Optional(Nullopt_t tag) noexcept : Optional{} {}
-  constexpr Optional(const Optional& rhs)     = default;
-  constexpr Optional(Optional&& rhs) noexcept = default;
+  constexpr Optional() noexcept = default;                    //!< Create an empty optional.
+  constexpr Optional(Nullopt_t tag) noexcept : Optional{} {}  //!< Create an empty optional.
+  constexpr Optional(const Optional& rhs)     = default;      //!< Copy an optional.
+  constexpr Optional(Optional&& rhs) noexcept = default;      //!< Move an optional.
+  /// @brief Implicitly copy-convert an optional of a compatible type.
+  /// @tparam U The contained type of the other optional.
+  /// @param rhs The optional to copy-convert from.
   template <typename U,
             std::enable_if_t<std::is_convertible<U, T>::value>* = nullptr,
             typename Enable                                     = T,
             typename = std::enable_if_t<std::is_constructible<T, const U&>::value && !std::is_reference<Enable>::value>>
   constexpr Optional(const Optional<U>& rhs);
+  /// @brief Explicitly copy-convert an optional of a compatible type.
+  /// @tparam U The contained type of the other optional.
+  /// @param rhs The optional to copy-convert from.
   template <typename U,
             std::enable_if_t<!std::is_convertible<U, T>::value>* = nullptr,
             typename Enable                                      = T,
             typename = std::enable_if_t<std::is_constructible<T, const U&>::value && !std::is_reference<Enable>::value>>
   explicit constexpr Optional(const Optional<U>& rhs);
+  /// @brief Implicitly move-convert an optional of a compatible type.
+  /// @tparam U The contained type of the other optional.
+  /// @param rhs The optional to move-convert from.
   template <typename U,
             std::enable_if_t<std::is_convertible<U, T>::value>* = nullptr,
             typename Enable                                     = T,
             typename = std::enable_if_t<std::is_constructible<T, U>::value && !std::is_reference<Enable>::value>>
   constexpr Optional(Optional<U>&& rhs) noexcept;
+  /// @brief Explicitly move-convert an optional of a compatible type.
+  /// @tparam U The contained type of the other optional.
+  /// @param rhs The optional to move-convert from.
   template <typename U,
             std::enable_if_t<!std::is_convertible<U, T>::value>* = nullptr,
             typename Enable                                      = T,
             typename = std::enable_if_t<std::is_constructible<T, U>::value && !std::is_reference<Enable>::value>>
   explicit constexpr Optional(Optional<U>&& rhs) noexcept;
+  /// @brief Construct an engaged optional, in-place initializing the contained value using the given arguments.
+  /// @tparam Args The types of arguments to initialize the contained value with.
+  /// @param tag  Tag value indicating the contained value should be in-place initialized.
+  /// @param args Arguments to initialize the contained value with.
   template <typename... Args,
             typename Enable = T,
             typename = std::enable_if_t<std::is_constructible<T, Args...>::value && !std::is_reference<Enable>::value>>
   explicit constexpr Optional(InPlace_t tag, Args&&... args) noexcept(std::is_nothrow_constructible<T, Args...>::value);
+  /// @brief Construct an engaged optional, in-place initializing the contained value using the given arguments.
+  /// @tparam U    The types of initialization values in the initializer list.
+  /// @tparam Args The types of arguments to initialize the contained value with.
+  /// @param tag   Tag value indicating the contained value should be in-place initialized.
+  /// @param ilist An initializer list to initialize the contained value with.
+  /// @param args  Arguments to initialize the contained value with.
   template <typename U,
             typename... Args,
             typename Enable = T,
@@ -80,6 +106,9 @@ public:
                                                !std::is_reference<Enable>::value>>
   explicit constexpr Optional(InPlace_t tag, std::initializer_list<U> ilist, Args&&... args) noexcept(
       std::is_nothrow_constructible<T, std::initializer_list<U>, Args...>::value);
+  /// @brief Implicitly initialize an engaged optional holding the given non-reference value.
+  /// @tparam U The type of value to initialize the optional with.
+  /// @param rhs The value to initialize the optional with.
   template <typename U                                            = T,
             std::enable_if_t<std::is_convertible<U&&, T>::value>* = nullptr,
             typename Enable                                       = T,
@@ -87,8 +116,13 @@ public:
                                                              std::is_constructible<T, U&&>::value && !std::is_same<RemoveCVRef_t<U>, InPlace_t>::value &&
                                                              !detail::IsOptional<RemoveCVRef_t<U>>::value && !std::is_reference<Enable>::value>>
   constexpr Optional(U&& rhs) noexcept(std::is_nothrow_constructible<T, U>::value);
+  /// @brief Implicitly initialize an engaged optional holding the given reference.
+  /// @param rhs The value to hold a reference to.
   template <typename U = T, typename = std::enable_if_t<std::is_reference<U>::value>>
   constexpr Optional(T rhs) noexcept;
+  /// @brief Explicitly initialize an engaged optional holding the given non-reference value.
+  /// @tparam U The type of value to initialize the optional with.
+  /// @param rhs The value to initialize the optional with.
   template <typename U                                             = T,
             std::enable_if_t<!std::is_convertible<U&&, T>::value>* = nullptr,
             typename Enable                                        = T,
@@ -97,37 +131,85 @@ public:
                                                               !detail::IsOptional<RemoveCVRef_t<U>>::value && !std::is_reference<Enable>::value>>
   explicit constexpr Optional(U&& rhs) noexcept(std::is_nothrow_constructible<T, U>::value);
 
-  ~Optional() noexcept = default;
+  ~Optional() noexcept = default;  //!< Destroy the optional, and any contained value.
 
-  constexpr auto operator=(Nullopt_t tag) noexcept -> Optional&;
-  constexpr auto operator=(const Optional& rhs) -> Optional&     = default;
-  constexpr auto operator=(Optional&& rhs) noexcept -> Optional& = default;
+  constexpr auto operator=(Nullopt_t tag) noexcept -> Optional&;             //!< Reset the optional.
+  constexpr auto operator=(const Optional& rhs) -> Optional&     = default;  //!< Copy an optional value.
+  constexpr auto operator=(Optional&& rhs) noexcept -> Optional& = default;  //!< Move an optional value.
+  /// @brief Assign a compatible value to the optional.
+  /// @tparam U The type of compatible value to assign.
+  /// @param rhs The value to assign to this optional.
+  /// @return Self-reference.
   template <typename U      = T,
             typename Enable = T,
             typename        = std::enable_if_t<!detail::IsOptional<U>::value && std::is_constructible<T, U>::value &&
                                                !std::is_same<std::decay_t<U>, T>::value && !std::is_reference<Enable>::value>>
   constexpr auto operator=(U&& rhs) noexcept(std::is_nothrow_constructible<T, U>::value &&
                                              std::is_nothrow_assignable<T, U>::value) -> Optional&;
+  /// @brief Copy-convert another optional to this optional.
+  /// @tparam U The wrapped type to convert from.
+  /// @param rhs The wrapped value to convert from.
+  /// @return Self-reference.
   template <typename U, typename Enable = T, typename = std::enable_if_t<!std::is_reference<Enable>::value>>
   constexpr auto operator=(const Optional<U>& rhs) noexcept(std::is_nothrow_constructible<T, const U&>::value &&
                                                             std::is_nothrow_assignable<T, const U&>::value)
       -> Optional&;
+  /// @brief Move-convert another optional to this optional.
+  /// @tparam U The wrapped type to convert from.
+  /// @param rhs The wrapped value to convert from.
+  /// @return Self-reference.
   template <typename U, typename Enable = T, typename = std::enable_if_t<!std::is_reference<Enable>::value>>
   constexpr auto operator=(Optional<U>&& rhs) noexcept(std::is_nothrow_constructible<T, U>::value &&
                                                        std::is_nothrow_assignable<T, U>::value) -> Optional&;
 
+  /// @name Unckecked Access
+  /// @brief Access the underlying value without engagement checking.
+  /// @return Reference or member access to the underlying value.
+  ///  @{
   [[nodiscard]] constexpr auto operator->() noexcept -> std::remove_reference_t<T>* { return std::addressof(**this); }
   [[nodiscard]] constexpr auto operator->() const noexcept -> const std::remove_reference_t<T>*;
   [[nodiscard]] constexpr decltype(auto) operator*() & noexcept { return *storage_; }
   [[nodiscard]] constexpr decltype(auto) operator*() && noexcept { return *std::move(storage_); }
   [[nodiscard]] constexpr decltype(auto) operator*() const& noexcept { return *storage_; }
   [[nodiscard]] constexpr decltype(auto) operator*() const&& noexcept { return *std::move(storage_); }
+  /// @}
 
+  /// @name Checked Access
+  /// @brief Access the underlying value if it exists.
+  /// @return Reference to the underlying value.
+  /// @throws BadOptionalAccess if the optional is empty.
+  /// @{
   [[nodiscard]] constexpr decltype(auto) value() & { return *this ? *storage_ : throw BadOptionalAccess{}; }
   [[nodiscard]] constexpr decltype(auto) value() &&;
   [[nodiscard]] constexpr decltype(auto) value() const& { return *this ? *storage_ : throw BadOptionalAccess{}; }
   [[nodiscard]] constexpr decltype(auto) value() const&&;
+  /// @}
 
+  /// @name Monadic Operations
+  ///
+  /// @brief Operate on this optional as a mondad.
+  ///
+  /// All of these operations allow conditional access to the underlying value, without having to use conditional
+  /// syntax:
+  /// - `value_or` returns the wrapped value if it exists, or the provided default otherwise
+  /// - `and_then` invokes `f` with the contained value as an argument, returning the result if the value exists, or an
+  ///     empty optional otherwise; `f` must return a specialization of `Optional`
+  /// - `transform` invokes `f` with the contaiined value as an argument, returning the result wrapped in an `Optional`
+  ///     if the value exists, or an empty `Optional` otherwise
+  /// - `or_else` returns the contained value wrapped in an `Optional` if it exists, or the result of invoking `f` with
+  ///     no arguments otherwise
+  /// - `visit` invokes `f` with the contained value as an argument if it exists, or with `nullopt` as an argument
+  ///     otherwise, returning the invocation result
+  ///
+  /// @tparam U The type of default value to use.
+  /// @tparam F The type of monadic visitor to apply to this optional.
+  ///
+  /// @param default_value The default value to return if this optional is empty.
+  /// @param f             The monadic visitor to apply to this optional.
+  ///
+  /// @return The visitation result.
+  ///
+  /// @{
   template <typename U>
   [[nodiscard]] constexpr auto value_or(U&& default_value) const& -> T;
   template <typename U>
@@ -160,11 +242,27 @@ public:
   constexpr decltype(auto) visit(F&& f) const&;
   template <typename F>
   constexpr decltype(auto) visit(F&& f) const&&;
+  /// @}
 
+  /// @name Engagement
+  /// @brief Check if this optional is engaged or empty.
+  /// @return `true` if this optional is engaged, or `false` if it is empty.
+  /// @{
   [[nodiscard]] explicit constexpr operator bool() const noexcept { return has_value(); }
   [[nodiscard]] constexpr bool     has_value() const noexcept { return bool{storage_}; }
+  /// @}
 
+  /// @brief Reset this optional, destroying any existing contained value.
   constexpr void reset() noexcept { storage_.reset(); }
+
+  /// @name Emplacement
+  /// @brief Construct a contained value in-place.
+  /// @tparam U    The type of elements in the initializer list to initialize the underlying value with.
+  /// @tparam Args The types of arguments to initialize the underlying value with.
+  /// @param ilist The initializer list to initialize the underlying value with.
+  /// @param args  The arguments to initialize the underlying value with.
+  /// @return Reference to the underlying value.
+  /// @{
   template <typename Enable = T, typename = std::enable_if_t<!std::is_reference<Enable>::value>, typename... Args>
   constexpr auto emplace(Args&&... args) noexcept(std::is_nothrow_constructible<T, Args...>::value) -> T&;
   template <typename Enable = T,
@@ -173,7 +271,22 @@ public:
             typename... Args>
   constexpr auto emplace(std::initializer_list<U> ilist, Args&&... args) noexcept(
       std::is_nothrow_constructible<T, std::initializer_list<U>, Args...>::value) -> T&;
+  /// @}
 
+  /// @name Relational Operations
+  ///
+  /// @brief Relational operators that use the underlying value's relational operators to compare optionals.
+  ///
+  /// If two optionals are both engaged, the operation uses the underlying values' relational operators. Otherwise,
+  /// empty optionals compare equal to each other, and less-than engaged optionals.
+  ///
+  /// @tparam U The type of underlying value to compare against.
+  ///
+  /// @param lhs The left-hand relational operand.
+  /// @param rhs The right-hand relational operatnd.
+  ///
+  /// @return The relational comparison result.
+  /// @{
   template <typename U>
   friend constexpr bool operator==(const Optional& lhs, const Optional<U>& rhs) noexcept
   {
@@ -204,6 +317,7 @@ public:
   {
     return (lhs && !rhs) || (lhs && rhs && (*lhs >= *rhs));
   }
+  /// @}
 
 private:
   template <typename U>
@@ -212,6 +326,11 @@ private:
   detail::StorageFor<T> storage_ = {};
 };
 
+/// @brief Construct an optional containing the given value.
+/// @note This function never creates a wrapped reference, always a wrapped value.
+/// @tparam T The type of value to create an optional from.
+/// @param value The value to initialize the optional from.
+/// @return The newly-created wrrapped object.
 template <typename T>
 [[nodiscard]] constexpr auto make_optional(T&& value) noexcept(
     std::is_nothrow_constructible<Optional<RemoveCVRef_t<T>>, T>::value)

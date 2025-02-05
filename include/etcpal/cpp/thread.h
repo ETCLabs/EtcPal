@@ -217,12 +217,31 @@ private:
 
 using Thread = BasicThread<>;
 
+/// @brief A joining thread with cooperative cancellation and allocator support.
+/// @tparam Allocator The type of allocator to allocate memory with.
 template <typename Allocator = polymorphic_allocator<>>
 class JThread
 {
 public:
-  using native_handle_type = etcpal_thread_os_handle_t;
+  using native_handle_type = etcpal_thread_os_handle_t;  //!< The underlying native thread handle type.
 
+  /// @name Constructors
+  ///
+  /// @brief Construct a thread that executes the given entry point function using the given arguments.
+  ///
+  /// If the function `fun` is capable of accepting a `StopToken` as its first argument, a token associated with this
+  /// thread object will be passed to it. On destruction, the thread object issues a cancellation to that token,
+  /// allowing cooperative cancellation.
+  ///
+  /// @tparam Fun  The type of entry point function to execute.
+  /// @tparam Args The types of arguments to pass to the entry point function.
+  ///
+  /// @param params The paramters to create the thread using.
+  /// @param alloc  The allocator to allocate memory using.
+  /// @param fun    The entry point function to execute on the new thread.
+  /// @param args   The arguments to pass to the entry point function.
+  ///
+  /// @{
   JThread() noexcept = default;
   template <typename Fun,
             typename... Args,
@@ -244,23 +263,35 @@ public:
   explicit JThread(Fun&& fun, Args&&... args);
   template <typename Fun, typename... Args, std::enable_if_t<detail::IsCallable<Fun, Args...>::value>* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
+  /// @}
 
-  JThread(const JThread& rhs)     = delete;
-  JThread(JThread&& rhs) noexcept = default;
+  JThread(const JThread& rhs)     = delete;   //!< Disallow copying a thread.
+  JThread(JThread&& rhs) noexcept = default;  //!< Move a thread.
 
-  ~JThread() noexcept { request_stop(); }
+  ~JThread() noexcept { request_stop(); }  //!< Destroy a thread, issueing a cancellation request and performing a join.
 
-  auto operator=(const JThread& rhs) -> JThread& = delete;
-  auto operator=(JThread&& rhs) noexcept -> JThread&;
+  auto operator=(const JThread& rhs) -> JThread& = delete;  //!< Disallow copying a thread.
+  auto operator=(JThread&& rhs) noexcept -> JThread&;  //!< Move assignment, cancelling and joining any existing thread.
 
+  /// @name Observers
+  /// @brief Obtain state information about the managed thread.
+  /// @return The requested information.
+  /// @{
   [[nodiscard]] bool joinable() const noexcept { return thread_.joinable(); }
   [[nodiscard]] auto native_handle() const noexcept { return thread_.os_handle(); }
+  /// @}
 
+  /// @brief Wait for the thread to join with the caller.
   void join() noexcept { thread_.Join(); }
 
+  /// @name Cancellation
+  /// @brief Manage cooperative thread cancellation.
+  /// @return The associated cancellation token or source, or the status of a stop request.
+  /// @{
   [[nodiscard]] auto get_stop_source() const noexcept { return ssource_; }
   [[nodiscard]] auto get_stop_token() const noexcept { return ssource_.get_token(); }
   bool               request_stop() noexcept { return ssource_.request_stop(); }
+  /// @}
 
 private:
   StopSource<Allocator>  ssource_ = StopSource<Allocator>{NoStopState};
