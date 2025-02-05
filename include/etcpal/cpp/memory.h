@@ -215,6 +215,17 @@ private:
 
 }  // namespace detail
 
+/// @brief A memory resource that releases allocated memory only when destroyed.
+///
+/// This memory resource is intended for very fast memory allocations when allocated memory need not be released. Unlike
+/// `std::pmr::monotonic_buffer_resource`, this resource contains the memory buffer as a member, and tracks certain
+/// allocation statistics so a caller can detect when all allocated memory has been deallocated, and when an allocation
+/// would fail. This allows callers to safely reclaim `MonotonicBuffer` objects that have no more outstanding
+/// allocations, as well as detect when a buffer is capable of freeing an allocated pointer. Thus, a caller can more
+/// easily use these buffers as building blocks for more complex memory resources, such as `DualLevelBlockPool`.
+///
+/// @tparam Size  The total number of bytes available.
+/// @tparam Debug Whether to track and report allocation statistics to `std::cout` or not.
 template <std::size_t Size = std::numeric_limits<std::uint8_t>::max(), bool Debug = false>
 class MonotonicBuffer : public memory_resource, private detail::MonotonicBufferStatistics<Size, Debug>
 {
@@ -222,25 +233,46 @@ private:
   using Stats = detail::MonotonicBufferStatistics<Size, Debug>;
 
 public:
-  MonotonicBuffer()                                              = default;
-  MonotonicBuffer(const MonotonicBuffer& rhs)                    = delete;
-  MonotonicBuffer(MonotonicBuffer&& rhs)                         = delete;
-  ~MonotonicBuffer() noexcept override                           = default;
-  auto operator=(const MonotonicBuffer& rhs) -> MonotonicBuffer& = delete;
-  auto operator=(MonotonicBuffer&& rhs) -> MonotonicBuffer&      = delete;
+  MonotonicBuffer()                                              = default;  //!< Construct an empty buffer.
+  MonotonicBuffer(const MonotonicBuffer& rhs)                    = delete;   //!< Disallow copying a buffer.
+  MonotonicBuffer(MonotonicBuffer&& rhs)                         = delete;   //!< Disallow moving a buffer.
+  auto operator=(const MonotonicBuffer& rhs) -> MonotonicBuffer& = delete;   //!< Disallow copying a buffer.
+  auto operator=(MonotonicBuffer&& rhs) -> MonotonicBuffer&      = delete;   //!< Disallow moving a buffer.
 
-  [[nodiscard]] auto  free_bytes() const noexcept { return Size - allocd_bytes_; }
-  [[nodiscard]] bool  owns(void* p) const noexcept { return (p >= buffer_.data()) && (p < buffer_.data() + Size); }
-  [[nodiscard]] bool  empty() const noexcept { return num_allocs_ == 0; }
+  /// @name Buffer Properties
+  /// @brief Obtain the requested informationi about this memory resource.
+  /// @return The requested resource information.
+  /// @{
+  /// @brief Obtain the number of bytes this buffer can still allocate, without taking alignment into account.
+  /// @return Amount of free unallocated buffer space.
+  [[nodiscard]] auto free_bytes() const noexcept { return Size - allocd_bytes_; }
+  /// @brief Check whether a pointer was allocated from this memory resource or not.
+  /// @param p The pointer to check ownership of.
+  /// @return Whether the given pointer points into this buffer or not.
+  [[nodiscard]] bool owns(void* p) const noexcept { return (p >= buffer_.data()) && (p < buffer_.data() + Size); }
+  /// @brief Check whether there is memory allocated from this buffer that has not been deallocated yet.
+  /// @return `true` if the number of allocations matches the number of deallocations, or `false` otherwise.
+  [[nodiscard]] bool empty() const noexcept { return num_allocs_ == 0; }
+  /// @brief Obtain a pointer to the underlying buffer.
+  /// @return Pointer to the beginning of the underlying buffer.
+  [[nodiscard]] constexpr auto data() const noexcept { return buffer_.data(); }
+  /// @brief Obtain the static total size of this buffer.
+  /// @return This buffer's total size.
+  [[nodiscard]] static constexpr auto size() noexcept { return Size; }
+  /// @brief Check whether this buffer is tracking and reporting additional statistics to `std::cout` or not.
+  /// @return Whether this buffer is in debug mode or not.
+  [[nodiscard]] static constexpr bool debug_mode() noexcept { return Debug; }
+  /// @}
+
+  /// @brief Attempt to allocate the given number of bytes using the given alignment.
+  /// @param bytes     The number of bytes to allocate.
+  /// @param alignment The alignment the allocation must use.
+  /// @return `nullptr` if the allocation failed, or the allocated memory pointer otherwise.
   [[nodiscard]] void* try_allocate(std::size_t bytes, std::size_t alignment) noexcept
   {
     const auto timer = Stats::report_allocator_entry();
     return try_alloc_impl(bytes, alignment);
   }
-
-  [[nodiscard]] constexpr auto        data() const noexcept { return buffer_.data(); }
-  [[nodiscard]] static constexpr auto size() noexcept { return Size; }
-  [[nodiscard]] static constexpr bool debug_mode() noexcept { return Debug; }
 
 protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
@@ -290,6 +322,10 @@ private:
   std::size_t num_allocs_                                           = 0;
 };
 
+/// @brief A memory resource that allocates fixed-size memory blocks, or multiple contiguous blocks.
+/// @tparam Size      The total amount of availabe memory.
+/// @tparam BlockSize The size of a single memory block.
+/// @tparam Debug     Whether to track and report statistics to `std::cout` or not.
 template <std::size_t Size, std::size_t BlockSize = sizeof(std::max_align_t), bool Debug = false>
 class BlockMemory : public memory_resource
 {
@@ -561,6 +597,11 @@ private:
   int                                          single_block_allocs_ = 0;
 };
 
+/// @brief Thread-safe block memory resource.
+/// @tparam Lock      The type of lock to perform synchonization with.
+/// @tparam Size      The total amount of available memory.
+/// @tparam BlockSize The size of a single memory block.
+/// @tparam Debug     Whether to track and report statistics to `std::cout` or not.
 template <std::size_t Size,
           typename Lock         = RwLock,
           std::size_t BlockSize = sizeof(std::max_align_t),
@@ -632,6 +673,9 @@ private:
   std::chrono::high_resolution_clock::duration           time_in_allocator_ = {};
 };
 
+/// @brief A `Deletor` using the given allocator compatible with `std::unique_ptr`.
+/// @tparam T The type of object to delete.
+/// @tparam Allocator A type of allocator capable of deallocating the managed pointer.
 template <typename T, typename Allocator>
 struct DeleteUsingAlloc
 {
@@ -667,12 +711,27 @@ struct DeleteUsingAlloc
     typename std::allocator_traits<Allocator>::template rebind_alloc<U>{allocator}.deallocate(ptr, 1);
   }
 };
-
+/// @brief Disable `DeleteUsingAlloc` for array allocations.
 template <typename T, typename Allocator>
 struct DeleteUsingAlloc<T[], Allocator>
 {
 };
 
+/// @brief Construct an object of the given type, allocated using the given allocator.
+///
+/// Unlike `std::make_unique`, this function:
+/// - uses an arbitrary allocator to perform the allocation
+/// - ensures the returned `std::unique_ptr` has the correct `Deletor` to deallocate the memory with
+/// - does not support allocating arrays
+///
+/// @tparam T         The type of object to allocate a new one of.
+/// @tparam Allocator The type of allocator to use to allocate the new object.
+/// @tparam Args      The types of arguments to initialize the new object with.
+///
+/// @param allocator The allocator to allocate the new object using.
+/// @param args      The arguments to initialize the new object with.
+///
+/// @return An `std::unique_ptr` owning the newly-allocated object.
 template <typename T, typename Allocator, typename... Args, std::enable_if_t<!std::is_array<T>::value>* = nullptr>
 [[nodiscard]] auto allocate_unique(const Allocator& allocator, Args&&... args)
 {
@@ -728,6 +787,22 @@ template <std::size_t Size, typename Lock, bool Debug>
 
 }  // namespace detail
 
+/// @brief A two-tier memory resource combining `MonotonicBuffer`s with a `BlockMemory`.
+///
+/// @warning For general use, use one of the provided type aliases. Choosing some of the template parameters manually
+///          may be detrimental.
+///
+/// This memory resource wraps a `BlockMemory`, and supplies smaller-sized allocation through `MonotonicBuffer`s
+/// allocated out of the underlying `BlockMemory`. This resource is intended to be a more customizable version of
+/// `std::pmr::synchronized_pool_resource` or `std::pmr::unsynchronized_pool_resource`, and performs better under many
+/// workloads. However, it does not currently support an upstream backup resource.
+///
+/// @tparam Lock                  The type of lock to use for synchonization.
+/// @tparam Size                  The total amount of available memory.
+/// @tparam SmallBlockSize        The maximum size of monotonic blocks.
+/// @tparam Debug                 Whether to track and report statistics to `std::cout` or not.
+/// @tparam DebugMonotonicBuffers Whether to track and report detailed monotonic block statistics to `std::cout` or not.
+/// @tparam BlockSize             The size of a single memory block.
 template <std::size_t Size,
           std::size_t SmallBlockSize        = std::max(Size >> 9, BlockMemory<Size>::block_size << 5),
           typename Lock                     = detail::DummyLock,
@@ -1042,6 +1117,7 @@ template <std::size_t Size,
           typename Lock              = typename SyncDualLevelBlockPool<Size, SmallBlockSize, BlockSize>::LockType>
 using DebugSyncDualLevelBlockPool = SyncDualLevelBlockPool<Size, SmallBlockSize, BlockSize, Lock, true>;
 
+/// @brief A memory resource wrapper that tracks and reports upstream allocation times to `std::cout`.
 class MemoryPerformanceRecorder : public memory_resource
 {
 public:

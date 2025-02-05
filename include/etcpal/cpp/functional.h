@@ -10,8 +10,32 @@
 namespace etcpal
 {
 
+/// @brief A move-only type-erased function object with allocator support and multi-signature support.
+///
+/// A function object of this type can type-earse any object invocable with all of the given signatures. For example,
+/// the type `MoveOnlyFunction<void(), void(int)>` can be invoked with either no arguments, or a single argument of type
+/// `int`. A custom allocator type may also be specified as the last template argument, as in
+/// `MoveOnlyFunction<void(), void(int), std::allocator<unsigned char>>`.
+///
+/// The constructor of a `MoveOnlyFunction` takes one or two arguments. The first argument is the callable object to
+/// type-erase, and the second argument is the allocator to use. Initializing a `MoveOnlyFunction` with a `nullptr`
+/// creates an object that throws `std::bad_function_call` when invoked.
+///
+/// @tparam Signatures The call signatures that this object supports.
 template <typename... Signatures>
 class MoveOnlyFunction;
+
+/// @brief A non-owning reference to a callable object, with multi-signature support.
+///
+/// A function reference of this type can type-erase any object invocable with all of the given signatures. For example,
+/// the type `FunctionRef<void(), void(int)>` can be invoked with either no arguments, or a single argument of type
+/// `int`.
+///
+/// The constructor of a `FunctionRef` takes a single argument, the callable object to form a type-erased reference to.
+/// Initializing a `FunctionRef` with a `nullptr` creates a `FunctionRef` with call operators that invoke undefined
+/// behavior.
+///
+/// @tparam Signatures The call sugnatures that this object supports.
 template <typename... Signatures>
 class FunctionRef;
 

@@ -95,10 +95,14 @@ class Promise;
 template <typename T, typename Allocator = polymorphic_allocator<>>
 class Future;
 
+/// @brief An exceptional condition that occurred while fulfilling a promise or obtaining a future value.
 class FutureError : public std::logic_error
 {
 public:
+  /// @brief Construct a generic future error.
   FutureError() : std::logic_error{"future error"} {}
+  /// @brief Construct an exception represending the given future-related error condition.
+  /// @param status The type of exceptional condition that occurred.
   FutureError(FutureErrc status)
       : std::logic_error{(status == FutureErrc::no_state)                    ? "no associated future state"
                          : (status == FutureErrc::future_already_promised)   ? "broken promise"
@@ -199,47 +203,75 @@ private:
 /// @brief A type representing a promise to produce a value in the future.
 ///
 /// A promise/future pair acts like a single-shot mailbox for some asynchronous task to eventually deliver a result of
-/// type @a T. This implementation supports custom allocators
+/// type @a T. This implementation supports custom allocators. The custom allocator allocates the shared mailbox
+/// storage, and any allocations required for future continuations.
 ///
-/// @tparam T
-/// @tparam Allocator
+/// @tparam T         The type of value being promised.
+/// @tparam Allocator The type of allocator to allocate memory with.
 template <typename T, typename Allocator>
 class Promise
 {
 public:
+  /// @brief Construct a promise using a default-constructed allocator.
   Promise() = default;
+  /// @brief Construct a promise using the given allocator.
+  /// @param alloc The allocator to use to perform any required memory allocations.
   explicit Promise(const Allocator& alloc);
 
-  Promise(const Promise& rhs)     = delete;
-  Promise(Promise&& rhs) noexcept = default;
-
-  ~Promise() noexcept;
-
+  /// @name Move-Only
+  /// @brief Mark promises as move-only.
+  /// @param rhs The promise object to move from.
+  /// @{
+  Promise(const Promise& rhs)                        = delete;
+  Promise(Promise&& rhs) noexcept                    = default;
   auto operator=(const Promise& rhs) -> Promise&     = delete;
   auto operator=(Promise&& rhs) noexcept -> Promise& = default;
+  /// @}
 
+  /// @brief Destroy a fulfilled promise, or abaondon an unfilled one.
+  ~Promise() noexcept;
+
+  /// @brief Obtain a handle to the promised future value.
+  /// @return Return the promise of a future value.
   [[nodiscard]] auto get_future();
 
+  /// @name Promise Fulfillment
+  /// @brief Fulfill this promise with the given value.
+  /// @param value The value to fulfill the promise with.
+  /// @{
   template <typename U, typename = std::enable_if_t<std::is_convertible<U, T>::value>>
   void set_value(U&& value);
   template <typename U = T, typename = std::enable_if_t<std::is_same<U, void>::value>>
   void set_value();
+  /// @}
 
 private:
   std::shared_ptr<detail::FutureSharedState<T, Allocator>> state_ =
       std::allocate_shared<detail::FutureSharedState<T, Allocator>>(Allocator{}, Allocator{});
 };
 
+/// @brief A handle to a promised future value.
+/// @tparam T         The type of future value being promised.
+/// @tparam Allocator The type of allocator to allocate memory with.
 template <typename T, typename Allocator>
 class Future
 {
 public:
-  Future(const Future& rhs)     = delete;
-  Future(Future&& rhs) noexcept = default;
-
+  /// @name Move-Only
+  /// @brief Mark futures as move-only.
+  /// @param rhs The future object to move from.
+  /// @{
+  Future(const Future& rhs)                        = delete;
+  Future(Future&& rhs) noexcept                    = default;
   auto operator=(const Future& rhs) -> Future&     = delete;
   auto operator=(Future&& rhs) noexcept -> Future& = default;
+  /// @}
 
+  /// @name Value Access
+  /// @brief Obtain the promised future value.
+  /// @param timeout The maximum amount of time to wait for the future value.
+  /// @return The future value itself, the exception the promise holder reported, or an error in awaiting the value.
+  /// @{
   [[nodiscard]] auto get() -> T;
   [[nodiscard]] auto get_if() noexcept -> Variant<T, FutureErrc, std::exception_ptr>;
   template <typename Rep, typename Period>
@@ -248,6 +280,50 @@ public:
   template <typename Clock, typename Duration>
   [[nodiscard]] auto get_if(const std::chrono::time_point<Clock, Duration>& timeout) noexcept
       -> Variant<T, FutureErrc, std::exception_ptr>;
+  /// @}
+
+  /// @name Continuation
+  ///
+  /// @brief Set a contionuation to invoke when the associated promise is fulfilled.
+  ///
+  /// The continuation may be a single callable object, or multiple callable objects that can handle all the possible
+  /// result types when combined.
+  ///
+  /// The continuations must support one of the following:
+  /// - the expression `cont(status, result, exception)` must be valid, given:
+  ///     - `status` is a value of type `FutureStatus` indicating the future completion result
+  ///     - `result` is a value of type `Optional<T>` holding the promised result if it was indeed delivered
+  ///     - `exception` is a value of type `std::exception_ptr` holding holding the exception, if any, the promiser
+  ///         reported
+  /// - the following requirements are satisfied:
+  ///     - given:
+  ///         - `conts` is the pseudo-overload-set formed by all callable objects `cont...`, with any overload
+  ///             resolution ambiguity favoring the first object in the variadic list
+  ///         - `status` is a value of type `FutureStatus` indicating the future completion result
+  ///         - `result` is a value of type `T` holding the promised result
+  ///         - `exception` is a value of type `std::exception_ptr` holding holding the exception the promiser reported
+  ///     - then all of the following expressions are valid, and return types implicitly convertible to each other:
+  ///         - `conts(status)`
+  ///         - `conts(result)`
+  ///         - `conts(exception)`
+  ///
+  /// If `conts...` supports both the three-argument and the single-argument expressions, this library may choose to use
+  /// any of the expressions. In any case, as long as the future was obtained from a promise, the continuation will be
+  /// invoked exactly once, whether the promise was fulfilled or abandoned. In the three-argument version, only one of
+  /// `result` and `exception` will hold a value. In the single-argument version, `status` is guaranteed to report some
+  /// sort of failure, and `exception` is guaranteed to hold an exception.
+  ///
+  /// @tparam F        The types of callable objects to invoke when the associated promise is fulfilled or abandoned.
+  /// @tparam Executor The type of executor to post continuation execution through.
+  ///
+  /// @param cont The callable objects to invoke when the associated promise is fulfilled or abandoned.
+  /// @param exec The executor to post coninuation execution through.
+  ///
+  /// @return The future return value of the continuation.
+  ///
+  /// @throws FutureError if there is no associated shared state.
+  ///
+  /// @{
   template <typename... F,
             typename = std::enable_if_t<
                 detail::IsCallable<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>::value &&
@@ -286,6 +362,7 @@ public:
                                           detail::CallResult_t<detail::Selection<F...>, T>,
                                           detail::CallResult_t<detail::Selection<F...>, std::exception_ptr>>,
                 Allocator>;
+  /// @}
 
   [[nodiscard]] bool valid() const noexcept;
   [[nodiscard]] auto wait() const noexcept -> FutureStatus;
@@ -302,24 +379,52 @@ private:
   std::shared_ptr<detail::FutureSharedState<T, Allocator>> state_ = {};
 };
 
+/// @brief Tag type to indicate an asynchronous operation should return a future.
 struct UseFuture
 {
 };
-
+/// @brief Tag value to indicate an asynchronous operation should return a future.
 ETCPAL_INLINE_VARIABLE constexpr auto use_future = UseFuture{};
 
+/// @brief A statically-sized thread pool with allocator support and thread configuration.
+/// @tparam Allocator The type of allocator to use to allocate memory.
+/// @tparam N         The number of threads the pool has.
 template <std::size_t N, typename Allocator = polymorphic_allocator<>>
 class ThreadPool
 {
 public:
-  class Executor;
+  class Executor;  //!< The pool's executor type.
 
+  /// @brief Construct the thread pool using the given allocator and thread specifications.
+  /// @param params Parameters to initialize all pool threads with.
+  /// @param alloc  The allocator to use to allocate memory.
   explicit ThreadPool(const EtcPalThreadParams& params, const Allocator& alloc = {});
+  /// @brief Construct the thread pool using the default thread parameters and the given allocator.
+  /// @param alloc The allocator to use to allocate memory.
   explicit ThreadPool(const Allocator& alloc);
+  /// @brief Construct a thread pool using the default thread parameters and a default-constructed allocator.
   ThreadPool() : ThreadPool{Allocator{}} {}
 
+  /// @brief Shut down the thread pool, and join all the pool threads.
   ~ThreadPool() noexcept;
 
+  /// @name Task Posting
+  ///
+  /// @brief Post a task to be executed on the thread pool.
+  ///
+  /// The task posted to the thread pool must be invocable with no arguments. If the first argument is of type
+  /// `UseFuture`, then the return value of the task is returned as a future. Otherwise, the return value is discarded.
+  ///
+  /// @tparam Alloc The type of allocator to use to allocate memory for this new task.
+  /// @tparam F     The type of callable object to execute on the thread pool.
+  ///
+  /// @param tag   Tag indicating the task's return value should be returned in a future.
+  /// @param fun   The callable object to execute on the thread pool.
+  /// @param alloc The allocator to use to allocate memory for this new task.
+  ///
+  /// @return The future return value of the given task, or the number of tasks currently queued for execution.
+  ///
+  /// @{
   template <typename Alloc = Allocator, typename F>
   [[nodiscard]] auto post(UseFuture tag, F&& fun, const Alloc& alloc)
       -> Future<decltype(std::forward<F>(fun)()), Alloc>;
@@ -329,7 +434,10 @@ public:
   auto post(F&& fun, const Alloc& alloc);
   template <typename F>
   auto post(F&& fun);
+  /// @}
 
+  /// @brief Obtain an executor associated with this thread pool.
+  /// @return An executor associated with this thread pool.
   [[nodiscard]] auto get_executor() noexcept { return Executor{*this}; }
 
 private:
@@ -839,7 +947,7 @@ template <typename... F, typename>
 
   auto promise =
       Promise<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
-      state_->get_allocator()};
+          state_->get_allocator()};
   auto future = promise.get_future();
   auto result = state_->set_continuation(
       [fun = make_selection(std::forward<F>(cont)...), prom = std::move(promise)](
@@ -881,19 +989,19 @@ template <typename... F, typename>
   auto future  = promise.get_future();
   auto result  = state_->set_continuation([fun = make_selection(std::forward<F>(cont)...), prom = std::move(promise)](
                                              auto status, auto& value, auto exception) mutable {
-        if (value)
-        {
+    if (value)
+    {
       detail::fulfill_promise(prom, fun, *value);
-        }
-        else if (exception)
-        {
+    }
+    else if (exception)
+    {
       detail::fulfill_promise(prom, fun, exception);
-        }
-        else
-        {
+    }
+    else
+    {
       detail::fulfill_promise(prom, fun, status);
-        }
-      });
+    }
+  });
   switch (result.result)
   {
     case detail::FutureActionResult::continuation_set_suceeded:
@@ -923,14 +1031,14 @@ template <typename Executor, typename... F, typename>
 
   auto promise =
       Promise<detail::CallResult_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>{
-      state_->get_allocator()};
+          state_->get_allocator()};
   auto future = promise.get_future();
   auto result = state_->set_continuation([fun  = make_selection(std::forward<F>(cont)...), exec,
                                           prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
-        exec.post([f = std::move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
+    exec.post([f = std::move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
       detail::fulfill_promise(p, f, status, val, exception);
-        });
-      });
+    });
+  });
   switch (result.result)
   {
     case detail::FutureActionResult::continuation_set_suceeded:
@@ -969,20 +1077,20 @@ template <typename Executor, typename... F, typename>
   auto result  = state_->set_continuation([fun  = make_selection(std::forward<F>(cont)...), exec,
                                           prom = std::move(promise)](auto status, auto& value, auto exception) mutable {
     exec.post([f = move(fun), p = std::move(prom), status, val = std::move(value), exception]() mutable {
-          if (val)
-          {
+      if (val)
+      {
         detail::fulfill_promise(p, f, *val);
-          }
-          else if (exception)
-          {
+      }
+      else if (exception)
+      {
         detail::fulfill_promise(p, f, exception);
-          }
-          else
-          {
+      }
+      else
+      {
         detail::fulfill_promise(p, f, status);
-          }
-        });
-      });
+      }
+    });
+  });
   switch (result.result)
   {
     case detail::FutureActionResult::continuation_set_suceeded:
