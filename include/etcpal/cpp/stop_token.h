@@ -35,7 +35,7 @@ private:
 
 public:
   StopSource() = default;
-  explicit StopSource(NoStopState_t nss, const Allocator& alloc = {}) noexcept : ctrl_block_{} {}
+  explicit StopSource(NoStopState_t nss) noexcept : ctrl_block_{} {}
   explicit StopSource(const Allocator& alloc) : ctrl_block_{std::allocate_shared<StopContext>(alloc, alloc)} {}
   StopSource(const StopSource& rhs) noexcept;
   StopSource(StopSource&& rhs) noexcept : ctrl_block_{std::move(rhs.ctrl_block_)} {}
