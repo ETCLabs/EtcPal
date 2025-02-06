@@ -228,11 +228,12 @@ public:
   /// @brief Copy assign to this variant.
   /// @param rhs The variant to copy from.
   /// @return Self-reference.
-  constexpr auto operator=(const Variant& rhs) noexcept(detail::AllNothrowCopyAssignable<T...>::value) -> Variant&;
+  ETCPAL_CONSTEXPR_20 auto operator=(const Variant& rhs) noexcept(detail::AllNothrowCopyAssignable<T...>::value)
+      -> Variant&;
   /// @brief Move assign to this variant.
   /// @param rhs The variant to move from.
   /// @return Self-reference.
-  constexpr auto operator=(Variant&& rhs) noexcept -> Variant&;
+  ETCPAL_CONSTEXPR_20 auto operator=(Variant&& rhs) noexcept -> Variant&;
 
   /// @name Observers
   /// @brief Inspect what type the variant currently holds.
@@ -749,7 +750,7 @@ etcpal::Variant<T...>::~Variant() noexcept
 }
 
 template <typename... T>
-constexpr auto etcpal::Variant<T...>::operator=(const Variant& rhs) noexcept(
+ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(const Variant& rhs) noexcept(
     detail::AllNothrowCopyAssignable<T...>::value) -> Variant&
 {
   if (type_ == rhs.type_)
@@ -776,7 +777,7 @@ constexpr auto etcpal::Variant<T...>::operator=(const Variant& rhs) noexcept(
 }
 
 template <typename... T>
-constexpr auto etcpal::Variant<T...>::operator=(Variant&& rhs) noexcept -> Variant&
+ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(Variant&& rhs) noexcept -> Variant&
 {
   if (type_ == rhs.type_)
   {

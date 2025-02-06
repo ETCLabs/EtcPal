@@ -53,6 +53,22 @@
 /// @def ETCPAL_CONSTEXPR_14_OR_INLINE
 /// @brief Defined to "constexpr" in C++14 or later, "inline" earlier.
 
+#if (__cplusplus >= 202002L)
+#define ETCPAL_CONSTEXPR_20           constexpr
+#define ETCPAL_CONSTEXPR_20_OR_INLINE constexpr
+#else  // #if (__cplusplus >= 202002L)
+#define ETCPAL_CONSTEXPR_20
+#define ETCPAL_CONSTEXPR_20_OR_INLINE inline
+#endif  // #if (__cplusplus >= 202002L)
+
+#if (__cplusplus >= 201703L)
+#define ETCPAL_CONSTEXPR_17           constexpr
+#define ETCPAL_CONSTEXPR_17_OR_INLINE constexpr
+#else  // #if (__cplusplus >= 201703L)
+#define ETCPAL_CONSTEXPR_17
+#define ETCPAL_CONSTEXPR_17_OR_INLINE inline
+#endif  // #if (__cplusplus >= 201703L)
+
 #if ((defined(_MSC_VER) && (_MSC_VER > 1900)) || (__cplusplus >= 201402L))
 #define ETCPAL_CONSTEXPR_14           constexpr
 #define ETCPAL_CONSTEXPR_14_OR_INLINE constexpr
