@@ -5,15 +5,22 @@
 
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <bitset>
 #include <chrono>
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <vector>
 
+#if !(ETCPAL_NO_OS_SUPPORT)
+#include <iostream>
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
+
 #include <etcpal/cpp/synchronized.h>
+
+#if !(ETCPAL_NO_OS_SUPPORT)
 #include <etcpal/cpp/rwlock.h>
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
 
 namespace etcpal
 {
@@ -159,6 +166,7 @@ class MonotonicBufferStatistics<Size, true>
 public:
   ~MonotonicBufferStatistics() noexcept
   {
+#if !(ETCPAL_NO_OS_SUPPORT)
     std::cout << "\n"
                  "+++++++++++++++++++++++++++++++++++++++++\n"
                  "Allocator Statistics for Monotonic Buffer\n"
@@ -183,6 +191,7 @@ public:
               << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_alloc_).count()
               << "ms\n"
                  "-----------------------------------------\n";
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
     if (current_allocs_ != 0)
     {
       throw std::logic_error{"allocation count is not zero"};
@@ -453,6 +462,7 @@ class BlockMemory<Size, BlockSize, true> : public BlockMemory<Size, BlockSize, f
 public:
   ~BlockMemory() noexcept override
   {
+#if !(ETCPAL_NO_OS_SUPPORT)
     std::cout << "\n"
                  "+++++++++++++++++++++++++++++++++++++++++++++++\n"
                  "Allocator Statistics for Block Memory Allocator\n"
@@ -508,6 +518,7 @@ public:
               << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_allocator_).count()
               << "ms\n"
                  "-----------------------------------------------\n";
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
     if (allocated_blocks_ != 0)
     {
       throw std::logic_error{"allocation count is not zero"};
@@ -572,10 +583,12 @@ protected:
                              i < BlockMemory<Size, BlockSize, false>::num_blocks();
          ++i, ++count)
     {
+#if !(ETCPAL_NO_OS_SUPPORT)
       if (i >= start + calculated_blocks)
       {
         std::cerr << "    mismatched allocation size\n";
       }
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
       if (!BlockMemory<Size, BlockSize, false>::is_allocated(i))
       {
         throw std::logic_error{"deallocating non-allocated memory"};
@@ -597,13 +610,50 @@ private:
   int                                          single_block_allocs_ = 0;
 };
 
+namespace detail
+{
+
+struct DummyLock
+{
+  static constexpr void lock() noexcept {}
+  static constexpr void unlock() noexcept {}
+  static constexpr bool try_lock() noexcept { return true; }
+};
+
+struct SpinLock
+{
+  std::atomic<bool> locked{false};
+
+  [[nodiscard]] bool try_lock() noexcept
+  {
+    bool expected = false;
+    return locked.compare_exchange_strong(expected, true);
+  }
+
+  void unlock() noexcept { locked = false; }
+  void lock() noexcept
+  {
+    while (!try_lock())
+    {
+    };
+  }
+};
+
+}  // namespace detail
+
 /// @brief Thread-safe block memory resource.
 /// @tparam Lock      The type of lock to perform synchonization with.
 /// @tparam Size      The total amount of available memory.
 /// @tparam BlockSize The size of a single memory block.
 /// @tparam Debug     Whether to track and report statistics to `std::cout` or not.
 template <std::size_t Size,
-          typename Lock         = RwLock,
+          typename Lock =
+#if !(ETCPAL_NO_OS_SUPPORT)
+              RwLock
+#else   // #if !(ETCPAL_NO_OS_SUPPORT)
+              detail::SpinLock
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
+          ,
           std::size_t BlockSize = sizeof(std::max_align_t),
           bool        Debug     = false>
 class SyncBlockMemory : public memory_resource
@@ -632,6 +682,7 @@ template <std::size_t Size, typename Lock, std::size_t BlockSize>
 class SyncBlockMemory<Size, Lock, BlockSize, true> : public memory_resource
 {
 public:
+#if !(ETCPAL_NO_OS_SUPPORT)
   ~SyncBlockMemory() noexcept override
   {
     std::cout << "\n"
@@ -643,6 +694,7 @@ public:
               << "ms\n"
                  "------------------------------------------------------------\n";
   }
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
 
 protected:
   [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
@@ -753,13 +805,6 @@ template <typename T, typename Allocator, typename... Args, std::enable_if_t<!st
 namespace detail
 {
 
-struct DummyLock
-{
-  static constexpr void lock() noexcept {}
-  static constexpr void unlock() noexcept {}
-  static constexpr bool try_lock() noexcept { return true; }
-};
-
 [[nodiscard]] constexpr auto make_max_aligned(std::size_t size) noexcept
 {
   return (size % alignof(std::max_align_t) == 0) ? size
@@ -839,6 +884,7 @@ class DualLevelBlockPoolStatistics<BasicDualLevelBlockPool<Size, SmallSize, Lock
 public:
   static constexpr auto small_size = largest_sync_buffer_sized_under<SmallSize, Lock, DebugMonoBuffs>();
 
+#if !(ETCPAL_NO_OS_SUPPORT)
   ~DualLevelBlockPoolStatistics() noexcept
   {
     std::cout << "\n"
@@ -878,6 +924,7 @@ public:
               << "ms\n"
                  "----------------------------------------------\n";
   }
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
 
   void report_new_small_buffer() noexcept
   {
@@ -1104,8 +1151,14 @@ using DualLevelBlockPool = BasicDualLevelBlockPool<Size, SmallBlockSize, detail:
 template <std::size_t Size,
           std::size_t SmallBlockSize = DualLevelBlockPool<Size>::small_size,
           std::size_t BlockSize      = DualLevelBlockPool<Size, SmallBlockSize>::block_size,
-          typename Lock              = RwLock,
-          bool Debug                 = false>
+          typename Lock =
+#if !(ETCPAL_NO_OS_SUPPORT)
+              RwLock
+#else   // #if !(ETCPAL_NO_OS_SUPPORT)
+              detail::SpinLock
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
+          ,
+          bool Debug = false>
 using SyncDualLevelBlockPool = BasicDualLevelBlockPool<Size, SmallBlockSize, Lock, Debug, false, BlockSize>;
 template <std::size_t Size,
           std::size_t SmallBlockSize = DualLevelBlockPool<Size>::small_size,
@@ -1125,6 +1178,7 @@ public:
   MemoryPerformanceRecorder(const MemoryPerformanceRecorder& rhs) = delete;
   MemoryPerformanceRecorder(MemoryPerformanceRecorder&& rhs)      = delete;
 
+#if !(ETCPAL_NO_OS_SUPPORT)
   ~MemoryPerformanceRecorder() noexcept
   {
     std::cout << "\n"
@@ -1134,6 +1188,7 @@ public:
                  "time spent in allocator - "
               << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_spent_).count() << "ms\n";
   }
+#endif  // #if !(ETCPAL_NO_OS_SUPPORT)
 
   auto operator=(const MemoryPerformanceRecorder& rhs) -> MemoryPerformanceRecorder& = delete;
   auto operator=(MemoryPerformanceRecorder&& rhs) -> MemoryPerformanceRecorder&      = delete;
