@@ -535,7 +535,7 @@ Error BasicThread<Allocator>::Start(const Allocator& alloc, Function&& func, Arg
   if (thread_)
     return kEtcPalErrInvalid;
 
-  try
+  ETCPAL_TRY
   {
     thread_ = allocate_unique<CtrlBlock>(
         alloc, CtrlBlock{FunctionType{std::bind(std::forward<Function>(func), std::forward<Args>(args)...), alloc}});
@@ -549,7 +549,7 @@ Error BasicThread<Allocator>::Start(const Allocator& alloc, Function&& func, Arg
 
     return create_res;
   }
-  catch (const std::bad_alloc& exe)
+  ETCPAL_CATCH(const std::bad_alloc& exe)
   {
     return kEtcPalErrNoMem;
   }

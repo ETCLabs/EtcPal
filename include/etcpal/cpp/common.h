@@ -96,10 +96,14 @@
 /// @cond Internal Exception Macros
 
 #if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) && !defined(ETCPAL_NO_EXCEPTIONS)
+#define ETCPAL_TRY                      try
+#define ETCPAL_CATCH(exception)         catch (exception)
 #define ETCPAL_THROW(exception)         throw exception
 #define ETCPAL_BUILDING_WITH_EXCEPTIONS 1
 #else
 #include <cstdlib>
+#define ETCPAL_TRY
+#define ETCPAL_CATCH(exception)         if ETCPAL_CONSTEXPR_17 (false)
 #define ETCPAL_THROW(exception)         std::abort()
 #define ETCPAL_BUILDING_WITH_EXCEPTIONS 0
 #endif

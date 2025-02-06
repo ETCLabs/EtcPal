@@ -763,12 +763,12 @@ ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(const Variant& rhs) no
   }
 
   storage_.destruct((type_ == variant_npos) ? sizeof...(T) : type_);
-  try
+  ETCPAL_TRY
   {
     rhs.storage_.visit(rhs.type_, [&](const auto& arg) { storage_.construct(rhs.type_, arg); });
     type_ = rhs.type_;
   }
-  catch (...)
+  ETCPAL_CATCH(...)
   {
     type_ = variant_npos;
   }
@@ -789,12 +789,12 @@ ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(Variant&& rhs) noexcep
   }
 
   storage_.destruct((type_ == variant_npos) ? sizeof...(T) : type_);
-  try
+  ETCPAL_TRY
   {
     rhs.storage_.visit(rhs.type_, [&](auto&& arg) { storage_.construct(rhs.type_, std::move(arg)); });
     type_ = rhs.type_;
   }
-  catch (...)
+  ETCPAL_CATCH(...)
   {
     type_ = variant_npos;
   }

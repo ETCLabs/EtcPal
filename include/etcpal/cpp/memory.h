@@ -794,11 +794,11 @@ template <typename T, typename Allocator, typename... Args, std::enable_if_t<!st
 {
   auto alloc = typename std::allocator_traits<Allocator>::template rebind_alloc<T>{allocator};
   auto ptr   = alloc.allocate(1);
-  try
+  ETCPAL_TRY
   {
     new (ptr) T(std::forward<Args>(args)...);
   }
-  catch (...)
+  ETCPAL_CATCH(...)
   {
     alloc.deallocate(ptr, 1);
     ETCPAL_THROW();
