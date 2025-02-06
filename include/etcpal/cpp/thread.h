@@ -151,9 +151,9 @@ class BasicThread
 public:
   /// @brief Create a new thread object which does not yet represent a thread.
   BasicThread() = default;
-  template <class Function, class... Args, std::enable_if_t<detail::IsCallable<Function, Args...>::value>* = nullptr>
+  template <class Function, class... Args, std::enable_if_t<is_invocable<Function, Args...>::value>* = nullptr>
   BasicThread(Function&& func, Args&&... args);
-  template <class Function, class... Args, std::enable_if_t<detail::IsCallable<Function, Args...>::value>* = nullptr>
+  template <class Function, class... Args, std::enable_if_t<is_invocable<Function, Args...>::value>* = nullptr>
   BasicThread(const Allocator& alloc, Function&& func, Args&&... args);
   BasicThread(unsigned int priority, unsigned int stack_size, const char* name, void* platform_data = nullptr);
 
@@ -189,9 +189,9 @@ public:
   BasicThread& SetParams(const EtcPalThreadParams& params) noexcept;
   /// @}
 
-  template <class Function, class... Args, typename = std::enable_if_t<detail::IsCallable<Function, Args...>::value>>
+  template <class Function, class... Args, typename = std::enable_if_t<is_invocable<Function, Args...>::value>>
   Error Start(const Allocator& alloc, Function&& func, Args&&... args);
-  template <class Function, class... Args, typename = std::enable_if_t<detail::IsCallable<Function, Args...>::value>>
+  template <class Function, class... Args, typename = std::enable_if_t<is_invocable<Function, Args...>::value>>
   Error Start(Function&& func, Args&&... args);
   Error Join(int timeout_ms = ETCPAL_WAIT_FOREVER) noexcept;
   Error Terminate() noexcept;
@@ -245,23 +245,23 @@ public:
   JThread() noexcept = default;
   template <typename Fun,
             typename... Args,
-            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
+            std::enable_if_t<is_invocable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(const EtcPalThreadParams& params, const Allocator& alloc, Fun&& fun, Args&&... args);
   template <typename Fun,
             typename... Args,
-            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
+            std::enable_if_t<is_invocable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args);
-  template <typename Fun, typename... Args, std::enable_if_t<detail::IsCallable<Fun, Args...>::value>* = nullptr>
+  template <typename Fun, typename... Args, std::enable_if_t<is_invocable<Fun, Args...>::value>* = nullptr>
   explicit JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args);
   template <typename Fun,
             typename... Args,
-            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
+            std::enable_if_t<is_invocable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(const Allocator& alloc, Fun&& fun, Args&&... args);
   template <typename Fun,
             typename... Args,
-            std::enable_if_t<detail::IsCallable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
+            std::enable_if_t<is_invocable<Fun, const StopToken<Allocator>&, Args...>::value>* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
-  template <typename Fun, typename... Args, std::enable_if_t<detail::IsCallable<Fun, Args...>::value>* = nullptr>
+  template <typename Fun, typename... Args, std::enable_if_t<is_invocable<Fun, Args...>::value>* = nullptr>
   explicit JThread(Fun&& fun, Args&&... args);
   /// @}
 
@@ -307,7 +307,7 @@ private:
 /// @throw std::runtime_error if Start() returns an error code.
 /// @post `joinable() == true`
 template <typename Allocator>
-template <class Function, class... Args, std::enable_if_t<etcpal::detail::IsCallable<Function, Args...>::value>*>
+template <class Function, class... Args, std::enable_if_t<etcpal::is_invocable<Function, Args...>::value>*>
 BasicThread<Allocator>::BasicThread(const Allocator& alloc, Function&& func, Args&&... args)
 {
   auto result = Start(alloc, std::forward<Function>(func), std::forward<Args>(args)...);
@@ -316,7 +316,7 @@ BasicThread<Allocator>::BasicThread(const Allocator& alloc, Function&& func, Arg
 }
 
 template <typename Allocator>
-template <class Function, class... Args, std::enable_if_t<etcpal::detail::IsCallable<Function, Args...>::value>*>
+template <class Function, class... Args, std::enable_if_t<etcpal::is_invocable<Function, Args...>::value>*>
 BasicThread<Allocator>::BasicThread(Function&& func, Args&&... args)
     : BasicThread{Allocator{}, std::forward<Function>(func), std::forward<Args>(args)...}
 {
@@ -632,7 +632,7 @@ Error BasicThread<Allocator>::Sleep(const std::chrono::duration<Rep, Period>& sl
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
+          std::enable_if_t<etcpal::is_invocable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, const Allocator& alloc, Fun&& fun, Args&&... args)
     : ssource_{alloc}, thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
 {
@@ -646,7 +646,7 @@ etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, const Allo
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
+          std::enable_if_t<etcpal::is_invocable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args)
     : ssource_{}, thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
 {
@@ -658,7 +658,7 @@ etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun,
 }
 
 template <typename Allocator>
-template <typename Fun, typename... Args, std::enable_if_t<etcpal::detail::IsCallable<Fun, Args...>::value>*>
+template <typename Fun, typename... Args, std::enable_if_t<etcpal::is_invocable<Fun, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun, Args&&... args)
     : thread_{params.priority, params.stack_size, params.thread_name, params.platform_data}
 {
@@ -672,7 +672,7 @@ etcpal::JThread<Allocator>::JThread(const EtcPalThreadParams& params, Fun&& fun,
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
+          std::enable_if_t<etcpal::is_invocable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(const Allocator& alloc, Fun&& fun, Args&&... args)
     : ssource_{alloc}, thread_{alloc, std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
 {
@@ -681,14 +681,14 @@ etcpal::JThread<Allocator>::JThread(const Allocator& alloc, Fun&& fun, Args&&...
 template <typename Allocator>
 template <typename Fun,
           typename... Args,
-          std::enable_if_t<etcpal::detail::IsCallable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
+          std::enable_if_t<etcpal::is_invocable<Fun, const etcpal::StopToken<Allocator>&, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(Fun&& fun, Args&&... args)
     : ssource_{}, thread_{std::forward<Fun>(fun), ssource_.get_token(), std::forward<Args>(args)...}
 {
 }
 
 template <typename Allocator>
-template <typename Fun, typename... Args, std::enable_if_t<etcpal::detail::IsCallable<Fun, Args...>::value>*>
+template <typename Fun, typename... Args, std::enable_if_t<etcpal::is_invocable<Fun, Args...>::value>*>
 etcpal::JThread<Allocator>::JThread(Fun&& fun, Args&&... args)
     : thread_{std::forward<Fun>(fun), std::forward<Args>(args)...}
 {
