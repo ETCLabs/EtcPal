@@ -777,7 +777,7 @@ template <typename T, typename Allocator>
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   switch (state_->set_future_retrieved())
@@ -786,9 +786,9 @@ template <typename T, typename Allocator>
       return Future<T, Allocator>{state_};
 
     case detail::FutureActionResult::future_already_retrieved:
-      throw FutureError{FutureErrc::future_already_promised};
+      ETCPAL_THROW(FutureError{FutureErrc::future_already_promised});
     default:
-      throw std::logic_error{"invalid promise status"};
+      ETCPAL_THROW(std::logic_error{"invalid promise status"});
   }
 }
 
@@ -798,7 +798,7 @@ void etcpal::Promise<T, Allocator>::set_value(U&& value)
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   auto result = state_->set_value(std::forward<U>(value));
@@ -813,9 +813,9 @@ void etcpal::Promise<T, Allocator>::set_value(U&& value)
     case detail::FutureActionResult::value_already_set:
       [[fallthrough]];
     case detail::FutureActionResult::exception_already_set:
-      throw FutureError{FutureErrc::promise_already_satisfied};
+      ETCPAL_THROW(FutureError{FutureErrc::promise_already_satisfied});
     default:
-      throw std::logic_error{"invalid promise status"};
+      ETCPAL_THROW(std::logic_error{"invalid promise status"});
   }
 }
 
@@ -825,7 +825,7 @@ void etcpal::Promise<T, Allocator>::set_value()
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   auto result = state_->set_value(nullptr);
@@ -840,9 +840,9 @@ void etcpal::Promise<T, Allocator>::set_value()
     case detail::FutureActionResult::value_already_set:
       [[fallthrough]];
     case detail::FutureActionResult::exception_already_set:
-      throw FutureError{FutureErrc::promise_already_satisfied};
+      ETCPAL_THROW(FutureError{FutureErrc::promise_already_satisfied});
     default:
-      throw std::logic_error{"invalid promise status"};
+      ETCPAL_THROW(std::logic_error{"invalid promise status"});
   }
 }
 
@@ -851,7 +851,7 @@ template <typename T, typename Allocator>
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   auto result = state_->get_value(std::chrono::milliseconds{ETCPAL_WAIT_FOREVER});
@@ -863,15 +863,15 @@ template <typename T, typename Allocator>
       return state_->return_value(std::move(*result.value));
 
     case detail::FutureActionResult::broken_promise:
-      throw FutureError{FutureErrc::broken_promise};
+      ETCPAL_THROW(FutureError{FutureErrc::broken_promise});
     case detail::FutureActionResult::value_already_obtained:
-      throw FutureError{FutureErrc::future_already_retrieved};
+      ETCPAL_THROW(FutureError{FutureErrc::future_already_retrieved});
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{FutureErrc::continuation_already_set};
+      ETCPAL_THROW(FutureError{FutureErrc::continuation_already_set});
     case detail::FutureActionResult::value_get_timeout:
-      throw std::logic_error{"timed out waiting forever for a future value"};
+      ETCPAL_THROW(std::logic_error{"timed out waiting forever for a future value"});
     default:
-      throw std::logic_error{"invalid future status"};
+      ETCPAL_THROW(std::logic_error{"invalid future status"});
   }
 }
 
@@ -898,9 +898,9 @@ template <typename T, typename Allocator>
     case detail::FutureActionResult::continuation_already_set:
       return FutureErrc::continuation_already_set;
     case detail::FutureActionResult::value_get_timeout:
-      throw std::logic_error{"timed out waiting forever for a future value"};
+      ETCPAL_THROW(std::logic_error{"timed out waiting forever for a future value"});
     default:
-      throw std::logic_error{"invalid future status"};
+      ETCPAL_THROW(std::logic_error{"invalid future status"});
   }
 }
 
@@ -931,7 +931,7 @@ template <typename Rep, typename Period>
     case detail::FutureActionResult::value_get_timeout:
       return FutureErrc::timeout;
     default:
-      throw std::logic_error{"invalid future status"};
+      ETCPAL_THROW(std::logic_error{"invalid future status"});
   }
 }
 
@@ -942,7 +942,7 @@ template <typename... F, typename>
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   auto promise =
@@ -961,9 +961,9 @@ template <typename... F, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{FutureErrc::continuation_already_set};
+      ETCPAL_THROW(FutureError{FutureErrc::continuation_already_set});
     default:
-      throw std::logic_error{"invalid promise status"};
+      ETCPAL_THROW(std::logic_error{"invalid promise status"});
   }
 
   return future;
@@ -979,7 +979,7 @@ template <typename... F, typename>
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
@@ -1011,9 +1011,9 @@ template <typename... F, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{FutureErrc::continuation_already_set};
+      ETCPAL_THROW(FutureError{FutureErrc::continuation_already_set});
     default:
-      throw std::logic_error{"invalid promise status"};
+      ETCPAL_THROW(std::logic_error{"invalid promise status"});
   }
 
   return future;
@@ -1026,7 +1026,7 @@ template <typename Executor, typename... F, typename>
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   auto promise =
@@ -1048,9 +1048,9 @@ template <typename Executor, typename... F, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{FutureErrc::continuation_already_set};
+      ETCPAL_THROW(FutureError{FutureErrc::continuation_already_set});
     default:
-      throw std::logic_error{"invalid promise status"};
+      ETCPAL_THROW(std::logic_error{"invalid promise status"});
   }
 
   return future;
@@ -1066,7 +1066,7 @@ template <typename Executor, typename... F, typename>
 {
   if (!state_)
   {
-    throw FutureError{FutureErrc::no_state};
+    ETCPAL_THROW(FutureError{FutureErrc::no_state});
   }
 
   auto promise = Promise<detail::CommonCVRefType_t<detail::CallResult_t<detail::Selection<F...>, FutureStatus>,
@@ -1100,9 +1100,9 @@ template <typename Executor, typename... F, typename>
       break;
 
     case detail::FutureActionResult::continuation_already_set:
-      throw FutureError{FutureErrc::continuation_already_set};
+      ETCPAL_THROW(FutureError{FutureErrc::continuation_already_set});
     default:
-      throw std::logic_error{"invalid promise status"};
+      ETCPAL_THROW(std::logic_error{"invalid promise status"});
   }
 
   return future;
@@ -1152,7 +1152,7 @@ template <typename Rep, typename Period>
       return FutureStatus::continued;
 
     default:
-      throw std::logic_error{"invalid future status"};
+      ETCPAL_THROW(std::logic_error{"invalid future status"});
   }
 }
 

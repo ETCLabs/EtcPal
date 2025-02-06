@@ -126,9 +126,13 @@ private:
   struct NullResource : public memory_resource
   {
   protected:
-    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override { throw std::bad_alloc{}; }
     void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override {}
-    [[nodiscard]] bool  do_is_equal(const memory_resource& rhs) const noexcept override
+    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+    {
+      ETCPAL_THROW(std::bad_alloc{});
+    }
+
+    [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
     {
       return this == std::addressof(rhs);
     }
@@ -195,7 +199,7 @@ public:
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
     if (current_allocs_ != 0)
     {
-      throw std::logic_error{"allocation count is not zero"};
+      ETCPAL_THROW(std::logic_error{"allocation count is not zero"});
     }
   }
 
@@ -293,7 +297,7 @@ protected:
       return p;
     }
 
-    throw std::bad_alloc{};
+    ETCPAL_THROW(std::bad_alloc{});
   }
 
   void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
@@ -373,7 +377,7 @@ protected:
       }
     }
 
-    throw std::bad_alloc{};
+    ETCPAL_THROW(std::bad_alloc{});
   }
 
   void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
@@ -522,13 +526,13 @@ public:
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
     if (allocated_blocks_ != 0)
     {
-      throw std::logic_error{"allocation count is not zero"};
+      ETCPAL_THROW(std::logic_error{"allocation count is not zero"});
     }
     for (auto i = 0; i < BlockMemory<Size, BlockSize, false>::num_blocks(); ++i)
     {
       if (BlockMemory<Size, BlockSize, false>::is_allocated(i))
       {
-        throw std::logic_error{"memory block leaked"};
+        ETCPAL_THROW(std::logic_error{"memory block leaked"});
       }
     }
   }
@@ -558,15 +562,15 @@ protected:
     const auto blocks      = BlockMemory<Size, BlockSize, false>::to_blocks(bytes);
     if (start_index < 0 || start_index >= BlockMemory<Size, BlockSize, false>::num_blocks())
     {
-      throw std::logic_error{"attempting to deallocate memory from outside this resource"};
+      ETCPAL_THROW(std::logic_error{"attempting to deallocate memory from outside this resource"});
     }
     if (start_index + blocks > BlockMemory<Size, BlockSize, false>::num_blocks())
     {
-      throw std::logic_error{"deallocation size would reach outside this resource"};
+      ETCPAL_THROW(std::logic_error{"deallocation size would reach outside this resource"});
     }
     if (!BlockMemory<Size, BlockSize, false>::is_start_block(start_index))
     {
-      throw std::logic_error{"deallocating pointer to a memory block that's not a starting block of a chunk"};
+      ETCPAL_THROW(std::logic_error{"deallocating pointer to a memory block that's not a starting block of a chunk"});
     }
 
     allocated_blocks_ -= count_blocks_to_deallocate(start_index, blocks);
@@ -592,7 +596,7 @@ protected:
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
       if (!BlockMemory<Size, BlockSize, false>::is_allocated(i))
       {
-        throw std::logic_error{"deallocating non-allocated memory"};
+        ETCPAL_THROW(std::logic_error{"deallocating non-allocated memory"});
       }
     }
 
@@ -797,7 +801,7 @@ template <typename T, typename Allocator, typename... Args, std::enable_if_t<!st
   catch (...)
   {
     alloc.deallocate(ptr, 1);
-    throw;
+    ETCPAL_THROW();
   }
 
   return std::unique_ptr<T, DeleteUsingAlloc<T, Allocator>>{ptr, DeleteUsingAlloc<T, Allocator>{alloc}};

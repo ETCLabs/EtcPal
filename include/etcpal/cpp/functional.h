@@ -149,7 +149,7 @@ class Callable;
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
       return ptr_ ? std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...)   \
-                  : throw std::bad_function_call{};                                                                    \
+                  : ETCPAL_THROW(std::bad_function_call{});                                                            \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
@@ -210,7 +210,7 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
-      return target_ptr() ? thunk(target_ptr(), std::forward<Args>(args)...) : throw std::bad_function_call{};         \
+      return target_ptr() ? thunk(target_ptr(), std::forward<Args>(args)...) : ETCPAL_THROW(std::bad_function_call{}); \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<detail::IsCallable<const Parent, T...>::value>>               \
     constexpr decltype(auto) operator()(T&&... args) const&& noexcept(                                                 \
