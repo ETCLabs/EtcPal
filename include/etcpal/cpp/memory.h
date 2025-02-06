@@ -1143,9 +1143,9 @@ protected:
   }
 
 private:
-  SyncBlockMemory<capacity, LockType, block_size, debug>                       pool_{};
-  Synchronized<std::vector<SmallBufferPtr, polymorphic_allocator<>>, LockType> small_pools_{
-      small_size / sizeof(SmallBufferPtr), polymorphic_allocator<>{std::addressof(pool_)}};
+  SyncBlockMemory<capacity, LockType, block_size, debug>                                     pool_{};
+  Synchronized<std::vector<SmallBufferPtr, polymorphic_allocator<SmallBufferPtr>>, LockType> small_pools_{
+      small_size / sizeof(SmallBufferPtr), polymorphic_allocator<SmallBufferPtr>{std::addressof(pool_)}};
 };
 
 template <std::size_t Size,
