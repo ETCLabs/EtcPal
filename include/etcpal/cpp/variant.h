@@ -352,7 +352,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l == r; },
-                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
+                                      [](const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
   [[nodiscard]] friend constexpr bool operator!=(const Variant& lhs, const Variant& rhs) noexcept
@@ -368,7 +368,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l != r; },
-                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
+                                      [](const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
   [[nodiscard]] friend constexpr bool operator<(const Variant& lhs, const Variant& rhs) noexcept
@@ -384,7 +384,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l < r; },
-                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
+                                      [](const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
   [[nodiscard]] friend constexpr bool operator>(const Variant& lhs, const Variant& rhs) noexcept
@@ -400,7 +400,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l > r; },
-                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
+                                      [](const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
   [[nodiscard]] friend constexpr bool operator<=(const Variant& lhs, const Variant& rhs) noexcept
@@ -416,7 +416,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l <= r; },
-                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
+                                      [](const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
   [[nodiscard]] friend constexpr bool operator>=(const Variant& lhs, const Variant& rhs) noexcept
@@ -432,7 +432,7 @@ public:
 
     return lhs.visit([&](const auto& l) {
       return rhs.visit(make_selection([&](const decltype(l)& r) { return l >= r; },
-                                      [](const auto& r) -> bool { throw BadVariantAccess{}; }));
+                                      [](const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
   /// @}
@@ -537,7 +537,7 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw BadVariantAccess{};
+      ETCPAL_THROW(BadVariantAccess{});
     }
 
     return std::forward<V>(visitor)(std::move(value));
@@ -548,7 +548,7 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw BadVariantAccess{};
+      ETCPAL_THROW(BadVariantAccess{});
     }
 
     return std::forward<V>(visitor)(value);
@@ -559,7 +559,7 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw BadVariantAccess{};
+      ETCPAL_THROW(BadVariantAccess{});
     }
 
     return std::forward<V>(visitor)(std::move(value));
@@ -570,7 +570,7 @@ union etcpal::detail::VariadicUnion<T>
   {
     if (index != 0)
     {
-      throw BadVariantAccess{};
+      ETCPAL_THROW(BadVariantAccess{});
     }
 
     return std::forward<V>(visitor)(value);
@@ -757,7 +757,7 @@ ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(const Variant& rhs) no
   {
     storage_.visit(type_, [&](auto& lhs) {
       rhs.storage_.visit(rhs.type_, make_selection([&](const decltype(lhs)& arg) { lhs = arg; },
-                                                   [](auto&& arg) { throw BadVariantAccess{}; }));
+                                                   [](auto&& arg) { ETCPAL_THROW(BadVariantAccess{}); }));
     });
     return *this;
   }
@@ -783,7 +783,7 @@ ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(Variant&& rhs) noexcep
   {
     storage_.visit(type_, [&](auto& lhs) {
       rhs.storage_.visit(rhs.type_, make_selection([&](decltype(lhs)& arg) { lhs = std::move(arg); },
-                                                   [](auto&& arg) { throw BadVariantAccess{}; }));
+                                                   [](auto&& arg) { ETCPAL_THROW(BadVariantAccess{}); }));
     });
     return *this;
   }
@@ -935,7 +935,7 @@ template <std::size_t I, typename>
 {
   if (index() != I)
   {
-    throw BadVariantAccess{};
+    ETCPAL_THROW(BadVariantAccess{});
   }
 
   return std::move(storage_.get(InPlaceIndex_t<I>{}));
@@ -947,7 +947,7 @@ template <std::size_t I, typename>
 {
   if (index() != I)
   {
-    throw BadVariantAccess{};
+    ETCPAL_THROW(BadVariantAccess{});
   }
 
   return storage_.get(InPlaceIndex_t<I>{});
@@ -959,7 +959,7 @@ template <std::size_t I, typename>
 {
   if (index() != I)
   {
-    throw BadVariantAccess{};
+    ETCPAL_THROW(BadVariantAccess{});
   }
 
   return std::move(storage_.get(InPlaceIndex_t<I>{}));
@@ -971,7 +971,7 @@ template <std::size_t I, typename>
 {
   if (index() != I)
   {
-    throw BadVariantAccess{};
+    ETCPAL_THROW(BadVariantAccess{});
   }
 
   return storage_.get(InPlaceIndex_t<I>{});
