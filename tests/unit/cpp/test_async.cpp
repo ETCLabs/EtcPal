@@ -56,7 +56,7 @@ TEST(etcpal_cpp_async, thread_pool)
 
   etcpal::ThreadPool<32> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
   auto                   future_futures                = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<int>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       auto promise = etcpal::Promise<int>{alloc};
@@ -67,7 +67,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_futures_for_get_if     = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<int>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       auto promise = etcpal::Promise<int>{alloc};
@@ -78,7 +78,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_continued_futures      = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<int>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       auto promise = etcpal::Promise<int>{alloc};
@@ -90,7 +90,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_continued_exec_futures = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<int>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       futures.push_back(
@@ -102,7 +102,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_abandoned_futures      = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<int>>{alloc};
     for (auto i = 0; i < num_items; ++i)
     {
       futures.push_back(etcpal::Promise<int>{alloc}.get_future());
@@ -146,7 +146,7 @@ TEST(etcpal_cpp_async, thread_pool)
 TEST(etcpal_cpp_async, promise_chain)
 {
   using namespace std::chrono_literals;
-  using NumVector = std::vector<int, etcpal::polymorphic_allocator<>>;
+  using NumVector = std::vector<int, etcpal::polymorphic_allocator<int>>;
 
   etcpal::SyncDualLevelBlockPool<1 << 14> buffer{};
   const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
