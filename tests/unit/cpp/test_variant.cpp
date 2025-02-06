@@ -56,7 +56,7 @@ TEST(etcpal_cpp_variant, variant)
   TEST_ASSERT_TRUE((etcpal::Variant<int, double>{etcpal::InPlaceType_t<int>{}}).index() == 0);
   TEST_ASSERT_TRUE((etcpal::Variant<int, double>{etcpal::InPlaceType_t<double>{}}).index() == 1);
 
-  using String         = std::basic_string<char, std::char_traits<char>, etcpal::polymorphic_allocator<>>;
+  using String         = std::basic_string<char, std::char_traits<char>, etcpal::polymorphic_allocator<char>>;
   using StringOrNumber = etcpal::Variant<int, String>;
 
   etcpal::BlockMemory<1 << 5> buffer{};
