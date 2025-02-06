@@ -540,7 +540,7 @@ union etcpal::detail::VariadicUnion<T>
       ETCPAL_THROW(BadVariantAccess{});
     }
 
-    return std::forward<V>(visitor)(std::move(value));
+    return invoke(std::forward<V>(visitor), std::move(value));
   }
 
   template <typename V>
@@ -551,7 +551,7 @@ union etcpal::detail::VariadicUnion<T>
       ETCPAL_THROW(BadVariantAccess{});
     }
 
-    return std::forward<V>(visitor)(value);
+    return invoke(std::forward<V>(visitor), value);
   }
 
   template <typename V>
@@ -562,7 +562,7 @@ union etcpal::detail::VariadicUnion<T>
       ETCPAL_THROW(BadVariantAccess{});
     }
 
-    return std::forward<V>(visitor)(std::move(value));
+    return invoke(std::forward<V>(visitor), std::move(value));
   }
 
   template <typename V>
@@ -573,7 +573,7 @@ union etcpal::detail::VariadicUnion<T>
       ETCPAL_THROW(BadVariantAccess{});
     }
 
-    return std::forward<V>(visitor)(value);
+    return invoke(std::forward<V>(visitor), value);
   }
 
   [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
@@ -646,25 +646,27 @@ union etcpal::detail::VariadicUnion<T, U, Rest...>
   template <typename V>
   [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
   {
-    return (index == 0) ? std::forward<V>(visitor)(std::move(value)) : rest.visit(index - 1, std::forward<V>(visitor));
+    return (index == 0) ? invoke(std::forward<V>(visitor), std::move(value))
+                        : std::move(rest).visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
   [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
   {
-    return (index == 0) ? std::forward<V>(visitor)(value) : rest.visit(index - 1, std::forward<V>(visitor));
+    return (index == 0) ? invoke(std::forward<V>(visitor), value) : rest.visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
   [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
   {
-    return (index == 0) ? std::forward<V>(visitor)(std::move(value)) : rest.visit(index - 1, std::forward<V>(visitor));
+    return (index == 0) ? invoke(std::forward<V>(visitor), std::move(value))
+                        : std::move(rest).visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
   [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
   {
-    return (index == 0) ? std::forward<V>(visitor)(value) : rest.visit(index - 1, std::forward<V>(visitor));
+    return (index == 0) ? invoke(std::forward<V>(visitor), value) : rest.visit(index - 1, std::forward<V>(visitor));
   }
 
   [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
