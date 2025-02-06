@@ -179,9 +179,15 @@ public:
   /// @return Reference to the underlying value.
   /// @throws BadOptionalAccess if the optional is empty.
   /// @{
-  [[nodiscard]] constexpr decltype(auto) value() & { return *this ? *storage_ : throw BadOptionalAccess{}; }
+  [[nodiscard]] constexpr decltype(auto) value() &
+  {
+    return ETCPAL_TERNARY_THROW(*this, *storage_, throw BadOptionalAccess{});
+  }
   [[nodiscard]] constexpr decltype(auto) value() &&;
-  [[nodiscard]] constexpr decltype(auto) value() const& { return *this ? *storage_ : throw BadOptionalAccess{}; }
+  [[nodiscard]] constexpr decltype(auto) value() const&
+  {
+    return ETCPAL_TERNARY_THROW(*this, *storage_, throw BadOptionalAccess{});
+  }
   [[nodiscard]] constexpr decltype(auto) value() const&&;
   /// @}
 
@@ -651,13 +657,13 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr decltype(auto) etcpal::Optional<T>::value() &&
 {
-  return *this ? *std::move(storage_) : throw BadOptionalAccess{};
+  return ETCPAL_TERNARY_THROW(*this, *std::move(storage_), BadOptionalAccess{});
 }
 
 template <typename T>
 [[nodiscard]] constexpr decltype(auto) etcpal::Optional<T>::value() const&&
 {
-  return *this ? *std::move(storage_) : throw BadOptionalAccess{};
+  return ETCPAL_TERNARY_THROW(*this, *std::move(storage_), BadOptionalAccess{});
 }
 
 template <typename T>

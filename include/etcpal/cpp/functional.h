@@ -149,8 +149,9 @@ class Callable;
     template <typename Enable = R, std::enable_if_t<!std::is_void<Enable>::value>* = nullptr>                          \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
-      return ptr_ ? std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...)   \
-                  : throw std::bad_function_call{};                                                                    \
+      return ETCPAL_TERNARY_THROW(                                                                                     \
+          ptr_, std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...),      \
+          std::bad_function_call{});                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
     template <typename Enable = R, std::enable_if_t<std::is_void<Enable>::value>* = nullptr>                           \
@@ -222,7 +223,8 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
-      return target_ptr() ? thunk(target_ptr(), std::forward<Args>(args)...) : throw std::bad_function_call{};         \
+      return ETCPAL_TERNARY_THROW(target_ptr(), thunk(target_ptr(), std::forward<Args>(args)...),                      \
+                                  std::bad_function_call{});                                                           \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<detail::IsCallable<const Parent, T...>::value>>               \
     constexpr decltype(auto) operator()(T&&... args) const&& noexcept(                                                 \
