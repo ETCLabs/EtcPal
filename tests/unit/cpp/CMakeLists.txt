@@ -6,7 +6,6 @@ etcpal_add_live_test(etcpal_cpp_unit_tests CXX
   test_main.cpp
   test_opaque_id.cpp
   test_optional.cpp
-  test_stop_token.cpp
   test_uuid.cpp
   test_variant.cpp
 )
@@ -19,6 +18,7 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     test_rwlock.cpp
     test_sem.cpp
     test_signal.cpp
+    test_stop_token.cpp
     test_synchronized.cpp
     test_thread.cpp
     test_timer.cpp
