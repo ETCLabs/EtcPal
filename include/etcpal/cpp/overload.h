@@ -29,22 +29,22 @@ public:
   template <typename... Args, typename = std::enable_if_t<is_invocable<const T, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(is_nothrow_invocable<const T, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args, typename = std::enable_if_t<is_invocable<const T&, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(is_nothrow_invocable<const T&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
   template <typename... Args, typename = std::enable_if_t<is_invocable<T, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) && noexcept(is_nothrow_invocable<T, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args, typename = std::enable_if_t<is_invocable<T&, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) & noexcept(is_nothrow_invocable<T&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
 
 private:
@@ -76,45 +76,45 @@ public:
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
       is_nothrow_invocable<const First, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<const Parent, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
       is_nothrow_invocable<const Parent, Args...>::value)
   {
-    return static_cast<const Parent&&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<const Parent&&>(*this), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<const First&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
       is_nothrow_invocable<const First&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<const Parent&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
       is_nothrow_invocable<const Parent&, Args...>::value)
   {
-    return static_cast<const Parent&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<const Parent&>(*this), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<First, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) && noexcept(is_nothrow_invocable<First, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<Parent, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) && noexcept(is_nothrow_invocable<Parent, Args...>::value)
   {
-    return static_cast<Parent&&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<Parent&&>(*this), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<First&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) & noexcept(is_nothrow_invocable<First&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<Parent&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) & noexcept(is_nothrow_invocable<Parent&, Args...>::value)
   {
-    return static_cast<Parent&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<Parent&>(*this), std::forward<Args>(args)...);
   }
 
 private:
@@ -156,22 +156,22 @@ public:
   template <typename... Args, typename = std::enable_if_t<is_invocable<const T, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(is_nothrow_invocable<const T, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args, typename = std::enable_if_t<is_invocable<const T&, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(is_nothrow_invocable<const T&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
   template <typename... Args, typename = std::enable_if_t<is_invocable<T, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) && noexcept(is_nothrow_invocable<T, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args, typename = std::enable_if_t<is_invocable<T&, Args...>::value>>
   constexpr decltype(auto) operator()(Args&&... args) & noexcept(is_nothrow_invocable<T&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
 
 private:
@@ -203,7 +203,7 @@ public:
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
       is_nothrow_invocable<const First, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args,
             std::enable_if_t<!is_invocable<const First, Args...>::value &&
@@ -211,13 +211,13 @@ public:
   constexpr decltype(auto) operator()(Args&&... args) const&& noexcept(
       is_nothrow_invocable<const Parent, Args...>::value)
   {
-    return static_cast<const Parent&&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<const Parent&&>(*this), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<const First&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
       is_nothrow_invocable<const First&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
   template <typename... Args,
             std::enable_if_t<!is_invocable<const First&, Args...>::value &&
@@ -225,29 +225,29 @@ public:
   constexpr decltype(auto) operator()(Args&&... args) const& noexcept(
       is_nothrow_invocable<const Parent&, Args...>::value)
   {
-    return static_cast<const Parent&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<const Parent&>(*this), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<First, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) && noexcept(is_nothrow_invocable<First, Args...>::value)
   {
-    return std::move(value_)(std::forward<Args>(args)...);
+    return invoke(std::move(value_), std::forward<Args>(args)...);
   }
   template <typename... Args,
             std::enable_if_t<!is_invocable<First, Args...>::value && is_invocable<Parent, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) && noexcept(is_nothrow_invocable<Parent, Args...>::value)
   {
-    return static_cast<Parent&&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<Parent&&>(*this), std::forward<Args>(args)...);
   }
   template <typename... Args, std::enable_if_t<is_invocable<First&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) & noexcept(is_nothrow_invocable<First&, Args...>::value)
   {
-    return value_(std::forward<Args>(args)...);
+    return invoke(value_, std::forward<Args>(args)...);
   }
   template <typename... Args,
             std::enable_if_t<!is_invocable<First&, Args...>::value && is_invocable<Parent&, Args...>::value>* = nullptr>
   constexpr decltype(auto) operator()(Args&&... args) & noexcept(is_nothrow_invocable<Parent&, Args...>::value)
   {
-    return static_cast<Parent&>(*this)(std::forward<Args>(args)...);
+    return invoke(static_cast<Parent&>(*this), std::forward<Args>(args)...);
   }
 
 private:
