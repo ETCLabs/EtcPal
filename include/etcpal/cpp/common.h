@@ -212,7 +212,7 @@ decltype(auto) invoke_impl(T U::* f, Obj&& obj, Args&&... args) noexcept(noexcep
   return ((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...);
 }
 
-template <typename F, typename... Args, std::void_t<decltype(std::declval<F>()(std::declval<Args>()...))>* = nullptr>
+template <typename F, typename... Args, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>* = nullptr>
 decltype(auto) invoke_impl(F&& fun,
                            Args&&... args) noexcept(noexcept(std::forward<F>(fun)(std::forward<Args>(args)...)))
 {
