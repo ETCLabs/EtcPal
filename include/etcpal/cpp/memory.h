@@ -77,7 +77,7 @@ namespace detail
 
 }  // namespace detail
 
-[[nodiscard]] inline auto set_default_resource(memory_resource* resource) noexcept -> memory_resource*
+inline auto set_default_resource(memory_resource* resource) noexcept -> memory_resource*
 {
   return detail::default_resource_ptr() = resource;
 }
@@ -86,6 +86,7 @@ namespace detail
 {
   return detail::default_resource_ptr();
 }
+
 template <typename T = unsigned char>
 class polymorphic_allocator
 {
