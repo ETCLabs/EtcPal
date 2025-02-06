@@ -181,12 +181,12 @@ public:
   /// @{
   [[nodiscard]] constexpr decltype(auto) value() &
   {
-    return ETCPAL_TERNARY_THROW(*this, *storage_, throw BadOptionalAccess{});
+    return ETCPAL_TERNARY_THROW(*this, *storage_, BadOptionalAccess{});
   }
   [[nodiscard]] constexpr decltype(auto) value() &&;
   [[nodiscard]] constexpr decltype(auto) value() const&
   {
-    return ETCPAL_TERNARY_THROW(*this, *storage_, throw BadOptionalAccess{});
+    return ETCPAL_TERNARY_THROW(*this, *storage_, BadOptionalAccess{});
   }
   [[nodiscard]] constexpr decltype(auto) value() const&&;
   /// @}
