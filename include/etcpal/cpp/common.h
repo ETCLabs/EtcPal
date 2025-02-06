@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <utility>
+#include <functional>
 
 #if (__cplusplus >= 201703)
 #include <memory_resource>
@@ -141,110 +142,6 @@ enum class Enabler
 template <typename First, typename...>
 using FirstOf = First;
 
-template <typename F, typename, typename... Args>
-struct IsCallableImpl : public std::false_type
-{
-};
-
-template <typename F, typename... Args>
-struct IsCallableImpl<F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...> : public std::true_type
-{
-};
-
-template <typename T, typename U, typename Obj, typename... Args>
-decltype(auto) invoke_member_function(T U::* f, Obj&& obj, Args&&... args) noexcept(
-    noexcept(((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...)))
-{
-  return ((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...);
-}
-
-template <typename T, typename... Args>
-struct IsCallableImpl<T,
-                      std::enable_if_t<std::is_member_function_pointer<T>::value,
-                                       decltype(invoke_member_function(std::declval<T>(), std::declval<Args>()...))>,
-                      Args...> : public std::true_type
-{
-};
-
-template <typename F, typename... Args>
-using IsCallable = IsCallableImpl<F, void, Args...>;
-
-template <typename R, typename F, typename, typename... Args>
-struct IsCallableRImpl : public std::false_type
-{
-};
-
-template <typename R, typename F, typename... Args>
-struct IsCallableRImpl<
-    R,
-    F,
-    std::enable_if_t<std::is_convertible<decltype(std::declval<F>()(std::declval<Args>()...)), R>::value>,
-    Args...> : public std::true_type
-{
-};
-
-template <typename R, typename T, typename... Args>
-struct IsCallableImpl<
-    R,
-    T,
-    std::enable_if_t<
-        std::is_member_function_pointer<T>::value &&
-        std::is_convertible<decltype(invoke_member_function(std::declval<T>(), std::declval<Args>()...)), R>::value>,
-    Args...> : public std::true_type
-{
-};
-
-template <typename R, typename F, typename... Args>
-using IsCallableR = IsCallableRImpl<R, F, void, Args...>;
-
-template <typename F, typename, typename... Args>
-struct IsNothrowCallableImpl : public std::false_type
-{
-};
-
-template <typename F, typename... Args>
-struct IsNothrowCallableImpl<F, std::enable_if_t<noexcept(std::declval<F>()(std::declval<Args>()...))>, Args...>
-    : public std::true_type
-{
-};
-
-template <typename F, typename... Args>
-using IsNothrowCallable = IsNothrowCallableImpl<F, void, Args...>;
-
-template <typename R, typename F, typename, typename... Args>
-struct IsNothrowCallableRImpl : public std::false_type
-{
-};
-
-template <typename R, typename F, typename... Args>
-struct IsNothrowCallableImpl<R, F, std::enable_if_t<noexcept(R{std::declval<F>()(std::declval<Args>()...)})>, Args...>
-    : public std::true_type
-{
-};
-
-template <typename F, typename... Args>
-struct IsNothrowCallableImpl<void, F, std::enable_if_t<noexcept(std::declval<F>()(std::declval<Args>()...))>, Args...>
-    : public std::true_type
-{
-};
-
-template <typename R, typename F, typename... Args>
-using IsNothrowCallableR = IsNothrowCallableRImpl<R, F, void, Args...>;
-
-template <typename F, typename, typename... Args>
-struct CallResult
-{
-};
-
-template <typename F, typename... Args>
-struct CallResult<F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...>
-{
-  using type = decltype(std::declval<F>()(std::declval<Args>()...));
-};
-
-template <typename F, typename... Args>
-using CallResult_t = typename CallResult<F, void, Args...>::type;
-
 template <typename... T>
 struct CommonCVRefType
 {
@@ -288,6 +185,126 @@ template <typename Enum>
 {
   return static_cast<std::underlying_type_t<Enum>>(value);
 }
+
+#if (__cplusplus >= 201703L)
+
+using std::invoke;
+using std::invoke_result;
+using std::invoke_result_t;
+using std::is_invocable;
+using std::is_invocable_r;
+using std::is_invocable_r_v;
+using std::is_invocable_v;
+using std::is_nothrow_invocable;
+using std::is_nothrow_invocable_r;
+using std::is_nothrow_invocable_r_v;
+using std::is_nothrow_invocable_v;
+
+#else
+
+namespace detail
+{
+
+template <typename T, typename U, typename Obj, typename... Args>
+decltype(auto) invoke_impl(T U::* f, Obj&& obj, Args&&... args) noexcept(noexcept(((*std::forward<Obj>(obj)).*
+                                                                                   f)(std::forward<Args>(args)...)))
+{
+  return ((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...);
+}
+
+template <typename F, typename... Args, std::void_t<decltype(std::declval<F>()(std::declval<Args>()...))>* = nullptr>
+decltype(auto) invoke_impl(F&& fun,
+                           Args&&... args) noexcept(noexcept(std::forward<F>(fun)(std::forward<Args>(args)...)))
+{
+  return std::forward<F>(fun)(std::forward<Args>(args)...);
+}
+
+template <typename F, typename = void, typename... Args>
+struct IsInvocableImpl : public std::false_type
+{
+};
+
+template <typename F, typename... Args>
+struct IsInvocableImpl<F, void_t<decltype(invoke_impl(std::declval<F>(), std::declval<Args>()...))>, Args...>
+    : public std::true_type
+{
+};
+
+template <typename R, typename F, typename = void, typename... Args>
+struct IsInvocableRImpl : public std::false_type
+{
+};
+
+template <typename R, typename F, typename... Args>
+struct IsInvocableRImpl<
+    R,
+    F,
+    std::enable_if_t<std::is_convertible<decltype(invoke_impl(std::declval<F>(), std::declval<Args>()...)), R>::value>,
+    Args...> : public std::true_type
+{
+};
+
+template <typename F, typename = void, typename... Args>
+struct IsNothrowInvocableImpl : public std::false_type
+{
+};
+
+template <typename F, typename... Args>
+struct IsNothrowInvocableImpl<F,
+                              std::enable_if_t<noexcept(invoke_impl(std::declval<F>(), std::declval<Args>()...))>,
+                              Args...> : public std::true_type
+{
+};
+
+template <typename R, typename F, typename = void, typename... Args>
+struct IsNothrowInvocableRImpl : public std::false_type
+{
+};
+
+template <typename R, typename F, typename... Args>
+struct IsNothrowInvocableRImpl<R,
+                               F,
+                               std::enable_if_t<noexcept(R{invoke_impl(std::declval<F>(), std::declval<Args>()...)})>,
+                               Args...> : public std::true_type
+{
+};
+
+}  // namespace detail
+
+template <typename F, typename... Args>
+struct is_invocable : public detail::IsInvocableImpl<F, void, Args...>
+{
+};
+template <typename R, typename F, typename... Args>
+struct is_invocable_r : public detail::IsInvocableRImpl<R, F, void, Args...>
+{
+};
+template <typename F, typename... Args>
+struct is_nothrow_invocable : public detail::IsNothrowInvocableImpl<F, void, Args...>
+{
+};
+template <typename R, typename F, typename... Args>
+struct is_nothrow_invocable_r : public detail::IsNothrowInvocableRImpl<R, F, void, Args...>
+{
+};
+
+template <typename T, typename... Args>
+struct invoke_result
+{
+  using type = decltype(detail::invoke_impl(std::declval<T>(), std::declval<Args>()...));
+};
+template <typename T, typename... Args>
+using invoke_result_t = typename invoke_result<T, Args...>::type;
+
+template <typename F, typename... Args>
+constexpr decltype(auto) invoke(F&& fun,
+                                Args&&... args) noexcept(noexcept(detail::invoke_impl(std::forward<F>(fun),
+                                                                                      std::forward<Args>(args)...)))
+{
+  return detail::invoke_impl(std::forward<F>(fun), std::forward<Args>(args)...);
+}
+
+#endif
 
 /// @brief A scope-based finalizer.
 ///
