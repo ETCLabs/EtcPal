@@ -684,102 +684,102 @@ template <typename T>
 template <typename F>
 constexpr auto etcpal::Optional<T>::and_then(F&& f) &
 {
-  return *this ? std::forward<F>(f)(**this) : decltype(std::forward<F>(f)(**this)){};
+  return *this ? invoke(std::forward<F>(f), **this) : invoke_result_t<F, T&>{};
 }
 
 template <typename T>
 template <typename F>
 constexpr auto etcpal::Optional<T>::and_then(F&& f) &&
 {
-  return *this ? std::forward<F>(f)(*std::move(*this)) : decltype(std::forward<F>(f)(*std::move(*this))){};
+  return *this ? invoke(std::forward<F>(f), *std::move(*this)) : invoke_result_t<F, T>{};
 }
 
 template <typename T>
 template <typename F>
 constexpr auto etcpal::Optional<T>::and_then(F&& f) const&
 {
-  return *this ? std::forward<F>(f)(**this) : decltype(std::forward<F>(f)(**this)){};
+  return *this ? invoke(std::forward<F>(f), **this) : invoke_result_t<F, const T&>{};
 }
 
 template <typename T>
 template <typename F>
 constexpr auto etcpal::Optional<T>::and_then(F&& f) const&&
 {
-  return *this ? std::forward<F>(f)(*std::move(*this)) : decltype(std::forward<F>(f)(*std::move(*this))){};
+  return *this ? invoke(std::forward<F>(f), *std::move(*this)) : invoke_result_t<F, const T>{};
 }
 
 template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::transform(F&& f) &
 {
-  using result_type = Optional<decltype(std::forward<F>(f)(**this))>;
-  return *this ? result_type{std::forward<F>(f)(**this)} : result_type{};
+  using result_type = Optional<invoke_result_t<F, T&>>;
+  return *this ? invoke(std::forward<F>(f), **this) : result_type{};
 }
 
 template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::transform(F&& f) &&
 {
-  using result_type = Optional<decltype(std::forward<F>(f)(*std::move(*this)))>;
-  return *this ? result_type{std::forward<F>(f)(*std::move(*this))} : result_type{};
+  using result_type = Optional<invoke_result_t<F, T>>;
+  return *this ? invoke(std::forward<F>(f), std::move(**this)) : result_type{};
 }
 
 template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::transform(F&& f) const&
 {
-  using result_type = Optional<decltype(std::forward<F>(f)(**this))>;
-  return *this ? result_type{std::forward<F>(f)(**this)} : result_type{};
+  using result_type = Optional<invoke_result_t<F, const T&>>;
+  return *this ? invoke(std::forward<F>(f), **this) : result_type{};
 }
 
 template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::transform(F&& f) const&&
 {
-  using result_type = Optional<decltype(std::forward<F>(f)(*std::move(*this)))>;
-  return *this ? result_type{std::forward<F>(f)(*std::move(*this))} : result_type{};
+  using result_type = Optional<invoke_result_t<F, const T>>;
+  return *this ? invoke(std::forward<F>(f), std::move(**this)) : result_type{};
 }
 
 template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::or_else(F&& f) const& -> Optional
 {
-  return *this ? **this : std::forward<F>(f)();
+  return *this ? **this : invoke(std::forward<F>(f));
 }
 
 template <typename T>
 template <typename F>
 [[nodiscard]] constexpr auto etcpal::Optional<T>::or_else(F&& f) && -> Optional
 {
-  return *this ? *std::move(*this) : std::forward<F>(f)();
+  return *this ? *std::move(*this) : invoke(std::forward<F>(f));
 }
 
 template <typename T>
 template <typename F>
 constexpr decltype(auto) etcpal::Optional<T>::visit(F&& f) &
 {
-  return *this ? std::forward<F>(f)(**this) : std::forward<F>(f)(nullopt);
+  return *this ? invoke(std::forward<F>(f), **this) : invoke(std::forward<F>(f), nullopt);
 }
 
 template <typename T>
 template <typename F>
 constexpr decltype(auto) etcpal::Optional<T>::visit(F&& f) &&
 {
-  return *this ? std::forward<F>(f)(*std::move(*this)) : std::forward<F>(f)(nullopt);
+  return *this ? invoke(std::forward<F>(f), *std::move(*this)) : invoke(std::forward<F>(f), nullopt);
 }
 
 template <typename T>
 template <typename F>
 constexpr decltype(auto) etcpal::Optional<T>::visit(F&& f) const&
 {
-  return *this ? std::forward<F>(f)(**this) : std::forward<F>(f)(nullopt);
+  return *this ? invoke(std::forward<F>(f), **this) : invoke(std::forward<F>(f), nullopt);
 }
 
 template <typename T>
 template <typename F>
 constexpr decltype(auto) etcpal::Optional<T>::visit(F&& f) const&&
 {
-  return *this ? std::forward<F>(f)(*std::move(*this)) : std::forward<F>(f)(nullopt);
+  return *this ? invoke(std::forward<F>(f), *std::move(*this)) : invoke(std::forward<F>(f), nullopt);
 }
 
 template <typename T>
