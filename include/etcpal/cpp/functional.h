@@ -83,7 +83,7 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT override                \
     {                                                                                                                  \
-      return std::forward<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>(fun_)(std::forward<Args>(args)...);                \
+      return invoke(std::forward<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>(fun_), std::forward<Args>(args)...);        \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] auto target_ptr() const noexcept -> const void* override                                             \
@@ -146,23 +146,12 @@ class Callable;
     {                                                                                                                  \
     }                                                                                                                  \
                                                                                                                        \
-    template <typename Enable = R, std::enable_if_t<!std::is_void<Enable>::value>* = nullptr>                          \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
       return ETCPAL_TERNARY_THROW(                                                                                     \
-          ptr_, std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_)(std::forward<Args>(args)...),      \
+          ptr_,                                                                                                        \
+          invoke(std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF>(*ptr_), std::forward<Args>(args)...),    \
           std::bad_function_call{});                                                                                   \
-    }                                                                                                                  \
-                                                                                                                       \
-    template <typename Enable = R, std::enable_if_t<std::is_void<Enable>::value>* = nullptr>                           \
-    R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
-    {                                                                                                                  \
-      if (ptr_)                                                                                                        \
-      {                                                                                                                \
-        std::forward<ETCPAL_CALLABLE_CV FunBase ETCPAL_CALLABLE_REF> (*ptr_)(std::forward<Args>(args)...);             \
-      }                                                                                                                \
-                                                                                                                       \
-      ETCPAL_THROW(std::bad_function_call{});                                                                          \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
@@ -223,28 +212,28 @@ class Callable;
                                                                                                                        \
     R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF                                                  \
     {                                                                                                                  \
-      return ETCPAL_TERNARY_THROW(target_ptr(), thunk(target_ptr(), std::forward<Args>(args)...),                      \
+      return ETCPAL_TERNARY_THROW(target_ptr(), invoke(thunk, target_ptr(), std::forward<Args>(args)...),              \
                                   std::bad_function_call{});                                                           \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<const Parent, T...>::value>>                     \
     constexpr decltype(auto) operator()(T&&... args) const&& noexcept(is_nothrow_invocable<const Parent, T...>::value) \
     {                                                                                                                  \
-      return static_cast<const Parent&&>(*this)(std::forward<T>(args)...);                                             \
+      return invoke(static_cast<const Parent&&>(*this), std::forward<T>(args)...);                                     \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<const Parent&, T...>::value>>                    \
     constexpr decltype(auto) operator()(T&&... args) const& noexcept(is_nothrow_invocable<const Parent&, T...>::value) \
     {                                                                                                                  \
-      return static_cast<const Parent&>(*this)(std::forward<T>(args)...);                                              \
+      return invoke(static_cast<const Parent&>(*this), std::forward<T>(args)...);                                      \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<Parent, T...>::value>>                           \
     constexpr decltype(auto) operator()(T&&... args) && noexcept(is_nothrow_invocable<Parent, T...>::value)            \
     {                                                                                                                  \
-      return static_cast<Parent&&>(*this)(std::forward<T>(args)...);                                                   \
+      return invoke(static_cast<Parent&&>(*this), std::forward<T>(args)...);                                           \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<Parent&, T...>::value>>                          \
     constexpr decltype(auto) operator()(T&&... args) & noexcept(is_nothrow_invocable<Parent&, T...>::value)            \
     {                                                                                                                  \
-      return static_cast<Parent&>(*this)(std::forward<T>(args)...);                                                    \
+      return invoke(static_cast<Parent&>(*this), std::forward<T>(args)...);                                            \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit operator bool() const noexcept                                                              \
@@ -293,7 +282,8 @@ class Callable;
                                                                                                                        \
     constexpr R operator()(Args... args) const ETCPAL_CALLABLE_NOEXCEPT                                                \
     {                                                                                                                  \
-      return obj_ ? fun_.thunk(obj_, std::forward<Args>(args)...) : fun_.actual(std::forward<Args>(args)...);          \
+      return obj_ ? invoke(fun_.thunk, obj_, std::forward<Args>(args)...)                                              \
+                  : invoke(fun_.actual, std::forward<Args>(args)...);                                                  \
     }                                                                                                                  \
                                                                                                                        \
     [[nodiscard]] explicit constexpr operator bool() const noexcept                                                    \
@@ -338,27 +328,27 @@ class Callable;
                                                                                                                        \
     constexpr R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_NOEXCEPT                                   \
     {                                                                                                                  \
-      return thunk(target_address(), std::forward<Args>(args)...);                                                     \
+      return invoke(thunk, target_address(), std::forward<Args>(args)...);                                             \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<const Parent, T...>::value>>                     \
     constexpr decltype(auto) operator()(T&&... args) const&& noexcept(is_nothrow_invocable<const Parent, T...>::value) \
     {                                                                                                                  \
-      return static_cast<const Parent&&>(*this)(std::forward<T>(args)...);                                             \
+      return invoke(static_cast<const Parent&&>(*this), std::forward<T>(args)...);                                     \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<const Parent&, T...>::value>>                    \
     constexpr decltype(auto) operator()(T&&... args) const& noexcept(is_nothrow_invocable<const Parent&, T...>::value) \
     {                                                                                                                  \
-      return static_cast<const Parent&>(*this)(std::forward<T>(args)...);                                              \
+      return invoke(static_cast<const Parent&>(*this), std::forward<T>(args)...);                                      \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<Parent, T...>::value>>                           \
     constexpr decltype(auto) operator()(T&&... args) && noexcept(is_nothrow_invocable<Parent, T...>::value)            \
     {                                                                                                                  \
-      return static_cast<Parent&&>(*this)(std::forward<T>(args)...);                                                   \
+      return invoke(static_cast<Parent&&>(*this), std::forward<T>(args)...);                                           \
     }                                                                                                                  \
     template <typename... T, typename = std::enable_if_t<is_invocable<Parent&, T...>::value>>                          \
     constexpr decltype(auto) operator()(T&&... args) & noexcept(is_nothrow_invocable<Parent&, T...>::value)            \
     {                                                                                                                  \
-      return static_cast<Parent&>(*this)(std::forward<T>(args)...);                                                    \
+      return invoke(static_cast<Parent&>(*this), std::forward<T>(args)...);                                            \
     }                                                                                                                  \
                                                                                                                        \
   protected:                                                                                                           \
