@@ -21,7 +21,6 @@
 
 extern "C" void run_all_tests(void)  // NOLINT
 {
-  RUN_TEST_GROUP(etcpal_cpp_stop_token);
   RUN_TEST_GROUP(etcpal_cpp_error);
   RUN_TEST_GROUP(etcpal_cpp_hash);
   RUN_TEST_GROUP(etcpal_cpp_uuid);
@@ -36,6 +35,7 @@ extern "C" void run_all_tests(void)  // NOLINT
   RUN_TEST_GROUP(etcpal_cpp_log_timestamp);
   RUN_TEST_GROUP(etcpal_cpp_log);
   RUN_TEST_GROUP(etcpal_cpp_mutex);
+  RUN_TEST_GROUP(etcpal_cpp_stop_token);
   RUN_TEST_GROUP(etcpal_cpp_synchronized);
 #if !DISABLE_RECURSIVE_MUTEX_TESTS
   RUN_TEST_GROUP(etcpal_cpp_recursive_mutex);
