@@ -798,11 +798,10 @@ template <typename T, typename Allocator, typename... Args, std::enable_if_t<!st
   {
     new (ptr) T(std::forward<Args>(args)...);
   }
-  ETCPAL_CATCH(...)
-  {
+  ETCPAL_CATCH(..., {
     alloc.deallocate(ptr, 1);
     ETCPAL_THROW();
-  }
+  });
 
   return std::unique_ptr<T, DeleteUsingAlloc<T, Allocator>>{ptr, DeleteUsingAlloc<T, Allocator>{alloc}};
 }

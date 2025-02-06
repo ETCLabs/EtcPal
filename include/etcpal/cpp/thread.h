@@ -549,10 +549,7 @@ Error BasicThread<Allocator>::Start(const Allocator& alloc, Function&& func, Arg
 
     return create_res;
   }
-  ETCPAL_CATCH(const std::bad_alloc& exe)
-  {
-    return kEtcPalErrNoMem;
-  }
+  ETCPAL_CATCH(const std::bad_alloc& exe, { return kEtcPalErrNoMem; })
 }
 
 template <typename Allocator>
