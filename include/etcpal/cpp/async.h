@@ -897,10 +897,8 @@ template <typename T, typename Allocator>
       return FutureErrc::future_already_retrieved;
     case detail::FutureActionResult::continuation_already_set:
       return FutureErrc::continuation_already_set;
-    case detail::FutureActionResult::value_get_timeout:
-      ETCPAL_THROW(std::logic_error{"timed out waiting forever for a future value"});
     default:
-      ETCPAL_THROW(std::logic_error{"invalid future status"});
+      std::abort();
   }
 }
 
@@ -931,7 +929,7 @@ template <typename Rep, typename Period>
     case detail::FutureActionResult::value_get_timeout:
       return FutureErrc::timeout;
     default:
-      ETCPAL_THROW(std::logic_error{"invalid future status"});
+      std::abort();
   }
 }
 
@@ -1152,7 +1150,7 @@ template <typename Rep, typename Period>
       return FutureStatus::continued;
 
     default:
-      ETCPAL_THROW(std::logic_error{"invalid future status"});
+      std::abort();
   }
 }
 
