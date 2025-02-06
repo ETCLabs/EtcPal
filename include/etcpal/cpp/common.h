@@ -205,28 +205,21 @@ using std::is_nothrow_invocable_v;
 namespace detail
 {
 
-template <typename T, typename U, typename Obj, typename... Args>
-decltype(auto) invoke_impl(T U::* f, Obj&& obj, Args&&... args) noexcept(noexcept(((*std::forward<Obj>(obj)).*
-                                                                                   f)(std::forward<Args>(args)...)))
-{
-  return ((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...);
-}
-
-template <typename F, typename... Args, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>* = nullptr>
-decltype(auto) invoke_impl(F&& fun,
-                           Args&&... args) noexcept(noexcept(std::forward<F>(fun)(std::forward<Args>(args)...)))
-{
-  return std::forward<F>(fun)(std::forward<Args>(args)...);
-}
-
 template <typename F, typename = void, typename... Args>
 struct IsInvocableImpl : public std::false_type
 {
 };
 
 template <typename F, typename... Args>
-struct IsInvocableImpl<F, void_t<decltype(invoke_impl(std::declval<F>(), std::declval<Args>()...))>, Args...>
-    : public std::true_type
+struct IsInvocableImpl<F, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>, Args...> : public std::true_type
+{
+};
+
+template <typename T, typename U, typename Obj, typename... Args>
+struct IsInvocableImpl<T U::*,
+                       void_t<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())(std::declval<Args>()...))>,
+                       Obj,
+                       Args...> : public std::true_type
 {
 };
 
@@ -239,8 +232,19 @@ template <typename R, typename F, typename... Args>
 struct IsInvocableRImpl<
     R,
     F,
-    std::enable_if_t<std::is_convertible<decltype(invoke_impl(std::declval<F>(), std::declval<Args>()...)), R>::value>,
+    std::enable_if_t<std::is_convertible<decltype(std::declval<F>()(std::declval<Args>()...)), R>::value>,
     Args...> : public std::true_type
+{
+};
+
+template <typename R, typename T, typename U, typename Obj, typename... Args>
+struct IsInvocableRImpl<R,
+                        T U::*,
+                        std::enable_if_t<std::is_convertible<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())(
+                                                                 std::declval<Args>()...)),
+                                                             R>::value>,
+                        Obj,
+                        Args...> : public std::true_type
 {
 };
 
@@ -250,9 +254,17 @@ struct IsNothrowInvocableImpl : public std::false_type
 };
 
 template <typename F, typename... Args>
-struct IsNothrowInvocableImpl<F,
-                              std::enable_if_t<noexcept(invoke_impl(std::declval<F>(), std::declval<Args>()...))>,
-                              Args...> : public std::true_type
+struct IsNothrowInvocableImpl<F, std::enable_if_t<noexcept(std::declval<F>()(std::declval<Args>()...))>, Args...>
+    : public std::true_type
+{
+};
+
+template <typename T, typename U, typename Obj, typename... Args>
+struct IsNothrowInvocableImpl<
+    T U::*,
+    std::enable_if_t<noexcept(((*std::declval<Obj>()).*std::declval<T U::*>())(std::declval<Args>()...))>,
+    Obj,
+    Args...> : public std::true_type
 {
 };
 
@@ -262,12 +274,43 @@ struct IsNothrowInvocableRImpl : public std::false_type
 };
 
 template <typename R, typename F, typename... Args>
-struct IsNothrowInvocableRImpl<R,
-                               F,
-                               std::enable_if_t<noexcept(R{invoke_impl(std::declval<F>(), std::declval<Args>()...)})>,
-                               Args...> : public std::true_type
+struct IsNothrowInvocableRImpl<
+    R,
+    F,
+    std::enable_if_t<std::is_convertible<decltype(std::declval<F>()(std::declval<Args>()...)), R>::value &&
+                     std::is_nothrow_constructible<R, decltype(std::declval<F>()(std::declval<Args>()...))>::value>,
+    Args...> : public std::true_type
 {
 };
+
+template <typename R, typename T, typename U, typename Obj, typename... Args>
+struct IsNothrowInvocableRImpl<
+    R,
+    T U::*,
+    std::enable_if_t<
+        std::is_convertible<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())(std::declval<Args>()...)),
+                            R>::value &&
+        std::is_nothrow_constructible<R,
+                                      decltype(((*std::declval<Obj>()).*
+                                                std::declval<T U::*>())(std::declval<Args>()...))>::value>,
+    Obj,
+    Args...> : public std::true_type
+{
+};
+
+template <typename T, typename U, typename Obj, typename... Args>
+decltype(auto) invoke_impl(T U::* f,
+                           Obj&&  obj,
+                           Args&&... args) noexcept(IsNothrowInvocableImpl<T U::*, Obj, Args...>::value)
+{
+  return ((*std::forward<Obj>(obj)).*f)(std::forward<Args>(args)...);
+}
+
+template <typename F, typename... Args, void_t<decltype(std::declval<F>()(std::declval<Args>()...))>* = nullptr>
+decltype(auto) invoke_impl(F&& fun, Args&&... args) noexcept(IsNothrowInvocableImpl<F, Args...>::value)
+{
+  return std::forward<F>(fun)(std::forward<Args>(args)...);
+}
 
 }  // namespace detail
 
@@ -297,11 +340,15 @@ template <typename T, typename... Args>
 using invoke_result_t = typename invoke_result<T, Args...>::type;
 
 template <typename F, typename... Args>
-constexpr decltype(auto) invoke(F&& fun,
-                                Args&&... args) noexcept(noexcept(detail::invoke_impl(std::forward<F>(fun),
-                                                                                      std::forward<Args>(args)...)))
+constexpr decltype(auto) invoke(F&& fun, Args&&... args) noexcept(is_nothrow_invocable<F, Args...>::value)
 {
   return detail::invoke_impl(std::forward<F>(fun), std::forward<Args>(args)...);
+}
+
+template <typename R, typename F, typename... Args>
+constexpr auto invoke_r(F&& fun, Args&&... args) noexcept(is_nothrow_invocable_r<F, Args...>::value) -> R
+{
+  return invoke(std::forward<F>(fun), std::forward<Args>(args)...);
 }
 
 #endif
