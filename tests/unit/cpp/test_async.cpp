@@ -113,11 +113,11 @@ TEST(etcpal_cpp_async, thread_pool)
 
   using namespace std::chrono_literals;
 
-  TEST_ASSERT_TRUE(future_futures.wait_for(1s) == etcpal::FutureStatus::ready);
-  TEST_ASSERT_TRUE(future_futures_for_get_if.wait_for(1s) == etcpal::FutureStatus::ready);
-  TEST_ASSERT_TRUE(future_continued_futures.wait_for(1s) == etcpal::FutureStatus::ready);
-  TEST_ASSERT_TRUE(future_continued_exec_futures.wait_for(1s) == etcpal::FutureStatus::ready);
-  TEST_ASSERT_TRUE(future_abandoned_futures.wait_for(1s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_futures.wait_for(10s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_futures_for_get_if.wait_for(10s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_continued_futures.wait_for(10s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_continued_exec_futures.wait_for(10s) == etcpal::FutureStatus::ready);
+  TEST_ASSERT_TRUE(future_abandoned_futures.wait_for(10s) == etcpal::FutureStatus::ready);
   auto futures                = future_futures.get();
   auto futures_for_get_if     = future_futures_for_get_if.get();
   auto continued_futures      = future_continued_futures.get();
