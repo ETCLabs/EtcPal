@@ -56,7 +56,7 @@ protected:
 namespace detail
 {
 
-[[nodiscard]] inline auto default_resource_ptr() noexcept -> memory_resource*&
+[[nodiscard]] inline auto default_resource_ptr() noexcept -> std::atomic<memory_resource*>&
 {
   struct MallocResource : public memory_resource
   {
@@ -69,8 +69,8 @@ namespace detail
     }
   };
 
-  static MallocResource   malloc_resource{};
-  static memory_resource* resource = std::addressof(malloc_resource);
+  static MallocResource                malloc_resource{};
+  static std::atomic<memory_resource*> resource{std::addressof(malloc_resource)};
 
   return resource;
 }
