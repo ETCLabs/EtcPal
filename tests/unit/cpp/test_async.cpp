@@ -53,7 +53,7 @@ TEST(etcpal_cpp_async, thread_pool)
   const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   constexpr auto num_items =
-#if __has_feature(memory_sanitizer)
+#if ETCPAL_USING_MSAN
       512
 #else
       1024
