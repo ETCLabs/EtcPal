@@ -59,8 +59,15 @@ TEST(etcpal_cpp_variant, variant)
   using String         = std::basic_string<char, std::char_traits<char>, etcpal::polymorphic_allocator<char>>;
   using StringOrNumber = etcpal::Variant<int, String>;
 
-  etcpal::BlockMemory<1 << 5> buffer{};
-  const auto                  alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
+  etcpal::BlockMemory<1 <<
+#if ETCPAL_USING_MSAN
+                      6
+#else
+                      5
+#endif
+                      >
+             buffer{};
+  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   // comparision
   const auto test_string_0 = String{"test string 0", alloc};

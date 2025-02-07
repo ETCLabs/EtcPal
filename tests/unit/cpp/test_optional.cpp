@@ -44,8 +44,15 @@ TEST(etcpal_cpp_optional, optional)
   TEST_ASSERT_TRUE(etcpal::Optional<int>{0});
 
   // destruction
-  etcpal::BlockMemory<1 << 5> buffer{};
-  const auto                  alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
+  etcpal::BlockMemory<1 <<
+#if ETCPAL_USING_MSAN
+                      6
+#else
+                      5
+#endif
+                      >
+             buffer{};
+  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   const auto test_value = std::allocate_shared<int>(alloc);
   // initialization

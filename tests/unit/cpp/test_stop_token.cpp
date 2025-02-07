@@ -28,8 +28,15 @@ TEST_TEAR_DOWN(etcpal_cpp_stop_token)
 
 TEST(etcpal_cpp_stop_token, stop_source)
 {
-  etcpal::BlockMemory<1 << 8> buffer{};
-  const auto                  alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
+  etcpal::BlockMemory<1 <<
+#if ETCPAL_USING_MSAN
+                      9
+#else
+                      8
+#endif
+                      >
+             buffer{};
+  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   // initialize source with state
   auto ssource = etcpal::StopSource
