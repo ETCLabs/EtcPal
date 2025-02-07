@@ -84,6 +84,16 @@
 #define ETCPAL_INLINE_VARIABLE static
 #endif
 
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer)
+#define ETCPAL_USING_MSAN true
+#else
+#define ETCPAL_USING_MSAN false
+#endif
+#else
+#define ETCPAL_USING_MSAN false
+#endif
+
 /// @def ETCPAL_NO_EXCEPTIONS
 /// @brief Explicitly removes all "throw" statements from EtcPal C++ headers.
 ///
