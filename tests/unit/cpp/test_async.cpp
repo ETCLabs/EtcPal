@@ -52,7 +52,13 @@ TEST(etcpal_cpp_async, thread_pool)
   etcpal::SyncDualLevelBlockPool<1 << 22> buffer{};
   const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
-  constexpr auto num_items = 1024;
+  constexpr auto num_items =
+#if __has_feature(memory_sanitizer)
+      512
+#else
+      1024
+#endif
+      ;
 
   etcpal::ThreadPool<32> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
   auto                   future_futures                = pool.post(etcpal::use_future, [&] {
