@@ -31,8 +31,15 @@ TEST(etcpal_cpp_async, promise_future)
 {
   using namespace std::chrono_literals;
 
-  etcpal::SyncBlockMemory<1 << 9> buffer{};
-  const auto                      alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
+  etcpal::SyncBlockMemory<1 <<
+#if ETCPAL_USING_MSAN
+                          10
+#else
+                          9
+#endif
+                          >
+             buffer{};
+  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   auto promise = etcpal::Promise<int>{alloc};
   auto future  = promise.get_future();
@@ -154,7 +161,14 @@ TEST(etcpal_cpp_async, promise_chain)
   using namespace std::chrono_literals;
   using NumVector = std::vector<int, etcpal::polymorphic_allocator<int>>;
 
-  etcpal::SyncDualLevelBlockPool<1 << 14> buffer{};
+  etcpal::SyncDualLevelBlockPool<1 <<
+#if ETCPAL_USING_MSAN
+                                 15
+#else
+                                 14
+#endif
+                                 >
+                                          buffer{};
   const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   constexpr auto num_elements = std::size_t{1024};
