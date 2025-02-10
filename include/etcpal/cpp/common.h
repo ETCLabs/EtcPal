@@ -95,9 +95,15 @@
 #else
 #define ETCPAL_USING_ASAN false
 #endif
+#if __has_feature(thread_sanitizer)
+#define ETCPAL_USING_TSAN true
+#else
+#define ETCPAL_USING_TSAN false
+#endif
 #else
 #define ETCPAL_USING_MSAN false
 #define ETCPAL_USING_ASAN false
+#define ETCPAL_USING_TSAN false
 #endif
 
 /// @def ETCPAL_NO_EXCEPTIONS
