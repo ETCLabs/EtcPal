@@ -60,7 +60,7 @@ TEST(etcpal_cpp_variant, variant)
   using StringOrNumber = etcpal::Variant<int, String>;
 
   etcpal::BlockMemory<1 <<
-#if ETCPAL_USING_MSAN
+#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN
                       6
 #else
                       5
