@@ -31,7 +31,7 @@ extern "C" {
 typedef pthread_mutex_t etcpal_mutex_t;
 #define ETCPAL_MUTEX_INIT PTHREAD_MUTEX_INITIALIZER
 
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 0
+#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 
 #define etcpal_mutex_create(idptr)   ((bool)(!pthread_mutex_init((idptr), NULL)))
 #define etcpal_mutex_lock(idptr)     ((bool)(!pthread_mutex_lock(idptr)))
