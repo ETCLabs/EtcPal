@@ -61,9 +61,23 @@ namespace detail
   struct MallocResource : public memory_resource
   {
   protected:
-    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override { return ::malloc(bytes); }
-    void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override { ::free(p); }
-    [[nodiscard]] bool  do_is_equal(const memory_resource& rhs) const noexcept override
+    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+    {
+      auto* const ptr = ::aligned_alloc(alignment, bytes);
+      return ETCPAL_TERNARY_THROW(ptr, ptr, std::bad_alloc{});
+    }
+
+    void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+    {
+      std::
+#pragma push_macro("free")
+#undef free
+          free
+#pragma pop_macro("free")
+          (p);
+    }
+
+    [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
     {
       return this == std::addressof(rhs);
     }
