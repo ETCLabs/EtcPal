@@ -17,6 +17,9 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include <pthread.h>
+#include <time.h>
+
 #include "etcpal/rwlock.h"
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)

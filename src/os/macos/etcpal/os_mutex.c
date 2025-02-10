@@ -17,6 +17,9 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include <pthread.h>
+#include <time.h>
+
 #include "etcpal/mutex.h"
 
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)

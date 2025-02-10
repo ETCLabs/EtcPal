@@ -17,6 +17,9 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#include <pthread.h>
+#include <time.h>
+
 #include "etcpal/event_group.h"
 #include "etcpal/private/common.h"
 
