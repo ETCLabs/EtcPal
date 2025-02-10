@@ -22,6 +22,15 @@
 
 #include "etcpal/rwlock.h"
 
+static bool not_timed_out(struct timespec* timeout_spec)
+{
+  struct timespec curr_time;
+  clock_gettime(CLOCK_REALTIME, &curr_time);
+
+  return (curr_time.tv_sec > timeout_spec->tv_sec) ||
+         ((curr_time.tv_sec == timeout_spec->tv_sec) && (curr_time.tv_nsec >= timeout_spec->tv_nsec));
+}
+
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
   if (timeout_ms == ETCPAL_WAIT_FOREVER)
@@ -46,7 +55,22 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
     timeout_spec.tv_nsec -= 1000000000;
   }
 
-  return 0 == pthread_rwlock_timedrdlock(id, &timeout_spec);
+  while (not_timed_out(&timeout_spec))
+  {
+    if (etcpal_rwlock_try_readlock(id))
+    {
+      return true;
+    }
+
+    const struct timespec to_sleep = {1, 0};
+    struct timespec       remaining;
+    if (0 != nanosleep(&to_sleep, &remaining))
+    {
+      break;
+    }
+  }
+
+  return false;
 }
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
@@ -73,5 +97,20 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
     timeout_spec.tv_nsec -= 1000000000;
   }
 
-  return 0 == pthread_rwlock_timedwrlock(id, &timeout_spec);
+  while (not_timed_out(&timeout_spec))
+  {
+    if (etcpal_rwlock_try_writelock(id))
+    {
+      return true;
+    }
+
+    const struct timespec to_sleep = {1, 0};
+    struct timespec       remaining;
+    if (0 != nanosleep(&to_sleep, &remaining))
+    {
+      break;
+    }
+  }
+
+  return false;
 }
