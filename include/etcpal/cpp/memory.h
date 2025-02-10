@@ -65,8 +65,17 @@ namespace detail
   protected:
     [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
     {
-      auto* const ptr = ::aligned_alloc(alignment, bytes);
-      return ETCPAL_TERNARY_THROW(ptr, ptr, std::bad_alloc{});
+      auto* const ptr =
+#if (__STDC_VERSION__ >= 201112L)
+          ::aligned_alloc(alignment, bytes)
+#else  // #if (__STDC_VERSION__ >= 201112L)
+#pragma push_macro("malloc")
+#undef malloc
+          ETCPAL_TERNARY_THROW(alignment <= alignof(std::max_align_t), std::malloc(bytes), std::bad_alloc{})
+#pragma pop_macro("malloc")
+          ;
+#endif  // #if (__STDC_VERSION__ >= 201112L)
+              return ETCPAL_TERNARY_THROW(ptr, ptr, std::bad_alloc{});
     }
 
     void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
