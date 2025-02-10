@@ -22,7 +22,7 @@
 
 #include "etcpal/rwlock.h"
 
-static bool not_timed_out(struct timespec* timeout_spec)
+static bool timed_out(struct timespec* timeout_spec)
 {
   struct timespec curr_time;
   clock_gettime(CLOCK_REALTIME, &curr_time);
@@ -55,7 +55,7 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
     timeout_spec.tv_nsec -= 1000000000;
   }
 
-  while (not_timed_out(&timeout_spec))
+  while (!timed_out(&timeout_spec))
   {
     if (etcpal_rwlock_try_readlock(id))
     {
@@ -97,7 +97,7 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
     timeout_spec.tv_nsec -= 1000000000;
   }
 
-  while (not_timed_out(&timeout_spec))
+  while (!timed_out(&timeout_spec))
   {
     if (etcpal_rwlock_try_writelock(id))
     {
