@@ -63,9 +63,6 @@ bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
     {
       return true;
     }
-
-    const struct timespec to_sleep = {1, 0};
-    struct timespec       remaining;
     if (kEtcPalErrOk != etcpal_thread_sleep(1))
     {
       break;

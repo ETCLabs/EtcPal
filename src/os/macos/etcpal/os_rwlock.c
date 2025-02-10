@@ -63,9 +63,6 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
     {
       return true;
     }
-
-    const struct timespec to_sleep = {1, 0};
-    struct timespec       remaining;
     if (kEtcPalErrOk != etcpal_thread_sleep(1))
     {
       break;
@@ -105,9 +102,6 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
     {
       return true;
     }
-
-    const struct timespec to_sleep = {1, 0};
-    struct timespec       remaining;
     if (kEtcPalErrOk != etcpal_thread_sleep(1))
     {
       break;
