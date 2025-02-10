@@ -20,6 +20,8 @@
 #include <pthread.h>
 #include <time.h>
 
+#include <etcpal/thread.h>
+
 #include "etcpal/rwlock.h"
 
 static bool timed_out(struct timespec* timeout_spec)
@@ -64,7 +66,7 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 
     const struct timespec to_sleep = {1, 0};
     struct timespec       remaining;
-    if (0 != nanosleep(&to_sleep, &remaining))
+    if (kEtcPalErrOk != etcpal_thread_sleep(1))
     {
       break;
     }
@@ -106,7 +108,7 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 
     const struct timespec to_sleep = {1, 0};
     struct timespec       remaining;
-    if (0 != nanosleep(&to_sleep, &remaining))
+    if (kEtcPalErrOk != etcpal_thread_sleep(1))
     {
       break;
     }
