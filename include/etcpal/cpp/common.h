@@ -90,8 +90,14 @@
 #else
 #define ETCPAL_USING_MSAN false
 #endif
+#if __has_feature(address_sanitizer)
+#define ETCPAL_USING_ASAN true
+#else
+#define ETCPAL_USING_ASAN false
+#endif
 #else
 #define ETCPAL_USING_MSAN false
+#define ETCPAL_USING_ASAN false
 #endif
 
 /// @def ETCPAL_NO_EXCEPTIONS
