@@ -39,7 +39,7 @@ typedef struct
   etcpal_event_bits_t bits;
 } etcpal_event_group_t;
 
-#define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         0
+#define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         1
 #define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS      0
 #define ETCPAL_EVENT_GROUP_WAKES_MULTIPLE_THREADS 0
 #define ETCPAL_EVENT_GROUP_NUM_USABLE_BITS        32
