@@ -29,7 +29,7 @@ TEST_TEAR_DOWN(etcpal_cpp_stop_token)
 TEST(etcpal_cpp_stop_token, stop_source)
 {
   etcpal::BlockMemory<1 <<
-#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN
+#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN || ETCPAL_USING_TSAN
                       9
 #else
                       8
