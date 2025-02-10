@@ -32,7 +32,7 @@ TEST(etcpal_cpp_async, promise_future)
   using namespace std::chrono_literals;
 
   etcpal::SyncBlockMemory<1 <<
-#if ETCPAL_USING_MSAN
+#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN
                           10
 #else
                           9
@@ -60,7 +60,7 @@ TEST(etcpal_cpp_async, thread_pool)
   const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   constexpr auto num_items =
-#if ETCPAL_USING_MSAN
+#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN
       512
 #else
       1024
@@ -162,7 +162,7 @@ TEST(etcpal_cpp_async, promise_chain)
   using NumVector = std::vector<int, etcpal::polymorphic_allocator<int>>;
 
   etcpal::SyncDualLevelBlockPool<1 <<
-#if ETCPAL_USING_MSAN
+#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN
                                  15
 #else
                                  14
