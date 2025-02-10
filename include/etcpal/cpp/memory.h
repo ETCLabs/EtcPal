@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdlib.h>
+
 #include <cstddef>
 #include <cstdlib>
 
