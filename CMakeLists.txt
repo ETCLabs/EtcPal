@@ -12,8 +12,17 @@ option(ETCPAL_BUILD_TESTS    "Build the EtcPal unit tests"           OFF)
 option(ETCPAL_BUILD_EXAMPLES "Build the EtcPal example apps"         OFF)
 option(ETCPAL_INSTALL_PDBS   "Include PDBs in EtcPal install target" ON)
 option(ETCPAL_TEST_AS_CXX14  "Force all tests to conform to C++14"   ON)
+option(ETCPAL_WARN_ERROR     "Elevate all warnings to errors"        OFF)
 
 option(ETCPAL_EXPLICITLY_DISABLE_EXCEPTIONS "Disable throwing of exceptions throughout the EtcPal C++ headers" OFF)
+
+if(ETCPAL_WARN_ERROR)
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
+  endif()
+endif()
 
 ############################## Standalone Support #############################
 
