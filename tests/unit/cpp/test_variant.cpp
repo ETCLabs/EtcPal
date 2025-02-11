@@ -59,35 +59,28 @@ TEST(etcpal_cpp_variant, variant)
   using String         = std::basic_string<char, std::char_traits<char>, etcpal::polymorphic_allocator<char>>;
   using StringOrNumber = etcpal::Variant<int, String>;
 
-  etcpal::BlockMemory<1 <<
-#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN || ETCPAL_USING_TSAN
-                      6
-#else
-                      5
-#endif
-                      >
-             buffer{};
-  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
+  etcpal::DebugDualLevelBlockPool<1 << 15> buffer{};
+  const auto                               alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   // comparision
   const auto test_string_0 = String{"test string 0", alloc};
   const auto test_string_1 = String{"test string 1", alloc};
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_0} == StringOrNumber{test_string_0}));
-  TEST_ASSERT_FALSE((StringOrNumber{test_string_0} == StringOrNumber{test_string_1}));
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_0} < StringOrNumber{test_string_1}));
-  TEST_ASSERT_FALSE((StringOrNumber{test_string_1} < StringOrNumber{test_string_0}));
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_1} > StringOrNumber{test_string_0}));
-  TEST_ASSERT_FALSE((StringOrNumber{test_string_0} > StringOrNumber{test_string_1}));
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_0} <= StringOrNumber{test_string_0}));
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_0} <= StringOrNumber{test_string_1}));
-  TEST_ASSERT_FALSE((StringOrNumber{test_string_1} <= StringOrNumber{test_string_0}));
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_0} >= StringOrNumber{test_string_0}));
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_1} >= StringOrNumber{test_string_0}));
-  TEST_ASSERT_FALSE((StringOrNumber{test_string_0} >= StringOrNumber{test_string_1}));
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} == StringOrNumber{String{test_string_0, alloc}}));
+  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_0, alloc}} == StringOrNumber{String{test_string_1, alloc}}));
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} < StringOrNumber{String{test_string_1, alloc}}));
+  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_1, alloc}} < StringOrNumber{String{test_string_0, alloc}}));
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_1, alloc}} > StringOrNumber{String{test_string_0, alloc}}));
+  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_0, alloc}} > StringOrNumber{String{test_string_1, alloc}}));
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} <= StringOrNumber{String{test_string_0, alloc}}));
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} <= StringOrNumber{String{test_string_1, alloc}}));
+  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_1, alloc}} <= StringOrNumber{String{test_string_0, alloc}}));
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} >= StringOrNumber{String{test_string_0, alloc}}));
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_1, alloc}} >= StringOrNumber{String{test_string_0, alloc}}));
+  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_0, alloc}} >= StringOrNumber{String{test_string_1, alloc}}));
 
   // value access
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_0}).get<String>() == test_string_0);
-  TEST_ASSERT_TRUE((StringOrNumber{test_string_0}).get_if<String>());
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}}).get<String>() == test_string_0);
+  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}}).get_if<String>());
   TEST_ASSERT_FALSE((StringOrNumber{0}).get_if<String>());
 
   // destruction
@@ -102,7 +95,7 @@ TEST(etcpal_cpp_variant, variant)
   auto move = std::move(test_variant);
   TEST_ASSERT(test_value.use_count() == 3);
   // destroy empty object
-  test_variant = test_string_0;
+  test_variant = String{test_string_0, alloc};
   TEST_ASSERT(test_value.use_count() == 3);
   // copy assign
   test_variant = move;
@@ -111,7 +104,7 @@ TEST(etcpal_cpp_variant, variant)
   copy = std::move(move);
   TEST_ASSERT(test_value.use_count() == 3);
   // destroy engaged object
-  copy = test_string_0;
+  copy = String{test_string_0, alloc};
   TEST_ASSERT(test_value.use_count() == 2);
 }
 
