@@ -44,7 +44,7 @@ typedef struct
   LONG    reader_count;
 } etcpal_rwlock_t;
 
-#define ETCPAL_RWLOCK_HAS_TIMED_LOCK 0
+#define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id);
 bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);

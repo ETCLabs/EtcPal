@@ -51,7 +51,27 @@ bool etcpal_mutex_try_lock(etcpal_mutex_t* id)
 
 bool etcpal_mutex_timed_lock(etcpal_mutex_t* id, int timeout_ms)
 {
-  return (timeout_ms == 0) ? etcpal_mutex_try_lock(id) : etcpal_mutex_lock(id);
+  if (timeout_ms == ETCPAL_WAIT_FOREVER)
+  {
+    return etcpal_mutex_lock(id);
+  }
+  if (timeout_ms == 0)
+  {
+    return etcpal_mutex_try_lock(id);
+  }
+
+  for (DWORD curr_time = GetTickCount(), timeout_time = curr_time + timeout_ms; curr_time < timeout_time;
+       curr_time = GetTickCount())
+  {
+    if (etcpal_mutex_try_lock(id))
+    {
+      return true;
+    }
+
+    Sleep((DWORD)((timeout_time - curr_time + 1) / 2));
+  }
+
+  return false;
 }
 
 void etcpal_mutex_unlock(etcpal_mutex_t* id)
