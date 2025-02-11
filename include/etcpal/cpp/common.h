@@ -100,6 +100,24 @@
 #define ETCPAL_NODISCARD
 #endif  // #if (__cplusplus >= 201703L)
 
+#if defined(__clang__) && __clang__  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH _Pragma("clang diagnostic push")
+#define ETCPAL_WARN_POP  _Pragma("clang diagnostic pop")
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION
+#elif defined(__GNUC__) && __GNUC__  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH _Pragma("GCC diagnostic push")
+#define ETCPAL_WARN_POP  _Pragma("GCC diagnostic pop")
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION
+#elif defined(_WIN32) && _WIN32  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH                    __pragma(warning(push))
+#define ETCPAL_WARN_POP                     __pragma(warning(pop))
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION __pragma(warning(disable : 4244))
+#else  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH
+#define ETCPAL_WARN_POP
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION
+#endif  // #if defined(__clang__) && __clang__
+
 #if (__cplusplus >= 201703L)
 #define ETCPAL_INLINE_VARIABLE inline
 #else
