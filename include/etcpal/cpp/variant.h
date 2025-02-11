@@ -540,7 +540,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
   {
     if (index != 0)
     {
@@ -551,7 +551,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
   {
     if (index != 0)
     {
@@ -562,7 +562,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
   {
     if (index != 0)
     {
@@ -573,7 +573,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
   {
     if (index != 0)
     {
@@ -651,27 +651,27 @@ union etcpal::detail::VariadicUnion<T, U, Rest...>
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), std::move(value))
                         : std::move(rest).visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), value) : rest.visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), std::move(value))
                         : std::move(rest).visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
-  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
+  constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), value) : rest.visit(index - 1, std::forward<V>(visitor));
   }

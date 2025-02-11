@@ -485,8 +485,10 @@ struct etcpal::detail::StorageFor
   constexpr void emplace(Args&&... args) noexcept(std::is_nothrow_constructible<T, Args...>::value)
   {
     reset();
-    new (std::addressof(storage.value)) ETCPAL_WARN_PUSH ETCPAL_WARN_IGNORE_LOSSY_CONVERSION T(
-        std::forward<Args>(args)...) ETCPAL_WARN_POP;
+    ETCPAL_WARN_PUSH;
+    ETCPAL_WARN_IGNORE_LOSSY_CONVERSION;
+    new (std::addressof(storage.value)) T(std::forward<Args>(args)...);
+    ETCPAL_WARN_POP;
     engaged = true;
   }
 };
