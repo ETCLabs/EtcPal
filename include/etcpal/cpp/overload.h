@@ -131,7 +131,7 @@ Overload(T&&...) -> Overload<RemoveCVRef_t<T>...>;
 /// @param args The objects to form an overload set with.
 /// @return The new overload set object.
 template <typename... T>
-[[nodiscard]] constexpr auto make_overload(T&&... args) noexcept(
+ETCPAL_NODISCARD constexpr auto make_overload(T&&... args) noexcept(
     std::is_nothrow_constructible<Overload<RemoveCVRef_t<T>...>, T...>::value)
 {
   return Overload<RemoveCVRef_t<T>...>{std::forward<T>(args)...};
@@ -272,7 +272,7 @@ using Selection = Select<RemoveCVRef_t<T>...>;
 /// @param args The objects to create a prioritized overload set from.
 /// @return The new prioritized overload set.
 template <typename... T>
-[[nodiscard]] constexpr auto make_selection(T&&... args) noexcept(
+ETCPAL_NODISCARD constexpr auto make_selection(T&&... args) noexcept(
     std::is_nothrow_constructible<detail::Selection<T...>, T...>::value)
 {
   return detail::Selection<T...>{std::forward<T>(args)...};

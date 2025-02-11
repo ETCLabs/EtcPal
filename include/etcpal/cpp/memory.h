@@ -37,7 +37,7 @@ class memory_resource
 public:
   virtual ~memory_resource() noexcept = default;
 
-  [[nodiscard]] void* allocate(std::size_t bytes, std::size_t alignment = alignof(std::max_align_t))
+  ETCPAL_NODISCARD void* allocate(std::size_t bytes, std::size_t alignment = alignof(std::max_align_t))
   {
     return do_allocate(bytes, alignment);
   }
@@ -47,23 +47,23 @@ public:
     do_deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool is_equal(const memory_resource& rhs) const noexcept { return do_is_equal(rhs); }
+  ETCPAL_NODISCARD bool is_equal(const memory_resource& rhs) const noexcept { return do_is_equal(rhs); }
 
 protected:
-  [[nodiscard]] virtual void* do_allocate(std::size_t bytes, std::size_t alignment)            = 0;
+  ETCPAL_NODISCARD virtual void* do_allocate(std::size_t bytes, std::size_t alignment)            = 0;
   virtual void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) = 0;
-  [[nodiscard]] virtual bool  do_is_equal(const memory_resource& rhs) const noexcept           = 0;
+  ETCPAL_NODISCARD virtual bool  do_is_equal(const memory_resource& rhs) const noexcept           = 0;
 };
 
 namespace detail
 {
 
-[[nodiscard]] inline auto default_resource_ptr() noexcept -> std::atomic<memory_resource*>&
+ETCPAL_NODISCARD inline auto default_resource_ptr() noexcept -> std::atomic<memory_resource*>&
 {
   struct MallocResource : public memory_resource
   {
   protected:
-    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+    ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, std::size_t alignment) override
     {
       auto* const ptr =
 #if (__STDC_VERSION__ >= 201112L)
@@ -78,7 +78,9 @@ namespace detail
               return ETCPAL_TERNARY_THROW(ptr, ptr, std::bad_alloc{});
     }
 
-    void do_deallocate(void* p, [[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
+    void do_deallocate(void*               p,
+                       ETCPAL_MAYBE_UNUSED std::size_t bytes,
+                       ETCPAL_MAYBE_UNUSED std::size_t alignment) override
     {
       std::
 #pragma push_macro("free")
@@ -88,7 +90,7 @@ namespace detail
           (p);
     }
 
-    [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+    ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
     {
       return this == std::addressof(rhs);
     }
@@ -107,7 +109,7 @@ inline auto set_default_resource(memory_resource* resource) noexcept -> memory_r
   return detail::default_resource_ptr() = resource;
 }
 
-[[nodiscard]] inline auto get_default_resource() noexcept -> memory_resource*
+ETCPAL_NODISCARD inline auto get_default_resource() noexcept -> memory_resource*
 {
   return detail::default_resource_ptr();
 }
@@ -126,18 +128,18 @@ public:
   polymorphic_allocator(memory_resource* res) noexcept : resource_{res} {}
 
   void               deallocate(T* p, std::size_t n) { resource_->deallocate(p, sizeof(T) * n, alignof(T)); }
-  [[nodiscard]] auto allocate(std::size_t n) -> T*
+  ETCPAL_NODISCARD auto allocate(std::size_t n) -> T*
   {
     return reinterpret_cast<T*>(resource_->allocate(sizeof(T) * n, alignof(T)));
   }
 
-  [[nodiscard]] auto resource() const noexcept -> memory_resource* { return resource_; }
+  ETCPAL_NODISCARD auto resource() const noexcept -> memory_resource* { return resource_; }
 
-  [[nodiscard]] friend bool operator==(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
+  ETCPAL_NODISCARD friend bool operator==(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
   {
     return (lhs.resource_ && rhs.resource_) || lhs.resource_->is_equal(*rhs.resource_);
   }
-  [[nodiscard]] friend bool operator!=(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
+  ETCPAL_NODISCARD friend bool operator!=(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
   {
     return !(lhs == rhs);
   }
@@ -146,23 +148,24 @@ private:
   memory_resource* resource_ = get_default_resource();
 };
 
-[[nodiscard]] inline auto null_memory_resource() noexcept -> memory_resource*
+ETCPAL_NODISCARD inline auto null_memory_resource() noexcept -> memory_resource*
 {
   struct NullResource : public memory_resource
   {
   protected:
-    void do_deallocate([[maybe_unused]] void*       p,
-                       [[maybe_unused]] std::size_t bytes,
-                       [[maybe_unused]] std::size_t alignment) override
+    void do_deallocate(ETCPAL_MAYBE_UNUSED void* p,
+                       ETCPAL_MAYBE_UNUSED std::size_t bytes,
+                       ETCPAL_MAYBE_UNUSED std::size_t alignment) override
     {
     }
 
-    [[nodiscard]] void* do_allocate([[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
+    ETCPAL_NODISCARD void* do_allocate(ETCPAL_MAYBE_UNUSED std::size_t bytes,
+                                       ETCPAL_MAYBE_UNUSED std::size_t alignment) override
     {
       ETCPAL_THROW(std::bad_alloc{});
     }
 
-    [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+    ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
     {
       return this == std::addressof(rhs);
     }
@@ -183,13 +186,13 @@ class MonotonicBufferStatistics
 {
 public:
   static constexpr void report_deallocation() noexcept {}
-  static constexpr void report_allocation([[maybe_unused]] const unsigned char* prev_end,
-                                          [[maybe_unused]] std::size_t          bytes,
-                                          [[maybe_unused]] const unsigned char* new_end) noexcept
+  static constexpr void report_allocation(ETCPAL_MAYBE_UNUSED const unsigned char* prev_end,
+                                          ETCPAL_MAYBE_UNUSED std::size_t          bytes,
+                                          ETCPAL_MAYBE_UNUSED const unsigned char* new_end) noexcept
   {
   }
 
-  [[nodiscard]] static constexpr auto report_allocator_entry() noexcept
+  ETCPAL_NODISCARD static constexpr auto report_allocator_entry() noexcept
   {
     return finally([] {});
   }
@@ -242,7 +245,7 @@ public:
     padding_bytes_ += new_end - prev_end - bytes;
   }
 
-  [[nodiscard]] auto report_allocator_entry() noexcept
+  ETCPAL_NODISCARD auto report_allocator_entry() noexcept
   {
     return finally([&, start = std::chrono::high_resolution_clock::now()] {
       time_in_alloc_ += std::chrono::high_resolution_clock::now() - start;
@@ -289,37 +292,37 @@ public:
   /// @{
   /// @brief Obtain the number of bytes this buffer can still allocate, without taking alignment into account.
   /// @return Amount of free unallocated buffer space.
-  [[nodiscard]] auto free_bytes() const noexcept { return Size - allocd_bytes_; }
+  ETCPAL_NODISCARD auto free_bytes() const noexcept { return Size - allocd_bytes_; }
   /// @brief Check whether a pointer was allocated from this memory resource or not.
   /// @param p The pointer to check ownership of.
   /// @return Whether the given pointer points into this buffer or not.
-  [[nodiscard]] bool owns(void* p) const noexcept { return (p >= buffer_.data()) && (p < buffer_.data() + Size); }
+  ETCPAL_NODISCARD bool owns(void* p) const noexcept { return (p >= buffer_.data()) && (p < buffer_.data() + Size); }
   /// @brief Check whether there is memory allocated from this buffer that has not been deallocated yet.
   /// @return `true` if the number of allocations matches the number of deallocations, or `false` otherwise.
-  [[nodiscard]] bool empty() const noexcept { return num_allocs_ == 0; }
+  ETCPAL_NODISCARD bool empty() const noexcept { return num_allocs_ == 0; }
   /// @brief Obtain a pointer to the underlying buffer.
   /// @return Pointer to the beginning of the underlying buffer.
-  [[nodiscard]] constexpr auto data() const noexcept { return buffer_.data(); }
+  ETCPAL_NODISCARD constexpr auto data() const noexcept { return buffer_.data(); }
   /// @brief Obtain the static total size of this buffer.
   /// @return This buffer's total size.
-  [[nodiscard]] static constexpr auto size() noexcept { return Size; }
+  ETCPAL_NODISCARD static constexpr auto size() noexcept { return Size; }
   /// @brief Check whether this buffer is tracking and reporting additional statistics to `std::cout` or not.
   /// @return Whether this buffer is in debug mode or not.
-  [[nodiscard]] static constexpr bool debug_mode() noexcept { return Debug; }
+  ETCPAL_NODISCARD static constexpr bool debug_mode() noexcept { return Debug; }
   /// @}
 
   /// @brief Attempt to allocate the given number of bytes using the given alignment.
   /// @param bytes     The number of bytes to allocate.
   /// @param alignment The alignment the allocation must use.
   /// @return `nullptr` if the allocation failed, or the allocated memory pointer otherwise.
-  [[nodiscard]] void* try_allocate(std::size_t bytes, std::size_t alignment) noexcept
+  ETCPAL_NODISCARD void* try_allocate(std::size_t bytes, std::size_t alignment) noexcept
   {
     const auto timer = Stats::report_allocator_entry();
     return try_alloc_impl(bytes, alignment);
   }
 
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     const auto timer = Stats::report_allocator_entry();
     if (auto* const p = try_alloc_impl(bytes, alignment))
@@ -330,22 +333,22 @@ protected:
     ETCPAL_THROW(std::bad_alloc{});
   }
 
-  void do_deallocate([[maybe_unused]] void*       p,
-                     [[maybe_unused]] std::size_t bytes,
-                     [[maybe_unused]] std::size_t alignment) override
+  void do_deallocate(ETCPAL_MAYBE_UNUSED void* p,
+                     ETCPAL_MAYBE_UNUSED std::size_t bytes,
+                     ETCPAL_MAYBE_UNUSED std::size_t alignment) override
   {
     const auto timer = Stats::report_allocator_entry();
     Stats::report_deallocation();
     --num_allocs_;
   }
 
-  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+  ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
 
 private:
-  [[nodiscard]] void* try_alloc_impl(std::size_t bytes, std::size_t alignment) noexcept
+  ETCPAL_NODISCARD void* try_alloc_impl(std::size_t bytes, std::size_t alignment) noexcept
   {
     auto* const init_end = buffer_.data() + allocd_bytes_;
     auto*       curr     = static_cast<void*>(init_end);
@@ -388,7 +391,7 @@ public:
   auto operator=(BlockMemory&& rhs) -> BlockMemory&      = delete;
 
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
+  ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, ETCPAL_MAYBE_UNUSED std::size_t alignment) override
   {
     const auto blocks = to_blocks(bytes);
     first_free_block_ = find_first_free_block(first_free_block_);
@@ -412,7 +415,7 @@ protected:
     ETCPAL_THROW(std::bad_alloc{});
   }
 
-  void do_deallocate(void* p, [[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
+  void do_deallocate(void* p, ETCPAL_MAYBE_UNUSED std::size_t bytes, ETCPAL_MAYBE_UNUSED std::size_t alignment) override
   {
     const auto start_index = to_index(p);
     first_free_block_      = std::min(static_cast<int>(start_index), first_free_block_);
@@ -423,7 +426,7 @@ protected:
     }
   }
 
-  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+  ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -431,20 +434,20 @@ protected:
   void                      mark_start_block(int block) noexcept { live_.set(2 * block + 1); }
   void                      mark_allocated(int block) noexcept { live_.set(2 * block); }
   void                      mark_free(int block) noexcept { live_.reset(2 * block).reset(2 * block + 1); }
-  [[nodiscard]] static auto to_blocks(std::size_t bytes) noexcept
+  ETCPAL_NODISCARD static auto to_blocks(std::size_t bytes) noexcept
   {
     return static_cast<int>((bytes / BlockSize) + ((bytes % BlockSize == 0) ? 0 : 1));
   }
 
-  [[nodiscard]] auto to_index(void* p) const noexcept
+  ETCPAL_NODISCARD auto to_index(void* p) const noexcept
   {
     return static_cast<int>((reinterpret_cast<unsigned char*>(p) - buffer_.data()) / BlockSize);
   }
 
-  [[nodiscard]] auto num_blocks() const noexcept { return static_cast<int>(live_.size() / 2); }
-  [[nodiscard]] bool is_allocated(int block) const noexcept { return live_[2 * block]; }
-  [[nodiscard]] bool is_start_block(int block) const noexcept { return live_[2 * block + 1]; }
-  [[nodiscard]] auto num_free_blocks(int start, int max) const noexcept
+  ETCPAL_NODISCARD auto num_blocks() const noexcept { return static_cast<int>(live_.size() / 2); }
+  ETCPAL_NODISCARD bool is_allocated(int block) const noexcept { return live_[2 * block]; }
+  ETCPAL_NODISCARD bool is_start_block(int block) const noexcept { return live_[2 * block + 1]; }
+  ETCPAL_NODISCARD auto num_free_blocks(int start, int max) const noexcept
   {
     const auto limit = std::min(start + max, num_blocks());
     for (auto i = start; i < limit; ++i)
@@ -458,7 +461,7 @@ protected:
     return limit - start;
   }
 
-  [[nodiscard]] void* allocate_blocks(int start, int blocks) noexcept
+  ETCPAL_NODISCARD void* allocate_blocks(int start, int blocks) noexcept
   {
     mark_start_block(start);
     for (auto i = start; i < start + blocks; ++i)
@@ -469,7 +472,7 @@ protected:
     return buffer_.data() + (start * BlockSize);
   }
 
-  [[nodiscard]] auto find_first_free_block(int start) const noexcept
+  ETCPAL_NODISCARD auto find_first_free_block(int start) const noexcept
   {
     for (auto i = start; i < num_blocks(); ++i)
     {
@@ -570,7 +573,7 @@ public:
   }
 
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     const auto  blocks = BlockMemory<Size, BlockSize, false>::to_blocks(bytes);
     const auto  start  = std::chrono::high_resolution_clock::now();
@@ -612,7 +615,7 @@ protected:
     time_in_allocator_ += std::chrono::high_resolution_clock::now() - start;
   }
 
-  [[nodiscard]] auto count_blocks_to_deallocate(int start, int calculated_blocks) const noexcept
+  ETCPAL_NODISCARD auto count_blocks_to_deallocate(int start, int calculated_blocks) const noexcept
   {
     auto count = 1;
     for (auto i = start + 1; BlockMemory<Size, BlockSize, false>::is_allocated(i) &&
@@ -661,7 +664,7 @@ struct SpinLock
 {
   std::atomic<bool> locked{false};
 
-  [[nodiscard]] bool try_lock() noexcept
+  ETCPAL_NODISCARD bool try_lock() noexcept
   {
     bool expected = false;
     return locked.compare_exchange_strong(expected, true);
@@ -696,7 +699,7 @@ template <std::size_t Size,
 class SyncBlockMemory : public memory_resource
 {
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     return memory_.lock()->allocate(bytes, alignment);
   }
@@ -706,7 +709,7 @@ protected:
     memory_.lock()->deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+  ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -734,7 +737,7 @@ public:
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
 
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     const auto start = std::chrono::high_resolution_clock::now();
     auto       alloc = memory_.lock();
@@ -752,7 +755,7 @@ protected:
     alloc->deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+  ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
@@ -822,7 +825,7 @@ struct DeleteUsingAlloc<T[], Allocator>
 ///
 /// @return An `std::unique_ptr` owning the newly-allocated object.
 template <typename T, typename Allocator, typename... Args, std::enable_if_t<!std::is_array<T>::value>* = nullptr>
-[[nodiscard]] auto allocate_unique(const Allocator& allocator, Args&&... args)
+ETCPAL_NODISCARD auto allocate_unique(const Allocator& allocator, Args&&... args)
 {
   auto alloc = typename std::allocator_traits<Allocator>::template rebind_alloc<T>{allocator};
   auto ptr   = alloc.allocate(1);
@@ -841,21 +844,21 @@ template <typename T, typename Allocator, typename... Args, std::enable_if_t<!st
 namespace detail
 {
 
-[[nodiscard]] constexpr auto make_max_aligned(std::size_t size) noexcept
+ETCPAL_NODISCARD constexpr auto make_max_aligned(std::size_t size) noexcept
 {
   return (size % alignof(std::max_align_t) == 0) ? size
                                                  : ((size / alignof(std::max_align_t)) + 1) * alignof(std::max_align_t);
 }
 
 template <std::size_t SmallBlockSize, typename Lock, bool Debug>
-[[nodiscard]] constexpr auto size_for_32_blocks_per_buffer() noexcept
+ETCPAL_NODISCARD constexpr auto size_for_32_blocks_per_buffer() noexcept
 {
   constexpr auto sync_buffer_size = sizeof(Synchronized<MonotonicBuffer<SmallBlockSize, Debug>, Lock>);
   return make_max_aligned(std::max(sync_buffer_size >> 5, sizeof(std::max_align_t)));
 }
 
 template <std::size_t Size, typename Lock, bool Debug>
-[[nodiscard]] constexpr auto largest_sync_buffer_sized_under() noexcept
+ETCPAL_NODISCARD constexpr auto largest_sync_buffer_sized_under() noexcept
 {
   constexpr auto overhead     = sizeof(Synchronized<MonotonicBuffer<Size, Debug>, Lock>) - Size;
   constexpr auto reduced_size = Size - overhead;
@@ -903,15 +906,15 @@ class DualLevelBlockPoolStatistics
 {
 public:
   static constexpr void report_new_small_buffer() noexcept {}
-  static constexpr void report_small_deallocation([[maybe_unused]] std::size_t wastage) noexcept {}
-  static constexpr void report_small_allocation([[maybe_unused]] std::size_t bytes,
-                                                [[maybe_unused]] std::size_t padding) noexcept
+  static constexpr void report_small_deallocation(ETCPAL_MAYBE_UNUSED std::size_t wastage) noexcept {}
+  static constexpr void report_small_allocation(ETCPAL_MAYBE_UNUSED std::size_t bytes,
+                                                ETCPAL_MAYBE_UNUSED std::size_t padding) noexcept
   {
   }
-  static constexpr void               report_large_allocation([[maybe_unused]] std::size_t bytes) noexcept {}
-  [[nodiscard]] static constexpr auto report_lock() noexcept { return true; }
-  static constexpr void               report_locked([[maybe_unused]] bool arg) noexcept {}
-  [[nodiscard]] static constexpr auto report_allocator_entry() noexcept
+  static constexpr void                  report_large_allocation(ETCPAL_MAYBE_UNUSED std::size_t bytes) noexcept {}
+  ETCPAL_NODISCARD static constexpr auto report_lock() noexcept { return true; }
+  static constexpr void                  report_locked(ETCPAL_MAYBE_UNUSED bool arg) noexcept {}
+  ETCPAL_NODISCARD static constexpr auto report_allocator_entry() noexcept
   {
     return finally([] {});
   }
@@ -986,13 +989,13 @@ public:
     small_buffer_padding_ += padding;
   }
 
-  [[nodiscard]] auto report_lock() const noexcept { return std::chrono::high_resolution_clock::now(); }
+  ETCPAL_NODISCARD auto report_lock() const noexcept { return std::chrono::high_resolution_clock::now(); }
   void               report_locked(const std::chrono::high_resolution_clock::time_point& start) noexcept
   {
     time_spent_locking_ += std::chrono::high_resolution_clock::now() - start;
   }
 
-  [[nodiscard]] auto report_allocator_entry() noexcept
+  ETCPAL_NODISCARD auto report_allocator_entry() noexcept
   {
     return finally([&, start = std::chrono::high_resolution_clock::now()] {
       total_time_ += std::chrono::high_resolution_clock::now() - start;
@@ -1065,7 +1068,7 @@ private:
   using SmallBufferPtr  = std::unique_ptr<SyncSmallBuffer, DeleteUsingAlloc<SyncSmallBuffer, polymorphic_allocator<>>>;
 
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     const auto timer = Stats::report_allocator_entry();
     if (bytes <= actual_monotonic_buffer_size)
@@ -1089,12 +1092,12 @@ protected:
     pool_.deallocate(p, bytes, alignment);
   }
 
-  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+  ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }
 
-  [[nodiscard]] void* try_allocate_from_existing_small_buffers(std::size_t bytes, std::size_t alignment) noexcept
+  ETCPAL_NODISCARD void* try_allocate_from_existing_small_buffers(std::size_t bytes, std::size_t alignment) noexcept
   {
     const auto pool_lock_start = Stats::report_lock();
     auto       small_pools     = small_pools_.clock();
@@ -1120,7 +1123,7 @@ protected:
     return nullptr;
   }
 
-  [[nodiscard]] void* allocate_from_small_buffers(std::size_t bytes, std::size_t alignment)
+  ETCPAL_NODISCARD void* allocate_from_small_buffers(std::size_t bytes, std::size_t alignment)
   {
     if (auto* const p = try_allocate_from_existing_small_buffers(bytes, alignment))
     {
@@ -1156,7 +1159,7 @@ protected:
     return new_pool->allocate(bytes, alignment);
   }
 
-  [[nodiscard]] bool try_deallocate_from_small_buffers(void* p, std::size_t bytes, std::size_t alignment)
+  ETCPAL_NODISCARD bool try_deallocate_from_small_buffers(void* p, std::size_t bytes, std::size_t alignment)
   {
     const auto pool_lock_start = Stats::report_lock();
     auto       small_pools     = small_pools_.clock();
@@ -1233,7 +1236,7 @@ public:
   auto operator=(MemoryPerformanceRecorder&& rhs) -> MemoryPerformanceRecorder&      = delete;
 
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  ETCPAL_NODISCARD void* do_allocate(std::size_t bytes, std::size_t alignment) override
   {
     const auto  start = std::chrono::high_resolution_clock::now();
     auto* const p     = upstream_->allocate(bytes, alignment);
@@ -1249,7 +1252,7 @@ protected:
     time_spent_ += std::chrono::high_resolution_clock::now() - start;
   }
 
-  [[nodiscard]] bool do_is_equal(const memory_resource& rhs) const noexcept override
+  ETCPAL_NODISCARD bool do_is_equal(const memory_resource& rhs) const noexcept override
   {
     return this == std::addressof(rhs);
   }

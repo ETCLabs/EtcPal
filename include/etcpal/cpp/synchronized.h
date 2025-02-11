@@ -51,17 +51,17 @@ public:
   /// @brief Obtain a reference to or member of the wrapped object.
   /// @return The requested reference or memeber.
   /// @{
-  [[nodiscard]] auto operator*() const noexcept -> T& { return value_->value_; }
-  [[nodiscard]] auto operator->() const noexcept -> T* { return std::addressof(value_->value_); }
+  ETCPAL_NODISCARD auto operator*() const noexcept -> T& { return value_->value_; }
+  ETCPAL_NODISCARD auto operator->() const noexcept -> T* { return std::addressof(value_->value_); }
   /// @}
 
   /// @brief Attempt to acquire locked access to the given synchronized object without waiting for access.
   /// @param value The synchronized object to attempt to obtain locked access to.
   /// @return The synchronized reference on successful locking, or an empty optional on failure.
-  [[nodiscard]] static auto try_acquire(Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>;
+  ETCPAL_NODISCARD static auto try_acquire(Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>;
 
 private:
-  explicit SynchronizedRef([[maybe_unused]] detail::NoLock tag, Synchronized<T, Lock>& value) noexcept
+  explicit SynchronizedRef(ETCPAL_MAYBE_UNUSED detail::NoLock tag, Synchronized<T, Lock>& value) noexcept
       : value_(std::addressof(value))
   {
   }
@@ -78,10 +78,10 @@ public:
     value_->mutex_.lock();
   }
 
-  [[nodiscard]] auto operator*() const noexcept -> const T& { return value_->value_; }
-  [[nodiscard]] auto operator->() const noexcept -> const T* { return std::addressof(value_->value_); }
+  ETCPAL_NODISCARD auto operator*() const noexcept -> const T& { return value_->value_; }
+  ETCPAL_NODISCARD auto operator->() const noexcept -> const T* { return std::addressof(value_->value_); }
 
-  [[nodiscard]] static auto try_acquire(const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
+  ETCPAL_NODISCARD static auto try_acquire(const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
   {
     if (value.mutex_.try_lock())
     {
@@ -106,10 +106,10 @@ public:
     value_->mutex_.WriteLock();
   }
 
-  [[nodiscard]] auto operator*() const noexcept -> T& { return value_->value_; }
-  [[nodiscard]] auto operator->() const noexcept -> T* { return std::addressof(value_->value_); }
+  ETCPAL_NODISCARD auto operator*() const noexcept -> T& { return value_->value_; }
+  ETCPAL_NODISCARD auto operator->() const noexcept -> T* { return std::addressof(value_->value_); }
 
-  [[nodiscard]] static auto try_acquire(Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
+  ETCPAL_NODISCARD static auto try_acquire(Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
   {
     if (value.mutex_.TryWriteLock())
     {
@@ -134,10 +134,10 @@ public:
     value_->mutex_.ReadLock();
   }
 
-  [[nodiscard]] auto operator*() const noexcept -> const T& { return value_->value_; }
-  [[nodiscard]] auto operator->() const noexcept -> const T* { return std::addressof(value_->value_); }
+  ETCPAL_NODISCARD auto operator*() const noexcept -> const T& { return value_->value_; }
+  ETCPAL_NODISCARD auto operator->() const noexcept -> const T* { return std::addressof(value_->value_); }
 
-  [[nodiscard]] static auto try_acquire(const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
+  ETCPAL_NODISCARD static auto try_acquire(const Synchronized<T, Lock>& value) noexcept -> Optional<SynchronizedRef>
   {
     if (value.mutex_.TryReadLock())
     {
@@ -187,12 +187,12 @@ public:
   /// @brief Obtain an RAII locking reference to the underlying value.
   /// @return A synchronized reference to the wrapped value, or an empty optional if locking failed.
   /// @{
-  [[nodiscard]] auto clock() const noexcept { return lock(); }
-  [[nodiscard]] auto lock() const noexcept { return SynchronizedRef<const T, Lock>{*this}; }
-  [[nodiscard]] auto lock() noexcept { return SynchronizedRef<T, Lock>{*this}; }
-  [[nodiscard]] auto try_clock() const noexcept { return try_lock(); }
-  [[nodiscard]] auto try_lock() const noexcept { return SynchronizedRef<const T, Lock>::try_acquire(*this); }
-  [[nodiscard]] auto try_lock() noexcept { return SynchronizedRef<T, Lock>::try_acquire(*this); }
+  ETCPAL_NODISCARD auto clock() const noexcept { return lock(); }
+  ETCPAL_NODISCARD auto lock() const noexcept { return SynchronizedRef<const T, Lock>{*this}; }
+  ETCPAL_NODISCARD auto lock() noexcept { return SynchronizedRef<T, Lock>{*this}; }
+  ETCPAL_NODISCARD auto try_clock() const noexcept { return try_lock(); }
+  ETCPAL_NODISCARD auto try_lock() const noexcept { return SynchronizedRef<const T, Lock>::try_acquire(*this); }
+  ETCPAL_NODISCARD auto try_lock() noexcept { return SynchronizedRef<T, Lock>::try_acquire(*this); }
   /// @}
 
 private:
@@ -258,7 +258,7 @@ etcpal::SynchronizedRef<T, Lock, Enable>::SynchronizedRef(Synchronized<T, Lock>&
 }
 
 template <typename T, typename Lock, typename Enable>
-[[nodiscard]] auto etcpal::SynchronizedRef<T, Lock, Enable>::try_acquire(Synchronized<T, Lock>& value) noexcept
+ETCPAL_NODISCARD auto etcpal::SynchronizedRef<T, Lock, Enable>::try_acquire(Synchronized<T, Lock>& value) noexcept
     -> Optional<SynchronizedRef>
 {
   if (value.mutex_.try_lock())

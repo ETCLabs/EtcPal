@@ -42,7 +42,7 @@ template <typename T>
 struct ConstructFrom
 {
   template <typename... Args, typename = std::enable_if_t<std::is_constructible<T, Args...>::value>>
-  [[nodiscard]] constexpr auto operator()(Args&&... args) const
+  ETCPAL_NODISCARD constexpr auto operator()(Args&&... args) const
       noexcept(std::is_nothrow_constructible<T, Args...>::value) -> T
   {
     return T{std::forward<Args>(args)...};
@@ -116,33 +116,33 @@ template <std::size_t I, typename... T>
 using TypeAtIndex_t = typename TypeAtIndex<I, void, T...>::type;
 
 template <typename T, typename U>
-[[nodiscard]] constexpr auto index_of(std::size_t curr = 0) noexcept
+ETCPAL_NODISCARD constexpr auto index_of(std::size_t curr = 0) noexcept
 {
   return std::is_same<T, U>::value ? curr : variant_npos;
 }
 
 template <typename T, typename First, typename Second, typename... Rest>
-[[nodiscard]] constexpr auto index_of(std::size_t curr = 0) noexcept
+ETCPAL_NODISCARD constexpr auto index_of(std::size_t curr = 0) noexcept
 {
   return std::is_same<T, First>::value ? curr : index_of<T, Second, Rest...>(curr + 1);
 }
 
 template <typename T, typename U>
-[[nodiscard]] constexpr auto count_occurances_of([[maybe_unused]] InPlaceType_t<U> tag) noexcept
+ETCPAL_NODISCARD constexpr auto count_occurances_of(ETCPAL_MAYBE_UNUSED InPlaceType_t<U> tag) noexcept
 {
   return std::is_same<T, U>::value ? 1 : 0;
 }
 
 template <typename T, typename First, typename Second, typename... Rest>
-[[nodiscard]] constexpr auto count_occurances_of(InPlaceType_t<First>  first,
-                                                 InPlaceType_t<Second> second,
-                                                 InPlaceType_t<Rest>... rest) noexcept
+ETCPAL_NODISCARD constexpr auto count_occurances_of(InPlaceType_t<First>  first,
+                                                    InPlaceType_t<Second> second,
+                                                    InPlaceType_t<Rest>... rest) noexcept
 {
   return count_occurances_of<T>(first) + count_occurances_of<T>(second, rest...);
 }
 
 template <typename T, typename... U>
-[[nodiscard]] constexpr auto is_unique_in() noexcept
+ETCPAL_NODISCARD constexpr auto is_unique_in() noexcept
 {
   return count_occurances_of<T>(InPlaceType_t<U>{}...);
 }
@@ -239,8 +239,8 @@ public:
   /// @brief Inspect what type the variant currently holds.
   /// @return The index of the currently-engaged type, or the valueless-by-exception status.
   /// @{
-  [[nodiscard]] constexpr auto index() const noexcept { return type_; }
-  [[nodiscard]] constexpr bool valueless_by_exception() const noexcept { return index() == variant_npos; }
+  ETCPAL_NODISCARD constexpr auto index() const noexcept { return type_; }
+  ETCPAL_NODISCARD constexpr bool valueless_by_exception() const noexcept { return index() == variant_npos; }
   /// @}
 
   /// @name Emplacement
@@ -297,37 +297,37 @@ public:
   /// @throws BadVariantAccess if the variant does not acutally contain the requested type.
   /// @{
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() const&& -> const U&&;
+  ETCPAL_NODISCARD constexpr auto get() const&& -> const U&&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() const& -> const U&;
+  ETCPAL_NODISCARD constexpr auto get() const& -> const U&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() && -> U&&;
+  ETCPAL_NODISCARD constexpr auto get() && -> U&&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get() & -> U&;
+  ETCPAL_NODISCARD constexpr auto get() & -> U&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() const&& -> const detail::TypeAtIndex_t<I, T...>&&;
+  ETCPAL_NODISCARD constexpr auto get() const&& -> const detail::TypeAtIndex_t<I, T...>&&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() const& -> const detail::TypeAtIndex_t<I, T...>&;
+  ETCPAL_NODISCARD constexpr auto get() const& -> const detail::TypeAtIndex_t<I, T...>&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() && -> detail::TypeAtIndex_t<I, T...>&&;
+  ETCPAL_NODISCARD constexpr auto get() && -> detail::TypeAtIndex_t<I, T...>&&;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get() & -> detail::TypeAtIndex_t<I, T...>&;
+  ETCPAL_NODISCARD constexpr auto get() & -> detail::TypeAtIndex_t<I, T...>&;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get_if() const&& noexcept -> Optional<const U&&>;
+  ETCPAL_NODISCARD constexpr auto get_if() const&& noexcept -> Optional<const U&&>;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get_if() const& noexcept -> Optional<const U&>;
+  ETCPAL_NODISCARD constexpr auto get_if() const& noexcept -> Optional<const U&>;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get_if() && noexcept -> Optional<U&&>;
+  ETCPAL_NODISCARD constexpr auto get_if() && noexcept -> Optional<U&&>;
   template <typename U, typename = std::enable_if_t<detail::is_unique_in<U, T...>()>>
-  [[nodiscard]] constexpr auto get_if() & noexcept -> Optional<U&>;
+  ETCPAL_NODISCARD constexpr auto get_if() & noexcept -> Optional<U&>;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get_if() const&& noexcept -> Optional<const detail::TypeAtIndex_t<I, T...>&&>;
+  ETCPAL_NODISCARD constexpr auto get_if() const&& noexcept -> Optional<const detail::TypeAtIndex_t<I, T...>&&>;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get_if() const& noexcept -> Optional<const detail::TypeAtIndex_t<I, T...>&>;
+  ETCPAL_NODISCARD constexpr auto get_if() const& noexcept -> Optional<const detail::TypeAtIndex_t<I, T...>&>;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get_if() && noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&&>;
+  ETCPAL_NODISCARD constexpr auto get_if() && noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&&>;
   template <std::size_t I, typename = std::enable_if_t<std::less<>{}(I, sizeof...(T))>>
-  [[nodiscard]] constexpr auto get_if() & noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&>;
+  ETCPAL_NODISCARD constexpr auto get_if() & noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&>;
   /// @}
 
   /// @name Relational Operators
@@ -343,7 +343,7 @@ public:
   /// @return The relational comparision result.
   ///
   /// @{
-  [[nodiscard]] friend constexpr bool operator==(const Variant& lhs, const Variant& rhs) noexcept
+  ETCPAL_NODISCARD friend constexpr bool operator==(const Variant& lhs, const Variant& rhs) noexcept
   {
     if ((lhs.index() != rhs.index()) || (lhs.valueless_by_exception() && rhs.valueless_by_exception()))
     {
@@ -353,10 +353,10 @@ public:
     return lhs.visit([&](const auto& l) {
       return rhs.visit(
           make_selection([&](const decltype(l)& r) { return l == r; },
-                         []([[maybe_unused]] const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
+                         [](ETCPAL_MAYBE_UNUSED const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
-  [[nodiscard]] friend constexpr bool operator!=(const Variant& lhs, const Variant& rhs) noexcept
+  ETCPAL_NODISCARD friend constexpr bool operator!=(const Variant& lhs, const Variant& rhs) noexcept
   {
     if (lhs.index() != rhs.index())
     {
@@ -372,7 +372,7 @@ public:
                                       [](const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
-  [[nodiscard]] friend constexpr bool operator<(const Variant& lhs, const Variant& rhs) noexcept
+  ETCPAL_NODISCARD friend constexpr bool operator<(const Variant& lhs, const Variant& rhs) noexcept
   {
     if ((lhs.index() < rhs.index()) || (lhs.valueless_by_exception() && !rhs.valueless_by_exception()))
     {
@@ -386,10 +386,10 @@ public:
     return lhs.visit([&](const auto& l) {
       return rhs.visit(
           make_selection([&](const decltype(l)& r) { return l < r; },
-                         []([[maybe_unused]] const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
+                         [](ETCPAL_MAYBE_UNUSED const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
-  [[nodiscard]] friend constexpr bool operator>(const Variant& lhs, const Variant& rhs) noexcept
+  ETCPAL_NODISCARD friend constexpr bool operator>(const Variant& lhs, const Variant& rhs) noexcept
   {
     if ((lhs.index() > rhs.index()) || (!lhs.valueless_by_exception() && rhs.valueless_by_exception()))
     {
@@ -403,10 +403,10 @@ public:
     return lhs.visit([&](const auto& l) {
       return rhs.visit(
           make_selection([&](const decltype(l)& r) { return l > r; },
-                         []([[maybe_unused]] const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
+                         [](ETCPAL_MAYBE_UNUSED const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
-  [[nodiscard]] friend constexpr bool operator<=(const Variant& lhs, const Variant& rhs) noexcept
+  ETCPAL_NODISCARD friend constexpr bool operator<=(const Variant& lhs, const Variant& rhs) noexcept
   {
     if ((lhs.index() < rhs.index()) || lhs.valueless_by_exception())
     {
@@ -420,10 +420,10 @@ public:
     return lhs.visit([&](const auto& l) {
       return rhs.visit(
           make_selection([&](const decltype(l)& r) { return l <= r; },
-                         []([[maybe_unused]] const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
+                         [](ETCPAL_MAYBE_UNUSED const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
-  [[nodiscard]] friend constexpr bool operator>=(const Variant& lhs, const Variant& rhs) noexcept
+  ETCPAL_NODISCARD friend constexpr bool operator>=(const Variant& lhs, const Variant& rhs) noexcept
   {
     if ((lhs.index() > rhs.index()) || rhs.valueless_by_exception())
     {
@@ -437,7 +437,7 @@ public:
     return lhs.visit([&](const auto& l) {
       return rhs.visit(
           make_selection([&](const decltype(l)& r) { return l >= r; },
-                         []([[maybe_unused]] const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
+                         [](ETCPAL_MAYBE_UNUSED const auto& r) -> bool { ETCPAL_THROW(BadVariantAccess{}); }));
     });
   }
   /// @}
@@ -456,17 +456,17 @@ namespace detail
 {
 
 template <typename T, typename... Args>
-constexpr void construct_if_possible([[maybe_unused]] std::true_type tag,
-                                     T*                              ptr,
+constexpr void construct_if_possible(ETCPAL_MAYBE_UNUSED std::true_type tag,
+                                     T*                                 ptr,
                                      Args&&... args) noexcept(std::is_nothrow_constructible<T, Args...>::value)
 {
   new (ptr) T(std::forward<Args>(args)...);
 }
 
 template <typename T, typename... Args>
-constexpr void construct_if_possible([[maybe_unused]] std::false_type tag,
-                                     [[maybe_unused]] T*              ptr,
-                                     [[maybe_unused]] Args&&... args) noexcept
+constexpr void construct_if_possible(ETCPAL_MAYBE_UNUSED std::false_type tag,
+                                     ETCPAL_MAYBE_UNUSED T*              ptr,
+                                     ETCPAL_MAYBE_UNUSED Args&&... args) noexcept
 {
 }
 
@@ -480,9 +480,9 @@ union etcpal::detail::VariadicUnion<T>
   EmptyType empty;
   T         value;
 
-  constexpr VariadicUnion([[maybe_unused]] InPlaceIndex_t<1> index) noexcept : empty{} {}
+  constexpr VariadicUnion(ETCPAL_MAYBE_UNUSED InPlaceIndex_t<1> index) noexcept : empty{} {}
   template <typename... Args>
-  constexpr VariadicUnion([[maybe_unused]] InPlaceIndex_t<0> index,
+  constexpr VariadicUnion(ETCPAL_MAYBE_UNUSED InPlaceIndex_t<0> index,
                           Args&&... args) noexcept(std::is_nothrow_constructible<T, Args...>::value)
       : value{std::forward<Args>(args)...}
   {
@@ -540,7 +540,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
   {
     if (index != 0)
     {
@@ -551,7 +551,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
   {
     if (index != 0)
     {
@@ -562,7 +562,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
   {
     if (index != 0)
     {
@@ -573,7 +573,7 @@ union etcpal::detail::VariadicUnion<T>
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
   {
     if (index != 0)
     {
@@ -583,10 +583,10 @@ union etcpal::detail::VariadicUnion<T>
     return invoke(std::forward<V>(visitor), value);
   }
 
-  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
-  [[nodiscard]] constexpr auto& get([[maybe_unused]] InPlaceIndex_t<0> tag) noexcept { return value; }
-  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<1> tag) const noexcept { return empty; }
-  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<1> tag) noexcept { return empty; }
+  ETCPAL_NODISCARD constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
+  ETCPAL_NODISCARD constexpr auto& get(ETCPAL_MAYBE_UNUSED InPlaceIndex_t<0> tag) noexcept { return value; }
+  ETCPAL_NODISCARD constexpr auto& get(InPlaceIndex_t<1> tag) const noexcept { return empty; }
+  ETCPAL_NODISCARD constexpr auto& get(InPlaceIndex_t<1> tag) noexcept { return empty; }
 };
 
 template <typename T, typename U, typename... Rest>
@@ -596,13 +596,13 @@ union etcpal::detail::VariadicUnion<T, U, Rest...>
   T                         value;
 
   template <std::size_t I, typename... Args, typename = std::enable_if_t<I != 0>>
-  constexpr VariadicUnion([[maybe_unused]] InPlaceIndex_t<I> index, Args&&... args) noexcept(
+  constexpr VariadicUnion(ETCPAL_MAYBE_UNUSED InPlaceIndex_t<I> index, Args&&... args) noexcept(
       std::is_nothrow_constructible<VariadicUnion<U, Rest...>, InPlaceIndex_t<I - 1>, Args...>::value)
       : rest{InPlaceIndex_t<I - 1>{}, std::forward<Args>(args)...}
   {
   }
   template <typename... Args>
-  constexpr VariadicUnion([[maybe_unused]] InPlaceIndex_t<0> index,
+  constexpr VariadicUnion(ETCPAL_MAYBE_UNUSED InPlaceIndex_t<0> index,
                           Args&&... args) noexcept(std::is_nothrow_constructible<T, Args...>::value)
       : value{std::forward<Args>(args)...}
   {
@@ -651,40 +651,40 @@ union etcpal::detail::VariadicUnion<T, U, Rest...>
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&&
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), std::move(value))
                         : std::move(rest).visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) const&
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), value) : rest.visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &&
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), std::move(value))
                         : std::move(rest).visit(index - 1, std::forward<V>(visitor));
   }
 
   template <typename V>
-  [[nodiscard]] constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
+  ETCPAL_NODISCARD constexpr decltype(auto) visit(std::size_t index, V&& visitor) &
   {
     return (index == 0) ? invoke(std::forward<V>(visitor), value) : rest.visit(index - 1, std::forward<V>(visitor));
   }
 
-  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
-  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<0> tag) noexcept { return value; }
+  ETCPAL_NODISCARD constexpr auto& get(InPlaceIndex_t<0> tag) const noexcept { return value; }
+  ETCPAL_NODISCARD constexpr auto& get(InPlaceIndex_t<0> tag) noexcept { return value; }
   template <std::size_t I, typename = std::enable_if_t<I != 0>>
-  [[nodiscard]] constexpr auto& get(InPlaceIndex_t<I> tag) const noexcept
+  ETCPAL_NODISCARD constexpr auto& get(InPlaceIndex_t<I> tag) const noexcept
   {
     return rest.get(InPlaceIndex_t<I - 1>{});
   }
   template <std::size_t I, typename = std::enable_if_t<I != 0>>
-  [[nodiscard]] constexpr auto& get([[maybe_unused]] InPlaceIndex_t<I> tag) noexcept
+  ETCPAL_NODISCARD constexpr auto& get(ETCPAL_MAYBE_UNUSED InPlaceIndex_t<I> tag) noexcept
   {
     return rest.get(InPlaceIndex_t<I - 1>{});
   }
@@ -707,7 +707,7 @@ constexpr etcpal::Variant<T...>::Variant(U&& init) noexcept(
 
 template <typename... T>
 template <typename U, typename... Args, typename>
-constexpr etcpal::Variant<T...>::Variant([[maybe_unused]] InPlaceType_t<U> tag,
+constexpr etcpal::Variant<T...>::Variant(ETCPAL_MAYBE_UNUSED InPlaceType_t<U> tag,
                                          Args&&... args) noexcept(std::is_nothrow_constructible<U, Args...>::value)
     : type_{detail::index_of<U, T...>()}, storage_{InPlaceIndex_t<detail::index_of<U, T...>()>{}}
 {
@@ -724,7 +724,7 @@ constexpr etcpal::Variant<T...>::Variant(InPlaceType_t<U> tag, std::initializer_
 
 template <typename... T>
 template <std::size_t I, typename... Args, typename>
-constexpr etcpal::Variant<T...>::Variant([[maybe_unused]] InPlaceIndex_t<I> tag, Args&&... args) noexcept(
+constexpr etcpal::Variant<T...>::Variant(ETCPAL_MAYBE_UNUSED InPlaceIndex_t<I> tag, Args&&... args) noexcept(
     std::is_nothrow_constructible<detail::TypeAtIndex_t<I, T...>, Args...>::value)
     : type_{I}, storage_{InPlaceIndex_t<I>{}, std::forward<Args>(args)...}
 {
@@ -767,7 +767,7 @@ ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(const Variant& rhs) no
     storage_.visit(type_, [&](auto& lhs) {
       rhs.storage_.visit(rhs.type_,
                          make_selection([&](const decltype(lhs)& arg) { lhs = arg; },
-                                        []([[maybe_unused]] auto&& arg) { ETCPAL_THROW(BadVariantAccess{}); }));
+                                        [](ETCPAL_MAYBE_UNUSED auto&& arg) { ETCPAL_THROW(BadVariantAccess{}); }));
     });
     return *this;
   }
@@ -791,7 +791,7 @@ ETCPAL_CONSTEXPR_20 auto etcpal::Variant<T...>::operator=(Variant&& rhs) noexcep
     storage_.visit(type_, [&](auto& lhs) {
       rhs.storage_.visit(rhs.type_,
                          make_selection([&](decltype(lhs)& arg) { lhs = std::move(arg); },
-                                        []([[maybe_unused]] auto&& arg) { ETCPAL_THROW(BadVariantAccess{}); }));
+                                        [](ETCPAL_MAYBE_UNUSED auto&& arg) { ETCPAL_THROW(BadVariantAccess{}); }));
     });
     return *this;
   }
@@ -908,35 +908,35 @@ constexpr auto etcpal::Variant<T...>::visit(Visitor&& visitor) & -> R
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const&& -> const U&&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() const&& -> const U&&
 {
   return std::move(get<detail::index_of<U, T...>()>());
 }
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const& -> const U&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() const& -> const U&
 {
   return get<detail::index_of<U, T...>()>();
 }
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() && -> U&&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() && -> U&&
 {
   return std::move(get<detail::index_of<U, T...>()>());
 }
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() & -> U&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() & -> U&
 {
   return get<detail::index_of<U, T...>()>();
 }
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const&& -> const detail::TypeAtIndex_t<I, T...>&&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() const&& -> const detail::TypeAtIndex_t<I, T...>&&
 {
   if (index() != I)
   {
@@ -948,7 +948,7 @@ template <std::size_t I, typename>
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() const& -> const detail::TypeAtIndex_t<I, T...>&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() const& -> const detail::TypeAtIndex_t<I, T...>&
 {
   if (index() != I)
   {
@@ -960,7 +960,7 @@ template <std::size_t I, typename>
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() && -> detail::TypeAtIndex_t<I, T...>&&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() && -> detail::TypeAtIndex_t<I, T...>&&
 {
   if (index() != I)
   {
@@ -972,7 +972,7 @@ template <std::size_t I, typename>
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get() & -> detail::TypeAtIndex_t<I, T...>&
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get() & -> detail::TypeAtIndex_t<I, T...>&
 {
   if (index() != I)
   {
@@ -984,35 +984,35 @@ template <std::size_t I, typename>
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const&& noexcept -> Optional<const U&&>
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() const&& noexcept -> Optional<const U&&>
 {
   return std::move(*this).template get_if<detail::index_of<U, T...>()>();
 }
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const& noexcept -> Optional<const U&>
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() const& noexcept -> Optional<const U&>
 {
   return get_if<detail::index_of<U, T...>()>();
 }
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() && noexcept -> Optional<U&&>
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() && noexcept -> Optional<U&&>
 {
   return std::move(*this).template get_if<detail::index_of<U, T...>()>();
 }
 
 template <typename... T>
 template <typename U, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() & noexcept -> Optional<U&>
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() & noexcept -> Optional<U&>
 {
   return get_if<detail::index_of<U, T...>()>();
 }
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const&& noexcept
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() const&& noexcept
     -> Optional<const detail::TypeAtIndex_t<I, T...>&&>
 {
   if (index() != I)
@@ -1025,7 +1025,7 @@ template <std::size_t I, typename>
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() const& noexcept
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() const& noexcept
     -> Optional<const detail::TypeAtIndex_t<I, T...>&>
 {
   if (index() != I)
@@ -1038,7 +1038,8 @@ template <std::size_t I, typename>
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() && noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&&>
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() && noexcept
+    -> Optional<detail::TypeAtIndex_t<I, T...>&&>
 {
   if (index() != I)
   {
@@ -1050,7 +1051,7 @@ template <std::size_t I, typename>
 
 template <typename... T>
 template <std::size_t I, typename>
-[[nodiscard]] constexpr auto etcpal::Variant<T...>::get_if() & noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&>
+ETCPAL_NODISCARD constexpr auto etcpal::Variant<T...>::get_if() & noexcept -> Optional<detail::TypeAtIndex_t<I, T...>&>
 {
   if (index() != I)
   {

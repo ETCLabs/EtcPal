@@ -79,6 +79,27 @@
 #endif
 
 #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH  [[fallthrough]]
+#define ETCPAL_MAYBE_UNUSED [[maybe_unused]]
+#define ETCPAL_NODISCARD    [[nodiscard]]
+#elif defined(__clang__) && __clang__  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH  __attribute__((fallthrough))
+#define ETCPAL_MAYBE_UNUSED __attribute__((unused))
+#define ETCPAL_NODISCARD    __attribute__((warn_unused_result))
+#elif defined(__GNUC__) && __GNUC__  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH  __attribute__((fallthrough))
+#define ETCPAL_MAYBE_UNUSED __attribute__((unused))
+#define ETCPAL_NODISCARD    __attribute__((warn_unused_result))
+#elif defined(_WIN32) && _WIN32  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH
+#define ETCPAL_MAYBE_UNUSED __pragma(warning(suppress : 4100 4101))
+#define ETCPAL_NODISCARD    _Check_return_
+#else  // #if (__cplusplus >= 201703L)
+#define ETCPAL_MAYBE_UNUSED
+#define ETCPAL_NODISCARD
+#endif  // #if (__cplusplus >= 201703L)
+
+#if (__cplusplus >= 201703L)
 #define ETCPAL_INLINE_VARIABLE inline
 #else
 #define ETCPAL_INLINE_VARIABLE static
@@ -203,7 +224,7 @@ using RemoveCVRef_t = std::remove_cv_t<std::remove_reference_t<T>>;
 /// @param value The enumeration value to convert.
 /// @return The underlying integral enumeration value.
 template <typename Enum>
-[[nodiscard]] constexpr auto to_underlying(Enum value) noexcept
+ETCPAL_NODISCARD constexpr auto to_underlying(Enum value) noexcept
 {
   return static_cast<std::underlying_type_t<Enum>>(value);
 }
@@ -382,7 +403,7 @@ constexpr auto invoke_r(F&& fun, Args&&... args) noexcept(is_nothrow_invocable_r
 ///
 /// @tparam Action The type of action to invoke on scope exit.
 template <typename Action>
-class [[maybe_unused]] FinalAction
+class ETCPAL_MAYBE_UNUSED FinalAction
 {
 public:
   constexpr FinalAction(Action&& action) noexcept : action_{std::move(action)}, valid_{true} {}
@@ -417,7 +438,7 @@ FinalAction(Action&&) -> FinalAction<RemoveCVRef_t<Action>>;
 /// @param action The action to invoke on scope exit.
 /// @return A finalizer that runs the given action on destruction.
 template <typename Action>
-[[nodiscard]] constexpr auto finally(Action&& action) noexcept(
+ETCPAL_NODISCARD constexpr auto finally(Action&& action) noexcept(
     std::is_nothrow_constructible<FinalAction<RemoveCVRef_t<Action>>>::value)
 {
   return FinalAction<RemoveCVRef_t<Action>>{std::forward<Action>(action)};

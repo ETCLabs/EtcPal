@@ -41,7 +41,7 @@ public:
   StopSource() = default;
   /// @brief Construct an empty source with no shared cancellation state.
   /// @param nss Tag value indicating the source should be empty.
-  explicit StopSource([[maybe_unused]] NoStopState_t nss) noexcept : ctrl_block_{} {}
+  explicit StopSource(ETCPAL_MAYBE_UNUSED NoStopState_t nss) noexcept : ctrl_block_{} {}
   /// @brief Construct a source using the given allocator to allocate the shared cancellation state.
   /// @param alloc The allocator to allocate memory with.
   explicit StopSource(const Allocator& alloc) : ctrl_block_{std::allocate_shared<StopContext>(alloc, alloc)} {}
@@ -73,9 +73,9 @@ public:
   /// @return The requested token or state information.
   ///
   /// @{
-  [[nodiscard]] auto get_token() const noexcept { return StopToken<Allocator>{ctrl_block_}; }
-  [[nodiscard]] bool stop_requested() const noexcept { return ctrl_block_ && ctrl_block_->stop_requested; }
-  [[nodiscard]] bool stop_possible() const noexcept { return ctrl_block_.get(); }
+  ETCPAL_NODISCARD auto get_token() const noexcept { return StopToken<Allocator>{ctrl_block_}; }
+  ETCPAL_NODISCARD bool stop_requested() const noexcept { return ctrl_block_ && ctrl_block_->stop_requested; }
+  ETCPAL_NODISCARD bool stop_possible() const noexcept { return ctrl_block_.get(); }
   /// @}
 
 private:
@@ -104,8 +104,8 @@ public:
   /// @return The requested cancellation state information.
   ///
   /// @{
-  [[nodiscard]] bool stop_requested() const noexcept { return ctrl_block_ && ctrl_block_->stop_requested; }
-  [[nodiscard]] bool stop_possible() const noexcept;
+  ETCPAL_NODISCARD bool stop_requested() const noexcept { return ctrl_block_ && ctrl_block_->stop_requested; }
+  ETCPAL_NODISCARD bool stop_possible() const noexcept;
   /// @}
 
 private:
@@ -241,7 +241,7 @@ bool etcpal::StopSource<Allocator>::request_stop() noexcept
 }
 
 template <typename Allocator>
-[[nodiscard]] bool etcpal::StopToken<Allocator>::stop_possible() const noexcept
+ETCPAL_NODISCARD bool etcpal::StopToken<Allocator>::stop_possible() const noexcept
 {
   if (!ctrl_block_ || (!ctrl_block_->stop_requested && (ctrl_block_->num_sources == 0)))
   {
