@@ -162,4 +162,52 @@ void           etcpal_deinit(etcpal_features_t features);
  * @}
  */
 
+#if defined(__cplusplus) && (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH  [[fallthrough]]
+#define ETCPAL_MAYBE_UNUSED [[maybe_unused]]
+#define ETCPAL_NODISCARD    [[nodiscard]]
+#elif defined(__clang__) && __clang__  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH  __attribute__((fallthrough))
+#define ETCPAL_MAYBE_UNUSED __attribute__((unused))
+#define ETCPAL_NODISCARD    __attribute__((warn_unused_result))
+#elif defined(__GNUC__) && __GNUC__  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH  __attribute__((fallthrough))
+#define ETCPAL_MAYBE_UNUSED __attribute__((unused))
+#define ETCPAL_NODISCARD
+#elif defined(_WIN32) && _WIN32  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH
+#define ETCPAL_MAYBE_UNUSED __pragma(warning(suppress : 4100 4101))
+#define ETCPAL_NODISCARD    _Check_return_
+#else  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH
+#define ETCPAL_MAYBE_UNUSED
+#define ETCPAL_NODISCARD
+#endif  // #if (__cplusplus >= 201703L)
+
+#if defined(__clang__) && __clang__  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH _Pragma("clang diagnostic push")
+#define ETCPAL_WARN_POP  _Pragma("clang diagnostic pop")
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION
+#define ETCPAL_WARN_IGNORE_UNUSED_RESULT _Pragma("clang diagnostic ignored \"-Wunused-result\"")
+#define ETCPAL_WARN_IGNORE_UNUSED_VALUE  _Pragma("clang diagnostic ignored \"-Wunused-value\"")
+#elif defined(__GNUC__) && __GNUC__  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH _Pragma("GCC diagnostic push")
+#define ETCPAL_WARN_POP  _Pragma("GCC diagnostic pop")
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION
+#define ETCPAL_WARN_IGNORE_UNUSED_RESULT _Pragma("GCC diagnostic ignored \"-Wunused-result\"")
+#define ETCPAL_WARN_IGNORE_UNUSED_VALUE  _Pragma("GCC diagnostic ignored \"-Wunused-value\"")
+#elif defined(_WIN32) && _WIN32  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH                    __pragma(warning(push))
+#define ETCPAL_WARN_POP                     __pragma(warning(pop))
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION __pragma(warning(disable : 4244))
+#define ETCPAL_WARN_IGNORE_UNUSED_RESULT
+#define ETCPAL_WARN_IGNORE_UNUSED_VALUE
+#else  // #if defined(__clang__) && __clang__
+#define ETCPAL_WARN_PUSH
+#define ETCPAL_WARN_POP
+#define ETCPAL_WARN_IGNORE_LOSSY_CONVERSION
+#define ETCPAL_WARN_IGNORE_UNUSED_RESULT
+#define ETCPAL_WARN_IGNORE_UNUSED_VALUE
+#endif  // #if defined(__clang__) && __clang__
+
 #endif /* ETCPAL_COMMON_H_ */

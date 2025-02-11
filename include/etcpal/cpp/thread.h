@@ -290,7 +290,7 @@ public:
   /// @{
   ETCPAL_NODISCARD auto get_stop_source() const noexcept { return ssource_; }
   ETCPAL_NODISCARD auto get_stop_token() const noexcept { return ssource_.get_token(); }
-  bool               request_stop() noexcept { return ssource_.request_stop(); }
+  bool                  request_stop() noexcept { return ssource_.request_stop(); }
   /// @}
 
 private:
@@ -506,6 +506,25 @@ BasicThread<Allocator>& BasicThread<Allocator>::SetParams(const EtcPalThreadPara
   return *this;
 }
 
+namespace detail
+{
+
+template <typename... T, typename R, typename... Args, typename... U, std::size_t... I>
+decltype(auto) invoke_using_args(R (*fun)(Args...),
+                                 std::tuple<U...>&   args,
+                                 ETCPAL_MAYBE_UNUSED std::index_sequence<I...> indices)
+{
+  return invoke(fun, std::forward<T>(std::get<I>(args))...);
+}
+
+template <typename... T, typename F, typename... U, std::size_t... I>
+decltype(auto) invoke_using_args(F&& fun, std::tuple<U...>& args, ETCPAL_MAYBE_UNUSED std::index_sequence<I...> indices)
+{
+  return invoke(std::forward<F>(fun), std::forward<T>(std::get<I>(args))...);
+}
+
+}  // namespace detail
+
 /// @brief Associate this thread object with a new thread of execution.
 ///
 /// The new thread of execution starts executing
@@ -538,7 +557,12 @@ Error BasicThread<Allocator>::Start(const Allocator& alloc, Function&& func, Arg
   ETCPAL_TRY
   {
     thread_ = allocate_unique<CtrlBlock>(
-        alloc, CtrlBlock{FunctionType{std::bind(std::forward<Function>(func), std::forward<Args>(args)...), alloc}});
+        alloc,
+        CtrlBlock{FunctionType{
+            [fun = std::forward<Function>(func), args_tuple = std::make_tuple(std::forward<Args>(args)...)]() mutable {
+              return detail::invoke_using_args<Args...>(fun, args_tuple, std::make_index_sequence<sizeof...(Args)>{});
+            },
+            alloc}});
     Error create_res = etcpal_thread_create(
         std::addressof(thread_->thread), &params_, [](void* arg) { (*reinterpret_cast<FunctionType*>(arg))(); },
         std::addressof(thread_->entry_point));
