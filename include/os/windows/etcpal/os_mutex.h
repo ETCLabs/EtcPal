@@ -51,7 +51,7 @@ typedef struct
     false                 \
   }
 
-#define ETCPAL_MUTEX_HAS_TIMED_LOCK 0
+#define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 
 bool etcpal_mutex_create(etcpal_mutex_t* id);
 bool etcpal_mutex_lock(etcpal_mutex_t* id);
