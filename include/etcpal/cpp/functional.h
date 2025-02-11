@@ -63,8 +63,8 @@ class Callable;
     auto      operator=(const FunBase& rhs) -> FunBase&                                                = delete;       \
     auto      operator=(FunBase&& rhs) -> FunBase&                                                     = delete;       \
     virtual R operator()(Args... args) ETCPAL_CALLABLE_CV ETCPAL_CALLABLE_REF ETCPAL_CALLABLE_NOEXCEPT = 0;            \
-    [[nodiscard]] virtual auto target_ptr() const noexcept -> const void*                              = 0;            \
-    [[nodiscard]] virtual auto target_ptr() noexcept -> void*                                          = 0;            \
+    ETCPAL_NODISCARD virtual auto target_ptr() const noexcept -> const void*                           = 0;            \
+    ETCPAL_NODISCARD virtual auto target_ptr() noexcept -> void*                                       = 0;            \
   };                                                                                                                   \
                                                                                                                        \
   template <typename R, typename... Args, typename F>                                                                  \
@@ -86,12 +86,12 @@ class Callable;
       return invoke(std::forward<ETCPAL_CALLABLE_CV F ETCPAL_CALLABLE_REF>(fun_), std::forward<Args>(args)...);        \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto target_ptr() const noexcept -> const void* override                                             \
+    ETCPAL_NODISCARD auto target_ptr() const noexcept -> const void* override                                          \
     {                                                                                                                  \
       return reinterpret_cast<const void*>(std::addressof(fun_));                                                      \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto target_ptr() noexcept -> void* override                                                         \
+    ETCPAL_NODISCARD auto target_ptr() noexcept -> void* override                                                      \
     {                                                                                                                  \
       return reinterpret_cast<void*>(std::addressof(fun_));                                                            \
     }                                                                                                                  \
@@ -126,7 +126,7 @@ class Callable;
     using result_type = R;                                                                                             \
                                                                                                                        \
     MoveOnlyFunction() noexcept = default;                                                                             \
-    MoveOnlyFunction([[maybe_unused]] std::nullptr_t tag) noexcept : MoveOnlyFunction{}                                \
+    MoveOnlyFunction(ETCPAL_MAYBE_UNUSED std::nullptr_t tag) noexcept : MoveOnlyFunction{}                             \
     {                                                                                                                  \
     }                                                                                                                  \
     template <                                                                                                         \
@@ -154,18 +154,18 @@ class Callable;
           std::bad_function_call{});                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] explicit operator bool() const noexcept                                                              \
+    ETCPAL_NODISCARD explicit operator bool() const noexcept                                                           \
     {                                                                                                                  \
       return ptr_ != nullptr;                                                                                          \
     }                                                                                                                  \
                                                                                                                        \
   protected:                                                                                                           \
-    [[nodiscard]] auto* target_ptr() const noexcept                                                                    \
+    ETCPAL_NODISCARD auto* target_ptr() const noexcept                                                                 \
     {                                                                                                                  \
       return ptr_->target_ptr();                                                                                       \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto* target_ptr() noexcept                                                                          \
+    ETCPAL_NODISCARD auto* target_ptr() noexcept                                                                       \
     {                                                                                                                  \
       return ptr_->target_ptr();                                                                                       \
     }                                                                                                                  \
@@ -236,18 +236,18 @@ class Callable;
       return invoke(static_cast<Parent&>(*this), std::forward<T>(args)...);                                            \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] explicit operator bool() const noexcept                                                              \
+    ETCPAL_NODISCARD explicit operator bool() const noexcept                                                           \
     {                                                                                                                  \
       return bool{static_cast<const Parent&>(*this)};                                                                  \
     }                                                                                                                  \
                                                                                                                        \
   protected:                                                                                                           \
-    [[nodiscard]] auto* target_ptr() const noexcept                                                                    \
+    ETCPAL_NODISCARD auto* target_ptr() const noexcept                                                                 \
     {                                                                                                                  \
       return Parent::target_ptr();                                                                                     \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto* target_ptr() noexcept                                                                          \
+    ETCPAL_NODISCARD auto* target_ptr() noexcept                                                                       \
     {                                                                                                                  \
       return Parent::target_ptr();                                                                                     \
     }                                                                                                                  \
@@ -262,7 +262,7 @@ class Callable;
   {                                                                                                                    \
   public:                                                                                                              \
     constexpr FunctionRef() noexcept = default;                                                                        \
-    constexpr FunctionRef([[maybe_unused]] std::nullptr_t tag) noexcept : FunctionRef{}                                \
+    constexpr FunctionRef(ETCPAL_MAYBE_UNUSED std::nullptr_t tag) noexcept : FunctionRef{}                             \
     {                                                                                                                  \
     }                                                                                                                  \
     constexpr FunctionRef(R (*f)(Args...) ETCPAL_CALLABLE_NOEXCEPT) noexcept : fun_{f}                                 \
@@ -286,17 +286,17 @@ class Callable;
                   : invoke(fun_.actual, std::forward<Args>(args)...);                                                  \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] explicit constexpr operator bool() const noexcept                                                    \
+    ETCPAL_NODISCARD explicit constexpr operator bool() const noexcept                                                 \
     {                                                                                                                  \
       return obj_ ? (fun_.thunk != nullptr) : (fun_.actual != nullptr);                                                \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] auto target_address() const noexcept -> ETCPAL_CALLABLE_CV void*                                     \
+    ETCPAL_NODISCARD auto target_address() const noexcept -> ETCPAL_CALLABLE_CV void*                                  \
     {                                                                                                                  \
       return obj_ ? obj_ : reinterpret_cast<ETCPAL_CALLABLE_CV void*>(fun_.actual);                                    \
     }                                                                                                                  \
                                                                                                                        \
-    [[nodiscard]] constexpr auto target() const noexcept -> R (*)(Args...) ETCPAL_CALLABLE_NOEXCEPT                    \
+    ETCPAL_NODISCARD constexpr auto target() const noexcept -> R (*)(Args...) ETCPAL_CALLABLE_NOEXCEPT                 \
     {                                                                                                                  \
       return obj_ ? nullptr : fun_.actual;                                                                             \
     }                                                                                                                  \
@@ -352,7 +352,7 @@ class Callable;
     }                                                                                                                  \
                                                                                                                        \
   protected:                                                                                                           \
-    [[nodiscard]] constexpr auto* target_address() const noexcept                                                      \
+    ETCPAL_NODISCARD constexpr auto* target_address() const noexcept                                                   \
     {                                                                                                                  \
       return Parent::target_address();                                                                                 \
     }                                                                                                                  \
