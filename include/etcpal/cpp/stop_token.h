@@ -41,7 +41,7 @@ public:
   StopSource() = default;
   /// @brief Construct an empty source with no shared cancellation state.
   /// @param nss Tag value indicating the source should be empty.
-  explicit StopSource(NoStopState_t nss) noexcept : ctrl_block_{} {}
+  explicit StopSource([[maybe_unused]] NoStopState_t nss) noexcept : ctrl_block_{} {}
   /// @brief Construct a source using the given allocator to allocate the shared cancellation state.
   /// @param alloc The allocator to allocate memory with.
   explicit StopSource(const Allocator& alloc) : ctrl_block_{std::allocate_shared<StopContext>(alloc, alloc)} {}
