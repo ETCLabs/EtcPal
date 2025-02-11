@@ -121,7 +121,7 @@
 #if (defined(__cpp_exceptions) || defined(__EXCEPTIONS) || defined(_CPPUNWIND)) && !defined(ETCPAL_NO_EXCEPTIONS)
 #define ETCPAL_TRY                                     try
 #define ETCPAL_CATCH(exception, caught_block)          catch (exception) caught_block
-#define ETCPAL_THROW(exception)                        throw exception
+#define ETCPAL_THROW(...)                              throw __VA_ARGS__
 #define ETCPAL_BUILDING_WITH_EXCEPTIONS                1
 #define ETCPAL_TERNARY_THROW(cond, success, exception) (cond) ? success : throw exception
 #else

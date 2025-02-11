@@ -78,7 +78,7 @@ namespace detail
               return ETCPAL_TERNARY_THROW(ptr, ptr, std::bad_alloc{});
     }
 
-    void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+    void do_deallocate(void* p, [[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
     {
       std::
 #pragma push_macro("free")
@@ -151,8 +151,13 @@ private:
   struct NullResource : public memory_resource
   {
   protected:
-    void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override {}
-    [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+    void do_deallocate([[maybe_unused]] void*       p,
+                       [[maybe_unused]] std::size_t bytes,
+                       [[maybe_unused]] std::size_t alignment) override
+    {
+    }
+
+    [[nodiscard]] void* do_allocate([[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
     {
       ETCPAL_THROW(std::bad_alloc{});
     }
@@ -178,9 +183,9 @@ class MonotonicBufferStatistics
 {
 public:
   static constexpr void report_deallocation() noexcept {}
-  static constexpr void report_allocation(const unsigned char* prev_end,
-                                          std::size_t          bytes,
-                                          const unsigned char* new_end) noexcept
+  static constexpr void report_allocation([[maybe_unused]] const unsigned char* prev_end,
+                                          [[maybe_unused]] std::size_t          bytes,
+                                          [[maybe_unused]] const unsigned char* new_end) noexcept
   {
   }
 
@@ -325,7 +330,9 @@ protected:
     ETCPAL_THROW(std::bad_alloc{});
   }
 
-  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+  void do_deallocate([[maybe_unused]] void*       p,
+                     [[maybe_unused]] std::size_t bytes,
+                     [[maybe_unused]] std::size_t alignment) override
   {
     const auto timer = Stats::report_allocator_entry();
     Stats::report_deallocation();
@@ -381,7 +388,7 @@ public:
   auto operator=(BlockMemory&& rhs) -> BlockMemory&      = delete;
 
 protected:
-  [[nodiscard]] void* do_allocate(std::size_t bytes, std::size_t alignment) override
+  [[nodiscard]] void* do_allocate(std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
   {
     const auto blocks = to_blocks(bytes);
     first_free_block_ = find_first_free_block(first_free_block_);
@@ -405,7 +412,7 @@ protected:
     ETCPAL_THROW(std::bad_alloc{});
   }
 
-  void do_deallocate(void* p, std::size_t bytes, std::size_t alignment) override
+  void do_deallocate(void* p, [[maybe_unused]] std::size_t bytes, [[maybe_unused]] std::size_t alignment) override
   {
     const auto start_index = to_index(p);
     first_free_block_      = std::min(static_cast<int>(start_index), first_free_block_);
@@ -426,12 +433,12 @@ protected:
   void                      mark_free(int block) noexcept { live_.reset(2 * block).reset(2 * block + 1); }
   [[nodiscard]] static auto to_blocks(std::size_t bytes) noexcept
   {
-    return (bytes / BlockSize) + ((bytes % BlockSize == 0) ? 0 : 1);
+    return static_cast<int>((bytes / BlockSize) + ((bytes % BlockSize == 0) ? 0 : 1));
   }
 
   [[nodiscard]] auto to_index(void* p) const noexcept
   {
-    return (reinterpret_cast<unsigned char*>(p) - buffer_.data()) / BlockSize;
+    return static_cast<int>((reinterpret_cast<unsigned char*>(p) - buffer_.data()) / BlockSize);
   }
 
   [[nodiscard]] auto num_blocks() const noexcept { return static_cast<int>(live_.size() / 2); }
@@ -551,13 +558,13 @@ public:
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
     if (allocated_blocks_ != 0)
     {
-      ETCPAL_THROW(std::logic_error{"allocation count is not zero"});
+      std::abort();
     }
     for (auto i = 0; i < BlockMemory<Size, BlockSize, false>::num_blocks(); ++i)
     {
       if (BlockMemory<Size, BlockSize, false>::is_allocated(i))
       {
-        ETCPAL_THROW(std::logic_error{"memory block leaked"});
+        std::abort();
       }
     }
   }
@@ -621,7 +628,7 @@ protected:
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
       if (!BlockMemory<Size, BlockSize, false>::is_allocated(i))
       {
-        ETCPAL_THROW(std::logic_error{"deallocating non-allocated memory"});
+        std::abort();
       }
     }
 
@@ -895,12 +902,15 @@ template <typename Pool>
 class DualLevelBlockPoolStatistics
 {
 public:
-  static constexpr void               report_new_small_buffer() noexcept {}
-  static constexpr void               report_small_deallocation(std::size_t wastage) noexcept {}
-  static constexpr void               report_small_allocation(std::size_t bytes, std::size_t padding) noexcept {}
-  static constexpr void               report_large_allocation(std::size_t bytes) noexcept {}
+  static constexpr void report_new_small_buffer() noexcept {}
+  static constexpr void report_small_deallocation([[maybe_unused]] std::size_t wastage) noexcept {}
+  static constexpr void report_small_allocation([[maybe_unused]] std::size_t bytes,
+                                                [[maybe_unused]] std::size_t padding) noexcept
+  {
+  }
+  static constexpr void               report_large_allocation([[maybe_unused]] std::size_t bytes) noexcept {}
   [[nodiscard]] static constexpr auto report_lock() noexcept { return true; }
-  static constexpr void               report_locked(bool arg) noexcept {}
+  static constexpr void               report_locked([[maybe_unused]] bool arg) noexcept {}
   [[nodiscard]] static constexpr auto report_allocator_entry() noexcept
   {
     return finally([] {});
