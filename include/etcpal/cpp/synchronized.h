@@ -5,11 +5,12 @@
 
 #include <etcpal/cpp/common.h>
 #include <etcpal/cpp/optional.h>
+#include <etcpal/cpp/rwlock.h>
 
 namespace etcpal
 {
 
-template <typename T, typename Lock>
+template <typename T, typename Lock = RwLock>
 class Synchronized;
 
 namespace detail

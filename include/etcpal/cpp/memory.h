@@ -226,7 +226,7 @@ public:
               << padding_bytes_
               << " bytes padding\n"
                  "total time in allocator - "
-              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_alloc_).count()
+              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_in_alloc_.load()).count()
               << "ms\n"
                  "-----------------------------------------\n";
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
@@ -248,16 +248,20 @@ public:
   ETCPAL_NODISCARD auto report_allocator_entry() noexcept
   {
     return finally([&, start = std::chrono::high_resolution_clock::now()] {
-      time_in_alloc_ += std::chrono::high_resolution_clock::now() - start;
+      const auto diff = std::chrono::high_resolution_clock::now() - start;
+      auto       curr = time_in_alloc_.load();
+      while (!time_in_alloc_.compare_exchange_strong(curr, curr + diff))
+      {
+      }
     });
   }
 
 private:
-  int                                          current_allocs_     = 0;
-  int                                          total_allocs_       = 0;
-  std::size_t                                  total_bytes_allocd_ = 0;
-  std::size_t                                  padding_bytes_      = 0;
-  std::chrono::high_resolution_clock::duration time_in_alloc_      = {};
+  std::atomic<int>                                          current_allocs_{0};
+  std::atomic<int>                                          total_allocs_{0};
+  std::atomic<std::size_t>                                  total_bytes_allocd_{0};
+  std::atomic<std::size_t>                                  padding_bytes_{0};
+  std::atomic<std::chrono::high_resolution_clock::duration> time_in_alloc_{};
 };
 
 }  // namespace detail
@@ -929,42 +933,43 @@ public:
 #if !(ETCPAL_NO_OS_SUPPORT)
   ~DualLevelBlockPoolStatistics() noexcept
   {
-    std::cout << "\n"
-                 "++++++++++++++++++++++++++++++++++++++++++++++\n"
-                 "Allocator Statistics for Dual Level Block Pool\n"
-                 "==============================================\n"
-                 "blocks                       - "
-              << total_block_bytes_ / 1024.0 << " kiB ("
-              << total_block_bytes_ * 100.0 / (total_small_buffer_bytes_ + total_block_bytes_)
-              << "%)\n"
-                 "small buffers                - "
-              << total_small_buffers_ << " x " << small_size / 1024.0
-              << " kiB\n"
-                 "                             - "
-              << total_small_buffers_ * small_size / 1024.0 << " kiB ("
-              << total_small_buffer_bytes_ * 100.0 / (total_small_buffer_bytes_ + total_block_bytes_)
-              << "%)\n"
-                 "small buffer high water mark - "
-              << max_small_buffers_
-              << " buffers\n"
-                 "                             - "
-              << max_small_buffers_ * small_size / 1024.0
-              << " kiB\n"
-                 "small buffer wastage         - "
-              << small_buffer_wastage_ / 1024.0 << " kiB ("
-              << small_buffer_wastage_ * 100.0 / (total_small_buffers_ * small_size)
-              << "%)\n"
-                 "                             - "
-              << small_buffer_padding_
-              << " bytes padding\n"
-                 "time spent synchronizing     - "
-              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_spent_locking_).count()
-              << "ms (" << time_spent_locking_.count() * 100.0 / total_time_.count()
-              << "%)\n"
-                 "time spent in allocator      - "
-              << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(total_time_).count()
-              << "ms\n"
-                 "----------------------------------------------\n";
+    std::cout
+        << "\n"
+           "++++++++++++++++++++++++++++++++++++++++++++++\n"
+           "Allocator Statistics for Dual Level Block Pool\n"
+           "==============================================\n"
+           "blocks                       - "
+        << total_block_bytes_ / 1024.0 << " kiB ("
+        << total_block_bytes_ * 100.0 / (total_small_buffer_bytes_ + total_block_bytes_)
+        << "%)\n"
+           "small buffers                - "
+        << total_small_buffers_ << " x " << small_size / 1024.0
+        << " kiB\n"
+           "                             - "
+        << total_small_buffers_ * small_size / 1024.0 << " kiB ("
+        << total_small_buffer_bytes_ * 100.0 / (total_small_buffer_bytes_ + total_block_bytes_)
+        << "%)\n"
+           "small buffer high water mark - "
+        << max_small_buffers_
+        << " buffers\n"
+           "                             - "
+        << max_small_buffers_ * small_size / 1024.0
+        << " kiB\n"
+           "small buffer wastage         - "
+        << small_buffer_wastage_ / 1024.0 << " kiB ("
+        << small_buffer_wastage_ * 100.0 / (total_small_buffers_ * small_size)
+        << "%)\n"
+           "                             - "
+        << small_buffer_padding_
+        << " bytes padding\n"
+           "time spent synchronizing     - "
+        << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(time_spent_locking_.load()).count()
+        << "ms (" << time_spent_locking_.load().count() * 100.0 / total_time_.load().count()
+        << "%)\n"
+           "time spent in allocator      - "
+        << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(total_time_.load()).count()
+        << "ms\n"
+           "----------------------------------------------\n";
   }
 #endif  // #if !(ETCPAL_NO_OS_SUPPORT)
 
@@ -972,7 +977,10 @@ public:
   {
     ++total_small_buffers_;
     ++curr_small_buffers_;
-    max_small_buffers_ = std::max(curr_small_buffers_, max_small_buffers_);
+    auto prev = max_small_buffers_.load();
+    while (!max_small_buffers_.compare_exchange_strong(prev, std::max(curr_small_buffers_.load(), prev)))
+    {
+    }
   }
 
   void report_small_deallocation(std::size_t wastage) noexcept
@@ -992,26 +1000,34 @@ public:
   ETCPAL_NODISCARD auto report_lock() const noexcept { return std::chrono::high_resolution_clock::now(); }
   void                  report_locked(const std::chrono::high_resolution_clock::time_point& start) noexcept
   {
-    time_spent_locking_ += std::chrono::high_resolution_clock::now() - start;
+    const auto diff = std::chrono::high_resolution_clock::now() - start;
+    auto       prev = time_spent_locking_.load();
+    while (!time_spent_locking_.compare_exchange_strong(prev, prev + diff))
+    {
+    }
   }
 
   ETCPAL_NODISCARD auto report_allocator_entry() noexcept
   {
     return finally([&, start = std::chrono::high_resolution_clock::now()] {
-      total_time_ += std::chrono::high_resolution_clock::now() - start;
+      const auto diff = std::chrono::high_resolution_clock::now() - start;
+      auto       prev = total_time_.load();
+      while (!total_time_.compare_exchange_strong(prev, prev + diff))
+      {
+      }
     });
   }
 
 private:
-  int                                          total_small_buffers_      = 0;
-  int                                          curr_small_buffers_       = 0;
-  int                                          max_small_buffers_        = 0;
-  std::size_t                                  small_buffer_wastage_     = 0;
-  std::size_t                                  small_buffer_padding_     = 0;
-  std::size_t                                  total_block_bytes_        = 0;
-  std::size_t                                  total_small_buffer_bytes_ = 0;
-  std::chrono::high_resolution_clock::duration time_spent_locking_       = {};
-  std::chrono::high_resolution_clock::duration total_time_               = {};
+  std::atomic<int>                                          total_small_buffers_{0};
+  std::atomic<int>                                          curr_small_buffers_{0};
+  std::atomic<int>                                          max_small_buffers_{0};
+  std::atomic<std::size_t>                                  small_buffer_wastage_{0};
+  std::atomic<std::size_t>                                  small_buffer_padding_{0};
+  std::atomic<std::size_t>                                  total_block_bytes_{0};
+  std::atomic<std::size_t>                                  total_small_buffer_bytes_{0};
+  std::atomic<std::chrono::high_resolution_clock::duration> time_spent_locking_{};
+  std::atomic<std::chrono::high_resolution_clock::duration> total_time_{};
 };
 
 }  // namespace detail

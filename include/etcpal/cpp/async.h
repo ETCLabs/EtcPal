@@ -175,7 +175,7 @@ public:
   ETCPAL_NODISCARD auto get_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
   ETCPAL_NODISCARD auto await_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
-  void               abandon() noexcept;
+  void                  abandon() noexcept;
 
   ETCPAL_NODISCARD auto get_allocator() const noexcept { return allocator_; }
 
@@ -1195,11 +1195,18 @@ etcpal::ThreadPool<N, Allocator>::ThreadPool(const Allocator& alloc)
 template <std::size_t N, typename Allocator>
 etcpal::ThreadPool<N, Allocator>::~ThreadPool() noexcept
 {
-  const auto queue = queue_.lock();
-  queue_status_.SetBits(static_cast<EventBits>(detail::QueueStatus::shut_down));
+  {
+    const auto queue = queue_.lock();
+    queue_status_.SetBits(static_cast<EventBits>(detail::QueueStatus::shut_down));
+    for (auto& thread : threads_)
+    {
+      thread.request_stop();
+    }
+  }
+
   for (auto& thread : threads_)
   {
-    thread.request_stop();
+    thread.join();
   }
 }
 
