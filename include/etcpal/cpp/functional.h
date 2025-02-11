@@ -126,7 +126,7 @@ class Callable;
     using result_type = R;                                                                                             \
                                                                                                                        \
     MoveOnlyFunction() noexcept = default;                                                                             \
-    MoveOnlyFunction(std::nullptr_t tag) noexcept : MoveOnlyFunction{}                                                 \
+    MoveOnlyFunction([[maybe_unused]] std::nullptr_t tag) noexcept : MoveOnlyFunction{}                                \
     {                                                                                                                  \
     }                                                                                                                  \
     template <                                                                                                         \
@@ -262,7 +262,7 @@ class Callable;
   {                                                                                                                    \
   public:                                                                                                              \
     constexpr FunctionRef() noexcept = default;                                                                        \
-    constexpr FunctionRef(std::nullptr_t tag) noexcept : FunctionRef{}                                                 \
+    constexpr FunctionRef([[maybe_unused]] std::nullptr_t tag) noexcept : FunctionRef{}                                \
     {                                                                                                                  \
     }                                                                                                                  \
     constexpr FunctionRef(R (*f)(Args...) ETCPAL_CALLABLE_NOEXCEPT) noexcept : fun_{f}                                 \

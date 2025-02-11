@@ -689,7 +689,7 @@ template <typename Rep, typename Period>
 {
   const auto status = static_cast<FutureStatus>(
       status_.TryWait(static_cast<EventBits>(FutureStatus::ready | FutureStatus::abandoned), 0,
-                      std::chrono::duration_cast<std::chrono::milliseconds>(timeout).count()));
+                      std::chrono::duration_cast<std::chrono::duration<int, std::milli>>(timeout).count()));
   const auto state = state_.lock();
   if (is_abandoned(status))
   {
