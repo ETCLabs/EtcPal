@@ -95,6 +95,7 @@
 #define ETCPAL_MAYBE_UNUSED __pragma(warning(suppress : 4100 4101))
 #define ETCPAL_NODISCARD    _Check_return_
 #else  // #if (__cplusplus >= 201703L)
+#define ETCPAL_FALLTHROUGH
 #define ETCPAL_MAYBE_UNUSED
 #define ETCPAL_NODISCARD
 #endif  // #if (__cplusplus >= 201703L)
