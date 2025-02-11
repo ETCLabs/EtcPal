@@ -32,6 +32,7 @@
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
 #endif
+ETCPAL_WARN_IGNORE_UNUSED_VALUE;
 
 static const unsigned kLargePrime = 115249;
 
