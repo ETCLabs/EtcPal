@@ -277,8 +277,8 @@ public:
   /// @brief Obtain state information about the managed thread.
   /// @return The requested information.
   /// @{
-  [[nodiscard]] bool joinable() const noexcept { return thread_.joinable(); }
-  [[nodiscard]] auto native_handle() const noexcept { return thread_.os_handle(); }
+  ETCPAL_NODISCARD bool joinable() const noexcept { return thread_.joinable(); }
+  ETCPAL_NODISCARD auto native_handle() const noexcept { return thread_.os_handle(); }
   /// @}
 
   /// @brief Wait for the thread to join with the caller.
@@ -288,8 +288,8 @@ public:
   /// @brief Manage cooperative thread cancellation.
   /// @return The associated cancellation token or source, or the status of a stop request.
   /// @{
-  [[nodiscard]] auto get_stop_source() const noexcept { return ssource_; }
-  [[nodiscard]] auto get_stop_token() const noexcept { return ssource_.get_token(); }
+  ETCPAL_NODISCARD auto get_stop_source() const noexcept { return ssource_; }
+  ETCPAL_NODISCARD auto get_stop_token() const noexcept { return ssource_.get_token(); }
   bool               request_stop() noexcept { return ssource_.request_stop(); }
   /// @}
 
@@ -549,7 +549,7 @@ Error BasicThread<Allocator>::Start(const Allocator& alloc, Function&& func, Arg
 
     return create_res;
   }
-  ETCPAL_CATCH([[maybe_unused]] const std::bad_alloc& exe, { return kEtcPalErrNoMem; })
+  ETCPAL_CATCH(ETCPAL_MAYBE_UNUSED const std::bad_alloc& exe, { return kEtcPalErrNoMem; })
 }
 
 template <typename Allocator>

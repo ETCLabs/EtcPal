@@ -29,51 +29,51 @@ enum class FutureStatus : unsigned int
   no_state  = 1 << 6   //!< future has no associated state
 };
 
-[[nodiscard]] constexpr auto operator~(FutureStatus value) noexcept
+ETCPAL_NODISCARD constexpr auto operator~(FutureStatus value) noexcept
 {
   return static_cast<FutureStatus>(~static_cast<unsigned int>(value));
 }
-[[nodiscard]] constexpr auto operator&(FutureStatus lhs, FutureStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator&(FutureStatus lhs, FutureStatus rhs) noexcept
 {
   return static_cast<FutureStatus>(static_cast<unsigned int>(lhs) & static_cast<unsigned int>(rhs));
 }
-[[nodiscard]] constexpr auto operator|(FutureStatus lhs, FutureStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator|(FutureStatus lhs, FutureStatus rhs) noexcept
 {
   return static_cast<FutureStatus>(static_cast<unsigned int>(lhs) | static_cast<unsigned int>(rhs));
 }
-[[nodiscard]] constexpr auto operator^(FutureStatus lhs, FutureStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator^(FutureStatus lhs, FutureStatus rhs) noexcept
 {
   return static_cast<FutureStatus>(static_cast<unsigned int>(lhs) ^ static_cast<unsigned int>(rhs));
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto operator<<(FutureStatus lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator<<(FutureStatus lhs, IntType rhs) noexcept
 {
   return static_cast<FutureStatus>(static_cast<unsigned int>(lhs) << rhs);
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto operator>>(FutureStatus lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator>>(FutureStatus lhs, IntType rhs) noexcept
 {
   return static_cast<FutureStatus>(static_cast<unsigned int>(lhs) >> rhs);
 }
-[[nodiscard]] constexpr auto& operator&=(FutureStatus& lhs, FutureStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator&=(FutureStatus& lhs, FutureStatus rhs) noexcept
 {
   return lhs = lhs & rhs;
 }
-[[nodiscard]] constexpr auto& operator|=(FutureStatus& lhs, FutureStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator|=(FutureStatus& lhs, FutureStatus rhs) noexcept
 {
   return lhs = lhs | rhs;
 }
-[[nodiscard]] constexpr auto& operator^=(FutureStatus& lhs, FutureStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator^=(FutureStatus& lhs, FutureStatus rhs) noexcept
 {
   return lhs = lhs ^ rhs;
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto& operator<<=(FutureStatus& lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator<<=(FutureStatus& lhs, IntType rhs) noexcept
 {
   return lhs = lhs << rhs;
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto& operator>>=(FutureStatus& lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator>>=(FutureStatus& lhs, IntType rhs) noexcept
 {
   return lhs = lhs >> rhs;
 }
@@ -165,22 +165,22 @@ public:
 
   explicit FutureSharedState(const Allocator& alloc) noexcept : allocator_{alloc} {}
 
-  [[nodiscard]] auto set_future_retrieved() noexcept -> FutureActionResult;
+  ETCPAL_NODISCARD auto set_future_retrieved() noexcept -> FutureActionResult;
   template <typename U, typename = std::enable_if_t<std::is_convertible<U, Type>::value>>
-  [[nodiscard]] auto set_value(U&& value) noexcept -> StateChangeResult;
-  [[nodiscard]] auto set_exception(std::exception_ptr exception) noexcept -> StateChangeResult;
+  ETCPAL_NODISCARD auto set_value(U&& value) noexcept -> StateChangeResult;
+  ETCPAL_NODISCARD auto set_exception(std::exception_ptr exception) noexcept -> StateChangeResult;
   template <typename Func>
-  [[nodiscard]] auto set_continuation(Func&& continuation) noexcept -> StateChangeResult;
+  ETCPAL_NODISCARD auto set_continuation(Func&& continuation) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
-  [[nodiscard]] auto get_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
+  ETCPAL_NODISCARD auto get_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
   template <typename Rep, typename Period>
-  [[nodiscard]] auto await_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
+  ETCPAL_NODISCARD auto await_value(const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult;
   void               abandon() noexcept;
 
-  [[nodiscard]] auto get_allocator() const noexcept { return allocator_; }
+  ETCPAL_NODISCARD auto get_allocator() const noexcept { return allocator_; }
 
   template <typename U = T, typename Arg, typename = std::enable_if_t<!std::is_same<U, void>::value>>
-  [[nodiscard]] static auto return_value(Arg&& value) noexcept -> T;
+  ETCPAL_NODISCARD static auto return_value(Arg&& value) noexcept -> T;
   template <typename U = T, typename = std::enable_if_t<std::is_same<U, void>::value>>
   static void return_value(std::nullptr_t value) noexcept;
 
@@ -233,7 +233,7 @@ public:
 
   /// @brief Obtain a handle to the promised future value.
   /// @return Return the promise of a future value.
-  [[nodiscard]] auto get_future();
+  ETCPAL_NODISCARD auto get_future();
 
   /// @name Promise Fulfillment
   /// @brief Fulfill this promise with the given value.
@@ -272,13 +272,13 @@ public:
   /// @param timeout The maximum amount of time to wait for the future value.
   /// @return The future value itself, the exception the promise holder reported, or an error in awaiting the value.
   /// @{
-  [[nodiscard]] auto get() -> T;
-  [[nodiscard]] auto get_if() noexcept -> Variant<T, FutureErrc, std::exception_ptr>;
+  ETCPAL_NODISCARD auto get() -> T;
+  ETCPAL_NODISCARD auto get_if() noexcept -> Variant<T, FutureErrc, std::exception_ptr>;
   template <typename Rep, typename Period>
-  [[nodiscard]] auto get_if(const std::chrono::duration<Rep, Period>& timeout = std::chrono::milliseconds{
-                                ETCPAL_WAIT_FOREVER}) noexcept -> Variant<T, FutureErrc, std::exception_ptr>;
+  ETCPAL_NODISCARD auto get_if(const std::chrono::duration<Rep, Period>& timeout = std::chrono::milliseconds{
+                                   ETCPAL_WAIT_FOREVER}) noexcept -> Variant<T, FutureErrc, std::exception_ptr>;
   template <typename Clock, typename Duration>
-  [[nodiscard]] auto get_if(const std::chrono::time_point<Clock, Duration>& timeout) noexcept
+  ETCPAL_NODISCARD auto get_if(const std::chrono::time_point<Clock, Duration>& timeout) noexcept
       -> Variant<T, FutureErrc, std::exception_ptr>;
   /// @}
 
@@ -330,13 +330,13 @@ public:
                 !(is_invocable<detail::Selection<F...>, FutureStatus>::value &&
                   is_invocable<detail::Selection<F...>, T>::value &&
                   is_invocable<detail::Selection<F...>, std::exception_ptr>::value)>>
-  [[nodiscard]] auto and_then(F&&... cont)
+  ETCPAL_NODISCARD auto and_then(F&&... cont)
       -> Future<invoke_result_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>;
   template <typename... F,
             typename = std::enable_if_t<is_invocable<detail::Selection<F...>, FutureStatus>::value &&
                                         is_invocable<detail::Selection<F...>, T>::value &&
                                         is_invocable<detail::Selection<F...>, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(F&&... cont)
+  ETCPAL_NODISCARD auto and_then(F&&... cont)
       -> Future<detail::CommonCVRefType_t<invoke_result_t<detail::Selection<F...>, FutureStatus>,
                                           invoke_result_t<detail::Selection<F...>, T>,
                                           invoke_result_t<detail::Selection<F...>, std::exception_ptr>>,
@@ -349,7 +349,7 @@ public:
                 !(is_invocable<detail::Selection<F, Rest...>, FutureStatus>::value &&
                   is_invocable<detail::Selection<F, Rest...>, T>::value &&
                   is_invocable<detail::Selection<F, Rest...>, std::exception_ptr>::value)>>
-  [[nodiscard]] auto and_then(const Executor& exec, F&& cont, Rest&&... rest)
+  ETCPAL_NODISCARD auto and_then(const Executor& exec, F&& cont, Rest&&... rest)
       -> Future<invoke_result_t<detail::Selection<F, Rest...>, FutureStatus, Optional<T>&, std::exception_ptr>,
                 Allocator>;
   template <typename Executor,
@@ -358,19 +358,20 @@ public:
             typename = std::enable_if_t<is_invocable<detail::Selection<F, Rest...>, FutureStatus>::value &&
                                         is_invocable<detail::Selection<F, Rest...>, T>::value &&
                                         is_invocable<detail::Selection<F, Rest...>, std::exception_ptr>::value>>
-  [[nodiscard]] auto and_then(const Executor& exec, F&& cont, Rest&&... rest)
+  ETCPAL_NODISCARD auto and_then(const Executor& exec, F&& cont, Rest&&... rest)
       -> Future<detail::CommonCVRefType_t<invoke_result_t<detail::Selection<F, Rest...>, FutureStatus>,
                                           invoke_result_t<detail::Selection<F, Rest...>, T>,
                                           invoke_result_t<detail::Selection<F, Rest...>, std::exception_ptr>>,
                 Allocator>;
   /// @}
 
-  [[nodiscard]] bool valid() const noexcept;
-  [[nodiscard]] auto wait() const noexcept -> FutureStatus;
+  ETCPAL_NODISCARD bool valid() const noexcept;
+  ETCPAL_NODISCARD auto wait() const noexcept -> FutureStatus;
   template <typename Rep, typename Period>
-  [[nodiscard]] auto wait_for(const std::chrono::duration<Rep, Period>& timeout) const noexcept -> FutureStatus;
+  ETCPAL_NODISCARD auto wait_for(const std::chrono::duration<Rep, Period>& timeout) const noexcept -> FutureStatus;
   template <typename Clock, typename Duration>
-  [[nodiscard]] auto wait_until(const std::chrono::time_point<Clock, Duration>& timeout) const noexcept -> FutureStatus;
+  ETCPAL_NODISCARD auto wait_until(const std::chrono::time_point<Clock, Duration>& timeout) const noexcept
+      -> FutureStatus;
 
 private:
   friend class Promise<T, Allocator>;
@@ -427,10 +428,10 @@ public:
   ///
   /// @{
   template <typename Alloc = Allocator, typename F>
-  [[nodiscard]] auto post(UseFuture tag, F&& fun, const Alloc& alloc)
+  ETCPAL_NODISCARD auto post(UseFuture tag, F&& fun, const Alloc& alloc)
       -> Future<decltype(std::forward<F>(fun)()), Alloc>;
   template <typename F>
-  [[nodiscard]] auto post(UseFuture tag, F&& fun) -> Future<decltype(std::forward<F>(fun)()), Allocator>;
+  ETCPAL_NODISCARD auto post(UseFuture tag, F&& fun) -> Future<decltype(std::forward<F>(fun)()), Allocator>;
   template <typename Alloc = Allocator, typename F>
   auto post(F&& fun, const Alloc& alloc);
   template <typename F>
@@ -439,7 +440,7 @@ public:
 
   /// @brief Obtain an executor associated with this thread pool.
   /// @return An executor associated with this thread pool.
-  [[nodiscard]] auto get_executor() noexcept { return Executor{*this}; }
+  ETCPAL_NODISCARD auto get_executor() noexcept { return Executor{*this}; }
 
 private:
   using Task          = MoveOnlyFunction<void(), Allocator>;
@@ -462,62 +463,62 @@ enum class QueueStatus : EventBits
   all_bits   = ~EventBits{}
 };
 
-[[nodiscard]] constexpr auto operator~(QueueStatus value) noexcept
+ETCPAL_NODISCARD constexpr auto operator~(QueueStatus value) noexcept
 {
   return static_cast<QueueStatus>(~static_cast<EventBits>(value));
 }
-[[nodiscard]] constexpr auto operator&(QueueStatus lhs, QueueStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator&(QueueStatus lhs, QueueStatus rhs) noexcept
 {
   return static_cast<QueueStatus>(static_cast<EventBits>(lhs) & static_cast<EventBits>(rhs));
 }
-[[nodiscard]] constexpr auto operator|(QueueStatus lhs, QueueStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator|(QueueStatus lhs, QueueStatus rhs) noexcept
 {
   return static_cast<QueueStatus>(static_cast<EventBits>(lhs) | static_cast<EventBits>(rhs));
 }
-[[nodiscard]] constexpr auto operator^(QueueStatus lhs, QueueStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator^(QueueStatus lhs, QueueStatus rhs) noexcept
 {
   return static_cast<QueueStatus>(static_cast<EventBits>(lhs) ^ static_cast<EventBits>(rhs));
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto operator<<(QueueStatus lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator<<(QueueStatus lhs, IntType rhs) noexcept
 {
   return static_cast<QueueStatus>(static_cast<EventBits>(lhs) << rhs);
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto operator>>(QueueStatus lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto operator>>(QueueStatus lhs, IntType rhs) noexcept
 {
   return static_cast<QueueStatus>(static_cast<EventBits>(lhs) >> rhs);
 }
-[[nodiscard]] constexpr auto& operator&=(QueueStatus& lhs, QueueStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator&=(QueueStatus& lhs, QueueStatus rhs) noexcept
 {
   return lhs = lhs & rhs;
 }
-[[nodiscard]] constexpr auto& operator|=(QueueStatus& lhs, QueueStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator|=(QueueStatus& lhs, QueueStatus rhs) noexcept
 {
   return lhs = lhs | rhs;
 }
-[[nodiscard]] constexpr auto& operator^=(QueueStatus& lhs, QueueStatus rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator^=(QueueStatus& lhs, QueueStatus rhs) noexcept
 {
   return lhs = lhs ^ rhs;
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto& operator<<=(QueueStatus& lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator<<=(QueueStatus& lhs, IntType rhs) noexcept
 {
   return lhs = lhs << rhs;
 }
 template <typename IntType>
-[[nodiscard]] constexpr auto& operator>>=(QueueStatus& lhs, IntType rhs) noexcept
+ETCPAL_NODISCARD constexpr auto& operator>>=(QueueStatus& lhs, IntType rhs) noexcept
 {
   return lhs = lhs >> rhs;
 }
 
-[[nodiscard]] constexpr auto to_queue_status(std::size_t queue_size) noexcept
+ETCPAL_NODISCARD constexpr auto to_queue_status(std::size_t queue_size) noexcept
 {
   return static_cast<QueueStatus>(queue_size << 1);
 }
 
 template <typename T, typename Series, typename Lock>
-[[nodiscard]] auto pop_one(Synchronized<std::queue<T, Series>, Lock>& sync_queue, EventGroup& queue_status) noexcept
+ETCPAL_NODISCARD auto pop_one(Synchronized<std::queue<T, Series>, Lock>& sync_queue, EventGroup& queue_status) noexcept
     -> Optional<T>
 {
   const auto queue = sync_queue.lock();
@@ -534,17 +535,17 @@ template <typename T, typename Series, typename Lock>
   return value;
 }
 
-[[nodiscard]] constexpr bool has_value(FutureStatus status) noexcept
+ETCPAL_NODISCARD constexpr bool has_value(FutureStatus status) noexcept
 {
   return (status & FutureStatus::ready) == FutureStatus::ready;
 }
 
-[[nodiscard]] constexpr bool is_abandoned(FutureStatus status) noexcept
+ETCPAL_NODISCARD constexpr bool is_abandoned(FutureStatus status) noexcept
 {
   return (status & FutureStatus::abandoned) == FutureStatus::abandoned;
 }
 
-[[nodiscard]] constexpr bool is_consumed(FutureStatus status) noexcept
+ETCPAL_NODISCARD constexpr bool is_consumed(FutureStatus status) noexcept
 {
   return (status & (FutureStatus::consumed | FutureStatus::continued)) != FutureStatus{};
 }
@@ -573,14 +574,14 @@ public:
   explicit Executor(ThreadPool& pool) noexcept : pool_{std::addressof(pool)} {}
 
   template <typename Alloc = Allocator, typename F>
-  [[nodiscard]] auto post(UseFuture tag, F&& fun, const Alloc& alloc) const
+  ETCPAL_NODISCARD auto post(UseFuture tag, F&& fun, const Alloc& alloc) const
       -> Future<decltype(std::forward<F>(fun)()), Alloc>
   {
     return pool_->post(tag, std::forward<F>(fun), alloc);
   }
 
   template <typename F>
-  [[nodiscard]] auto post(UseFuture tag, F&& fun) const -> Future<decltype(std::forward<F>(fun)()), Allocator>
+  ETCPAL_NODISCARD auto post(UseFuture tag, F&& fun) const -> Future<decltype(std::forward<F>(fun)()), Allocator>
   {
     return pool_->post(tag, std::forward<F>(fun));
   }
@@ -602,7 +603,7 @@ private:
 };
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_future_retrieved() noexcept
+ETCPAL_NODISCARD auto etcpal::detail::FutureSharedState<T, Allocator>::set_future_retrieved() noexcept
     -> FutureActionResult
 {
   return future_retrieved_.exchange(true) ? FutureActionResult::future_already_retrieved
@@ -611,7 +612,8 @@ template <typename T, typename Allocator>
 
 template <typename T, typename Allocator>
 template <typename U, typename>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_value(U&& value) noexcept -> StateChangeResult
+ETCPAL_NODISCARD auto etcpal::detail::FutureSharedState<T, Allocator>::set_value(U&& value) noexcept
+    -> StateChangeResult
 {
   const auto state  = state_.lock();
   const auto status = static_cast<FutureStatus>(status_.GetBits());
@@ -634,8 +636,8 @@ template <typename U, typename>
 }
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_exception(std::exception_ptr exception) noexcept
-    -> StateChangeResult
+ETCPAL_NODISCARD auto etcpal::detail::FutureSharedState<T, Allocator>::set_exception(
+    std::exception_ptr exception) noexcept -> StateChangeResult
 {
   const auto state  = state_.lock();
   const auto status = static_cast<FutureStatus>(status_.GetBits());
@@ -659,7 +661,7 @@ template <typename T, typename Allocator>
 
 template <typename T, typename Allocator>
 template <typename Cont>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::set_continuation(Cont&& continuation) noexcept
+ETCPAL_NODISCARD auto etcpal::detail::FutureSharedState<T, Allocator>::set_continuation(Cont&& continuation) noexcept
     -> StateChangeResult
 {
   const auto state  = state_.lock();
@@ -684,7 +686,7 @@ template <typename Cont>
 
 template <typename T, typename Allocator>
 template <typename Rep, typename Period>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::await_value(
+ETCPAL_NODISCARD auto etcpal::detail::FutureSharedState<T, Allocator>::await_value(
     const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult
 {
   const auto status = static_cast<FutureStatus>(
@@ -727,7 +729,7 @@ void etcpal::detail::FutureSharedState<T, Allocator>::abandon() noexcept
 
 template <typename T, typename Allocator>
 template <typename U, typename Arg, typename>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::return_value(Arg&& value) noexcept -> T
+ETCPAL_NODISCARD auto etcpal::detail::FutureSharedState<T, Allocator>::return_value(Arg&& value) noexcept -> T
 {
   return std::move(value);
 }
@@ -740,7 +742,7 @@ void etcpal::detail::FutureSharedState<T, Allocator>::return_value(std::nullptr_
 
 template <typename T, typename Allocator>
 template <typename Rep, typename Period>
-[[nodiscard]] auto etcpal::detail::FutureSharedState<T, Allocator>::get_value(
+ETCPAL_NODISCARD auto etcpal::detail::FutureSharedState<T, Allocator>::get_value(
     const std::chrono::duration<Rep, Period>& timeout) noexcept -> StateChangeResult
 {
   auto result = await_value(timeout);
@@ -774,7 +776,7 @@ etcpal::Promise<T, Allocator>::~Promise() noexcept
 }
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::Promise<T, Allocator>::get_future()
+ETCPAL_NODISCARD auto etcpal::Promise<T, Allocator>::get_future()
 {
   if (!state_)
   {
@@ -812,7 +814,7 @@ void etcpal::Promise<T, Allocator>::set_value(U&& value)
       return;
 
     case detail::FutureActionResult::value_already_set:
-      [[fallthrough]];
+      ETCPAL_FALLTHROUGH;
     case detail::FutureActionResult::exception_already_set:
       ETCPAL_THROW(FutureError{FutureErrc::promise_already_satisfied});
     default:
@@ -839,7 +841,7 @@ void etcpal::Promise<T, Allocator>::set_value()
       return;
 
     case detail::FutureActionResult::value_already_set:
-      [[fallthrough]];
+      ETCPAL_FALLTHROUGH;
     case detail::FutureActionResult::exception_already_set:
       ETCPAL_THROW(FutureError{FutureErrc::promise_already_satisfied});
     default:
@@ -848,7 +850,7 @@ void etcpal::Promise<T, Allocator>::set_value()
 }
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::get() -> T
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::get() -> T
 {
   if (!state_)
   {
@@ -877,7 +879,7 @@ template <typename T, typename Allocator>
 }
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::get_if() noexcept -> Variant<T, FutureErrc, std::exception_ptr>
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::get_if() noexcept -> Variant<T, FutureErrc, std::exception_ptr>
 {
   if (!state_)
   {
@@ -905,7 +907,7 @@ template <typename T, typename Allocator>
 
 template <typename T, typename Allocator>
 template <typename Rep, typename Period>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::get_if(const std::chrono::duration<Rep, Period>& timeout) noexcept
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::get_if(const std::chrono::duration<Rep, Period>& timeout) noexcept
     -> Variant<T, FutureErrc, std::exception_ptr>
 {
   if (!state_)
@@ -936,7 +938,7 @@ template <typename Rep, typename Period>
 
 template <typename T, typename Allocator>
 template <typename... F, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&&... cont)
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::and_then(F&&... cont)
     -> Future<invoke_result_t<detail::Selection<F...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
 {
   if (!state_)
@@ -970,7 +972,7 @@ template <typename... F, typename>
 
 template <typename T, typename Allocator>
 template <typename... F, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(F&&... cont)
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::and_then(F&&... cont)
     -> Future<detail::CommonCVRefType_t<invoke_result_t<detail::Selection<F...>, FutureStatus>,
                                         invoke_result_t<detail::Selection<F...>, T>,
                                         invoke_result_t<detail::Selection<F...>, std::exception_ptr>>,
@@ -1020,7 +1022,7 @@ template <typename... F, typename>
 
 template <typename T, typename Allocator>
 template <typename Executor, typename F, typename... Rest, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont, Rest&&... rest)
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont, Rest&&... rest)
     -> Future<invoke_result_t<detail::Selection<F, Rest...>, FutureStatus, Optional<T>&, std::exception_ptr>, Allocator>
 {
   if (!state_)
@@ -1057,7 +1059,7 @@ template <typename Executor, typename F, typename... Rest, typename>
 
 template <typename T, typename Allocator>
 template <typename Executor, typename F, typename... Rest, typename>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont, Rest&&... rest)
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::and_then(const Executor& exec, F&& cont, Rest&&... rest)
     -> Future<detail::CommonCVRefType_t<invoke_result_t<detail::Selection<F, Rest...>, FutureStatus>,
                                         invoke_result_t<detail::Selection<F, Rest...>, T>,
                                         invoke_result_t<detail::Selection<F, Rest...>, std::exception_ptr>>,
@@ -1109,13 +1111,13 @@ template <typename Executor, typename F, typename... Rest, typename>
 }
 
 template <typename T, typename Allocator>
-[[nodiscard]] bool etcpal::Future<T, Allocator>::valid() const noexcept
+ETCPAL_NODISCARD bool etcpal::Future<T, Allocator>::valid() const noexcept
 {
   return state_ != nullptr;
 }
 
 template <typename T, typename Allocator>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::wait() const noexcept -> FutureStatus
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::wait() const noexcept -> FutureStatus
 {
   const auto status = wait_for(std::chrono::milliseconds{ETCPAL_WAIT_FOREVER});
   if (status == FutureStatus::timeout)
@@ -1128,7 +1130,7 @@ template <typename T, typename Allocator>
 
 template <typename T, typename Allocator>
 template <typename Rep, typename Period>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::wait_for(
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::wait_for(
     const std::chrono::duration<Rep, Period>& timeout) const noexcept -> FutureStatus
 {
   if (!state_)
@@ -1158,7 +1160,7 @@ template <typename Rep, typename Period>
 
 template <typename T, typename Allocator>
 template <typename Clock, typename Duration>
-[[nodiscard]] auto etcpal::Future<T, Allocator>::wait_until(
+ETCPAL_NODISCARD auto etcpal::Future<T, Allocator>::wait_until(
     const std::chrono::time_point<Clock, Duration>& timeout) const noexcept -> FutureStatus
 {
   return wait_for(timeout - Clock::now());
