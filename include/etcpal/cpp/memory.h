@@ -51,7 +51,7 @@ public:
 
 protected:
   ETCPAL_NODISCARD virtual void* do_allocate(std::size_t bytes, std::size_t alignment)            = 0;
-  virtual void                do_deallocate(void* p, std::size_t bytes, std::size_t alignment) = 0;
+  virtual void                   do_deallocate(void* p, std::size_t bytes, std::size_t alignment) = 0;
   ETCPAL_NODISCARD virtual bool  do_is_equal(const memory_resource& rhs) const noexcept           = 0;
 };
 
@@ -106,7 +106,7 @@ ETCPAL_NODISCARD inline auto default_resource_ptr() noexcept -> std::atomic<memo
 
 inline auto set_default_resource(memory_resource* resource) noexcept -> memory_resource*
 {
-  return detail::default_resource_ptr() = resource;
+  return detail::default_resource_ptr().exchange(resource);
 }
 
 ETCPAL_NODISCARD inline auto get_default_resource() noexcept -> memory_resource*
@@ -127,7 +127,7 @@ public:
   }
   polymorphic_allocator(memory_resource* res) noexcept : resource_{res} {}
 
-  void               deallocate(T* p, std::size_t n) { resource_->deallocate(p, sizeof(T) * n, alignof(T)); }
+  void                  deallocate(T* p, std::size_t n) { resource_->deallocate(p, sizeof(T) * n, alignof(T)); }
   ETCPAL_NODISCARD auto allocate(std::size_t n) -> T*
   {
     return reinterpret_cast<T*>(resource_->allocate(sizeof(T) * n, alignof(T)));
@@ -431,9 +431,9 @@ protected:
     return this == std::addressof(rhs);
   }
 
-  void                      mark_start_block(int block) noexcept { live_.set(2 * block + 1); }
-  void                      mark_allocated(int block) noexcept { live_.set(2 * block); }
-  void                      mark_free(int block) noexcept { live_.reset(2 * block).reset(2 * block + 1); }
+  void                         mark_start_block(int block) noexcept { live_.set(2 * block + 1); }
+  void                         mark_allocated(int block) noexcept { live_.set(2 * block); }
+  void                         mark_free(int block) noexcept { live_.reset(2 * block).reset(2 * block + 1); }
   ETCPAL_NODISCARD static auto to_blocks(std::size_t bytes) noexcept
   {
     return static_cast<int>((bytes / BlockSize) + ((bytes % BlockSize == 0) ? 0 : 1));
@@ -990,7 +990,7 @@ public:
   }
 
   ETCPAL_NODISCARD auto report_lock() const noexcept { return std::chrono::high_resolution_clock::now(); }
-  void               report_locked(const std::chrono::high_resolution_clock::time_point& start) noexcept
+  void                  report_locked(const std::chrono::high_resolution_clock::time_point& start) noexcept
   {
     time_spent_locking_ += std::chrono::high_resolution_clock::now() - start;
   }
