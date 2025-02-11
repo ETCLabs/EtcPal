@@ -73,7 +73,27 @@ bool etcpal_rwlock_try_readlock(etcpal_rwlock_t* id)
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  return (timeout_ms == 0) ? etcpal_rwlock_try_readlock(id) : etcpal_rwlock_readlock(id);
+  if (timeout_ms == ETCPAL_WAIT_FOREVER)
+  {
+    return etcpal_rwlock_readlock(id);
+  }
+  if (timeout_ms == 0)
+  {
+    return etcpal_rwlock_try_readlock(id);
+  }
+
+  for (DWORD curr_time = GetTickCount(), timeout_time = curr_time + timeout_ms; curr_time < timeout_time;
+       curr_time = GetTickCount())
+  {
+    if (etcpal_rwlock_try_readlock(id))
+    {
+      return true;
+    }
+
+    Sleep((DWORD)((timeout_time - curr_time + 1) / 2));
+  }
+
+  return false;
 }
 
 void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
@@ -122,7 +142,27 @@ bool etcpal_rwlock_try_writelock(etcpal_rwlock_t* id)
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  return (timeout_ms == 0) ? etcpal_rwlock_try_writelock(id) : etcpal_rwlock_writelock(id);
+  if (timeout_ms == ETCPAL_WAIT_FOREVER)
+  {
+    return etcpal_rwlock_writelock(id);
+  }
+  if (timeout_ms == 0)
+  {
+    return etcpal_rwlock_try_writelock(id);
+  }
+
+  for (DWORD curr_time = GetTickCount(), timeout_time = curr_time + timeout_ms; curr_time < timeout_time;
+       curr_time = GetTickCount())
+  {
+    if (etcpal_rwlock_try_writelock(id))
+    {
+      return true;
+    }
+
+    Sleep((DWORD)((timeout_time - curr_time + 1) / 2));
+  }
+
+  return false;
 }
 
 void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)

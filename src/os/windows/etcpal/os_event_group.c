@@ -25,6 +25,37 @@
 
 static bool check_and_clear_bits(etcpal_event_bits_t* bits, etcpal_event_bits_t bits_requested, int flags);
 
+static void do_acquire(etcpal_event_group_t* id, int flags)
+{
+  if (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR)
+  {
+    AcquireSRWLockExclusive(&id->lock);
+  }
+  else
+  {
+    AcquireSRWLockShared(&id->lock);
+  }
+}
+
+static void do_release(etcpal_event_group_t* id, int flags)
+{
+  if (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR)
+  {
+    ReleaseSRWLockExclusive(&id->lock);
+  }
+  else
+  {
+    ReleaseSRWLockShared(&id->lock);
+  }
+}
+
+static bool do_sleep(etcpal_event_group_t* id, int flags, int timeout_ms)
+{
+  return SleepConditionVariableSRW(&id->cond, &id->lock, timeout_ms,
+                                   (flags & ETCPAL_EVENT_GROUP_AUTO_CLEAR) ? 0 : CONDITION_VARIABLE_LOCKMODE_SHARED) ||
+         (GetLastError() == ERROR_TIMEOUT);
+}
+
 /*************************** Function definitions ****************************/
 
 bool etcpal_event_group_create(etcpal_event_group_t* id)
@@ -45,14 +76,15 @@ etcpal_event_bits_t etcpal_event_group_wait(etcpal_event_group_t* id, etcpal_eve
   if (!id || !bits || !id->valid)
     return 0;
 
-  AcquireSRWLockExclusive(&id->lock);
+  do_acquire(id, flags);
   etcpal_event_bits_t result = id->bits;
   while (!check_and_clear_bits(&id->bits, bits, flags))
   {
-    SleepConditionVariableSRW(&id->cond, &id->lock, INFINITE, 0);
+    do_sleep(id, flags, INFINITE);
     result = id->bits;
   }
-  ReleaseSRWLockExclusive(&id->lock);
+  do_release(id, flags);
+
   return result;
 }
 
@@ -62,15 +94,44 @@ etcpal_event_bits_t etcpal_event_group_timed_wait(etcpal_event_group_t* id,
                                                   int                   timeout_ms)
 {
   if (!id || !bits || !id->valid)
+  {
     return 0;
-  if (timeout_ms != 0)
+  }
+  if (timeout_ms == ETCPAL_WAIT_FOREVER)
+  {
     return etcpal_event_group_wait(id, bits, flags);
+  }
+  if (timeout_ms == 0)
+  {
+    do_acquire(id, flags);
+    etcpal_event_bits_t result = id->bits;
+    check_and_clear_bits(&id->bits, bits, flags);
+    do_release(id, flags);
 
-  // Just check once and return the state of the bits
-  AcquireSRWLockExclusive(&id->lock);
+    return result;
+  }
+
+  const DWORD timeout_time = GetTickCount() + timeout_ms;
+  do_acquire(id, flags);
   etcpal_event_bits_t result = id->bits;
-  check_and_clear_bits(&id->bits, bits, flags);
-  ReleaseSRWLockExclusive(&id->lock);
+  while (!check_and_clear_bits(&id->bits, bits, flags))
+  {
+    const DWORD curr = GetTickCount();
+    if (curr >= timeout_time)
+    {
+      do_release(id, flags);
+      return false;
+    }
+    if (!do_sleep(id, flags, timeout_time - curr))
+    {
+      do_release(id, flags);
+      return false;
+    }
+
+    result = id->bits;
+  }
+  do_release(id, flags);
+
   return result;
 }
 
@@ -90,9 +151,9 @@ etcpal_event_bits_t etcpal_event_group_get_bits(etcpal_event_group_t* id)
   if (!id || !id->valid)
     return 0;
 
-  AcquireSRWLockExclusive(&id->lock);
+  AcquireSRWLockShared(&id->lock);
   etcpal_event_bits_t result = id->bits;
-  ReleaseSRWLockExclusive(&id->lock);
+  ReleaseSRWLockShared(&id->lock);
   return result;
 }
 
