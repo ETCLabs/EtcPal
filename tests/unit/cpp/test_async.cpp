@@ -95,8 +95,8 @@ TEST(etcpal_cpp_async, thread_pool)
     for (auto i = 0; i < num_items; ++i)
     {
       auto promise = etcpal::Promise<int>{alloc};
-      futures.push_back(
-          promise.get_future().and_then([](auto status, auto& value, auto exception) { return value.value(); }));
+      futures.push_back(promise.get_future().and_then(
+          []([[maybe_unused]] auto status, auto& value, auto exception) { return value.value(); }));
       pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
     }
 
@@ -107,9 +107,8 @@ TEST(etcpal_cpp_async, thread_pool)
     for (auto i = 0; i < num_items; ++i)
     {
       futures.push_back(
-          pool.post(etcpal::use_future, [i]() { return i; }).and_then([](auto status, auto& value, auto exception) {
-            return value.value();
-          }));
+          pool.post(etcpal::use_future, [i]() { return i; })
+              .and_then([]([[maybe_unused]] auto status, auto& value, auto exception) { return value.value(); }));
     }
 
     return futures;
@@ -147,8 +146,8 @@ TEST(etcpal_cpp_async, thread_pool)
     TEST_ASSERT_TRUE(continued_futures[i].get() == i);
 
     TEST_ASSERT_TRUE(continued_exec_futures[i].wait_for(50ms) == etcpal::FutureStatus::ready);
-    auto twice_contnued =
-        continued_exec_futures[i].and_then([](auto status, auto& value, auto exception) { return value.value(); });
+    auto twice_contnued = continued_exec_futures[i].and_then(
+        []([[maybe_unused]] auto status, auto& value, auto exception) { return value.value(); });
     TEST_ASSERT_TRUE(twice_contnued.wait_for(50ms) == etcpal::FutureStatus::ready);
     TEST_ASSERT_TRUE(twice_contnued.get() == i);
 
@@ -168,8 +167,8 @@ TEST(etcpal_cpp_async, promise_chain)
                                  14
 #endif
                                  >
-                                          buffer{};
-  const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
+             buffer{};
+  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
 
   constexpr auto num_elements = std::size_t{1024};
 
@@ -198,7 +197,9 @@ TEST(etcpal_cpp_async, promise_chain)
                 return nums;
               },
               [](std::exception_ptr ptr) -> NumVector& { std::rethrow_exception(ptr); },
-              [](etcpal::FutureStatus err) -> NumVector& { ETCPAL_THROW(std::logic_error{"promise chain broken"}); })
+              []([[maybe_unused]] etcpal::FutureStatus err) -> NumVector& {
+                ETCPAL_THROW(std::logic_error{"promise chain broken"});
+              })
           .and_then(
               pool.get_executor(), [](NumVector& nums) { std::sort(std::begin(nums), std::end(nums)); },
               [](std::exception_ptr ptr) { std::rethrow_exception(ptr); },
