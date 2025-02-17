@@ -26,8 +26,8 @@ TEST_SETUP(etcpal_cpp_async)
 
 TEST_TEAR_DOWN(etcpal_cpp_async)
 {
-  default_resource = etcpal::set_default_resource(default_resource);
-  *pool.lock()     = nullptr;
+  etcpal::set_default_resource(default_resource);
+  *pool.lock() = nullptr;
 }
 
 TEST(etcpal_cpp_async, promise_future)
