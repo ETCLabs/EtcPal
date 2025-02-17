@@ -179,12 +179,6 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
 
   for (struct ifaddrs* ifaddr = os_addrs; ifaddr; ifaddr = ifaddr->ifa_next)
   {
-    if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index < cache->num_netints))
-    {
-      res = kEtcPalErrSys;
-      break;
-    }
-
     // An AF_LINK entry appears before one or more internet address entries for each interface.
     // Save the current AF_LINK entry for later use. If the entry is an IPv4 or IPv6 address, we
     // can proceed.
@@ -208,6 +202,12 @@ etcpal_error_t os_enumerate_interfaces(CachedNetintInfo* cache)
     else
     {
       continue;
+    }
+
+    if (!ETCPAL_ASSERT_VERIFY(current_etcpal_index < cache->num_netints))
+    {
+      res = kEtcPalErrSys;
+      break;
     }
 
     EtcPalNetintInfo* current_info = &cache->netints[current_etcpal_index];
