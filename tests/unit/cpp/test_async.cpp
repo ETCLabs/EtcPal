@@ -20,7 +20,7 @@ TEST_GROUP(etcpal_cpp_async);
 
 TEST_SETUP(etcpal_cpp_async)
 {
-  *pool.lock()     = std::make_unique<etcpal::DebugSyncDualLevelBlockPool<1 << 22>>();
+  *pool.lock()     = std::make_unique<etcpal::SyncDualLevelBlockPool<1 << 22>>();
   default_resource = etcpal::set_default_resource(pool.lock()->get());
 }
 
