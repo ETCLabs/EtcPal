@@ -9,8 +9,10 @@
 namespace
 {
 
-auto* default_resource = etcpal::null_memory_resource();
-}
+etcpal::Synchronized<std::unique_ptr<etcpal::memory_resource>> pool{nullptr};
+std::atomic<etcpal::memory_resource*>                          default_resource{nullptr};
+
+}  // namespace
 
 extern "C" {
 
@@ -18,30 +20,21 @@ TEST_GROUP(etcpal_cpp_async);
 
 TEST_SETUP(etcpal_cpp_async)
 {
-  default_resource = etcpal::get_default_resource();
-  etcpal::set_default_resource(etcpal::null_memory_resource());
+  *pool.lock()     = std::make_unique<etcpal::DebugSyncDualLevelBlockPool<1 << 22>>();
+  default_resource = etcpal::set_default_resource(pool.lock()->get());
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_async)
 {
-  etcpal::set_default_resource(default_resource);
+  default_resource = etcpal::set_default_resource(default_resource);
+  *pool.lock()     = nullptr;
 }
 
 TEST(etcpal_cpp_async, promise_future)
 {
   using namespace std::chrono_literals;
 
-  etcpal::SyncBlockMemory<1 <<
-#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN || ETCPAL_USING_TSAN
-                          10
-#else
-                          9
-#endif
-                          >
-             buffer{};
-  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
-
-  auto promise = etcpal::Promise<int>{alloc};
+  auto promise = etcpal::Promise<int>{};
   auto future  = promise.get_future();
 
   TEST_ASSERT_TRUE(future.valid());
@@ -56,9 +49,6 @@ TEST(etcpal_cpp_async, promise_future)
 
 TEST(etcpal_cpp_async, thread_pool)
 {
-  etcpal::SyncDualLevelBlockPool<1 << 22> buffer{};
-  const auto                              alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
-
   constexpr auto num_items =
 #if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN || ETCPAL_USING_TSAN
       512
@@ -67,12 +57,12 @@ TEST(etcpal_cpp_async, thread_pool)
 #endif
       ;
 
-  etcpal::ThreadPool<32> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
+  etcpal::ThreadPool<32> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}};
   auto                   future_futures                = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{};
     for (auto i = 0; i < num_items; ++i)
     {
-      auto promise = etcpal::Promise<int>{alloc};
+      auto promise = etcpal::Promise<int>{};
       futures.push_back(promise.get_future());
       pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
     }
@@ -80,10 +70,10 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_futures_for_get_if     = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{};
     for (auto i = 0; i < num_items; ++i)
     {
-      auto promise = etcpal::Promise<int>{alloc};
+      auto promise = etcpal::Promise<int>{};
       futures.push_back(promise.get_future());
       pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
     }
@@ -91,10 +81,10 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_continued_futures      = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{};
     for (auto i = 0; i < num_items; ++i)
     {
-      auto promise = etcpal::Promise<int>{alloc};
+      auto promise = etcpal::Promise<int>{};
       futures.push_back(promise.get_future().and_then(
           [](ETCPAL_MAYBE_UNUSED auto status, auto& value, auto exception) { return value.value(); }));
       pool.post([prom = std::move(promise), i]() mutable { prom.set_value(i); });
@@ -103,7 +93,7 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_continued_exec_futures = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{};
     for (auto i = 0; i < num_items; ++i)
     {
       futures.push_back(
@@ -114,10 +104,10 @@ TEST(etcpal_cpp_async, thread_pool)
     return futures;
   });
   auto                   future_abandoned_futures      = pool.post(etcpal::use_future, [&] {
-    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{alloc};
+    auto futures = std::vector<etcpal::Future<int>, etcpal::polymorphic_allocator<etcpal::Future<int>>>{};
     for (auto i = 0; i < num_items; ++i)
     {
-      futures.push_back(etcpal::Promise<int>{alloc}.get_future());
+      futures.push_back(etcpal::Promise<int>{}.get_future());
     }
 
     return futures;
@@ -160,26 +150,16 @@ TEST(etcpal_cpp_async, promise_chain)
   using namespace std::chrono_literals;
   using NumVector = std::vector<int, etcpal::polymorphic_allocator<int>>;
 
-  etcpal::SyncDualLevelBlockPool<1 <<
-#if ETCPAL_USING_MSAN || ETCPAL_USING_ASAN || ETCPAL_USING_TSAN
-                                 15
-#else
-                                 14
-#endif
-                                 >
-             buffer{};
-  const auto alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
-
   constexpr auto num_elements = std::size_t{1024};
 
-  etcpal::ThreadPool<8> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}, alloc};
-  auto                  numbers = NumVector(num_elements, alloc);
+  etcpal::ThreadPool<8> pool{{ETCPAL_THREAD_DEFAULT_PRIORITY, ETCPAL_THREAD_DEFAULT_STACK, "test pool"}};
+  auto                  numbers = NumVector(num_elements);
   auto                  rd      = std::mt19937{std::random_device{}()};
   auto                  dist    = std::uniform_int_distribution<int>{-1000, 1000};
   std::generate(std::begin(numbers), std::end(numbers), [&] { return dist(rd); });
 
-  auto max_val_promise = etcpal::Promise<int>{alloc};
-  auto min_val_promise = etcpal::Promise<int>{alloc};
+  auto max_val_promise = etcpal::Promise<int>{};
+  auto min_val_promise = etcpal::Promise<int>{};
   auto max_val         = max_val_promise.get_future();
   auto min_val         = min_val_promise.get_future();
   auto task_chain_done =
