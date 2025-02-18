@@ -247,20 +247,35 @@ struct IsInvocableImpl<T U::*,
 {
 };
 
-#ifdef _WIN32
+// #ifdef _WIN32
+
+template <typename F, typename = void>
+struct IsNoArgInvocableImpl : public std::false_type
+{
+};
 
 template <typename F>
-struct IsInvocableImpl<F, void_t<decltype(std::declval<F>()())>> : public std::true_type
+struct IsNoArgInvocableImpl<F, void_t<decltype(std::declval<F>()())>> : public std::true_type
+{
+};
+
+template <typename F, typename Arg, typename = void>
+struct IsOneArgInvocableImpl : public std::false_type
+{
+};
+
+template <typename F, typename Arg>
+struct IsOneArgInvocableImpl<F, Arg, void_t<decltype(std::declval<F>()(std::declval<Arg>()))>> : public std::true_type
 {
 };
 
 template <typename T, typename U, typename Obj>
-struct IsInvocableImpl<T U::*, void_t<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())())>, Obj>
+struct IsOneArgInvocableImpl<T U::*, Obj, void_t<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())())>>
     : public std::true_type
 {
 };
 
-#endif  // #ifdef _WIN32
+// #endif  // #ifdef _WIN32
 
 template <typename R, typename F, typename = void, typename... Args>
 struct IsInvocableRImpl : public std::false_type
@@ -287,24 +302,45 @@ struct IsInvocableRImpl<R,
 {
 };
 
-#ifdef _WIN32
+// #ifdef _WIN32
+
+template <typename R, typename F, typename = void>
+struct IsNoArgInvocableRImpl : public std::false_type
+{
+};
 
 template <typename R, typename F>
-struct IsInvocableRImpl<R, F, std::enable_if_t<std::is_convertible<decltype(std::declval<F>()()), R>::value>>
+struct IsNoArgInvocableRImpl<R, F, std::enable_if_t<std::is_convertible<decltype(std::declval<F>()()), R>::value>>
+    : public std::true_type
+{
+};
+
+template <typename R, typename F, typename Arg, typename = void>
+struct IsOneArgInvocableRImpl : public std::false_type
+{
+};
+
+template <typename R, typename F, typename Arg>
+struct IsOneArgInvocableRImpl<
+    R,
+    F,
+    Arg,
+    std::enable_if_t<std::is_convertible<decltype(std::declval<F>()(std::declval<Arg>())), R>::value>>
     : public std::true_type
 {
 };
 
 template <typename R, typename T, typename U, typename Obj>
-struct IsInvocableRImpl<
+struct IsOneArgInvocableRImpl<
     R,
     T U::*,
-    std::enable_if_t<std::is_convertible<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())()), R>::value>,
-    Obj> : public std::true_type
+    Obj,
+    std::enable_if_t<std::is_convertible<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())()), R>::value>>
+    : public std::true_type
 {
 };
 
-#endif  // #ifdef _WIN32
+// #endif  // #ifdef _WIN32
 
 template <typename F, typename = void, typename... Args>
 struct IsNothrowInvocableImpl : public std::false_type
@@ -326,21 +362,38 @@ struct IsNothrowInvocableImpl<
 {
 };
 
-#ifdef _WIN32
+// #ifdef _WIN32
+
+template <typename F, typename = void>
+struct IsNoArgNothrowInvocableImpl : public std::false_type
+{
+};
 
 template <typename F>
-struct IsNothrowInvocableImpl<F, std::enable_if_t<noexcept(std::declval<F>()())>> : public std::true_type
+struct IsNoArgNothrowInvocableImpl<F, std::enable_if_t<noexcept(std::declval<F>()())>> : public std::true_type
+{
+};
+
+template <typename F, typename Arg, typename = void>
+struct IsOneArgNothrowInvocableImpl : public std::false_type
+{
+};
+
+template <typename F, typename Arg>
+struct IsOneArgNothrowInvocableImpl<F, Arg, std::enable_if_t<noexcept(std::declval<F>()(std::declval<Arg>()))>>
+    : public std::true_type
 {
 };
 
 template <typename T, typename U, typename Obj>
-struct IsNothrowInvocableImpl<T U::*,
-                              std::enable_if_t<noexcept(((*std::declval<Obj>()).*std::declval<T U::*>())())>,
-                              Obj> : public std::true_type
+struct IsOneArgNothrowInvocableImpl<T U::*,
+                                    Obj,
+                                    std::enable_if_t<noexcept(((*std::declval<Obj>()).*std::declval<T U::*>())())>>
+    : public std::true_type
 {
 };
 
-#endif  // #ifdef _WIN32
+// #endif  // #ifdef _WIN32
 
 template <typename R, typename F, typename = void, typename... Args>
 struct IsNothrowInvocableRImpl : public std::false_type
@@ -372,19 +425,40 @@ struct IsNothrowInvocableRImpl<
 {
 };
 
-#ifdef _WIN32
+// #ifdef _WIN32
+
+template <typename R, typename F, typename = void>
+struct IsNoArgNothrowInvocableRImpl : public std::false_type
+{
+};
 
 template <typename R, typename F>
-struct IsNothrowInvocableRImpl<R,
-                               F,
-                               std::enable_if_t<std::is_convertible<decltype(std::declval<F>()()), R>::value &&
-                                                std::is_nothrow_constructible<R, decltype(std::declval<F>()())>::value>>
+struct IsNoArgNothrowInvocableRImpl<
+    R,
+    F,
+    std::enable_if_t<std::is_convertible<decltype(std::declval<F>()()), R>::value &&
+                     std::is_nothrow_constructible<R, decltype(std::declval<F>()())>::value>> : public std::true_type
+{
+};
+
+template <typename R, typename F, typename Arg, typename = void>
+struct IsOneArgNothrowInvocableRImpl : public std::false_type
+{
+};
+
+template <typename R, typename F, typename Arg>
+struct IsOneArgNothrowInvocableRImpl<
+    R,
+    F,
+    Arg,
+    std::enable_if_t<std::is_convertible<decltype(std::declval<F>()(std::declval<Arg>())), R>::value &&
+                     std::is_nothrow_constructible<R, decltype(std::declval<F>()(std::declval<Arg>()))>::value>>
     : public std::true_type
 {
 };
 
 template <typename R, typename T, typename U, typename Obj>
-struct IsNothrowInvocableRImpl<
+struct IsOneArgNothrowInvocableRImpl<
     R,
     T U::*,
     std::enable_if_t<
@@ -394,7 +468,7 @@ struct IsNothrowInvocableRImpl<
 {
 };
 
-#endif  // #ifdef _WIN32
+// #endif  // #ifdef _WIN32
 
 template <typename T, typename U, typename Obj, typename... Args>
 constexpr decltype(auto) invoke_impl(T U::* f,
@@ -426,6 +500,40 @@ struct is_nothrow_invocable : public detail::IsNothrowInvocableImpl<F, void, Arg
 };
 template <typename R, typename F, typename... Args>
 struct is_nothrow_invocable_r : public detail::IsNothrowInvocableRImpl<R, F, void, Args...>
+{
+};
+
+template <typename F>
+struct is_invocable<F> : public detail::IsNoArgInvocableImpl<F>
+{
+};
+template <typename R, typename F>
+struct is_invocable_r<R, F> : public detail::IsNoArgInvocableRImpl<R, F>
+{
+};
+template <typename F>
+struct is_nothrow_invocable<F> : public detail::IsNoArgNothrowInvocableImpl<F>
+{
+};
+template <typename R, typename F>
+struct is_nothrow_invocable_r<R, F> : public detail::IsNoArgNothrowInvocableRImpl<R, F>
+{
+};
+
+template <typename F, typename Arg>
+struct is_invocable<F, Arg> : public detail::IsOneArgInvocableImpl<F, Arg>
+{
+};
+template <typename R, typename F, typename Arg>
+struct is_invocable_r<R, F, Arg> : public detail::IsOneArgInvocableRImpl<R, F, Arg>
+{
+};
+template <typename F, typename Arg>
+struct is_nothrow_invocable<F, Arg> : public detail::IsOneArgNothrowInvocableImpl<F, Arg>
+{
+};
+template <typename R, typename F, typename Arg>
+struct is_nothrow_invocable_r<R, F, Arg> : public detail::IsOneArgNothrowInvocableRImpl<R, F, Arg>
 {
 };
 
