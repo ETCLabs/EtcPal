@@ -484,6 +484,25 @@ constexpr decltype(auto) invoke_impl(F&& fun, Args&&... args) noexcept(IsNothrow
   return std::forward<F>(fun)(std::forward<Args>(args)...);
 }
 
+template <typename T, typename U, typename Obj>
+constexpr decltype(auto) one_arg_invoke_impl(T U::* f,
+                                             Obj&&  obj) noexcept(IsOneArgNothrowInvocableImpl<T U::*, Obj>::value)
+{
+  return ((*std::forward<Obj>(obj)).*f)();
+}
+
+template <typename F, typename Arg, void_t<decltype(std::declval<F>()(std::declval<Arg>()))>* = nullptr>
+constexpr decltype(auto) one_arg_invoke_impl(F&& fun, Arg&& arg) noexcept(IsOneArgNothrowInvocableImpl<F, Arg>::value)
+{
+  return std::forward<F>(fun)(std::forward<Arg>(arg));
+}
+
+template <typename F, void_t<decltype(std::declval<F>()())>* = nullptr>
+constexpr decltype(auto) no_arg_invoke_impl(F&& fun) noexcept(IsNoArgNothrowInvocableImpl<F>::value)
+{
+  return std::forward<F>(fun)();
+}
+
 }  // namespace detail
 
 template <typename F, typename... Args>
@@ -549,6 +568,18 @@ template <typename F, typename... Args>
 constexpr decltype(auto) invoke(F&& fun, Args&&... args) noexcept(is_nothrow_invocable<F, Args...>::value)
 {
   return detail::invoke_impl(std::forward<F>(fun), std::forward<Args>(args)...);
+}
+
+template <typename F, typename Arg>
+constexpr decltype(auto) invoke(F&& fun, Arg&& arg) noexcept(is_nothrow_invocable<F, Arg>::value)
+{
+  return detail::one_arg_invoke_impl(std::forward<F>(fun), std::forward<Arg>(arg));
+}
+
+template <typename F>
+constexpr decltype(auto) invoke(F&& fun) noexcept(is_nothrow_invocable<F>::value)
+{
+  return detail::no_arg_invoke_impl(std::forward<F>(fun));
 }
 
 template <typename R, typename F, typename... Args>
