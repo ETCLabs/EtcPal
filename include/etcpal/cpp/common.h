@@ -224,7 +224,7 @@ using std::is_nothrow_invocable_r;
 using std::is_nothrow_invocable_r_v;
 using std::is_nothrow_invocable_v;
 
-#else
+#else  // #if (__cplusplus >= 201703L)
 
 namespace detail
 {
@@ -246,6 +246,21 @@ struct IsInvocableImpl<T U::*,
                        Args...> : public std::true_type
 {
 };
+
+#ifdef _WIN32
+
+template <typename F>
+struct IsInvocableImpl<F, void_t<decltype(std::declval<F>()())>> : public std::true_type
+{
+};
+
+template <typename T, typename U, typename Obj>
+struct IsInvocableImpl<T U::*, void_t<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())())>, Obj>
+    : public std::true_type
+{
+};
+
+#endif  // #ifdef _WIN32
 
 template <typename R, typename F, typename = void, typename... Args>
 struct IsInvocableRImpl : public std::false_type
@@ -272,6 +287,25 @@ struct IsInvocableRImpl<R,
 {
 };
 
+#ifdef _WIN32
+
+template <typename R, typename F>
+struct IsInvocableRImpl<R, F, std::enable_if_t<std::is_convertible<decltype(std::declval<F>()()), R>::value>>
+    : public std::true_type
+{
+};
+
+template <typename R, typename T, typename U, typename Obj>
+struct IsInvocableRImpl<
+    R,
+    T U::*,
+    std::enable_if_t<std::is_convertible<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())()), R>::value>,
+    Obj> : public std::true_type
+{
+};
+
+#endif  // #ifdef _WIN32
+
 template <typename F, typename = void, typename... Args>
 struct IsNothrowInvocableImpl : public std::false_type
 {
@@ -291,6 +325,22 @@ struct IsNothrowInvocableImpl<
     Args...> : public std::true_type
 {
 };
+
+#ifdef _WIN32
+
+template <typename F>
+struct IsNothrowInvocableImpl<F, std::enable_if_t<noexcept(std::declval<F>()())>> : public std::true_type
+{
+};
+
+template <typename T, typename U, typename Obj>
+struct IsNothrowInvocableImpl<T U::*,
+                              std::enable_if_t<noexcept(((*std::declval<Obj>()).*std::declval<T U::*>())())>,
+                              Obj> : public std::true_type
+{
+};
+
+#endif  // #ifdef _WIN32
 
 template <typename R, typename F, typename = void, typename... Args>
 struct IsNothrowInvocableRImpl : public std::false_type
@@ -321,6 +371,30 @@ struct IsNothrowInvocableRImpl<
     Args...> : public std::true_type
 {
 };
+
+#ifdef _WIN32
+
+template <typename R, typename F>
+struct IsNothrowInvocableRImpl<R,
+                               F,
+                               std::enable_if_t<std::is_convertible<decltype(std::declval<F>()()), R>::value &&
+                                                std::is_nothrow_constructible<R, decltype(std::declval<F>()())>::value>>
+    : public std::true_type
+{
+};
+
+template <typename R, typename T, typename U, typename Obj>
+struct IsNothrowInvocableRImpl<
+    R,
+    T U::*,
+    std::enable_if_t<
+        std::is_convertible<decltype(((*std::declval<Obj>()).*std::declval<T U::*>())()), R>::value &&
+        std::is_nothrow_constructible<R, decltype(((*std::declval<Obj>()).*std::declval<T U::*>())())>::value>,
+    Obj> : public std::true_type
+{
+};
+
+#endif  // #ifdef _WIN32
 
 template <typename T, typename U, typename Obj, typename... Args>
 constexpr decltype(auto) invoke_impl(T U::* f,
@@ -375,7 +449,7 @@ constexpr auto invoke_r(F&& fun, Args&&... args) noexcept(is_nothrow_invocable_r
   return invoke(std::forward<F>(fun), std::forward<Args>(args)...);
 }
 
-#endif
+#endif  // #if (__cplusplus >= 201703L)
 
 /// @brief A scope-based finalizer.
 ///
