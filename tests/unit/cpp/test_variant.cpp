@@ -1,5 +1,7 @@
 #include <etcpal/cpp/variant.h>
 
+#include <string>
+
 #include <unity_fixture.h>
 
 extern "C" {
@@ -26,18 +28,30 @@ TEST(etcpal_cpp_variant, variant)
   // comparision
   const auto test_string_0 = std::string{"test string 0"};
   const auto test_string_1 = std::string{"test string 1"};
-  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} == etcpal::Variant<int, std::string>{test_string_0}));
-  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_0} == etcpal::Variant<int, std::string>{test_string_1}));
-  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} < etcpal::Variant<int, std::string>{test_string_1}));
-  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_1} < etcpal::Variant<int, std::string>{test_string_0}));
-  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_1} > etcpal::Variant<int, std::string>{test_string_0}));
-  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_0} > etcpal::Variant<int, std::string>{test_string_1}));
-  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} <= etcpal::Variant<int, std::string>{test_string_0}));
-  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} <= etcpal::Variant<int, std::string>{test_string_1}));
-  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_1} <= etcpal::Variant<int, std::string>{test_string_0}));
-  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} >= etcpal::Variant<int, std::string>{test_string_0}));
-  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_1} >= etcpal::Variant<int, std::string>{test_string_0}));
-  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_0} >= etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_TRUE(
+      (etcpal::Variant<int, std::string>{test_string_0} == etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_FALSE(
+      (etcpal::Variant<int, std::string>{test_string_0} == etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_TRUE(
+      (etcpal::Variant<int, std::string>{test_string_0} < etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_FALSE(
+      (etcpal::Variant<int, std::string>{test_string_1} < etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE(
+      (etcpal::Variant<int, std::string>{test_string_1} > etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_FALSE(
+      (etcpal::Variant<int, std::string>{test_string_0} > etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_TRUE(
+      (etcpal::Variant<int, std::string>{test_string_0} <= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE(
+      (etcpal::Variant<int, std::string>{test_string_0} <= etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_FALSE(
+      (etcpal::Variant<int, std::string>{test_string_1} <= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE(
+      (etcpal::Variant<int, std::string>{test_string_0} >= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE(
+      (etcpal::Variant<int, std::string>{test_string_1} >= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_FALSE(
+      (etcpal::Variant<int, std::string>{test_string_0} >= etcpal::Variant<int, std::string>{test_string_1}));
 
   // value access
   TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0}).get<std::string>() == test_string_0);
