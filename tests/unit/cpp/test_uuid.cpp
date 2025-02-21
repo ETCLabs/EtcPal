@@ -17,10 +17,11 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/cpp/uuid.h"
-#include "unity_fixture.h"
+#include <etcpal/cpp/uuid.h>
 
 #include <unordered_set>
+
+#include "unity_fixture.h"
 
 extern "C" {
 TEST_GROUP(etcpal_cpp_uuid);

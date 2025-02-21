@@ -24,8 +24,10 @@
 #define ETCPAL_CPP_RWLOCK_H_
 
 #include <stdexcept>
-#include "etcpal/cpp/common.h"
+
 #include "etcpal/rwlock.h"
+
+#include "etcpal/cpp/common.h"
 
 namespace etcpal
 {

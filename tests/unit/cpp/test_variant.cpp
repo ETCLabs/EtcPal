@@ -2,49 +2,16 @@
 
 #include <unity_fixture.h>
 
-#include <etcpal/cpp/memory.h>
-
-namespace
-{
-
-auto* default_resource = etcpal::null_memory_resource();
-}
-
 extern "C" {
 
 TEST_GROUP(etcpal_cpp_variant);
 
 TEST_SETUP(etcpal_cpp_variant)
 {
-  default_resource = etcpal::get_default_resource();
-  etcpal::set_default_resource(etcpal::null_memory_resource());
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_variant)
 {
-  etcpal::set_default_resource(default_resource);
-}
-
-namespace
-{
-
-enum class Type
-{
-  integer,
-  unsigned_8,
-  unsigned_16,
-  unsigned_32,
-  unsigned_64,
-  signed_integer,
-  signed_8,
-  signed_16,
-  signed_32,
-  signed_64,
-  floating_point,
-  double_precision,
-  string
-};
-
 }
 
 TEST(etcpal_cpp_variant, variant)
@@ -56,37 +23,31 @@ TEST(etcpal_cpp_variant, variant)
   TEST_ASSERT_TRUE((etcpal::Variant<int, double>{etcpal::InPlaceType_t<int>{}}).index() == 0);
   TEST_ASSERT_TRUE((etcpal::Variant<int, double>{etcpal::InPlaceType_t<double>{}}).index() == 1);
 
-  using String         = std::basic_string<char, std::char_traits<char>, etcpal::polymorphic_allocator<char>>;
-  using StringOrNumber = etcpal::Variant<int, String>;
-
-  etcpal::DualLevelBlockPool<1 << 15> buffer{};
-  const auto                          alloc = etcpal::polymorphic_allocator<>{std::addressof(buffer)};
-
   // comparision
-  const auto test_string_0 = String{"test string 0", alloc};
-  const auto test_string_1 = String{"test string 1", alloc};
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} == StringOrNumber{String{test_string_0, alloc}}));
-  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_0, alloc}} == StringOrNumber{String{test_string_1, alloc}}));
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} < StringOrNumber{String{test_string_1, alloc}}));
-  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_1, alloc}} < StringOrNumber{String{test_string_0, alloc}}));
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_1, alloc}} > StringOrNumber{String{test_string_0, alloc}}));
-  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_0, alloc}} > StringOrNumber{String{test_string_1, alloc}}));
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} <= StringOrNumber{String{test_string_0, alloc}}));
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} <= StringOrNumber{String{test_string_1, alloc}}));
-  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_1, alloc}} <= StringOrNumber{String{test_string_0, alloc}}));
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}} >= StringOrNumber{String{test_string_0, alloc}}));
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_1, alloc}} >= StringOrNumber{String{test_string_0, alloc}}));
-  TEST_ASSERT_FALSE((StringOrNumber{String{test_string_0, alloc}} >= StringOrNumber{String{test_string_1, alloc}}));
+  const auto test_string_0 = std::string{"test string 0"};
+  const auto test_string_1 = std::string{"test string 1"};
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} == etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_0} == etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} < etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_1} < etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_1} > etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_0} > etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} <= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} <= etcpal::Variant<int, std::string>{test_string_1}));
+  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_1} <= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0} >= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_1} >= etcpal::Variant<int, std::string>{test_string_0}));
+  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{test_string_0} >= etcpal::Variant<int, std::string>{test_string_1}));
 
   // value access
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}}).get<String>() == test_string_0);
-  TEST_ASSERT_TRUE((StringOrNumber{String{test_string_0, alloc}}).get_if<String>());
-  TEST_ASSERT_FALSE((StringOrNumber{0}).get_if<String>());
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0}).get<std::string>() == test_string_0);
+  TEST_ASSERT_TRUE((etcpal::Variant<int, std::string>{test_string_0}).get_if<std::string>());
+  TEST_ASSERT_FALSE((etcpal::Variant<int, std::string>{0}).get_if<std::string>());
 
   // destruction
-  const auto test_value = std::allocate_shared<int>(alloc);
+  const auto test_value = std::make_shared<int>();
   // initialization
-  auto test_variant = etcpal::Variant<std::shared_ptr<int>, String>{test_value};
+  auto test_variant = etcpal::Variant<std::shared_ptr<int>, std::string>{test_value};
   TEST_ASSERT(test_value.use_count() == 2);
   // copy construct
   auto copy = test_variant;
@@ -95,7 +56,7 @@ TEST(etcpal_cpp_variant, variant)
   auto move = std::move(test_variant);
   TEST_ASSERT(test_value.use_count() == 3);
   // destroy empty object
-  test_variant = String{test_string_0, alloc};
+  test_variant = test_string_0;
   TEST_ASSERT(test_value.use_count() == 3);
   // copy assign
   test_variant = move;
@@ -104,7 +65,7 @@ TEST(etcpal_cpp_variant, variant)
   copy = std::move(move);
   TEST_ASSERT(test_value.use_count() == 3);
   // destroy engaged object
-  copy = String{test_string_0, alloc};
+  copy = test_string_0;
   TEST_ASSERT(test_value.use_count() == 2);
 }
 

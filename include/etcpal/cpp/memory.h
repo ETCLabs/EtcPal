@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdlib.h>
-
 #include <cstddef>
 #include <cstdlib>
 
@@ -137,7 +135,7 @@ public:
 
   ETCPAL_NODISCARD friend bool operator==(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
   {
-    return (lhs.resource_ && rhs.resource_) || lhs.resource_->is_equal(*rhs.resource_);
+    return (!lhs.resource_ && !rhs.resource_) || ((lhs.resource_ && rhs.resource_) && lhs.resource_->is_equal(*rhs.resource_));
   }
   ETCPAL_NODISCARD friend bool operator!=(const polymorphic_allocator& lhs, const polymorphic_allocator& rhs) noexcept
   {

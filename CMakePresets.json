@@ -50,7 +50,7 @@
     {
       "name": "windows-msvc",
       "displayName": "Windows Visual Studio 2019 Native x64",
-      "generator": "Visual Studio 16 2019",
+      "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "ETCPAL_BUILD_TESTS": true,
         "ETCPAL_BUILD_EXAMPLES": true,

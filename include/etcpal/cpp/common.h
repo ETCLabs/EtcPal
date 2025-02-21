@@ -23,9 +23,9 @@
 #ifndef ETCPAL_CPP_COMMON_H_
 #define ETCPAL_CPP_COMMON_H_
 
+#include <functional>
 #include <memory>
 #include <utility>
-#include <functional>
 
 #if (__cplusplus >= 201703)
 #include <memory_resource>

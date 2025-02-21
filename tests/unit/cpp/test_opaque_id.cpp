@@ -18,12 +18,14 @@
  ******************************************************************************/
 
 #include "etcpal/cpp/opaque_id.h"
-#include "unity_fixture.h"
 
 #include <climits>
 #include <cstdint>
+
 #include <set>
 #include <unordered_set>
+
+#include "unity_fixture.h"
 
 struct TestIntIdType
 {

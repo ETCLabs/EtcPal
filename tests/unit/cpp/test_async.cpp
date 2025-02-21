@@ -9,7 +9,7 @@
 namespace
 {
 
-etcpal::Synchronized<std::unique_ptr<etcpal::memory_resource>> pool{nullptr};
+etcpal::Synchronized<std::unique_ptr<etcpal::memory_resource>> memory_pool{nullptr};
 std::atomic<etcpal::memory_resource*>                          default_resource{nullptr};
 
 }  // namespace
@@ -20,14 +20,14 @@ TEST_GROUP(etcpal_cpp_async);
 
 TEST_SETUP(etcpal_cpp_async)
 {
-  *pool.lock()     = std::make_unique<etcpal::SyncDualLevelBlockPool<1 << 22>>();
-  default_resource = etcpal::set_default_resource(pool.lock()->get());
+  *memory_pool.lock()     = std::make_unique<etcpal::SyncDualLevelBlockPool<1 << 22>>();
+  default_resource = etcpal::set_default_resource(memory_pool.lock()->get());
 }
 
 TEST_TEAR_DOWN(etcpal_cpp_async)
 {
   etcpal::set_default_resource(default_resource);
-  *pool.lock() = nullptr;
+  *memory_pool.lock() = nullptr;
 }
 
 TEST(etcpal_cpp_async, promise_future)
