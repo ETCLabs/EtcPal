@@ -18,14 +18,16 @@
  ******************************************************************************/
 
 #include "etcpal/cpp/inet.h"
-#include "unity_fixture.h"
+
+#include <cctype>
+#include <cstring>
 
 #include <algorithm>
 #include <array>
-#include <cctype>
-#include <cstring>
 #include <string>
 #include <unordered_set>
+
+#include "unity_fixture.h"
 
 static void ConvertStringToLowercase(std::string& str)
 {
