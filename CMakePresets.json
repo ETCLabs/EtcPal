@@ -50,6 +50,18 @@
     {
       "name": "windows-msvc",
       "displayName": "Windows Visual Studio 2019 Native x64",
+      "generator": "Visual Studio 16 2019",
+      "cacheVariables": {
+        "ETCPAL_BUILD_TESTS": true,
+        "ETCPAL_BUILD_EXAMPLES": true,
+        "ETCPAL_BUILD_MOCK_LIB": true,
+        "CMAKE_INSTALL_PREFIX": "install"
+      },
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "windows-msvc-2022",
+      "displayName": "Windows Visual Studio 2022 Native x64",
       "generator": "Visual Studio 17 2022",
       "cacheVariables": {
         "ETCPAL_BUILD_TESTS": true,
