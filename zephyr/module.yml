@@ -1,0 +1,6 @@
+name: etcpal
+build:
+  cmake: .
+  kconfig: Kconfig
+samples:
+  - examples

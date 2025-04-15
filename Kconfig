@@ -1,0 +1,97 @@
+config ETCPAL
+  bool "Etcpal"
+  depends on CPP && (STD_CPP14 || STD_CPP17 || STD_CPP20) && REQUIRES_FULL_LIBCPP
+  help
+    This option enables the 'Etcpal' library.
+
+if ETCPAL
+
+config ETCPAL_OS_SUPPORTED
+  bool "Etcpal OS Supported"
+  default n
+  help
+    This option enables the 'Etcpal OS Supported' library.
+    The default is 'n'.
+
+choice ETCPAL_OS_TARGET
+  prompt "EtcPal OS support"
+  default ETCPAL_NO_OS_SUPPORT
+  help
+    This option specifies the OS support for the Etcpal library.
+    The default is 'None'.
+
+  config ETCPAL_OS_FREERTOS_SUPPORT
+    bool "Etcpal FreeRTOS support"
+    select ETCPAL_OS_SUPPORTED
+
+  config ETCPAL_OS_IOS_SUPPORT
+    bool "Etcpal IOS support"
+    select ETCPAL_OS_SUPPORTED
+
+  config ETCPAL_OS_LINUX_SUPPORT
+    bool "Etcpal Linux support"
+    select ETCPAL_OS_SUPPORTED
+
+  config ETCPAL_OS_MACOS_SUPPORT
+    bool "Etcpal MacOS support"
+    select ETCPAL_OS_SUPPORTED
+
+  config ETCPAL_OS_MQX_SUPPORT
+    bool "Etcpal MQX support"
+    select ETCPAL_OS_SUPPORTED
+
+  config ETCPAL_OS_WINDOWS_SUPPORT
+    bool "Etcpal Windows support"
+    select ETCPAL_OS_SUPPORTED
+
+  config ETCPAL_OS_ZEPHYR_SUPPORT
+    bool "Etcpal Zephyr support"
+    select ETCPAL_OS_SUPPORTED
+
+  config ETCPAL_NO_OS_SUPPORT
+    bool "No Etcpal OS support"
+
+endchoice
+
+config ETCPAL_NET_SUPPORTED
+  bool "Etcpal Net Supported"
+  default n
+  help
+    This option enables the 'Etcpal Net Supported' library.
+    The default is 'n'.
+
+choice ETCPAL_NET_TARGET
+  prompt "EtcPal Networking support"
+  default ETCPAL_NO_NET_SUPPORT
+  help
+    This option specifies the network support for the Etcpal library.
+    The default is 'None'.
+
+  config ETCPAL_NET_IOS_SUPPORT
+    bool "Etcpal IOS Net support"
+    select ETCPAL_NET_SUPPORTED
+
+  config ETCPAL_NET_LINUX_SUPPORT
+    bool "Etcpal Linux Net support"
+    select ETCPAL_NET_SUPPORTED
+
+  config ETCPAL_NET_LWIP_SUPPORT
+    bool "Etcpal LWIP Net support"
+    select ETCPAL_NET_SUPPORTED
+
+  config ETCPAL_NET_MACOS_SUPPORT
+    bool "Etcpal MacOS Net support"
+    select ETCPAL_NET_SUPPORTED
+
+  config ETCPAL_NET_MQX_SUPPORT
+    bool "Etcpal MQX Net support"
+    select ETCPAL_NET_SUPPORTED
+
+  config ETCPAL_NET_WINDOWS_SUPPORT
+    bool "Etcpal Windows Net support"
+    select ETCPAL_NET_SUPPORTED
+
+  config ETCPAL_NO_NET_SUPPORT
+    bool "No Etcpal Net support"
+endchoice
+endif # ETCPAL
