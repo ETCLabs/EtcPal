@@ -3,15 +3,19 @@ cmake_minimum_required(VERSION 3.15)
 ########################## Global Project Attributes ##########################
 
 if (DEFINED ZEPHYR_CURRENT_MODULE_DIR)
-  message("${CONFIG_ETCPAL}")
   if (DEFINED CONFIG_ETCPAL)
     message("EtcPal OS is set to Zephyr")
-    set(ETCPAL_OS_TARGET "zephyr" CACHE INTERNAL "EtcPal OS Target")
-    set(ETCPAL_NET_TARGET "none" CACHE INTERNAL "EtcPal Net Target")
   else()
     message("EtcPal Not enabled in Zephyr Kconfig")
     return()
   endif()
+endif()
+
+if (DEFINED CONFIG_ETCPAL_OS_TARGET_NAME)
+  set(ETCPAL_OS_TARGET ${CONFIG_ETCPAL_OS_TARGET_NAME} CACHE INTERNAL "EtcPal OS Target")
+endif()
+if (DEFINED CONFIG_ETCPAL_NET_TARGET_NAME)
+  set(ETCPAL_NET_TARGET ${CONFIG_ETCPAL_NET_TARGET_NAME} CACHE INTERNAL "EtcPal Net Target")
 endif()
 
 project(EtcPal)
