@@ -1,6 +1,6 @@
 name: etcpal
 build:
-  cmake: .
-  kconfig: Kconfig
+  cmake: zephyr
+  kconfig: zephyr/Kconfig
 samples:
   - examples
