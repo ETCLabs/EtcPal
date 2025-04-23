@@ -1,0 +1,5 @@
+config ETCPAL
+  bool "ETC Platform Abstraction Library"
+  depends on CPP && (STD_CPP14 || STD_CPP17 || STD_CPP20) && REQUIRES_FULL_LIBCPP
+  help
+    This option enables the 'Etcpal' library.
