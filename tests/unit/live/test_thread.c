@@ -49,7 +49,7 @@ void wait_and_exit(void* param)
 // Basic test of the three thread functions.
 TEST(etcpal_thread, create_and_destroy_functions_work)
 {
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
   etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
 
   TEST_ASSERT_TRUE(etcpal_signal_create(&wait_thread_stop_signal));
@@ -65,7 +65,7 @@ TEST(etcpal_thread, create_and_destroy_functions_work)
 #if ETCPAL_THREAD_HAS_TIMED_JOIN
 TEST(etcpal_thread, timed_join_works)
 {
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
   etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
 
   TEST_ASSERT_TRUE(etcpal_signal_create(&wait_thread_stop_signal));

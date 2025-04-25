@@ -59,7 +59,7 @@ static void single_event_wait_thread(void* arg)
 TEST(event_group_integration, one_wait_one_signal_one_event)
 {
   etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
 
   num_events_received = 0;
 
@@ -100,7 +100,7 @@ static void multiple_event_wait_thread(void* arg)
 TEST(event_group_integration, one_wait_one_signal_multiple_events)
 {
   etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
 
   event_1_num_received = 0;
   event_2_num_received = 0;
@@ -150,7 +150,7 @@ static void unrequested_bits_test_thread(void* arg)
 TEST(event_group_integration, wait_does_not_return_on_unrequested_bits)
 {
   etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
 
   num_events_received = 0;
   TEST_ASSERT_TRUE(etcpal_mutex_create(&num_events_received_lock));

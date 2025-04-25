@@ -30,7 +30,9 @@ extern "C" {
 #endif
 
 typedef LWEVENT_STRUCT etcpal_signal_t;
-#define ETCPAL_SIGNAL_INIT {}
+#define ETCPAL_SIGNAL_INIT \
+  {                        \
+  }
 
 #define ETCPAL_SIGNAL_HAS_TIMED_WAIT    1
 #define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 0

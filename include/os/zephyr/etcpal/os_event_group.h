@@ -39,7 +39,9 @@ typedef struct
   struct k_mutex      mutex;
   etcpal_event_bits_t bits;
 } etcpal_event_group_t;
-#define ETCPAL_EVENT_GROUP_INIT {}
+#define ETCPAL_EVENT_GROUP_INIT \
+  {                             \
+  }
 
 #define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         1
 #define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS      1

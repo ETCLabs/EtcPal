@@ -49,7 +49,9 @@ typedef struct
   etcpal_sem_t spots_filled;
   size_t       element_size;
 } etcpal_queue_t;
-#define ETCPAL_QUEUE_INIT {}
+#define ETCPAL_QUEUE_INIT \
+  {                       \
+  }
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS ETCPAL_SEM_HAS_TIMED_WAIT
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   ETCPAL_SEM_HAS_POST_FROM_ISR

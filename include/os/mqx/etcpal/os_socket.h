@@ -39,7 +39,7 @@ typedef uint32_t etcpal_socket_t;
 #endif
 
 #define ETCPAL_SOCKET_INVALID RTCS_SOCKET_ERROR
-#define ETCPAL_SOCKET_INIT ETCPAL_SOCKET_INVALID
+#define ETCPAL_SOCKET_INIT    ETCPAL_SOCKET_INVALID
 
 #define ETCPAL_SOCKET_MAX_POLL_SIZE RTCSCFG_FD_SETSIZE
 
@@ -66,7 +66,9 @@ typedef struct EtcPalPollContext
   EtcPalPollFdSet readfds;
   EtcPalPollFdSet writefds;
 } EtcPalPollContext;
-#define ETCPAL_POLL_CONTEXT_INIT {}
+#define ETCPAL_POLL_CONTEXT_INIT \
+  {                              \
+  }
 
 /* Definitions for the etcpal_recvmsg API */
 

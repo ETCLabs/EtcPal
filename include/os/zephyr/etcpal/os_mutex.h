@@ -30,7 +30,9 @@ extern "C" {
 #endif
 
 typedef struct k_mutex etcpal_mutex_t;
-#define ETCPAL_MUTEX_INIT {}
+#define ETCPAL_MUTEX_INIT \
+  {                       \
+  }
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 

@@ -48,7 +48,9 @@ typedef struct
   CONDITION_VARIABLE  cond;
   etcpal_event_bits_t bits;
 } etcpal_event_group_t;
-#define ETCPAL_EVENT_GROUP_INIT {}
+#define ETCPAL_EVENT_GROUP_INIT \
+  {                             \
+  }
 
 #define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         0
 #define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS      0

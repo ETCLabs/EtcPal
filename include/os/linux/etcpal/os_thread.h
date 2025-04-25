@@ -37,7 +37,7 @@ extern "C" {
 
 typedef pthread_t etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID ((pthread_t)-1)
-#define ETCPAL_THREAD_OS_HANDLE_INIT ETCPAL_THREAD_OS_HANDLE_INVALID
+#define ETCPAL_THREAD_OS_HANDLE_INIT    ETCPAL_THREAD_OS_HANDLE_INVALID
 
 typedef struct
 {
@@ -46,7 +46,9 @@ typedef struct
   pthread_t handle;
   char      name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
-#define ETCPAL_THREAD_INIT {}
+#define ETCPAL_THREAD_INIT \
+  {                        \
+  }
 
 #define etcpal_thread_get_current_os_handle pthread_self
 

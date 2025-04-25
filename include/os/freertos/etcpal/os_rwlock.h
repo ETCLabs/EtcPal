@@ -35,7 +35,9 @@ typedef struct
   SemaphoreHandle_t sem;
   unsigned int      reader_count;
 } etcpal_rwlock_t;
-#define ETCPAL_RWLOCK_INIT {}
+#define ETCPAL_RWLOCK_INIT \
+  {                        \
+  }
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 

@@ -36,7 +36,9 @@ typedef struct
   LWSEM_STRUCT sem;
   unsigned int reader_count;
 } etcpal_rwlock_t;
-#define ETCPAL_RWLOCK_INIT {}
+#define ETCPAL_RWLOCK_INIT \
+  {                        \
+  }
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id);
 bool etcpal_rwlock_readlock(etcpal_rwlock_t* id);
