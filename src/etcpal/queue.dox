@@ -85,6 +85,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_queue_t;
 
 /**
+ * @brief A default initializer for etcpal_queue_t.
+ *
+ * e.g. etcpal_queue_t queue = ETCPAL_QUEUE_INIT;
+ */
+#define ETCPAL_QUEUE_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief Whether etcpal_queue_create_static() is meaningful on this platform.
  *
  * If defined to 0, etcpal_queue_create_static() does nothing and returns false.

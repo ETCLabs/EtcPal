@@ -73,6 +73,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_sem_t;
 
 /**
+ * @brief A default initializer for etcpal_sem_t.
+ *
+ * e.g. etcpal_sem_t sem = ETCPAL_SEM_INIT;
+ */
+#define ETCPAL_SEM_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief Whether etcpal_sem_timed_wait() is meaningful on this platform.
  *
  * If defined to 0, etcpal_sem_timed_wait() executes the equivalent of etcpal_sem_try_wait() if

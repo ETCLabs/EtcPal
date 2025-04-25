@@ -37,7 +37,7 @@ TEST_TEAR_DOWN(etcpal_rwlock)
 
 TEST(etcpal_rwlock, create_and_destroy_works)
 {
-  etcpal_rwlock_t rwlock;
+  etcpal_rwlock_t rwlock = ETCPAL_RWLOCK_INIT;
 
   // Basic creation and taking ownership.
   TEST_ASSERT_TRUE(etcpal_rwlock_create(&rwlock));
@@ -50,7 +50,7 @@ TEST(etcpal_rwlock, create_and_destroy_works)
 
 TEST(etcpal_rwlock, read_and_write_interaction)
 {
-  etcpal_rwlock_t rwlock;
+  etcpal_rwlock_t rwlock = ETCPAL_RWLOCK_INIT;
   TEST_ASSERT_TRUE(etcpal_rwlock_create(&rwlock));
 
   for (int i = 0; i < NUM_TEST_LOCKS; ++i)
@@ -74,7 +74,7 @@ TEST(etcpal_rwlock, read_and_write_interaction)
 
 TEST(etcpal_rwlock, timed_lock_works)
 {
-  etcpal_rwlock_t rwlock;
+  etcpal_rwlock_t rwlock = ETCPAL_RWLOCK_INIT;
   TEST_ASSERT_TRUE(etcpal_rwlock_create(&rwlock));
 
 #if ETCPAL_MUTEX_HAS_TIMED_LOCK

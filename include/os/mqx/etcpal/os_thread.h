@@ -43,6 +43,7 @@ typedef struct EtcPalThreadParamsMqx
 
 typedef _task_id etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID MQX_NULL_TASK_ID
+#define ETCPAL_THREAD_OS_HANDLE_INIT ETCPAL_THREAD_OS_HANDLE_INVALID
 
 typedef struct
 {
@@ -51,6 +52,7 @@ typedef struct
   LWSEM_STRUCT sig;
   _task_id     tid;
 } etcpal_thread_t;
+#define ETCPAL_THREAD_INIT {}
 
 #define etcpal_thread_get_current_os_handle _task_get_id
 

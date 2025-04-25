@@ -32,7 +32,7 @@ TEST_TEAR_DOWN(etcpal_recursive_mutex)
 
 TEST(etcpal_recursive_mutex, create_and_destroy_works)
 {
-  etcpal_recursive_mutex_t mutex;
+  etcpal_recursive_mutex_t mutex = ETCPAL_RECURSIVE_MUTEX_INIT;
 
   // Basic creation and locking/unlocking.
   TEST_ASSERT_TRUE(etcpal_recursive_mutex_create(&mutex));
@@ -45,7 +45,7 @@ TEST(etcpal_recursive_mutex, create_and_destroy_works)
 
 TEST(etcpal_recursive_mutex, try_lock_works)
 {
-  etcpal_recursive_mutex_t mutex;
+  etcpal_recursive_mutex_t mutex = ETCPAL_RECURSIVE_MUTEX_INIT;
   TEST_ASSERT_TRUE(etcpal_recursive_mutex_create(&mutex));
 
   // try_lock() should succeed when the mutex is not locked.
@@ -61,7 +61,7 @@ TEST(etcpal_recursive_mutex, try_lock_works)
 
 TEST(etcpal_recursive_mutex, timed_lock_works)
 {
-  etcpal_recursive_mutex_t mutex;
+  etcpal_recursive_mutex_t mutex = ETCPAL_RECURSIVE_MUTEX_INIT;
   TEST_ASSERT_TRUE(etcpal_recursive_mutex_create(&mutex));
 
   // Can't truly unit test timed_lock from one thread on a recursive mutex, but we'll just make

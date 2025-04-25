@@ -86,6 +86,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_signal_t;
 
 /**
+ * @brief A default initializer for etcpal_signal_t.
+ *
+ * e.g. etcpal_signal_t signal = ETCPAL_SIGNAL_INIT;
+ */
+#define ETCPAL_SIGNAL_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief Whether etcpal_signal_timed_wait() is meaningful on this platform.
  * 
  * If defined to 0, etcpal_signal_timed_wait() executes the equivalent of etcpal_signal_try_wait()

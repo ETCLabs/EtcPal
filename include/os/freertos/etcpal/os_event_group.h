@@ -30,8 +30,10 @@ extern "C" {
 #endif
 
 typedef EventBits_t etcpal_event_bits_t;
+#define ETCPAL_EVENT_BITS_INIT 0
 
 typedef EventGroupHandle_t etcpal_event_group_t;
+#define ETCPAL_EVENT_GROUP_INIT NULL
 
 #define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         1
 #define ETCPAL_EVENT_GROUP_HAS_ISR_FUNCTIONS      1

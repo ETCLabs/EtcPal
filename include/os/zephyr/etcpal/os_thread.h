@@ -37,12 +37,14 @@ extern "C" {
 
 typedef k_tid_t etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
+#define ETCPAL_THREAD_OS_HANDLE_INIT ETCPAL_THREAD_OS_HANDLE_INVALID
 
 typedef struct
 {
   struct k_thread   thread;
   k_thread_stack_t* stack;
 } etcpal_thread_t;
+#define ETCPAL_THREAD_INIT {}
 
 #define etcpal_thread_get_current_os_handle k_current_get
 

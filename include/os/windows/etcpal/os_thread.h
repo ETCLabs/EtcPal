@@ -49,6 +49,7 @@ extern "C" {
 
 typedef DWORD etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID 0
+#define ETCPAL_THREAD_OS_HANDLE_INIT ETCPAL_THREAD_OS_HANDLE_INVALID
 
 typedef struct
 {
@@ -57,6 +58,7 @@ typedef struct
   HANDLE tid;
   char   name[ETCPAL_THREAD_NAME_MAX_LENGTH];
 } etcpal_thread_t;
+#define ETCPAL_THREAD_INIT {}
 
 #ifdef __cplusplus
 #define etcpal_thread_get_current_os_handle() ::GetCurrentThreadId()

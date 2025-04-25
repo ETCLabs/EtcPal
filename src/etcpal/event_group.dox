@@ -96,6 +96,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_event_group_t;
 
 /**
+ * @brief A default initializer for etcpal_event_group_t.
+ *
+ * e.g. etcpal_event_group_t group = ETCPAL_EVENT_GROUP_INIT;
+ */
+#define ETCPAL_EVENT_GROUP_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief The type that holds the event bitfield.
  *
  * This is always an integer type of some kind. Depending on the platform, the number of usable
@@ -103,6 +110,13 @@ typedef PLATFORM_DEFINED etcpal_event_group_t;
  * many bits are usable.
  */
 typedef PLATFORM_DEFINED etcpal_event_bits_t;
+
+/**
+ * @brief A default initializer for etcpal_event_bits_t.
+ *
+ * e.g. etcpal_event_bits_t bits = ETCPAL_EVENT_BITS_INIT;
+ */
+#define ETCPAL_EVENT_BITS_INIT [PLATFORM_DEFINED]
 
 /**
  * @brief Whether etcpal_event_group_timed_wait() is meaningful on this platform.

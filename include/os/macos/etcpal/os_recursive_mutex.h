@@ -29,6 +29,7 @@ extern "C" {
 #endif
 
 typedef pthread_mutex_t etcpal_recursive_mutex_t;
+#define ETCPAL_RECURSIVE_MUTEX_INIT PTHREAD_MUTEX_INITIALIZER
 
 #define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK 0
 

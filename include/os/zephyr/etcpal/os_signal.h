@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 typedef struct k_sem etcpal_signal_t;
+#define ETCPAL_SIGNAL_INIT {}
 
 #define ETCPAL_SIGNAL_HAS_TIMED_WAIT    1
 #define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 1

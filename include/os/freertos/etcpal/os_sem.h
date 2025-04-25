@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 typedef SemaphoreHandle_t etcpal_sem_t;
+#define ETCPAL_SEM_INIT NULL
 
 #define ETCPAL_SEM_HAS_TIMED_WAIT    1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 1

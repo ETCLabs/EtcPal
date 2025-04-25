@@ -35,6 +35,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_thread_t;
 
 /**
+ * @brief A default initializer for etcpal_thread_t.
+ *
+ * e.g. etcpal_thread_t thread = ETCPAL_THREAD_INIT;
+ */
+#define ETCPAL_THREAD_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief The native OS handle type for threads on this platform.
  *
  * This is a scalar type on all platforms for which EtcPal is ported.
@@ -47,6 +54,13 @@ typedef PLATFORM_DEFINED etcpal_thread_os_handle_t;
  *          invalid pthread_t. This is defined to `(pthread_t)-1` as a heuristic.
  */
 #define ETCPAL_THREAD_OS_HANDLE_INVALID /* platform-defined */
+
+/**
+ * @brief A default initializer for etcpal_thread_os_handle_t.
+ *
+ * e.g. etcpal_thread_os_handle_t handle = ETCPAL_THREAD_OS_HANDLE_INIT;
+ */
+#define ETCPAL_THREAD_OS_HANDLE_INIT ETCPAL_THREAD_OS_HANDLE_INVALID
 
 /**
  * @brief Whether etcpal_thread_timed_join() is meaningful on this platform.

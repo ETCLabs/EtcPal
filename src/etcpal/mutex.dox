@@ -84,6 +84,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_mutex_t;
 
 /**
+ * @brief A default initializer for etcpal_mutex_t.
+ *
+ * e.g. etcpal_mutex_t mutex = ETCPAL_MUTEX_INIT;
+ */
+#define ETCPAL_MUTEX_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief Whether etcpal_mutex_timed_lock() is meaningful on this platform.
  * 
  * If defined to 0, etcpal_mutex_timed_lock() executes the equivalent of etcpal_mutex_try_lock() if

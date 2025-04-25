@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 typedef SemaphoreHandle_t etcpal_mutex_t;
+#define ETCPAL_MUTEX_INIT NULL
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 

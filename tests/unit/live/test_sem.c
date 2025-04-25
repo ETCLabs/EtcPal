@@ -35,7 +35,7 @@ TEST_TEAR_DOWN(etcpal_sem)
 
 TEST(etcpal_sem, create_and_destroy_works)
 {
-  etcpal_sem_t sem;
+  etcpal_sem_t sem = ETCPAL_SEM_INIT;
 
   // Basic creation, with an initial count of 1
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 1, 10));
@@ -46,7 +46,7 @@ TEST(etcpal_sem, create_and_destroy_works)
 
 TEST(etcpal_sem, counting_works)
 {
-  etcpal_sem_t sem;
+  etcpal_sem_t sem = ETCPAL_SEM_INIT;
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 5, 10));
 
   // After decrementing the semaphore's count to 0, waiting should no longer work.
@@ -67,7 +67,7 @@ TEST(etcpal_sem, counting_works)
 
 TEST(etcpal_sem, try_wait_works)
 {
-  etcpal_sem_t sem;
+  etcpal_sem_t sem = ETCPAL_SEM_INIT;
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 1, 10));
 
   // Count is 1, wait should work
@@ -82,7 +82,7 @@ TEST(etcpal_sem, try_wait_works)
 
 TEST(etcpal_sem, timed_wait_works)
 {
-  etcpal_sem_t sem;
+  etcpal_sem_t sem = ETCPAL_SEM_INIT;
   // Create with an initial count of 0 - wait should not work
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 0, 10));
 
@@ -116,7 +116,7 @@ TEST(etcpal_sem, timed_wait_works)
 #if ETCPAL_SEM_HAS_TIMED_WAIT
 TEST(etcpal_sem, timed_wait_no_overflow)
 {
-  etcpal_sem_t sem;
+  etcpal_sem_t sem = ETCPAL_SEM_INIT;
   // Create with an initial count of 0 - wait should not work
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 0, 10));
 
@@ -138,7 +138,7 @@ TEST(etcpal_sem, timed_wait_no_overflow)
 #if ETCPAL_SEM_HAS_MAX_COUNT
 TEST(etcpal_sem, max_count)
 {
-  etcpal_sem_t sem;
+  etcpal_sem_t sem = ETCPAL_SEM_INIT;
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 0, 5));
 
   for (int i = 0; i < 5; ++i)

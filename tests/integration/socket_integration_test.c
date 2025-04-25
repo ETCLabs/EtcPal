@@ -79,9 +79,9 @@ static const uint8_t kTestMcastAddrIPv6[ETCPAL_IPV6_BYTES] = {0xff, 0x12, 0x00, 
                                                               0x74, 0x65, 0x73, 0x74, 0x74, 0x65, 0x73, 0x74};
 #endif
 
-static etcpal_socket_t send_sock;
+static etcpal_socket_t send_sock = ETCPAL_SOCKET_INIT;
 static EtcPalSockAddr  send_addr;
-static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];
+static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS] = {};
 
 // Select the default interface if available, the very first non-loopback, non-link-local interface
 // if not.
@@ -295,7 +295,7 @@ void unicast_udp_sendto_recvfrom_test(etcpal_iptype_t ip_type)
   // Start the send thread
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
-  etcpal_thread_t send_thr_handle;
+  etcpal_thread_t send_thr_handle = ETCPAL_THREAD_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
@@ -357,7 +357,7 @@ void unicast_udp_sendto_recvmsg_test(etcpal_iptype_t ip_type, uint8_t* control, 
   // Start the send thread
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
-  etcpal_thread_t send_thr_handle;
+  etcpal_thread_t send_thr_handle = ETCPAL_THREAD_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
@@ -612,7 +612,7 @@ void multicast_udp_sendto_recvfrom_test(void)
   // Start the send thread
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
-  etcpal_thread_t send_thr_handle;
+  etcpal_thread_t send_thr_handle = ETCPAL_THREAD_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
@@ -664,7 +664,7 @@ void multicast_udp_sendto_recvmsg_test(const EtcPalIpAddr* pktinfo_expected_addr
   // Start the send thread
   EtcPalThreadParams thread_params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&thread_params);
-  etcpal_thread_t send_thr_handle;
+  etcpal_thread_t send_thr_handle = ETCPAL_THREAD_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_thread_create(&send_thr_handle, &thread_params, send_thread, NULL));
 
   size_t num_packets_received = 0;
@@ -796,7 +796,7 @@ TEST(socket_integration_udp, multicast_udp_ipv6_sendto_recvmsg)
 // reasonable).
 TEST(socket_integration_udp, bulk_poll)
 {
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   static uint16_t bind_ports[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS];

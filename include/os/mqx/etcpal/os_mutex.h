@@ -29,6 +29,7 @@ extern "C" {
 #endif
 
 typedef LWSEM_STRUCT etcpal_mutex_t;
+#define ETCPAL_MUTEX_INIT {}
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 1
 

@@ -34,7 +34,7 @@
 #define NUM_ITERATIONS 10000
 
 static int            shared_var;
-static etcpal_mutex_t mutex;
+static etcpal_mutex_t mutex = ETCPAL_MUTEX_INIT;
 
 static void mutex_test_thread(void* arg)
 {
@@ -75,7 +75,7 @@ TEST_TEAR_DOWN(mutex_integration)
 // run. Tests on several platforms where the mutex lines were commented showed failure very reliably.
 TEST(mutex_integration, mutex_thread_test)
 {
-  etcpal_thread_t threads[NUM_THREADS];
+  etcpal_thread_t threads[NUM_THREADS] = {};
 
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
   for (size_t i = 0; i < NUM_THREADS; ++i)

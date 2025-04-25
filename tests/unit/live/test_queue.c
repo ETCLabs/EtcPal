@@ -35,7 +35,7 @@ TEST_TEAR_DOWN(etcpal_queue)
 
 TEST(etcpal_queue, can_send_and_receive)
 {
-  etcpal_queue_t queue;
+  etcpal_queue_t queue = ETCPAL_QUEUE_INIT;
 
   // Create queue for 10 chars
   TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 10, sizeof(uint8_t)));
@@ -49,7 +49,7 @@ TEST(etcpal_queue, can_send_and_receive)
 
 TEST(etcpal_queue, will_timeout_on_send)
 {
-  etcpal_queue_t queue;
+  etcpal_queue_t queue = ETCPAL_QUEUE_INIT;
 
   // Create queue for 3 chars
   TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 3, sizeof(uint8_t)));
@@ -82,7 +82,7 @@ TEST(etcpal_queue, will_timeout_on_send)
 
 TEST(etcpal_queue, will_timeout_on_receive)
 {
-  etcpal_queue_t queue;
+  etcpal_queue_t queue = ETCPAL_QUEUE_INIT;
 
   // Create queue for 3 chars
   TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 3, sizeof(uint8_t)));
@@ -109,7 +109,7 @@ TEST(etcpal_queue, will_timeout_on_receive)
 
 TEST(etcpal_queue, can_detect_empty)
 {
-  etcpal_queue_t queue;
+  etcpal_queue_t queue = ETCPAL_QUEUE_INIT;
 
   // Create queue for 3 chars
   TEST_ASSERT_TRUE(etcpal_queue_create(&queue, 4, sizeof(uint8_t)));

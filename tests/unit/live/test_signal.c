@@ -35,7 +35,7 @@ TEST_TEAR_DOWN(etcpal_signal)
 
 TEST(etcpal_signal, create_and_destroy_works)
 {
-  etcpal_signal_t signal;
+  etcpal_signal_t signal = ETCPAL_SIGNAL_INIT;
 
   // Basic creation.
   TEST_ASSERT_TRUE(etcpal_signal_create(&signal));
@@ -48,7 +48,7 @@ TEST(etcpal_signal, create_and_destroy_works)
 
 TEST(etcpal_signal, try_wait_works)
 {
-  etcpal_signal_t signal;
+  etcpal_signal_t signal = ETCPAL_SIGNAL_INIT;
   TEST_ASSERT_TRUE(etcpal_signal_create(&signal));
 
   // Signals shouldn't be created in the signaled state.
@@ -62,7 +62,7 @@ TEST(etcpal_signal, try_wait_works)
 
 TEST(etcpal_signal, timed_wait_works)
 {
-  etcpal_signal_t signal;
+  etcpal_signal_t signal = ETCPAL_SIGNAL_INIT;
   TEST_ASSERT_TRUE(etcpal_signal_create(&signal));
 
 #if ETCPAL_SIGNAL_HAS_TIMED_WAIT

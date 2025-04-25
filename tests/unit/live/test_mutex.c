@@ -35,7 +35,7 @@ TEST_TEAR_DOWN(etcpal_mutex)
 
 TEST(etcpal_mutex, create_and_destroy_works)
 {
-  etcpal_mutex_t mutex;
+  etcpal_mutex_t mutex = ETCPAL_MUTEX_INIT;
 
   // Basic creation and locking/unlocking.
   TEST_ASSERT_TRUE(etcpal_mutex_create(&mutex));
@@ -46,7 +46,7 @@ TEST(etcpal_mutex, create_and_destroy_works)
 
 TEST(etcpal_mutex, try_lock_works)
 {
-  etcpal_mutex_t mutex;
+  etcpal_mutex_t mutex = ETCPAL_MUTEX_INIT;
   TEST_ASSERT_TRUE(etcpal_mutex_create(&mutex));
 
   // try_lock() should succeed when the mutex is not locked.
@@ -61,7 +61,7 @@ TEST(etcpal_mutex, try_lock_works)
 
 TEST(etcpal_mutex, timed_lock_works)
 {
-  etcpal_mutex_t mutex;
+  etcpal_mutex_t mutex = ETCPAL_MUTEX_INIT;
   TEST_ASSERT_TRUE(etcpal_mutex_create(&mutex));
 
 #if ETCPAL_MUTEX_HAS_TIMED_LOCK

@@ -51,6 +51,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_recursive_mutex_t;
 
 /**
+ * @brief A default initializer for etcpal_recursive_mutex_t.
+ *
+ * e.g. etcpal_recursive_mutex_t mutex = ETCPAL_RECURSIVE_MUTEX_INIT;
+ */
+#define ETCPAL_RECURSIVE_MUTEX_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief Whether etcpal_recursive_mutex_timed_lock() is meaningful on this platform.
  * 
  * If defined to 0, etcpal_recursive_mutex_timed_lock() executes the equivalent of

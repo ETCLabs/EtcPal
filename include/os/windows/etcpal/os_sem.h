@@ -38,6 +38,7 @@ extern "C" {
 #endif
 
 typedef HANDLE etcpal_sem_t;
+#define ETCPAL_SEM_INIT INVALID_HANDLE_VALUE
 
 #define ETCPAL_SEM_HAS_TIMED_WAIT    1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 0

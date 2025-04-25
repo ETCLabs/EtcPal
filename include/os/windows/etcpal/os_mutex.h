@@ -46,6 +46,7 @@ typedef struct
   bool    valid;
   SRWLOCK lock;
 } etcpal_mutex_t;
+#define ETCPAL_MUTEX_INIT {}
 
 #define ETCPAL_MUTEX_HAS_TIMED_LOCK 0
 

@@ -120,7 +120,7 @@ TEST(etcpal_socket, blocking_state_is_consistent)
 // Test to make sure various invalid calls to etcpal_poll_* functions fail properly.
 TEST(etcpal_socket, poll_invalid_calls_fail)
 {
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   // Wait should fail with a meaningful error code when no sockets have been added
@@ -165,7 +165,7 @@ TEST(etcpal_socket, poll_invalid_calls_fail)
 // etcpal_poll_remove_socket() with predictable behavior resulting
 TEST(etcpal_socket, poll_add_remove_socket_works)
 {
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
@@ -183,12 +183,12 @@ TEST(etcpal_socket, poll_add_remove_socket_works)
 
 TEST(etcpal_socket, poll_user_data_works)
 {
-  etcpal_socket_t sock_1      = ETCPAL_SOCKET_INVALID;
-  etcpal_socket_t sock_2      = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_1      = ETCPAL_SOCKET_INIT;
+  etcpal_socket_t sock_2      = ETCPAL_SOCKET_INIT;
   void*           user_data_1 = (void*)1;
   void*           user_data_2 = (void*)2;
 
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   // Create two UDP sockets and poll for writability, make sure our user data gets passed back to us
@@ -229,7 +229,7 @@ TEST(etcpal_socket, poll_modify_socket_works)
 {
   etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
 
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
@@ -282,7 +282,7 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
   etcpal_socket_t rcvsock1  = ETCPAL_SOCKET_INVALID;
   etcpal_socket_t rcvsock2  = ETCPAL_SOCKET_INVALID;
 
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &rcvsock1));
@@ -359,10 +359,10 @@ TEST(etcpal_socket, poll_for_readability_on_udp_sockets_works)
 // Test the etcpal_poll_* API, polling for writeablility on UDP sockets.
 TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
 {
-  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INVALID;
-  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INIT;
+  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INIT;
 
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock_1));
@@ -395,10 +395,10 @@ TEST(etcpal_socket, poll_for_writability_on_udp_sockets_works)
 // correctly handled where the max fd is removed.
 TEST(etcpal_socket, poll_still_works_when_max_fd_removed)
 {
-  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INVALID;
-  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t sock_1 = ETCPAL_SOCKET_INIT;
+  etcpal_socket_t sock_2 = ETCPAL_SOCKET_INIT;
 
-  EtcPalPollContext context;
+  EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_poll_context_init(&context));
 
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock_1));
@@ -487,7 +487,7 @@ static void recvmsg_test_setup(etcpal_socket_t* recv_sock)
 
 TEST(etcpal_socket, recvmsg_works)
 {
-  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INIT;
   recvmsg_test_setup(&recv_sock);
 
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
@@ -513,7 +513,7 @@ TEST(etcpal_socket, recvmsg_works)
 
 TEST(etcpal_socket, recvmsg_trunc_flag_works)
 {
-  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INIT;
   recvmsg_test_setup(&recv_sock);
 
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]         = {0};
@@ -538,7 +538,7 @@ TEST(etcpal_socket, recvmsg_trunc_flag_works)
 
 TEST(etcpal_socket, recvmsg_ctrunc_flag_works)
 {
-  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INIT;
   recvmsg_test_setup(&recv_sock);
 
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH]         = {0};
@@ -562,7 +562,7 @@ TEST(etcpal_socket, recvmsg_ctrunc_flag_works)
 
 TEST(etcpal_socket, recvmsg_peek_flag_works)
 {
-  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INIT;
   recvmsg_test_setup(&recv_sock);
 
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
@@ -596,7 +596,7 @@ TEST(etcpal_socket, recvmsg_peek_flag_works)
 
 TEST(etcpal_socket, recvmsg_trunc_peek_works)
 {
-  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INVALID;
+  etcpal_socket_t recv_sock = ETCPAL_SOCKET_INIT;
   recvmsg_test_setup(&recv_sock);
 
   uint8_t buf[RECVMSG_TEST_MESSAGE_LENGTH + 1]     = {0};
