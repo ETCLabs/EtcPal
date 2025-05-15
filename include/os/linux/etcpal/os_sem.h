@@ -29,9 +29,9 @@ extern "C" {
 #endif
 
 typedef sem_t etcpal_sem_t;
-#define ETCPAL_RWLOCK_INIT \
-  {                        \
-    0                      \
+#define ETCPAL_SEM_INIT \
+  {                     \
+    0                   \
   }
 
 #define ETCPAL_SEM_HAS_TIMED_WAIT    1
