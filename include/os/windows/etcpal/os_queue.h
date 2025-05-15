@@ -51,6 +51,7 @@ typedef struct
 } etcpal_queue_t;
 #define ETCPAL_QUEUE_INIT \
   {                       \
+    0                     \
   }
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS ETCPAL_SEM_HAS_TIMED_WAIT

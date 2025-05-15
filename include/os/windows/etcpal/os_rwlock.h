@@ -45,6 +45,7 @@ typedef struct
 } etcpal_rwlock_t;
 #define ETCPAL_RWLOCK_INIT \
   {                        \
+    false                  \
   }
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 0

@@ -100,7 +100,7 @@ TEST_TEAR_DOWN(rwlock_integration)
 // reliably.
 TEST(rwlock_integration, rwlock_thread_test)
 {
-  etcpal_thread_t write_threads[NUM_WRITE_THREADS] = {};
+  etcpal_thread_t write_threads[NUM_WRITE_THREADS] = {ETCPAL_THREAD_INIT};
   etcpal_thread_t read_thread                      = ETCPAL_THREAD_INIT;
 
   EtcPalThreadParams params;

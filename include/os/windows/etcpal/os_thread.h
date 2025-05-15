@@ -60,6 +60,7 @@ typedef struct
 } etcpal_thread_t;
 #define ETCPAL_THREAD_INIT \
   {                        \
+    NULL                   \
   }
 
 #ifdef __cplusplus

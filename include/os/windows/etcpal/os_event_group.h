@@ -50,6 +50,7 @@ typedef struct
 } etcpal_event_group_t;
 #define ETCPAL_EVENT_GROUP_INIT \
   {                             \
+    false                       \
   }
 
 #define ETCPAL_EVENT_GROUP_HAS_TIMED_WAIT         0

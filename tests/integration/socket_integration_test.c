@@ -81,7 +81,7 @@ static const uint8_t kTestMcastAddrIPv6[ETCPAL_IPV6_BYTES] = {0xff, 0x12, 0x00, 
 
 static etcpal_socket_t send_sock = ETCPAL_SOCKET_INIT;
 static EtcPalSockAddr  send_addr;
-static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS] = {};
+static etcpal_socket_t recv_socks[ETCPAL_BULK_POLL_TEST_NUM_SOCKETS] = {ETCPAL_SOCKET_INIT};
 
 // Select the default interface if available, the very first non-loopback, non-link-local interface
 // if not.

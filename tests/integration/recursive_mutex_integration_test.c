@@ -77,7 +77,7 @@ TEST_TEAR_DOWN(recursive_mutex_integration)
 // run. Tests on several platforms where the mutex lines were commented showed failure very reliably.
 TEST(recursive_mutex_integration, mutex_thread_test)
 {
-  etcpal_thread_t threads[NUM_THREADS] = {};
+  etcpal_thread_t threads[NUM_THREADS] = {ETCPAL_THREAD_INIT};
 
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
   for (size_t i = 0; i < NUM_THREADS; ++i)

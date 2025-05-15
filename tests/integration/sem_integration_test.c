@@ -62,7 +62,7 @@ TEST_TEAR_DOWN(sem_integration)
 // should then terminate. The failure mode is that one or more threads hang and the test times out.
 TEST(sem_integration, sem_thread_test_initial_zero)
 {
-  etcpal_thread_t threads[NUM_THREADS] = {};
+  etcpal_thread_t threads[NUM_THREADS] = {ETCPAL_THREAD_INIT};
 
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, 0, NUM_THREADS * NUM_ITERATIONS));
 
@@ -97,7 +97,7 @@ TEST(sem_integration, sem_thread_test_initial_zero)
 // that one or more threads hang and the test times out.
 TEST(sem_integration, sem_thread_test_initial_full)
 {
-  etcpal_thread_t threads[NUM_THREADS] = {};
+  etcpal_thread_t threads[NUM_THREADS] = {ETCPAL_THREAD_INIT};
 
   TEST_ASSERT_TRUE(etcpal_sem_create(&sem, NUM_THREADS * NUM_ITERATIONS, NUM_THREADS * NUM_ITERATIONS));
 
