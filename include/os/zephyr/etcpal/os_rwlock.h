@@ -29,7 +29,11 @@ extern "C" {
 #endif
 
 typedef pthread_rwlock_t etcpal_rwlock_t;
+#ifdef PTHREAD_RWLOCK_INITIALIZER
 #define ETCPAL_RWLOCK_INIT PTHREAD_RWLOCK_INITIALIZER
+#else
+#define ETCPAL_RWLOCK_INIT (-1)  // What PTHREAD_RWLOCK_INITIALIZER is defined as according to Zephyr docs
+#endif
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 
