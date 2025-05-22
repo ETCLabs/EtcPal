@@ -54,6 +54,7 @@ typedef struct
 } etcpal_thread_t;
 #define ETCPAL_THREAD_INIT \
   {                        \
+    0                      \
   }
 
 #define etcpal_thread_get_current_os_handle _task_get_id

@@ -38,6 +38,7 @@ typedef struct
 } etcpal_rwlock_t;
 #define ETCPAL_RWLOCK_INIT \
   {                        \
+    0                      \
   }
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id);

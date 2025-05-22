@@ -32,6 +32,7 @@ extern "C" {
 typedef LWEVENT_STRUCT etcpal_signal_t;
 #define ETCPAL_SIGNAL_INIT \
   {                        \
+    0                      \
   }
 
 #define ETCPAL_SIGNAL_HAS_TIMED_WAIT    1

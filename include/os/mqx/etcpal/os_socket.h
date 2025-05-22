@@ -68,6 +68,7 @@ typedef struct EtcPalPollContext
 } EtcPalPollContext;
 #define ETCPAL_POLL_CONTEXT_INIT \
   {                              \
+    0                            \
   }
 
 /* Definitions for the etcpal_recvmsg API */
