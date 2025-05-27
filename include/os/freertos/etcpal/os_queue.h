@@ -31,6 +31,7 @@ extern "C" {
 #endif
 
 typedef QueueHandle_t etcpal_queue_t;
+#define ETCPAL_QUEUE_INIT NULL
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS 1
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   1

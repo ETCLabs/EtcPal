@@ -79,6 +79,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
 typedef PLATFORM_DEFINED etcpal_rwlock_t;
 
 /**
+ * @brief A default initializer for etcpal_rwlock_t.
+ *
+ * e.g. etcpal_rwlock_t lock = ETCPAL_RWLOCK_INIT;
+ */
+#define ETCPAL_RWLOCK_INIT [PLATFORM_DEFINED]
+
+/**
  * @brief Whether etcpal_rwlock_timed_readlock() and etcpal_rwlock_timed_writelock() are meaningful
  *        on this platform.
  * 

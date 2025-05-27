@@ -37,6 +37,9 @@ typedef struct
   struct k_msgq queue;
   uint8_t*      buffer;
 } etcpal_queue_t;
+#define ETCPAL_QUEUE_INIT \
+  {                       \
+  }
 
 #define ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS 1
 #define ETCPAL_QUEUE_HAS_ISR_FUNCTIONS   1

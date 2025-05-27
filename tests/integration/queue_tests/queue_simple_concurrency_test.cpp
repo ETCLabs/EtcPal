@@ -43,7 +43,7 @@ static unsigned num_reads  = 0;
 
 std::unordered_map<long long int, unsigned> val_occurrences_map;
 
-etcpal_sem_t occ_map_lock;
+etcpal_sem_t occ_map_lock = ETCPAL_SEM_INIT;
 void         init_concurrency_test()
 {
   etcpal_sem_create(&occ_map_lock, 1, 1);

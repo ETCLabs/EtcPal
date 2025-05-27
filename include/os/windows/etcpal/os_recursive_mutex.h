@@ -43,6 +43,10 @@ typedef struct
   bool             valid;
   CRITICAL_SECTION lock;
 } etcpal_recursive_mutex_t;
+#define ETCPAL_RECURSIVE_MUTEX_INIT \
+  {                                 \
+    false                           \
+  }
 
 #define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK 0
 

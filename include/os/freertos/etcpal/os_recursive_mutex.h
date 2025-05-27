@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 typedef SemaphoreHandle_t etcpal_recursive_mutex_t;
+#define ETCPAL_RECURSIVE_MUTEX_INIT NULL
 
 #define ETCPAL_RECURSIVE_MUTEX_HAS_TIMED_LOCK 1
 

@@ -37,6 +37,7 @@ extern "C" {
 
 typedef TaskHandle_t etcpal_thread_os_handle_t;
 #define ETCPAL_THREAD_OS_HANDLE_INVALID NULL
+#define ETCPAL_THREAD_OS_HANDLE_INIT    ETCPAL_THREAD_OS_HANDLE_INVALID
 
 typedef struct
 {
@@ -45,6 +46,9 @@ typedef struct
   SemaphoreHandle_t sig;
   TaskHandle_t      tid;
 } etcpal_thread_t;
+#define ETCPAL_THREAD_INIT \
+  {                        \
+  }
 
 #define etcpal_thread_get_current_os_handle xTaskGetCurrentTaskHandle
 

@@ -38,6 +38,7 @@ extern "C" {
 #endif
 
 typedef HANDLE etcpal_signal_t;
+#define ETCPAL_SIGNAL_INIT INVALID_HANDLE_VALUE
 
 #define ETCPAL_SIGNAL_HAS_TIMED_WAIT    1
 #define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 0

@@ -27,7 +27,7 @@
 
 #define NUM_ITERATIONS 3
 
-static etcpal_event_group_t event;
+static etcpal_event_group_t event = ETCPAL_EVENT_GROUP_INIT;
 
 TEST_GROUP(event_group_integration);
 
@@ -58,8 +58,8 @@ static void single_event_wait_thread(void* arg)
 
 TEST(event_group_integration, one_wait_one_signal_one_event)
 {
-  etcpal_thread_t    wait_thread;
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
 
   num_events_received = 0;
 
@@ -79,7 +79,7 @@ TEST(event_group_integration, one_wait_one_signal_one_event)
 #define EVENT_2 0x08
 static int      event_1_num_received;
 static int      event_2_num_received;
-etcpal_signal_t wait_thread_stop_signal;
+etcpal_signal_t wait_thread_stop_signal = ETCPAL_SIGNAL_INIT;
 
 static void multiple_event_wait_thread(void* arg)
 {
@@ -99,8 +99,8 @@ static void multiple_event_wait_thread(void* arg)
 
 TEST(event_group_integration, one_wait_one_signal_multiple_events)
 {
-  etcpal_thread_t    wait_thread;
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
 
   event_1_num_received = 0;
   event_2_num_received = 0;
@@ -128,7 +128,7 @@ TEST(event_group_integration, one_wait_one_signal_multiple_events)
 }
 
 static int            num_events_received;
-static etcpal_mutex_t num_events_received_lock;
+static etcpal_mutex_t num_events_received_lock = ETCPAL_MUTEX_INIT;
 
 static void unrequested_bits_test_thread(void* arg)
 {
@@ -149,8 +149,8 @@ static void unrequested_bits_test_thread(void* arg)
 
 TEST(event_group_integration, wait_does_not_return_on_unrequested_bits)
 {
-  etcpal_thread_t    wait_thread;
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
+  etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
 
   num_events_received = 0;
   TEST_ASSERT_TRUE(etcpal_mutex_create(&num_events_received_lock));

@@ -23,7 +23,7 @@
 #include "etcpal/timer.h"
 #include "unity_fixture.h"
 
-static etcpal_event_group_t event;
+static etcpal_event_group_t event = ETCPAL_EVENT_GROUP_INIT;
 
 TEST_GROUP(etcpal_event_group);
 

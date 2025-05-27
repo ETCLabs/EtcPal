@@ -29,6 +29,13 @@ extern "C" {
 #endif
 
 typedef pthread_rwlock_t etcpal_rwlock_t;
+#ifdef PTHREAD_RWLOCK_INITIALIZER
+#define ETCPAL_RWLOCK_INIT PTHREAD_RWLOCK_INITIALIZER
+#else
+#define ETCPAL_RWLOCK_INIT \
+  {                        \
+  }
+#endif
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 

@@ -14,6 +14,20 @@ typedef PLATFORM_DEFINED etcpal_socket_t;
 #define ETCPAL_SOCKET_INVALID [PLATFORM_DEFINED]
 
 /**
+ * @brief A default initializer for etcpal_socket_t.
+ *
+ * e.g. etcpal_socket_t sock = ETCPAL_SOCKET_INIT;
+ */
+#define ETCPAL_SOCKET_INIT ETCPAL_SOCKET_INVALID
+
+/**
+ * @brief A default initializer for etcpal_signal_t.
+ *
+ * e.g. etcpal_signal_t signal = ETCPAL_SIGNAL_INIT;
+ */
+#define ETCPAL_SIGNAL_INIT PLATFORM_DEFINED
+
+/**
  * @brief The maximum number of sockets that can be simultaneously monitored by etcpal_poll_wait().
  *
  * Some systems have no compile-time limit on this value - it could be a runtime system-defined
@@ -347,6 +361,13 @@ etcpal_error_t etcpal_getblocking(etcpal_socket_t id, bool* blocking);
  * See the documentation for etcpal_poll_context_init() and etcpal_poll_wait() for more information.
  */
 typedef PLATFORM_DEFINED EtcPalPollContext;
+
+/**
+ * @brief A default initializer for EtcPalPollContext.
+ *
+ * e.g. EtcPalPollContext context = ETCPAL_POLL_CONTEXT_INIT;
+ */
+#define ETCPAL_POLL_CONTEXT_INIT [PLATFORM_DEFINED]
 
 /**
  * @brief Create a new context for waiting on events on multiple sockets.

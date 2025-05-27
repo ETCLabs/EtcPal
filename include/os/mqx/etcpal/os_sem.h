@@ -29,6 +29,10 @@ extern "C" {
 #endif
 
 typedef LWSEM_STRUCT etcpal_sem_t;
+#define ETCPAL_SEM_INIT \
+  {                     \
+    0                   \
+  }
 
 #define ETCPAL_SEM_HAS_TIMED_WAIT    1
 #define ETCPAL_SEM_HAS_POST_FROM_ISR 0

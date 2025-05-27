@@ -32,7 +32,7 @@
 #define NUM_WRITE_THREADS 10
 #define NUM_ITERATIONS    10000
 
-static etcpal_rwlock_t rwlock;
+static etcpal_rwlock_t rwlock = ETCPAL_RWLOCK_INIT;
 static int             shared_var;
 static bool            read_thread_pass;
 
@@ -100,8 +100,8 @@ TEST_TEAR_DOWN(rwlock_integration)
 // reliably.
 TEST(rwlock_integration, rwlock_thread_test)
 {
-  etcpal_thread_t write_threads[NUM_WRITE_THREADS];
-  etcpal_thread_t read_thread;
+  etcpal_thread_t write_threads[NUM_WRITE_THREADS] = {ETCPAL_THREAD_INIT};
+  etcpal_thread_t read_thread                      = ETCPAL_THREAD_INIT;
 
   EtcPalThreadParams params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);

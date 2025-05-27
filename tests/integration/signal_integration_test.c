@@ -30,7 +30,7 @@
 #endif
 
 // For general usage
-static etcpal_signal_t sig;
+static etcpal_signal_t sig = ETCPAL_SIGNAL_INIT;
 
 static void signal_test_thread(void* arg)
 {
@@ -58,7 +58,7 @@ TEST_TEAR_DOWN(signal_integration)
 // wake up only one of the threads, so 6 posts should end both threads.
 TEST(signal_integration, signal_thread_test)
 {
-  etcpal_thread_t threads[2];
+  etcpal_thread_t threads[2] = {ETCPAL_THREAD_INIT};
 
   EtcPalThreadParams params;
   ETCPAL_THREAD_SET_DEFAULT_PARAMS(&params);

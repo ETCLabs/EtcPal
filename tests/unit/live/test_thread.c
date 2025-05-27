@@ -36,7 +36,7 @@ TEST_TEAR_DOWN(etcpal_thread)
 {
 }
 
-etcpal_signal_t wait_thread_stop_signal;
+etcpal_signal_t wait_thread_stop_signal = ETCPAL_SIGNAL_INIT;
 
 void wait_and_exit(void* param)
 {
@@ -49,8 +49,8 @@ void wait_and_exit(void* param)
 // Basic test of the three thread functions.
 TEST(etcpal_thread, create_and_destroy_functions_work)
 {
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
-  etcpal_thread_t    wait_thread;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
+  etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
 
   TEST_ASSERT_TRUE(etcpal_signal_create(&wait_thread_stop_signal));
   TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL), kEtcPalErrOk);
@@ -65,8 +65,8 @@ TEST(etcpal_thread, create_and_destroy_functions_work)
 #if ETCPAL_THREAD_HAS_TIMED_JOIN
 TEST(etcpal_thread, timed_join_works)
 {
-  EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
-  etcpal_thread_t    wait_thread;
+  EtcPalThreadParams params      = ETCPAL_THREAD_PARAMS_INIT;
+  etcpal_thread_t    wait_thread = ETCPAL_THREAD_INIT;
 
   TEST_ASSERT_TRUE(etcpal_signal_create(&wait_thread_stop_signal));
   TEST_ASSERT_EQUAL(etcpal_thread_create(&wait_thread, &params, wait_and_exit, NULL), kEtcPalErrOk);
@@ -87,7 +87,7 @@ TEST(etcpal_thread, timed_join_works)
 }
 #endif
 
-etcpal_signal_t spin_task_stop_signal;
+etcpal_signal_t spin_task_stop_signal = ETCPAL_SIGNAL_INIT;
 volatile bool   spin_task_ran;
 
 void increment_and_spin(void* param)
@@ -99,7 +99,7 @@ void increment_and_spin(void* param)
     ;
 }
 
-etcpal_signal_t oneshot_task_stop_signal;
+etcpal_signal_t oneshot_task_stop_signal = ETCPAL_SIGNAL_INIT;
 volatile bool   oneshot_task_ran;
 
 void oneshot(void* param)
@@ -129,10 +129,10 @@ TEST(etcpal_thread, threads_are_time_sliced)
   params.platform_data       = &mqx_params;
 #endif
 
-  etcpal_thread_t spin_task;
+  etcpal_thread_t spin_task = ETCPAL_THREAD_INIT;
   TEST_ASSERT_TRUE(etcpal_signal_create(&spin_task_stop_signal));
 
-  etcpal_thread_t oneshot_task;
+  etcpal_thread_t oneshot_task = ETCPAL_THREAD_INIT;
   TEST_ASSERT_TRUE(etcpal_signal_create(&oneshot_task_stop_signal));
 
   // Create the spin task.
@@ -158,7 +158,7 @@ TEST(etcpal_thread, threads_are_time_sliced)
   TEST_ASSERT_TRUE(oneshot_task_ran);
 }
 
-etcpal_thread_os_handle_t thread_handle;
+etcpal_thread_os_handle_t thread_handle = ETCPAL_THREAD_OS_HANDLE_INIT;
 
 void save_thread_handle(void* param)
 {
@@ -171,7 +171,7 @@ TEST(etcpal_thread, get_os_handle_works)
   thread_handle             = ETCPAL_THREAD_OS_HANDLE_INVALID;
   EtcPalThreadParams params = ETCPAL_THREAD_PARAMS_INIT;
 
-  etcpal_thread_t save_handle_thread;
+  etcpal_thread_t save_handle_thread = ETCPAL_THREAD_INIT;
   TEST_ASSERT_EQUAL(etcpal_thread_create(&save_handle_thread, &params, save_thread_handle, NULL), kEtcPalErrOk);
   etcpal_thread_os_handle_t reported_handle = etcpal_thread_get_os_handle(&save_handle_thread);
   etcpal_thread_join(&save_handle_thread);

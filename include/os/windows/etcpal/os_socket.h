@@ -51,6 +51,7 @@ typedef SOCKET etcpal_socket_t;
 #endif
 
 #define ETCPAL_SOCKET_INVALID INVALID_SOCKET
+#define ETCPAL_SOCKET_INIT    ETCPAL_SOCKET_INVALID
 
 #define ETCPAL_SOCKET_MAX_POLL_SIZE FD_SETSIZE
 
@@ -73,6 +74,10 @@ typedef struct EtcPalPollContext
   EtcPalPollFdSet writefds;
   EtcPalPollFdSet exceptfds;
 } EtcPalPollContext;
+#define ETCPAL_POLL_CONTEXT_INIT \
+  {                              \
+    false                        \
+  }
 
 /* Definitions for the etcpal_recvmsg API */
 
