@@ -434,7 +434,7 @@ Error Thread::Start(Function&& func, Args&&... args)
   if (!thread_)
     return kEtcPalErrNoMem;
 
-  auto new_f = std::unique_ptr<FunctionType>(new FunctionType([func, args...]() { func(args...); }));
+  auto new_f = std::unique_ptr<FunctionType>(new FunctionType([func, args...]() { std::invoke(func, args...); }));
   if (!new_f)
     return kEtcPalErrNoMem;
 
