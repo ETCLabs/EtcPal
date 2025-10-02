@@ -434,9 +434,8 @@ Error Thread::Start(Function&& func, Args&&... args)
   if (!thread_)
     return kEtcPalErrNoMem;
 
-  // TODO evaluate changing bind to lambda
-  auto new_f = std::unique_ptr<FunctionType>(new FunctionType(
-      std::bind(std::forward<Function>(func), std::forward<Args>(args)...)));  // NOLINT(modernize-avoid-bind)
+  auto new_f =
+      std::unique_ptr<FunctionType>(new FunctionType([func, args]() { func(std::forward<decltype(args)>(args)...); }));
   if (!new_f)
     return kEtcPalErrNoMem;
 
