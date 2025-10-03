@@ -434,7 +434,9 @@ Error Thread::Start(Function&& func, Args&&... args)
   if (!thread_)
     return kEtcPalErrNoMem;
 
-  auto new_f = std::unique_ptr<FunctionType>(new FunctionType([func, args...]() { std::invoke(func, args...); }));
+  // Use lambda instead of std::bind to avoid deprecated std::result_of
+  auto new_f = std::unique_ptr<FunctionType>(
+      new FunctionType([func = std::forward<Function>(func), args...]() mutable { func(args...); }));
   if (!new_f)
     return kEtcPalErrNoMem;
 
