@@ -210,6 +210,34 @@ TEST(etcpal_cpp_timer, duration_interval_works)
   TEST_ASSERT_TRUE(t2.IsExpired());
 }
 
+TEST(etcpal_cpp_timer, timers_report_expired_exclusive_properly)
+{
+  etcpal::Timer t1(0);
+  etcpal::Timer t2(20);
+
+  // A timer with a timeout of 0 should start expired.
+  TEST_ASSERT_TRUE(t1.IsExpiredExclusive());
+
+  // The nonzero timer should not be expired yet.
+  TEST_ASSERT_FALSE(t2.IsExpiredExclusive());
+
+  etcpal::Thread::Sleep(20);
+  TEST_ASSERT_TRUE(t2.IsExpiredExclusive());
+  TEST_ASSERT_GREATER_OR_EQUAL_UINT32(20u, t2.GetElapsed());
+}
+
+TEST(etcpal_cpp_timer, reset_exclusive_works)
+{
+  etcpal::Timer t(30);
+  etcpal::Thread::Sleep(30);
+  TEST_ASSERT_TRUE(t.IsExpiredExclusive());
+
+  t.Reset();
+  TEST_ASSERT_FALSE(t.IsExpiredExclusive());
+  etcpal::Thread::Sleep(30);
+  TEST_ASSERT_TRUE(t.IsExpiredExclusive());
+}
+
 TEST_GROUP_RUNNER(etcpal_cpp_timer)
 {
   RUN_TEST_CASE(etcpal_duration_to_string, duration_to_string_works);

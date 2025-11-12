@@ -74,6 +74,23 @@ bool etcpal_timer_is_expired(const EtcPalTimer* timer)
 {
   if (timer)
   {
+    return ((timer->interval == 0) || ((etcpal_getms() - timer->reset_time) > timer->interval));
+  }
+  return true;
+}
+
+/**
+ * @brief Check to see if a timer is expired.
+ * @param timer Pointer to the EtcPalTimer of which to check the expiration.
+ * @return true: More than or equal to @link EtcPalTimer::interval interval \endlink milliseconds have passed
+ *         since the timer was started/reset.
+ * @return false: Less than @link EtcPalTimer::interval interval \endlink milliseconds
+ *         have passed since the timer was started/reset)
+ */
+bool etcpal_timer_is_expired_exclusive(const EtcPalTimer* timer)
+{
+  if (timer)
+  {
     return ((timer->interval == 0) || ((etcpal_getms() - timer->reset_time) >= timer->interval));
   }
   return true;

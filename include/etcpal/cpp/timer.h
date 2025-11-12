@@ -225,6 +225,7 @@ public:
   uint32_t  GetElapsed() const noexcept;
   uint32_t  GetRemaining() const noexcept;
   bool      IsExpired() const noexcept;
+  bool      IsExpiredExclusive() const noexcept;
 
   void Start(uint32_t interval) noexcept;
   template <typename Rep, typename Period>
@@ -302,6 +303,11 @@ inline uint32_t Timer::GetRemaining() const noexcept
 inline bool Timer::IsExpired() const noexcept
 {
   return etcpal_timer_is_expired(&timer_);
+}
+
+inline bool Timer::IsExpiredExclusive() const noexcept
+{
+  return etcpal_timer_is_expired_exclusive(&timer_);
 }
 
 /// @brief Start the timer with a new interval.

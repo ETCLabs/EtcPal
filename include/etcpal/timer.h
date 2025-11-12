@@ -125,6 +125,7 @@ void     etcpal_timer_start(EtcPalTimer* timer, uint32_t interval);
 void     etcpal_timer_reset(EtcPalTimer* timer);
 uint32_t etcpal_timer_elapsed(const EtcPalTimer* timer);
 bool     etcpal_timer_is_expired(const EtcPalTimer* timer);
+bool     etcpal_timer_is_expired_exclusive(const EtcPalTimer* timer);
 uint32_t etcpal_timer_remaining(const EtcPalTimer* timer);
 
 #ifdef __cplusplus
