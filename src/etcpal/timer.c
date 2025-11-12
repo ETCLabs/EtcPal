@@ -91,7 +91,7 @@ bool etcpal_timer_is_expired_exclusive(const EtcPalTimer* timer)
 {
   if (timer)
   {
-    return ((timer->interval == 0) || ((etcpal_getms() - timer->reset_time) >= timer->interval));
+    return ((etcpal_getms() - timer->reset_time) >= timer->interval);
   }
   return true;
 }
