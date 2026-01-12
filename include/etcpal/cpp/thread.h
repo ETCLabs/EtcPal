@@ -23,6 +23,10 @@
 #ifndef ETCPAL_CPP_THREAD_H_
 #define ETCPAL_CPP_THREAD_H_
 
+#if defined(Q_MOC_RUN) || defined(QT_MOC_RUN)
+namespace etcpal { class Thread; }
+#else
+
 #include <algorithm>
 #include <cassert>
 #include <chrono>
@@ -507,7 +511,7 @@ Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) no
 {
   // This implementation cannot sleep longer than UINT_MAX.
   unsigned int sleep_ms_clamped = static_cast<unsigned int>(
-      std::min(std::chrono::milliseconds(sleep_duration).count(),
+      (std::min)(std::chrono::milliseconds(sleep_duration).count(),
                static_cast<std::chrono::milliseconds::rep>(std::numeric_limits<unsigned int>::max())));
   return Sleep(sleep_ms_clamped);
 }
@@ -515,3 +519,4 @@ Error Thread::Sleep(const std::chrono::duration<Rep, Period>& sleep_duration) no
 };  // namespace etcpal
 
 #endif  // ETCPAL_CPP_THREAD_H_
+#endif
