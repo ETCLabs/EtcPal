@@ -319,7 +319,7 @@ template <typename Rep, typename Period>
 void Timer::Start(const std::chrono::duration<Rep, Period>& interval) noexcept
 {
   uint32_t interval_clamped = static_cast<uint32_t>(
-      std::min(std::chrono::milliseconds(interval).count(),
+      (std::min)(std::chrono::milliseconds(interval).count(),
                static_cast<std::chrono::milliseconds::rep>(std::numeric_limits<uint32_t>::max())));
   etcpal_timer_start(&timer_, interval_clamped);
 }
