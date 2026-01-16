@@ -725,9 +725,13 @@ void make_iso_timestamp(const EtcPalLogTimestamp* timestamp, char* buf, bool hum
       }
       else
       {
+        // Compiler warns that the following snprintf call could write more than the available space.
+        // i.e. if utc_offset_hours or utc_offset_mins were to be more than 2 digits.
+        // Cap the UTC offset hours and minutes to two digits to appease the compiler.
+        int utc_offset_hours = ETCPAL_MIN(abs(timestamp->utc_offset) / 60, 99);
+        int utc_offset_mins  = ETCPAL_MIN(abs(timestamp->utc_offset) % 60, 99);
         snprintf(&buf[print_res], ETCPAL_LOG_TIMESTAMP_LEN - (size_t)print_res, "%s%02d:%02d",
-                 timestamp->utc_offset > 0 ? "+" : "-", abs(timestamp->utc_offset) / 60,
-                 abs(timestamp->utc_offset) % 60);
+                 timestamp->utc_offset > 0 ? "+" : "-", utc_offset_hours, utc_offset_mins);
       }
       timestamp_created = true;
     }
