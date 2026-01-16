@@ -31,6 +31,7 @@ function(add_etcpal_library target_name)
     ${ETCPAL_NET_ADDITIONAL_HEADERS}
     ${ETCPAL_NET_ADDITIONAL_SOURCES}
   )
+  add_library(EtcPal::${target_name} ALIAS ${target_name})
 
   # EtcPal public include directories and library dependencies
   target_include_directories(${target_name} PUBLIC
