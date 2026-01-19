@@ -1,68 +1,68 @@
 workflow:
   rules:
-  - if: '$CI_COMMIT_REF_NAME == "main"'
-  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_COMMIT_REF_NAME == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
 
 stages:
-- build
-# TODO rearchitect on-target testing setup so these stages don't need to be serialized
-- build-freertos
-- build-mqx
-- build-zephyr
-- deploy
+  - build
+  # TODO rearchitect on-target testing setup so these stages don't need to be serialized
+  - build-freertos
+  - build-mqx
+  - build-zephyr
+  - deploy
 
 variables:
   COMMON_CMAKE_DEFS: -DETCPAL_BUILD_MOCK_LIB=ON -DETCPAL_BUILD_TESTS=ON -DETCPAL_BUILD_EXAMPLES=ON -DETCPAL_WARN_AS_ERROR=ON
   KLOCWORK_PROJECT: "EtcPal"
 
 include:
-# Helper for environment setup for native Ninja builds with Windows/MSVC
-- project: "etc/common-tech/tools/gitlab-ci-util"
-  ref: v2.3.1
-  file: "/ci-yml/msvc-environment.yml"
-# Versioned build automation
-- project: "etc/common-tech/tools/gitlab-ci-util"
-  ref: v2.3.1
-  file: "/ci-yml/deploy-versioned-build.yml"
+  # Helper for environment setup for native Ninja builds with Windows/MSVC
+  - project: "etc/common-tech/tools/gitlab-ci-util"
+    ref: v2.3.1
+    file: "/ci-yml/msvc-environment.yml"
+  # Versioned build automation
+  - project: "etc/common-tech/tools/gitlab-ci-util"
+    ref: v2.3.1
+    file: "/ci-yml/deploy-versioned-build.yml"
 
 windows-build-and-test:
   stage: build
   tags:
-  - ct-windows
+    - ct-windows
   variables:
     CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON -DETCPAL_ENABLE_ASAN=ON
   script:
-  - mkdir build
-  - cd build
-  - cmake -G "Visual Studio 16 2019" -A x64 $env:COMMON_CMAKE_DEFS.Split(" ") $env:CMAKE_DEFS.Split(" ") ..
-  - cmake --build . --config Release -j
-  - cd ..
-  - .\build\tests\unit\controlled\Release\etcpal_controlled_unit_tests.exe
-  - python tools\ci\run_tests.py build --config Release
+    - mkdir build
+    - cd build
+    - cmake -G "Visual Studio 16 2019" $env:COMMON_CMAKE_DEFS.Split(" ") $env:CMAKE_DEFS.Split(" ") ..
+    - cmake --build . --config Release -j
+    - cd ..
+    - .\build\tests\unit\controlled\Release\etcpal_controlled_unit_tests.exe
+    - python tools\ci\run_tests.py build --config Release
   artifacts:
     when: always
     reports:
       junit: build/test_results_*.xml
     paths:
-    - build  
+      - build
 
 macos-build-and-test:
   stage: build
   tags:
-  - ct-macos
+    - ct-macos
   parallel:
     matrix:
-    - SANITIZER_DEFS:
-      - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
-      - -DETCPAL_ENABLE_TSAN=ON
+      - SANITIZER_DEFS:
+          - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
+          - -DETCPAL_ENABLE_TSAN=ON
   script:
-  - mkdir build
-  - cd build
-  - cmake ${COMMON_CMAKE_DEFS} ${SANITIZER_DEFS} ..
-  - cmake --build .
-  - cd ..
-  - python3 tools/ci/run_tests.py build
+    - mkdir build
+    - cd build
+    - cmake ${COMMON_CMAKE_DEFS} ${SANITIZER_DEFS} ..
+    - cmake --build .
+    - cd ..
+    - python3 tools/ci/run_tests.py build
   artifacts:
     when: always
     reports:
@@ -72,28 +72,28 @@ linux-gcc-build-and-test:
   stage: build
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/gcc-cmake:latest
   tags:
-  - etc-linux-docker
+    - etc-linux-docker
   variables:
     # TODO remove ETCPAL_TEST_IPV6=OFF when DEVOPS-1383 is completed
     CMAKE_DEFS: -DETCPAL_TEST_IPV6=OFF
   parallel:
     matrix:
-    - CMAKE_CXX_FLAGS:
-      - -fexceptions
-      - -fno-exceptions
-      SANITIZER_DEFS:
-      - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
-      - -DETCPAL_ENABLE_TSAN=ON
+      - CMAKE_CXX_FLAGS:
+          - -fexceptions
+          - -fno-exceptions
+        SANITIZER_DEFS:
+          - -DETCPAL_ENABLE_ASAN=ON -DETCPAL_ENABLE_UBSAN=ON
+          - -DETCPAL_ENABLE_TSAN=ON
   script:
-  - python3 -m pip install unity-test-parser
-  - mkdir build
-  - cd build
-  # The CMAKE_CXX_FLAGS var must be quoted here and not in the variable because of this bug:
-  # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1742
-  - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ${CMAKE_DEFS} ${SANITIZER_DEFS} -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}" ..
-  - make -j `nproc`
-  - cd ..
-  - python3 tools/ci/run_tests.py build
+    - python3 -m pip install unity-test-parser
+    - mkdir build
+    - cd build
+    # The CMAKE_CXX_FLAGS var must be quoted here and not in the variable because of this bug:
+    # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1742
+    - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ${CMAKE_DEFS} ${SANITIZER_DEFS} -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}" ..
+    - make -j `nproc`
+    - cd ..
+    - python3 tools/ci/run_tests.py build
   artifacts:
     when: always
     reports:
@@ -103,27 +103,27 @@ linux-clang-build-and-test:
   stage: build
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/clang-cmake-msan:latest
   tags:
-  - etc-linux-docker
+    - etc-linux-docker
   variables:
     # TODO remove ETCPAL_TEST_IPV6=OFF when DEVOPS-1383 is completed
     CMAKE_DEFS: -DETCPAL_TEST_IPV6=OFF
   parallel:
     matrix:
-    - CMAKE_CXX_FLAGS:
-      - -fexceptions
-      - -fno-exceptions
-      SANITIZER_DEFS:
-      - -DETCPAL_ENABLE_MSAN=ON
+      - CMAKE_CXX_FLAGS:
+          - -fexceptions
+          - -fno-exceptions
+        SANITIZER_DEFS:
+          - -DETCPAL_ENABLE_MSAN=ON
   script:
-  - python3 -m pip install unity-test-parser
-  - mkdir build
-  - cd build
-  # The CMAKE_CXX_FLAGS var must be quoted here and not in the variable because of this bug:
-  # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1742
-  - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ${CMAKE_DEFS} ${SANITIZER_DEFS} -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}" ..
-  - make -j `nproc`
-  - cd ..
-  - python3 tools/ci/run_tests.py build
+    - python3 -m pip install unity-test-parser
+    - mkdir build
+    - cd build
+    # The CMAKE_CXX_FLAGS var must be quoted here and not in the variable because of this bug:
+    # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1742
+    - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ${CMAKE_DEFS} ${SANITIZER_DEFS} -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS}" ..
+    - make -j `nproc`
+    - cd ..
+    - python3 tools/ci/run_tests.py build
   artifacts:
     when: always
     reports:
@@ -133,15 +133,15 @@ oss-build-and-test:
   stage: build
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/gcc-cmake:latest
   tags:
-  - etc-linux-docker
+    - etc-linux-docker
   script:
-  # Remove the .git folder to simulate building from P4/zip archive
-  - rm -rf .git/
-  - mkdir build
-  - cd build
-  # Use default config, no options
-  - cmake -G "Unix Makefiles" ..
-  - make -j `nproc`
+    # Remove the .git folder to simulate building from P4/zip archive
+    - rm -rf .git/
+    - mkdir build
+    - cd build
+    # Use default config, no options
+    - cmake -G "Unix Makefiles" ..
+    - make -j `nproc`
 
 # Build and test EtcPal with OS and network support disabled
 # This is currently done on Linux but with the OS and network targets set to none.
@@ -149,24 +149,24 @@ bare-metal-build-and-test:
   stage: build
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/gcc-cmake:latest
   tags:
-  - etc-linux-docker
+    - etc-linux-docker
   variables:
     CMAKE_DEFS: -DETCPAL_BUILD_TESTS=ON -DETCPAL_ENABLE_ASAN=ON -DETCPAL_OS_TARGET='none' -DETCPAL_NET_TARGET='none'
   script:
-  - python3 -m pip install unity-test-parser
-  - mkdir build
-  - cd build
-  - cmake -G "Unix Makefiles" ${CMAKE_DEFS} ..
-  - make -j `nproc`
-  - cd ..
-  - python3 tools/ci/run_tests.py build
+    - python3 -m pip install unity-test-parser
+    - mkdir build
+    - cd build
+    - cmake -G "Unix Makefiles" ${CMAKE_DEFS} ..
+    - make -j `nproc`
+    - cd ..
+    - python3 tools/ci/run_tests.py build
 
 freertos-lwip-build-and-test:
   stage: build-freertos
   tags:
-  - ct-etcpal-test
+    - ct-etcpal-test
   script:
-  - python C:\etcpal_testing\build_and_test_etcpal.py $env:CI_PROJECT_DIR freertos_lwip
+    - python C:\etcpal_testing\build_and_test_etcpal.py $env:CI_PROJECT_DIR freertos_lwip
   artifacts:
     when: always
     reports:
@@ -175,9 +175,9 @@ freertos-lwip-build-and-test:
 mqx-build-and-test:
   stage: build-mqx
   tags:
-  - ct-etcpal-test
+    - ct-etcpal-test
   script:
-  - python C:\etcpal_testing\build_and_test_etcpal.py $env:CI_PROJECT_DIR mqx
+    - python C:\etcpal_testing\build_and_test_etcpal.py $env:CI_PROJECT_DIR mqx
   artifacts:
     when: always
     reports:
@@ -186,9 +186,9 @@ mqx-build-and-test:
 zephyr-build-and-test:
   stage: build-zephyr
   tags:
-  - ct-etcpal-test
+    - ct-etcpal-test
   script:
-  - python C:\etcpal_testing\build_and_test_etcpal.py $env:CI_PROJECT_DIR zephyr
+    - python C:\etcpal_testing\build_and_test_etcpal.py $env:CI_PROJECT_DIR zephyr
   artifacts:
     when: always
     reports:
@@ -197,42 +197,42 @@ zephyr-build-and-test:
 lint:
   stage: build
   tags:
-  - etc-linux-docker
+    - etc-linux-docker
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/gcc-cmake:latest
   variables:
     CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON
   script:
-  - mkdir build
-  - cd build
-  - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ..
-  - make check_formatting
-  - make -j `nproc`
+    - mkdir build
+    - cd build
+    - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ..
+    - make check_formatting
+    - make -j `nproc`
 
 docs:
   stage: build
   rules:
-  - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
   tags:
-  - etc-linux-docker
+    - etc-linux-docker
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/doxygen:1.9.1
   variables:
     GIT_DEPTH: 0
   script:
-  - pip install --upgrade etcdevtool
-  - etcdevtool docs . 1.9.1
-  - mkdir docs-build
-  - mv docs/build/* docs-build/
+    - pip install --upgrade etcdevtool
+    - etcdevtool docs . 1.9.1
+    - mkdir docs-build
+    - mv docs/build/* docs-build/
   artifacts:
     paths:
-    - docs-build
+      - docs-build
 
 deploy-docs:
   stage: deploy
   rules:
-  - if: '$CI_COMMIT_REF_NAME == "main"'
+    - if: '$CI_COMMIT_REF_NAME == "main"'
   tags:
-  - etc-linux-docker
+    - etc-linux-docker
   image: etc-docker.artifactory.etcconnect.com/etc/common-tech/doxygen:1.9.1
   variables:
     # Fetch all tags
@@ -241,6 +241,6 @@ deploy-docs:
     GH_REPO_REF: github.com/ETCLabs/EtcPalDocs.git
     GH_REPO_TOKEN: $SVC_ETCLABS_REPO_TOKEN
   script:
-  - pip install --upgrade etcdevtool
-  - chmod +x tools/ci/publish_docs.sh
-  - tools/ci/publish_docs.sh
+    - pip install --upgrade etcdevtool
+    - chmod +x tools/ci/publish_docs.sh
+    - tools/ci/publish_docs.sh
