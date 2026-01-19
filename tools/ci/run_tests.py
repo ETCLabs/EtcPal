@@ -8,15 +8,22 @@ import sys
 import unity_test_parser
 
 
-BUILD_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..", "build")
+BUILD_DIR = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), "..", "..", "build"
+)
+
 
 def main():
     """The script entry point."""
 
     # Parse the command-line arguments.
-    parser = argparse.ArgumentParser(description="Run EtcPal unit tests and produce JUnit XML.")
+    parser = argparse.ArgumentParser(
+        description="Run EtcPal unit tests and produce JUnit XML."
+    )
     parser.add_argument("build_dir", help="The CMake build directory")
-    parser.add_argument("--config", help="The CMake build configuration to run tests for")
+    parser.add_argument(
+        "--config", help="The CMake build configuration to run tests for"
+    )
     args = parser.parse_args()
 
     test_exe_dir = os.path.join(args.build_dir, "tests", "test_executables")
@@ -46,22 +53,34 @@ def main():
         result_output_lines = result_output.splitlines()
         result_error_output_lines = result_error_output.splitlines()
 
+
+
+        print("\nRESULT OUTPUT:")
+        print(result_output)
+        print("-" * 60)
         for line in result_output_lines:
             print(line)
+        print("-" * 60)
+        print()
 
         if len(result_error_output) > 0:
             print("ERROR OUTPUT:")
             for line in result_error_output_lines:
                 print(line)
             failed = True
-        
-        results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
 
-        with open(os.path.join(args.build_dir, "test_results_{}.xml".format(test_name)), "w") as output_file:
+        results = unity_test_parser.TestResults(
+            result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE
+        )
+
+        with open(
+            os.path.join(args.build_dir, "test_results_{}.xml".format(test_name)), "w"
+        ) as output_file:
             junit_xml.TestSuite.to_file(output_file, [results.to_junit()])
 
     if failed:
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
