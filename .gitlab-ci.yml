@@ -44,6 +44,8 @@ windows-build-and-test:
     when: always
     reports:
       junit: build/test_results_*.xml
+    paths:
+    - build  
 
 macos-build-and-test:
   stage: build
