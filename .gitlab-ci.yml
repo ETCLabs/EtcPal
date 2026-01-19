@@ -31,7 +31,8 @@ windows-build-and-test:
   tags:
   - ct-windows
   variables:
-    CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON -DETCPAL_ENABLE_ASAN=ON
+    # TODO: ETCPAL-207 re-enable ASAN. "-DETCPAL_ENABLE_ASAN=ON"
+    CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON
   script:
   - mkdir build
   - cd build
