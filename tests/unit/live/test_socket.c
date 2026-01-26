@@ -658,7 +658,7 @@ TEST(etcpal_socket, so_sndtimeo_works)
   TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
   TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
 
-  int set_sndtimeo_val = 1234;
+  int set_sndtimeo_val = 1236;
   TEST_ASSERT_EQUAL(kEtcPalErrOk,
                     etcpal_setsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDTIMEO, &set_sndtimeo_val, sizeof(int)));
 
