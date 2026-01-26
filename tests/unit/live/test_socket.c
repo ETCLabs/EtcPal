@@ -650,6 +650,26 @@ TEST(etcpal_socket, so_sndbuf_works)
 
   etcpal_close(sock);
 }
+
+TEST(etcpal_socket, so_sndtimeo_works)
+{
+  etcpal_socket_t sock = ETCPAL_SOCKET_INVALID;
+
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_socket(ETCPAL_AF_INET, ETCPAL_SOCK_DGRAM, &sock));
+  TEST_ASSERT_NOT_EQUAL(sock, ETCPAL_SOCKET_INVALID);
+
+  int set_sndtimeo_val = 1234;
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_setsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDTIMEO, &set_sndtimeo_val, sizeof(int)));
+
+  int    get_sndtimeo_val  = 0;
+  size_t get_sndtimeo_size = sizeof(int);
+  TEST_ASSERT_EQUAL(kEtcPalErrOk,
+                    etcpal_getsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDTIMEO, &get_sndtimeo_val, &get_sndtimeo_size));
+  TEST_ASSERT_EQUAL(set_sndtimeo_val, get_sndtimeo_val);
+  TEST_ASSERT_EQUAL(sizeof(int), get_sndtimeo_size);
+  etcpal_close(sock);
+}
 #endif  // TEST_SOCKET_FULL_OS_AVAILABLE
 
 TEST_GROUP_RUNNER(etcpal_socket)
@@ -671,5 +691,6 @@ TEST_GROUP_RUNNER(etcpal_socket)
   RUN_TEST_CASE(etcpal_socket, recvmsg_trunc_peek_works);
 #if TEST_SOCKET_FULL_OS_AVAILABLE
   RUN_TEST_CASE(etcpal_socket, so_sndbuf_works);
+  RUN_TEST_CASE(etcpal_socket, so_sndtimeo_works);
 #endif  // TEST_SOCKET_FULL_OS_AVAILABLE
 }

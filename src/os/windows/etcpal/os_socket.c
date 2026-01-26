@@ -326,9 +326,20 @@ int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, s
   {
     case ETCPAL_SO_SNDBUF:
       return getsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, (int*)option_len);
+    case ETCPAL_SO_SNDTIMEO:
+    {
+      DWORD val = 0;
+      int len = sizeof val;
+      int res = getsockopt(id, SOL_SOCKET, SO_SNDTIMEO, (char*)&val, &len);
+      if (res == 0)
+      {
+        *(int*)option_value = (int)val;
+        *option_len = sizeof(int);
+      }
+      return res;
+    }
     case ETCPAL_SO_RCVBUF:    /* TODO */
     case ETCPAL_SO_RCVTIMEO:  /* TODO */
-    case ETCPAL_SO_SNDTIMEO:  /* TODO */
     case ETCPAL_SO_REUSEADDR: /* TODO */
     case ETCPAL_SO_BROADCAST: /* TODO */
     case ETCPAL_SO_KEEPALIVE: /* TODO */

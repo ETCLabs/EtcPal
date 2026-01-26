@@ -299,9 +299,20 @@ int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, s
   {
     case ETCPAL_SO_SNDBUF:
       return getsockopt(id, SOL_SOCKET, SO_SNDBUF, option_value, (socklen_t*)option_len);
+    case ETCPAL_SO_SNDTIMEO:
+    {
+      struct timeval val = {0};
+      socklen_t len = sizeof val;
+      int res = getsockopt(id, SOL_SOCKET, SO_SNDTIMEO, &val, &len);
+      if (res == 0)
+      {
+        timeval_to_ms(&val, (int*)option_value);
+        *option_len = sizeof(int);
+      }
+      return res;
+    }
     case ETCPAL_SO_RCVBUF:     // TODO
     case ETCPAL_SO_RCVTIMEO:   // TODO
-    case ETCPAL_SO_SNDTIMEO:   // TODO
     case ETCPAL_SO_REUSEADDR:  // TODO
     case ETCPAL_SO_REUSEPORT:  // TODO
     case ETCPAL_SO_BROADCAST:  // TODO
@@ -756,6 +767,14 @@ void ms_to_timeval(int ms, struct timeval* tv)
 
   tv->tv_sec  = ms / 1000;
   tv->tv_usec = (ms % 1000) * 1000;
+}
+
+void timeval_to_ms(const struct timeval* tv, int* ms)
+{
+  if (!ETCPAL_ASSERT_VERIFY(tv) || !ETCPAL_ASSERT_VERIFY(ms))
+    return;
+
+  *ms = (int)((tv->tv_sec * 1000) + (tv->tv_usec / 1000));
 }
 
 etcpal_error_t etcpal_shutdown(etcpal_socket_t id, int how)
