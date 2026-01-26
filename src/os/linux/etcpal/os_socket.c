@@ -296,11 +296,10 @@ int getsockopt_socket(etcpal_socket_t id, int option_name, void* option_value, s
 
       return res;
     }
-    case ETCPAL_SO_SNDTIMEO:
-    {
+    case ETCPAL_SO_SNDTIMEO: {
       struct timeval val = {0};
-      socklen_t len = sizeof val;
-      int res = getsockopt(id, SOL_SOCKET, SO_SNDTIMEO, &val, &len);
+      socklen_t      len = sizeof val;
+      int            res = getsockopt(id, SOL_SOCKET, SO_SNDTIMEO, &val, &len);
       if (res == 0)
       {
         timeval_to_ms(&val, (int*)option_value);

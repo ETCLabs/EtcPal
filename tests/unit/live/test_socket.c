@@ -664,8 +664,8 @@ TEST(etcpal_socket, so_sndtimeo_works)
 
   int    get_sndtimeo_val  = 0;
   size_t get_sndtimeo_size = sizeof(int);
-  TEST_ASSERT_EQUAL(kEtcPalErrOk,
-                    etcpal_getsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDTIMEO, &get_sndtimeo_val, &get_sndtimeo_size));
+  TEST_ASSERT_EQUAL(kEtcPalErrOk, etcpal_getsockopt(sock, ETCPAL_SOL_SOCKET, ETCPAL_SO_SNDTIMEO, &get_sndtimeo_val,
+                                                    &get_sndtimeo_size));
   TEST_ASSERT_EQUAL(set_sndtimeo_val, get_sndtimeo_val);
   TEST_ASSERT_EQUAL(sizeof(int), get_sndtimeo_size);
   etcpal_close(sock);
