@@ -134,6 +134,7 @@ static const int aiprotmap[ETCPAL_NUM_IPPROTO] =
 
 // Helpers for etcpal_setsockopt()
 static void ms_to_timeval(int ms, struct timeval* tv);
+static void timeval_to_ms(const struct timeval* tv, int* ms);
 static int  setsockopt_socket(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 static int  setsockopt_ip(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
 static int  setsockopt_ip6(etcpal_socket_t id, int option_name, const void* option_value, size_t option_len);
