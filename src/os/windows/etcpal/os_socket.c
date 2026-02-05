@@ -180,7 +180,7 @@ etcpal_error_t etcpal_socket_init(void)
   int     startup_res = WSAStartup(wsver, &wsdata);
   if (startup_res != 0)
   {
-    return err_winsock_to_etcpal(startup_res);
+    return err_winsock_to_etcpal(WSAGetLastError());
   }
 
   etcpal_error_t res = init_extension_functions();
