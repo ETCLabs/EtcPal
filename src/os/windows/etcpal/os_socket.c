@@ -1237,17 +1237,20 @@ etcpal_error_t get_wsarecvmsg(LPFN_WSARECVMSG* result)
   DWORD           bytes = 0;
 
   sock = socket(AF_INET6, SOCK_DGRAM, 0);
-
-  int err =
-      WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &func, sizeof(func), &bytes, NULL, NULL);
-
-  if (err == 0)
-    *result = func;
-
   if (sock != INVALID_SOCKET)
+  {
+    int err = WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &func, sizeof(func), &bytes, NULL,
+                       NULL);
+
+    if (err == 0)
+      *result = func;
+
     closesocket(sock);
 
-  return (err == 0) ? kEtcPalErrOk : err_winsock_to_etcpal(err);
+    return (err == 0) ? kEtcPalErrOk : err_winsock_to_etcpal(err);
+  }
+
+  return err_winsock_to_etcpal(WSAGetLastError());
 }
 
 void construct_wsamsg(const EtcPalMsgHdr* in_msg, LPSOCKADDR_STORAGE name_store, LPWSABUF buf_store, LPWSAMSG out_msg)
