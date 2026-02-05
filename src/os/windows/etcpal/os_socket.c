@@ -180,7 +180,7 @@ etcpal_error_t etcpal_socket_init(void)
   int     startup_res = WSAStartup(wsver, &wsdata);
   if (startup_res != 0)
   {
-    return err_winsock_to_etcpal(startup_res);
+    return err_winsock_to_etcpal(WSAGetLastError());
   }
 
   etcpal_error_t res = init_extension_functions();
@@ -1237,17 +1237,20 @@ etcpal_error_t get_wsarecvmsg(LPFN_WSARECVMSG* result)
   DWORD           bytes = 0;
 
   sock = socket(AF_INET6, SOCK_DGRAM, 0);
-
-  int err =
-      WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &func, sizeof(func), &bytes, NULL, NULL);
-
-  if (err == 0)
-    *result = func;
-
   if (sock != INVALID_SOCKET)
+  {
+    int err = WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER, &guid, sizeof(guid), &func, sizeof(func), &bytes, NULL,
+                       NULL);
+
+    if (err == 0)
+      *result = func;
+
     closesocket(sock);
 
-  return (err == 0) ? kEtcPalErrOk : err_winsock_to_etcpal(err);
+    return (err == 0) ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError());
+  }
+
+  return err_winsock_to_etcpal(WSAGetLastError());
 }
 
 void construct_wsamsg(const EtcPalMsgHdr* in_msg, LPSOCKADDR_STORAGE name_store, LPWSABUF buf_store, LPWSAMSG out_msg)
