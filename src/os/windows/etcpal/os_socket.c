@@ -1247,7 +1247,7 @@ etcpal_error_t get_wsarecvmsg(LPFN_WSARECVMSG* result)
 
     closesocket(sock);
 
-    return (err == 0) ? kEtcPalErrOk : err_winsock_to_etcpal(err);
+    return (err == 0) ? kEtcPalErrOk : err_winsock_to_etcpal(WSAGetLastError());
   }
 
   return err_winsock_to_etcpal(WSAGetLastError());
