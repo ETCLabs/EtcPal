@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2024 ETC Inc.
+ * Copyright 2026 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,37 +17,118 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
-#include "etcpal/rwlock.h"
-#include "etcpal/private/common.h"
+/******************************************************************************
+ * Copyright (c) 2018 Intel Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ******************************************************************************
+ * Implementation taken from Zephyr RTOS and modified by ETC for use in EtcPal.
+ * zephyr/lib/posix/options/rwlock.c
+ ******************************************************************************/
 
-#define MS_IN_S      1000
-#define MS_TO_S(ms)  ((ms) / MS_IN_S)
-#define MS_TO_NS(ms) ((ms)*1000000)
+#include "etcpal/os_rwlock.h"
+#include "etcpal/etcpal_zephyr_common.h"
 
-bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
+bool etcpal_rwlock_create(etcpal_rwlock_t* id)
 {
   if (!id)
   {
     return false;
   }
 
-  struct timespec time = {
-      .tv_sec  = MS_TO_S(timeout_ms),
-      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
-  };
-  return !pthread_rwlock_timedrdlock(id, &time);
+  k_sem_init(&id->write_sem, 1, 1);
+  k_sem_init(&id->reader_active, 1, 1);
+  atomic_set(&id->reader_count, 0);
+  id->initialized = true;
+
+  return true;
+}
+
+bool etcpal_rwlock_destroy(etcpal_rwlock_t* id)
+{
+  if (!id || !id->initialized)
+  {
+    return false;
+  }
+  // Not needed since etcpal_rwlock_t does not allocate any resources
+  return true;
+}
+
+bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
+{
+  if (!id || !id->initialized)
+  {
+    return false;
+  }
+
+  // Wait for release of write lock
+	if (k_sem_take(&id->write_sem, ms_to_zephyr_timeout(timeout_ms)) != 0) {
+    return false;
+	}
+
+  if (atomic_inc(&id->reader_count) == 0)
+  {
+    (void)k_sem_take(&id->reader_active, K_NO_WAIT);
+  }
+	(void)k_sem_give(&id->write_sem);
+
+	return true;
+}
+
+bool etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
+{
+  if (!id || !id->initialized)
+  {
+    return false;
+  }
+
+  if (atomic_dec(&id->reader_count) == 1)
+  {
+    k_sem_give(&id->reader_active);
+    return false;
+  }
+	return true;
 }
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
 {
-  if (!id)
+  if (!id || !id->initialized)
   {
     return false;
   }
 
-  struct timespec time = {
-      .tv_sec  = MS_TO_S(timeout_ms),
-      .tv_nsec = MS_TO_NS(timeout_ms % MS_IN_S),
-  };
-  return !pthread_rwlock_timedwrlock(id, &time);
+	int64_t start_time = k_uptime_get();
+
+	// Wait for release of write lock
+	if (k_sem_take(&id->write_sem, ms_to_zephyr_timeout(timeout_ms)) != 0) {
+    return false;
+  }
+
+	// Update timeout for remaining time
+	if (timeout_ms != ETCPAL_WAIT_FOREVER) {
+		int64_t elapsed_time = k_uptime_get() - start_time;
+		timeout_ms = timeout_ms <= elapsed_time ? 0 :
+			  timeout_ms - elapsed_time;
+	}
+
+	// Wait for all readers to be done
+	if (k_sem_take(&id->reader_active, ms_to_zephyr_timeout(timeout_ms)) != 0) {
+		(void)k_sem_give(&id->write_sem);
+		return false;
+	}
+
+  return true;
 }
+
+bool etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
+{
+  if (!id || !id->initialized)
+  {
+    return false;
+  }
+
+  (void)k_sem_give(&id->reader_active);
+  (void)k_sem_give(&id->write_sem);
+  return true;
+}
+
