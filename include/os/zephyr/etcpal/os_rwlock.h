@@ -28,11 +28,12 @@
 extern "C" {
 #endif
 
-typedef struct {
+typedef struct
+{
   struct k_sem write_sem;
   struct k_sem reader_active; /* blocks WR till reader has acquired lock */
-  atomic_t reader_count;
-  bool initialized;
+  atomic_t     reader_count;
+  bool         initialized;
 } etcpal_rwlock_t;
 
 #define ETCPAL_RWLOCK_INIT \

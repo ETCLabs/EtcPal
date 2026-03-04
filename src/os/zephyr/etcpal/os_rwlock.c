@@ -64,17 +64,18 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
   }
 
   // Wait for release of write lock
-	if (k_sem_take(&id->write_sem, ms_to_zephyr_timeout(timeout_ms)) != 0) {
+  if (k_sem_take(&id->write_sem, ms_to_zephyr_timeout(timeout_ms)) != 0)
+  {
     return false;
-	}
+  }
 
   if (atomic_inc(&id->reader_count) == 0)
   {
     (void)k_sem_take(&id->reader_active, K_NO_WAIT);
   }
-	(void)k_sem_give(&id->write_sem);
+  (void)k_sem_give(&id->write_sem);
 
-	return true;
+  return true;
 }
 
 bool etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
@@ -89,7 +90,7 @@ bool etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
     k_sem_give(&id->reader_active);
     return false;
   }
-	return true;
+  return true;
 }
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
@@ -99,25 +100,27 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
     return false;
   }
 
-	int64_t start_time = k_uptime_get();
+  int64_t start_time = k_uptime_get();
 
-	// Wait for release of write lock
-	if (k_sem_take(&id->write_sem, ms_to_zephyr_timeout(timeout_ms)) != 0) {
+  // Wait for release of write lock
+  if (k_sem_take(&id->write_sem, ms_to_zephyr_timeout(timeout_ms)) != 0)
+  {
     return false;
   }
 
-	// Update timeout for remaining time
-	if (timeout_ms != ETCPAL_WAIT_FOREVER) {
-		int64_t elapsed_time = k_uptime_get() - start_time;
-		timeout_ms = timeout_ms <= elapsed_time ? 0 :
-			  timeout_ms - elapsed_time;
-	}
+  // Update timeout for remaining time
+  if (timeout_ms != ETCPAL_WAIT_FOREVER)
+  {
+    int64_t elapsed_time = k_uptime_get() - start_time;
+    timeout_ms           = timeout_ms <= elapsed_time ? 0 : timeout_ms - elapsed_time;
+  }
 
-	// Wait for all readers to be done
-	if (k_sem_take(&id->reader_active, ms_to_zephyr_timeout(timeout_ms)) != 0) {
-		(void)k_sem_give(&id->write_sem);
-		return false;
-	}
+  // Wait for all readers to be done
+  if (k_sem_take(&id->reader_active, ms_to_zephyr_timeout(timeout_ms)) != 0)
+  {
+    (void)k_sem_give(&id->write_sem);
+    return false;
+  }
 
   return true;
 }
@@ -133,4 +136,3 @@ bool etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
   (void)k_sem_give(&id->write_sem);
   return true;
 }
-
