@@ -50,7 +50,9 @@ bool etcpal_rwlock_destroy(etcpal_rwlock_t* id)
   {
     return false;
   }
-  // Not needed since etcpal_rwlock_t does not allocate any resources
+
+  // Nothing to actually destroy. Just set initialized to false.
+  id->initialized = false;
   return true;
 }
 
