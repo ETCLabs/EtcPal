@@ -26,7 +26,7 @@
  * zephyr/lib/posix/options/rwlock.c
  ******************************************************************************/
 
-#include "etcpal/os_rwlock.h"
+#include "etcpal/rwlock.h"
 #include "etcpal/etcpal_zephyr_common.h"
 
 bool etcpal_rwlock_create(etcpal_rwlock_t* id)
@@ -88,7 +88,6 @@ bool etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
   if (atomic_dec(&id->reader_count) == 1)
   {
     k_sem_give(&id->reader_active);
-    return false;
   }
   return true;
 }
