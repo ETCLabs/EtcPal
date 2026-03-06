@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2024 ETC Inc.
+ * Copyright 2026 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,34 +21,37 @@
 #define ETCPAL_OS_RWLOCK_H_
 
 #include <stdbool.h>
-#include <zephyr/posix/pthread.h>
+#include <zephyr/kernel.h>
 #include "etcpal/common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef pthread_rwlock_t etcpal_rwlock_t;
-#ifdef PTHREAD_RWLOCK_INITIALIZER
-#define ETCPAL_RWLOCK_INIT PTHREAD_RWLOCK_INITIALIZER
-#else
+typedef struct
+{
+  struct k_sem write_sem;
+  struct k_sem reader_active; /* blocks WR till reader has acquired lock */
+  atomic_t     reader_count;
+  bool         initialized;
+} etcpal_rwlock_t;
+
 #define ETCPAL_RWLOCK_INIT \
   {                        \
   }
-#endif
 
 #define ETCPAL_RWLOCK_HAS_TIMED_LOCK 1
 
-#define etcpal_rwlock_create(idptr)       ((bool)(!pthread_rwlock_init((idptr), NULL)))
-#define etcpal_rwlock_readlock(idptr)     ((bool)(!pthread_rwlock_rdlock(idptr)))
-#define etcpal_rwlock_try_readlock(idptr) ((bool)(!pthread_rwlock_tryrdlock(idptr)))
+bool etcpal_rwlock_create(etcpal_rwlock_t* id);
+#define etcpal_rwlock_readlock(idptr)     ((bool)etcpal_rwlock_timed_readlock((idptr), ETCPAL_WAIT_FOREVER))
+#define etcpal_rwlock_try_readlock(idptr) ((bool)etcpal_rwlock_timed_readlock((idptr), ETCPAL_NO_WAIT))
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
-#define etcpal_rwlock_readunlock(idptr)    ((void)pthread_rwlock_unlock(idptr))
-#define etcpal_rwlock_writelock(idptr)     ((bool)(!pthread_rwlock_wrlock(idptr)))
-#define etcpal_rwlock_try_writelock(idptr) ((bool)(!pthread_rwlock_trywrlock(idptr)))
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
+#define etcpal_rwlock_writelock(idptr)     ((bool)etcpal_rwlock_timed_writelock((idptr), ETCPAL_WAIT_FOREVER))
+#define etcpal_rwlock_try_writelock(idptr) ((bool)etcpal_rwlock_timed_writelock((idptr), ETCPAL_NO_WAIT))
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
-#define etcpal_rwlock_writeunlock(idptr) ((void)pthread_rwlock_unlock(idptr))
-#define etcpal_rwlock_destroy(idptr)     ((void)pthread_rwlock_destroy(idptr))
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 #ifdef __cplusplus
 }
