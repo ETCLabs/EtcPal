@@ -46,12 +46,12 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id);
 #define etcpal_rwlock_readlock(idptr)     ((bool)etcpal_rwlock_timed_readlock((idptr), ETCPAL_WAIT_FOREVER))
 #define etcpal_rwlock_try_readlock(idptr) ((bool)etcpal_rwlock_timed_readlock((idptr), ETCPAL_NO_WAIT))
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms);
-bool etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id);
 #define etcpal_rwlock_writelock(idptr)     ((bool)etcpal_rwlock_timed_writelock((idptr), ETCPAL_WAIT_FOREVER))
 #define etcpal_rwlock_try_writelock(idptr) ((bool)etcpal_rwlock_timed_writelock((idptr), ETCPAL_NO_WAIT))
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms);
-bool etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
-bool etcpal_rwlock_destroy(etcpal_rwlock_t* id);
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id);
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id);
 
 #ifdef __cplusplus
 }

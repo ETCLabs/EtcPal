@@ -44,16 +44,15 @@ bool etcpal_rwlock_create(etcpal_rwlock_t* id)
   return true;
 }
 
-bool etcpal_rwlock_destroy(etcpal_rwlock_t* id)
+void etcpal_rwlock_destroy(etcpal_rwlock_t* id)
 {
   if (!id || !id->initialized)
   {
-    return false;
+    return;
   }
 
   // Nothing to actually destroy. Just set initialized to false.
   id->initialized = false;
-  return true;
 }
 
 bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
@@ -78,18 +77,17 @@ bool etcpal_rwlock_timed_readlock(etcpal_rwlock_t* id, int timeout_ms)
   return true;
 }
 
-bool etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
+void etcpal_rwlock_readunlock(etcpal_rwlock_t* id)
 {
   if (!id || !id->initialized)
   {
-    return false;
+    return;
   }
 
   if (atomic_dec(&id->reader_count) == 1)
   {
     k_sem_give(&id->reader_active);
   }
-  return true;
 }
 
 bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
@@ -124,14 +122,13 @@ bool etcpal_rwlock_timed_writelock(etcpal_rwlock_t* id, int timeout_ms)
   return true;
 }
 
-bool etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
+void etcpal_rwlock_writeunlock(etcpal_rwlock_t* id)
 {
   if (!id || !id->initialized)
   {
-    return false;
+    return;
   }
 
   (void)k_sem_give(&id->reader_active);
   (void)k_sem_give(&id->write_sem);
-  return true;
 }
