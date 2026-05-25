@@ -9,12 +9,13 @@ endif()
 # Core EtcPal library
 # ##############################################################################
 
-# Embedded third party sources are in a separate object library to avoid linting them with
-# clang-tidy
-add_library(EtcPalThirdParty OBJECT
+set(ETCPAL_THIRDPARTY_HEADERS
   ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.h
-  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.c
   ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.h
+)
+
+set(ETCPAL_THIRDPARTY_SOURCES
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.c
   ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.c
 )
 
@@ -25,7 +26,8 @@ function(add_etcpal_library target_name)
   add_library(${target_name}
     ${ETCPAL_CORE_HEADERS}
     ${ETCPAL_CORE_SOURCES}
-    $<TARGET_OBJECTS:EtcPalThirdParty>
+    ${ETCPAL_THIRDPARTY_HEADERS}
+    ${ETCPAL_THIRDPARTY_SOURCES}
     ${ETCPAL_OS_ADDITIONAL_HEADERS}
     ${ETCPAL_OS_ADDITIONAL_SOURCES}
     ${ETCPAL_NET_ADDITIONAL_HEADERS}
@@ -122,7 +124,8 @@ endif()
 # ##############################################################################
 if(ETCPAL_BUILD_MOCK_LIB)
   add_library(EtcPalMock
-    $<TARGET_OBJECTS:EtcPalThirdParty>
+    ${ETCPAL_THIRDPARTY_HEADERS}
+    ${ETCPAL_THIRDPARTY_SOURCES}
 
     # EtcPal headers
     ${ETCPAL_ROOT}/include/etcpal/acn_pdu.h
