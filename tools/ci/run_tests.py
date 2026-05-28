@@ -3,6 +3,7 @@
 import argparse
 import junit_xml
 import os
+import signal
 import subprocess
 import sys
 import unity_test_parser
@@ -63,6 +64,13 @@ def main():
             print(f"  executable: {test_exe_name}")
             print(f"  arguments: {[test_exe_name, '-v']}")
             print(f"  returncode: {process_result.returncode}")
+            if process_result.returncode < 0:
+                signal_num = -process_result.returncode
+                try:
+                    signal_name = signal.Signals(signal_num).name
+                except ValueError:
+                    signal_name = "UNKNOWN"
+                print(f"  termination signal: {signal_name} ({signal_num})")
             print(f"  stdout bytes: {process_result.stdout!r}")
             print(f"  stderr bytes: {process_result.stderr!r}")
             print("RAW DECODED STDOUT:")
