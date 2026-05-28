@@ -355,8 +355,8 @@ bool etcpal_queue_reset(etcpal_queue_t* id)
   // Reset the semaphores to their initial counts
   for (size_t i = 0; i < id->queue_size; ++i)
   {
-    etcpal_sem_wait(&id->spots_filled);
-    etcpal_sem_post(&id->spots_available);
+    true_if_success = etcpal_sem_wait(&id->spots_filled) && true_if_success;
+    true_if_success = etcpal_sem_post(&id->spots_available) && true_if_success;
   }
 
   id->queue_size = 0;
