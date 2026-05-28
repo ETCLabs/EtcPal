@@ -9,16 +9,6 @@ endif()
 # Core EtcPal library
 # ##############################################################################
 
-set(ETCPAL_THIRDPARTY_HEADERS
-  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.h
-  ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.h
-)
-
-set(ETCPAL_THIRDPARTY_SOURCES
-  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.c
-  ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.c
-)
-
 set(ETCPAL_LIB_TARGET_NAME EtcPal)
 
 # This is used for creating the main EtcPal target as well as the one used by the live unit tests
