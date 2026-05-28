@@ -54,8 +54,23 @@ def main():
             for line in result_error_output_lines:
                 print(line)
             failed = True
-        
-        results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
+
+        try:
+            results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
+        except ValueError as exc:
+            print(f"Failed to parse Unity output for test '{test_name}': {exc}")
+            print("RAW PROCESS RESULT DUMP:")
+            print(f"  executable: {test_exe_name}")
+            print(f"  arguments: {[test_exe_name, '-v']}")
+            print(f"  returncode: {process_result.returncode}")
+            print(f"  stdout bytes: {process_result.stdout!r}")
+            print(f"  stderr bytes: {process_result.stderr!r}")
+            print("RAW DECODED STDOUT:")
+            print(result_output)
+            print("RAW DECODED STDERR:")
+            print(result_error_output)
+            failed = True
+            continue
 
         with open(os.path.join(args.build_dir, "test_results_{}.xml".format(test_name)), "w") as output_file:
             junit_xml.TestSuite.to_file(output_file, [results.to_junit()])
