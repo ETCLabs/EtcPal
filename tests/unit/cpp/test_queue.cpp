@@ -183,7 +183,7 @@ TEST_GROUP_RUNNER(etcpal_cpp_queue)
   RUN_TEST_CASE(etcpal_cpp_queue, can_detect_empty);
   // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_reset);
   RUN_TEST_CASE(etcpal_cpp_queue, can_detect_full);
-  // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_used);
+  RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_used);
   // RUN_TEST_CASE(etcpal_cpp_queue, can_detect_slots_available);
 }
 
