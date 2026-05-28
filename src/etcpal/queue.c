@@ -352,6 +352,14 @@ bool etcpal_queue_reset(etcpal_queue_t* id)
 
   lock(id);
 
+  // Bring semaphore counts back to the empty-queue state.
+  // For each queued item, consume one filled slot and return one available slot.
+  for (size_t i = 0; i < id->queue_size; ++i)
+  {
+    (void)etcpal_sem_wait(&id->spots_filled);
+    (void)etcpal_sem_post(&id->spots_available);
+  }
+
   id->queue_size = 0;
 
   id->tail = 0;
