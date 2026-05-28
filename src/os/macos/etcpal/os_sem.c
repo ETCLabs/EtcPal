@@ -47,7 +47,17 @@ bool etcpal_sem_try_wait(etcpal_sem_t* id)
 bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
 {
   if (id && id->valid)
-    return !dispatch_semaphore_wait(id->sem, dispatch_time(DISPATCH_TIME_NOW, timeout_ms * NSEC_PER_MSEC));
+  {
+    dispatch_time_t timeout;
+    if (timeout_ms == ETCPAL_WAIT_FOREVER)
+      timeout = DISPATCH_TIME_FOREVER;
+    else if (timeout_ms == ETCPAL_NO_WAIT)
+      timeout = DISPATCH_TIME_NOW;
+    else
+      timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)timeout_ms * NSEC_PER_MSEC);
+
+    return !dispatch_semaphore_wait(id->sem, timeout);
+  }
   return false;
 }
 
