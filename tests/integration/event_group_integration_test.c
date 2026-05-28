@@ -118,6 +118,7 @@ TEST(event_group_integration, one_wait_one_signal_multiple_events)
     etcpal_thread_sleep(50);
   }
 
+  etcpal_thread_sleep(100);  // Additional padding to avoid flakey "Expected 3 Was 4" failures on MacOS
   etcpal_signal_post(&wait_thread_stop_signal);
 
   TEST_ASSERT_EQUAL(etcpal_thread_join(&wait_thread), kEtcPalErrOk);
