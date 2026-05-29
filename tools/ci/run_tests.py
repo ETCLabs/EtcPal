@@ -3,6 +3,7 @@
 import argparse
 import junit_xml
 import os
+import signal
 import subprocess
 import sys
 import unity_test_parser
@@ -54,8 +55,21 @@ def main():
             for line in result_error_output_lines:
                 print(line)
             failed = True
-        
-        results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
+
+        try:
+            results = unity_test_parser.TestResults(result_output, unity_test_parser.UNITY_FIXTURE_VERBOSE)
+        except ValueError as exc:
+            print(f"Failed to parse Unity output for test '{test_name}': {exc}")
+            print(f"  returncode: {process_result.returncode}")
+            if process_result.returncode < 0:
+                signal_num = -process_result.returncode
+                try:
+                    signal_name = signal.Signals(signal_num).name
+                except ValueError:
+                    signal_name = "UNKNOWN"
+                print(f"  termination signal: {signal_name} ({signal_num})")
+            failed = True
+            continue
 
         with open(os.path.join(args.build_dir, "test_results_{}.xml".format(test_name)), "w") as output_file:
             junit_xml.TestSuite.to_file(output_file, [results.to_junit()])

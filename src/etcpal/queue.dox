@@ -64,13 +64,13 @@ macros, etc.), so the documentation needs somewhere to pull a standard interface
  * constructs such as semaphores on full OS platforms. The current availability is as follows:
  *
  * | Platform | Queues Available | #ETCPAL_QUEUE_HAS_STATIC | #ETCPAL_QUEUE_HAS_TIMED_FUNCTIONS | #ETCPAL_QUEUE_HAS_ISR_FUNCTIONS |
- * |----------|------------------|-------------------------|-----------------------------------|---------------------------------|
- * | FreeRTOS | Yes              | No                      | Yes                               | Yes                             |
- * | Linux    | Yes              | No                      | Yes                               | No                              |
- * | macOS    | No               | No                      | N/A                               | N/A                             |
- * | MQX      | No               | No                      | N/A                               | N/A                             |
- * | Windows  | Yes              | No                      | Yes                               | No                              |
- * | Zephyr   | Yes              | Yes                     | Yes                               | Yes                             |
+ * |----------|------------------|--------------------------|-----------------------------------|---------------------------------|
+ * | FreeRTOS | Yes              | No                       | Yes                               | Yes                             |
+ * | Linux    | Yes              | No                       | Yes                               | No                              |
+ * | macOS    | Yes              | No                       | Yes                               | No                              |
+ * | MQX      | No               | No                       | N/A                               | N/A                             |
+ * | Windows  | Yes              | No                       | Yes                               | No                              |
+ * | Zephyr   | Yes              | Yes                      | Yes                               | Yes                             |
  *
  * **IMPORTANT NOTES FOR ZEPHYR USERS:** Some EtcPal features are dependent on Zephyr configuration see: <a
  * href="targeting_zephyr.html">Targeting Zephyr</a>

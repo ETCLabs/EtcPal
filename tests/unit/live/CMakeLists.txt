@@ -37,8 +37,8 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     endif()
   endif()
 
-  # Queues not supported on MQX or Apple platforms
-  if(ETCPAL_OS_TARGET STREQUAL "mqx" OR ETCPAL_OS_TARGET STREQUAL "ios" OR ETCPAL_OS_TARGET STREQUAL "macos")
+  # Queues not supported on MQX or iOS
+  if(ETCPAL_OS_TARGET STREQUAL "mqx" OR ETCPAL_OS_TARGET STREQUAL "ios")
     target_compile_definitions(etcpal_live_unit_tests PRIVATE DISABLE_QUEUE_TESTS)
   else()
     target_sources(etcpal_live_unit_tests PRIVATE test_queue.c)
