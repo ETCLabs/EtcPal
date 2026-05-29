@@ -17,6 +17,10 @@
  * https://github.com/ETCLabs/EtcPal
  ******************************************************************************/
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE  // Expose sem_clockwait() (glibc >= 2.30); must precede any system header include.
+#endif
+
 #include "etcpal/sem.h"
 
 #include "etcpal/private/common.h"
@@ -36,8 +40,11 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
     return etcpal_sem_wait(id);
   }
 
+  // POSIX sem_timedwait() only ever waits against CLOCK_REALTIME, which can be stepped (e.g. by NTP or a
+  // virtualized host clock); a wall-clock jump then makes this relative timeout fire early or block far
+  // too long. Wait against CLOCK_MONOTONIC instead (via sem_clockwait(), glibc >= 2.30), which is immune.
   struct timespec ts;
-  if (clock_gettime(CLOCK_REALTIME, &ts) == -1)
+  if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1)
   {
     return false;
   }
@@ -52,5 +59,5 @@ bool etcpal_sem_timed_wait(etcpal_sem_t* id, int timeout_ms)
   }
 
   ETCPAL_ASSERT_VERIFY(ts.tv_nsec < kNsPerSec);
-  return !sem_timedwait(id, &ts);
+  return !sem_clockwait(id, CLOCK_MONOTONIC, &ts);
 }
