@@ -188,10 +188,18 @@ zephyr-build-and-test:
     - ct-etcpal-test
   script:
     - python C:\etcpal_testing\build_and_test_etcpal.py $env:CI_PROJECT_DIR zephyr
+    - |
+      if (Test-Path "C:\etcpal_testing\etcpal-on-target-testing\zephyr\twister-out\") {
+        Copy-Item -Path "C:\etcpal_testing\etcpal-on-target-testing\zephyr\twister-out\" -Destination ".\twister-out\" -Recurse -Force
+      } else {
+        Write-Host "No twister-out directory found, skipping artifact collection."
+      }
   artifacts:
     when: always
     reports:
       junit: test_results_*.xml
+    paths:
+      - twister-out/
 
 lint:
   stage: build
