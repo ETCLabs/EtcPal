@@ -36,6 +36,16 @@ set(ETCPAL_CORE_SOURCES
   ${ETCPAL_ROOT}/src/etcpal/uuid.c
 )
 
+set(ETCPAL_THIRDPARTY_HEADERS
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.h
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.h
+)
+
+set(ETCPAL_THIRDPARTY_SOURCES
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/md5.c
+  ${ETCPAL_ROOT}/src/etcpal/thirdparty/sha1.c
+)
+
 if(ETCPAL_HAVE_OS_SUPPORT)
   set(ETCPAL_CORE_HEADERS ${ETCPAL_CORE_HEADERS}
     ${ETCPAL_ROOT}/include/etcpal/event_group.h

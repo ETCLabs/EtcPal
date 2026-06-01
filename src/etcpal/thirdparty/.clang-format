@@ -1,0 +1,3 @@
+# Prevent clang-format running on thirdparty files
+DisableFormat: true
+SortIncludes: Never
