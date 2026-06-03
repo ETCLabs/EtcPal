@@ -398,7 +398,10 @@ etcpal_error_t build_routing_table(int family, RoutingTable* table)
 // Get the routing table information from the system.
 etcpal_error_t get_routing_table_dump(int family, uint8_t** buf, size_t* buf_len)
 {
-  const unsigned int kMibSize = 6;
+  enum
+  {
+    kMibSize = 6
+  };
 
   if (!ETCPAL_ASSERT_VERIFY(buf) || !ETCPAL_ASSERT_VERIFY(buf_len))
     return kEtcPalErrSys;
