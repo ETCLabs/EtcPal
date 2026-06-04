@@ -81,3 +81,8 @@ Thumbs.db
 .kwps/
 kwinject.out
 kwtables/
+
+
+# CI Artifacts #
+################
+twister-out/
