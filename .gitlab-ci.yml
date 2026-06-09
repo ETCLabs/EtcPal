@@ -210,6 +210,8 @@ lint:
   variables:
     CMAKE_DEFS: -DETCPAL_ENABLE_CLANG_TIDY=ON -DETCPAL_CLANG_TIDY_WERROR=ON
   script:
+    - clang-format --version
+    - clang-tidy --version
     - mkdir build
     - cd build
     - cmake -G "Unix Makefiles" ${COMMON_CMAKE_DEFS} ..
