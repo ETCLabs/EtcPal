@@ -15,6 +15,7 @@ if(ETCPAL_HAVE_OS_SUPPORT)
     test_rwlock.cpp
     test_sem.cpp
     test_signal.cpp
+    test_synchronized_value.cpp
     test_thread.cpp
     test_timer.cpp
   )

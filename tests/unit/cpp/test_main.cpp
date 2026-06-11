@@ -36,6 +36,7 @@ extern "C" void run_all_tests(void)  // NOLINT
   RUN_TEST_GROUP(etcpal_cpp_recursive_mutex);
 #endif
   RUN_TEST_GROUP(etcpal_cpp_rwlock);
+  RUN_TEST_GROUP(etcpal_cpp_synchronized_value);
   RUN_TEST_GROUP(etcpal_cpp_sem);
   RUN_TEST_GROUP(etcpal_cpp_signal);
   RUN_TEST_GROUP(etcpal_cpp_thread);
