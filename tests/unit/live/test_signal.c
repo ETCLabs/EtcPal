@@ -60,12 +60,12 @@ TEST(etcpal_signal, try_wait_works)
   etcpal_signal_destroy(&signal);
 }
 
-TEST(etcpal_signal, timed_wait_works)
+#if ETCPAL_SIGNAL_HAS_TIMED_WAIT
+TEST(etcpal_signal, timed_wait_works_when_supported)
 {
   etcpal_signal_t signal = ETCPAL_SIGNAL_INIT;
   TEST_ASSERT_TRUE(etcpal_signal_create(&signal));
 
-#if ETCPAL_SIGNAL_HAS_TIMED_WAIT
   EtcPalTimer timer;
   etcpal_timer_start(&timer, 100);
 
@@ -74,22 +74,34 @@ TEST(etcpal_signal, timed_wait_works)
   // An unfortunately necessary heuristic - we assert that at least half the specified time has
   // gone by, to account for OS slop.
   TEST_ASSERT_GREATER_THAN_UINT32(5, etcpal_timer_elapsed(&timer));
+
+  etcpal_signal_destroy(&signal);
+}
 #else
+TEST(etcpal_signal, timed_wait_works_when_not_supported)
+{
+  etcpal_signal_t signal = ETCPAL_SIGNAL_INIT;
+  TEST_ASSERT_TRUE(etcpal_signal_create(&signal));
+
   // On this platform, timed_wait() should behave the same as try_wait() if timeout_ms is 0, and
   // wait() if timeout_ms != 0.
   TEST_ASSERT_FALSE(etcpal_signal_timed_wait(&signal, 0));
   etcpal_signal_post(&signal);
   TEST_ASSERT_TRUE(etcpal_signal_timed_wait(&signal, 10));
-#endif
 
   etcpal_signal_destroy(&signal);
 }
+#endif
 
 TEST_GROUP_RUNNER(etcpal_signal)
 {
   etcpal_init(ETCPAL_FEATURE_TIMERS);
   RUN_TEST_CASE(etcpal_signal, create_and_destroy_works);
   RUN_TEST_CASE(etcpal_signal, try_wait_works);
-  RUN_TEST_CASE(etcpal_signal, timed_wait_works);
+#if ETCPAL_SIGNAL_HAS_TIMED_WAIT
+  RUN_TEST_CASE(etcpal_signal, timed_wait_works_when_supported);
+#else
+  RUN_TEST_CASE(etcpal_signal, timed_wait_works_when_not_supported);
+#endif
   etcpal_deinit(ETCPAL_FEATURE_TIMERS);
 }

@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2026 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ typedef struct
   {                        \
   }
 
-#define ETCPAL_SIGNAL_HAS_TIMED_WAIT    0
+#define ETCPAL_SIGNAL_HAS_TIMED_WAIT    1
 #define ETCPAL_SIGNAL_HAS_POST_FROM_ISR 0
 
 bool etcpal_signal_create(etcpal_signal_t* id);

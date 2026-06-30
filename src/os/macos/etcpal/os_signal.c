@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2022 ETC Inc.
+ * Copyright 2026 ETC Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
  ******************************************************************************/
 
 #include "etcpal/signal.h"
+
+#include <errno.h>
 
 bool etcpal_signal_create(etcpal_signal_t* id)
 {
@@ -50,7 +52,9 @@ bool etcpal_signal_wait(etcpal_signal_t* id)
       {
         if (0 != pthread_cond_wait(&id->cond, &id->mutex))
         {
-          // On error, the mutex is not locked
+          // On error, the mutex is still locked per Unix spec
+          pthread_mutex_unlock(&id->mutex);
+          return false;
         }
       }
       id->signaled = false;
@@ -81,7 +85,40 @@ bool etcpal_signal_try_wait(etcpal_signal_t* id)
 
 bool etcpal_signal_timed_wait(etcpal_signal_t* id, int timeout_ms)
 {
-  return (timeout_ms == 0 ? etcpal_signal_try_wait(id) : etcpal_signal_wait(id));
+  if (timeout_ms < 0)  // Matches Windows, which treats negative timeouts as infinite waits
+    return etcpal_signal_wait(id);
+
+  if (timeout_ms == 0)
+    return etcpal_signal_try_wait(id);
+
+  // For positive timeout, use pthread_cond_timedwait_relative_np (macOS extension)
+  // CLOCK_REALTIME is an attempt at wallclock time, which can go backwards,
+  // so using a relative time approach to sidestep that altogether.
+  if (id && id->valid)
+  {
+    struct timespec rel_time = {0};
+    rel_time.tv_sec          = timeout_ms / 1000;
+    rel_time.tv_nsec         = (timeout_ms % 1000) * 1000000;
+
+    if (0 == pthread_mutex_lock(&id->mutex))
+    {
+      while (!id->signaled)
+      {
+        if (0 != pthread_cond_timedwait_relative_np(&id->cond, &id->mutex, &rel_time))
+        {
+          // On error (timeout or not), the mutex is still locked per pthread_cond_timedwait Unix spec, so assuming same
+          // for the _relative_np variant.
+          pthread_mutex_unlock(&id->mutex);
+          return false;
+        }
+      }
+
+      id->signaled = false;
+      pthread_mutex_unlock(&id->mutex);
+      return true;
+    }
+  }
+  return false;
 }
 
 void etcpal_signal_post(etcpal_signal_t* id)
