@@ -2,7 +2,8 @@
   "devToolConfig": {
     "version": {
       "fileTemplates": {
-        "tools/ci/templates/version.h.in": "include/etcpal/version.h"
+        "tools/ci/templates/version.h.in": "include/etcpal/version.h",
+        "tools/ci/templates/etcpal-version.cmake.in": "cmake/etcpal-version.cmake"
       },
       "jira": {
         "project": "ETCPAL",

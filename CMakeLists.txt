@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 3.15)
 
 ########################## Global Project Attributes ##########################
 
-project(EtcPal)
-
 set(ETCPAL_ROOT ${CMAKE_CURRENT_LIST_DIR})
 set(ETCPAL_CMAKE ${ETCPAL_ROOT}/cmake)
+
+include(${ETCPAL_CMAKE}/etcpal-version.cmake)
+project(EtcPal VERSION ${ETCPAL_VERSION})
 
 option(ETCPAL_BUILD_MOCK_LIB "Build the EtcPalMock library" OFF)
 option(ETCPAL_BUILD_TESTS "Build the EtcPal unit tests" OFF)

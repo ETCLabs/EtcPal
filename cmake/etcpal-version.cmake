@@ -1,0 +1,1 @@
+set(ETCPAL_VERSION 1.0.0.31)
